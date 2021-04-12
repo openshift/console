@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
-import { PipelineRunKind, PipelineRunReferenceResource } from '../../../types';
+import { PipelineRunKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { pipelineRefExists } from '../../../utils/pipeline-augment';
-import { PipelineModel, PipelineResourceModel } from '../../../models';
-import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList';
+import DynamicResourceLinkList from '../../pipelines/resource-overview/DynamicResourceLinkList';
+import {
+  convertBackingPipelineToPipelineResourceRefProps,
+  getPipelineResourceLinks,
+} from '../../pipelines/detail-page-tabs';
+import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResourceLinkList';
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
 import TriggeredBySection from './TriggeredBySection';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
-import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResourceLinkList';
+import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 
 export type PipelineRunCustomDetailsProps = {
   pipelineRun: PipelineRunKind;
@@ -19,12 +20,12 @@ export type PipelineRunCustomDetailsProps = {
 
 const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pipelineRun }) => {
   const { t } = useTranslation();
-  // FIXME: If they are inline resources, we are not going to render them
-  const unfilteredResources = pipelineRun.spec.resources as PipelineRunReferenceResource[];
-  const renderResources =
-    unfilteredResources
-      ?.filter(({ resourceRef }) => !!resourceRef)
-      .map((resource) => resource.resourceRef.name) || [];
+  const pipelineResourceLinks = getPipelineResourceLinks(
+    pipelineRun.status?.pipelineSpec?.resources,
+    pipelineRun.spec.resources,
+    t,
+  );
+
   return (
     <>
       <dl>
@@ -40,22 +41,18 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         logDetails={getPLRLogSnippet(pipelineRun, t)}
         namespace={pipelineRun.metadata.namespace}
       />
-      {pipelineRefExists(pipelineRun) && (
-        <dl>
-          <dt>{t('pipelines-plugin~Pipeline')}</dt>
-          <dd>
-            <ResourceLink
-              kind={referenceForModel(PipelineModel)}
-              name={pipelineRun.spec.pipelineRef.name}
-              namespace={pipelineRun.metadata.namespace}
-            />
-          </dd>
-        </dl>
-      )}
+      <dl>
+        <dt>{t('pipelines-plugin~Pipeline')}</dt>
+        <dd>
+          <PipelineResourceRef
+            {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun, t)}
+          />
+        </dd>
+      </dl>
       <TriggeredBySection pipelineRun={pipelineRun} />
-      <ResourceLinkList
-        model={PipelineResourceModel}
-        links={renderResources}
+      <DynamicResourceLinkList
+        links={pipelineResourceLinks}
+        title={t('pipelines-plugin~Pipeline Resources')}
         namespace={pipelineRun.metadata.namespace}
       />
       <WorkspaceResourceLinkList

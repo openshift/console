@@ -93,6 +93,7 @@ const useConnectFinally = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
+  const { t } = useTranslation();
   const { clusterTasks, namespacedTasks } = taskResources;
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
@@ -126,7 +127,7 @@ const useConnectFinally = (
       addNewFinallyListNode,
       finallyTasks: taskGroup.finallyTasks.map((ft, idx) => ({
         ...ft,
-        onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft), true),
+        onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft, t), true),
         error: getTopLevelErrorMessage(tasksInError)(idx),
         selected: taskGroup.highlightedIds.includes(ft.name),
         disableTooltip: true,
@@ -152,6 +153,7 @@ export const useNodes = (
   taskResources: PipelineBuilderTaskResources,
   tasksInError: BuilderTasksErrorGroup,
 ): PipelineMixedNodeModel[] => {
+  const { t } = useTranslation();
   const { clusterTasks, namespacedTasks } = taskResources;
 
   const taskGroupRef = React.useRef(taskGroup);
@@ -219,8 +221,8 @@ export const useNodes = (
       },
     });
 
-  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task));
-  const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task));
+  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task, t));
+  const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task, t));
 
   const invalidTaskListNodes: PipelineTaskListNodeModel[] = invalidTaskList.map((task) =>
     newInvalidListNode(task.name, task.runAfter),
@@ -230,7 +232,7 @@ export const useNodes = (
       ? tasksToBuilderNodes(
           validTaskList,
           onNewListNode,
-          (task) => onTaskSelection(task, findTask(taskResources, task), false),
+          (task) => onTaskSelection(task, findTask(taskResources, task, t), false),
           getTopLevelErrorMessage(tasksInError.tasks),
           taskGroup.highlightedIds,
         )

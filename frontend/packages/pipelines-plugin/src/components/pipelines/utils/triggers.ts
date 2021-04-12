@@ -14,7 +14,10 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventListenerModel, PipelineRunModel, TriggerTemplateModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
-import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
+import {
+  getResourceModelFromBindingKind,
+  getSafeBindingResourceKind,
+} from '../../../utils/pipeline-augment';
 import {
   EventListenerKind,
   EventListenerKindTrigger,
@@ -173,7 +176,7 @@ export const getEventListenerTriggerBindingNames = (
   bindings: EventListenerKindBindingReference[],
 ): ResourceModelLink[] =>
   bindings?.map((binding) => ({
-    model: getResourceModelFromBindingKind(binding.kind),
+    resourceKind: getSafeBindingResourceKind(binding.kind),
     // Ref is used since Tekton Triggers 0.5 (OpenShift Pipeline Operator 1.1)
     // We keep the fallback to name here to support also OpenShift Pipeline Operator 1.0.
     name: binding.ref || binding.name,

@@ -6,8 +6,8 @@ import {
   PipelineKind,
   TektonResource,
   PipelineRunKind,
-  PipelineRunInlineResource,
-  PipelineRunInlineResourceParam,
+  PipelineRunEmbeddedResource,
+  PipelineRunEmbeddedResourceParam,
   PipelineRunReferenceResource,
   PipelineRunResource,
   VolumeClaimTemplateType,
@@ -182,7 +182,7 @@ export const convertPipelineToModalData = (
 
 export const convertMapToNameValueArray = (map: {
   [key: string]: any;
-}): PipelineRunInlineResourceParam[] => {
+}): PipelineRunEmbeddedResourceParam[] => {
   return Object.keys(map).map((name) => {
     const value = map[name];
     return { name, value };
@@ -197,7 +197,7 @@ const convertResources = (resource: PipelineModalFormResource): PipelineRunResou
         params: convertMapToNameValueArray(resource.data.params),
         type: resource.data.type,
       },
-    } as PipelineRunInlineResource;
+    } as PipelineRunEmbeddedResource;
   }
 
   return {
