@@ -1,30 +1,31 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal/module/k8s';
+
 import { CloudInitConfig, Disk } from '../types/types';
 import {
-  STORAGE_CLASS,
-  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
-  KUBEVIRT_PROJECT_NAME,
   COMMON_TEMPLATES_NAMESPACE,
   COMMON_TEMPLATES_REVISION,
+  KUBEVIRT_PROJECT_NAME,
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+  STORAGE_CLASS,
 } from '../utils/constants/common';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 import {
+  DISK_DRIVE,
+  DISK_INTERFACE,
+  DISK_SOURCE,
+  diskAccessMode,
+  diskVolumeMode,
+  NIC_MODEL,
+  NIC_TYPE,
+} from '../utils/constants/vm';
+import { Flavor } from '../utils/constants/wizard';
+import {
+  deepFreeze,
   getRandomMacAddress,
   getResourceObject,
   resolveStorageDataAttribute,
-  deepFreeze,
 } from '../utils/utils';
-import { Flavor } from '../utils/constants/wizard';
-import {
-  NIC_MODEL,
-  NIC_TYPE,
-  DISK_INTERFACE,
-  DISK_SOURCE,
-  DISK_DRIVE,
-  diskAccessMode,
-  diskVolumeMode,
-} from '../utils/constants/vm';
-import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 export const flavorConfigs = {
   [Flavor.TINY]: { flavor: Flavor.TINY },

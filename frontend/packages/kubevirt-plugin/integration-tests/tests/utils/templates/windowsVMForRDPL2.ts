@@ -1,4 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+
 import { COMMON_TEMPLATES_NAMESPACE, COMMON_TEMPLATES_REVISION } from '../constants/common';
 
 export const getFakeWindowsVM = ({ name, networkName, vmIP }) => `

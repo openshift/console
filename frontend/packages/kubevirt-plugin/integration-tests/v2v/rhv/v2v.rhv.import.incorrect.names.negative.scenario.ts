@@ -1,13 +1,14 @@
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   asyncForEach,
   deleteResources,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
-import { rhvVMConfigNoStartOnCreate } from './v2v.rhv.configs';
-import { wrongValues } from '../../tests/utils/constants/vm';
+
 import { v2vUIDeployment } from '../../tests/mocks/mocks';
+import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
+import { wrongValues } from '../../tests/utils/constants/vm';
+import { rhvVMConfigNoStartOnCreate } from './v2v.rhv.configs';
 
 describe('RHV Wizard validation, negative tests', () => {
   const wizard = new RhvImportWizard();

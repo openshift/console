@@ -1,47 +1,49 @@
 /* eslint-disable no-await-in-loop */
-import { browser, ExpectedConditions as until, element, by } from 'protractor';
+import { browser, by, element, ExpectedConditions as until } from 'protractor';
+
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
+import { TemplateModel } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import {
-  selectOptionByText,
-  enabledAsBoolean,
-  selectItemFromDropdown,
-  selectAccessModeFromCM,
-  getResourceUID,
-  checkForError,
-} from '../utils/utils';
+import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
+
+import { diskStorageClass } from '../../views/dialogs/diskDialog.view';
+import { confirmActionButton } from '../../views/importWizard.view';
+import { continueButton, modalTitle, saveButton } from '../../views/kubevirtUIResource.view';
+import { templateCreateVMLink } from '../../views/template.view';
+import { dropDownItem, dropDownItemMain, resourceHorizontalTab } from '../../views/uiResource.view';
+import { virtualizationTitle } from '../../views/vms.list.view';
+import * as view from '../../views/wizard.view';
+import { DiskDialog } from '../dialogs/diskDialog';
+import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
+import { AccessMode, VolumeMode } from '../mocks/mocks';
 import {
   CloudInitConfig,
   Disk,
-  Network,
   FlavorConfig,
+  Network,
   VirtualMachineTemplateModel,
 } from '../types/types';
+import { VMBuilderData } from '../types/vm';
 import {
-  WIZARD_CREATE_SUCCESS,
-  PAGE_LOAD_TIMEOUT_SECS,
   KEBAP_ACTION,
-  VIRTUALIZATION_TITLE,
+  PAGE_LOAD_TIMEOUT_SECS,
   SEC,
   STORAGE_CLASS,
+  VIRTUALIZATION_TITLE,
+  WIZARD_CREATE_SUCCESS,
 } from '../utils/constants/common';
-import { AccessMode, VolumeMode } from '../mocks/mocks';
-import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
-import { DiskDialog } from '../dialogs/diskDialog';
-import { Flavor, StepTitle, TemplateByName } from '../utils/constants/wizard';
-import * as view from '../../views/wizard.view';
-import { resourceHorizontalTab, dropDownItem, dropDownItemMain } from '../../views/uiResource.view';
-import { continueButton, saveButton, modalTitle } from '../../views/kubevirtUIResource.view';
-import { confirmActionButton } from '../../views/importWizard.view';
-import { virtualizationTitle } from '../../views/vms.list.view';
-import { diskStorageClass } from '../../views/dialogs/diskDialog.view';
-import { templateCreateVMLink } from '../../views/template.view';
-import { VMBuilderData } from '../types/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
-import { TemplateModel } from '@console/internal/models';
+import { Flavor, StepTitle, TemplateByName } from '../utils/constants/wizard';
+import {
+  checkForError,
+  enabledAsBoolean,
+  getResourceUID,
+  selectAccessModeFromCM,
+  selectItemFromDropdown,
+  selectOptionByText,
+} from '../utils/utils';
 
 export class Wizard {
   async openWizard(

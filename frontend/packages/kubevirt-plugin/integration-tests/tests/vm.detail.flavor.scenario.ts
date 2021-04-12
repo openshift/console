@@ -1,5 +1,6 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
@@ -9,16 +10,17 @@ import {
   removeLeakedResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-import * as virtualMachineView from '../views/virtualMachine.view';
-import { saveButton } from '../views/kubevirtUIResource.view';
-import * as editFlavorView from '../views/dialogs/editFlavorView';
-import { selectOptionByText } from './utils/utils';
+
 import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
-import { VMBuilder } from './models/vmBuilder';
-import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import * as editFlavorView from '../views/dialogs/editFlavorView';
+import { saveButton } from '../views/kubevirtUIResource.view';
+import * as virtualMachineView from '../views/virtualMachine.view';
 import { getTestDataVolume } from './mocks/mocks';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
 import { CLONE_VM_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { selectOptionByText } from './utils/utils';
 
 describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();

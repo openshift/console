@@ -1,22 +1,24 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   click,
   createResources,
   deleteResources,
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { getVMManifest, hddDisk, multusNetworkInterface, multusNAD } from './mocks/mocks';
+
+import * as dashboardView from '../views/dashboard.view';
+import { getVMManifest, hddDisk, multusNAD, multusNetworkInterface } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import {
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
   NOT_AVAILABLE,
   VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { VM_STATUS } from './utils/constants/vm';
-import * as dashboardView from '../views/dashboard.view';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
 
 describe('Kubevirt VM dashboard tab', () => {
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nruncmd:\n- dnf install -y qemu-guest-agent\n- systemctl start qemu-guest-agent`;

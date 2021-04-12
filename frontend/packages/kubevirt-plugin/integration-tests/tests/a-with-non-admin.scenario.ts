@@ -1,31 +1,32 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as loginView from '@console/internal-integration-tests/views/login.view';
+import { closeGuidedTour } from '@console/internal-integration-tests/views/overview.view';
+import * as sidenav from '@console/internal-integration-tests/views/sidenav.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   addLeakableResource,
-  removeLeakedResources,
   click,
+  removeLeakedResources,
   withResource,
   withResources,
 } from '@console/shared/src/test-utils/utils';
-import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import * as loginView from '@console/internal-integration-tests/views/login.view';
-import * as sidenav from '@console/internal-integration-tests/views/sidenav.view';
-import { closeGuidedTour } from '@console/internal-integration-tests/views/overview.view';
+
 import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';
-import { createProject } from './utils/utils';
-import { RHEL7_IMAGE, CLONED_VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
-import { TemplateByName } from './utils/constants/wizard';
-import { GOLDEN_OS_IMAGES_NS, RHEL7_PVC } from './utils/constants/pvc';
-
-import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { PVC } from './models/pvc';
 import { UploadForm } from './models/pvcUploadForm';
+import { VMBuilder } from './models/vmBuilder';
 import { Wizard } from './models/wizard';
+import { CLONED_VM_BOOTUP_TIMEOUT_SECS, RHEL7_IMAGE } from './utils/constants/common';
+import { GOLDEN_OS_IMAGES_NS, RHEL7_PVC } from './utils/constants/pvc';
+import { TemplateByName } from './utils/constants/wizard';
+import { createProject } from './utils/utils';
 
 const testNonAdminNamespace = `${testName}-non-admin`;
 const KUBEADMIN_IDP = 'kube:admin';

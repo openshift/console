@@ -1,4 +1,4 @@
-import { element, by, $ } from 'protractor';
+import { $, by, element } from 'protractor';
 
 export const uploadCdiFormButton = element(by.partialButtonText('Data upload'));
 export const uploadInput = $('input[type="file"]');

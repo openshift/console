@@ -1,49 +1,51 @@
+import { execSync } from 'child_process';
 /* eslint-disable no-undef, max-nested-callbacks */
 import * as _ from 'lodash';
-import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   filterForName,
   isLoaded,
-  resourceRowsPresent,
   resourceRows,
+  resourceRowsPresent,
 } from '@console/internal-integration-tests/views/crud.view';
 import {
+  addLeakableResource,
+  applyResource,
+  asyncForEach,
+  createResources,
+  deleteResources,
+  removeLeakableResource,
   removeLeakedResources,
   waitForCount,
   withResource,
-  applyResource,
-  createResources,
-  deleteResources,
-  addLeakableResource,
-  removeLeakableResource,
-  asyncForEach,
 } from '@console/shared/src/test-utils/utils';
+
+import { getDataVolumeTemplates, getVolumes } from '../../src/selectors/vm/selectors';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
-import { getVolumes, getDataVolumeTemplates } from '../../src/selectors/vm/selectors';
-import { getRandStr, createProject } from './utils/utils';
+import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
 import {
-  CLONE_VM_TIMEOUT_SECS,
-  VM_BOOTUP_TIMEOUT_SECS,
-  VM_IMPORT_TIMEOUT_SECS,
-  PAGE_LOAD_TIMEOUT_SECS,
-} from './utils/constants/common';
-import {
-  multusNetworkInterface,
-  multusNAD,
-  getVMManifest,
   cloudInitCustomScriptConfig,
-  rootDisk,
   datavolumeClonerClusterRole,
+  getVMManifest,
+  multusNAD,
+  multusNetworkInterface,
+  rootDisk,
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VirtualMachine } from './models/virtualMachine';
-import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
-import { VM_ACTION, VM_STATUS, TAB } from './utils/constants/vm';
 import { VMBuilder } from './models/vmBuilder';
 import { Disk } from './types/types';
+import {
+  CLONE_VM_TIMEOUT_SECS,
+  PAGE_LOAD_TIMEOUT_SECS,
+  VM_BOOTUP_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
+} from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { TAB, VM_ACTION, VM_STATUS } from './utils/constants/vm';
+import { createProject, getRandStr } from './utils/utils';
 
 describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();

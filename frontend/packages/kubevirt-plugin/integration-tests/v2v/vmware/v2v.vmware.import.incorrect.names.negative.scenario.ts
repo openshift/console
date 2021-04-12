@@ -1,19 +1,20 @@
-import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
-import { VirtualMachineModel } from '../../../src/models';
-import { vmwareVMConfig } from './v2v.configs';
 import {
   asyncForEach,
   click,
   deleteResources,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-import { wrongValues } from '../../tests/utils/constants/vm';
-import { NetworkInterfaceDialog } from '../../tests/dialogs/networkInterfaceDialog';
-import { clickKebabAction } from '../../views/wizard.view';
-import { KEBAP_ACTION } from '../../tests/utils/constants/common';
-import * as view from '../../views/importWizard.view';
+
+import { VirtualMachineModel } from '../../../src/models';
 import { DiskDialog } from '../../tests/dialogs/diskDialog';
+import { NetworkInterfaceDialog } from '../../tests/dialogs/networkInterfaceDialog';
 import { v2vUIDeployment } from '../../tests/mocks/mocks';
+import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
+import { KEBAP_ACTION } from '../../tests/utils/constants/common';
+import { wrongValues } from '../../tests/utils/constants/vm';
+import * as view from '../../views/importWizard.view';
+import { clickKebabAction } from '../../views/wizard.view';
+import { vmwareVMConfig } from './v2v.configs';
 
 describe('VMWare Wizard validation, negative tests', () => {
   const leakedResources = new Set<string>();

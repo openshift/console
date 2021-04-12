@@ -1,10 +1,12 @@
 import { get } from 'lodash';
+
 import { withResource } from '@console/shared/src/test-utils/utils';
+
 import { getCloudInitVolume } from '../../src/selectors/vm/selectors';
 import { cloudInitScript } from './mocks/mocks';
-import { CloudInitConfig } from './types/types';
-import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
+import { CloudInitConfig } from './types/types';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt create VM using cloud-init', () => {

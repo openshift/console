@@ -1,20 +1,22 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import * as crudView from '@console/internal-integration-tests/views/crud.view';
+
+import { PVC_STATUS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import {
   namespaceDropdown,
-  selectItemFromDropdown,
   pvcStatus,
+  selectItemFromDropdown,
 } from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { click } from '@console/shared/src/test-utils/utils';
+
 import { listViewAction } from '../../views/actions.view';
 import * as pvcView from '../../views/pvc.view';
-import { PVC_ACTION } from '../utils/constants/pvc';
-import { PVC_STATUS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import { getTestDataVolume } from '../mocks/mocks';
-import { click } from '@console/shared/src/test-utils/utils';
 import { PVCData } from '../types/pvc';
+import { PVC_ACTION } from '../utils/constants/pvc';
 import { UploadForm } from './pvcUploadForm';
 import { UIResource } from './uiResource';
 

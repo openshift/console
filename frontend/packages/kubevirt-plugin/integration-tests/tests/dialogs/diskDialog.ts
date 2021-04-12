@@ -1,21 +1,23 @@
+import { $, browser, ExpectedConditions as until } from 'protractor';
+
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
+
+import * as view from '../../views/dialogs/diskDialog.view';
+import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
+import { errorHelper, modalCancelButton, waitForNoLoaders } from '../../views/wizard.view';
+import { AccessMode, VolumeMode } from '../mocks/mocks';
+import { Disk, DiskSourceConfig } from '../types/types';
+import { STORAGE_CLASS } from '../utils/constants/common';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
+import { DISK_SOURCE } from '../utils/constants/vm';
 import {
-  selectOptionByText,
-  selectOptionByOptionValue,
+  checkForError,
   getSelectedOptionText,
   getSelectOptions,
   selectItemFromDropdown,
-  checkForError,
+  selectOptionByOptionValue,
+  selectOptionByText,
 } from '../utils/utils';
-import * as view from '../../views/dialogs/diskDialog.view';
-import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
-import { Disk, DiskSourceConfig } from '../types/types';
-import { DISK_SOURCE } from '../utils/constants/vm';
-import { STORAGE_CLASS } from '../utils/constants/common';
-import { AccessMode, VolumeMode } from '../mocks/mocks';
-import { ProvisionSource } from '../utils/constants/enums/provisionSource';
-import { waitForNoLoaders, modalCancelButton, errorHelper } from '../../views/wizard.view';
-import { browser, ExpectedConditions as until, $ } from 'protractor';
 
 export class DiskDialog {
   sourceMethods = {

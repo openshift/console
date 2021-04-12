@@ -1,4 +1,5 @@
-import { $, $$, element, by, browser, ExpectedConditions as until, Key } from 'protractor';
+import { $, $$, browser, by, element, ExpectedConditions as until, Key } from 'protractor';
+
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
 
 export const consoleTypeSelectorId = '#pf-c-console__type-selector';

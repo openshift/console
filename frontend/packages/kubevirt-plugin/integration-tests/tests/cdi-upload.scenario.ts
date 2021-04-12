@@ -1,7 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { browser, ExpectedConditions as until } from 'protractor';
+
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
   click,
   createResource,
@@ -9,39 +11,39 @@ import {
   withResource,
   withResources,
 } from '@console/shared/src/test-utils/utils';
-import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
+
 import { typeWarnMessage } from '../views/pvc.view';
 import { bootSource, vmtLinkByName } from '../views/template.view';
+import { AccessMode, getTestDataVolume, VolumeMode } from './mocks/mocks';
+import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
+import { PVC } from './models/pvc';
+import { UploadForm } from './models/pvcUploadForm';
+import { VMBuilder } from './models/vmBuilder';
+import { VMTemplateBuilder } from './models/vmtemplateBuilder';
+import { PVCData } from './types/pvc';
 import {
-  CLONE_VM_TIMEOUT_SECS,
   CDI_UPLOAD_TIMEOUT_SECS,
-  PAGE_LOAD_TIMEOUT_SECS,
-  VM_BOOTUP_TIMEOUT_SECS,
-  STORAGE_CLASS,
   CIRROS_IMAGE,
+  CLONE_VM_TIMEOUT_SECS,
   FEDORA_IMAGE,
+  PAGE_LOAD_TIMEOUT_SECS,
   RHEL7_IMAGE,
-  WIN10_IMAGE,
+  STORAGE_CLASS,
+  VM_BOOTUP_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
+  WIN10_IMAGE,
 } from './utils/constants/common';
 import {
-  GOLDEN_OS_IMAGES_NS,
   CIRROS_PVC,
-  LOCAL_CIRROS_IMAGE,
   FEDORA_PVC,
+  GOLDEN_OS_IMAGES_NS,
+  LOCAL_CIRROS_IMAGE,
   RHEL7_PVC,
   WIN10_PVC,
 } from './utils/constants/pvc';
 import { VM_STATUS } from './utils/constants/vm';
 import { Flavor, TemplateByName } from './utils/constants/wizard';
-import { PVCData } from './types/pvc';
-import { UploadForm } from './models/pvcUploadForm';
-import { PVC } from './models/pvc';
-import { VMBuilder } from './models/vmBuilder';
-import { VMTemplateBuilder } from './models/vmtemplateBuilder';
-import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
 import { uploadOSImage } from './utils/utils';
-import { AccessMode, VolumeMode, getTestDataVolume } from './mocks/mocks';
 
 function imagePull(src, dest) {
   if (src === CIRROS_IMAGE) {

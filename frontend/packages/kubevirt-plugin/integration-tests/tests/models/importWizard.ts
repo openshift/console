@@ -1,11 +1,20 @@
 /* eslint-disable no-await-in-loop */
 import { browser } from 'protractor';
+
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { click, asyncForEach } from '@console/shared/src/test-utils/utils';
-import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
+import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
+import { K8sKind } from '@console/internal/module/k8s';
+import { asyncForEach, click } from '@console/shared/src/test-utils/utils';
+
+import * as view from '../../views/importWizard.view';
+import { saveButton, tableRows } from '../../views/kubevirtUIResource.view';
+import * as rhvView from '../../views/rhvImportWizard.view';
+import { resourceHorizontalTab } from '../../views/uiResource.view';
+import { virtualizationTitle } from '../../views/vms.list.view';
+import { clickKebabAction, waitForNoLoaders } from '../../views/wizard.view';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { tableRows, saveButton } from '../../views/kubevirtUIResource.view';
-import { checkForError, getSelectOptions, selectOptionByText } from '../utils/utils';
+import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
+import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import {
   IMPORT_WIZARD_CONN_NAME_PREFIX,
   KEBAP_ACTION,
@@ -13,16 +22,9 @@ import {
   VIRTUALIZATION_TITLE,
   VOLUME_MODE,
 } from '../utils/constants/common';
-import * as view from '../../views/importWizard.view';
-import { waitForNoLoaders, clickKebabAction } from '../../views/wizard.view';
-import { Wizard } from './wizard';
-import { virtualizationTitle } from '../../views/vms.list.view';
-import { K8sKind } from '@console/internal/module/k8s';
-import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { resourceHorizontalTab } from '../../views/uiResource.view';
-import { VirtualMachineTemplateModel, Network, Disk } from '../types/types';
 import { networkTabCol } from '../utils/constants/vm';
-import * as rhvView from '../../views/rhvImportWizard.view';
+import { checkForError, getSelectOptions, selectOptionByText } from '../utils/utils';
+import { Wizard } from './wizard';
 
 export class ImportWizard extends Wizard {
   async openWizard(model: K8sKind) {

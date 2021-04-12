@@ -4,15 +4,16 @@ import {
   removeLeakedResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
+
+import { multusNAD, v2vUIDeployment } from '../../tests/mocks/mocks';
+import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
+import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
+import { VM_STATUS } from '../../tests/utils/constants/vm';
 import {
   rhvVMConfigSecond,
   rhvVMConfigStartOnCreate,
   rhvVMMultiNicConfig,
 } from './v2v.rhv.configs';
-import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
-import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
-import { VM_STATUS } from '../../tests/utils/constants/vm';
-import { multusNAD, v2vUIDeployment } from '../../tests/mocks/mocks';
 
 describe('Kubevirt imports VM from RHV using wizard', () => {
   const leakedResources = new Set<string>();

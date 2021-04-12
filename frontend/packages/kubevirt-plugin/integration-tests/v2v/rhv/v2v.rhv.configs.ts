@@ -1,7 +1,7 @@
 import { InstanceConfig, VMImportConfig } from '../../tests/types/types';
 import {
-  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
   IMPORT_WIZARD_CONN_NAME_PREFIX,
+  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
 } from '../../tests/utils/constants/common';
 
 const {

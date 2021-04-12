@@ -1,17 +1,19 @@
 import * as _ from 'lodash';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
+
 import * as vmView from '../views/virtualMachine.view';
-import { getVMIManifest } from './mocks/mocks';
-import { exposeServices } from './utils/utils';
-import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { NOT_AVAILABLE } from './utils/constants/common';
-import { NodePortService } from './types/types';
 import { vmiDetailFlavor } from '../views/virtualMachineInstance.view';
-import { VM_STATUS, TAB } from './utils/constants/vm';
-import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { getVMIManifest } from './mocks/mocks';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
+import { NodePortService } from './types/types';
+import { NOT_AVAILABLE } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { TAB, VM_STATUS } from './utils/constants/vm';
+import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { exposeServices } from './utils/utils';
 
 describe('Test VMI Details', () => {
   const vmiName = `vmi-${testName}`;

@@ -1,45 +1,47 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import * as dashboardView from '../views/dashboard.view';
 import { detailViewAction as vmActions } from '@console/shared/src/test-utils/actions.view';
 import {
   click,
+  createResource,
   deleteResource,
-  waitForStringInElement,
   getDropdownOptions,
   selectDropdownOption,
   selectDropdownOptionById,
-  createResource,
+  waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
+
 import {
   consoleTypeSelector,
   consoleTypeSelectorId,
-  rdpServiceNotConfiguredElem,
   desktopClientTitle,
-  launchRemoteViewerButton,
   launchRemoteDesktopButton,
+  launchRemoteViewerButton,
   manualConnectionTitle,
+  networkSelectorId,
   rdpManualConnectionTitles,
   rdpManualConnectionValues,
-  networkSelectorId,
+  rdpServiceNotConfiguredElem,
 } from '../views/consolesView';
+import * as dashboardView from '../views/dashboard.view';
 import * as vmView from '../views/virtualMachine.view';
 import * as disksView from '../views/vm.disks.view';
-import {
-  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
-  PAGE_LOAD_TIMEOUT_SECS,
-  VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
-  VM_WITH_GA_CREATE_AND_EDIT_CLOUDINIT_TIMEOUT_SECS,
-  GUEST_AGENT_FIELD_TIMEOUT_SECS,
-  SEC,
-  KUBEVIRT_SCRIPTS_PATH,
-} from './utils/constants/common';
-import { VirtualMachine } from './models/virtualMachine';
-import { getFakeWindowsVM } from './utils/templates/windowsVMForRDPL2';
 import { getVMManifest, multusNAD } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
+import {
+  GUEST_AGENT_FIELD_TIMEOUT_SECS,
+  KUBEVIRT_SCRIPTS_PATH,
+  PAGE_LOAD_TIMEOUT_SECS,
+  SEC,
+  VM_CREATE_AND_EDIT_AND_CLOUDINIT_TIMEOUT_SECS,
+  VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+  VM_WITH_GA_CREATE_AND_EDIT_CLOUDINIT_TIMEOUT_SECS,
+} from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
+import { getFakeWindowsVM } from './utils/templates/windowsVMForRDPL2';
 
 const VM_LINUX_NAME = `${testName}-linux-vm`;
 const VM_WINDOWS_NAME = 'windows-rdp';

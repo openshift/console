@@ -1,23 +1,25 @@
-import * as _ from 'lodash';
 import { execSync } from 'child_process';
+import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
-import { selectDropdownOption, resolveTimeout } from '@console/shared/src/test-utils/utils';
-import { KubevirtUIResource } from './kubevirtUIResource';
-import {
-  PAGE_LOAD_TIMEOUT_SECS,
-  VM_BOOTUP_TIMEOUT_SECS,
-  UNEXPECTED_ACTION_ERROR,
-  VM_ACTIONS_TIMEOUT_SECS,
-  VM_STOP_TIMEOUT_SECS,
-  EXPECT_LOGIN_SCRIPT_PATH,
-} from '../utils/constants/common';
-import * as vmView from '../../views/virtualMachine.view';
+import { resolveTimeout, selectDropdownOption } from '@console/shared/src/test-utils/utils';
+
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
-import { TAB, VM_ACTION, VMI_ACTION, VM_STATUS } from '../utils/constants/vm';
+import * as vmView from '../../views/virtualMachine.view';
 import { Disk, Network } from '../types/types';
 import { VMBuilderData } from '../types/vm';
+import {
+  EXPECT_LOGIN_SCRIPT_PATH,
+  PAGE_LOAD_TIMEOUT_SECS,
+  UNEXPECTED_ACTION_ERROR,
+  VM_ACTIONS_TIMEOUT_SECS,
+  VM_BOOTUP_TIMEOUT_SECS,
+  VM_STOP_TIMEOUT_SECS,
+} from '../utils/constants/common';
+import { TAB, VM_ACTION, VM_STATUS, VMI_ACTION } from '../utils/constants/vm';
 import { waitForTextStartsWith } from '../utils/utils';
+import { KubevirtUIResource } from './kubevirtUIResource';
 
 export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
   async waitForStatus(status: string, timeout?: number) {

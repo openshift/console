@@ -1,14 +1,15 @@
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
+import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 /* eslint-disable no-await-in-loop */
 import { click } from '@console/shared/src/test-utils/utils';
-import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
+
+import { templateCreateVMLink, vmtLinkByName, vmtTitle } from '../../views/template.view';
 import { VirtualMachineTemplateModel } from '../types/types';
+import { VMTemplateBuilderData } from '../types/vm';
+import { VMT_ACTION } from '../utils/constants/vm';
 import { getResourceUID } from '../utils/utils';
 import { KubevirtUIResource } from './kubevirtUIResource';
-import { VMT_ACTION } from '../utils/constants/vm';
-import { templateCreateVMLink, vmtTitle, vmtLinkByName } from '../../views/template.view';
-import { VMTemplateBuilderData } from '../types/vm';
 import { Wizard } from './wizard';
 
 const confirmedActions: VMT_ACTION[] = [VMT_ACTION.Delete];

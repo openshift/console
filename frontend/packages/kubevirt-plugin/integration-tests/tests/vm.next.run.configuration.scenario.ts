@@ -1,35 +1,37 @@
 import { browser } from 'protractor';
-import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
+
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
-  getVMManifest,
-  getConfigMap,
-  hddDisk,
-  multusNetworkInterface,
-  multusNAD,
-} from './mocks/mocks';
-import { VirtualMachine } from './models/virtualMachine';
-import { getRandStr, selectOptionByText } from './utils/utils';
-import {
-  fillInput,
   click,
   createResources,
   deleteResources,
+  fillInput,
 } from '@console/shared/src/test-utils/utils';
-import { VM_ACTION } from './utils/constants/vm';
-import { VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
-import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { saveButton, tableRows } from '../views/kubevirtUIResource.view';
+
+import * as bootOrderView from '../views/dialogs/editBootOrderView';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
+import { saveButton, tableRows } from '../views/kubevirtUIResource.view';
+import * as vmEnv from '../views/vm.environment.view';
 import {
-  isPCAlertPresent,
-  isPCInfoAlertPresent,
   alertHeadings,
   alertValues,
+  isPCAlertPresent,
+  isPCInfoAlertPresent,
 } from '../views/vm.next.run.configuration.view';
-import * as bootOrderView from '../views/dialogs/editBootOrderView';
-import * as vmEnv from '../views/vm.environment.view';
+import {
+  getConfigMap,
+  getVMManifest,
+  hddDisk,
+  multusNAD,
+  multusNetworkInterface,
+} from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
+import { VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_ACTION } from './utils/constants/vm';
 import { Flavor } from './utils/constants/wizard';
+import { getRandStr, selectOptionByText } from './utils/utils';
 
 describe('Kubevirt VM Next Run Configuration', () => {
   const testVM = getVMManifest(

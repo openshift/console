@@ -1,9 +1,9 @@
+import { VirtualMachineInstanceModel } from '../../../src/models/index';
 /* eslint-disable no-await-in-loop, no-console */
 import { detailViewAction, listViewAction } from '../../views/actions.view';
-import { TAB, VMI_ACTION } from '../utils/constants/vm';
-import { VirtualMachineInstanceModel } from '../../../src/models/index';
-import { BaseVirtualMachine } from './baseVirtualMachine';
 import { VMBuilderData } from '../types/vm';
+import { TAB, VMI_ACTION } from '../utils/constants/vm';
+import { BaseVirtualMachine } from './baseVirtualMachine';
 
 const noConfirmDialogActions: VMI_ACTION[] = [];
 

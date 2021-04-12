@@ -1,7 +1,8 @@
+import { MatchLabels } from '@console/internal/module/k8s';
+import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
+
 /* eslint-disable no-await-in-loop */
 import * as view from '../../views/dialogs/editLabelView';
-import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
-import { MatchLabels } from '@console/internal/module/k8s';
 
 export class AddDialog {
   private extractID(id: string) {

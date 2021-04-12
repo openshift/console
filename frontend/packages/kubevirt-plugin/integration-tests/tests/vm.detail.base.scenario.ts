@@ -1,16 +1,18 @@
 import * as _ from 'lodash';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
+
 import * as vmView from '../views/virtualMachine.view';
 import { getVMManifest } from './mocks/mocks';
-import { exposeServices } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
-import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE } from './utils/constants/common';
-import { VM_STATUS } from './utils/constants/vm';
 import { NodePortService } from './types/types';
-import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { NOT_AVAILABLE, VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
+import { OperatingSystem, Workload } from './utils/constants/wizard';
+import { exposeServices } from './utils/utils';
 
 describe('Kubevirt VM details tab', () => {
   const vmName = `vm-${testName}`;

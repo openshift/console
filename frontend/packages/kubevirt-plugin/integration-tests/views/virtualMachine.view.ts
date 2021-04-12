@@ -1,4 +1,4 @@
-import { $, $$, element, by } from 'protractor';
+import { $, $$, by, element } from 'protractor';
 
 export const consoleSelectorDropdownId = '#console-type-selector';
 export const consoleNetworkInterfaceDropdownId = '#nic-dropdown';

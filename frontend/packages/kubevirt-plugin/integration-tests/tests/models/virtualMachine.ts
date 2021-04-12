@@ -1,31 +1,32 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
+import { MatchLabels } from 'public/module/k8s';
+
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { detailViewAction, listViewAction } from '../../views/actions.view';
 import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import * as vmView from '../../views/virtualMachine.view';
+import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
+import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
+
+import { detailViewAction, listViewAction } from '../../views/actions.view';
+import { saveButton } from '../../views/kubevirtUIResource.view';
 import { vmtLinkByName } from '../../views/template.view';
 import { resourceHorizontalTab } from '../../views/uiResource.view';
-import { saveButton } from '../../views/kubevirtUIResource.view';
+import * as vmView from '../../views/virtualMachine.view';
+import { CloneVirtualMachineDialog } from '../dialogs/cloneVirtualMachineDialog';
+import { AddDialog } from '../dialogs/schedulingDialog';
+import { VirtualMachineTemplateModel } from '../types/types';
+import { VMBuilderData } from '../types/vm';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   UNEXPECTED_ACTION_ERROR,
   VM_BOOTUP_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
 } from '../utils/constants/common';
-import { BaseVirtualMachine } from './baseVirtualMachine';
-import { AddDialog } from '../dialogs/schedulingDialog';
-import { VMBuilderData } from '../types/vm';
-import { VirtualMachineTemplateModel } from '../types/types';
-import { VM_ACTION, TAB, VM_STATUS } from '../utils/constants/vm';
-
-import { MatchLabels } from 'public/module/k8s';
-import { Wizard } from './wizard';
-import { CloneVirtualMachineDialog } from '../dialogs/cloneVirtualMachineDialog';
+import { TAB, VM_ACTION, VM_STATUS } from '../utils/constants/vm';
 import { getRandStr } from '../utils/utils';
+import { BaseVirtualMachine } from './baseVirtualMachine';
+import { Wizard } from './wizard';
 
 const noConfirmDialogActions: VM_ACTION[] = [VM_ACTION.Start, VM_ACTION.Clone];
 

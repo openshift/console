@@ -1,21 +1,23 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { selectOptionByText, setCheckboxState } from '../utils/utils';
-import { InstanceConfig, rhvConfig, VMImportConfig } from '../types/types';
-import {
-  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-  PAGE_LOAD_TIMEOUT_SECS,
-  IMPORT_WIZARD_CONN_NAME_PREFIX,
-  WIZARD_STARTED_IMPORT,
-} from '../utils/constants/common';
+import { click, fillInput } from '@console/shared/src/test-utils/utils';
+
 import * as view from '../../views/importWizard.view';
 import * as rhvView from '../../views/rhvImportWizard.view';
-import { VirtualMachine } from './virtualMachine';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import * as wizardView from '../../views/wizard.view';
+import { InstanceConfig, rhvConfig, VMImportConfig } from '../types/types';
+import {
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
+  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
+  PAGE_LOAD_TIMEOUT_SECS,
+  WIZARD_STARTED_IMPORT,
+} from '../utils/constants/common';
+import { selectOptionByText, setCheckboxState } from '../utils/utils';
 import { ImportWizard } from './importWizard';
+import { VirtualMachine } from './virtualMachine';
 
 export class RhvImportWizard extends ImportWizard {
   async fillApi(apiUrl: string) {

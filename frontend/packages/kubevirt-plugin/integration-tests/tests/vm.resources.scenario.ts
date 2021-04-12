@@ -1,48 +1,50 @@
 import * as _ from 'lodash';
 import { browser } from 'protractor';
-import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
+
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   click,
-  createResources,
-  deleteResources,
   createResource,
+  createResources,
   deleteResource,
+  deleteResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { createNICButton } from '../views/kubevirtUIResource.view';
-import { nicModel, nicType } from '../views/dialogs/networkInterface.view';
+
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
+import { nicModel, nicType } from '../views/dialogs/networkInterface.view';
+import { createNICButton } from '../views/kubevirtUIResource.view';
+import { dropDownItemMain, dropDownList } from '../views/uiResource.view';
 import * as wizardView from '../views/wizard.view';
-import { dropDownList, dropDownItemMain } from '../views/uiResource.view';
+import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
 import {
-  multusNAD,
-  hddDisk,
-  multusNetworkInterface,
-  getVMManifest,
   defaultPodNetworkingInterface,
+  getVMManifest,
+  hddDisk,
+  multusNAD,
+  multusNetworkInterface,
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VirtualMachine } from './models/virtualMachine';
+import { VMBuilder } from './models/vmBuilder';
+import { Wizard } from './models/wizard';
 import {
+  DEFAULT_YAML_VM_NAME,
+  VM_ACTIONS_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
+} from './utils/constants/common';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { networkTabCol, NIC_MODEL, NIC_TYPE, VM_ACTION, VM_STATUS } from './utils/constants/vm';
+import {
+  createExampleVMViaYAML,
   getListTexts,
   getRandomMacAddress,
-  createExampleVMViaYAML,
   getResourceObject,
   selectItemFromDropdown,
 } from './utils/utils';
-import {
-  VM_IMPORT_TIMEOUT_SECS,
-  VM_ACTIONS_TIMEOUT_SECS,
-  DEFAULT_YAML_VM_NAME,
-} from './utils/constants/common';
-import { VM_ACTION, VM_STATUS, NIC_MODEL, NIC_TYPE, networkTabCol } from './utils/constants/vm';
-import { VirtualMachine } from './models/virtualMachine';
-import { Wizard } from './models/wizard';
-import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
-import { VMBuilder } from './models/vmBuilder';
-import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVM = getVMManifest(ProvisionSource.URL, testName, `vm-disk-nic-${testName}`);
