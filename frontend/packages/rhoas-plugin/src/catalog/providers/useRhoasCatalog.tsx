@@ -11,6 +11,7 @@ import { CloudServiceAccountRequest } from '../../models';
 import { isResourceStatusSuccessful } from '../../utils/conditionHandler';
 import { CATALOG_TYPE } from '../const';
 import { RHOASServices } from '../catalog-content';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
   namespace,
@@ -45,7 +46,7 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
         <Flex direction={{ default: 'column' }} className="catalog-tile-pf-body">
           <FlexItem className="catalog-tile-pf-description">
             {t(
-              'rhoas-plugin~Red Hat OpenShift Application Services include Red Hat OpenShift API Management and Red Hat OpenShift Streams for Apache Kafka',
+              'rhoas-plugin~Red Hat OpenShift Application Services include services like Red Hat OpenShift Streams for Apache Kafka',
             )}
           </FlexItem>
           <FlexItem>{token}</FlexItem>
@@ -60,16 +61,6 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
       },
       {
         value: <Divider component="li" />,
-      },
-      {
-        label: 'Description',
-        value: (
-          <Text component={TextVariants.p}>
-            {t(
-              'rhoas-plugin~Red Hat OpenShift Application Services include:\n- Red Hat OpenShift API Management\n- Red Hat OpenShift Streams for Apache Kafka',
-            )}
-          </Text>
-        ),
       },
       {
         value: (
@@ -109,7 +100,7 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
               href: `/rhoas/ns/${namespace}/${serviceName}`,
             },
             details: {
-              descriptions: [{ value: <Text component={TextVariants.p}>{details}</Text> }],
+              descriptions: [{ value: <SyncMarkdownView content={details} /> }],
             },
           };
         },
@@ -124,7 +115,7 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
         uid: 'services-1615213269575',
         description: tokenStatusFooter(),
         provider: 'Red Hat, Inc.',
-        tags: ['kafka'],
+        tags: ['kafka', 'cloud', 'service', 'managed', 'rhoas', 'rhosak'],
         icon: {
           url: operatorIcon,
         },
