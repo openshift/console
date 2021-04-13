@@ -28,7 +28,7 @@ const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
         </p>
         <TriggerTemplateSelector
           name="selectedTrigger"
-          placeholder={t('pipelines-plugin~Select Trigger Template')}
+          placeholder={t('pipelines-plugin~Select TriggerTemplate')}
           pipeline={pipeline}
         />
       </SplitItem>

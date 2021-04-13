@@ -12,7 +12,7 @@ import PipelineVisualization from '../../../pipelines/detail-page-tabs/pipeline-
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 const pipelineRun = pipelineData.pipelineRuns[DataState.SUCCESS];
 
-describe('Pipeline Run Visualization', () => {
+describe('PipelineRunVisualization', () => {
   type PipelineRunVisualizationProps = React.ComponentProps<typeof PipelineRunVisualization>;
   let wrapper: ShallowWrapper<PipelineRunVisualizationProps>;
 

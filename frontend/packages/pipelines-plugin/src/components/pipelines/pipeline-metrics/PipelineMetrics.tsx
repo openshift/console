@@ -91,7 +91,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
             <DashboardCard>
               <DashboardCardHeader>
                 <DashboardCardTitle>
-                  {t('pipelines-plugin~Number of Pipeline Runs')}
+                  {t('pipelines-plugin~Number of PipelineRuns')}
                 </DashboardCardTitle>
               </DashboardCardHeader>
               <DashboardCardBody>
@@ -111,7 +111,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
             <DashboardCard>
               <DashboardCardHeader>
                 <DashboardCardTitle>
-                  {t('pipelines-plugin~Pipeline Run Duration')}
+                  {t('pipelines-plugin~PipelineRun Duration')}
                 </DashboardCardTitle>
               </DashboardCardHeader>
               <DashboardCardBody>
@@ -129,7 +129,7 @@ const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData })
           <GridItem xl2={5} xl={12} lg={12} md={12} sm={12}>
             <DashboardCard>
               <DashboardCardHeader>
-                <DashboardCardTitle>{t('pipelines-plugin~Task Run Duration')}</DashboardCardTitle>
+                <DashboardCardTitle>{t('pipelines-plugin~TaskRun Duration')}</DashboardCardTitle>
               </DashboardCardHeader>
               <DashboardCardBody>
                 <PipelineRunTaskRunGraph

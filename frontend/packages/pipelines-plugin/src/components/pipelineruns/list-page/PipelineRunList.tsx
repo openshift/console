@@ -8,13 +8,14 @@ import PipelineRunRow from './PipelineRunRow';
 
 export const PipelineRunList: React.FC = (props) => {
   const { t } = useTranslation();
+
   return (
     <Table
       {...props}
       aria-label={t(PipelineRunModel.labelPluralKey)}
       defaultSortField="status.startTime"
       defaultSortOrder={SortByDirection.desc}
-      Header={PipelineRunHeader(t)}
+      Header={PipelineRunHeader}
       Row={PipelineRunRow}
       virtualize
     />

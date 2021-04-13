@@ -17,7 +17,7 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
     ) || [];
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('pipelines-plugin~Event Listener details')} />
+      <SectionHeading text={t('pipelines-plugin~EventListener details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={eventListener} />

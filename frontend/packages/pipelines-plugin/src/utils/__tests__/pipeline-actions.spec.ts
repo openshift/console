@@ -1,4 +1,5 @@
 import { PipelineModel, PipelineRunModel } from '../../models';
+import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
 import {
   stopPipelineRun,
   rerunPipelineAndRedirect,
@@ -6,7 +7,14 @@ import {
   startPipeline,
   getPipelineKebabActions,
 } from '../pipeline-actions';
-import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
+
+jest.mock('@console/internal/i18n', () => {
+  const reactI18next = require.requireActual('@console/internal/i18n');
+  return {
+    ...reactI18next,
+    t: (key) => key,
+  };
+});
 
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
 const samplePipelineRun =

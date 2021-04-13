@@ -21,7 +21,7 @@ describe('ResultsList', () => {
   beforeEach(() => {
     resultsListProps = {
       status: runStatus.Succeeded,
-      resourceName: 'Task Run',
+      resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
@@ -34,7 +34,7 @@ describe('ResultsList', () => {
   it('Should render an EmptyState instead', () => {
     resultsListProps = {
       status: runStatus.Failed,
-      resourceName: 'Task Run',
+      resourceName: 'TaskRun',
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);

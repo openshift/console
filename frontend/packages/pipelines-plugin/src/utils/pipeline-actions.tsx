@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18n from '@console/internal/i18n';
 import {
   history,
   resourcePathFromModel,
@@ -46,7 +47,11 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
     if (namespace && (pipelineRef?.name || pipelineSpec)) {
       k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun));
     } else {
-      errorModal({ error: 'Invalid Pipeline Run configuration, unable to start Pipeline.' });
+      errorModal({
+        error: i18n.t(
+          'pipelines-plugin~Invalid PipelineRun configuration, unable to start Pipeline.',
+        ),
+      });
     }
   },
   accessReview: {
