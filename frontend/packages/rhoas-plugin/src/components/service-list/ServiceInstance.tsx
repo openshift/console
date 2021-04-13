@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
+import { Button } from '@patternfly/react-core';
 import { FormFooter, FormBody } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { history } from '@console/internal/components/utils';
-import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
-import { Button } from '@patternfly/react-core';
 import ServiceInstanceFilter from '../service-table/ServiceInstanceFilter';
 import ServiceInstanceTable from '../service-table/ServiceInstanceTable';
 import { ServicesEmptyState } from '../states';
 import { CloudKafka } from '../../utils/rhoas-types';
-// import ServicesEmptyStateIcon from '../states/ServicesEmptyStateIcon';
 
 type ConnectionErrorProps = {
   title: string;

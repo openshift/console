@@ -28,14 +28,5 @@ export const RHOASServices = [
 
 **Connectors** - the Kafka brokers can securely connect to distributed services, making it easy to consume and share streaming data between applications and enterprise systems, cloud provider services, and SaaS applications.
 `,
-    model: {
-      version: 'v1alpha1',
-      kind: 'KafkaConnection',
-      id: 'kafkaconnection',
-      plural: 'kafkaconnections',
-      label: 'Kafka Connection',
-      labelPlural: 'Kafka Connections',
-      abbr: 'AKC',
-    },
   },
 ];

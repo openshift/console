@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { FormGroup, Title, Split, SplitItem } from '@patternfly/react-core';
+import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -14,8 +16,6 @@ import {
 } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { FormGroup, Title, Split, SplitItem } from '@patternfly/react-core';
-import TimesCircleIcon from '@patternfly/react-icons/dist/js/icons/times-circle-icon';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import { ServicesRequestCRName } from '../../const';
 import {
@@ -94,7 +94,7 @@ const ServiceListPage: React.FC = () => {
 
       const connectionErrorObj = {
         title: t('rhoas-plugin~Failed to create connection'),
-        message: error + t('rhoas-plugin~Please try again'),
+        message: error,
         action: () => history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`),
         actionLabel: t('rhoas-plugin~Go back to Services Catalog'),
       };

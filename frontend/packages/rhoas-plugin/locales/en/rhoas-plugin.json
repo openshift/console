@@ -24,7 +24,6 @@
   "Failed to load list of services": "Failed to load list of services: {{error}}",
   "Go back to Services Catalog": "Go back to Services Catalog",
   "Failed to create connection": "Failed to create connection",
-  "Please try again": "Please try again",
   "Select Kafka Instance": "Select Kafka Instance",
   "The selected Kafka instance will be added to the topology view.": "The selected Kafka instance will be added to the topology view.",
   "Could not connect to RHOAS with API Token": "Could not connect to RHOAS with API Token",
@@ -55,5 +54,6 @@
   "This resource represents service that exist outside your cluster": "This resource represents service that exist outside your cluster",
   "Details": "Details",
   "Resources": "Resources",
-  "Create a binding connector": "Create a binding connector"
+  "Create a binding connector": "Create a binding connector",
+  "Description": "Description"
 }

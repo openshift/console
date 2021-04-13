@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
 } from '@console/shared';
-import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
 
 type ServiceIconStatusProps = {
   status: string;

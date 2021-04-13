@@ -5,13 +5,13 @@ import { LockIcon } from '@patternfly/react-icons';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ServiceToken } from '../../components/access-services/ServicesToken';
 import { ServiceAccountCRName, operatorIcon } from '../../const';
 import { CloudServiceAccountRequest } from '../../models';
 import { isResourceStatusSuccessful } from '../../utils/conditionHandler';
 import { CATALOG_TYPE } from '../const';
 import { RHOASServices } from '../catalog-content';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
   namespace,
@@ -63,6 +63,7 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
         value: <Divider component="li" />,
       },
       {
+        label: 'Description',
         value: (
           <Text component={TextVariants.p}>
             {t('rhoas-plugin~Cloud Services Card Description')}
