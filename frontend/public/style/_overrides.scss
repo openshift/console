@@ -1,3 +1,57 @@
+//reverted variations to regular property declarations for pf button component
+.pf-c-button {
+  &.pf-m-primary {
+    color: var(--pf-c-button--m-primary--Color);
+    background-color: var(--pf-c-button--m-primary--BackgroundColor);
+  }
+  &.pf-m-secondary {
+    color: var(--pf-c-button--m-secondary--Color);
+    background-color: var(--pf-c-button--m-secondary--BackgroundColor);
+  }
+  &.pf-m-tertiary {
+    color: var(--pf-c-button--m-tertiary--Color);
+    background-color: var(--pf-c-button--m-tertiary--BackgroundColor);
+  }
+  &.pf-m-link {
+    color: var(--pf-c-button--m-link--Color);
+    background-color: var(--pf-c-button--m-link--BackgroundColor);
+  }
+  &.pf-m-danger {
+    color: var(--pf-c-button--m-danger--Color);
+    background-color: var(--pf-c-button--m-danger--BackgroundColor);
+    &.pf-m-secondary {
+      --pf-c-button--m-danger--Color: var(--pf-c-button--m-secondary--m-danger--Color);
+      --pf-c-button--m-danger--BackgroundColor: var(--pf-c-button--m-secondary--m-danger--BackgroundColor);
+    }
+    &.pf-m-link {
+      --pf-c-button--m-danger--Color: var(--pf-c-button--m-link--m-danger--Color);
+      --pf-c-button--m-danger--BackgroundColor: var(--pf-c-button--m-link--m-danger--BackgroundColor);
+    }
+  }
+  &.pf-m-warning {
+    color: var(--pf-c-button--m-warning--Color);
+    background-color: var(--pf-c-button--m-warning--BackgroundColor);
+  }
+  &.pf-m-control {
+    color: var(--pf-c-button--m-control--Color);
+    background-color: var(--pf-c-button--m-control--BackgroundColor);
+  }
+  &.pf-m-plain {
+    color: var(--pf-c-button--m-plain--Color);
+    background-color: var(--pf-c-button--m-plain--BackgroundColor);
+  }
+  // default disable styles so they override the overrides above
+  &:disabled,
+  &.pf-m-disabled,
+  &.pf-m-aria-disabled {
+    &::after {
+      border-color: var(--pf-c-button--disabled--after--BorderColor);
+    }
+    color: var(--pf-c-button--disabled--Color);
+    background-color: var(--pf-c-button--disabled--BackgroundColor);
+  }
+}
+
 // Use this file to override styles from 3rd party dependencies
 $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
@@ -160,17 +214,20 @@ h6 {
   }
 }
 
-.pf-c-button {
-  &:hover,
-  &:focus {
-    .pf-c-button-icon--plain {
-      color: var(--pf-c-button--m-plain--hover--Color);
-    }
-  }
+.pf-c-button.pf-m-link {
+  white-space: normal; // override default .pf-c-button to enable wrapping
 }
 
-.pf-c-button-icon--plain {
-  color: var(--pf-c-button--m-plain--Color);
+.pf-c-button.pf-m-inline {
+  text-align: left; // override default .pf-c-button text centering
+}
+
+.pf-c-button.pf-m-link--align-left {
+  padding-left: 0;
+}
+
+.pf-c-button.pf-m-link--align-right {
+  padding-right: 0;
 }
 
 .pf-c-button.pf-c-button--no-default-values {
@@ -183,30 +240,17 @@ h6 {
   white-space: normal;
 }
 
-.pf-c-button.pf-m-inline {
-  text-align: left; // override default .pf-c-button text centering
+.pf-c-button {
+  &:hover,
+  &:focus {
+    .pf-c-button-icon--plain {
+      color: var(--pf-c-button--m-plain--hover--Color);
+    }
+  }
 }
 
-.pf-c-button.pf-m-link {
-  white-space: normal; // override default .pf-c-button to enable wrapping
-}
-
-.pf-c-button.pf-m-link--align-left {
-  padding-left: 0;
-}
-
-.pf-c-button.pf-m-link--align-right {
-  padding-right: 0;
-}
-
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-primary {
-  color: var(--pf-c-button--m-primary--Color);
-}
-
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-plain:hover {
-  color: var(--pf-c-button--m-plain--hover--Color);
+.pf-c-button-icon--plain {
+  color: var(--pf-c-button--m-plain--Color);
 }
 
 .pf-c-chip-group.pf-m-toolbar {
