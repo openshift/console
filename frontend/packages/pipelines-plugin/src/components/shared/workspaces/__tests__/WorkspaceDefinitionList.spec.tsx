@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
-import WorkspaceDefinitionList, { WorkspaceDefinitionListProps } from '../WorkspaceDefinitionList';
-import { pipelineTestData, PipelineExampleNames } from '../../../../test-data/pipeline-data';
+import { shallow } from 'enzyme';
+import WorkspaceDefinitionList from '../WorkspaceDefinitionList';
+import { TektonWorkspace } from '../../../../types';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -12,47 +12,61 @@ jest.mock('react-i18next', () => {
 });
 
 describe('WorkspaceDefinitionList', () => {
-  let workspaceDefinitionListWrapper: ShallowWrapper<WorkspaceDefinitionListProps>;
-  let workspaceDefinitionListWrapperProps: WorkspaceDefinitionListProps;
-
-  it('Should not render if no workspaces are found', () => {
-    workspaceDefinitionListWrapperProps = {
-      workspaces: null,
-    };
-    workspaceDefinitionListWrapper = shallow(
-      <WorkspaceDefinitionList {...workspaceDefinitionListWrapperProps} />,
-    );
-    expect(workspaceDefinitionListWrapper.isEmptyRender()).toBe(true);
+  it('should handle nulls', () => {
+    expect(shallow(<WorkspaceDefinitionList workspaces={null} />).isEmptyRender()).toBe(true);
+    expect(shallow(<WorkspaceDefinitionList workspaces={undefined} />).isEmptyRender()).toBe(true);
   });
 
-  it('Should render workspace list', () => {
-    const { pipeline } = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
-    workspaceDefinitionListWrapperProps = {
-      workspaces: pipeline.spec.workspaces,
-    };
-    workspaceDefinitionListWrapper = shallow(
-      <WorkspaceDefinitionList {...workspaceDefinitionListWrapperProps} />,
-    );
-    const workspaces = workspaceDefinitionListWrapper.find('dd').find('div');
-
-    expect(workspaces.length).toBe(3);
+  it('should not render anything when provided no workspaces', () => {
+    expect(shallow(<WorkspaceDefinitionList workspaces={[]} />).isEmptyRender()).toBe(true);
   });
 
-  it('Should show optional for optional workspaces', () => {
-    const { pipeline } = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
-    workspaceDefinitionListWrapperProps = {
-      workspaces: pipeline.spec.workspaces,
-    };
-    workspaceDefinitionListWrapper = shallow(
-      <WorkspaceDefinitionList {...workspaceDefinitionListWrapperProps} />,
-    );
-    const workspaces = workspaceDefinitionListWrapper.find('dd').find('div');
+  it('should should render wrapper if at least one workspace is there', () => {
+    const workspaces: TektonWorkspace[] = [{ name: 'workspace' }];
+    const wrapper = shallow(<WorkspaceDefinitionList workspaces={workspaces} />);
+    expect(wrapper.find('[data-test-id="workspace-definition-section"]').exists()).toBe(true);
+  });
 
-    expect(workspaces.length).toBe(3);
-    expect(workspaces.at(0).text()).toBe(
-      `${pipeline.spec.workspaces[0].name} (pipelines-plugin~optional)`,
+  it('should have a wrapper for each workspace provided', () => {
+    const test = shallow(<WorkspaceDefinitionList workspaces={[{ name: 'workspace' }]} />);
+    expect(test.find('[data-test-id="workspace-definition"]')).toHaveLength(1);
+
+    const test2 = shallow(
+      <WorkspaceDefinitionList
+        workspaces={[{ name: 'workspace' }, { name: 'second-workspace' }]}
+      />,
     );
-    expect(workspaces.at(1).text()).toBe(pipeline.spec.workspaces[1].name);
-    expect(workspaces.at(2).text()).toBe(pipeline.spec.workspaces[2].name);
+    expect(test2.find('[data-test-id="workspace-definition"]')).toHaveLength(2);
+  });
+
+  it('should support optional workspaces', () => {
+    const test = shallow(
+      <WorkspaceDefinitionList workspaces={[{ name: 'workspace', optional: true }]} />,
+    );
+    expect(test.find('[data-test-id="workspace-definition-optional"]')).toHaveLength(1);
+
+    const test2 = shallow(
+      <WorkspaceDefinitionList
+        workspaces={[
+          { name: 'workspace', optional: true },
+          { name: 'second-workspace', optional: true },
+        ]}
+      />,
+    );
+    expect(test2.find('[data-test-id="workspace-definition-optional"]')).toHaveLength(2);
+  });
+
+  it('should support a mixture of both optional and not workspaces', () => {
+    const test = shallow(
+      <WorkspaceDefinitionList
+        workspaces={[
+          { name: 'workspace', optional: true },
+          { name: 'second-workspace', optional: false },
+          { name: 'third-workspace' },
+        ]}
+      />,
+    );
+    expect(test.find('[data-test-id="workspace-definition-optional"]')).toHaveLength(1);
+    expect(test.find('[data-test-id="workspace-definition"]')).toHaveLength(2);
   });
 });

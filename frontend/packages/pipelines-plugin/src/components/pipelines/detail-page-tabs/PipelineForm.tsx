@@ -66,18 +66,16 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   };
 
   return (
-    <div className="co-m-pane__body">
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        onReset={handleReset}
-        validationSchema={validationSchema}
-      >
-        {(formikProps) => (
-          <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
-        )}
-      </Formik>
-    </div>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      onReset={handleReset}
+      validationSchema={validationSchema}
+    >
+      {(formikProps) => (
+        <PipelineFormComponent namespace={obj.metadata.namespace} {...formikProps} />
+      )}
+    </Formik>
   );
 };
 
