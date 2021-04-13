@@ -44,9 +44,6 @@
   &:disabled,
   &.pf-m-disabled,
   &.pf-m-aria-disabled {
-    &::after {
-      border-color: var(--pf-c-button--disabled--after--BorderColor);
-    }
     color: var(--pf-c-button--disabled--Color);
     background-color: var(--pf-c-button--disabled--BackgroundColor);
   }
