@@ -80,11 +80,11 @@ export type Condition = {
   lastTransitionTime?: string;
 };
 
-export type PipelineRunInlineResourceParam = { name: string; value: string };
-export type PipelineRunInlineResource = {
+export type PipelineRunEmbeddedResourceParam = { name: string; value: string };
+export type PipelineRunEmbeddedResource = {
   name: string;
   resourceSpec: {
-    params: PipelineRunInlineResourceParam[];
+    params: PipelineRunEmbeddedResourceParam[];
     type: string;
   };
 };
@@ -94,7 +94,7 @@ export type PipelineRunReferenceResource = {
     name: string;
   };
 };
-export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunInlineResource;
+export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunEmbeddedResource;
 
 export type PipelineRunWorkspace = {
   name: string;

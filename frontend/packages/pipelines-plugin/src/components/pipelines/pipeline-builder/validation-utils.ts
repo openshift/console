@@ -25,8 +25,9 @@ const areRequiredParamsAdded = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
   params: PipelineTaskParam[] = [],
+  t: TFunction,
 ): boolean => {
-  const task = findTaskFromFormikData(formValues, pipelineTask);
+  const task = findTaskFromFormikData(formValues, pipelineTask, t);
   if (!task) {
     // No task, means we don't know if the param is nullable, so pass the test
     return true;
@@ -52,6 +53,7 @@ const findResource = (
   path: string,
   resourceName: string,
   taskType: TaskType,
+  t: TFunction,
 ): TektonResource | false => {
   // Since we do not have easy access to the taskRef, walk the path back ot the root
   // eg. path === formData.tasks[0].resources.inputs[0].resource
@@ -61,7 +63,7 @@ const findResource = (
   const pipelineTask: PipelineTask = _.get(formValues, `${taskPath.join('.')}`);
 
   // Find the task based on the ref
-  const task = findTaskFromFormikData(formValues, pipelineTask);
+  const task = findTaskFromFormikData(formValues, pipelineTask, t);
   if (!task) {
     // No task, can't find resources
     return false;
@@ -85,8 +87,9 @@ const isResourceTheCorrectType = (
   resourceValue: string,
   resourceName: string,
   taskType: TaskType,
+  t: TFunction,
 ): boolean => {
-  const resource = findResource(formValues, path, resourceName, taskType);
+  const resource = findResource(formValues, path, resourceName, taskType, t);
   if (resource === false) {
     // Failed to find the resource, nothing we can do here
     return true;
@@ -104,8 +107,9 @@ const hasResourcesOfTheSameType = (
   path: string,
   resourceName: string,
   taskType: TaskType,
+  t: TFunction,
 ): boolean => {
-  const resource = findResource(formValues, path, resourceName, taskType);
+  const resource = findResource(formValues, path, resourceName, taskType, t);
   if (resource === false) {
     // Failed to find the resource, nothing we can do here
     return true;
@@ -121,8 +125,9 @@ const hasRequiredResources = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
   taskResources: PipelineTaskResource[],
+  t: TFunction,
 ): boolean => {
-  const task = findTaskFromFormikData(formValues, pipelineTask);
+  const task = findTaskFromFormikData(formValues, pipelineTask, t);
   if (!task) {
     // No matching task, can't verify if resources are needed
     return true;
@@ -142,9 +147,10 @@ const hasRequiredResources = (
 const hasRequiredWorkspaces = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
-  taskWorkspaces?: PipelineTaskWorkspace[],
+  taskWorkspaces: PipelineTaskWorkspace[],
+  t: TFunction,
 ) => {
-  const task = findTaskFromFormikData(formValues, pipelineTask);
+  const task = findTaskFromFormikData(formValues, pipelineTask, t);
   if (!task) {
     // No matching task, can't verify if workspaces are needed
     return true;
@@ -227,7 +233,7 @@ const resourceDefinition = (
           'is-resources-of-type-available',
           t('pipelines-plugin~No resources available. Add pipeline resources.'),
           function() {
-            return hasResourcesOfTheSameType(formValues, this.path, this.parent.name, taskType);
+            return hasResourcesOfTheSameType(formValues, this.path, this.parent.name, taskType, t);
           },
         )
         .test(
@@ -246,6 +252,7 @@ const resourceDefinition = (
               resourceValue,
               this.parent.name,
               taskType,
+              t,
             );
           },
         )
@@ -296,7 +303,7 @@ const taskValidation = (
             'is-param-optional',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
             function(params?: PipelineTaskParam[]) {
-              return areRequiredParamsAdded(formValues, this.parent, params);
+              return areRequiredParamsAdded(formValues, this.parent, params, t);
             },
           ),
         resources: yup
@@ -308,10 +315,12 @@ const taskValidation = (
             'is-resources-required',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
             function(resourceValue?: TektonResourceGroup<PipelineTaskResource>) {
-              return hasRequiredResources(formValues, this.parent, [
-                ...(resourceValue?.inputs || []),
-                ...(resourceValue?.outputs || []),
-              ]);
+              return hasRequiredResources(
+                formValues,
+                this.parent,
+                [...(resourceValue?.inputs || []), ...(resourceValue?.outputs || [])],
+                t,
+              );
             },
           ),
         workspaces: yup
@@ -339,7 +348,7 @@ const taskValidation = (
             'is-workspaces-required',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
             function(workspaceList?: PipelineTaskWorkspace[]) {
-              return hasRequiredWorkspaces(formValues, this.parent, workspaceList);
+              return hasRequiredWorkspaces(formValues, this.parent, workspaceList, t);
             },
           ),
       })

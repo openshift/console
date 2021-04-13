@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { ResourceLink } from '@console/internal/components/utils';
-import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 
 import './DynamicResourceLinkList.scss';
 
 export type ResourceModelLink = {
-  model: K8sKind;
+  resourceKind: string;
   name: string;
-  displayName?: string;
+  qualifier?: string;
 };
 
 type DynamicResourceLinkListProps = {
@@ -36,21 +35,18 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
       <dl>
         {title && <dt>{title}</dt>}
         <dd>
-          {links.map(({ name, model, displayName = '' }) => {
-            const kind = referenceForModel(model);
+          {links.map(({ name, resourceKind, qualifier = '' }) => {
             let linkName = name;
-            if (displayName.length > 0 && name !== displayName) {
-              linkName += ` (${displayName})`;
+            if (qualifier?.length > 0 && name !== qualifier) {
+              linkName += ` (${qualifier})`;
             }
             return (
-              <div key={`${kind}/${name}`}>
-                <ResourceLink
-                  kind={kind}
-                  name={name}
+              <div key={`${resourceKind}/${name}`}>
+                <PipelineResourceRef
+                  resourceKind={resourceKind}
+                  resourceName={name}
                   displayName={linkName}
                   namespace={namespace}
-                  title={name}
-                  inline
                 />
               </div>
             );

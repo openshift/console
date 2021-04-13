@@ -10,7 +10,7 @@ type ResourceLinkListProps = {
 const ResourceLinkList: React.FC<ResourceLinkListProps> = ({ links, model, namespace }) => {
   return (
     <DynamicResourceLinkList
-      links={links.map((name) => ({ model, name }))}
+      links={links.map((name) => ({ resourceKind: model.kind, name }))}
       namespace={namespace}
       title={model.labelPlural}
     />

@@ -286,6 +286,9 @@ export const getResourceModelFromTaskKind = (kind: string): K8sKind => {
   return null;
 };
 
+export const getSafeTaskResourceKind = (kind: string): string =>
+  (getResourceModelFromTaskKind(kind) || TaskModel).kind;
+
 export const getResourceModelFromBindingKind = (kind: string): K8sKind => {
   if (kind === ClusterTriggerBindingModel.kind) {
     return ClusterTriggerBindingModel;
@@ -295,6 +298,9 @@ export const getResourceModelFromBindingKind = (kind: string): K8sKind => {
   }
   return null;
 };
+
+export const getSafeBindingResourceKind = (kind: string): string =>
+  (getResourceModelFromBindingKind(kind) || TriggerBindingModel).kind;
 
 export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
   const {

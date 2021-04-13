@@ -11,7 +11,7 @@ import { PipelineDetailsTabProps } from '../types';
 
 const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, customData }) => {
   const { t } = useTranslation();
-  const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipeline);
+  const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipeline, t);
 
   return (
     <div className="co-m-pane__body">

@@ -3,8 +3,4 @@
   height: 33px; // fixed height header to avoid actions from bouncing the header
   margin: 0;
   padding: 0 var(--pf-global--spacer--lg);
-
-  &__pipeline-color {
-    background-color: var(--pf-chart-color-green-400);
-  }
 }
