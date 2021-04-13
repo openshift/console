@@ -1,12 +1,6 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
-import { ReduxReducer, isReduxReducer } from '@console/dynamic-plugin-sdk';
-import {
-  subscribeToExtensions,
-  extensionDiffListener,
-} from '@console/plugin-sdk/src/api/subscribeToExtensions';
-import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import { unwrapPromiseSettledResults } from '@console/dynamic-plugin-sdk/src/utils/promise';
+import { ResolvedExtension, ReduxReducer } from '@console/dynamic-plugin-sdk';
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
@@ -56,35 +50,19 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk)),
 );
 
-const pluginReducers: ReducersMapObject = {};
+export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
+  const pluginReducers: ReducersMapObject = {};
 
-subscribeToExtensions<ReduxReducer>(
-  extensionDiffListener((added, removed) => {
-    removed.forEach(({ properties: { scope } }) => {
-      delete pluginReducers[scope];
-    });
+  reducerExtensions.forEach(({ properties: { scope, reducer } }) => {
+    pluginReducers[scope] = reducer;
+  });
 
-    Promise.allSettled(added.map(resolveExtension)).then((results) => {
-      const [fulfilledValues, rejectedReasons] = unwrapPromiseSettledResults(results);
+  const nextReducers: ReducersMapObject<RootState> = _.isEmpty(pluginReducers)
+    ? baseReducers
+    : { plugins: combineReducers(pluginReducers), ...baseReducers };
 
-      fulfilledValues.forEach(({ properties: { scope, reducer } }) => {
-        pluginReducers[scope] = reducer;
-      });
-
-      if (rejectedReasons.length > 0) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to resolve Redux reducer extensions', rejectedReasons);
-      }
-
-      const nextReducers: ReducersMapObject<RootState> = _.isEmpty(pluginReducers)
-        ? baseReducers
-        : { plugins: combineReducers(pluginReducers), ...baseReducers };
-
-      store.replaceReducer(combineReducers<RootState>(nextReducers));
-    });
-  }),
-  isReduxReducer,
-);
+  store.replaceReducer(combineReducers<RootState>(nextReducers));
+};
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Redux store for debugging
