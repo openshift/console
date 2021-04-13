@@ -833,8 +833,11 @@ export const getKnSourceKafkaTopologyEdgeItems = (
   kafkaSource: K8sResourceKind,
   kafkaConnections: WatchK8sResultsObject<K8sResourceKind[]>,
 ): EdgeModel[] => {
+  if (!kafkaConnections?.data) {
+    return [];
+  }
   const { data } = kafkaConnections;
-  const edges = data?.reduce((acc, kafkaConnection) => {
+  const edges = data.reduce((acc, kafkaConnection) => {
     const kcServiceAccountSecretName = kafkaConnection?.spec?.credentials?.serviceAccountSecretName;
     const kafkaSourcePasswordSecretKeyRefName =
       kafkaSource.spec?.net?.sasl?.password?.secretKeyRef?.name;
@@ -983,7 +986,7 @@ const sinkURIDataModel = (
   resources: TopologyDataResources,
   data: TopologyDataObject,
   knDataModel: Model,
-): Model => {
+) => {
   // form node data for sink uri
   const sinkUri = resource.spec?.sink?.uri;
   let sinkTargetUid = getSinkTargetUid(knDataModel.nodes, sinkUri);
@@ -1022,8 +1025,6 @@ const sinkURIDataModel = (
     });
   }
   knDataModel.edges.push(...getEventTopologyEdgeItems(resource, resources.brokers));
-
-  return { edges: knDataModel.edges, nodes: knDataModel.nodes };
 };
 
 export const transformKnNodeData = (
@@ -1047,9 +1048,7 @@ export const transformKnNodeData = (
           const itemData = getOwnedEventSourceData(res, data, resources);
           knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
           knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
-          const { edges, nodes } = sinkURIDataModel(res, resources, data, knDataModel);
-          knDataModel.edges.push(...edges);
-          knDataModel.nodes.push(...nodes);
+          sinkURIDataModel(res, resources, data, knDataModel);
           const newGroup = getTopologyGroupItems(res);
           mergeGroup(newGroup, knDataModel.nodes);
         }
@@ -1090,10 +1089,7 @@ export const transformKnNodeData = (
           ...getKnSourceKafkaTopologyEdgeItems(res, resources.kafkaConnections),
           ...getEventTopologyEdgeItems(res, resources.ksservices),
         );
-        const { edges, nodes } = sinkURIDataModel(res, resources, data, knDataModel);
-        knDataModel.edges.push(...edges);
-        knDataModel.nodes.push(...nodes);
-        knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.brokers));
+        sinkURIDataModel(res, resources, data, knDataModel);
         const newGroup = getTopologyGroupItems(res);
         mergeGroup(newGroup, knDataModel.nodes);
         break;

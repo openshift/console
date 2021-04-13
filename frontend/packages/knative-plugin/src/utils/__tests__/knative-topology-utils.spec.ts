@@ -316,7 +316,6 @@ describe('event-source-kafka', () => {
   });
 
   it('should not return any edges', () => {
-    // downcastconst kafkaConnection = _.cloneDeep(getKafkaConnection);
     const kafkaConnection = {
       ...kafkaConnectionData,
       data: [
@@ -328,8 +327,12 @@ describe('event-source-kafka', () => {
         },
       ],
     };
-    // kafkaConnection.data[0].status.bootstrapServerHost = null;
     const edges = getKnSourceKafkaTopologyEdgeItems(mockKafkaData, kafkaConnection);
+    expect(edges).toEqual([]);
+  });
+
+  it('should not return any edges if KafkaConnection is not present', () => {
+    const edges = getKnSourceKafkaTopologyEdgeItems(mockKafkaData, undefined);
     expect(edges).toEqual([]);
   });
 });
