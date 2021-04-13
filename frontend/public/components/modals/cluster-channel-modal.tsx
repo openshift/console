@@ -48,10 +48,10 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
         <p>
           {channelsExist
             ? t(
-                'cluster-channel-modal~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired channel. Critical security updates will be delivered to any vulnerable channels.',
+                'cluster-channel-modal~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
               )
             : t(
-                'cluster-channel-modal~Input a channel that reflects the desired channel. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+                'cluster-channel-modal~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
               )}
         </p>
         <p>
