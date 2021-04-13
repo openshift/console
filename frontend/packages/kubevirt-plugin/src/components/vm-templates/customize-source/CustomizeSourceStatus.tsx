@@ -65,7 +65,7 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
           >
             <ExternalLink
               text={t('kubevirt-plugin~Learn how to generalize a boot source')}
-              href="foo"
+              href="https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.3/html/virtual_machine_management_guide/chap-templates#Sealing_Virtual_Machines_in_Preparation_for_Deployment_as_Templates"
             />
           </Alert>
         </StackItem>
