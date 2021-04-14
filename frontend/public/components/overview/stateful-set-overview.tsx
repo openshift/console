@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { StatefulSetModel } from '../../models';
 import { menuActions } from '../stateful-set';
 import { KebabAction, ResourceSummary } from '../utils';
@@ -20,28 +20,31 @@ const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = (
   </div>
 );
 
-const tabs = [
-  {
-    name: 'Details',
-    component: StatefulSetOverviewDetails,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsResourcesTab,
-  },
-];
-
 export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({
   item,
   customActions,
-}) => (
-  <ResourceOverviewDetails
-    item={item}
-    kindObj={StatefulSetModel}
-    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
-    tabs={tabs}
-  />
-);
+}) => {
+  const { t } = useTranslation();
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: StatefulSetOverviewDetails,
+    },
+    {
+      name: t('public~Resources'),
+      component: OverviewDetailsResourcesTab,
+    },
+  ];
+
+  return (
+    <ResourceOverviewDetails
+      item={item}
+      kindObj={StatefulSetModel}
+      menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+      tabs={tabs}
+    />
+  );
+};
 
 type StatefulSetOverviewDetailsProps = {
   item: OverviewItem;

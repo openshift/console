@@ -73,7 +73,7 @@ const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedS
       {podData?.pods?.length > 0 && <PodsOverview obj={obj} allPodsLink={linkUrl} />}
       {deploymentData?.name && (
         <>
-          <SidebarSectionHeading text="Deployment" />
+          <SidebarSectionHeading text={t('knative-plugin~Deployment')} />
           <ul className="list-group">
             <li className="list-group-item">
               <ResourceLink
