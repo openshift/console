@@ -143,8 +143,9 @@ RouteStatus.displayName = 'RouteStatus';
 const tableColumnClasses = [
   '',
   '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  // Status is less important than Location, so hide it earlier, but maintain its position for consistency with other tables
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
