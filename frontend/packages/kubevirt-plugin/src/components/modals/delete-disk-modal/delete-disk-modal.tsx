@@ -71,11 +71,11 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('kubevirt-plugin~Delete {{diskName}} disk', { diskName })}
+        {t('kubevirt-plugin~Detach {{diskName}} disk', { diskName })}
       </ModalTitle>
       <ModalBody>
         <Trans t={t} ns="kubevirt-plugin">
-          Are you sure you want to delete <strong className="co-break-word">{{ diskName }}</strong>{' '}
+          Are you sure you want to detach <strong className="co-break-word">{{ diskName }}</strong>{' '}
           disk?
         </Trans>
         {ownedResource && (
@@ -103,7 +103,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
         errorMessage={errorMessage}
         submitDisabled={isInProgress}
         inProgress={isInProgress}
-        submitText={t('kubevirt-plugin~Delete')}
+        submitText={t('kubevirt-plugin~Detach')}
         submitDanger
         cancel={cancel}
       />
