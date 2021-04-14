@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -147,14 +146,6 @@ const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType =>
   buildConfig.spec.strategy.type;
 
-const allStrategies = [
-  BuildStrategyType.Docker,
-  BuildStrategyType.Devfile,
-  BuildStrategyType.JenkinsPipeline,
-  BuildStrategyType.Source,
-  BuildStrategyType.Custom,
-];
-
 export const BuildConfigsList: React.SFC = (props) => {
   const { t } = useTranslation();
   const BuildConfigsTableHeader = () => {
@@ -207,15 +198,20 @@ BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   const { t } = useTranslation();
+  const allStrategies = [
+    { id: BuildStrategyType.Docker, title: t('public~Docker') },
+    { id: BuildStrategyType.Devfile, title: t('public~Devfile') },
+    { id: BuildStrategyType.JenkinsPipeline, title: t('public~JenkinsPipeline') },
+    { id: BuildStrategyType.Source, title: t('public~Source') },
+    { id: BuildStrategyType.Custom, title: t('public~Custom') },
+  ];
+
   const filters = [
     {
       filterGroupName: t('public~Build strategy'),
       type: 'build-strategy',
       reducer: buildStrategy,
-      items: _.map(allStrategies, (strategy) => ({
-        id: strategy,
-        title: strategy,
-      })),
+      items: allStrategies,
     },
   ];
   return (
