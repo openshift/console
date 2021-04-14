@@ -8,7 +8,9 @@ export const PipelineModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Pipeline',
+  // t('pipelines-plugin~Pipeline')
   labelKey: 'pipelines-plugin~Pipeline',
+  // t('pipelines-plugin~Pipelines')
   labelPluralKey: 'pipelines-plugin~Pipelines',
   plural: 'pipelines',
   abbr: 'PL',
@@ -24,8 +26,10 @@ export const PipelineRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Pipeline Run',
-  labelKey: 'pipelines-plugin~Pipeline Run',
-  labelPluralKey: 'pipelines-plugin~Pipeline Runs',
+  // t('pipelines-plugin~PipelineRun')
+  labelKey: 'pipelines-plugin~PipelineRun',
+  // t('pipelines-plugin~PipelineRuns')
+  labelPluralKey: 'pipelines-plugin~PipelineRuns',
   plural: 'pipelineruns',
   abbr: 'PLR',
   namespaced: true,
@@ -40,7 +44,9 @@ export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Task',
+  // t('pipelines-plugin~Task')
   labelKey: 'pipelines-plugin~Task',
+  // t('pipelines-plugin~Tasks')
   labelPluralKey: 'pipelines-plugin~Tasks',
   plural: 'tasks',
   abbr: 'T',
@@ -56,8 +62,10 @@ export const TaskRunModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Task Run',
-  labelKey: 'pipelines-plugin~Task Run',
-  labelPluralKey: 'pipelines-plugin~Task Runs',
+  // t('pipelines-plugin~TaskRun')
+  labelKey: 'pipelines-plugin~TaskRun',
+  // t('pipelines-plugin~TaskRuns')
+  labelPluralKey: 'pipelines-plugin~TaskRuns',
   plural: 'taskruns',
   abbr: 'TR',
   namespaced: true,
@@ -72,8 +80,10 @@ export const PipelineResourceModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Pipeline Resource',
-  labelKey: 'pipelines-plugin~Pipeline Resource',
-  labelPluralKey: 'pipelines-plugin~Pipeline Resources',
+  // t('pipelines-plugin~PipelineResource')
+  labelKey: 'pipelines-plugin~PipelineResource',
+  // t('pipelines-plugin~PipelineResources')
+  labelPluralKey: 'pipelines-plugin~PipelineResources',
   plural: 'pipelineresources',
   abbr: 'PR',
   namespaced: true,
@@ -88,8 +98,10 @@ export const ClusterTaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1beta1',
   label: 'Cluster Task',
-  labelKey: 'pipelines-plugin~Cluster Task',
-  labelPluralKey: 'pipelines-plugin~Cluster Tasks',
+  // t('pipelines-plugin~ClusterTask')
+  labelKey: 'pipelines-plugin~ClusterTask',
+  // t('pipelines-plugin~ClusterTasks')
+  labelPluralKey: 'pipelines-plugin~ClusterTasks',
   plural: 'clustertasks',
   abbr: 'CT',
   namespaced: false,
@@ -104,7 +116,9 @@ export const ConditionModel: K8sKind = {
   apiGroup: 'tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Condition',
+  // t('pipelines-plugin~Condition')
   labelKey: 'pipelines-plugin~Condition',
+  // t('pipelines-plugin~Conditions')
   labelPluralKey: 'pipelines-plugin~Conditions',
   plural: 'conditions',
   abbr: 'C',
@@ -120,8 +134,10 @@ export const TriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Trigger Binding',
-  labelKey: 'pipelines-plugin~Trigger Binding',
-  labelPluralKey: 'pipelines-plugin~Trigger Bindings',
+  // t('pipelines-plugin~TriggerBinding')
+  labelKey: 'pipelines-plugin~TriggerBinding',
+  // t('pipelines-plugin~TriggerBindings')
+  labelPluralKey: 'pipelines-plugin~TriggerBindings',
   plural: 'triggerbindings',
   abbr: 'TB',
   namespaced: true,
@@ -137,8 +153,10 @@ export const ClusterTriggerBindingModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Cluster Trigger Binding',
-  labelKey: 'pipelines-plugin~Cluster Trigger Binding',
-  labelPluralKey: 'pipelines-plugin~Cluster Trigger Bindings',
+  // t('pipelines-plugin~ClusterTriggerBinding')
+  labelKey: 'pipelines-plugin~ClusterTriggerBinding',
+  // t('pipelines-plugin~ClusterTriggerBindings')
+  labelPluralKey: 'pipelines-plugin~ClusterTriggerBindings',
   plural: 'clustertriggerbindings',
   abbr: 'CTB',
   namespaced: false,
@@ -154,8 +172,10 @@ export const TriggerTemplateModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Trigger Template',
-  labelKey: 'pipelines-plugin~Trigger Template',
-  labelPluralKey: 'pipelines-plugin~Trigger Templates',
+  // t('pipelines-plugin~TriggerTemplate')
+  labelKey: 'pipelines-plugin~TriggerTemplate',
+  // t('pipelines-plugin~TriggerTemplates')
+  labelPluralKey: 'pipelines-plugin~TriggerTemplates',
   plural: 'triggertemplates',
   abbr: 'TT',
   namespaced: true,
@@ -171,8 +191,10 @@ export const EventListenerModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
   label: 'Event Listener',
-  labelKey: 'pipelines-plugin~Event Listener',
-  labelPluralKey: 'pipelines-plugin~Event Listeners',
+  // t('pipelines-plugin~EventListener')
+  labelKey: 'pipelines-plugin~EventListener',
+  // t('pipelines-plugin~EventListeners')
+  labelPluralKey: 'pipelines-plugin~EventListeners',
   plural: 'eventlisteners',
   abbr: 'EL',
   namespaced: true,
