@@ -71,6 +71,10 @@ export type CatalogItem<T extends any = any> = {
   uid: string;
   type: string;
   name: string;
+  /** Optional title to render a custom title using ReactNode.
+   * Rendered in catalog tile and side panel
+   *  */
+  title?: React.ReactNode;
   provider?: string;
   // Used as the tile description. If provided as a string, the description is truncated to 3 lines.
   // If provided as a ReactNode, the contents will not be truncated.
