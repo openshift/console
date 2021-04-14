@@ -17,6 +17,7 @@ export const topologySidePane = {
       .get(topologyPO.sidePane.tabName)
       .contains(tabName)
       .should('be.visible'),
+  verifyActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).should('be.visible'),
   selectTab: (tabName: string) =>
     cy
       .get(topologyPO.sidePane.tabName)
@@ -56,6 +57,19 @@ export const topologySidePane = {
       .get('a')
       .contains('Add Health Checks')
       .click(),
+  scaleUpPodCount: () =>
+    cy
+      .get(topologyPO.sidePane.podScale)
+      .eq(0)
+      .click(),
+  scaleDownPodCount: () =>
+    cy
+      .get(topologyPO.sidePane.podScale)
+      .eq(1)
+      .click(),
+  verifyPodText: (scaleNumber: string) =>
+    cy.get(topologyPO.sidePane.podText).should('contain.text', scaleNumber),
+  verifyHealthCheckAlert: () => cy.get(topologyPO.sidePane.healthCheckAlert).should('be.visible'),
   verifyWorkloadInAppSideBar: (workloadName: string) =>
     cy
       .get(topologyPO.sidePane.dialog)

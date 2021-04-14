@@ -1,8 +1,21 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
+import {
+  perspective,
+  projectNameSpace,
+  navigateTo,
+} from '@console/dev-console/integration-tests/support/pages/app';
+import {
+  switchPerspective,
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants/global';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import {
+  createGitWorkload,
+  topologyHelper,
+} from '@console/dev-console/integration-tests/support/pages';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -36,4 +49,69 @@ Then('user can see sidebar opens with Resources tab selected by default', () => 
 Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
   topologySidePane.verifySection('Pipeline Runs');
+});
+
+Then('user can see sidebar Details, Resources and Monitoring tabs', () => {
+  topologySidePane.verifyTab('Details');
+  topologySidePane.verifyTab('Resources');
+  topologySidePane.verifyTab('Monitoring');
+});
+
+Then('user can see sidebar Details, Resources tabs', () => {
+  topologySidePane.verifyTab('Details');
+  topologySidePane.verifyTab('Resources');
+});
+
+When('user goes to Details tab', () => {
+  topologySidePane.selectTab('Details');
+});
+
+Then('user can see close button', () => {
+  topologySidePane.close();
+});
+
+Then(
+  'user verifies name of the node {string} and Action drop down present on top of the sidebar',
+  (nodeName: string) => {
+    topologySidePane.verifyTitle(nodeName);
+    topologySidePane.verifyActionsDropDown();
+  },
+);
+
+Then('user is able to see health check notification', () => {
+  topologySidePane.verifyHealthCheckAlert();
+});
+
+Given('user is at developer perspective', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  guidedTour.close();
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
+});
+
+Given('user has created namespace starts with {string}', (projectName: string) => {
+  const d = new Date();
+  const timestamp = d.getTime();
+  projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
+});
+
+Given('user has created or selected namespace {string}', (projectName: string) => {
+  Cypress.env('NAMESPACE', projectName);
+  projectNameSpace.selectOrCreateProject(`${projectName}`);
+});
+
+Given(
+  'user has created workload {string} with resource type {string}',
+  (componentName: string, resourceType: string = 'Deployment') => {
+    createGitWorkload(
+      'https://github.com/sclorg/nodejs-ex.git',
+      componentName,
+      resourceType,
+      'nodejs-ex-git-app',
+    );
+    topologyHelper.verifyWorkloadInTopologyPage(componentName);
+  },
+);
+
+Given('user is at Add page', () => {
+  navigateTo(devNavigationMenu.Add);
 });
