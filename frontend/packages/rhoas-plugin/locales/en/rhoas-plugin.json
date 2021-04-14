@@ -55,5 +55,6 @@
   "Details": "Details",
   "Resources": "Resources",
   "Create a binding connector": "Create a binding connector",
-  "Description": "Description"
+  "Description": "Description",
+  "Please try again": "{{error}} Please try again"
 }

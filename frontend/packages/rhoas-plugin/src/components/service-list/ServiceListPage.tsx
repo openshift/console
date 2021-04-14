@@ -94,7 +94,9 @@ const ServiceListPage: React.FC = () => {
 
       const connectionErrorObj = {
         title: t('rhoas-plugin~Failed to create connection'),
-        message: error,
+        message: t('rhoas-plugin~Please try again', {
+          error,
+        }),
         action: () => history.push(`/catalog/ns/${currentNamespace}?catalogType=managedservices`),
         actionLabel: t('rhoas-plugin~Go back to Services Catalog'),
       };
