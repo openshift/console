@@ -1,6 +1,6 @@
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-
 import {
+  CDI_CLONE_POD_NAME_ANNOTAION,
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_POD_NAME_ANNOTATION,
   CDI_UPLOAD_RUNNING,
@@ -29,8 +29,13 @@ export const getPvcUploadPodName = (pvc: PersistentVolumeClaimKind) =>
 export const getPvcUploadPhase = (pvc: PersistentVolumeClaimKind) =>
   getAnnotation(pvc, CDI_UPLOAD_POD_ANNOTATION);
 
+export const getPvcClonePodName = (pvc: PersistentVolumeClaimKind) =>
+  getAnnotation(pvc, CDI_CLONE_POD_NAME_ANNOTAION);
+
 export const isPvcUploading = (pvc: PersistentVolumeClaimKind) =>
-  getPvcUploadPodName(pvc) && getPvcUploadPhase(pvc) === CDI_UPLOAD_RUNNING;
+  !getPvcClonePodName(pvc) &&
+  getPvcUploadPodName(pvc) &&
+  getPvcUploadPhase(pvc) === CDI_UPLOAD_RUNNING;
 
 export const isPvcBoundToCDI = (pvc: PersistentVolumeClaimKind) =>
   pvc?.metadata?.ownerReferences?.some(
