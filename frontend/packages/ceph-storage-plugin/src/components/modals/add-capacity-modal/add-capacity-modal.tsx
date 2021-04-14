@@ -1,20 +1,22 @@
 import * as React from 'react';
+import { compose } from 'redux';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { Form, FormGroup, TextInput, TextContent } from '@patternfly/react-core';
-import { humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
   ModalTitle,
   ModalSubmitFooter,
   ModalBody,
 } from '@console/internal/components/factory';
-import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
-
+import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
+import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
+import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -29,12 +31,14 @@ import {
 } from '../../../constants';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
-import { pvResource, cephCapacityResource } from '../../../resources';
+import { pvResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
+const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
+const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
@@ -43,17 +47,18 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { ocsConfig, close, cancel } = props;
   const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
 
-  const [response, loadError, loading] = usePrometheusPoll(cephCapacityResource);
+  const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
+
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   /* TBD(Afreen): Show installation storage class as preselected
                   Change state metadata
   */
+
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
-  const cephCapacity: string = response?.data?.result?.[0]?.value[1];
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
   const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
   const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
@@ -64,6 +69,10 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const isArbiterEnabled: boolean = checkArbiterCluster(ocsConfig);
   const replica = isArbiterEnabled ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA;
   const name = getName(ocsConfig);
+  const totalCapacityMetric = values?.[0];
+  const usedCapacityMetric = values?.[1];
+  const usedCapacity = humanizeBinaryBytes(usedCapacityMetric);
+  const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
 
   let currentCapacity: React.ReactNode;
   let availablePvsCount: number = 0;
@@ -77,14 +86,12 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     currentCapacity = (
       <div className="skeleton-text ceph-add-capacity__current-capacity--loading" />
     );
-  } else if (loadError || !cephCapacity || !osdSizeWithoutUnit || deviceSetIndex === -1) {
+  } else if (loadError || !totalCapacityMetric || !usedCapacityMetric) {
     currentCapacity = <div className="text-muted">{t('ceph-storage-plugin~Not available')}</div>;
   } else {
     currentCapacity = (
       <div className="text-muted">
-        <strong>{`${humanizeBinaryBytes(Number(cephCapacity) / replica).string} / ${deviceSets[
-          deviceSetIndex
-        ].count * osdSizeWithoutUnit} TiB`}</strong>
+        <strong>{`${usedCapacity.string} / ${totalCapacity.string}`}</strong>
       </div>
     );
   }
