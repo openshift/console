@@ -66,14 +66,13 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     currentCapacity = (
       <div className="skeleton-text ceph-add-capacity__current-capacity--loading" />
     );
-  } else if (loadError || !cephCapacity || !osdSizeWithoutUnit || deviceSetIndex === -1) {
+  } else if (loadError || !cephCapacity || !osdSizeWithoutUnit) {
     currentCapacity = <div className="text-muted">{t('ceph-storage-plugin~Not available')}</div>;
   } else {
     currentCapacity = (
       <div className="text-muted">
-        <strong>{`${humanizeBinaryBytes(Number(cephCapacity) / replica).string} / ${deviceSets[
-          deviceSetIndex
-        ].count * osdSizeWithoutUnit} TiB`}</strong>
+        <strong>{`${humanizeBinaryBytes(Number(cephCapacity) / replica).string} / ${deviceSets[0]
+          .count * osdSizeWithoutUnit} TiB`}</strong>
       </div>
     );
   }
