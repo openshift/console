@@ -22,7 +22,7 @@ export const BlockPoolFooter = (props: BlockPoolFooterProps) => {
         <Button
           type="button"
           variant="primary"
-          data-test-id="pool-submit-action"
+          data-test-id="confirm-action"
           onClick={onConfirm}
           isDisabled={checkRequiredValues(
             state.poolName,
@@ -33,12 +33,7 @@ export const BlockPoolFooter = (props: BlockPoolFooterProps) => {
         >
           {t('ceph-storage-plugin~Create')}
         </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          data-test-id="pool-cancel-action"
-          onClick={cancel}
-        >
+        <Button type="button" variant="secondary" data-test-id="cancel-action" onClick={cancel}>
           {t('ceph-storage-plugin~Cancel')}
         </Button>
       </ActionGroup>

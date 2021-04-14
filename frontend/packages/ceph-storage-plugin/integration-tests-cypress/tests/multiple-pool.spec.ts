@@ -1,9 +1,38 @@
+import { modal } from '../../../integration-tests-cypress/views/modal';
 import { checkErrors } from '../../../integration-tests-cypress/support';
-import { storagePool, PoolState } from '../views/multiple-pool';
+import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
+import {
+  poolName,
+  populateBlockPoolForm,
+  blockPoolFooter,
+  deleteBlockPoolFromCli,
+  verifyBlockPoolJSON,
+} from '../views/block-pool';
 
-// Pool var
-const poolName: string = 'example.pool';
-const replicaCount: string = '2';
+const prepareStorageClassForm = () => {
+  cy.log('Selecting provisioner');
+  cy.byTestID('storage-class-provisioner-dropdown').click();
+  cy.byLegacyTestID('dropdown-text-filter').type('openshift-storage.rbd.csi.ceph.com');
+  cy.byTestID('dropdown-menu-item-link').contains('openshift-storage.rbd.csi.ceph.com');
+  cy.byTestID('dropdown-menu-item-link').click();
+
+  cy.log('Creating a new block pool');
+  cy.byTestID('pool-dropdown-toggle').click();
+  cy.byTestID('create-new-pool-button').click();
+};
+
+const createBlockPool = (poolCreationAction: string) => {
+  cy.log('Make sure the storage pool creation form is open');
+  modal.shouldBeOpened();
+  modal.modalTitleShouldContain('Create New Block Pool');
+  populateBlockPoolForm();
+  blockPoolFooter('create');
+
+  cy.log('Verify a new block pool creation');
+  blockPoolFooter(poolCreationAction);
+  cy.byTestID('pool-dropdown-toggle').contains(poolName);
+  verifyBlockPoolJSON();
+};
 
 describe('Test Ceph pool creation', () => {
   before(() => {
@@ -23,17 +52,13 @@ describe('Test Ceph pool creation', () => {
     cy.byTestID('item-create').click();
 
     cy.log('Test creation of a new pool');
-    storagePool.prepareStorageClassForm();
-    storagePool.create(poolName, replicaCount, PoolState.CREATED);
-
-    cy.log('Verify a newly created pool');
-    storagePool.verify(poolName, replicaCount);
+    prepareStorageClassForm();
+    createBlockPool(POOL_PROGRESS.CREATED);
 
     cy.log('Try to create a new pool with already existing name');
-    storagePool.prepareStorageClassForm();
-    storagePool.create(poolName, replicaCount, PoolState.DUPLICATED);
+    prepareStorageClassForm();
+    createBlockPool(POOL_PROGRESS.FAILED);
 
-    cy.log('Deleting a pool');
-    storagePool.delete(poolName);
+    deleteBlockPoolFromCli();
   });
 });
