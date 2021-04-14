@@ -332,7 +332,10 @@ describe('convertPipelineToModalData', () => {
     const { workspaces } = convertPipelineToModalData(workspacePipeline);
     expect(
       workspaces.filter((workspace) => workspace.type === VolumeTypes.EmptyDirectory),
-    ).toHaveLength(3);
+    ).toHaveLength(2);
+    expect(
+      workspaces.filter((workspace) => workspace.type === VolumeTypes.NoWorkspace),
+    ).toHaveLength(1);
   });
 
   it('expect to return workspaces with type PVC, if preselect PVC argument is passed', () => {
@@ -340,6 +343,9 @@ describe('convertPipelineToModalData', () => {
     expect(
       workspaces.filter((workspace) => workspace.type === VolumeTypes.EmptyDirectory),
     ).toHaveLength(0);
-    expect(workspaces.filter((workspace) => workspace.type === VolumeTypes.PVC)).toHaveLength(3);
+    expect(workspaces.filter((workspace) => workspace.type === VolumeTypes.PVC)).toHaveLength(2);
+    expect(
+      workspaces.filter((workspace) => workspace.type === VolumeTypes.NoWorkspace),
+    ).toHaveLength(1);
   });
 });
