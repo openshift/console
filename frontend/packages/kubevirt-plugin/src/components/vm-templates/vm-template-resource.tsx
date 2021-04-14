@@ -19,7 +19,6 @@ import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/
 import { TemplateSourceStatus } from '../../statuses/template/types';
 import { getBasicID, prefixedID } from '../../utils';
 import { BootOrderSummary } from '../boot-order';
-import { EditButton } from '../edit-button';
 import { vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal';
 import { descriptionModal } from '../modals/description-modal';
@@ -55,16 +54,13 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
         title={t('kubevirt-plugin~Description')}
         idValue={prefixedID(id, 'description')}
         valueClassName="kubevirt-vm-resource-summary__description"
+        canEdit={canUpdateTemplate}
+        onEditClick={() => descriptionModal({ resource: template, kind: getVMLikeModel(template) })}
       >
         {!description && (
           <span className="text-secondary">{t('kubevirt-plugin~Not available')}</span>
         )}
-        <EditButton
-          canEdit={canUpdateTemplate}
-          onClick={() => descriptionModal({ resource: template, kind: getVMLikeModel(template) })}
-        >
-          {description}
-        </EditButton>
+        {description}
       </VMDetailsItem>
 
       <VMDetailsItem
