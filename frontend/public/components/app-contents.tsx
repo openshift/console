@@ -370,6 +370,17 @@ const AppContents: React.FC<{}> = () => {
               />
 
               <LazyRoute
+                path="/k8s/ns/:ns/networkpolicies/~new/form"
+                exact
+                kind="NetworkPolicy"
+                loader={() =>
+                  import(
+                    '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
+                  ).then((m) => m.CreateNetworkPolicy)
+                }
+              />
+
+              <LazyRoute
                 path="/k8s/ns/:ns/routes/~new/form"
                 exact
                 kind="Route"
