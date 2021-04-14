@@ -1,24 +1,25 @@
+import { keywordFilter } from '@console/shared';
 import { history } from '@console/internal/components/utils';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { CatalogType, CatalogTypeCounts } from './types';
 
-export const keywordCompare = (filterString: string, item: CatalogItem): boolean => {
-  if (!filterString) {
-    return true;
-  }
+const catalogItemCompare = (keyword: string, item: CatalogItem): boolean => {
   if (!item) {
     return false;
   }
-
-  const filterStringLowerCase = filterString.toLowerCase();
   return (
-    item.name.toLowerCase().includes(filterStringLowerCase) ||
-    (typeof item.description === 'string' &&
-      item.description.toLowerCase().includes(filterStringLowerCase)) ||
-    (item.tags && item.tags.some((tag) => tag.includes(filterStringLowerCase)))
+    item.name.toLowerCase().includes(keyword) ||
+    (typeof item.description === 'string' && item.description.toLowerCase().includes(keyword)) ||
+    item.type.toLowerCase().includes(keyword) ||
+    item.tags?.some((tag) => tag.includes(keyword)) ||
+    item.cta?.label.toLowerCase().includes(keyword)
   );
+};
+
+export const keywordCompare = (filterString: string, items: CatalogItem[]): CatalogItem[] => {
+  return keywordFilter(filterString, items, catalogItemCompare);
 };
 
 export const getIconProps = (item: CatalogItem) => {

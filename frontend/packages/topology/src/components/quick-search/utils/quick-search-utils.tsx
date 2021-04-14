@@ -11,7 +11,7 @@ import {
 } from '@console/app/src/components/quick-starts/utils/quick-start-context';
 
 export const quickSearch = (items: CatalogItem[], query: string) => {
-  return items.filter((item) => keywordCompare(query, item));
+  return keywordCompare(query, items);
 };
 
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {

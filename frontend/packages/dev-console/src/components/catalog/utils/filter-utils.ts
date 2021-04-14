@@ -62,7 +62,7 @@ export const filterBySearchKeyword = (
   items: CatalogItem[],
   searchKeyword: string,
 ): CatalogItem[] => {
-  return searchKeyword ? items.filter((item) => keywordCompare(searchKeyword, item)) : items;
+  return keywordCompare(searchKeyword, items);
 };
 
 export const filterByCategory = (
