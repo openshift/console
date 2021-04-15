@@ -28,6 +28,7 @@ export const topologyPO = {
     nodeName: '#HelmRelease ul li div',
   },
   sidePane: {
+    actionsDropDown: '[data-test-id="actions-menu-button"]',
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
     tabs: '[role="dialog"] li button',
@@ -36,6 +37,9 @@ export const topologyPO = {
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
     tabName: '[role="dialog"] li button',
+    healthCheckAlert: 'div.ocs-health-checks-alert',
+    podScale: 'button.pf-c-button.pf-m-plain.pf-m-block',
+    podText: 'text.pf-chart-donut-title.pod-ring__center-text',
     detailsTab: {
       labels: 'dt[data-test-selector$="Labels"]',
       annotations: '[data-test-selector="details-item-label__Annotations"]',

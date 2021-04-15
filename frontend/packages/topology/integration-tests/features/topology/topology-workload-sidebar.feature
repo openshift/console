@@ -3,29 +3,24 @@ Feature: Sidebar in topology
               As a user, I want to check sidebar of workloads
 
         Background:
-            Given user is at developer perspective
-              And user has selected namespace "aut-topology-sidebar"
+            Given user has created or selected namespace "aut-topology-sidebar"
+              And user is at Add page
 
 
         @smoke
-        Scenario Outline: Sidebar for workload: T-05-TC01
-            Given user created workload "<workload_name>" with resource type "<resource_type>"
-             When user clicks on workload "<workload_name>"
+        Scenario: Sidebar for workload: T-05-TC01
+            Given user has created workload "nodejs-ex-git" with resource type "deployment"
+             When user clicks on workload "nodejs-ex-git"
              Then user can see sidebar opens with Resources tab selected by default
               And user can see sidebar Details, Resources and Monitoring tabs
-              And user verifies name of the node "<workload_name>" and Action drop down present on top of the sidebar
-              And user is able to see health check notifiation
+              And user verifies name of the node "nodejs-ex-git" and Action drop down present on top of the sidebar
+              And user is able to see health check notification
               And user can see close button
-
-        Examples:
-                  | resource_type     | workload_name   |
-                  | deployment        | nodejs-ex-git   |
-                  | deployment config | dancer-ex-git-1 |
 
 
         @smoke
         Scenario: Sidebar for knative service: T-05-TC01
-            Given user created workload "hello-openshift" with resource type "knative service"
+            Given user has created workload "hello-openshift" with resource type "Knative Service"
              When user clicks on workload "hello-openshift"
              Then user can see sidebar opens with Resources tab selected by default
               And user can see sidebar Details, Resources tabs
@@ -34,31 +29,19 @@ Feature: Sidebar in topology
 
 
         @regression
-        Scenario Outline: Pod scale up in sidebar
-            Given user created workload "<workload_name>" with resource type "<resource_type>"
-             When user clicks on workload "<workload_name>"
+        Scenario: Pod scale up in sidebar
+            Given user has created workload "dancer-ex-git-1" with resource type "deployment"
+             When user clicks on workload "dancer-ex-git-1"
               And user goes to Details tab
               And user scales up the pod
-             Then user is able to see pod Scaling to 2
-              And user can see two half circles in light and dark blue representing two pods
-
-        Examples:
-                  | resource_type     | workload_name   |
-                  | deployment        | nodejs-ex-git   |
-                  | deployment config | dancer-ex-git-1 |
+             Then user is able to see pod Scaling to "2 Pods" for workload "nodejs-ex-git-1"
 
 
         @regression
-        Scenario Outline: Pod scale down in sidebar
-            Given user created workload "<workload_name>" with resource type "<resource_type>"
-              And user has scaled up the pod to 2
-             When user clicks on workload "<workload_name>"
+        Scenario: Pod scale down in sidebar
+            Given user has created workload "nodejs-ex-git-1" with resource type "deployment"
+              And user has scaled up the pod to 2 for workload "nodejs-ex-git-1"
+             When user clicks on workload "nodejs-ex-git-1"
               And user goes to Details tab
               And user scales down the pod number
-             Then user is able to see pod number change to 1
-              And user can see two half circles appearing and changing to one
-
-        Examples:
-                  | resource_type     | workload_name   |
-                  | deployment        | nodejs-ex-git   |
-                  | deployment config | dancer-ex-git-1 |
+             Then user is able to see pod Scaling to "1 Pod" for workload "nodejs-ex-git-1"
