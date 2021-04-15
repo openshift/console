@@ -6,12 +6,6 @@ export enum Verb {
   Patch = 'Patch',
 }
 
-export enum Roles {
-  view = 'view',
-  admin = 'admin',
-  edit = 'edit',
-}
-
 export type ProjectAccessRoles = {
   availableClusterRoles: string[];
 };

@@ -12,7 +12,7 @@ import {
 } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import { filterRoleBindings, getUserRoleBindings } from './project-access-form-utils';
+import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
 import {
   getRolesWithNameChange,
   sendRoleBindingRequest,
@@ -23,21 +23,27 @@ import {
 } from './project-access-form-submit-utils';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
-import { Verb, UserRoleBinding, Roles, roleBinding } from './project-access-form-utils-types';
+import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 
 export interface ProjectAccessProps {
   formName: string;
   namespace: string;
   roleBindings?: { data: []; loaded: boolean; loadError: {} };
+  roles: { data: Roles; loaded: boolean };
 }
 
-const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, roleBindings }) => {
+const ProjectAccess: React.FC<ProjectAccessProps> = ({
+  formName,
+  namespace,
+  roleBindings,
+  roles,
+}) => {
   const { t } = useTranslation();
-  if (!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) {
+  if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
     return <LoadingBox />;
   }
 
-  const filteredRoleBindings = filterRoleBindings(roleBindings.data, Roles);
+  const filteredRoleBindings = filterRoleBindings(roleBindings.data, Object.keys(roles.data));
 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(filteredRoleBindings);
 
@@ -108,8 +114,9 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
     <>
       <PageHeading>
         <Trans t={t} ns="devconsole">
-          Project access allows you to add or remove a user&apos;s access to the project. More
-          advanced management of role-based access control appear in{' '}
+          {
+            "Project access allows you to add or remove a user's access to the project. More advanced management of role-based access control appear in "
+          }
           <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleModel.plural}`}>Roles</Link> and{' '}
           <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleBindingModel.plural}`}>
             Role Bindings
@@ -131,7 +138,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
             onReset={handleReset}
             validationSchema={validationSchema}
           >
-            {(formikProps) => <ProjectAccessForm {...formikProps} />}
+            {(formikProps) => <ProjectAccessForm {...formikProps} roles={roles.data} />}
           </Formik>
         )}
       </div>
