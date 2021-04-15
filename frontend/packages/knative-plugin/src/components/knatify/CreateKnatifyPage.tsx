@@ -115,12 +115,16 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
-        <title>{t('knative-plugin~Create Knative service')}</title>
+        <title>{t('knative-plugin~Make Serverless')}</title>
       </Helmet>
       <PageHeading
-        title={t('knative-plugin~Create Knative service')}
+        title={t('knative-plugin~Make Serverless')}
         badge={getBadgeFromType(BadgeType.TECH)}
-      />
+      >
+        {t(
+          'knative-plugin~This feature will create a new serverless deployment next to your existing deployment. Other configurations, including the traffic pattern, can be modified in the form.',
+        )}
+      </PageHeading>
       {isResourceLoaded ? (
         <Formik
           initialValues={getInitialValuesKnatify(
