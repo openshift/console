@@ -1,0 +1,11 @@
+apiVersion: operator.serverless.openshift.io/v1alpha1
+kind: KnativeKafka
+metadata:
+  name: knative-kafka
+  namespace: knative-eventing
+spec:
+  channel:
+    bootstrapServers: REPLACE_WITH_COMMA_SEPARATED_KAFKA_BOOTSTRAP_SERVERS
+    enabled: false
+  source:
+    enabled: false

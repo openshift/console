@@ -3,9 +3,8 @@ Feature: Create event sources
               As a user, I want to create event sources
 
         Background:
-            Given user has installed knative Apache camel operator
-              And user has created or selected namespace "aut-namespace"
-              And user is at developer perspective
+            Given user has installed Knative Apache Camelk Integration Operator
+              And user has created or selected namespace "aut-knative"
 
 
         @smoke @manual
@@ -26,14 +25,6 @@ Feature: Create event sources
             Given user is at Add page
              Then user is able to see "Event Source" card on Add page
               And user is able to see "Operator Backed" card on Add page
-
-
-        @smoke
-        Scenario: CamelSource event source : Kn-08-TC03
-            Given user is at Add page
-             When user clicks on "Event Source" card
-             Then user will be redirected to "Event Sources" page
-              And user is able to see "Camel Source" event source type
 
 
         @regression
