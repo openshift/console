@@ -61,10 +61,10 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
       {namespacePolicyType === NamespacePolicyType.MULTI && (
         <ReviewListBody hideIcon>
           <span>{t('ceph-storage-plugin~Resources ')}</span>&nbsp;
-          <p>{t('ceph-storage-plugin~Selected read namespace stores ')}</p>
+          <p>{t('ceph-storage-plugin~Selected read namespace stores: ')}</p>
           <StoreCard resources={readNamespaceStore} />
           <br />
-          <span>{t('ceph-storage-plugin~Selected write namespace store ')}</span>
+          <span>{t('ceph-storage-plugin~Selected write namespace store: ')}</span>
           <span className="text-secondary">{getName(writeNamespaceStore[0])}</span>
         </ReviewListBody>
       )}
