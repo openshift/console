@@ -48,6 +48,11 @@
     flex-direction: row-reverse;
     flex-grow: 0.25;
   }
+  &__icon-block {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-grow: 0.10;
+  }
   &__text {
     line-height: 15px;
     font-weight: bold;
