@@ -140,8 +140,8 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
-      {processedData?.length ? (
-        <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
+      <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
+        {processedData?.length ? (
           <Chart
             ariaTitle={ariaChartTitle || title}
             containerComponent={container}
@@ -166,10 +166,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
               ))}
             </ChartGroup>
           </Chart>
-        </PrometheusGraphLink>
-      ) : (
-        <GraphEmpty height={height} loading={loading} />
-      )}
+        ) : (
+          <GraphEmpty height={height} loading={loading} />
+        )}
+      </PrometheusGraphLink>
     </PrometheusGraph>
   );
 };

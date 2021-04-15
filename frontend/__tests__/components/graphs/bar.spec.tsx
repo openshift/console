@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import { ChartBar } from '@patternfly/react-charts';
 
 import { BarChart } from '@console/internal/components/graphs/bar';
@@ -33,11 +33,7 @@ describe('<BarChart />', () => {
 
   it('should show an empty state', () => {
     const wrapper = shallow(<BarChart data={[]} />);
+    expect(wrapper.find(PrometheusGraphLink).exists()).toBe(true);
     expect(wrapper.find(GraphEmpty).exists()).toBe(true);
-  });
-
-  it('should show a skeleton loading state', () => {
-    const wrapper = mount(<BarChart data={[]} loading={true} />); // Use full mount function so that we can check for a LoadingBox child
-    expect(wrapper.find('.skeleton-chart').exists()).toBe(true);
   });
 });

@@ -46,9 +46,9 @@ export const BarChart: React.FC<BarChartProps> = ({
 
   return (
     <PrometheusGraph ref={containerRef} title={title} className={titleClassName}>
-      {data.length ? (
-        <PrometheusGraphLink query={noLink ? undefined : query}>
-          {data.map((datum, index) => (
+      <PrometheusGraphLink query={noLink ? undefined : query}>
+        {data.length ? (
+          data.map((datum, index) => (
             <React.Fragment key={index}>
               <div className="graph-bar__label">
                 {LabelComponent ? (
@@ -73,11 +73,11 @@ export const BarChart: React.FC<BarChartProps> = ({
                 />
               </div>
             </React.Fragment>
-          ))}
-        </PrometheusGraphLink>
-      ) : (
-        <GraphEmpty loading={loading} />
-      )}
+          ))
+        ) : (
+          <GraphEmpty loading={loading} />
+        )}
+      </PrometheusGraphLink>
     </PrometheusGraph>
   );
 };
