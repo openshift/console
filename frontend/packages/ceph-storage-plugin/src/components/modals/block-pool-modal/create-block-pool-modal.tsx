@@ -134,7 +134,7 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
           onSubmit={createPool}
           cancel={props.cancel}
           close={props.close}
-          primaryAction={FooterPrimaryActions.CREATE}
+          primaryAction={FooterPrimaryActions(t).CREATE}
         />
       </ModalFooter>
     </div>

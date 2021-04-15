@@ -16,29 +16,34 @@ const configureKms = () => {
   cy.byTestID('edit-kms-link').contains('Change connection details');
 };
 
-export const createStorageClass = (scName: string, encrypted?: boolean) => {
+export const createStorageClass = (scName: string, poolName?: string, encrypted?: boolean) => {
   cy.clickNavLink(['Storage', 'StorageClasses']);
   cy.byTestID('item-create').click();
   cy.byLegacyTestID('storage-class-form')
     .get('input#storage-class-name')
     .type(scName);
 
-  // select provisioner
+  cy.log('Selecting Ceph RBD provisioner');
   cy.byTestID('storage-class-provisioner-dropdown').click();
   cy.byLegacyTestID('dropdown-text-filter').type('openshift-storage.rbd.csi.ceph.com');
   cy.byTestID('dropdown-menu-item-link').should('contain', 'openshift-storage.rbd.csi.ceph.com');
   cy.byTestID('dropdown-menu-item-link').click();
 
-  // select block pool
-  cy.byTestID('pool-dropdown-toggle').click();
-  cy.byTestID('ocs-storagecluster-cephblockpool').click();
-
-  // encryption
+  cy.log('Enable encryption');
   encrypted && configureKms();
 
-  // create new sc
+  cy.log(`Selecting block pool ${poolName}`);
+  cy.byTestID('pool-dropdown-toggle').click();
+  cy.byTestID(poolName || 'ocs-storagecluster-cephblockpool').click();
+
+  cy.log('Creating new StorageClass');
   cy.byLegacyTestID('storage-class-form')
     .get('button#save-changes')
     .click();
   cy.byLegacyTestID('resource-title').contains(scName);
+};
+
+export const deleteStorageClassFromCli = (scName: string) => {
+  cy.log('Deleting a storage class');
+  cy.exec(`oc delete StorageClass ${scName}`);
 };

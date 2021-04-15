@@ -6,6 +6,7 @@ import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 export const poolName: string = 'example.pool';
 export const replicaCount: string = '2';
 export const volumeType: string = 'ssd';
+export const scName: string = 'testing-sc';
 
 export const poolMessage: {
   [key in POOL_PROGRESS]?: string;
@@ -14,9 +15,10 @@ export const poolMessage: {
   [POOL_PROGRESS.CREATED]: `Pool ${poolName} was successfully created`,
   [POOL_PROGRESS.NOTALLOWED]:
     "Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.",
+  [POOL_PROGRESS.BOUNDED]: `${poolName} cannot be deleted. When a pool is bounded to PVC it cannot be deleted. Please detach all the resources from StorageClass(es): ${scName}`,
 };
 
-const navigateToBlockPool = () => {
+export const navigateToBlockPool = () => {
   commonFlows.navigateToOCS();
   cy.byLegacyTestID('horizontal-link-Block Pools').click();
 };
@@ -38,6 +40,7 @@ export enum Actions {
   created = 'created',
   failed = 'failed',
   notAllowed = 'notAllowed',
+  bound = 'bounded',
 }
 
 export const verifyFooterActions = (action: string) => {
@@ -53,6 +56,11 @@ export const verifyFooterActions = (action: string) => {
       break;
     case Actions.notAllowed:
       cy.log('Check close-action is enabled');
+      cy.byLegacyTestID('modal-close-action').click();
+      break;
+    case Actions.bound:
+      cy.log('Check go-to-pvc-list-action and close-action are enabled');
+      cy.byLegacyTestID('modal-go-to-pvc-list-action').should('be.visible');
       cy.byLegacyTestID('modal-close-action').click();
       break;
     default:

@@ -11,7 +11,7 @@ describe('Test Ceph pool creation', () => {
   });
   it('Sc KMS encryption', () => {
     const scName: string = 'sc-encrypt';
-    createStorageClass(scName, true);
+    createStorageClass(scName, '', true);
     cy.clickNavLink(['PersistentVolumeClaims']);
     pvc.createPVC('encrypted-pvc', '1', scName);
     isPodRunningWithEncryptedPV();
