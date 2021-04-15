@@ -32,16 +32,8 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
     null,
     namespace,
   );
-  const [nsName, setNSName] = React.useState('');
   const [dropdownItems, setDropdownItems] = React.useState([]);
   const nnsList = nnsLoaded && !nnsErr ? nnsObj.items : [];
-  const handleDropdownChange = React.useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      setNSName(e.currentTarget.id);
-      onChange(nnsList.find((nns) => nns?.metadata?.name === e.currentTarget.id));
-    },
-    [nnsList, onChange],
-  );
   React.useEffect(() => {
     const nnsDropdownItems = nnsList.reduce(
       (res, nns) => {
@@ -55,7 +47,9 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
               namespacePolicy === NamespacePolicyType.MULTI &&
               !enabledItems.some((itemName) => itemName === name)
             }
-            onClick={handleDropdownChange}
+            onClick={(e) =>
+              onChange(nnsList.find((ns) => ns?.metadata?.name === e.currentTarget.id))
+            }
             data-test={name}
             description={t('ceph-storage-plugin~Provider {{provider}} | Region: {{region}}', {
               provider: nns?.spec?.type,
@@ -88,11 +82,11 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
     nnsErr,
     nnsList,
     t,
-    handleDropdownChange,
     namespace,
     creatorDisabled,
     namespacePolicy,
     enabledItems,
+    onChange,
   ]);
 
   return (
@@ -117,7 +111,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
             data-test="nns-dropdown-toggle"
             onToggle={() => setOpen(!isOpen)}
           >
-            {selectedKey || nsName || t('ceph-storage-plugin~Select a namespace store')}
+            {selectedKey || t('ceph-storage-plugin~Select a namespace store')}
           </DropdownToggle>
         }
         isOpen={isOpen}
@@ -134,7 +128,7 @@ type NamespaceStoreDropdownProps = {
   namespace: string;
   onChange?: (NamespaceStoreKind) => void;
   className?: string;
-  selectedKey?: string;
+  selectedKey: string;
   enabledItems?: string[];
   namespacePolicy?: NamespacePolicyType;
   creatorDisabled?: boolean;
