@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
 import { Alert } from '@patternfly/react-core';
+import { withTranslation } from 'react-i18next';
 
 import { CONST } from '@console/shared';
 import { k8sPatch, k8sPatchByName, k8sCreate } from '../../module/k8s';
@@ -77,7 +78,7 @@ const generateSecretData = (formData) => {
   return Base64.encode(JSON.stringify(config));
 };
 
-class ConfigureNamespacePullSecret extends PromiseComponent {
+class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
   constructor(props) {
     super(props);
 
@@ -184,18 +185,18 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
   }
 
   render() {
-    const { namespace, pullSecret } = this.props;
+    const { namespace, pullSecret, t } = this.props;
 
     const existingData = parseExisitingPullSecret(pullSecret);
 
     return (
       <form onSubmit={this._submit} name="form" className="modal-content">
-        <ModalTitle>Default Pull Secret</ModalTitle>
+        <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
         <ModalBody>
           <p>
-            Specify default credentials to be used to authenticate and download containers within
-            this namespace. These credentials will be the default unless a pod references a specific
-            pull secret.
+            {t(
+              'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
+            )}
           </p>
 
           {existingData.invalidData && (
@@ -203,15 +204,18 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               isInline
               className="co-alert"
               variant="danger"
-              title="Overwriting default pull secret"
+              title={t('public~Overwriting default pull Secret')}
             >
-              A default pull secret exists, but can't be parsed. Saving this will overwrite it.
+              {t(
+                'public~A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.',
+              )}
+              '
             </Alert>
           )}
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label>Namespace</label>
+              <label>{t('public~Namespace')}</label>
             </div>
             <div className="col-xs-9">
               <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
@@ -220,7 +224,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-name">Secret Name</label>
+              <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
             </div>
             {pullSecret ? (
               <div className="col-xs-9">
@@ -237,7 +241,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                   required
                 />
                 <p className="help-block text-muted" id="namespace-pull-secret-name-help">
-                  Friendly name to help you manage this in the future
+                  {t('public~Friendly name to help you manage this in the future')}
                 </p>
               </div>
             )}
@@ -245,7 +249,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
           <div className="row co-m-form-row form-group">
             <div className="col-xs-3">
-              <label>Method</label>
+              <label>{t('public~Method')}</label>
             </div>
             <div className="col-xs-9">
               <div className="radio">
@@ -257,7 +261,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                     onChange={this._onMethodChange}
                     value="form"
                   />
-                  Enter Username/Password
+                  {t('public~Enter username/password')}
                 </label>
               </div>
               <div className="radio">
@@ -269,7 +273,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                     id="namespace-pull-secret-method--upload"
                     value="upload"
                   />
-                  Upload Docker config.json
+                  {t('public~Upload Docker config.json')}
                 </label>
               </div>
             </div>
@@ -279,7 +283,9 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-address">Registry Address</label>
+                  <label htmlFor="namespace-pull-secret-address">
+                    {t('public~Registry address')}
+                  </label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -287,14 +293,14 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                     className="pf-c-form-control"
                     id="namespace-pull-secret-address"
                     defaultValue={existingData.address}
-                    placeholder="quay.io"
+                    placeholder={t('public~quay.io')}
                     required
                   />
                 </div>
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-email">Email Address</label>
+                  <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -305,13 +311,13 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                     aria-describedby="namespace-pull-secret-email-help"
                   />
                   <p className="help-block text-muted" id="namespace-pull-secret-email-help">
-                    Optional, depending on registry provider
+                    {t('public~Optional, depending on registry provider')}
                   </p>
                 </div>
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-username">Username</label>
+                  <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -325,7 +331,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-password">Password</label>
+                  <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -344,7 +350,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-file">File Upload</label>
+                  <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -354,8 +360,9 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                     aria-describedby="namespace-pull-secret-file-help"
                   />
                   <p className="help-block etext-muted" id="namespace-pull-secret-file-help">
-                    Properly configured Docker config file in JSON format. Will be base64 encoded
-                    after upload.
+                    {t(
+                      'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
+                    )}
                   </p>
                 </div>
               </div>
@@ -363,8 +370,13 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
                 (existingData.invalidJson && (
                   <div className="row co-m-form-row">
                     <div className="col-xs-9 col-sm-offset-3">
-                      <Alert isInline className="co-alert" variant="danger" title="Invalid JSON">
-                        The uploaded file is not properly-formatted JSON.
+                      <Alert
+                        isInline
+                        className="co-alert"
+                        variant="danger"
+                        title={t('public~Invalid JSON')}
+                      >
+                        {t('public~The uploaded file is not properly-formatted JSON.')}
                       </Alert>
                     </div>
                   </div>
@@ -382,7 +394,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}
           inProgress={this.state.inProgress}
-          submitText="Save"
+          submitText={t('public~Save')}
           cancel={this._cancel}
         />
       </form>
@@ -390,9 +402,9 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
   }
 }
 
+const ConfigureNamespacePullSecret = withTranslation()(ConfigureNamespacePullSecretWithTranslation);
+export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);
 ConfigureNamespacePullSecret.propTypes = {
   namespace: PropTypes.object.isRequired,
   pullSecret: PropTypes.object,
 };
-
-export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);
