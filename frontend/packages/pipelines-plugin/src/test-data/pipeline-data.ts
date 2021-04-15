@@ -14,6 +14,8 @@ export enum DataState {
   FAILED3 = 'Failed at stage 3',
   FAILED_BUT_COMPLETE = 'Completed But Failed',
   SKIPPED = 'Skipped',
+  PIPELINE_RUN_PENDING = 'PipelineRunPending',
+  PIPELINE_RUN_CANCELLED = 'PipelineRunCancelled',
 }
 
 export enum PipelineExampleNames {
@@ -584,6 +586,75 @@ export const pipelineTestData: PipelineTestData = {
               },
             },
           },
+        },
+      },
+      [DataState.PIPELINE_RUN_PENDING]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'simple-pipeline-p1bun0',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T09:58:19Z',
+          labels: { [TektonResourceLabel.pipeline]: 'simple-pipeline' },
+        },
+        spec: {
+          pipelineRef: { name: 'simple-pipeline' },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            {
+              name: 'web-image',
+              resourceRef: { name: 'mapit-image' },
+            },
+          ],
+          status: 'PipelineRunPending',
+        },
+        status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+          completionTime: '2019-10-29T11:57:53Z',
+          conditions: [
+            {
+              lastTransitionTime: '2019-09-12T20:38:01Z',
+              message: 'All Tasks have completed executing',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+        },
+      },
+
+      [DataState.PIPELINE_RUN_CANCELLED]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'simple-pipeline-p1bun0',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T09:58:19Z',
+          labels: { [TektonResourceLabel.pipeline]: 'simple-pipeline' },
+        },
+        spec: {
+          pipelineRef: { name: 'simple-pipeline' },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            {
+              name: 'web-image',
+              resourceRef: { name: 'mapit-image' },
+            },
+          ],
+          status: 'PipelineRunCancelled',
+        },
+        status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.SIMPLE_PIPELINE],
+          completionTime: '2019-10-29T11:57:53Z',
+          conditions: [
+            {
+              lastTransitionTime: '2019-09-12T20:38:01Z',
+              message: 'All Tasks have completed executing',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
         },
       },
     },

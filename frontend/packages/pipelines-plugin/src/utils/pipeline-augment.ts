@@ -21,7 +21,7 @@ import {
   TriggerBindingModel,
   PipelineModel,
 } from '../models';
-import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
+import { pipelineRunFilterReducer, SucceedConditionReason } from './pipeline-filter-reducer';
 import { TektonResourceLabel } from '../components/pipelines/const';
 import { PipelineKind, PipelineRunKind, PipelineTask } from '../types';
 
@@ -198,8 +198,10 @@ export const truncateName = (name: string, length: number): string =>
   name.length < length ? name : `${name.slice(0, length - 1)}...`;
 
 export const getPipelineFromPipelineRun = (pipelineRun: PipelineRunKind): PipelineKind => {
-  const pipelineName = pipelineRun?.metadata?.labels?.[TektonResourceLabel.pipeline];
-  if (!pipelineName || !pipelineRun?.status?.pipelineSpec) {
+  const pipelineName =
+    pipelineRun?.metadata?.labels?.[TektonResourceLabel.pipeline] || pipelineRun?.metadata?.name;
+  const pipelineSpec = pipelineRun?.status?.pipelineSpec || pipelineRun?.spec?.pipelineSpec;
+  if (!pipelineName || !pipelineSpec) {
     return null;
   }
   return {
@@ -209,12 +211,11 @@ export const getPipelineFromPipelineRun = (pipelineRun: PipelineRunKind): Pipeli
       name: pipelineName,
       namespace: pipelineRun.metadata.namespace,
     },
-    spec: pipelineRun?.status?.pipelineSpec,
+    spec: pipelineSpec,
   };
 };
 
-export const totalPipelineRunTasks = (pipelinerun: PipelineRunKind): number => {
-  const executedPipeline = getPipelineFromPipelineRun(pipelinerun);
+export const totalPipelineRunTasks = (executedPipeline: PipelineKind): number => {
   if (!executedPipeline) {
     return 0;
   }
@@ -223,8 +224,8 @@ export const totalPipelineRunTasks = (pipelinerun: PipelineRunKind): number => {
   return totalTasks + finallyTasks;
 };
 
-export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
-  const totalTasks = totalPipelineRunTasks(pipelinerun);
+export const getTaskStatus = (pipelinerun: PipelineRunKind, pipeline: PipelineKind): TaskStatus => {
+  const totalTasks = totalPipelineRunTasks(pipeline);
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
       ? Object.keys(pipelinerun.status.taskRuns)
@@ -240,7 +241,8 @@ export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
     Cancelled: 0,
     Skipped: skippedTaskLength,
   };
-  if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
+
+  if (pipelinerun?.status?.taskRuns) {
     plrTasks.forEach((taskRun) => {
       const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
       if (status === 'Succeeded' || status === 'Completed' || status === 'Complete') {
@@ -267,12 +269,12 @@ export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
       taskStatus[runStatus.Pending] += unhandledTasks;
     }
   } else if (
-    pipelinerun &&
-    pipelinerun.status &&
-    pipelinerun.status.conditions &&
-    pipelinerun.status.conditions[0].status === 'False'
+    pipelinerun?.status?.conditions?.[0]?.status === 'False' ||
+    pipelinerun?.spec.status === SucceedConditionReason.PipelineRunCancelled
   ) {
     taskStatus[runStatus.Cancelled] = totalTasks;
+  } else if (pipelinerun?.spec.status === SucceedConditionReason.PipelineRunPending) {
+    taskStatus[runStatus.Pending] += totalTasks;
   } else {
     taskStatus[runStatus.PipelineNotStarted]++;
   }

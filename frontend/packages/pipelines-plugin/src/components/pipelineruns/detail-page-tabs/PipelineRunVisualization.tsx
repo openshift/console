@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { PipelineRunKind } from '../../../types';
-import { getPipelineFromPipelineRun } from '../../../utils/pipeline-augment';
-
+import { PipelineKind, PipelineRunKind } from '../../../types';
+import { usePipelineFromPipelineRun } from '../hooks/usePipelineFromPipelineRun';
 import './PipelineRunVisualization.scss';
 
 type PipelineRunVisualizationProps = {
@@ -11,7 +10,7 @@ type PipelineRunVisualizationProps = {
 };
 
 const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({ pipelineRun }) => {
-  const pipeline = getPipelineFromPipelineRun(pipelineRun);
+  const pipeline: PipelineKind = usePipelineFromPipelineRun(pipelineRun);
   if (!pipeline) {
     return (
       <div className="pipeline-plr-loader">

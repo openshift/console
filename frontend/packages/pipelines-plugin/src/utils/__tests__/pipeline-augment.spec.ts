@@ -119,7 +119,7 @@ describe('PipelineAugment test getRunStatusColor handles all runStatus values', 
 describe('PipelineAugment test correct task status state is pulled from pipeline/pipelineruns', () => {
   it('expect no arguments to produce a net-zero result', () => {
     // Null check + showcasing we get at least 1 value out of the function
-    const emptyTaskStatus = getTaskStatus(null);
+    const emptyTaskStatus = getTaskStatus(null, null);
     expect(emptyTaskStatus).toEqual({
       PipelineNotStarted: 1,
       Pending: 0,
@@ -142,8 +142,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const simpleTestData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 
       const expectedTaskCount = getExpectedTaskCount(simpleTestData.pipeline);
-      const taskStatus = getTaskStatus(simpleTestData.pipelineRuns[DataState.SUCCESS]);
-      const taskCount = totalPipelineRunTasks(simpleTestData.pipelineRuns[DataState.SUCCESS]);
+      const taskStatus = getTaskStatus(
+        simpleTestData.pipelineRuns[DataState.SUCCESS],
+        simpleTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(simpleTestData.pipeline);
 
       expect(taskStatus.Succeeded).toEqual(expectedTaskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
@@ -154,8 +157,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.SUCCESS]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.SUCCESS]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.SUCCESS],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(taskStatus.Succeeded).toEqual(expectedTaskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
@@ -166,8 +172,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const finallyTestData = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
 
       const expectedTaskCount = getExpectedTaskCount(finallyTestData.pipeline);
-      const taskStatus = getTaskStatus(finallyTestData.pipelineRuns[DataState.SUCCESS]);
-      const taskCount = totalPipelineRunTasks(finallyTestData.pipelineRuns[DataState.SUCCESS]);
+      const taskStatus = getTaskStatus(
+        finallyTestData.pipelineRuns[DataState.SUCCESS],
+        finallyTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(finallyTestData.pipeline);
 
       expect(taskStatus.Succeeded).toEqual(expectedTaskCount);
       expect(taskCount).toEqual(expectedTaskCount);
@@ -186,8 +195,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const simpleTestData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 
       const expectedTaskCount = getExpectedTaskCount(simpleTestData.pipeline);
-      const taskStatus = getTaskStatus(simpleTestData.pipelineRuns[DataState.IN_PROGRESS]);
-      const taskCount = totalPipelineRunTasks(simpleTestData.pipelineRuns[DataState.IN_PROGRESS]);
+      const taskStatus = getTaskStatus(
+        simpleTestData.pipelineRuns[DataState.IN_PROGRESS],
+        simpleTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(simpleTestData.pipeline);
 
       expect(sumInProgressTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
@@ -198,8 +210,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const complexTestData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.IN_PROGRESS]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.IN_PROGRESS]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.IN_PROGRESS],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumInProgressTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
@@ -218,10 +233,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       const partialTestData = pipelineTestData[PipelineExampleNames.PARTIAL_PIPELINE];
 
       const expectedTaskCount = getExpectedTaskCount(partialTestData.pipeline);
-      const taskStatus = getTaskStatus(partialTestData.pipelineRuns[DataState.FAILED_BUT_COMPLETE]);
-      const taskCount = totalPipelineRunTasks(
+      const taskStatus = getTaskStatus(
         partialTestData.pipelineRuns[DataState.FAILED_BUT_COMPLETE],
+        partialTestData.pipeline,
       );
+      const taskCount = totalPipelineRunTasks(partialTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(0);
       expect(sumCancelledTaskStatus(taskStatus)).toEqual(expectedTaskCount);
@@ -232,8 +248,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PipelineRun cancelled at beginning`, () => {
       const expected = { succeeded: 1, failed: 0, cancelled: 12 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.CANCELLED1]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.CANCELLED1]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.CANCELLED1],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -245,8 +264,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PipelineRun failed at beginning`, () => {
       const expected = { succeeded: 0, failed: 1, cancelled: 12 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.FAILED1]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.FAILED1]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.FAILED1],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -258,8 +280,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PLR cancelled at stage 2 parallel`, () => {
       const expected = { succeeded: 3, failed: 0, cancelled: 10 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.CANCELLED2]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.CANCELLED2]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.CANCELLED2],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -271,8 +296,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PLR failed at stage 2 parallel`, () => {
       const expected = { succeeded: 2, failed: 1, cancelled: 10 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.FAILED2]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.FAILED2]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.FAILED2],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -284,8 +312,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PLR cancelled at stage 3`, () => {
       const expected = { succeeded: 4, failed: 0, cancelled: 9 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.CANCELLED3]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.CANCELLED3]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.CANCELLED3],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -297,8 +328,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect correct task status for PLR failed at stage 3`, () => {
       const expected = { succeeded: 2, failed: 2, cancelled: 9 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.FAILED3]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.FAILED3]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.FAILED3],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumFailedTaskStatus(taskStatus)).toEqual(expected.failed);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -317,8 +351,11 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     it(`expect to return the skipped task status count if whenExpression is used`, () => {
       const expected = { succeeded: 1, skipped: 1 };
       const expectedTaskCount = getExpectedTaskCount(complexTestData.pipeline);
-      const taskStatus = getTaskStatus(complexTestData.pipelineRuns[DataState.SKIPPED]);
-      const taskCount = totalPipelineRunTasks(complexTestData.pipelineRuns[DataState.SKIPPED]);
+      const taskStatus = getTaskStatus(
+        complexTestData.pipelineRuns[DataState.SKIPPED],
+        complexTestData.pipeline,
+      );
+      const taskCount = totalPipelineRunTasks(complexTestData.pipeline);
 
       expect(sumSkippedTaskStatus(taskStatus)).toEqual(expected.skipped);
       expect(sumSuccededTaskStatus(taskStatus)).toEqual(expected.succeeded);
@@ -373,24 +410,33 @@ describe('Pipelinerun graph to show the executed pipeline structure', () => {
   const testPipelineRun =
     pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
 
-  it('expect to return null, if pipelinerun does not have a status field', () => {
+  it('expect to return null, if pipelinerun does not have a pipelineSpec field in status or spec', () => {
     const plrWithoutPipelineSpec = _.omit(testPipelineRun, ['status']);
     const executedPipeline = getPipelineFromPipelineRun(plrWithoutPipelineSpec);
     expect(executedPipeline).toEqual(null);
   });
 
-  it('expect to return null, if pipelinerun does not have pipelineSpec in status field', () => {
+  it('expect to return null, if pipelinerun does not have pipeline labels or name in the metadata field', () => {
     const executedPipeline = getPipelineFromPipelineRun(
-      _.omit(testPipelineRun, ['status.pipelineSpec']),
+      _.omit(testPipelineRun, ['metadata.labels', 'metadata.name']),
     );
     expect(executedPipeline).toBe(null);
   });
 
-  it('expect to return null, if pipelinerun does not have pipeline labels in the metadata field', () => {
-    const executedPipeline = getPipelineFromPipelineRun(
-      _.omit(testPipelineRun, ['metadata.labels']),
-    );
-    expect(executedPipeline).toBe(null);
+  it('expect to return pipeline, if pipelinerun has pipelineSpec in spec field', () => {
+    const plrWithEmbeddedPipeline =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SUCCESS];
+    const executedPipeline = getPipelineFromPipelineRun(plrWithEmbeddedPipeline);
+    expect(executedPipeline).not.toBe(null);
+    expect(executedPipeline).toMatchObject({
+      apiVersion: apiVersionForModel(PipelineModel),
+      kind: 'Pipeline',
+      metadata: {
+        name: plrWithEmbeddedPipeline.metadata.name,
+        namespace: plrWithEmbeddedPipeline.metadata.namespace,
+      },
+      spec: { ...plrWithEmbeddedPipeline.spec.pipelineSpec },
+    });
   });
 
   it('expect to return the pipeline, if pipelinerun has pipelineSpec in status field', () => {

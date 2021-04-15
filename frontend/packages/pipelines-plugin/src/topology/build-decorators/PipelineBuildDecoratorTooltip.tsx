@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PipelineRunKind } from '../../types';
-import { getRunStatusColor, getTaskStatus, runStatus } from '../../utils/pipeline-augment';
+import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
 import HorizontalStackedBars from '../../components/charts/HorizontalStackedBars';
 import TaskStatusToolTip from '../../components/pipelineruns/status/TaskStatusTooltip';
 import './PipelineBuildDecoratorTooltip.scss';
+import { useTaskStatus } from '../../components/pipelineruns/hooks/useTaskStatus';
 
 export interface PipelineBuildDecoratorTooltipProps {
   pipelineRun: PipelineRunKind;
@@ -16,11 +17,11 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
   status,
 }) => {
   const { t } = useTranslation();
+  const taskStatus = useTaskStatus(pipelineRun);
   if (!pipelineRun || !status) {
     return null;
   }
 
-  const taskStatus = getTaskStatus(pipelineRun);
   const pipelineBars = (
     <HorizontalStackedBars
       height="1em"

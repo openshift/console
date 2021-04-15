@@ -1,6 +1,19 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 
+export enum SucceedConditionReason {
+  PipelineRunCancelled = 'PipelineRunCancelled',
+  TaskRunCancelled = 'TaskRunCancelled',
+  Cancelled = 'Cancelled',
+  PipelineRunStopping = 'PipelineRunStopping',
+  PipelineRunPending = 'PipelineRunPending',
+  TaskRunStopping = 'TaskRunStopping',
+  CreateContainerConfigError = 'CreateContainerConfigError',
+  ExceededNodeResources = 'ExceededNodeResources',
+  ExceededResourceQuota = 'ExceededResourceQuota',
+  ConditionCheckFailed = 'ConditionCheckFailed',
+}
+
 // Converts the PipelineRun (and TaskRun) condition status into a human readable string.
 // See also tkn cli implementation at https://github.com/tektoncd/cli/blob/release-v0.15.0/pkg/formatted/k8s.go#L54-L83
 export const pipelineRunStatus = (pipelineRun): string => {
@@ -20,18 +33,19 @@ export const pipelineRunStatus = (pipelineRun): string => {
 
   if (succeedCondition.reason && succeedCondition.reason !== status) {
     switch (succeedCondition.reason) {
-      case 'PipelineRunCancelled':
-      case 'TaskRunCancelled':
-      case 'Cancelled':
+      case SucceedConditionReason.PipelineRunCancelled:
+      case SucceedConditionReason.TaskRunCancelled:
+      case SucceedConditionReason.Cancelled:
         return i18next.t('pipelines-plugin~Cancelled');
-      case 'PipelineRunStopping':
-      case 'TaskRunStopping':
+      case SucceedConditionReason.PipelineRunStopping:
+      case SucceedConditionReason.TaskRunStopping:
         return i18next.t('pipelines-plugin~Failed');
-      case 'CreateContainerConfigError':
-      case 'ExceededNodeResources':
-      case 'ExceededResourceQuota':
+      case SucceedConditionReason.CreateContainerConfigError:
+      case SucceedConditionReason.ExceededNodeResources:
+      case SucceedConditionReason.ExceededResourceQuota:
+      case SucceedConditionReason.PipelineRunPending:
         return i18next.t('pipelines-plugin~Pending');
-      case 'ConditionCheckFailed':
+      case SucceedConditionReason.ConditionCheckFailed:
         return i18next.t('pipelines-plugin~Skipped');
       default:
         return status;
