@@ -20,17 +20,18 @@ import {
 } from '@console/internal/components/utils';
 import { DeploymentModel } from '@console/internal/models';
 import {
-  ContainerSpec,
   K8sKind,
   k8sPatch,
   K8sResourceKind,
   referenceFor,
+  DeploymentKind,
 } from '@console/internal/module/k8s/';
 import { getName } from '@console/shared';
+import { getAttachOBCPatch } from '../../utils';
 
 const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToOBCModalProps) => {
   const { t } = useTranslation();
-  const [requestDeployment, setRequestedDeployment] = React.useState({});
+  const [requestDeployment, setRequestedDeployment] = React.useState<DeploymentKind>(null);
   const [deploymentObjects, setDeployments] = React.useState({});
   const [deploymentNames, setDeploymentNames] = React.useState({});
   const { handlePromise, close, cancel, resource, deployments } = props;
@@ -54,56 +55,10 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
     setDeploymentNames(deploymentNameList);
   }, [deploymentData, deployments]);
 
-  const getPatches = () => {
-    const configMapRef = {
-      configMapRef: {
-        name: obcName,
-      },
-    };
-    const secretMapRef = {
-      secretRef: {
-        name: obcName,
-      },
-    };
-
-    const containers: ContainerSpec[] = _.get(
-      requestDeployment,
-      'spec.template.spec.containers',
-      [],
-    );
-    const patches = containers.reduce((patch, container, i) => {
-      if (_.isEmpty(container.envFrom)) {
-        patch.push({
-          op: 'add',
-          path: `/spec/template/spec/containers/${i}/envFrom`,
-          value: [configMapRef],
-        });
-        patch.push({
-          op: 'add',
-          path: `/spec/template/spec/containers/${i}/envFrom/-`,
-          value: secretMapRef,
-        });
-      } else {
-        patch.push({
-          op: 'add',
-          path: `/spec/template/spec/containers/${i}/envFrom/-`,
-          value: configMapRef,
-        });
-        patch.push({
-          op: 'add',
-          path: `/spec/template/spec/containers/${i}/envFrom/-`,
-          value: secretMapRef,
-        });
-      }
-      return patch;
-    }, []);
-    return patches;
-  };
-
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     handlePromise(
-      k8sPatch(DeploymentModel, requestDeployment, getPatches()),
+      k8sPatch(DeploymentModel, requestDeployment, getAttachOBCPatch(obcName, requestDeployment)),
       (res) => {
         history.push(`${resourceObjPath(res, referenceFor(res))}/environment`);
         close();

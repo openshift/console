@@ -12,3 +12,4 @@ export * from './resource-metadata';
 export * from './yaml-templates';
 export * from './notification-alert';
 export * from './console-types';
+export * from './storage-provider';

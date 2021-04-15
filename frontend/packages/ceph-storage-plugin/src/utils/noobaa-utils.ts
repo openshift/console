@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
-import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { K8sResourceKind, DeploymentKind } from '@console/internal/module/k8s/types';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { SecretModel } from '@console/internal/models';
 import { getAPIVersion } from '@console/shared/src/selectors/common';
@@ -158,4 +158,48 @@ export const secretPayloadCreator = (
       break;
   }
   return payload;
+};
+
+// Attaching OBC to a particular deployment
+
+export const getAttachOBCPatch = (obcName: string, deployment: DeploymentKind) => {
+  const configMapRef = {
+    configMapRef: {
+      name: obcName,
+    },
+  };
+  const secretMapRef = {
+    secretRef: {
+      name: obcName,
+    },
+  };
+
+  const containers = deployment?.spec?.template?.spec?.containers ?? [];
+  const patches = containers.reduce((patch, container, i) => {
+    if (_.isEmpty(container.envFrom)) {
+      patch.push({
+        op: 'add',
+        path: `/spec/template/spec/containers/${i}/envFrom`,
+        value: [configMapRef],
+      });
+      patch.push({
+        op: 'add',
+        path: `/spec/template/spec/containers/${i}/envFrom/-`,
+        value: secretMapRef,
+      });
+    } else {
+      patch.push({
+        op: 'add',
+        path: `/spec/template/spec/containers/${i}/envFrom/-`,
+        value: configMapRef,
+      });
+      patch.push({
+        op: 'add',
+        path: `/spec/template/spec/containers/${i}/envFrom/-`,
+        value: secretMapRef,
+      });
+    }
+    return patch;
+  }, []);
+  return patches;
 };

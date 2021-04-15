@@ -17,6 +17,7 @@ import { FileUpload } from '../extensions/file-upload';
 import { ModelMetadata } from '../extensions/resource-metadata';
 import { AlertAction } from '../extensions/notification-alert';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
+import { StorageProvider } from '../extensions/storage-provider';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -41,7 +42,8 @@ export type SupportedExtension =
   | CatalogItemFilter
   | FileUpload
   | ModelMetadata
-  | AlertAction;
+  | AlertAction
+  | StorageProvider;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

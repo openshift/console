@@ -1,0 +1,13 @@
+.co-storage__selection {
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.co-storage-heading {
+  &__wrapper {
+    display: flex;
+  }
+  &__subtitle {
+    padding-left: var(--pf-global--spacer--xs);
+    margin-top: var(--pf-global--spacer--xs);
+  }
+}

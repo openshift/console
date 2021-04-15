@@ -42,5 +42,12 @@
     "flags": {
       "required": ["OCS"]
     }
+  },
+  {
+    "type": "console.storage-provider",
+    "properties": {
+      "name": "ObjectBucketClaim",
+      "Component": { "$codeRef": "storageProvider" }
+    }
   }
 ]
