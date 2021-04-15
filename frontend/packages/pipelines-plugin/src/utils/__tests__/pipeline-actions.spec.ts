@@ -37,6 +37,13 @@ describe('PipelineAction testing startPipeline create correct labels and callbac
   });
 });
 
+describe('PipelineAction testing startPipeline to check the pipelinerun access review', () => {
+  it('expect access review check on pipelinerun resource', () => {
+    const pipeline = startPipeline(PipelineModel, samplePipeline);
+    expect(pipeline.accessReview.resource).toBe(PipelineRunModel.plural);
+  });
+});
+
 describe('PipelineAction testing stopPipelineRun create correct labels and callbacks', () => {
   it('expect label to be "Stop" with hidden flag as false when latest Run is running', () => {
     const stopAction = stopPipelineRun(PipelineRunModel, {
