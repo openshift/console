@@ -20,8 +20,8 @@ export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityPro
   const submit = React.useCallback(
     (event) => {
       event.preventDefault();
-      showCommunityOperators(ignoreWarnings);
       close();
+      showCommunityOperators(ignoreWarnings);
     },
     [close, ignoreWarnings, showCommunityOperators],
   );
