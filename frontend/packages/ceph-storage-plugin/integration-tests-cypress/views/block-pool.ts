@@ -40,22 +40,23 @@ export enum Actions {
   notAllowed = 'notAllowed',
 }
 
-export const blockPoolFooter = (action: string) => {
+export const verifyFooterActions = (action: string) => {
   switch (action) {
     case Actions.failed:
-      cy.byTestID('empty-state-body').contains(poolMessage[POOL_PROGRESS.FAILED]);
+      cy.log('Check try-again-action and finish-action are enabled');
       cy.byLegacyTestID('modal-try-again-action').should('be.visible');
       cy.byLegacyTestID('modal-finish-action').click();
       break;
     case Actions.created:
-      cy.byTestID('empty-state-body').contains(poolMessage[POOL_PROGRESS.CREATED]);
+      cy.log('Check finish-action is enabled');
       cy.byLegacyTestID('modal-finish-action').click();
       break;
     case Actions.notAllowed:
-      cy.byTestID('empty-state-body').contains(poolMessage[POOL_PROGRESS.NOTALLOWED]);
+      cy.log('Check close-action is enabled');
       cy.byLegacyTestID('modal-close-action').click();
       break;
     default:
+      cy.log(`Invoke ${action} action`);
       cy.byLegacyTestID('confirm-action')
         .scrollIntoView()
         .click();
@@ -69,9 +70,9 @@ export const verifyBlockPoolJSON = (
   cy.exec(`oc get cephBlockPool ${poolName} -n  ${NS} -o json`).then((res) => {
     const blockPool = JSON.parse(res.stdout);
     expect(blockPool.spec?.replicated?.size).toEqual(Number(replica));
-    expect(blockPool.spec?.compressionMode).toEqual(compressionEnabled ? 'aggressive' : '');
+    expect(blockPool.spec?.compressionMode).toEqual(compressionEnabled ? 'aggressive' : 'none');
     expect(blockPool.spec?.parameters?.compression_mode).toEqual(
-      compressionEnabled ? 'aggressive' : '',
+      compressionEnabled ? 'aggressive' : 'none',
     );
     expect(blockPool.spec?.deviceClass).toEqual(volumeType);
   });
@@ -80,7 +81,7 @@ export const createBlockPool = () => {
   navigateToBlockPool();
   cy.byTestID('item-create').click();
   populateBlockPoolForm();
-  blockPoolFooter('create');
+  verifyFooterActions('create');
   cy.log('Verify a new block pool creation');
   cy.byTestID('status-text').contains('Ready');
   verifyBlockPoolJSON();
