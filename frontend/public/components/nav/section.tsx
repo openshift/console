@@ -235,7 +235,7 @@ export const NavSection = connect(navSectionStateToProps)(
               isExpanded={isOpen}
               onExpand={this.toggle}
               data-test="nav"
-              data-quickstart-id={dataQuickStartId}
+              buttonProps={{ 'data-quickstart-id': dataQuickStartId }}
             >
               {children}
             </NavExpandable>
