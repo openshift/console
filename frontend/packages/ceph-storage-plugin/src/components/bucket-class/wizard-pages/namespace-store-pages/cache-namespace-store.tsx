@@ -31,6 +31,7 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
       const { unit, value } = event;
       const ms = convertToMS({ unit, value });
       dispatch({ type: 'setTimeToLive', value: ms });
+      dispatch({ type: 'setTimeUnit', value: unit });
       if (Number.isInteger(parseFloat(value)) && validateDuration(ms)) {
         setValidated(ValidatedOptions.success);
       } else {

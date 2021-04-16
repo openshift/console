@@ -532,6 +532,8 @@
   "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running": "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running",
   "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.": "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.",
   "Pool management tasks are not supported for default pool and Openshift Container Storage's  external mode.": "Pool management tasks are not supported for default pool and Openshift Container Storage's  external mode.",
+  "hr": "hr",
+  "min": "min",
   "A minimal cluster deployment will be performed.": "A minimal cluster deployment will be performed.",
   "The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified a minimal cluster will be deployed.": "The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified a minimal cluster will be deployed.",
   "Back to nodes selection": "Back to nodes selection",
