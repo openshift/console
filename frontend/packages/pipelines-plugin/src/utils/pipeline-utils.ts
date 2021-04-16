@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { formatDuration } from '@console/internal/components/utils/datetime';
+import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
 import {
   ContainerStatus,
   k8sUpdate,
@@ -127,7 +127,7 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
       const date =
         new Date(mTask.status.completionTime).getTime() -
         new Date(mTask.status.startTime).getTime();
-      mTask.status.duration = formatDuration(date);
+      mTask.status.duration = formatPrometheusDuration(date);
     }
     // append task status
     if (!mTask.status) {

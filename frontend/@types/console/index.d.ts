@@ -57,5 +57,13 @@ declare interface Window {
   api: {};
 }
 
+// TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for RelativeTimeFormat.
+declare namespace Intl {
+  class RelativeTimeFormat {
+    constructor(locale: string);
+    format(n: number, unit: string);
+  }
+}
+
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
 declare type Diff<T, K> = Omit<T, keyof K>;

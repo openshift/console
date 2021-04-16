@@ -49,10 +49,12 @@ import {
   useSafeFetch,
 } from '../utils';
 import {
+  dateFormatterNoYear,
+  dateTimeFormatter,
   formatPrometheusDuration,
-  getLocaleDate,
   parsePrometheusDuration,
-  twentyFourHourTime,
+  timeFormatter,
+  timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { PrometheusAPIError } from './types';
 import { ONE_MINUTE } from '@console/shared/src/constants/time';
@@ -65,8 +67,6 @@ const theme = getCustomTheme(
   queryBrowserTheme,
 );
 export const colors = theme.line.colorScale;
-
-const formatDate = (date: Date) => getLocaleDate(date, { month: 'short', day: 'numeric' });
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
@@ -198,9 +198,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
               <div className="query-browser__tooltip-group">
-                <div className="query-browser__tooltip-time">
-                  {`${formatDate(time)} ${twentyFourHourTime(time, true)}`}
-                </div>
+                <div className="query-browser__tooltip-time">{dateTimeFormatter.format(time)}</div>
               </div>
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-group" key={i}>
@@ -325,10 +323,16 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     const xAxisTickCount = Math.round(width / 100);
     const xAxisTickShowSeconds = span < xAxisTickCount * ONE_MINUTE;
-    const xAxisTickFormat =
-      span > parsePrometheusDuration('1d')
-        ? (d: Date) => `${formatDate(d)}\n${twentyFourHourTime(d)}`
-        : (d: Date) => twentyFourHourTime(d, xAxisTickShowSeconds);
+    const xAxisTickFormat = (d) => {
+      if (span > parsePrometheusDuration('1d')) {
+        // Add a newline between the date and time so tick labels don't overlap.
+        return `${dateFormatterNoYear.format(d)}\n${timeFormatter.format(d)}`;
+      }
+      if (xAxisTickShowSeconds) {
+        return timeFormatterWithSeconds.format(d);
+      }
+      return timeFormatter.format(d);
+    };
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
     const ChartComponent = isStack ? ChartArea : ChartLine;

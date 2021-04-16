@@ -1,9 +1,12 @@
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { TFunction } from 'i18next';
 import { humanizeNumberSI } from '@console/internal/components/utils';
+import {
+  dateFormatterNoYear,
+  parsePrometheusDuration,
+} from '@console/internal/components/utils/datetime';
 import { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+
 import { PipelineKind } from '../../../types';
 
 export interface GraphData {
@@ -51,7 +54,7 @@ const formatPositiveValue = (v: number): string =>
 export const formatValue = (v: number): string =>
   (v < 0 ? '-' : '') + formatPositiveValue(Math.abs(v));
 export const formatDate = (date: Date) => {
-  return `${moment(date).format('MMM DD')}`;
+  return dateFormatterNoYear.format(date);
 };
 export const formatTimeSeriesValues = (result: PrometheusResult, samples: number, span: number) => {
   const { metric, values } = result;
@@ -103,10 +106,12 @@ export const getXaxisValues = (timespan: number): number[] => {
   const xValues = [];
   if (!timespan) return xValues;
   const oneDayDuration = parsePrometheusDuration('1d');
-  const endDate = new Date(Date.now()).setHours(0, 0, 0, 0);
   const numDays = Math.round(timespan / oneDayDuration);
-  for (let m = moment(endDate); xValues.length - 1 < numDays; m.subtract(1, 'days')) {
-    xValues.push(m.unix() * 1000);
+  const d = new Date(Date.now());
+  d.setHours(0, 0, 0, 0);
+  while (xValues.length - 1 < numDays) {
+    xValues.push(d.getTime());
+    d.setDate(d.getDate() - 1);
   }
   return xValues.slice(0, numDays);
 };

@@ -8,16 +8,16 @@ import { OAuthModel } from '../../models';
 import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 import { EmptyBox, Kebab, ResourceSummary, SectionHeading, history, navFactory } from '../utils';
-import { formatDuration } from '../utils/datetime';
+import { formatPrometheusDuration } from '../utils/datetime';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(OAuthModel), ...common];
 
 const oAuthReference = referenceForModel(OAuthModel);
 
-// Convert to ms for formatDuration
+// Convert to ms for formatPrometheusDuration
 const tokenDuration = (seconds: number) =>
-  _.isNil(seconds) ? '-' : formatDuration(seconds * 1000);
+  _.isNil(seconds) ? '-' : formatPrometheusDuration(seconds * 1000);
 
 const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders }) => {
   const { t } = useTranslation();

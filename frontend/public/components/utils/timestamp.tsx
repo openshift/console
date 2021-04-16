@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
-import * as moment from 'moment';
 
 import * as dateTime from './datetime';
 
@@ -16,14 +15,14 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
   if (omitSuffix) {
     return dateTime.fromNow(mdate, undefined, { omitSuffix: true });
   }
-  if (Math.sign(timeDifference) !== -1 && timeDifference < 630000) {
-    // 10.5 minutes
-    // Show a relative time if within 10.5 minutes in the past from the current time.
+
+  // Show a relative time if within 10.5 minutes in the past from the current time.
+  if (timeDifference > dateTime.maxClockSkewMS && timeDifference < 630000) {
     return dateTime.fromNow(mdate);
   }
 
-  // Apr 23, 4:33 pm
-  return moment(mdate).format('LLL');
+  // Apr 23, 2021, 4:33 PM
+  return dateTime.dateTimeFormatter.format(mdate);
 };
 
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
@@ -54,9 +53,7 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {moment(mdate)
-              .utc()
-              .format('LLL z')}
+            {dateTime.utcDateTimeFormatter.format(mdate)}
           </span>,
         ]}
       >

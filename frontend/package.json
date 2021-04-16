@@ -284,8 +284,6 @@
     "mochawesome-merge": "^4.1.0",
     "mochawesome-report-generator": "^5.1.0",
     "mock-socket": "^9.0.3",
-    "moment": "2.22.x",
-    "moment-locales-webpack-plugin": "^1.2.0",
     "monaco-editor-core": "0.20.0",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "node-sass": "^5.0.0",

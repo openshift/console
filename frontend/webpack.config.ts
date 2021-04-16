@@ -19,7 +19,6 @@ interface Configuration extends webpack.Configuration {
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
@@ -226,9 +225,6 @@ const config: Configuration = {
     new CopyWebpackPlugin([
       { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
     ]),
-    new MomentLocalesPlugin({
-      localesToKeep: ['en', 'ja', 'ko', 'zh-cn'],
-    }),
     extractCSS,
     virtualModules,
     new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),

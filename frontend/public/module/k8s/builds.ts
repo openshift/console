@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 
 import { BuildModel, BuildConfigModel } from '../../models';
 import { k8sCreate } from './';
-import { formatDuration } from '../../components/utils/datetime';
+import { formatPrometheusDuration } from '../../components/utils/datetime';
 
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 
@@ -52,7 +52,7 @@ export const formatBuildDuration = (build) => {
 
   // Duration in the build is returned as nanoseconds. Convert to milliseconds.
   const ms = Math.floor(duration / 1000 / 1000);
-  return formatDuration(ms);
+  return formatPrometheusDuration(ms);
 };
 
 export const getBuildNumber = (build) => {

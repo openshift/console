@@ -32,7 +32,7 @@ $tooltip-background-color: #151515;
 }
 
 .graph-wrapper.graph-wrapper--query-browser {
-  padding: 5px 10px 15px 50px;
+  padding: 5px 15px 15px 50px;
 
   &--with-legend {
     min-height: 305px;
@@ -44,7 +44,8 @@ $tooltip-background-color: #151515;
   margin: 0 0 20px 0;
 
   .co-dashboard-card__body--dashboard-graph {
-    padding: 10px;
+    // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow the card otherwise.
+    padding: 10px 15px 10px 10px;
   }
 
   &.co-dashboard-card--gradient {
