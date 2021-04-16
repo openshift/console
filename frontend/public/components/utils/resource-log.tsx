@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Base64 } from 'js-base64';
-import { Alert, AlertActionLink, Button } from '@patternfly/react-core';
+import { Alert, AlertActionLink, Button, Checkbox } from '@patternfly/react-core';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -10,7 +10,8 @@ import {
   OutlinedWindowRestoreIcon,
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS, USERSETTINGS_PREFIX } from '@console/shared/src/constants';
+import { useUserSettings } from '@console/shared';
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
@@ -89,6 +90,8 @@ export const LogControls: React.FC<LogControlsProps> = ({
   containerName,
   podLogLinks,
   namespaceUID,
+  toggleWrapLines,
+  isWrapLines,
 }) => {
   const { t } = useTranslation();
   return (
@@ -142,6 +145,17 @@ export const LogControls: React.FC<LogControlsProps> = ({
               </React.Fragment>
             );
           })}
+        <Checkbox
+          label={t('logs~Wrap lines')}
+          id="wrapLogLines"
+          isChecked={isWrapLines}
+          onChange={(checked: boolean) => {
+            toggleWrapLines(checked);
+          }}
+        />
+        <span aria-hidden="true" className="co-action-divider hidden-xs">
+          |
+        </span>
         <a href={currentLogURL} target="_blank" rel="noopener noreferrer">
           <OutlinedWindowRestoreIcon className="co-icon-space-r" />
           {t('logs~Raw')}
@@ -206,6 +220,11 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const bufferFull = lines.length === bufferSize;
   const linkURL = getResourceLogURL(resource, containerName);
   const watchURL = getResourceLogURL(resource, containerName, bufferSize, true);
+  const [wrapLines, setWrapLines] = useUserSettings<boolean>(
+    `${USERSETTINGS_PREFIX}.log.wrapLines`,
+    false,
+    true,
+  );
 
   // Update lines behind while stream is paused, reset when unpaused
   React.useEffect(() => {
@@ -391,6 +410,8 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           containerName={containerName}
           podLogLinks={podLogLinks}
           namespaceUID={namespaceUID}
+          toggleWrapLines={setWrapLines}
+          isWrapLines={wrapLines}
         />
         <LogWindow
           bufferFull={bufferFull}
@@ -399,6 +420,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           linesBehind={linesBehind}
           status={status}
           updateStatus={setStatus}
+          wrapLines={wrapLines}
         />
       </div>
     </>
@@ -416,6 +438,8 @@ type LogControlsProps = {
   namespaceUID?: string;
   toggleStreaming?: () => void;
   toggleFullscreen: () => void;
+  toggleWrapLines: (wrapLines: boolean) => void;
+  isWrapLines: boolean;
 };
 
 type ResourceLogProps = {

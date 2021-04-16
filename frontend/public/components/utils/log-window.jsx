@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { STREAM_EOF, STREAM_PAUSED, STREAM_ACTIVE } from './resource-log';
 import { OutlinedPlayCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
@@ -114,7 +115,7 @@ class LogWindowWithTranslation extends React.PureComponent {
   }
 
   render() {
-    const { bufferFull, lines, linesBehind, status, t } = this.props;
+    const { bufferFull, lines, linesBehind, status, t, wrapLines } = this.props;
     const { content, height } = this.state;
     // TODO maybe move these variables into state so they are only updated on changes
     const headerText = bufferFull
@@ -131,7 +132,13 @@ class LogWindowWithTranslation extends React.PureComponent {
         <div className="log-window__body">
           <div className="log-window__scroll-pane" ref={this._setScrollPane}>
             <div className="log-window__contents" ref={this._setLogContents} style={{ height }}>
-              <div className="log-window__lines">{content}</div>
+              <div
+                className={classnames('log-window__lines', {
+                  'log-window__lines--wrap': wrapLines,
+                })}
+              >
+                {content}
+              </div>
             </div>
           </div>
         </div>
@@ -154,4 +161,9 @@ LogWindow.propTypes = {
   linesBehind: PropTypes.number.isRequired,
   status: PropTypes.string.isRequired,
   updateStatus: PropTypes.func.isRequired,
+  wrapLines: PropTypes.bool,
+};
+
+LogWindow.defaultProps = {
+  wrapLines: false,
 };
