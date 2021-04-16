@@ -256,9 +256,9 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         {useSelector && (
           <NameValueEditorComponent
             nameValuePairs={nameValuePairs}
-            valueString="Selector"
-            nameString="Label"
-            addString="Add Value"
+            valueString={t('public~Selector')}
+            nameString={t('public~Label')}
+            addString={t('public~Add value')}
             readOnly={false}
             allowSorting={false}
             updateParentData={handleNameValuePairs}

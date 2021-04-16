@@ -562,6 +562,8 @@
   "Access mode": "Access mode",
   "Desired storage capacity": "Desired storage capacity",
   "Use label selectors to request storage": "Use label selectors to request storage",
+  "Selector": "Selector",
+  "Add value": "Add value",
   "PersistentVolume resources that match all label selectors will be considered for binding.": "PersistentVolume resources that match all label selectors will be considered for binding.",
   "Create PersistentVolumeClaim": "Create PersistentVolumeClaim",
   "Collapse": "Collapse",
