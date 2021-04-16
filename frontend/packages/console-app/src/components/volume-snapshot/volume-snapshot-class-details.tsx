@@ -30,19 +30,20 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
     </div>
   );
 };
-const pages = [
-  {
-    href: '',
-    name: 'Details',
-    component: Details,
-  },
-  editYaml(),
-  events(ResourceEventStream),
-];
 
-const VolumeSnapshotClassDetailsPage: React.FC<DetailsPageProps> = (props) => (
-  <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />
-);
+const VolumeSnapshotClassDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
+  const pages = [
+    {
+      href: '',
+      name: t('console-app~Details'),
+      component: Details,
+    },
+    editYaml(),
+    events(ResourceEventStream),
+  ];
+  return <DetailsPage {...props} menuActions={Kebab.factory.common} pages={pages} />;
+};
 
 type DetailsProps = {
   obj: VolumeSnapshotClassKind;

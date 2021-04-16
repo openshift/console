@@ -49,6 +49,7 @@
   "VolumeSnapshotClass details": "VolumeSnapshotClass details",
   "Driver": "Driver",
   "Deletion policy": "Deletion policy",
+  "Details": "Details",
   "VolumeSnapshotContent details": "VolumeSnapshotContent details",
   "VolumeSnapshot": "VolumeSnapshot",
   "VolumeSnapshotClass": "VolumeSnapshotClass",
