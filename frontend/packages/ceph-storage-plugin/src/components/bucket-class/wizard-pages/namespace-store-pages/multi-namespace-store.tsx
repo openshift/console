@@ -23,6 +23,9 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
     const openModal = () => NamespaceStoreModal({ namespace });
     const [selectedCount, setSelectedCount] = React.useState(state.readNamespaceStore.length);
     const [enabledItems, setEnabledItems] = React.useState([]);
+    const [selectedItem, setSelectedItem] = React.useState(
+      getName(state.writeNamespaceStore[0]) ?? '',
+    );
 
     React.useEffect(() => {
       const readItems = state.readNamespaceStore.map(getName);
@@ -34,11 +37,13 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
       setSelectedCount(selectedNamespaceStore.length);
       if (!selectedNamespaceStore.map(getName).includes(getName(state.writeNamespaceStore[0]))) {
         dispatch({ type: 'setWriteNamespaceStore', value: [] });
+        setSelectedItem('');
       }
     };
 
     const onSelectNamespaceStoreDropdown = (selectedNamespaceStore: NamespaceStoreKind) => {
       dispatch({ type: 'setWriteNamespaceStore', value: [selectedNamespaceStore] });
+      setSelectedItem(getName(selectedNamespaceStore));
     };
 
     return (
@@ -94,6 +99,7 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
           <FormGroup className="nb-create-bc-step-page-form" fieldId="namespacestore-input">
             <NamespaceStoreDropdown
               id="namespacestore-input"
+              selectedKey={selectedItem}
               className="nb-create-bc-step-page-form--dropdown"
               namespace={namespace}
               onChange={onSelectNamespaceStoreDropdown}
