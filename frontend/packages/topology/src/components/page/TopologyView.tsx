@@ -268,9 +268,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBarDetails = React.useMemo(() => getSelectedEntityDetails(selectedEntity), [
-    selectedEntity,
-  ]);
+  const topologySideBarDetails = getSelectedEntityDetails(selectedEntity);
 
   if (!filteredModel) {
     return null;
