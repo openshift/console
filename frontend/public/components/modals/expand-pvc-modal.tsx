@@ -64,9 +64,10 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
       <ModalBody>
         <p>
           <Trans t={t} ns="modal">
-            Increase the capacity of claim{' '}
+            Increase the capacity of PVC{' '}
             <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
-            This can be a time-consuming process.
+            Note that capacity can't be less than the current PVC size. This can be a time-consuming
+            process.
           </Trans>
         </p>
         <label className="control-label co-required">{t('modal~Size')}</label>

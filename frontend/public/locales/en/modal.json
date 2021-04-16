@@ -32,7 +32,7 @@
   "This resource is managed by <2></2> and any modifications may be overwritten. Edit the managing resource to preserve changes.": "This resource is managed by <2></2> and any modifications may be overwritten. Edit the managing resource to preserve changes.",
   "Delete": "Delete",
   "Expand {{kind}}": "Expand {{kind}}",
-  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.",
+  "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.",
   "Size": "Size",
   "requestSize": "requestSize",
   "Expand": "Expand",
