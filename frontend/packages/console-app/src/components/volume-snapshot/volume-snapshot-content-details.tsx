@@ -83,24 +83,26 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const pages = [
-  {
-    href: '',
-    name: 'Details',
-    component: Details,
-  },
-  editYaml(),
-  events(ResourceEventStream),
-];
-
-const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    getResourceStatus={volumeSnapshotStatus}
-    menuActions={Kebab.factory.common}
-    pages={pages}
-  />
-);
+const VolumeSnapshotContentDetailsPage: React.FC<DetailsPageProps> = (props) => {
+  const { t } = useTranslation();
+  const pages = [
+    {
+      href: '',
+      name: t('console-app~Details'),
+      component: Details,
+    },
+    editYaml(),
+    events(ResourceEventStream),
+  ];
+  return (
+    <DetailsPage
+      {...props}
+      getResourceStatus={volumeSnapshotStatus}
+      menuActions={Kebab.factory.common}
+      pages={pages}
+    />
+  );
+};
 
 type DetailsProps = {
   obj: VolumeSnapshotContentKind;
