@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import { Chart, ChartArea, ChartAxis } from '@patternfly/react-charts';
 
 import { AreaChart } from '@console/internal/components/graphs/area';
@@ -42,11 +42,7 @@ describe('<AreaChart />', () => {
 
   it('should show an empty state', () => {
     const wrapper = shallow(<AreaChart data={[]} />);
+    expect(wrapper.find(PrometheusGraphLink).exists()).toBe(true);
     expect(wrapper.find(GraphEmpty).exists()).toBe(true);
-  });
-
-  it('should show a loading skeleton state', () => {
-    const wrapper = mount(<AreaChart data={[]} loading={true} />); // Use full mount function so that we can check for a LoadingBox child
-    expect(wrapper.find('.skeleton-chart').exists()).toBe(true);
   });
 });
