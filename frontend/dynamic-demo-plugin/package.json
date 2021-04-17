@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack",
-    "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack",
+    "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack --mode=production",
+    "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack --mode=development",
     "http-server": "./http-server.sh ./dist",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
   },
   "dependencies": {
-    "react": "16.9.0"
+    "react": "17.0.1"
   },
   "devDependencies": {
     "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk",

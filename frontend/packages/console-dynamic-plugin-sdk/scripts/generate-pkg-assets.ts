@@ -1,6 +1,7 @@
 import * as readPkg from 'read-pkg';
-import chalk from 'chalk';
 import * as fs from 'fs-extra';
+import * as _ from 'lodash';
+import chalk from 'chalk';
 
 import { resolvePath, relativePath } from './utils/path';
 
@@ -16,7 +17,7 @@ const createPackageJson = (packagePath: string) => {
     './api': './lib/api/api.js',
   };
   packageJson.readme = 'README.md';
-  packageJson.peerDependencies = packageJson.dependencies;
+  packageJson.peerDependencies = _.pick(packageJson.devDependencies, 'webpack');
   delete packageJson.dependencies;
   delete packageJson.devDependencies;
   delete packageJson.scripts;

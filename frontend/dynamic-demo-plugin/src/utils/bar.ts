@@ -1,4 +1,4 @@
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import { SetFeatureFlag } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
 
 export default (label: string) => `Hello ${label} Function!`;
 
