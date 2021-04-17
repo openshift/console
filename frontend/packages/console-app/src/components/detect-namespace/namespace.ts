@@ -12,6 +12,11 @@ import {
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
+import { k8sGet, K8sKind } from '@console/internal/module/k8s';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import { FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { flagPending } from '@console/internal/reducers/features';
 
 type NamespaceContextType = {
   namespace?: string;
@@ -25,6 +30,10 @@ const LAST_NAMESPACE_NAME_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastNamesp
 const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `bridge/last-namespace-name`;
 
 export const NamespaceContext = React.createContext<NamespaceContextType>({});
+
+const namespaceExists = async (model: K8sKind, namespace: string) => {
+  await k8sGet(model, namespace);
+};
 
 export const useValuesForNamespaceContext = () => {
   const { pathname } = useLocation();
@@ -46,6 +55,7 @@ export const useValuesForNamespaceContext = () => {
     },
     [dispatch, setLastNamespace],
   );
+  const useProjects = useFlag(FLAGS.OPENSHIFT);
 
   // Keep namespace in sync with redux.
   React.useEffect(() => {
@@ -55,12 +65,26 @@ export const useValuesForNamespaceContext = () => {
     }
     // Automatically sets favorited or latest namespace as soon as
     // both informations are loaded from user settings.
-    if (!urlNamespace && favoriteLoaded && lastNamespaceLoaded) {
-      dispatch(setActiveNamespace(favoritedNamespace || lastNamespace || ALL_NAMESPACES_KEY));
+    if (!urlNamespace && favoriteLoaded && lastNamespaceLoaded && !flagPending(useProjects)) {
+      const setActiveIfExists = (ns: string) => {
+        if (!ns) {
+          return Promise.reject();
+        }
+        return namespaceExists(useProjects ? ProjectModel : NamespaceModel, ns)
+          .then(() => dispatch(setActiveNamespace(ns)))
+          .catch((res) => {
+            // eslint-disable-next-line no-console
+            console.warn('Error fetching namespace', ns);
+            throw res;
+          });
+      };
+      setActiveIfExists(favoritedNamespace)
+        .catch(() => setActiveIfExists(lastNamespace))
+        .catch(() => {});
     }
     // Only run this hook after favorite and last namespace are loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [favoriteLoaded, lastNamespaceLoaded]);
+  }, [favoriteLoaded, lastNamespaceLoaded, useProjects]);
 
   return {
     namespace: urlNamespace || favoritedNamespace || lastNamespace || ALL_NAMESPACES_KEY,
