@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
-import { UserRoleBinding, RoleBinding } from './project-access-form-utils-types';
+import {
+  UserRoleBinding,
+  RoleBinding,
+  ProjectAccessRoles,
+} from './project-access-form-utils-types';
 
 export const filterRoleBindings = (roleBindings: RoleBinding[], roles): RoleBinding[] => {
   return _.filter(roleBindings, (user: RoleBinding) => _.keys(roles).includes(user.roleRef.name));
@@ -14,3 +18,7 @@ export const getUsersFromSubject = (user: RoleBinding): UserRoleBinding[] =>
 
 export const getUserRoleBindings = (roleBindings: RoleBinding[]): UserRoleBinding[] =>
   _.flatten(roleBindings.map((user) => getUsersFromSubject(user)));
+
+export const defaultProjectAccessRoles: ProjectAccessRoles = {
+  availableClusterRoles: ['admin', 'edit', 'view'],
+};

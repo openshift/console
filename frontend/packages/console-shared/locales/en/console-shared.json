@@ -139,6 +139,8 @@
   "Namespace dashboard links appear on the project dashboard and namespace details pages in a section called \"Launcher\". Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.": "Namespace dashboard links appear on the project dashboard and namespace details pages in a section called \"Launcher\". Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.",
   "Add catalog categories": "Add catalog categories",
   "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.": "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.",
+  "Add project access roles": "Add project access roles",
+  "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.": "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.",
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
   "Required": "Required"

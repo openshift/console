@@ -30,6 +30,7 @@ import * as webAllowExternalImg from '@console/internal/imgs/network-policy-samp
 import * as webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { defaultProjectAccessRoles } from '@console/dev-console/src/components/project-access/project-access-form-utils';
 
 export type Sample = {
   highlightText?: string;
@@ -290,6 +291,16 @@ const defaultSamples = (t: TFunction) =>
           id: 'devcatalog-categories',
           snippet: true,
           lazyYaml: () => YAML.dump(defaultCatalogCategories),
+          targetResource: getTargetResource(ConsoleOperatorConfigModel),
+        },
+        {
+          title: t('console-shared~Add project access roles'),
+          description: t(
+            'console-shared~Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.',
+          ),
+          id: 'projectaccess-roles',
+          snippet: true,
+          lazyYaml: () => YAML.dump(defaultProjectAccessRoles),
           targetResource: getTargetResource(ConsoleOperatorConfigModel),
         },
       ],

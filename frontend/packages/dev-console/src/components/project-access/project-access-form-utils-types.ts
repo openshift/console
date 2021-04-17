@@ -12,6 +12,10 @@ export enum Roles {
   edit = 'edit',
 }
 
+export type ProjectAccessRoles = {
+  availableClusterRoles: string[];
+};
+
 export interface UserRoleBinding {
   roleBindingName?: string;
   user: string;
