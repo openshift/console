@@ -45,6 +45,7 @@ export const OS: React.FC<OSProps> = React.memo(
     commonTemplates,
     operatinSystemField,
     cloneBaseDiskImageField,
+    isCreateTemplate,
     mountWindowsGuestToolsField,
     flavor,
     workloadProfile,
@@ -265,7 +266,7 @@ export const OS: React.FC<OSProps> = React.memo(
           fieldType={FormFieldType.INLINE_CHECKBOX}
           loadingResources={loadingResources}
         >
-          <FormField>
+          <FormField isCreateTemplate={isCreateTemplate}>
             <Checkbox
               id={getFieldId(cloneBaseDiskImageField)}
               onChange={(v) => onChange(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE, v)}
@@ -311,6 +312,7 @@ type OSProps = {
   commonTemplateName: string;
   operatinSystemField: any;
   cloneBaseDiskImageField: any;
+  isCreateTemplate: boolean;
   mountWindowsGuestToolsField: any;
   workloadProfile: string;
   cnvBaseImages: any;

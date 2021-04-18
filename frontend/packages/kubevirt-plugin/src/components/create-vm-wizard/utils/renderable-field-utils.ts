@@ -49,6 +49,7 @@ const renderableFieldOrder: { [key in RenderableField]: number } = {
   [VMSettingsField.CONTAINER_IMAGE]: 32,
   [VMSettingsField.IMAGE_URL]: 33,
   [VMSettingsField.START_VM]: 34,
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE]: 35,
 };
 
 const idResolver: RenderableFieldResolver = {
@@ -73,6 +74,8 @@ const idResolver: RenderableFieldResolver = {
   [VMSettingsField.DESCRIPTION]: 'vm-description',
   [VMSettingsField.OPERATING_SYSTEM]: 'operating-system-dropdown',
   [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 'clone-common-base-image-checkbox',
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE]:
+    'clone-common-base-image-template-checkbox',
   [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 'mount-windows-guest-tools-checkbox',
   [VMSettingsField.FLAVOR]: 'flavor-dropdown',
   [VMSettingsField.MEMORY]: 'resources-memory',

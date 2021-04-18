@@ -49,6 +49,9 @@ export const titleKeyResolver: RenderableFieldResolver = {
   // t('kubevirt-plugin~Clone available operating system source to this Virtual Machine')
   [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]:
     'kubevirt-plugin~Clone available operating system source to this Virtual Machine',
+  // t('kubevirt-plugin~Clone available operating system source to this Virtual Machine Template')
+  [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE]:
+    'kubevirt-plugin~Clone available operating system source to this Virtual Machine Template',
   // t('kubevirt-plugin~Mount Windows guest tools')
   [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 'kubevirt-plugin~Mount Windows guest tools',
   // t('kubevirt-plugin~Flavor')

@@ -44,6 +44,10 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       value: false,
       isHidden: hiddenByOperatingSystem,
     },
+    [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE]: {
+      value: false,
+      isHidden: hiddenByOperatingSystem,
+    },
     [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: {
       value: false,
       isHidden: asHidden(true, VMSettingsField.OPERATING_SYSTEM),
