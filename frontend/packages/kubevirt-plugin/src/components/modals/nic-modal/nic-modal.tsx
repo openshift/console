@@ -119,6 +119,7 @@ export const Network: React.FC<NetworkProps> = ({
       isLoading={nadsLoading && !nadsLoadError}
       validationMessage={validationMessage}
       validationType={validationType}
+      rawErrorMessage={nadsLoadError}
     >
       <FormSelect
         onChange={(net, event) => {

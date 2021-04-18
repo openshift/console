@@ -9,3 +9,7 @@
 .kubevirt-form-row__help-icon--hidden {
   color: #72767B;
 }
+
+.kubevirt-fort-row__invalid-message-container {
+  color: var(--pf-global--danger-color--100);
+}
