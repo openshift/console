@@ -1,9 +1,14 @@
-.odc-task-sidebar {
+.opp-task-sidebar {
   &__content {
-    padding: 0 var(--pf-global--spacer--lg);
+    padding: var(--pf-global--spacer--lg);
+    overflow-y: auto;
   }
 
   &__param, &__resource, &__workspace {
     margin-bottom: var(--pf-global--spacer--md);
+  }
+
+  h2 {
+    margin: 0 0 var(--pf-global--spacer--sm) 0;
   }
 }

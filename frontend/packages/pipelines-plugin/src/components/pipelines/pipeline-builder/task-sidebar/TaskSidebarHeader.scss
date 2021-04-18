@@ -1,6 +1,17 @@
 .opp-task-sidebar-header {
-  font-size: var(--pf-global--FontSize--md);
-  height: 33px; // fixed height header to avoid actions from bouncing the header
-  margin: 0;
-  padding: 0 var(--pf-global--spacer--lg);
+  &__title {
+    font-size: var(--pf-global--FontSize--md);
+    height: 33px; // fixed height header to avoid actions from bouncing the header
+    margin: 0;
+    padding: 0 var(--pf-global--spacer--lg);
+  }
+
+  &__shortcuts {
+    text-align: right;
+    padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg);
+  }
+
+  hr {
+    margin: 0;
+  }
 }
