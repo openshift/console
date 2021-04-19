@@ -1,6 +1,6 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
 
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
+import { VM_TEMPLATE_NAME_PARAMETER, WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
 import {
   DUMMY_VM_NAME,
   ROOT_DISK_NAME,
@@ -14,7 +14,6 @@ import {
   DiskType,
   VolumeType,
 } from '../../../../constants/vm/storage';
-import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
@@ -92,8 +91,6 @@ const getContainerStorage = (
   };
 };
 
-const containerNames = winToolsContainerNames();
-
 export const windowsToolsStorage: VMWizardStorage = {
   type: VMWizardStorageType.WINDOWS_GUEST_TOOLS,
   disk: DiskWrapper.initializeFromSimpleData({
@@ -105,7 +102,7 @@ export const windowsToolsStorage: VMWizardStorage = {
     name: WINTOOLS_DISK_NAME,
     type: VolumeType.CONTAINER_DISK,
     typeData: {
-      image: containerNames[window.SERVER_FLAGS.branding] || containerNames?.okd,
+      image: WINTOOLS_CONTAINER_NAMES[window.SERVER_FLAGS.branding] || WINTOOLS_CONTAINER_NAMES.okd,
     },
   }).asResource(),
 };
