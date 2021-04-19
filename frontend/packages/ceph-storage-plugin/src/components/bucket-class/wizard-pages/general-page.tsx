@@ -9,22 +9,15 @@ import {
   TextInput,
   Radio,
   ValidatedOptions,
-  Tooltip,
 } from '@patternfly/react-core';
 import { ExternalLink } from '@console/internal/components/utils';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import '../create-bc.scss';
 import { useFlag } from '@console/shared';
 import { Action, State } from '../state';
 import { bucketClassTypeRadios } from '../../../constants/bucket-class';
 import { validateBucketClassName } from '../../../utils/bucket-class';
 import { GUARDED_FEATURES } from '../../../features';
-
-const BucketClassNameToolTip = ({ position, content }) => (
-  <Tooltip position={position} content={content} isContentLeftAligned>
-    <OutlinedQuestionCircleIcon />
-  </Tooltip>
-);
 
 const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
   const { t } = useTranslation();
@@ -90,24 +83,19 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         )}
         <FormGroup
           labelIcon={
-            <BucketClassNameToolTip
-              position="top"
-              content={
-                <ul>
-                  <li>{t('ceph-storage-plugin~3-63 chars')}</li>
-                  <li>
-                    {t('ceph-storage-plugin~Starts and ends with lowercase number or letter')}
-                  </li>
-                  <li>
-                    {t(
-                      'ceph-storage-plugin~Only lowercase letters, numbers, non-consecutive periods or hyphens',
-                    )}
-                  </li>
-                  <li>{t('ceph-storage-plugin~Avoid using the form of an IP address')}</li>
-                  <li>{t('ceph-storage-plugin~Globally unique name')}</li>
-                </ul>
-              }
-            />
+            <FieldLevelHelp>
+              <ul>
+                <li>{t('ceph-storage-plugin~3-63 chars')}</li>
+                <li>{t('ceph-storage-plugin~Starts and ends with lowercase number or letter')}</li>
+                <li>
+                  {t(
+                    'ceph-storage-plugin~Only lowercase letters, numbers, non-consecutive periods or hyphens',
+                  )}
+                </li>
+                <li>{t('ceph-storage-plugin~Avoid using the form of an IP address')}</li>
+                <li>{t('ceph-storage-plugin~Globally unique name')}</li>
+              </ul>
+            </FieldLevelHelp>
           }
           className="nb-create-bc-step-page-form__element"
           fieldId="bucketclassname-input"

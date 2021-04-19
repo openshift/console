@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
-import { Form, Tooltip, FormGroup, TextInput, TextContent } from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, TextContent } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
@@ -13,6 +12,7 @@ import {
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { getName, getRequestedPVCSize } from '@console/shared';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -145,11 +145,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           id="add-cap-sc-dropdown__FormGroup"
           fieldId="add-capacity-dropdown"
           label={t('ceph-storage-plugin~Storage Class')}
-          labelIcon={
-            <Tooltip position="top" content={<>{storageClassTooltip(t)}</>}>
-              <QuestionCircleIcon className="pf-u-secondary-color-100" />
-            </Tooltip>
-          }
+          labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
           isRequired
         >
           <div id="add-capacity-dropdown" className="ceph-add-capacity__sc-dropdown">
@@ -169,11 +165,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
               fieldId="request-size"
               id="requestSize__FormGroup"
               label={t('ceph-storage-plugin~Raw Capacity')}
-              labelIcon={
-                <Tooltip position="top" content={<>{requestedCapacityTooltip(t)}</>}>
-                  <QuestionCircleIcon className="pf-u-secondary-color-100" />
-                </Tooltip>
-              }
+              labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
             >
               <TextInput
                 isDisabled
