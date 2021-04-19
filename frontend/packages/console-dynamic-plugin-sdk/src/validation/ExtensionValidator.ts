@@ -29,10 +29,12 @@ export const findWebpackModules = (
   exposedModules: ExposedPluginModules,
 ) => {
   const webpackModules = Array.from(compilation.modules);
+
   return Object.keys(exposedModules).reduce((acc, moduleName) => {
-    acc[moduleName] = webpackModules.find(
-      (m) => (m as webpack.NormalModule)?.rawRequest === exposedModules[moduleName],
-    );
+    acc[moduleName] = webpackModules.find((m) => {
+      const rawRequest = _.get(m, 'rawRequest') || _.get(m, 'rootModule.rawRequest');
+      return exposedModules[moduleName] === rawRequest;
+    });
     return acc;
   }, {} as { [moduleName: string]: webpack.Module });
 };
@@ -48,8 +50,7 @@ export class ExtensionValidator {
     compilation: webpack.Compilation,
     extensions: SupportedExtension[],
     exposedModules: ExposedPluginModules,
-    dataVar: string = 'obj',
-    extensionDataVar: string = 'data',
+    dataVar: string = 'extensions',
   ) {
     const codeRefs = collectCodeRefData(extensions);
     const webpackModules = findWebpackModules(compilation, exposedModules);
@@ -72,7 +73,7 @@ export class ExtensionValidator {
     codeRefs.forEach((data) => {
       Object.entries(data.propToCodeRefValue).forEach(([propName, codeRefValue]) => {
         const [moduleName, exportName] = parseEncodedCodeRefValue(codeRefValue);
-        const errorTrace = `in ${dataVar}.${extensionDataVar}[${data.index}] property '${propName}'`;
+        const errorTrace = `in ${dataVar}[${data.index}] property '${propName}'`;
 
         if (!moduleName || !exportName) {
           this.result.addError(`Invalid code reference '${codeRefValue}' ${errorTrace}`);
