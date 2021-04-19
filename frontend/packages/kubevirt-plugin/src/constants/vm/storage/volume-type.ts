@@ -16,12 +16,15 @@ export class VolumeType extends ObjectEnum<string> {
   static readonly CLOUD_INIT_NO_CLOUD = new VolumeType('cloudInitNoCloud');
   static readonly CONTAINER_DISK = new VolumeType('containerDisk');
   static readonly DATA_VOLUME = new VolumeType('dataVolume');
+  static readonly DOWNWARD_API = new VolumeType('downwardAPI');
   static readonly EMPTY_DISK = new VolumeType('emptyDisk');
   static readonly EPHEMERAL = new VolumeType('ephemeral');
+  static readonly HOST_DISK = new VolumeType('hostDisk');
   static readonly PERSISTENT_VOLUME_CLAIM = new VolumeType('persistentVolumeClaim');
   static readonly SECRET = new VolumeType('secret', { isEnvType: true });
   static readonly CONFIG_MAP = new VolumeType('configMap', { isEnvType: true });
   static readonly SERVICE_ACCOUNT = new VolumeType('serviceAccount', { isEnvType: true });
+  static readonly SYSPREP = new VolumeType('sysprep');
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<VolumeType>(VolumeType),

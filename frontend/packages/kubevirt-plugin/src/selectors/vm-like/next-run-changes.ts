@@ -141,12 +141,12 @@ export const changedEnvDisks = (vm: VMWrapper, vmi: VMIWrapper): string[] => {
   const vmVolumes = vm.getVolumes();
 
   const vmEnvDiskVolumeNames = vmVolumes
-    .filter((vol) => new VolumeWrapper(vol).getType().isEnvType())
+    .filter((vol) => new VolumeWrapper(vol).getType()?.isEnvType())
     .map((vol) => vol.name);
 
   const vmiEnvDiskVolumeNames = vmi
     .getVolumes()
-    .filter((vol) => new VolumeWrapper(vol).getType().isEnvType())
+    .filter((vol) => new VolumeWrapper(vol).getType()?.isEnvType())
     .map((vol) => vol.name);
 
   const vmEnvDisks = vm.getDisks().filter((dsk) => vmEnvDiskVolumeNames.includes(dsk.name));
