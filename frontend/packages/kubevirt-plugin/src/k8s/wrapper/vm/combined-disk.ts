@@ -10,7 +10,8 @@ import { StorageUISource } from '../../../components/modals/disk-modal/storage-u
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
 import { getSimpleName } from '../../../selectors/utils';
-import { asVM, getDataVolumeTemplates, isWinToolsImage } from '../../../selectors/vm';
+import { asVM, getDataVolumeTemplates } from '../../../selectors/vm';
+import { isWinToolsImage } from '../../../selectors/vm/winimage';
 import { V1DataVolumeTemplateSpec } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1PersistentVolumeClaim, V1Volume } from '../../../types/api';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';

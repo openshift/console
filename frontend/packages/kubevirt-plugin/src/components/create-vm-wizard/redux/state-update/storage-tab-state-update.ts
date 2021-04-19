@@ -9,7 +9,8 @@ import {
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
 import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
-import { getVolumeContainerImage, isWinToolsImage } from '../../../../selectors/vm';
+import { getVolumeContainerImage } from '../../../../selectors/vm';
+import { isWinToolsImage } from '../../../../selectors/vm/winimage';
 import { toShallowJS } from '../../../../utils/immutable';
 import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { getNextIDResolver } from '../../../../utils/utils';

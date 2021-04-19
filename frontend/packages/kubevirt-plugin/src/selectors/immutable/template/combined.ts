@@ -14,8 +14,8 @@ import { VirtualMachineModel } from '../../../models';
 import { ITemplate } from '../../../types/template';
 import { iGet, iGetIn } from '../../../utils/immutable';
 import { compareVersions } from '../../../utils/sort';
-import { isWinToolsImage } from '../../vm';
 import { getFlavorLabel, getOsLabel, getWorkloadLabel } from '../../vm-template/combined-dependent';
+import { isWinToolsImage } from '../../vm/winimage';
 import { iGetCreationTimestamp, iGetLabels } from '../common';
 
 type FindTemplateOptions = {

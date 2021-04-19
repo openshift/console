@@ -20,7 +20,6 @@ import {
   getNetworks,
   getVolumes,
   hasAutoAttachPodInterface,
-  isWinToolsImage,
   parseCPU,
 } from '../../../../selectors/vm';
 import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
@@ -31,6 +30,7 @@ import {
   getTemplateWorkloadProfiles,
 } from '../../../../selectors/vm-template/advanced';
 import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
+import { isWinToolsImage } from '../../../../selectors/vm/winimage';
 import { V1alpha1DataVolume, V1Volume } from '../../../../types/api';
 import { V1Network } from '../../../../types/vm';
 import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
