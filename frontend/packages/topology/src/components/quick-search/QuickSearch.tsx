@@ -37,6 +37,7 @@ const Contents: React.FC<{
       getCatalogURL: (searchTerm: string, ns: string) => `/catalog/ns/${ns}?keyword=${searchTerm}`,
       // t('topology~View all developer catalog items ({{itemCount, number}})')
       catalogLinkLabel: 'topology~View all developer catalog items ({{itemCount, number}})',
+      extensions: catalogService.catalogExtensions,
     },
     {
       catalogType: 'quickStarts',
@@ -45,6 +46,7 @@ const Contents: React.FC<{
       getCatalogURL: (searchTerm: string) => `/quickstart?keyword=${searchTerm}`,
       // t('topology~View all quick starts ({{itemCount, number}})'
       catalogLinkLabel: 'topology~View all quick starts ({{itemCount, number}})',
+      extensions: catalogService.catalogExtensions,
     },
   ];
   return (

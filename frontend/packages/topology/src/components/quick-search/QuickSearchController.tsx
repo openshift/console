@@ -41,14 +41,20 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
                   },
                 ]
               : [];
+          const catalogItemTypes = quickSearchProvider.extensions.map((extension) => ({
+            label: extension.properties.title,
+            value: extension.properties.type,
+            description: extension.properties.typeDescription,
+          }));
           return {
             filteredItems: [...acc.filteredItems, ...items].sort((item1, item2) =>
               item1.name.localeCompare(item2.name),
             ),
             viewAllLinks: [...acc.viewAllLinks, ...viewAllLink],
+            catalogItemTypes: [...acc.catalogItemTypes, ...catalogItemTypes],
           };
         },
-        { filteredItems: [], viewAllLinks: [] },
+        { filteredItems: [], viewAllLinks: [], catalogItemTypes: [] },
       );
     },
     [namespace, quickSearchProviders, t],

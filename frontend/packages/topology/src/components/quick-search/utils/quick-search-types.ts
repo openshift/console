@@ -1,4 +1,5 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, CatalogItemType, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 
 export type QuickSearchProvider = {
   catalogType: string;
@@ -6,6 +7,7 @@ export type QuickSearchProvider = {
   loaded: boolean;
   getCatalogURL: (searchTerm: string, ns?: string) => string;
   catalogLinkLabel: string;
+  extensions: ResolvedExtension<CatalogItemType>[];
 };
 
 export type QuickSearchProviders = QuickSearchProvider[];
@@ -19,4 +21,5 @@ export type CatalogLinkData = {
 export type QuickSearchData = {
   filteredItems: CatalogItem[];
   viewAllLinks: CatalogLinkData[];
+  catalogItemTypes: CatalogType[];
 };
