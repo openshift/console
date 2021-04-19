@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
@@ -224,10 +225,21 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   value={mappedValidSubscription}
                 />
               )}
-              <PropertyItem label={t('olm~Repository')} value={repository || notAvailable} />
+              <PropertyItem
+                label={t('olm~Repository')}
+                value={
+                  repository ? <ExternalLink href={repository} text={repository} /> : notAvailable
+                }
+              />
               <PropertyItem
                 label={t('olm~Container image')}
-                value={containerImage || notAvailable}
+                value={
+                  containerImage ? (
+                    <ClipboardCopy isReadOnly>{containerImage}</ClipboardCopy>
+                  ) : (
+                    notAvailable
+                  )
+                }
               />
               <PropertyItem label={t('olm~Created at')} value={created || notAvailable} />
               <PropertyItem
