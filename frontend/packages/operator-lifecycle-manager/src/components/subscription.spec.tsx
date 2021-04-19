@@ -292,8 +292,8 @@ describe('SubscriptionsList', () => {
       'olm~Name',
       'olm~Namespace',
       'olm~Status',
-      'olm~Channel',
-      'olm~Approval strategy',
+      'olm~Update channel',
+      'olm~Update approval',
       '',
     ]);
   });
@@ -347,8 +347,11 @@ describe('SubscriptionUpdates', () => {
 
   it('renders link to configure update channel', () => {
     const channel = wrapper
-      .findWhere((node) =>
-        node.equals(<dt className="co-detail-table__section-header">olm~Channel</dt>),
+      .findWhere(
+        (node) =>
+          node.type() === 'dt' &&
+          node.hasClass('co-detail-table__section-header') &&
+          node.text().includes('olm~Update channel'),
       )
       .parents()
       .at(0)
@@ -362,8 +365,11 @@ describe('SubscriptionUpdates', () => {
 
   it('renders link to set approval strategy', () => {
     const strategy = wrapper
-      .findWhere((node) =>
-        node.equals(<dt className="co-detail-table__section-header">olm~Approval</dt>),
+      .findWhere(
+        (node) =>
+          node.type() === 'dt' &&
+          node.hasClass('co-detail-table__section-header') &&
+          node.text().includes('olm~Update approval'),
       )
       .parents()
       .at(0)
