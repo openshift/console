@@ -245,6 +245,8 @@
   "This disk does not have a source defined and can not be used as a boot source": "This disk does not have a source defined and can not be used as a boot source",
   "A boot source disk must have a source and can not be blank": "A boot source disk must have a source and can not be blank",
   "--- Select Bootable Disk ---": "--- Select Bootable Disk ---",
+  "Supported Storage classes": "Supported Storage classes",
+  "Supported Storage classes for selected provider": "Supported Storage classes for selected provider",
   "Disks": "Disks",
   "Add Disk": "Add Disk",
   "No disks attached": "No disks attached",

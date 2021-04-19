@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
+  ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
@@ -19,6 +20,8 @@ import {
 } from '@console/internal/module/k8s';
 import { getAnnotations, getName } from '@console/shared/src';
 import {
+  Alert,
+  AlertVariant,
   ExpandableSection,
   Form,
   FormSelect,
@@ -53,7 +56,13 @@ import {
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
-import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
+import {
+  DYNAMIC,
+  getDialogUIError,
+  getSequenceName,
+  STORAGE_CLASS_SUPPORTED_RHV_LINK,
+  STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
+} from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
@@ -73,7 +82,7 @@ import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { StorageUISource } from './storage-ui-source';
-
+import { VMImportProvider } from '../../create-vm-wizard/types';
 import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
@@ -100,6 +109,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     storageClassConfigMap: _storageClassConfigMap,
     editConfig,
     isVMRunning,
+    importProvider,
   } = props;
   const { t } = useTranslation();
   const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
@@ -598,22 +608,44 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             </FormPFSelect>
           </FormRow>
           {source.requiresStorageClass() && (
-            <K8sResourceSelectRow
-              title={t('kubevirt-plugin~Storage Class')}
-              key="storage-class"
-              id={asId('storage-class')}
-              isDisabled={isDisabled('storageClass') || isStorageClassDataLoading}
-              name={storageClassName}
-              data={storageClasses}
-              model={StorageClassModel}
-              hasPlaceholder
-              onChange={(sc) => onStorageClassNameChanged(sc || '')}
-              getResourceLabel={(sc) =>
-                getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true'
-                  ? t('kubevirt-plugin~{{name}} (default)', { name: getName(sc) })
-                  : getName(sc)
-              }
-            />
+            <Stack hasGutter>
+              {importProvider && (
+                <StackItem>
+                  <Alert
+                    variant={AlertVariant.warning}
+                    isInline
+                    title={t('kubevirt-plugin~Supported Storage classes')}
+                  >
+                    <ExternalLink
+                      text={t('kubevirt-plugin~Supported Storage classes for selected provider')}
+                      href={
+                        importProvider === VMImportProvider.OVIRT
+                          ? STORAGE_CLASS_SUPPORTED_VMWARE_LINK
+                          : STORAGE_CLASS_SUPPORTED_RHV_LINK
+                      }
+                    />
+                  </Alert>
+                </StackItem>
+              )}
+              <StackItem>
+                <K8sResourceSelectRow
+                  title={t('kubevirt-plugin~Storage Class')}
+                  key="storage-class"
+                  id={asId('storage-class')}
+                  isDisabled={isDisabled('storageClass') || isStorageClassDataLoading}
+                  name={storageClassName}
+                  data={storageClasses}
+                  model={StorageClassModel}
+                  hasPlaceholder
+                  onChange={(sc) => onStorageClassNameChanged(sc || '')}
+                  getResourceLabel={(sc) =>
+                    getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true'
+                      ? t('kubevirt-plugin~{{name}} (default)', { name: getName(sc) })
+                      : getName(sc)
+                  }
+                />
+              </StackItem>
+            </Stack>
           )}
           {source.requiresVolumeModeOrAccessModes() && (
             <ExpandableSection
@@ -754,5 +786,6 @@ export type DiskModalProps = {
   usedPVCNames: Set<string>;
   editConfig?: UIStorageEditConfig;
   isVMRunning?: boolean;
+  importProvider?: VMImportProvider;
 } & ModalComponentProps &
   HandlePromiseProps;

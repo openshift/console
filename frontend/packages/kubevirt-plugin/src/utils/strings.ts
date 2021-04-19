@@ -31,6 +31,10 @@ export const CLOUD_INIT_MISSING_USERNAME =
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
 export const STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK =
   'https://docs.openshift.com/container-platform/4.6/virt/virtual_machines/virtual_disks/virt-features-for-storage.html';
+export const STORAGE_CLASS_SUPPORTED_RHV_LINK =
+  'https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/importing_vms/virt-importing-rhv-vm.html';
+export const STORAGE_CLASS_SUPPORTED_VMWARE_LINK =
+  'https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/importing_vms/virt-importing-vmware-vm.html';
 
 export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled
