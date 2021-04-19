@@ -123,6 +123,7 @@ func main() {
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
 	fUserSettingsLocation := fs.String("user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
+	fQuickStarts := fs.String("quick-starts", "", "Allow customization of available ConsoleQuickStart resources in console. (JSON as string)")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -235,6 +236,7 @@ func main() {
 		DevCatalogCategories:  *fDevCatalogCategories,
 		UserSettingsLocation:  *fUserSettingsLocation,
 		EnabledConsolePlugins: consolePluginsMap,
+		QuickStarts:           *fQuickStarts,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend

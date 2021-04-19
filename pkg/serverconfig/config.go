@@ -253,6 +253,16 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 			klog.Fatalf("Could not marshal ConsoleConfig customization.developerCatalog.categories field: %v", err)
 		}
 	}
+
+	if customization.QuickStarts.Disabled != nil {
+		quickStarts, err := json.Marshal(customization.QuickStarts)
+		if err == nil {
+			fs.Set("quick-starts", string(quickStarts))
+		} else {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.quickStarts field: %v", err)
+		}
+	}
+
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {
