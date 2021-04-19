@@ -260,6 +260,7 @@
   "Install Operator": "Install Operator",
   "Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.": "Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.",
   "Update channel": "Update channel",
+  "Update approval": "Update approval",
   "The channel to track and receive the updates from.": "The channel to track and receive the updates from.",
   "Installation mode": "Installation mode",
   "All namespaces on the cluster": "All namespaces on the cluster",
