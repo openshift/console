@@ -215,7 +215,7 @@ export const Area: React.FC<AreaProps> = ({
       chartStyle={chartStyle}
       data={data}
       loading={loading}
-      query={query}
+      query={[query, limitQuery, requestedQuery]}
       mainDataName="usage"
       {...rest}
     />
@@ -229,7 +229,7 @@ export type AreaChartProps = {
   humanize?: Humanize;
   height?: number;
   loading?: boolean;
-  query?: string;
+  query?: string | string[];
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
