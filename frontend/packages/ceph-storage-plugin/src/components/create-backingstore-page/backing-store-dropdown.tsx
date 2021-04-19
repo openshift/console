@@ -7,11 +7,11 @@ import {
   DropdownSeparator,
   DropdownToggle,
 } from '@patternfly/react-core';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ListKind } from 'public/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useDeepCompareMemoize } from '@console/shared';
 import CreateBackingStoreFormModal from './create-bs-modal';
-import { NooBaaBackingStoreModel } from '../../models';
 import { BackingStoreKind } from '../../types';
+import { backingStoreResource } from '../../resources';
 
 export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
   id,
@@ -23,19 +23,17 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
-  const [nbsObj, nbsLoaded, nbsErr] = useK8sGet<ListKind<BackingStoreKind>>(
-    NooBaaBackingStoreModel,
-    null,
-    namespace,
-  );
+
+  const [nbsData, , nbsLoadErr] = useK8sWatchResource<BackingStoreKind[]>(backingStoreResource);
+  const noobaaBackingStores: BackingStoreKind[] = useDeepCompareMemoize(nbsData, true);
+
   const [nsName, setNSName] = React.useState('');
-  const nbsList = nbsLoaded && !nbsErr ? nbsObj.items : [];
   const handleDropdownChange = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       setNSName(e.currentTarget.id);
-      onChange(nbsList.find((nbs) => nbs?.metadata?.name === e.currentTarget.id));
+      onChange(noobaaBackingStores.find((nbs) => nbs?.metadata?.name === e.currentTarget.id));
     },
-    [nbsList, onChange],
+    [noobaaBackingStores, onChange],
   );
 
   const getDropdownItems = React.useCallback(
@@ -76,11 +74,11 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
     [creatorDisabled, t, handleDropdownChange, namespace],
   );
 
-  const dropdownItems = getDropdownItems(nbsList);
+  const dropdownItems = getDropdownItems(noobaaBackingStores);
 
   return (
     <div className={className}>
-      {nbsErr && (
+      {nbsLoadErr && (
         <Alert
           className="nb-create-bc-step-page__danger"
           variant="danger"
@@ -95,7 +93,7 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
             id="nbs-dropdown-id"
             data-test="nbs-dropdown-toggle"
             onToggle={() => setOpen(!isOpen)}
-            isDisabled={!!nbsErr}
+            isDisabled={!!nbsLoadErr}
           >
             {selectedKey || nsName || t('ceph-storage-plugin~Select a backing store')}
           </DropdownToggle>

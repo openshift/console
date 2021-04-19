@@ -12,7 +12,13 @@ import {
 import { WatchK8sResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeDiscoveryResult } from '@console/local-storage-operator-plugin/src/models';
-import { CephClusterModel, CephBlockPoolModel, OCSServiceModel } from './models';
+import {
+  CephClusterModel,
+  CephBlockPoolModel,
+  OCSServiceModel,
+  NooBaaBackingStoreModel,
+  NooBaaNamespaceStoreModel,
+} from './models';
 import { CEPH_STORAGE_NAMESPACE } from './constants';
 import { CAPACITY_USAGE_QUERIES, StorageDashboardQuery } from './queries';
 
@@ -98,4 +104,16 @@ export const secretResource: FirehoseResource = {
   prop: 'secret',
   namespace: CEPH_STORAGE_NAMESPACE,
   name: 'rook-ceph-external-cluster-details',
+};
+
+export const backingStoreResource = {
+  kind: referenceForModel(NooBaaBackingStoreModel),
+  isList: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
+};
+
+export const namespaceStoreResource = {
+  kind: referenceForModel(NooBaaNamespaceStoreModel),
+  isList: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
 };
