@@ -29,8 +29,8 @@ import {
   getGuestAgentFieldNotAvailMsg,
   getNumLoggedInUsersMessage,
 } from '../../../utils/guest-agent-strings';
+import { isGuestAgentInstalled } from '../../../utils/guest-agent-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { isGuestAgentInstalled } from './vm-alerts';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const { t } = useTranslation();

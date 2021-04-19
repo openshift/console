@@ -7,10 +7,14 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { Gallery } from '@patternfly/react-core';
 
-import { VMStatus } from '../../vm-status/vm-status';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { VMAlerts } from './vm-alerts';
+import { VMEventsStatusCard } from '../../vms/VMEventsStatusCard';
+import GuestAgentStatusHealth from './status/GuestAgentStatusHealth';
+import VMStatusHealth from './status/VMStatusHealth';
+
+import './vm-status-card.scss';
 
 export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const { t } = useTranslation();
@@ -22,11 +26,15 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
       <DashboardCardHeader>
         <DashboardCardTitle>{t('kubevirt-plugin~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
-      <DashboardCardBody>
+      <DashboardCardBody className="VMStatusCard-body">
         <HealthBody>
-          <VMStatus vm={vm} vmi={vmi} vmStatusBundle={vmStatusBundle} />
+          <Gallery className="VMStatusCard co-overview-status__health" hasGutter>
+            <VMStatusHealth vmStatusBundle={vmStatusBundle} />
+            <GuestAgentStatusHealth vmi={vmi} />
+          </Gallery>
         </HealthBody>
-        <VMAlerts vmi={vmi} />
+        <div className="VMStatusCard-separator" />
+        <VMEventsStatusCard vm={vm} />
       </DashboardCardBody>
     </DashboardCard>
   );

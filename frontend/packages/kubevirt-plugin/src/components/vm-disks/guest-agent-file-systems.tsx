@@ -14,7 +14,7 @@ import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/gue
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types/vm';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
+import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 
 import './guest-agent-file-systems.scss';
 

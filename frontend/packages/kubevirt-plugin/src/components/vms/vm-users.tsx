@@ -13,7 +13,7 @@ import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/gue
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
+import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
