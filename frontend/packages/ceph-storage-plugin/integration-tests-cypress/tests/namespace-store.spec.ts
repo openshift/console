@@ -1,12 +1,13 @@
 import { commonFlows } from '../views/common';
-import { store, Providers, testName } from '../views/store';
+import { store, Providers, testName, StoreType } from '../views/store';
 import { checkErrors } from '../../../integration-tests-cypress/support';
 
-describe('Tests creation of Backing Stores', () => {
+describe('Tests creation of Namespace Stores', () => {
   before(() => {
     cy.login();
     cy.visit('/');
     cy.install();
+    store.setStoreType(StoreType.NamespaceStore);
   });
 
   after(() => {
@@ -15,7 +16,7 @@ describe('Tests creation of Backing Stores', () => {
 
   afterEach(() => {
     cy.byLegacyTestID('actions-menu-button').click();
-    cy.byTestActionID('Delete Backing Store').click();
+    cy.byTestActionID('Delete Namespace Store').click();
     cy.byTestID('confirm-action').click();
     checkErrors();
   });
@@ -23,17 +24,17 @@ describe('Tests creation of Backing Stores', () => {
   beforeEach(() => {
     cy.visit('/');
     commonFlows.navigateToOCS();
-    cy.byLegacyTestID('horizontal-link-Backing Store').click();
+    cy.byLegacyTestID('horizontal-link-Namespace Store').click();
     cy.byTestID('item-create').click();
   });
 
-  it('Test creation of AWS backing store', () => {
+  it('Test creation of AWS namespace store', () => {
     store.createStore(Providers.AWS);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
-  it('Test creation of Azure backing store', () => {
+  it('Test creation of Azure namespace store', () => {
     store.createStore(Providers.AZURE);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
@@ -43,10 +44,5 @@ describe('Tests creation of Backing Stores', () => {
     store.createStore(Providers.S3);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
-  });
-
-  it('Test creation of PVC Endpoint Type', () => {
-    store.createStore(Providers.PVC);
-    cy.byLegacyTestID('resource-title').contains(testName);
   });
 });

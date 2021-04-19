@@ -7,16 +7,23 @@ export enum Providers {
 
 export const testName = 'test-bucket';
 
+export enum StoreType {
+  BackingStore = 'backingstore',
+  NamespaceStore = 'namespacestore',
+}
+
+let storeType = StoreType.BackingStore;
+
 const inputCustomSecrets = () => {
   cy.byTestID('switch-to-creds').click();
-  cy.byTestID('backingstore-access-key').type('my_dummy_test_key');
-  cy.byTestID('backingstore-secret-key').type('my_dummy_sec_key');
-  cy.byTestID('backingstore-target-bucket').type('my_dummy_target');
+  cy.byTestID(`${storeType}-access-key`).type('my_dummy_test_key');
+  cy.byTestID(`${storeType}-secret-key`).type('my_dummy_sec_key');
+  cy.byTestID(`${storeType}-target-bucket`).type('my_dummy_target');
 };
 
 const setupAWS = () => {
   cy.byTestDropDownMenu(Providers.AWS).click();
-  cy.byTestID('backingstore-aws-region-dropdown').click();
+  cy.byTestID(`${storeType}-aws-region-dropdown`).click();
   cy.byTestDropDownMenu('us-east-1').click();
   inputCustomSecrets();
 };
@@ -29,14 +36,14 @@ const setupAzureBlob = () => {
 const setupS3Endpoint = () => {
   const ENDPOINT = 'http://test-endpoint.com';
   cy.byTestDropDownMenu('S3 Compatible').click();
-  cy.byTestID('backingstore-s3-endpoint').type(ENDPOINT);
+  cy.byTestID(`${storeType}-s3-endpoint`).type(ENDPOINT);
   inputCustomSecrets();
 };
 
 const setupPVC = () => cy.byTestDropDownMenu('PVC').click();
 
 const setupProvider = (provider: Providers) => {
-  cy.byTestID('backingstore-provider').click();
+  cy.byTestID(`${storeType}-provider`).click();
   switch (provider) {
     case Providers.AWS:
       setupAWS();
@@ -55,10 +62,13 @@ const setupProvider = (provider: Providers) => {
   }
 };
 
-export const bs = {
+export const store = {
   createStore: (provider: Providers) => {
-    cy.byTestID('backingstore-name').type(testName);
+    cy.byTestID(`${storeType}-name`).type(testName);
     setupProvider(provider);
-    cy.byTestID('backingstore-create-button').click();
+    cy.byTestID(`${storeType}-create-button`).click();
+  },
+  setStoreType: (type: StoreType) => {
+    storeType = type;
   },
 };
