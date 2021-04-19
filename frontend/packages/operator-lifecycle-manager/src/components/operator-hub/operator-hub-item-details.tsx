@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
-import { ClipboardCopy } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import { ExternalLink, HintBlock, Timestamp } from '@console/internal/components/utils';
@@ -235,7 +234,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 label={t('olm~Container image')}
                 value={
                   containerImage ? (
-                    <ClipboardCopy isReadOnly>{containerImage}</ClipboardCopy>
+                    <div className="co-break-all co-select-to-copy">{containerImage}</div>
                   ) : (
                     notAvailable
                   )
