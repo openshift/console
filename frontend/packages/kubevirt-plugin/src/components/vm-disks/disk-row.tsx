@@ -15,6 +15,7 @@ import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { VMIKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { validateDisk } from '../../utils/validations/vm/disk';
 import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
@@ -80,10 +81,11 @@ const menuActionDelete = (
 const getActions = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
+  vmi: VMIKind,
   opts: VMStorageRowActionOpts,
 ) => {
   const actions = [];
-  if (isVMI(vmLikeEntity) || isVMRunningOrExpectedRunning(asVM(vmLikeEntity))) {
+  if (isVMI(vmLikeEntity) || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)) {
     return actions;
   }
 
@@ -162,6 +164,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
     isDisabled,
     withProgress,
     vmLikeEntity,
+    vmi,
     columnClasses,
     templateValidations,
     pendingChangesDisks,
@@ -197,7 +200,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
       style={style}
       actionsComponent={
         <Kebab
-          options={getActions(disk, vmLikeEntity, {
+          options={getActions(disk, vmLikeEntity, vmi, {
             withProgress,
             templateValidations,
           })}
@@ -205,7 +208,7 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
             isDisabled ||
             isVMI(vmLikeEntity) ||
             !!getDeletetionTimestamp(vmLikeEntity) ||
-            isVMRunningOrExpectedRunning(asVM(vmLikeEntity))
+            isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)
           }
           id={`kebab-for-${disk.getName()}`}
         />

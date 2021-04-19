@@ -1,6 +1,7 @@
 import { ValidationObject } from '@console/shared';
 
 import { VMLikeEntityKind } from '../../types/vmLike';
+import { VMIKind } from '../../types';
 
 export type NetworkSimpleData = {
   name?: string;
@@ -27,6 +28,7 @@ export type VMNicRowActionOpts = { withProgress: (promise: Promise<any>) => void
 
 export type VMNicRowCustomData = {
   vmLikeEntity: VMLikeEntityKind;
+  vmi: VMIKind;
   columnClasses: string[];
   isDisabled: boolean;
   pendingChangesNICs?: Set<string>;

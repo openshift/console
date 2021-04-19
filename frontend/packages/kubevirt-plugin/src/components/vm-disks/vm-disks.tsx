@@ -173,10 +173,11 @@ export const VMDisks: React.FC<VMDisksProps> = ({
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const templateValidations = getTemplateValidationsFromTemplate(getLoadedData(vmTemplate));
-  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
-  const pendingChangesDisks: Set<string> = vmi
-    ? new Set(changedDisks(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
-    : null;
+  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  const pendingChangesDisks: Set<string> =
+    isVMRunning && vmi
+      ? new Set(changedDisks(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
+      : null;
 
   const resources = [
     getResource(PersistentVolumeClaimModel, {
@@ -223,6 +224,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({
       rowFilters={[diskSourceFilter]}
       customData={{
         vmLikeEntity,
+        vmi,
         withProgress,
         isDisabled: isLocked || isCommonTemplate,
         templateValidations,

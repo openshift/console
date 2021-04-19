@@ -18,10 +18,10 @@ import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMSnapshot } from '../../types';
 import { wrapWithProgress } from '../../utils/utils';
 import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
-import { VMLikeEntityTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { snapshotsTableColumnClasses } from './utils';
 import { VMSnapshotRow } from './vm-snapshot-row';
+import { VMTabProps } from '../vms/types';
 
 export type VMSnapshotsTableProps = {
   data?: any[];
@@ -88,10 +88,11 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
   );
 };
 
-export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp }) => {
   const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
+  const vmi = vmisProp[0];
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
@@ -108,7 +109,7 @@ export const VMSnapshotsPage: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
+  const isDisabled = isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
 
   return (
     <div className="co-m-list">

@@ -60,8 +60,8 @@ const BootOrderModalComponent = withHandlePromise(
     const [showUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
     const [showPatchError, setPatchError] = React.useState<boolean>(false);
     const vm = asVM(vmLikeEntity);
-    const isVMRunning = isVMRunningOrExpectedRunning(vm);
     const vmi = getLoadedData(vmiProp);
+    const isVMRunning = isVMRunningOrExpectedRunning(vm, vmi);
 
     const onReload = React.useCallback(() => {
       const updatedDevices = bootableDevices;
