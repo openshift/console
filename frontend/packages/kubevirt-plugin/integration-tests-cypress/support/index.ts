@@ -1,7 +1,11 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
+import {
+  KUBEVIRT_PROJECT_NAME,
+  KUBEVIRT_STORAGE_CLASS_DEFAULTS,
+  EXPECT_LOGIN_SCRIPT_PATH,
+  OS_IMAGES_NS,
+} from '../const';
 import { V1alpha1DataVolume } from '../../src/types/api';
-import { KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../const';
 
 export * from '../../../integration-tests-cypress/support';
 
@@ -9,11 +13,14 @@ declare global {
   namespace Cypress {
     interface Chainable<Subject> {
       deleteResource(resource: any, ignoreNotFound?: boolean): void;
+      applyResource(resource: any): void;
       createResource(resource: any): void;
+      waitForResource(resource: any): void;
       createDataVolume(name: string, namespace: string): void;
       dropFile(filePath: string, fileName: string, inputSelector: string): void;
       createUserTemplate(namespace: string): void;
       cdiCloner(namespace: string): void;
+      waitForLoginPrompt(vmName: string, namespace: string): void;
     }
   }
 }
@@ -23,17 +30,35 @@ Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   cy.exec(
     `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`,
   );
+  // VMI maybe still there while deleting VM
+  // wait for VMI is deleted before move on
+  if (kind === 'VirtualMachine') {
+    cy.exec(
+      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} vmi ${resource.metadata.name} --wait=true`,
+    );
+  }
 });
 
 Cypress.Commands.add('createResource', (resource) => {
   cy.exec(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
 });
 
+Cypress.Commands.add('applyResource', (resource) => {
+  cy.exec(`echo '${JSON.stringify(resource)}' | kubectl apply -f -`);
+});
+
+Cypress.Commands.add('waitForResource', (resource: any) => {
+  const { kind } = resource;
+  const { name } = resource.metadata;
+  const ns = resource.metadata.namespace;
+  cy.exec(`kubectl wait --for condition=Ready ${kind} ${name} -n ${ns} --timeout=600s`, {
+    timeout: 600000,
+  });
+});
+
 Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
   cy.exec(
-    `kubectl get -o json -n ${Cypress.env(
-      'KUBEVIRT_PROJECT_NAME',
-    )} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
+    `kubectl get -o json -n ${KUBEVIRT_PROJECT_NAME} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
   ).then((result) => {
     const configMap = JSON.parse(result.stdout);
     cy.fixture('data-volume').then((dv) => {
@@ -49,7 +74,8 @@ Cypress.Commands.add('createDataVolume', (name: string, namespace: string) => {
       if (storageClass) {
         dv.spec.pvc.storageClassName = storageClass;
       }
-      cy.createResource(dv);
+      cy.applyResource(dv);
+      cy.waitForResource(dv);
     });
   });
 });
@@ -83,9 +109,7 @@ const configureDataVolume = (dv: V1alpha1DataVolume, configMap: ConfigMapKind) =
 
 Cypress.Commands.add('createUserTemplate', (namespace: string) => {
   cy.exec(
-    `kubectl get -o json -n ${Cypress.env(
-      'KUBEVIRT_PROJECT_NAME',
-    )} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
+    `kubectl get -o json -n ${KUBEVIRT_PROJECT_NAME} configMap ${KUBEVIRT_STORAGE_CLASS_DEFAULTS}`,
   ).then((result) => {
     const configMap = JSON.parse(result.stdout);
     cy.fixture('user-template').then((ut) => {
@@ -107,10 +131,17 @@ Cypress.Commands.add('createUserTemplate', (namespace: string) => {
 
 Cypress.Commands.add('cdiCloner', (namespace: string) => {
   cy.fixture('cdi-cloner').then((cloner) => {
-    cy.createResource(cloner.clusterRole);
+    cy.applyResource(cloner.clusterRole);
     cloner.roleBinding.subjects[0].name = `system:serviceaccount:${namespace}:default`;
     cloner.roleBinding.metadata.name = namespace;
-    cloner.roleBinding.metadata.namespace = Cypress.env('OS_IMAGES_NS');
-    cy.createResource(cloner.roleBinding);
+    cloner.roleBinding.metadata.namespace = OS_IMAGES_NS;
+    cy.applyResource(cloner.roleBinding);
+  });
+});
+
+Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) => {
+  cy.exec(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${vmName} ${namespace}`, {
+    failOnNonZeroExit: false,
+    timeout: 180000,
   });
 });

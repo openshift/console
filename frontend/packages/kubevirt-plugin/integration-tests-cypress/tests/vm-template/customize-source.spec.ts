@@ -3,8 +3,7 @@ import { testName } from '../../support';
 import { addSource } from '../../view/add-source';
 import { customizeSource, PROVIDER } from '../../view/customize-source';
 import { virtualization } from '../../view/virtualization';
-
-const TEMPLATE = Cypress.env('TEMPLATE_NAME');
+import { TEMPLATE_NAME, TEMPLATE_BASE_IMAGE, OS_IMAGES_NS } from '../../const/index';
 
 describe('test vm template source image', () => {
   before(() => {
@@ -14,8 +13,8 @@ describe('test vm template source image', () => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: Cypress.env('TEMPLATE_BASE_IMAGE'),
-        namespace: Cypress.env('OS_IMAGES_NS'),
+        name: TEMPLATE_BASE_IMAGE,
+        namespace: OS_IMAGES_NS,
       },
     });
     cy.cdiCloner(testName);
@@ -25,8 +24,8 @@ describe('test vm template source image', () => {
     cy.deleteResource({
       kind: 'DataVolume',
       metadata: {
-        name: Cypress.env('TEMPLATE_BASE_IMAGE'),
-        namespace: Cypress.env('OS_IMAGES_NS'),
+        name: TEMPLATE_BASE_IMAGE,
+        namespace: OS_IMAGES_NS,
       },
     });
   });
@@ -34,12 +33,12 @@ describe('test vm template source image', () => {
   it('customize common template source', () => {
     const vmtName = 'tmp-customized';
     virtualization.templates.visit();
-    virtualization.templates.addSource(TEMPLATE);
+    virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY);
-    virtualization.templates.testSource(TEMPLATE, 'Importing');
-    virtualization.templates.testSource(TEMPLATE, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
 
-    virtualization.templates.customizeSource(TEMPLATE);
+    virtualization.templates.customizeSource(TEMPLATE_NAME);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();
@@ -56,7 +55,7 @@ describe('test vm template source image', () => {
     cy.createUserTemplate(testName);
     virtualization.templates.visit();
 
-    virtualization.templates.customizeSource(TEMPLATE);
+    virtualization.templates.customizeSource(TEMPLATE_NAME);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();

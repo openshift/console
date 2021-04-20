@@ -4,7 +4,8 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "types": ["cypress"],
-    "lib": ["es6", "dom", "es2017"]
+    "lib": ["es6", "dom", "es2017"],
+    "baseUrl": "../../node_modules"
   },
   "include": ["**/*.ts", "./support/index.ts"]
 }
