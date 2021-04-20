@@ -5,6 +5,10 @@ import { TFunction } from 'i18next';
 
 import { defaultCatalogCategories } from '@console/dev-console/src/components/catalog/utils/default-categories';
 
+import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { subscribeToExtensions } from '@console/plugin-sdk/src/api/subscribeToExtensions';
+
 import {
   BuildConfigModel,
   ClusterRoleModel,
@@ -39,7 +43,7 @@ export type Sample = {
   description: string;
   id: string;
   yaml?: string;
-  lazyYaml?: () => string;
+  lazyYaml?: () => Promise<string>;
   snippet?: boolean;
   targetResource: {
     apiVersion: string;
@@ -301,6 +305,51 @@ const defaultSamples = (t: TFunction) =>
           id: 'projectaccess-roles',
           snippet: true,
           lazyYaml: () => YAML.dump(defaultProjectAccessRoles),
+          targetResource: getTargetResource(ConsoleOperatorConfigModel),
+        },
+        {
+          title: t('console-shared~Add page actions'),
+          description: t(
+            'console-shared~Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.',
+          ),
+          id: 'addpage-actions',
+          snippet: true,
+          lazyYaml: () => {
+            // Similar to useTranslationExt
+            const translateExtension = (key: string) => {
+              if (key.length < 3 || key[0] !== '%' || key[key.length - 1] !== '%') {
+                return key;
+              }
+              return t(key.substr(1, key.length - 2));
+            };
+            return new Promise<string>((resolve) => {
+              // Using subscribeToExtensions here instead of useExtensions hook because
+              // this lazyYaml method is not called in a render flow.
+              // We should probably have a yaml snippets extension later for this.
+              const unsubscribe = subscribeToExtensions<AddAction>(
+                (extensions: LoadedExtension<AddAction>[]) => {
+                  const sortedExtensions = extensions
+                    .slice()
+                    .sort((a, b) => a.properties.id.localeCompare(b.properties.id));
+                  const yaml = sortedExtensions
+                    .map((extension) => {
+                      const { id, label, description } = extension.properties;
+                      const labelComment = translateExtension(label)
+                        .split('\n')
+                        .join('\n  # ');
+                      const descriptionComment = translateExtension(description)
+                        .split('\n')
+                        .join('\n  # ');
+                      return `- # ${labelComment}\n  # ${descriptionComment}\n  ${id}`;
+                    })
+                    .join('\n');
+                  resolve(yaml);
+                  unsubscribe();
+                },
+                isAddAction,
+              );
+            });
+          },
           targetResource: getTargetResource(ConsoleOperatorConfigModel),
         },
       ],

@@ -141,6 +141,8 @@
   "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.": "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.",
   "Add project access roles": "Add project access roles",
   "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.": "Provides a list of default roles which are shown in the Project Access. The roles must be added below customization projectAccess.",
+  "Add page actions": "Add page actions",
+  "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.": "Provides a list of all available actions on the Add page in the Developer perspective. The IDs must be added below customization addPage disabledActions to hide these actions.",
   "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.": "Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.",
   "Cannot be longer than {{characterCount}} characters.": "Cannot be longer than {{characterCount}} characters.",
   "Required": "Required"
