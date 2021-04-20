@@ -3,6 +3,7 @@
   "{{resourceKind}} maintain the proper number of healthy machines.": "{{resourceKind}}은 적절한 수의 정상적인 시스템을 유지합니다.",
   "Create MachineAutoscaler": "MachineAutoscaler 만들기",
   "machine_0": "머신",
+  "machine_1": "머신",
   "Desired count": "필요한 수",
   "Current count": "현재 수",
   "The most recently observed number of replicas.": "가장 최근에 확인된 복제본 수입니다.",

@@ -1,0 +1,14 @@
+{
+  "VolumeSnapshotContent details": "VolumeSnapshotContent 세부 정보",
+  "Status": "상태",
+  "Size": "크기",
+  "VolumeSnapshot": "VolumeSnapshot",
+  "VolumeSnapshotContent": "VolumeSnapshotContent",
+  "Deletion policy": "삭제 정책",
+  "Driver": "드라이버",
+  "Volume handle": "볼륨 처리",
+  "Snapshot handle": "스냅샷 처리",
+  "Name": "이름",
+  "SnapshotClass": "스냅샷 클래스",
+  "Created at": "작성일"
+}

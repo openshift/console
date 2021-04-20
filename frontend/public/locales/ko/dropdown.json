@@ -1,8 +1,6 @@
 {
   "All Projects": "모든 프로젝트",
   "All Namespaces": "모든 네임 스페이스",
-  "Create Project": "프로젝트 만들기",
-  "Create Namespace": "네임 스페이스 만들기",
   "Project": "프로젝트",
   "Namespace": "네임 스페이스",
   "Select Project...": "프로젝트 선택...",
@@ -13,5 +11,7 @@
   "Add favorite {{content}}": "즐겨 찾기 {{content}} 추가",
   "Actions": "동작",
   "Containers": "컨테이너",
-  "Init containers": "Init 컨테이너"
+  "Init containers": "Init 컨테이너",
+  "Create Project": "프로젝트 만들기",
+  "Create Namespace": "네임 스페이스 만들기"
 }

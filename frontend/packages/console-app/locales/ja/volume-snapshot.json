@@ -1,0 +1,10 @@
+{
+  "Name": "名前",
+  "Namespace": "namespace",
+  "Status": "ステータス",
+  "Size": "サイズ",
+  "Source": "ソース",
+  "Snapshot content": "スナップショットのコンテンツ",
+  "VolumeSnapshotClass": "VolumeSnapshotClass",
+  "Created at": "作成:"
+}

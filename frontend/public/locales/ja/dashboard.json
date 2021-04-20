@@ -64,5 +64,6 @@
   "{{humanAvailable}} available of {{humanLimit}} total limit": "利用可能な {{humanAvailable}}/{{humanLimit}} 合計制限",
   "{{humanAvailable}} available of {{humanMax}}": "利用可能な {{humanAvailable}}/{{humanMax}}",
   "{{humanAvailable}} available": "利用可能な {{humanAvailable}}",
+  "View metrics for {{title}}": "{{title}} のメトリクスの表示",
   "Quick start available": "クイックスタートが利用可能"
 }

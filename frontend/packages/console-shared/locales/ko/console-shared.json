@@ -38,6 +38,7 @@
   "Filter by type...": "유형별 필터링 ...",
   "Filter by type": "유형별 필터링",
   "{{count}} item_0": "{{count}} 항목",
+  "{{count}} item_1": "{{count}} 항목",
   "No results match the filter criteria": "필터 기준과 일치하는 결과가 없습니다.",
   "Clear filter": "필터 지우기",
   "Add values": "값 추가",
@@ -73,6 +74,7 @@
   "Drag": "드래그",
   "Click": "클릭",
   "Right click": "마우스 오른쪽 버튼 클릭",
+  "Drag + Drop": "드래그 앤 드롭",
   "{{label}} details": "{{label}} 세부 정보",
   "Scheduling disabled": "예약 비활성화",
   "Pod": "Pod",
@@ -131,5 +133,7 @@
   "Add a link to the namespace dashboard": "네임 스페이스 대시 보드에 링크 추가",
   "Namespace dashboard links appear on the project dashboard and namespace details pages in a section called \"Launcher\". Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.": "네임 스페이스 대시 보드 링크는 \"Launcher\"섹션의 프로젝트 대시 보드 및 네임 스페이스 세부 사항 페이지에 표시됩니다. 네임 스페이스 대시 보드 링크 선택 옵션에서 특정 네임 스페이스 또는 네임 스페이스로 제한할 수 있습니다.",
   "Add catalog categories": "카탈로그 카테고리 추가",
-  "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.": "Developer Catalog에 표시되는 기본 카테고리 목록을 제공합니다. 카테고리는 사용자 정의 developerCatalog 아래에 추가해야 합니다."
+  "Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.": "Developer Catalog에 표시되는 기본 카테고리 목록을 제공합니다. 카테고리는 사용자 정의 developerCatalog 아래에 추가해야 합니다.",
+  "{{label}} Details": "{{label}} 세부 정보",
+  "to {{podSubTitle}}": "{{podSubTitle}}"
 }

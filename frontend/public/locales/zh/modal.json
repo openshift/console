@@ -43,7 +43,7 @@
   "Pod selector": "Pod 选择器",
   "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "确定 pod 集是这个{{kind: props.kind.label.toLowerCase()}}的目标。",
   "Duplicate keys found.": "找到重复的键。",
-  "Edit annotations": "编辑注解",
+  "Edit annotations": "Pod 注解",
   "Edit taints": "编辑污点",
   "Taints": "污点",
   "Key": "键",

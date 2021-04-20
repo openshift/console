@@ -1,6 +1,6 @@
 {
   "Activity": "활동",
-  "View events": "이벤트 보기",
+  "View events": "이벤트보기",
   "Updating": "업데이트 중",
   "Update cluster": "클러스터 업데이트",
   "Not available": "사용할 수 없음",
@@ -40,7 +40,7 @@
   "6 Hours": "6 시간",
   "24 Hours": "24 시간",
   "No resource quotas": "리소스 할당량이 없음",
-  "View details": "세부 정보 보기",
+  "View details": "세부 정보보기",
   "Alerts could not be loaded.": "경고를 로드할 수 없습니다.",
   "Unknown": "알 수 없음",
   "Pending": "보류",
@@ -58,8 +58,11 @@
   "Top {{label}} consumers": "상위 {{label}} 소비자",
   "Top consumers": "상위 소비자",
   "Select consumer type": "소비자 유형 선택",
+  "time axis": "시간축",
   "Usage": "사용법",
+  "View {{title}} metrics in query browser": "쿼리 브라우저에서 {{title}} 메트릭보기",
   "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 사용 가능 (총 한도 {{humanLimit}})",
   "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 사용 가능 (총 {{humanMax}})",
-  "{{humanAvailable}} available": "{{humanAvailable}} 사용 가능"
+  "{{humanAvailable}} available": "{{humanAvailable}} 사용 가능",
+  "View metrics for {{title}}": "{{title}}의 메트릭 보기"
 }
