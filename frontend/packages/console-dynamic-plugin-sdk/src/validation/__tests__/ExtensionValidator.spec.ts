@@ -74,6 +74,7 @@ describe('ExtensionValidator', () => {
         compilation,
         extensions as SupportedExtension[],
         exposedModules,
+        'testExtensions',
       );
       afterResult(result, getProvidedExports);
     };
@@ -143,8 +144,8 @@ describe('ExtensionValidator', () => {
         },
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
-          expect(result.getErrors()[0].startsWith("Invalid code reference '.fooExport'")).toBe(
-            true,
+          expect(result.getErrors()[0]).toBe(
+            "Invalid code reference '.fooExport' in testExtensions[1] property 'mux'",
           );
           expect(getProvidedExports).toHaveBeenCalledTimes(1);
         },
@@ -179,7 +180,9 @@ describe('ExtensionValidator', () => {
         },
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
-          expect(result.getErrors()[0].startsWith("Invalid module 'barModule'")).toBe(true);
+          expect(result.getErrors()[0]).toBe(
+            "Invalid module 'barModule' in testExtensions[1] property 'mux'",
+          );
           expect(getProvidedExports).toHaveBeenCalledTimes(1);
         },
       );
@@ -213,7 +216,9 @@ describe('ExtensionValidator', () => {
         },
         (result, getProvidedExports) => {
           expect(result.getErrors().length).toBe(1);
-          expect(result.getErrors()[0].startsWith("Invalid module export 'barExport'")).toBe(true);
+          expect(result.getErrors()[0]).toBe(
+            "Invalid module export 'barExport' in testExtensions[1] property 'mux'",
+          );
           expect(getProvidedExports).toHaveBeenCalledTimes(2);
         },
       );
