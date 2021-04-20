@@ -325,7 +325,7 @@
   "Failed": "Failed",
   "This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.": "This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.",
   "Enabling console plugin": "Enabling console plugin",
-  "This console plugin will be able to provide a custom interface and run any kubernetes command as the logged in user. Make sure you trust it before enabling.": "This console plugin will be able to provide a custom interface and run any kubernetes command as the logged in user. Make sure you trust it before enabling.",
+  "This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.": "This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.",
   "Hide operator description": "Hide operator description",
   "Show operator description": "Show operator description",
   "Operator description": "Operator description",

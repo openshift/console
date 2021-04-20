@@ -43,7 +43,7 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
       linkTitle={
         <>
           <HelpIcon />
-          {t('ceph-storage-plugin~Where can I find google cloud credentials?')}
+          {t('ceph-storage-plugin~Where can I find Google Cloud credentials?')}
         </>
       }
       popupTitle=" "
@@ -80,7 +80,7 @@ export const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
         helperText={
           !showSecret
             ? t(
-                'ceph-storage-plugin~Upload a .json file with the service account keys provided by google cloud storage.',
+                'ceph-storage-plugin~Upload a .json file with the service account keys provided by Google Cloud Storage.',
               )
             : null
         }

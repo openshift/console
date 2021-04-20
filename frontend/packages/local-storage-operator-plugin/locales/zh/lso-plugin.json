@@ -19,7 +19,7 @@
   "{{nodes, number}} node_0": "{{nodes, number}} 节点",
   "Selecting all nodes will discover for available disks storage on all nodes.": "选择所有节点将发现在所有节点上的可用磁盘存储。",
   "Select nodes": "选择节点",
-  "Selecting nodes allow you to limit the discovery for available disks to specific nodes.": "选择节点可让您将可用磁盘的发现限制到特定的节点。",
+  "Selecting nodes allows you to limit the discovery for available disks to specific nodes.": "选择节点可让您将可用磁盘的发现限制到特定的节点。",
   "Local Storage": "本地存储",
   "Create Local Volume Discovery": "创建本地卷发现",
   "Local Volume Discovery": "本地卷发现",

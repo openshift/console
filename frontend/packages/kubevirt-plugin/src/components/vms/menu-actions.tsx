@@ -397,7 +397,7 @@ export const menuActionCopySSHCommand = (
             position="left"
             trigger="manual"
             isVisible={showTooltip}
-            content={t('kubevirt-plugin~Manage SSH access in the virtual machine Details page')}
+            content={t('kubevirt-plugin~Manage SSH access in the virtual machine details page')}
           />
         )}
         <div className="kubevirt-menu-actions__secondary-title">

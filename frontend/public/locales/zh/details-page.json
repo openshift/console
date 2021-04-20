@@ -46,7 +46,7 @@
   "Edit {{kind}}": "编辑 {{kind}}",
   "Edit labels": "编辑标签",
   "Edit Pod selector": "编辑 Pod 选择器",
-  "Edit annotations": "Pod 注解",
+  "Edit annotations": "编辑注解",
   "Edit Pod count": "编辑 Pod 数量",
   "Edit taints": "编辑污点",
   "Edit tolerations": "编辑容限",

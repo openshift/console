@@ -407,7 +407,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
             />
             <span className="help-block">
               {t(
-                'ceph-storage-plugin~An encryption key will be generated for each persistent volume created using this storageclass.',
+                'ceph-storage-plugin~An encryption key will be generated for each persistent volume created using this StorageClass.',
               )}
             </span>
 

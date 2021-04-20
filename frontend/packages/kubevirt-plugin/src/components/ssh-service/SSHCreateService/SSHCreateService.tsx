@@ -43,7 +43,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
             variant="info"
             data-test="SSHCreateService-info-message"
             isInline
-            title={t('kubevirt-plugin~Missing Authorized key')}
+            title={t('kubevirt-plugin~Missing authorized key')}
           >
             {t(
               `kubevirt-plugin~An authorized key is not detected. SSH access is enabled with the password.`,

@@ -22,7 +22,7 @@ const SSHPopover: React.FC = () => {
             machine.
           </Text>
           <Text component={TextVariants.p}>
-            The key will be stored after the machine will be created.
+            The key will be stored after the machine is created
           </Text>
         </Trans>
       }

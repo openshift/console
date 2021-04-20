@@ -32,7 +32,7 @@ export const ThickProvision: React.FC<ProvisionerProps> = ({ onParamChange }) =>
         />
         <span className="help-block">
           {t(
-            'ceph-storage-plugin~By enabling thick-provisioning, volumes will allocate the requested capacity upon volume creation. Volume creation to be slower when thick-provisioning is enabled.',
+            'ceph-storage-plugin~By enabling thick-provisioning, volumes will allocate the requested capacity upon volume creation. Volume creation will be slower when thick-provisioning is enabled.',
           )}
         </span>
       </div>
