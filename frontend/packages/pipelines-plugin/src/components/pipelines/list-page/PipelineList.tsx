@@ -18,7 +18,7 @@ const PipelineList: React.FC<PipelineListProps> = (props) => {
       {...props}
       defaultSortField="latestRun.status.startTime"
       defaultSortOrder={SortByDirection.desc}
-      aria-label={PipelineModel.labelPlural}
+      aria-label={t(PipelineModel.labelPluralKey)}
       Header={PipelineHeader(t)}
       Row={PipelineRow}
       virtualize

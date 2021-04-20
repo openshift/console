@@ -17,7 +17,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => {
     <div className="co-m-pane__body">
       <SectionHeading
         text={t('pipelines-plugin~{{taskLabel}} details', {
-          taskLabel: TaskModel.label,
+          taskLabel: t(TaskModel.labelKey),
         })}
       />
       <div className="row">

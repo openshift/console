@@ -17,7 +17,7 @@ const ClusterTaskDetails: React.FC<ClusterTaskDetailsProps> = ({ obj: task }) =>
     <div className="co-m-pane__body">
       <SectionHeading
         text={t('pipelines-plugin~{{clusterTaskLabel}} details', {
-          clusterTaskLabel: ClusterTaskModel.label,
+          clusterTaskLabel: t(ClusterTaskModel.labelKey),
         })}
       />
       <div className="row">

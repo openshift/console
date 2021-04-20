@@ -86,7 +86,7 @@ const MultipleResourceKeySelector: React.FC<StateProps & MultipleResourceKeySele
         loadError={loadError}
         dataSelector={['metadata', 'name']}
         selectedKey={field.value}
-        placeholder={t('pipelines-plugin~Select a {{label}}', { label: resourceModel.label })}
+        placeholder={t('pipelines-plugin~Select a {{label}}', { label: t(resourceModel.labelKey) })}
         autocompleteFilter={autocompleteFilter}
         dropDownClassName={cx({ 'dropdown--full-width': true })}
         onChange={(value: string) => {

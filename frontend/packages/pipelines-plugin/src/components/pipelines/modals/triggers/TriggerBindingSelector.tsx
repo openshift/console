@@ -18,7 +18,7 @@ const KEY_DIVIDER = '~';
 
 const TriggerBindingSelector: React.FC<TriggerBindingSelectorProps> = (props) => {
   const { t } = useTranslation();
-  const { description, label = TriggerBindingModel.label, onChange } = props;
+  const { description, label = t(TriggerBindingModel.labelKey), onChange } = props;
   const { values } = useFormikContext<AddTriggerFormValues>();
   const autoCompleteFilter = (strText: string, item: React.ReactElement): boolean =>
     fuzzy(strText, item?.props?.name);

@@ -45,7 +45,7 @@ const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({
 
   return (
     <>
-      <SidebarSectionHeading text={PipelineRunModel.labelPlural}>
+      <SidebarSectionHeading text={t(PipelineRunModel.labelPluralKey)}>
         {showAlert && pipelineRuns.length === 0 && (
           <PipelineOverviewAlert
             title={t('pipelines-plugin~Pipeline could not be started automatically')}

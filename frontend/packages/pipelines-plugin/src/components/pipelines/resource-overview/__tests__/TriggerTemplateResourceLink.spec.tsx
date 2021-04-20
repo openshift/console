@@ -5,6 +5,14 @@ import { ResourceLink } from '@console/internal/components/utils';
 import TriggerTemplateResourceLink from '../TriggerTemplateResourceLink';
 import { TriggerTemplateModel } from '../../../../models';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 type TriggerTemplateResourceLinkProps = React.ComponentProps<typeof TriggerTemplateResourceLink>;
 describe('TriggerTemplateResourceLink', () => {
   const props: TriggerTemplateResourceLinkProps = {
