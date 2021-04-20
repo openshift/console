@@ -6,3 +6,5 @@ export enum StatusSimpleLabel {
   InProgress = 'InProgress',
   Other = 'Other',
 }
+
+export const NORMAL = 'Normal';
