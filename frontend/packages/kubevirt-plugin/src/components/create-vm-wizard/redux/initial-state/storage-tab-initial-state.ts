@@ -1,55 +1,57 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
+
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import {
-  CommonData,
-  VMWizardStorage,
-  VMWizardStorageType,
-  VMSettingsField,
-  VMWizardProps,
-} from '../../types';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+  DUMMY_VM_NAME,
+  ROOT_DISK_NAME,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+} from '../../../../constants/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import {
   DataVolumeSourceType,
   DiskBus,
   DiskType,
   VolumeType,
 } from '../../../../constants/vm/storage';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { VM_TEMPLATE_NAME_PARAMETER, WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
-import { stringValueUnitSplit } from '../../../form/size-unit-utils';
-import { InitialStepStateGetter } from './types';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
-import { toShallowJS, iGetIn } from '../../../../utils/immutable';
-import { generateDataVolumeName } from '../../../../utils';
-import { getEmptyInstallStorage } from '../../../../utils/storage';
-import {
-  DUMMY_VM_NAME,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  ROOT_DISK_NAME,
-} from '../../../../constants/vm';
-import {
-  iGetVmSettingValue,
-  iGetProvisionSource,
-  iGetRelevantTemplateSelectors,
-} from '../../selectors/immutable/vm-settings';
-import {
-  iGetLoadedCommonData,
-  iGetName,
-  iGetCommonData,
-  getInitialData,
-} from '../../selectors/immutable/selectors';
+import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 import {
   iGetCommonTemplateDiskBus,
   iGetRelevantTemplate,
 } from '../../../../selectors/immutable/template/combined';
-import { iGetPrameterValue } from '../../../../selectors/immutable/common';
-import { getStorages } from '../../selectors/selectors';
+import { generateDataVolumeName } from '../../../../utils';
+import { iGetIn, toShallowJS } from '../../../../utils/immutable';
+import { getEmptyInstallStorage } from '../../../../utils/storage';
+import { stringValueUnitSplit } from '../../../form/size-unit-utils';
+import {
+  getInitialData,
+  iGetCommonData,
+  iGetLoadedCommonData,
+  iGetName,
+} from '../../selectors/immutable/selectors';
 import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
+import {
+  iGetProvisionSource,
+  iGetRelevantTemplateSelectors,
+  iGetVmSettingValue,
+} from '../../selectors/immutable/vm-settings';
+import { getStorages } from '../../selectors/selectors';
+import {
+  CommonData,
+  VMSettingsField,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
+} from '../../types';
+import { InitialStepStateGetter } from './types';
 
 const WINTOOLS_DISK_NAME = 'windows-guest-tools';
 
@@ -90,6 +92,8 @@ const getContainerStorage = (
   };
 };
 
+const containerNames = winToolsContainerNames();
+
 export const windowsToolsStorage: VMWizardStorage = {
   type: VMWizardStorageType.WINDOWS_GUEST_TOOLS,
   disk: DiskWrapper.initializeFromSimpleData({
@@ -101,7 +105,7 @@ export const windowsToolsStorage: VMWizardStorage = {
     name: WINTOOLS_DISK_NAME,
     type: VolumeType.CONTAINER_DISK,
     typeData: {
-      image: WINTOOLS_CONTAINER_NAMES[window.SERVER_FLAGS.branding] || WINTOOLS_CONTAINER_NAMES.okd,
+      image: containerNames[window.SERVER_FLAGS.branding] || containerNames?.okd,
     },
   }).asResource(),
 };

@@ -62,14 +62,7 @@ export const VM_DETAIL_EVENTS_HREF = 'events';
 
 export const DUMMY_VM_NAME = 'vm';
 
-export const WINTOOLS_CONTAINER_NAMES = {
-  openshift: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  ocp: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  online: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  dedicated: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  azure: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  okd: 'kubevirt/virtio-container-disk',
-};
+export const VIRTIO_WIN_IMAGE = 'virtio-win-image';
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
 export const getPVCUploadURL = (pvcNamespace: string): string =>
