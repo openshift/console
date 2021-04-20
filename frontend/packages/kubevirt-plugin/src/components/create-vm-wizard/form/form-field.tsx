@@ -12,6 +12,7 @@ import {
   isFieldDisabled,
   isFieldRequired,
 } from '../selectors/immutable/field';
+import { VMSettingsField } from '../types';
 import { getFieldId, getFieldTitleKey, getPlaceholderKey } from '../utils/renderable-field-utils';
 import { FormFieldContext } from './form-field-context';
 
@@ -75,7 +76,12 @@ const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldTyp
   supportedTypes.has(fieldType) ? value : undefined;
 
 // renders only when props change (shallow compare)
-export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, value }) => {
+export const FormField: React.FC<FormFieldProps> = ({
+  children,
+  isDisabled,
+  value,
+  isCreateTemplate,
+}) => {
   const { t } = useTranslation();
   return (
     <FormFieldContext.Consumer>
@@ -110,7 +116,14 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               isValid: set(hasIsValid, isValid),
               validated: set(hasValidated, validated),
               id: getFieldId(key),
-              label: set(hasLabel, t(getFieldTitleKey(key))),
+              label: set(
+                hasLabel,
+                t(
+                  isCreateTemplate
+                    ? getFieldTitleKey(VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE_TEMPLATE)
+                    : getFieldTitleKey(key),
+                ),
+              ),
               selections: set(hasSelections, val),
               placeholderText: set(hasPlaceholderText, t(getPlaceholderKey(key))),
               toggleId: set(hasToggleId, getFieldId(key)),
@@ -127,4 +140,5 @@ type FormFieldProps = {
   children: React.ReactNode;
   isDisabled?: boolean;
   value?: any;
+  isCreateTemplate?: boolean;
 };

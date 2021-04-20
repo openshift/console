@@ -120,6 +120,7 @@
   "Name": "Name",
   "Description": "Description",
   "Clone available operating system source to this Virtual Machine": "Clone available operating system source to this Virtual Machine",
+  "Clone available operating system source to this Virtual Machine Template": "Clone available operating system source to this Virtual Machine Template",
   "Mount Windows guest tools": "Mount Windows guest tools",
   "Flavor": "Flavor",
   "Memory": "Memory",
