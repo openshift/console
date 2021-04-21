@@ -1,26 +1,4 @@
 /**
- * Console feature flags used to gate extension instances.
- */
-export type ExtensionFlags = Partial<{
-  required: string[];
-  disallowed: string[];
-}>;
-
-/**
- * TS type guard to narrow type of the given extension to `E`.
- */
-export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
-
-/**
- * Runtime extension interface, exposing additional metadata.
- */
-export type LoadedExtension<E extends Extension = Extension> = E & {
-  pluginID: string;
-  pluginName: string;
-  uid: string;
-};
-
-/**
  * An extension of the Console application.
  *
  * Each extension is a realization (instance) of an extension `type` using the
@@ -40,6 +18,28 @@ export type Extension<P extends {} = any> = {
   type: string;
   properties: P;
   flags?: ExtensionFlags;
+};
+
+/**
+ * Console feature flags used to gate extension instances.
+ */
+export type ExtensionFlags = Partial<{
+  required: string[];
+  disallowed: string[];
+}>;
+
+/**
+ * TS type guard to narrow type of the given extension to `E`.
+ */
+export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
+
+/**
+ * Runtime extension interface, exposing additional metadata.
+ */
+export type LoadedExtension<E extends Extension = Extension> = E & {
+  pluginID: string;
+  pluginName: string;
+  uid: string;
 };
 
 /**
