@@ -1,12 +1,9 @@
-import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
+import { AccessReviewResourceAttributes, ObjectMetadata } from '@console/internal/module/k8s';
 
 export type QuickStart = {
   apiVersion: string;
   kind: string;
-  metadata: {
-    name: string;
-    uid?: string;
-  };
+  metadata: ObjectMetadata;
   spec: QuickStartSpec;
 };
 

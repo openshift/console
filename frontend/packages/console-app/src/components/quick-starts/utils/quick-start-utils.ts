@@ -1,6 +1,7 @@
 import { QuickStart, QuickStartStatus, AllQuickStartStates } from './quick-start-types';
 import { allQuickStarts } from '../data/quick-start-test-data';
 
+export const QUICK_START_NAME = 'console.openshift.io/name';
 export const getQuickStarts = (): QuickStart[] => allQuickStarts;
 
 export const getQuickStartByName = (name: string): QuickStart =>
@@ -27,6 +28,29 @@ export const getQuickStartStatusCount = (
       [QuickStartStatus.NOT_STARTED]: 0,
     },
   );
+};
+
+export const getDisabledQuickStarts = (): string[] => {
+  let disabledQuickStarts = [];
+  const quickStartServerData = window.SERVER_FLAGS.quickStarts;
+  try {
+    if (quickStartServerData) {
+      disabledQuickStarts = JSON.parse(quickStartServerData).disabled ?? [];
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error while parsing SERVER_FLAG.quickStarts', e);
+  }
+  return disabledQuickStarts;
+};
+
+export const isDisabledQuickStart = (
+  quickstart: QuickStart,
+  disabledQuickStarts: string[],
+): boolean => {
+  const quickStartName =
+    quickstart.metadata.annotations?.[QUICK_START_NAME] ?? quickstart.metadata.name;
+  return disabledQuickStarts.includes(quickStartName);
 };
 
 export const filterQuickStarts = (

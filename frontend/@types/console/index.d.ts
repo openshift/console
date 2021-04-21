@@ -33,6 +33,7 @@ declare interface Window {
     meteringBaseURL: string;
     prometheusBaseURL: string;
     prometheusTenancyBaseURL: string;
+    quickStarts: string;
     requestTokenURL: string;
     alertManagerPublicURL: string;
     grafanaPublicURL: string;
