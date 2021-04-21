@@ -62,7 +62,7 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, name?:string }>} */
+/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, name?:string, debounceTimeout?: number }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
     const {
@@ -77,6 +77,7 @@ export class ListPageWrapper_ extends React.PureComponent {
       hideLabelFilter,
       columnLayout,
       name,
+      debounceTimeout,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
     const Filter = (
@@ -91,6 +92,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         hideLabelFilter={hideLabelFilter}
         columnLayout={columnLayout}
         uniqueFilterName={name}
+        debounceTimeout={debounceTimeout}
         {...this.props}
       />
     );
@@ -424,7 +426,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean, nameFilterPlaceholder?: string >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean, nameFilterPlaceholder?: string, debounceTimeout?: number >} */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -452,6 +454,7 @@ export const MultiListPage = (props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
+    debounceTimeout,
   } = props;
 
   const { t } = useTranslation();
@@ -494,6 +497,7 @@ export const MultiListPage = (props) => {
           nameFilterPlaceholder={nameFilterPlaceholder}
           labelFilterPlaceholder={labelFilterPlaceholder}
           name={name}
+          debounceTimeout={debounceTimeout}
         />
       </Firehose>
     </FireMan_>

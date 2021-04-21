@@ -57,7 +57,7 @@ import {
 import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 
-import { VMWizardMode, VMWizardName } from '../../constants';
+import { CDI_APP_LABEL, VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
@@ -71,7 +71,6 @@ import {
 import { isVM, isVMI, isVMImport } from '../../selectors/check-type';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
-import { VMStatusBundle } from '../../statuses/vm/types';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
@@ -139,10 +138,21 @@ const PendingChanges: React.FC = () => {
   return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
 };
 
-const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
+const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style, customData }) => {
   const { vm, vmi, vmImport } = obj;
-  const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
+  const { pods, migrations, pvcs, dvs } = customData;
+  const { name, namespace, node, creationTimestamp, uid } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
+
+  const vmStatusBundle = getVMStatus({
+    vm,
+    vmi,
+    pods,
+    migrations,
+    pvcs,
+    dataVolumes: dvs,
+    vmImports: [],
+  });
 
   let options: KebabOption[];
   let model: K8sKind;
@@ -267,6 +277,37 @@ const VMListEmpty: React.FC = () => {
 
 const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => {
   const { t } = useTranslation();
+  const { loaded, loadError } = props;
+  const namespace = props?.customData?.namespace;
+
+  const [pods, podsLoaded, podsError] = useK8sWatchResource<PodKind[]>({
+    kind: PodModel.kind,
+    namespace,
+    isList: true,
+    selector: {
+      matchLabels: { app: CDI_APP_LABEL },
+    },
+  });
+
+  const [migrations, migrationsLoaded, migrationsError] = useK8sWatchResource<K8sKind[]>({
+    kind: VirtualMachineInstanceMigrationModel.kind,
+    namespace,
+    isList: true,
+  });
+  const [dvs, dvsLoaded, dvsError] = useK8sWatchResource<V1alpha1DataVolume[]>({
+    kind: DataVolumeModel.kind,
+    namespace,
+    isList: true,
+  });
+  const [pvcs, pvcsLoaded, pvcsError] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
+    kind: PersistentVolumeClaimModel.kind,
+    namespace,
+    isList: true,
+  });
+
+  const watchLoaded = podsLoaded && migrationsLoaded && dvsLoaded && pvcsLoaded;
+  const watchError = podsError || pvcsError || dvsError || migrationsError;
+
   return (
     <div className="kv-vm-list">
       <Table
@@ -276,6 +317,14 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
         Header={VMHeader(t)}
         Row={VMRow}
         virtualize
+        loaded={loaded && watchLoaded}
+        customData={{
+          pods,
+          migrations,
+          dvs,
+          pvcs,
+        }}
+        loadError={loadError || watchError}
       />
     </div>
   );
@@ -300,28 +349,6 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       prop: 'vmis',
     },
     {
-      kind: PodModel.kind,
-      namespace,
-      prop: 'pods',
-    },
-    {
-      kind: VirtualMachineInstanceMigrationModel.kind,
-      namespace,
-      prop: 'migrations',
-    },
-    {
-      kind: PersistentVolumeClaimModel.kind,
-      isList: true,
-      namespace,
-      prop: 'pvcs',
-    },
-    {
-      kind: DataVolumeModel.kind,
-      isList: true,
-      namespace,
-      prop: 'dataVolumes',
-    },
-    {
       kind: VirtualMachineImportModel.kind,
       isList: true,
       namespace,
@@ -330,116 +357,89 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
     },
   ];
 
-  const flatten = ({
-    vms,
-    vmis,
-    pods,
-    migrations,
-    pvcs,
-    dataVolumes,
-    vmImports,
-  }: {
-    vms: FirehoseResult<VMKind[]>;
-    vmis: FirehoseResult<VMIKind[]>;
-    pods: FirehoseResult<PodKind[]>;
-    migrations: FirehoseResult;
-    pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
-    dataVolumes: FirehoseResult<V1alpha1DataVolume[]>;
-    vmImports: FirehoseResult<VMImportKind[]>;
-  }) => {
-    const loadedVMs = getLoadedData(vms);
-    const loadedVMIs = getLoadedData(vmis);
-    const loadedPods = getLoadedData(pods);
-    const loadedMigrations = getLoadedData(migrations);
-    const loadedVMImports = getLoadedData(vmImports);
-    const loadedPVCs = getLoadedData(pvcs);
-    const loadedDataVolumes = getLoadedData(dataVolumes);
-    const isVMImportLoaded = !vmImports || vmImports.loaded || vmImports.loadError; // go in when CRD missing or no permissions
+  const flatten = React.useCallback(
+    ({
+      vms,
+      vmis,
+      vmImports,
+    }: {
+      vms: FirehoseResult<VMKind[]>;
+      vmis: FirehoseResult<VMIKind[]>;
+      pods: FirehoseResult<PodKind[]>;
+      migrations: FirehoseResult;
+      pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
+      dataVolumes: FirehoseResult<V1alpha1DataVolume[]>;
+      vmImports: FirehoseResult<VMImportKind[]>;
+    }) => {
+      const loadedVMs = getLoadedData(vms);
+      const loadedVMIs = getLoadedData(vmis);
+      const loadedVMImports = getLoadedData(vmImports);
+      const isVMImportLoaded = !vmImports || vmImports.loaded || vmImports.loadError; // go in when CRD missing or no permissions
 
-    if (
-      ![
+      if (![loadedVMs, loadedVMIs, isVMImportLoaded].every((v) => v)) {
+        return null;
+      }
+
+      const vmisLookup = createLookup<VMIKind>(vmis, getBasicID);
+
+      const uniqueVMImportsByTargetName = _.sortedUniqBy(
+        [...(loadedVMImports || [])].sort((a, b) =>
+          new Date(getCreationTimestamp(a)) > new Date(getCreationTimestamp(b)) ? -1 : 1,
+        ),
+        (vmImport) => new VMImportWrappper(vmImport).getResolvedVMTargetName(),
+      );
+
+      const virtualMachines = _.unionBy(
+        // order of arrays designates the priority
         loadedVMs,
         loadedVMIs,
-        loadedPods,
-        loadedMigrations,
-        loadedDataVolumes,
-        isVMImportLoaded,
-      ].every((v) => v)
-    ) {
-      return null;
-    }
+        uniqueVMImportsByTargetName,
+        (entity: VMKind | VMIKind | VMImportKind) =>
+          entity.kind === VirtualMachineImportModel.kind
+            ? `${getNamespace(entity)}-${new VMImportWrappper(entity).getResolvedVMTargetName()}`
+            : getBasicID(entity),
+      );
 
-    const vmisLookup = createLookup<VMIKind>(vmis, getBasicID);
+      return virtualMachines
+        .map((obj: VMILikeEntityKind | VMImportKind) => {
+          const lookupID = getBasicID(obj);
+          const objectBundle: ObjectBundle = { vm: null, vmi: null, vmImport: null };
+          let vmImportStatus: V2VVMImportStatus;
 
-    const uniqueVMImportsByTargetName = _.sortedUniqBy(
-      [...(loadedVMImports || [])].sort((a, b) =>
-        new Date(getCreationTimestamp(a)) > new Date(getCreationTimestamp(b)) ? -1 : 1,
-      ),
-      (vmImport) => new VMImportWrappper(vmImport).getResolvedVMTargetName(),
-    );
-
-    const virtualMachines = _.unionBy(
-      // order of arrays designates the priority
-      loadedVMs,
-      loadedVMIs,
-      uniqueVMImportsByTargetName,
-      (entity: VMKind | VMIKind | VMImportKind) =>
-        entity.kind === VirtualMachineImportModel.kind
-          ? `${getNamespace(entity)}-${new VMImportWrappper(entity).getResolvedVMTargetName()}`
-          : getBasicID(entity),
-    );
-
-    return virtualMachines
-      .map((obj: VMILikeEntityKind | VMImportKind) => {
-        const lookupID = getBasicID(obj);
-        const objectBundle: ObjectBundle = { vm: null, vmi: null, vmImport: null };
-        let vmStatusBundle: VMStatusBundle;
-        let vmImportStatus: V2VVMImportStatus;
-
-        if (isVMImport(obj)) {
-          objectBundle.vmImport = obj;
-          const { vmImportStatus: importstatus, ...bundle } = getVMImportStatusAsVMStatus({
-            vmImport: obj,
-          });
-          vmStatusBundle = bundle;
-          vmImportStatus = importstatus;
-        } else {
-          if (isVM(obj)) {
-            objectBundle.vm = obj;
-            objectBundle.vmi = vmisLookup[lookupID];
-          } else if (isVMI(obj)) {
-            objectBundle.vmi = obj;
+          if (isVMImport(obj)) {
+            objectBundle.vmImport = obj;
+            const { vmImportStatus: importstatus } = getVMImportStatusAsVMStatus({
+              vmImport: obj,
+            });
+            vmImportStatus = importstatus;
+          } else {
+            if (isVM(obj)) {
+              objectBundle.vm = obj;
+              objectBundle.vmi = vmisLookup[lookupID];
+            }
+            if (isVMI(obj)) {
+              objectBundle.vmi = obj;
+            }
           }
 
-          vmStatusBundle = getVMStatus({
-            vm: objectBundle.vm,
-            vmi: objectBundle.vmi,
-            pods: loadedPods,
-            migrations: loadedMigrations,
-            pvcs: loadedPVCs,
-            dataVolumes: loadedDataVolumes,
-            vmImports: loadedVMImports,
-          });
-        }
-
-        return {
-          metadata: {
-            name: getName(obj),
-            namespace: getNamespace(obj),
-            node: getVMINodeName(objectBundle.vmi),
-            creationTimestamp: getCreationTimestamp(obj),
-            uid: getUID(obj),
-            status: vmStatusBundle.status.toSimpleSortString(),
-            vmStatusBundle,
-            vmImportStatus,
-            lookupID,
-            labels: getLabels(obj),
-          },
-          ...objectBundle,
-        };
-      })
-      .filter(({ vmImport, metadata }) => !(vmImport && metadata.vmImportStatus?.isCompleted()));
-  };
+          return {
+            metadata: {
+              name: getName(obj),
+              namespace: getNamespace(obj),
+              node: getVMINodeName(objectBundle.vmi),
+              creationTimestamp: getCreationTimestamp(obj),
+              uid: getUID(obj),
+              vmImportStatus,
+              lookupID,
+              labels: getLabels(obj),
+            },
+            ...objectBundle,
+          };
+        })
+        .filter(({ vmImport, metadata }) => !(vmImport && metadata.vmImportStatus?.isCompleted()));
+    },
+    [],
+  );
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
@@ -453,9 +453,11 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       showTitle={showTitle}
       rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
+      customData={{ namespace }}
       resources={resources}
       flatten={flatten}
       label={VirtualMachineModel.labelPlural}
+      debounceTimeout={200}
     />
   );
 };
@@ -470,13 +472,17 @@ type VMRowObjType = {
   metadata: {
     name: string;
     namespace: string;
-    status: string;
     node: string;
     creationTimestamp: string;
     uid: string;
     lookupID: string;
-    vmStatusBundle: VMStatusBundle;
     vmImportStatus?: V2VVMImportStatus;
+  };
+  customData: {
+    pods: PodKind[];
+    migrations: K8sKind[];
+    dvs: V1alpha1DataVolume[];
+    pvcs: PersistentVolumeClaimKind[];
   };
 } & ObjectBundle;
 

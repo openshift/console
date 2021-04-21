@@ -19,8 +19,8 @@ import {
 } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
+import { useDebounceCallback } from '@console/shared';
 import { useTranslation } from 'react-i18next';
-
 import { setQueryArgument, removeQueryArgument } from './utils';
 import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
@@ -98,6 +98,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
     uniqueFilterName,
+    debounceTimeout = 0,
   } = props;
 
   const { t } = useTranslation();
@@ -170,11 +171,14 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   /* Logic for Name and Label Filter */
 
-  const applyFilter = (input: string | string[], type: FilterType) => {
-    const filter = type === FilterType.NAME ? textFilter : labelFilter;
-    const value = type === FilterType.NAME ? input : { all: input };
-    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
-  };
+  const applyFilter = React.useCallback(
+    (input: string | string[], type: FilterType) => {
+      const filter = type === FilterType.NAME ? textFilter : labelFilter;
+      const value = type === FilterType.NAME ? input : { all: input };
+      props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
+    },
+    [labelFilter, props, textFilter],
+  );
 
   const updateLabelFilter = (filterValues: string[]) => {
     if (filterValues.length > 0) {
@@ -186,14 +190,23 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     applyFilter(filterValues, FilterType.LABEL);
   };
 
+  const handleNameFilter = React.useCallback(
+    (value: string) => {
+      if (!_.isEmpty(value)) {
+        setQueryArgument(uniqTextFilter, value);
+      } else {
+        removeQueryArgument(uniqTextFilter);
+      }
+      applyFilter(value, FilterType.NAME);
+    },
+    [applyFilter, uniqTextFilter],
+  );
+
+  const debouncedHandleNameFilter = useDebounceCallback(handleNameFilter, debounceTimeout);
+
   const updateNameFilter = (filterValue: string) => {
-    if (!_.isEmpty(filterValue)) {
-      setQueryArgument(uniqTextFilter, filterValue);
-    } else {
-      removeQueryArgument(uniqTextFilter);
-    }
     setInputText(filterValue);
-    applyFilter(filterValue, FilterType.NAME);
+    debouncedHandleNameFilter(filterValue);
   };
 
   const updateSearchFilter = (value: string) => {
@@ -420,6 +433,7 @@ type FilterToolbarProps = {
   labelFilterPlaceholder?: string;
   // Used when multiple tables are in the same page
   uniqueFilterName?: string;
+  debounceTimeout?: number;
 };
 
 export type RowFilter<R = any> = {
