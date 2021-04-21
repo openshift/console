@@ -27,10 +27,12 @@ import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import { useExtensions } from '@console/plugin-sdk';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { isContextProvider } from '@console/dynamic-plugin-sdk/src/extensions/context-providers';
+import {
+  useResolvedExtensions,
+  isContextProvider,
+  isStandaloneRoutePage,
+} from '@console/dynamic-plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
-import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import '../i18n';
@@ -209,7 +211,11 @@ class App_ extends React.PureComponent {
 const AppWithExtensions = withTranslation()((props) => {
   const [contextProviderExtensions, resolved] = useResolvedExtensions(isContextProvider);
 
-  return resolved && <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  return resolved ? (
+    <App_ contextProviderExtensions={contextProviderExtensions} {...props} />
+  ) : (
+    <LoadingBox />
+  );
 });
 
 initConsolePlugins(store);

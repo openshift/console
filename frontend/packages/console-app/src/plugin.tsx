@@ -12,7 +12,6 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
-  ReduxReducer,
   ResourceDetailsPage,
   ResourceListPage,
   ResourceClusterNavItem,
@@ -45,7 +44,6 @@ import {
   getClusterUpdateTimestamp,
   isClusterUpdateActivity,
 } from './components/dashboards-page/activity';
-import reducer from './redux/reducer';
 import * as models from './models';
 
 type ConsumedExtensions =
@@ -57,7 +55,6 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
-  | ReduxReducer
   | ResourceListPage
   | ResourceDetailsPage
   | ResourceClusterNavItem
@@ -209,13 +206,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/quick-starts/QuickStartCatalogPage' /* webpackChunkName: "co-quick-start" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'ReduxReducer',
-    properties: {
-      namespace: 'console',
-      reducer,
     },
   },
   {
