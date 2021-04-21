@@ -84,7 +84,7 @@ const useTemplates: ExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   React.useEffect(() => {
     k8sListPartialMetadata(TemplateModel, { ns: 'openshift' })
       .then((metadata) => {
-        setTemplates(metadata);
+        setTemplates(metadata ?? []);
         setTemplatesLoaded(true);
         setTemplatesError(null);
       })
