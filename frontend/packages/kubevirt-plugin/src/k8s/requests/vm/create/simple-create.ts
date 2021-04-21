@@ -104,6 +104,7 @@ export const prepareVM = async (
   { namespace, name, startVM }: { namespace: string; name: string; startVM: boolean },
   scConfigMap: ConfigMapKind,
   sshKey?: string,
+  enableSSHService?: boolean,
   emptyDiskSize?: string,
   referenceTemplate = true,
 ): Promise<VMKind> => {
@@ -196,7 +197,7 @@ export const prepareVM = async (
         disk: windowsToolsStorage.disk,
         volume: windowsToolsStorage.volume,
       });
-    } else if (!isEmpty(sshKey)) {
+    } else if (!isEmpty(sshKey) && enableSSHService) {
       vmWrapper.updateVolume(
         new VolumeWrapper()
           .init({ name: CLOUDINIT_DISK })
@@ -240,7 +241,16 @@ export const createVM = async (
   opts: { namespace: string; name: string; startVM: boolean },
   scConfigMap: ConfigMapKind,
   sshKey?: string,
+  enableSSHService?: boolean,
 ) => {
-  const vm = await prepareVM(template, sourceStatus, customSource, opts, scConfigMap, sshKey);
+  const vm = await prepareVM(
+    template,
+    sourceStatus,
+    customSource,
+    opts,
+    scConfigMap,
+    sshKey,
+    enableSSHService,
+  );
   return k8sCreate(VirtualMachineModel, vm);
 };
