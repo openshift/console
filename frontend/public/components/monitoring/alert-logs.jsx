@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import {
   ContainerDropdown,
@@ -11,6 +12,10 @@ import {
   ResourceLog,
   setQueryArgument,
 } from '../utils';
+
+import { getURLSearchParams } from '../utils/link';
+
+import { alertsToProps } from '../monitoring/utils';
 
 const containersToStatuses = ({ status }, containers) => {
   return _.reduce(
@@ -98,7 +103,7 @@ export class AlertLogs extends React.Component {
 
     return (
       <>
-        {this.props?.namespace && (
+        {this.props.alert?.labels?.namespace && (
           <div className="co-m-pane__body">
             <ResourceLog
               containerName={currentContainer ? currentContainer.name : ''}
@@ -113,3 +118,21 @@ export class AlertLogs extends React.Component {
     );
   }
 }
+
+const alertStateToProps = (state, props) => {
+  const { match } = props;
+  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const { data, loaded, loadError } = alertsToProps(state, perspective);
+  const ruleID = match?.params?.ruleID;
+  const labels = getURLSearchParams();
+  const alerts = _.filter(data, (a) => a.rule.id === ruleID);
+  const rule = alerts?.[0]?.rule;
+  const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
+  return {
+    alert,
+    loaded,
+    loadError,
+    rule,
+  };
+};
+export default connect(alertStateToProps)(AlertLogs);
