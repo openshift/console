@@ -13,7 +13,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <div>
+    <div className="co-m-number-spinner">
       <Button
         onClick={() => changeValueBy(-1)}
         type="button"

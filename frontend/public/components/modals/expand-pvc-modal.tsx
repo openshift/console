@@ -79,6 +79,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
           defaultRequestSizeValue={requestSizeValue}
           dropdownUnits={dropdownUnits}
           testID="pvc-expand-size-input"
+          minValue={defaultSize[0]}
         />
       </ModalBody>
       <ModalSubmitFooter

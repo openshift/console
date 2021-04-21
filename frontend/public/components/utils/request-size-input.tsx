@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Dropdown } from './dropdown';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { NumberSpinner } from './number-spinner';
 
 export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   children,
@@ -17,7 +18,6 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   onChange,
   placeholder,
   required,
-  step,
   testID,
 }) => {
   const [unit, setUnit] = React.useState(defaultRequestSizeUnit);
@@ -26,6 +26,13 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   const onValueChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setValue(event.currentTarget.value);
     onChange({ value: event.currentTarget.value, unit });
+  };
+
+  const changeValueBy = (changeBy: number) => {
+    const valueNumber = parseInt(value, 10);
+    const newValue = `${valueNumber + changeBy}`;
+    setValue(newValue);
+    onChange({ value: newValue, unit });
   };
 
   const onUnitChange = (newUnit) => {
@@ -39,11 +46,11 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   return (
     <div>
       <div className="pf-c-input-group">
-        <input
+        <NumberSpinner
           className={classNames('pf-c-form-control', inputClassName)}
           type="number"
-          step={step || 'any'}
           onChange={onValueChange}
+          changeValueBy={changeValueBy}
           placeholder={placeholder}
           aria-describedby={describedBy}
           name={inputName}
@@ -58,7 +65,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
           title={dropdownUnits[defaultRequestSizeUnit]}
           selectedKey={defaultRequestSizeUnit}
           name={dropdownName}
-          className="btn-group"
+          className={classNames('btn-group', 'request-size-input__unit')}
           items={dropdownUnits}
           onChange={onUnitChange}
           disabled={isInputDisabled}
