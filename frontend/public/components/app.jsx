@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
-import store from '../redux';
+import store, { applyReduxExtensions } from '../redux';
 import { withTranslation } from 'react-i18next';
 
 import { detectFeatures } from '../actions/features';
@@ -27,10 +27,13 @@ import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import { useExtensions } from '@console/plugin-sdk';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { isContextProvider } from '@console/dynamic-plugin-sdk/src/extensions/context-providers';
+import {
+  useResolvedExtensions,
+  isContextProvider,
+  isReduxReducer,
+  isStandaloneRoutePage,
+} from '@console/dynamic-plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
-import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import '../i18n';
@@ -207,9 +210,15 @@ class App_ extends React.PureComponent {
 }
 
 const AppWithExtensions = withTranslation()((props) => {
-  const [contextProviderExtensions, resolved] = useResolvedExtensions(isContextProvider);
+  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
+  const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
-  return resolved && <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  if (reducersResolved && providersResolved) {
+    applyReduxExtensions(reduxReducerExtensions);
+    return <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  }
+
+  return <LoadingBox />;
 });
 
 initConsolePlugins(store);

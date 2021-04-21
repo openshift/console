@@ -1,13 +1,10 @@
 import { applyMiddleware, combineReducers, createStore, compose, ReducersMapObject } from 'redux';
 import * as _ from 'lodash-es';
-
-import { isReduxReducer } from '@console/plugin-sdk/src/typings/reducers';
-import { isExtensionInUse, getGatingFlagNames } from '@console/plugin-sdk/src/store';
+import { ResolvedExtension, ReduxReducer } from '@console/dynamic-plugin-sdk';
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
 import { dashboardsReducer, DashboardsState } from './reducers/dashboards';
-import { pluginStore } from './plugins';
 
 const composeEnhancers =
   (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
@@ -53,41 +50,19 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk)),
 );
 
-const addPluginListener = () => {
-  const reducerExtensions = pluginStore.getAllExtensions().filter(isReduxReducer);
-  const getReduxFlagsObject = () => {
-    const gatingFlags = getGatingFlagNames(reducerExtensions);
-    const featureState = store.getState()[featureReducerName];
-    return featureState ? _.pick(featureState.toObject(), gatingFlags) : null;
-  };
+export const applyReduxExtensions = (reducerExtensions: ResolvedExtension<ReduxReducer>[]) => {
+  const pluginReducers: ReducersMapObject = {};
 
-  let flagsObject = getReduxFlagsObject();
-
-  store.subscribe(() => {
-    const currentFlagsObject = getReduxFlagsObject();
-
-    if (JSON.stringify(flagsObject) !== JSON.stringify(currentFlagsObject)) {
-      flagsObject = currentFlagsObject;
-
-      const pluginReducerExtensions = reducerExtensions.filter((e) =>
-        isExtensionInUse(e, flagsObject),
-      );
-
-      const pluginReducers: ReducersMapObject = pluginReducerExtensions.reduce((map, e) => {
-        map[e.properties.namespace] = e.properties.reducer;
-        return map;
-      }, {});
-
-      const nextReducers: ReducersMapObject<RootState> = _.isEmpty(pluginReducers)
-        ? baseReducers
-        : { plugins: combineReducers(pluginReducers), ...baseReducers };
-
-      store.replaceReducer(combineReducers<RootState>(nextReducers));
-    }
+  reducerExtensions.forEach(({ properties: { scope, reducer } }) => {
+    pluginReducers[scope] = reducer;
   });
-};
 
-addPluginListener();
+  const nextReducers: ReducersMapObject<RootState> = _.isEmpty(pluginReducers)
+    ? baseReducers
+    : { plugins: combineReducers(pluginReducers), ...baseReducers };
+
+  store.replaceReducer(combineReducers<RootState>(nextReducers));
+};
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Redux store for debugging

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  ExtensionFlags,
   Extension,
+  ExtensionFlags,
   ExtensionTypeGuard,
   LoadedExtension,
 } from '@console/dynamic-plugin-sdk/src/types';
 
-export { ExtensionFlags, Extension, ExtensionTypeGuard, LoadedExtension };
+export { Extension, ExtensionFlags, ExtensionTypeGuard, LoadedExtension };
 
 /**
  * An extension that is always effective, regardless of feature flags.

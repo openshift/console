@@ -20,6 +20,18 @@ import {
   RemoteEntryModuleMock,
 } from '../../utils/test-utils';
 
+let consoleError: jest.SpyInstance<typeof global.console.error>;
+let consoleWarn: jest.SpyInstance<typeof global.console.warn>;
+
+beforeEach(() => {
+  consoleError = jest.spyOn(global.console, 'error');
+  consoleWarn = jest.spyOn(global.console, 'warn');
+});
+
+afterEach(() => {
+  [consoleError, consoleWarn].forEach((mock) => mock.mockRestore());
+});
+
 describe('applyCodeRefSymbol', () => {
   it('marks the given function with CodeRef symbol', () => {
     const ref: CodeRef = () => Promise.resolve('qux');
@@ -125,6 +137,7 @@ describe('loadReferencedObject', () => {
       _.noop,
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe('value1');
+        expect(consoleError).not.toHaveBeenCalled();
         expect(errorCallback).not.toHaveBeenCalled();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
@@ -137,6 +150,7 @@ describe('loadReferencedObject', () => {
       _.noop,
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe('value2');
+        expect(consoleError).not.toHaveBeenCalled();
         expect(errorCallback).not.toHaveBeenCalled();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
@@ -146,11 +160,14 @@ describe('loadReferencedObject', () => {
 
   it('fails on malformed code reference', async () => {
     await testResult(
-      { $codeRef: '' },
+      { $codeRef: '.' },
       { bar: 'value1', default: 'value2' },
       _.noop,
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe(null);
+        expect(consoleError).toHaveBeenCalledWith(
+          "Malformed code reference '.' of plugin Test@1.2.3",
+        );
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).not.toHaveBeenCalled();
         expect(moduleFactory).not.toHaveBeenCalled();
@@ -164,11 +181,15 @@ describe('loadReferencedObject', () => {
       { bar: 'value1', default: 'value2' },
       (entryModule) => {
         entryModule.get.mockImplementation(() => {
-          throw new Error('boom');
+          throw new Error('entryModule.get() goes boom');
         });
       },
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe(null);
+        expect(consoleError).toHaveBeenCalledWith(
+          "Failed to load module 'foo' of plugin Test@1.2.3",
+          new Error('entryModule.get() goes boom'),
+        );
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).not.toHaveBeenCalled();
@@ -180,11 +201,15 @@ describe('loadReferencedObject', () => {
       { bar: 'value1', default: 'value2' },
       (entryModule, moduleFactory) => {
         moduleFactory.mockImplementation(() => {
-          throw new Error('boom');
+          throw new Error('moduleFactory() goes boom');
         });
       },
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe(null);
+        expect(consoleError).toHaveBeenCalledWith(
+          "Failed to load module 'foo' of plugin Test@1.2.3",
+          new Error('moduleFactory() goes boom'),
+        );
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
@@ -199,6 +224,9 @@ describe('loadReferencedObject', () => {
       _.noop,
       (result, errorCallback, entryModule, moduleFactory) => {
         expect(result).toBe(null);
+        expect(consoleError).toHaveBeenCalledWith(
+          "Missing module export 'foo.bar' of plugin Test@1.2.3",
+        );
         expect(errorCallback).toHaveBeenCalledWith();
         expect(entryModule.get).toHaveBeenCalledWith('foo');
         expect(moduleFactory).toHaveBeenCalledWith();
@@ -256,6 +284,25 @@ describe('resolveCodeRefProperties', () => {
 
     expect(await resolveCodeRefProperties(extensions[0])).toEqual({ test: true });
     expect(await resolveCodeRefProperties(extensions[1])).toEqual({ baz: 1, qux: 'value' });
+  });
+
+  it('logs a warning if the given extension has no code references', async () => {
+    const extensions: Extension[] = [
+      {
+        type: 'Foo',
+        properties: { test: true },
+      },
+      {
+        type: 'Bar',
+        properties: { baz: 1, qux: getExecutableCodeRefMock('value') },
+      },
+    ];
+
+    await resolveCodeRefProperties(extensions[0]);
+    await resolveCodeRefProperties(extensions[1]);
+
+    expect(consoleWarn).toHaveBeenCalledTimes(1);
+    expect(consoleWarn).toHaveBeenCalledWith("Extension 'Foo' has no code references");
   });
 });
 
