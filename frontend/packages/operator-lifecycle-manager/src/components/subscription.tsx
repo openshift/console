@@ -16,6 +16,7 @@ import {
   RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
+  FieldLevelHelp,
   Kebab,
   LoadingInline,
   MsgBox,
@@ -258,11 +259,11 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('olm~Channel'),
+        title: t('olm~Update channel'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('olm~Approval strategy'),
+        title: t('olm~Update approval'),
         props: { className: tableColumnClasses[4] },
       },
       {
@@ -515,7 +516,12 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
       <div className="co-detail-table__row row">
         <div className="co-detail-table__section col-sm-3">
           <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">{t('olm~Channel')}</dt>
+            <dt className="co-detail-table__section-header">
+              {t('olm~Update channel')}
+              <FieldLevelHelp>
+                {t('olm~The channel to track and receive the updates from.')}
+              </FieldLevelHelp>
+            </dt>
             <dd>
               {waitingForUpdate ? (
                 <LoadingInline />
@@ -536,7 +542,12 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
         </div>
         <div className="co-detail-table__section col-sm-3">
           <dl className="co-m-pane__details">
-            <dt className="co-detail-table__section-header">{t('olm~Approval')}</dt>
+            <dt className="co-detail-table__section-header">
+              {t('olm~Update approval')}
+              <FieldLevelHelp>
+                {t('olm~The strategy to determine either manual or automatic updates.')}
+              </FieldLevelHelp>
+            </dt>
             <dd>
               {waitingForUpdate ? (
                 <LoadingInline />

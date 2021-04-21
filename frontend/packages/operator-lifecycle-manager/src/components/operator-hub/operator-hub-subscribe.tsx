@@ -729,7 +729,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               </div>
               <div className="form-group">
                 <fieldset>
-                  <label className="co-required">{t('olm~Approval strategy')}</label>
+                  <label className="co-required">{t('olm~Update approval')}</label>
                   <FieldLevelHelp>
                     {t('olm~The strategy to determine either manual or automatic updates.')}
                   </FieldLevelHelp>
