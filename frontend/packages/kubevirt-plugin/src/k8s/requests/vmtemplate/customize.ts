@@ -185,6 +185,7 @@ export const createVMForCustomization = async (
     },
     undefined,
     undefined,
+    undefined,
     size,
     false,
   );
