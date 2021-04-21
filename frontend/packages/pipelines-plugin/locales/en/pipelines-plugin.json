@@ -163,6 +163,7 @@
   "Add workspace": "Add workspace",
   "Error loading the tasks.": "Error loading the tasks.",
   "Unable to locate any tasks.": "Unable to locate any tasks.",
+  "Resources aren't in beta, so it is recommended to use workspaces instead.": "Resources aren't in beta, so it is recommended to use workspaces instead.",
   "Input resources": "Input resources",
   "Output resources": "Output resources",
   "Display Name": "Display Name",
