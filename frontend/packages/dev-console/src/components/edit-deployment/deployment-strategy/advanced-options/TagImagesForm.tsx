@@ -2,28 +2,34 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { DropdownField } from '@console/shared/src';
+import { FormSection } from '@patternfly/react-core';
 import ImageStream from '../../../import/image-search/ImageStream';
+import { getContainerNames } from '../../utils/edit-deployment-utils';
 
 const TagImagesForm: React.FC<{ lifecycleHook: string }> = ({ lifecycleHook }) => {
   const { t } = useTranslation();
   const {
     values: {
-      containers,
-      deploymentStrategy: { data },
+      formData: { containers, deploymentStrategy },
     },
   } = useFormikContext<FormikValues>();
-  const tagImages = 'tagImages[]';
+  const dropdownItems = getContainerNames(containers);
   return (
-    <>
+    <FormSection>
       <DropdownField
-        name={`deploymentStrategy.data.${lifecycleHook}.${tagImages}.containerName`}
+        name={`formData.deploymentStrategy.imageStreamData.${lifecycleHook}.containerName`}
         label={t('devconsole~Container name')}
-        items={containers}
-        selectedKey={data[lifecycleHook][tagImages].containerName}
+        items={dropdownItems}
+        selectedKey={deploymentStrategy.imageStreamData[lifecycleHook].containerName}
+        fullWidth
         required
       />
-      <ImageStream label={t('devconsole~Tag as')} required />
-    </>
+      <ImageStream
+        label={t('devconsole~Tag as')}
+        formContextField={`formData.deploymentStrategy.imageStreamData.${lifecycleHook}`}
+        required
+      />
+    </FormSection>
   );
 };
 

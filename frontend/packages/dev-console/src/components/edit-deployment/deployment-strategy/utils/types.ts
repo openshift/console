@@ -1,31 +1,33 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Resources } from '../../../import/import-types';
 
 export enum DeploymentStrategyType {
-  recreate = 'recreate',
-  rolling = 'rolling',
-  custom = 'custom',
+  recreateParams = 'Recreate',
+  rollingParams = 'Rolling',
+  customParams = 'Custom',
+  rollingUpdate = 'RollingUpdate',
 }
 
 export const KubernetesDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling Update',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingUpdate]: 'Rolling Update',
 };
 
 export const OpenshiftDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling',
-  [DeploymentStrategyType.custom]: 'Custom',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingParams]: 'Rolling',
+  [DeploymentStrategyType.customParams]: 'Custom',
 };
 
 export const KubernetesDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling Update',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingUpdate]: 'Rolling Update',
 };
 
 export const OpenshiftDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling',
-  [DeploymentStrategyType.custom]: 'Custom',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingParams]: 'Rolling',
+  [DeploymentStrategyType.customParams]: 'Custom',
 };
 
 export const DeploymentStrategyDropdownData = {
@@ -40,12 +42,13 @@ export const DeploymentStrategyDropdownData = {
 };
 
 export type StrategyFieldProps = {
-  resourceType: string;
+  resourceType?: string;
+  resourceObj: K8sResourceKind;
 };
 
 export enum LifecycleAction {
   execNewPod = 'execNewPod',
-  tagImages = 'tagImages[]',
+  tagImages = 'tagImages',
 }
 
 export enum FailurePolicyType {

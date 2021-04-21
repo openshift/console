@@ -6,19 +6,20 @@ import { Resources } from '../../import/import-types';
 import AdvancedStrategyOptions from './advanced-options/AdvancedStrategyOptions';
 import { StrategyFieldProps } from './utils/types';
 
-const RecreateStrategy: React.FC<StrategyFieldProps> = ({ resourceType }) => {
+const RecreateStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
   const { t } = useTranslation();
   return resourceType === Resources.OpenShift ? (
     <>
       <InputField
-        name="deploymentStrategy.data.timeoutSeconds"
+        name="formData.deploymentStrategy.recreateParams.timeoutSeconds"
+        style={{ maxWidth: 'unset' }}
         label={t('devconsole~Timeout')}
         type={TextInputTypes.number}
         helpText={t(
           'devconsole~The number of seconds to wait for a pod to scale up before giving up',
         )}
       />
-      <AdvancedStrategyOptions />
+      <AdvancedStrategyOptions dataAttribute="recreateParams" resourceObj={resourceObj} />
     </>
   ) : null;
 };

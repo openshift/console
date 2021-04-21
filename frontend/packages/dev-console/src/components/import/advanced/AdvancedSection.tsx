@@ -57,7 +57,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
           {values.resources === Resources.KnativeService ? (
             <ServerlessScalingSection />
           ) : (
-            <ScalingSection />
+            <ScalingSection name="deployment.replicas" />
           )}
         </ProgressiveListItem>
         <ProgressiveListItem name={t('devconsole~Resource limits')}>

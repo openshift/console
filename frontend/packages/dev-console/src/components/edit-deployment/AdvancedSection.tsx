@@ -20,10 +20,10 @@ const AdvancedSection: React.FC = () => {
         onVisibleItemChange={handleVisibleItemChange}
       >
         <ProgressiveListItem name={t('devconsole~Pause rollouts')}>
-          <PauseRolloutsSection />
+          <PauseRolloutsSection name="formData.paused" />
         </ProgressiveListItem>
         <ProgressiveListItem name={t('devconsole~Scaling')}>
-          <ScalingSection />
+          <ScalingSection name="formData.replicas" />
         </ProgressiveListItem>
       </ProgressiveList>
     </FormSection>

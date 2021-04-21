@@ -6,13 +6,15 @@ import { Resources } from '../../import/import-types';
 import AdvancedStrategyOptions from './advanced-options/AdvancedStrategyOptions';
 import { StrategyFieldProps } from './utils/types';
 
-const RollingStrategy: React.FC<StrategyFieldProps> = ({ resourceType }) => {
+const RollingStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
   const { t } = useTranslation();
+  const dataAttribute = resourceType === Resources.OpenShift ? 'rollingParams' : 'rollingUpdate';
   return (
     <>
       {resourceType === Resources.OpenShift && (
         <InputField
-          name="deploymentStrategy.data.timeoutSeconds"
+          name="formData.deploymentStrategy.rollingParams.timeoutSeconds"
+          style={{ maxWidth: 'unset' }}
           label={t('devconsole~Timeout')}
           type={TextInputTypes.number}
           helpText={t(
@@ -21,20 +23,22 @@ const RollingStrategy: React.FC<StrategyFieldProps> = ({ resourceType }) => {
         />
       )}
       <InputField
-        name="deploymentStrategy.data.maxUnavailable"
+        name={`formData.deploymentStrategy.${dataAttribute}.maxUnavailable`}
         label={t('devconsole~Maximum number of unavailable Pods')}
         helpText={t(
           'devconsole~The maximum number of pods that can be unavailable during the rolling deployment. This can be either a percentage (10%) or a whole number (1).',
         )}
       />
       <InputField
-        name="deploymentStrategy.data.maxSurge"
+        name={`formData.deploymentStrategy.${dataAttribute}.maxSurge`}
         label={t('devconsole~Maximum number of surge Pods')}
         helpText={t(
           'devconsole~The maximum number of pods that can be scheduled above the original number of pods while the rolling deployment is in progress. This can be either a percentage (10%) or a whole number (1).',
         )}
       />
-      <AdvancedStrategyOptions />
+      {resourceType === Resources.OpenShift && (
+        <AdvancedStrategyOptions dataAttribute="rollingParams" resourceObj={resourceObj} />
+      )}
     </>
   );
 };

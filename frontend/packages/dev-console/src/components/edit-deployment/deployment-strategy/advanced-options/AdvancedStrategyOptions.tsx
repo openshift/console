@@ -1,43 +1,78 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
-import { TextInputTypes } from '@patternfly/react-core';
+import { FormSection, TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared/src';
 import { ExpandCollapse } from '@console/internal/components/utils';
-import FormSection from '../../../import/section/FormSection';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeploymentStrategyType } from '../utils/types';
+import LifecycleHookField from './LifecycleHookField';
 
-const AdvancedStrategyOptions: React.FC = () => {
+const AdvancedStrategyOptions: React.FC<{
+  dataAttribute: string;
+  resourceObj: K8sResourceKind;
+}> = ({ dataAttribute, resourceObj }) => {
   const { t } = useTranslation();
   const {
     values: {
-      deploymentStrategy: { type },
+      formData: {
+        deploymentStrategy: { type },
+      },
     },
   } = useFormikContext<FormikValues>();
+  const [showAdditionalParams, setShowAdditionalParams] = React.useState<boolean>(false);
   return (
-    <ExpandCollapse
-      textExpanded={t('devconsole~Show additional parameters and lifecycle hooks')}
-      textCollapsed={t('devconsole~Hide additional parameters and lifecycle hooks')}
-    >
-      <FormSection>
-        {type === DeploymentStrategyType.rolling && (
-          <>
-            <InputField
-              name="deploymentStrategy.data.updatePeriodSeconds"
-              label={t('devconsole~Update Period')}
-              type={TextInputTypes.number}
+    <>
+      {showAdditionalParams && type === DeploymentStrategyType.rollingParams && (
+        <>
+          <InputField
+            name="formData.deploymentStrategy.rollingParams.updatePeriodSeconds"
+            style={{ maxWidth: 'unset' }}
+            label={t('devconsole~Update Period')}
+            type={TextInputTypes.number}
+          />
+          <InputField
+            name="formData.deploymentStrategy.rollingParams.intervalSeconds"
+            style={{ maxWidth: 'unset' }}
+            label={t('devconsole~Interval')}
+            type={TextInputTypes.number}
+          />
+        </>
+      )}
+      <ExpandCollapse
+        textExpanded={t('devconsole~Hide additional parameters and lifecycle hooks')}
+        textCollapsed={t('devconsole~Show additional parameters and lifecycle hooks')}
+        onToggle={(isExpanded) => setShowAdditionalParams(isExpanded)}
+      >
+        <FormSection>
+          <LifecycleHookField
+            title={t('devconsole~Pre Lifecycle Hook')}
+            subTitle={t('devconsole~Pre hooks execute before the deployment begins.')}
+            dataAttribute={dataAttribute}
+            resourceObj={resourceObj}
+            lifecycleHookName="pre"
+          />
+          {type === DeploymentStrategyType.recreateParams && (
+            <LifecycleHookField
+              title={t('devconsole~Mid Lifecycle Hook')}
+              subTitle={t(
+                'devconsole~Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
+              )}
+              dataAttribute={dataAttribute}
+              resourceObj={resourceObj}
+              lifecycleHookName="mid"
             />
-            <InputField
-              name="deploymentStrategy.data.intervalSeconds"
-              label={t('devconsole~Interval')}
-              type={TextInputTypes.number}
-            />
-          </>
-        )}
-        {/* Tod-do: Refactor HealthChecksProbe to make it a generic comp which can be used for adding both health checks and lifecycle hooks. */}
-        {/* <LifecycleHooks /> */}
-      </FormSection>
-    </ExpandCollapse>
+          )}
+          <LifecycleHookField
+            title={t('devconsole~Post Lifecycle Hook')}
+            subTitle={t('devconsole~Post hooks execute after the deployment strategy completes.')}
+            dataAttribute={dataAttribute}
+            resourceObj={resourceObj}
+            lifecycleHookName="post"
+          />
+        </FormSection>
+      </ExpandCollapse>
+    </>
   );
 };
 

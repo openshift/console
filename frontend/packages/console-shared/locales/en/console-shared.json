@@ -1,5 +1,6 @@
 {
   "An error occurred": "An error occurred",
+  "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.",
   "No resources found": "No resources found",
   "Started": "Started",
   "There are no recent events.": "There are no recent events.",
@@ -55,7 +56,6 @@
   "Expressions": "Expressions",
   "Select {{title}}": "Select {{title}}",
   "A form is not available for this resource. Please use the YAML view.": "A form is not available for this resource. Please use the YAML view.",
-  "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.",
   "Create": "Create",
   "Cancel": "Cancel",
   "Advanced configuration": "Advanced configuration",
@@ -71,6 +71,7 @@
   "Click {{submit}} to save changes or {{reset}} to cancel changes.": "Click {{submit}} to save changes or {{reset}} to cancel changes.",
   "Save": "Save",
   "Reload": "Reload",
+  "Download": "Download",
   "Name": "Name",
   "Add value": "Add value",
   "Filter by type...": "Filter by type...",

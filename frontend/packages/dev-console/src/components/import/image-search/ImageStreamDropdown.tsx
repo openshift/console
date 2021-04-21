@@ -8,21 +8,24 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
+const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
+  disabled = false,
+  formContextField,
+}) => {
   const { t } = useTranslation();
   const imgCollection = {};
 
-  const {
-    values: { imageStream },
-    setFieldValue,
-    initialValues,
-  } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
+  const { imageStream } = _.get(values, formContextField) || values;
+  const { imageStream: initialImageStream, isi: initialIsi } =
+    _.get(initialValues, formContextField) || initialValues;
   const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
     ImageStreamContext,
   );
   const { accessLoading, loading } = state;
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
+  const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const collectImageStreams = (namespace: string, resource: K8sResourceKind): void => {
     if (!imgCollection[namespace]) {
       imgCollection[namespace] = {};
@@ -39,15 +42,16 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = fals
 
   const onDropdownChange = React.useCallback(
     (img: string) => {
-      setFieldValue('imageStream.tag', initialValues.imageStream.tag);
-      setFieldValue('isi', initialValues.isi);
+      setFieldValue(`${fieldPrefix}imageStream.tag`, initialImageStream.tag);
+      setFieldValue(`${fieldPrefix}isi`, initialIsi);
       const image = _.get(imgCollection, [imageStream.namespace, img], {});
       dispatch({ type: ImageStreamActions.setSelectedImageStream, value: image });
     },
     [
       setFieldValue,
-      initialValues.imageStream.tag,
-      initialValues.isi,
+      fieldPrefix,
+      initialImageStream.tag,
+      initialIsi,
       imgCollection,
       imageStream.namespace,
       dispatch,
@@ -74,14 +78,14 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = fals
   }, [imageStream.image, isStreamsAvailable]);
 
   React.useEffect(() => {
-    if (initialValues.imageStream.image !== imageStream.image) {
-      initialValues.imageStream.tag = '';
+    if (initialImageStream.image !== imageStream.image) {
+      initialImageStream.tag = '';
     }
-  }, [imageStream.image, initialValues.imageStream.image, initialValues.imageStream.tag]);
+  }, [imageStream.image, initialImageStream.image, initialImageStream.tag]);
 
   return (
     <ResourceDropdownField
-      name="imageStream.image"
+      name={`${fieldPrefix}imageStream.image`}
       label={t('devconsole~Image Stream')}
       resources={getImageStreamResource(imageStream.namespace)}
       dataSelector={['metadata', 'name']}

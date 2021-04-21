@@ -32,7 +32,7 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import { VolumeSnapshotModel } from '../../models';
+import { DeploymentConfigModel, DeploymentModel, VolumeSnapshotModel } from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -270,7 +270,9 @@ const kebabFactory: KebabFactory = {
     labelKey: 'public~Edit {{kind}}',
     labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
     dataTest: `Edit ${kind.label}`,
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
+    href: [DeploymentModel.kind, DeploymentConfigModel.kind].includes(kind.kind)
+      ? `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`
+      : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
