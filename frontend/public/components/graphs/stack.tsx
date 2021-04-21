@@ -10,7 +10,7 @@ import {
   getCustomTheme,
 } from '@patternfly/react-charts';
 import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { twentyFourHourTime } from '../utils/datetime';
+import { timeFormatter } from '../utils/datetime';
 import { humanizeNumber, useRefWidth } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
@@ -24,13 +24,13 @@ import { AreaChart, AreaChartProps } from './area';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
-const DEFAULT_TICK_COUNT = 3;
+const DEFAULT_TICK_COUNT = 2;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
 export const StackChart: React.FC<AreaChartProps> = ({
   className,
   data = [],
-  formatDate = twentyFourHourTime,
+  formatDate = timeFormatter.format,
   height = DEFAULT_HEIGHT,
   humanize = humanizeNumber,
   loading = true,

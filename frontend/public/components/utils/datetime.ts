@@ -1,6 +1,53 @@
 import * as _ from 'lodash-es';
 import * as moment from 'moment';
 
+const getLocale = () => localStorage.getItem('bridge/language');
+
+// https://tc39.es/ecma402/#datetimeformat-objects
+export const timeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+  hour: 'numeric',
+  minute: 'numeric',
+});
+
+export const timeFormatterWithSeconds = new Intl.DateTimeFormat(getLocale() || undefined, {
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+});
+
+export const dateFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+export const dateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  year: 'numeric',
+});
+
+export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(getLocale() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  year: 'numeric',
+});
+
+export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+});
+
 // Behaves like moment.js's fromNow
 export const fromNow = (dateTime, now = undefined, options = { omitSuffix: false }) => {
   // Check for null. If dateTime is null, it returns incorrect date and time of Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)

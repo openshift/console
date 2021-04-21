@@ -46,9 +46,11 @@ import {
   useSafeFetch,
 } from '../utils';
 import {
+  dateTimeFormatterWithSeconds,
   formatPrometheusDuration,
   parsePrometheusDuration,
-  twentyFourHourTime,
+  timeFormatter,
+  timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { PrometheusAPIError } from './types';
 import { ONE_MINUTE } from '@console/shared/src/constants/time';
@@ -190,7 +192,9 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
               <div className="query-browser__tooltip-group">
-                <div className="query-browser__tooltip-time">{twentyFourHourTime(time, true)}</div>
+                <div className="query-browser__tooltip-time">
+                  {dateTimeFormatterWithSeconds.format(time)}
+                </div>
               </div>
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-group" key={i}>
@@ -312,7 +316,11 @@ const Graph: React.FC<GraphProps> = React.memo(
         yTickFormat = (v: number) => (v === 0 ? '0' : v.toExponential(1));
       }
     }
-    const xTickFormat = (d) => twentyFourHourTime(d, span < 5 * ONE_MINUTE);
+    const xAxisTickCount = Math.round(width / 100);
+    const xAxisTickShowSeconds = span < xAxisTickCount * ONE_MINUTE;
+    const xTickFormat = xAxisTickShowSeconds
+      ? timeFormatterWithSeconds.format
+      : timeFormatter.format;
     let xAxisStyle;
     if (width < 225) {
       xAxisStyle = {
@@ -339,7 +347,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         theme={theme}
         width={width}
       >
-        <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
+        <ChartAxis style={xAxisStyle} tickCount={xAxisTickCount} tickFormat={xTickFormat} />
         <ChartAxis
           crossAxis={false}
           dependentAxis
