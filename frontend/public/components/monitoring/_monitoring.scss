@@ -85,6 +85,16 @@ $tooltip-background-color: #151515;
   display: flex;
   flex-direction: column;
   margin-right: 20px;
+
+  .monitoring-dashboards__dashboard_dropdown_item {
+    display: flex;
+    justify-content: space-between;
+  }
+  .monitoring-dashboards__dashboard_dropdown_tag {
+    font-weight: var(--pf-global--FontWeight--bold);
+    line-height: 13px;
+    margin-left: 20px;
+  }
 }
 
 .monitoring-dashboards__header {
