@@ -164,7 +164,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         idValue={prefixedID(id, 'boot-order')}
         arePendingChanges={
           isVM &&
-          isVMRunningOrExpectedRunning(vm) &&
+          isVMRunningOrExpectedRunning(vm, vmi) &&
           isBootOrderChanged(new VMWrapper(vm), new VMIWrapper(vmi))
         }
       >
@@ -238,7 +238,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
     vmiLike &&
     canUpdateVM &&
     kindObj !== VirtualMachineInstanceModel &&
-    !isVMRunningOrExpectedRunning(vm);
+    !isVMRunningOrExpectedRunning(vm, vmi);
 
   const id = getBasicID(vmiLike);
   const flavorText = t(
@@ -318,7 +318,7 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
             isNotAvail={!flavorText}
             arePendingChanges={
               isVM &&
-              isVMRunningOrExpectedRunning(vm) &&
+              isVMRunningOrExpectedRunning(vm, vmi) &&
               isFlavorChanged(new VMWrapper(vm), new VMIWrapper(vmi))
             }
           >

@@ -110,7 +110,7 @@ export const menuActionDeleteVMImport = (
 export const menuActionStart = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatusBundle }: ActionArgs,
+  { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const StartMessage: React.FC = () => {
     const name = getName(vm);
@@ -128,7 +128,7 @@ export const menuActionStart = (
   };
 
   return {
-    hidden: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm),
+    hidden: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm, vmi),
     // t('kubevirt-plugin~Start Virtual Machine')
     labelKey: 'kubevirt-plugin~Start Virtual Machine',
     callback: () => {
@@ -157,7 +157,7 @@ const menuActionStop = (
   const isImporting = vmStatusBundle?.status?.isImporting();
   return {
     isDisabled: isImporting,
-    hidden: !isImporting && !isVMExpectedRunning(vm),
+    hidden: !isImporting && !isVMExpectedRunning(vm, vmi),
     // t('kubevirt-plugin~Stop Virtual Machine')
     labelKey: 'kubevirt-plugin~Stop Virtual Machine',
     callback: () =>
@@ -186,7 +186,7 @@ const menuActionRestart = (
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      !isVMExpectedRunning(vm) ||
+      !isVMExpectedRunning(vm, vmi) ||
       !isVMCreated(vm),
     // t('kubevirt-plugin~Restart Virtual Machine')
     labelKey: 'kubevirt-plugin~Restart Virtual Machine',
@@ -244,7 +244,7 @@ const menuActionMigrate = (
       vmStatusBundle?.status?.isMigrating() ||
       vmStatusBundle?.status?.isError() ||
       vmStatusBundle?.status?.isInProgress() ||
-      !isVMRunningOrExpectedRunning(vm),
+      !isVMRunningOrExpectedRunning(vm, vmi),
     // t('kubevirt-plugin~Migrate Virtual Machine')
     labelKey: 'kubevirt-plugin~Migrate Virtual Machine',
     callback: () =>
@@ -297,13 +297,13 @@ const menuActionCancelMigration = (
 const menuActionClone = (
   kindObj: K8sKind,
   vm: VMKind,
-  { vmStatusBundle }: ActionArgs,
+  { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   return {
     hidden: vmStatusBundle?.status?.isImporting(),
     // t('kubevirt-plugin~Clone Virtual Machine')
     labelKey: 'kubevirt-plugin~Clone Virtual Machine',
-    callback: () => cloneVMModal({ vm }),
+    callback: () => cloneVMModal({ vm, vmi }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };

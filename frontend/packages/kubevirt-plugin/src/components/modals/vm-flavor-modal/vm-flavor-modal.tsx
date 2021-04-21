@@ -128,7 +128,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     return sourceMemSize !== memSize || sourceMemUnit !== memUnit || `${sourceCPU}` !== cpus;
   };
 
-  const showPendingChangesWarning = isVMExpectedRunning(vm) && isChanged();
+  const showPendingChangesWarning = isVMExpectedRunning(vm, vmi) && isChanged();
 
   const {
     validations: { cpus: cpusValidation, memory: memoryValidation },
@@ -173,7 +173,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     <div className="modal-content">
       <ModalTitle>{t('kubevirt-plugin~Edit Flavor')}</ModalTitle>
       <ModalBody>
-        {isVMExpectedRunning(vm) && (
+        {isVMExpectedRunning(vm, vmi) && (
           <ModalPendingChangesAlert isChanged={showPendingChangesWarning} />
         )}
         <Form>

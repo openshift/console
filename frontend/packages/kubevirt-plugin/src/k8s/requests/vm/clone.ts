@@ -6,21 +6,22 @@ import {
 
 import { VirtualMachineModel } from '../../../models';
 import { isVMExpectedRunning } from '../../../selectors/vm';
-import { VMKind } from '../../../types/vm';
+import { VMIKind, VMKind } from '../../../types/vm';
 import { CloneTo, VMClone } from '../../helpers/vm-clone';
 import { stopVM } from './actions';
 
 type CloneFrom = {
   vm: VMKind;
+  vmi: VMIKind;
   persistentVolumeClaims: PersistentVolumeClaimKind[];
   dataVolumes: K8sResourceKind[];
 };
 
 export const cloneVM = async (
-  { vm, persistentVolumeClaims, dataVolumes }: CloneFrom,
+  { vm, vmi, persistentVolumeClaims, dataVolumes }: CloneFrom,
   cloneTo: CloneTo,
 ) => {
-  if (isVMExpectedRunning(vm)) {
+  if (isVMExpectedRunning(vm, vmi)) {
     await stopVM(vm);
   }
 

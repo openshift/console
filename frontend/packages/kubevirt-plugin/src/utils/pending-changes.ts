@@ -12,6 +12,7 @@ import {
 } from '../selectors/vm-like/next-run-changes';
 import { VMIKind, VMKind } from '../types';
 import { getVMTabURL, redirectToTab } from './url';
+import { VMIPhase } from '../constants/vmi/phase';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {
   const vm = vmWrapper.asResource();
@@ -58,7 +59,11 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
 };
 
 export const hasPendingChanges = (vm: VMKind, vmi: VMIKind, pc?: PendingChanges): boolean => {
-  const pendingChanges = pc || (!!vmi && getPendingChanges(new VMWrapper(vm), new VMIWrapper(vmi)));
+  const pendingChanges =
+    pc ||
+    (!!vmi &&
+      vmi.status.phase !== VMIPhase.Succeeded &&
+      getPendingChanges(new VMWrapper(vm), new VMIWrapper(vmi)));
   return Object.keys(pendingChanges || {}).reduce(
     (boolVal, k) => boolVal || pendingChanges[k].isPendingChange,
     false,

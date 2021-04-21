@@ -37,7 +37,7 @@ import {
   getVolumes,
   isVMExpectedRunning,
 } from '../../../selectors/vm';
-import { VMKind } from '../../../types';
+import { VMKind, VMIKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
@@ -51,6 +51,7 @@ import './_clone-vm-modal.scss';
 export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const {
     vm,
+    vmi,
     namespace,
     onNamespaceChanged,
     namespaces,
@@ -102,6 +103,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
     const promise = cloneVM(
       {
         vm,
+        vmi,
         dataVolumes: dataVolumesData,
         persistentVolumeClaims: persistentVolumeClaimsData,
       },
@@ -116,7 +118,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   };
 
   const vmRunningWarning =
-    isVMExpectedRunning(vm) &&
+    isVMExpectedRunning(vm, vmi) &&
     t('kubevirt-plugin~The VM {{vmName}} is still running. It will be powered off while cloning.', {
       vmName: getName(vm),
     });
@@ -299,6 +301,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
 
 type CloneVMModalFirehoseProps = ModalComponentProps & {
   vm: VMKind;
+  vmi: VMIKind;
   useProjects: boolean;
 };
 

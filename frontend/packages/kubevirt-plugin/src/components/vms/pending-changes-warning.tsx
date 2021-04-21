@@ -95,11 +95,10 @@ export const PendingChangesWarning: React.FC<PendingChangesWarningProps> = ({
   vmi: vmiProp,
 }) => {
   const vm: VMKind = asVM(getLoadedData(vmLikeEntity));
-  if (!isVMRunningOrExpectedRunning(vm)) {
+  const vmi = getLoadedData(vmiProp);
+  if (!isVMRunningOrExpectedRunning(vm, vmi)) {
     return <></>;
   }
-
-  const vmi = getLoadedData(vmiProp);
 
   const vmWrapper = new VMWrapper(vm);
   const vmiWrapper = new VMIWrapper(vmi);

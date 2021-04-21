@@ -2,6 +2,7 @@ import { ValidationObject } from '@console/shared';
 
 import { DiskType } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
+import { VMIKind } from '../../types';
 import { UIStorageValidation } from '../../types/ui/storage';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { TemplateValidations } from '../../utils/validations/template/template-validations';
@@ -41,6 +42,7 @@ export type VMStorageRowActionOpts = {
 
 export type VMStorageRowCustomData = {
   vmLikeEntity: VMLikeEntityKind;
+  vmi: VMIKind;
   columnClasses: string[];
   isDisabled: boolean;
   pendingChangesDisks?: Set<string>;

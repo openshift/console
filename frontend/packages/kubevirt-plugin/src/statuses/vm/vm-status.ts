@@ -228,8 +228,13 @@ const isDeleting = (vm: VMKind, vmi: VMIKind): VMStatusBundle =>
     ? { status: VMStatus.DELETING }
     : null;
 
-const isBeingStopped = (vm: VMKind): VMStatusBundle => {
-  if (vm && !isVMExpectedRunning(vm) && isVMCreated(vm)) {
+const isBeingStopped = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
+  if (
+    vm &&
+    !isVMExpectedRunning(vm, vmi) &&
+    isVMCreated(vm) &&
+    getStatusPhase<VMIPhase>(vmi) !== VMIPhase.Succeeded
+  ) {
     return {
       status: VMStatus.STOPPING,
     };
@@ -238,8 +243,8 @@ const isBeingStopped = (vm: VMKind): VMStatusBundle => {
   return null;
 };
 
-const isOff = (vm: VMKind): VMStatusBundle => {
-  return vm && !isVMExpectedRunning(vm) ? { status: VMStatus.OFF } : null;
+const isOff = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
+  return vm && !isVMExpectedRunning(vm, vmi) ? { status: VMStatus.OFF } : null;
 };
 
 const isError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
@@ -270,8 +275,8 @@ const isRunning = (vmi: VMIKind): VMStatusBundle => {
   return null;
 };
 
-const isStarting = (vm: VMKind, launcherPod: PodKind = null): VMStatusBundle => {
-  if (vm && isVMExpectedRunning(vm) && isVMCreated(vm)) {
+const isStarting = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind = null): VMStatusBundle => {
+  if (vm && isVMCreated(vm) && isVMExpectedRunning(vm, vmi)) {
     // created but not yet ready
     if (launcherPod) {
       const podStatus = getPodStatus(launcherPod);
@@ -290,8 +295,8 @@ const isStarting = (vm: VMKind, launcherPod: PodKind = null): VMStatusBundle => 
   return null;
 };
 
-const isWaitingForVMI = (vm: VMKind): VMStatusBundle => {
-  if (vm && isVMExpectedRunning(vm) && !isVMCreated(vm)) {
+const isWaitingForVMI = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
+  if (vm && !isVMCreated(vm) && isVMExpectedRunning(vm, vmi)) {
     return { status: VMStatus.VMI_WAITING, message: VMI_WAITING_MESSAGE };
   }
   return null;
@@ -324,12 +329,12 @@ export const getVMStatus = ({
     isBeingImported(vm, pods, pvcs, dataVolumes) ||
     isVMError(vm) ||
     isDeleting(vm, vmi) ||
-    isBeingStopped(vm) ||
-    isOff(vm) ||
+    isBeingStopped(vm, vmi) ||
+    isOff(vm, vmi) ||
     isError(vm, vmi, launcherPod) ||
     isRunning(vmi) ||
-    isStarting(vm, launcherPod) ||
-    isWaitingForVMI(vm) ||
+    isStarting(vm, vmi, launcherPod) ||
+    isWaitingForVMI(vm, vmi) ||
     ([VMIPhase.Scheduling, VMIPhase.Scheduled].includes(getStatusPhase<VMIPhase>(vmi)) && {
       status: VMStatus.STARTING,
       message: STARTING_MESSAGE,

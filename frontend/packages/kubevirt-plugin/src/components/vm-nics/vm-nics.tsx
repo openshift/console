@@ -120,10 +120,11 @@ export const VMNics: React.FC<VMTabProps> = ({
   const { t } = useTranslation();
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
-  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity));
+  const vmi = vmisProp[0];
+  const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
   const pendingChangesNICs: Set<string> =
-    vmisProp?.length > 0 && isVMI(vmisProp[0])
-      ? new Set(changedNics(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmisProp[0])))
+    isVMRunning && vmisProp?.length > 0 && isVMI(vmi)
+      ? new Set(changedNics(new VMWrapper(asVM(vmLikeEntity)), new VMIWrapper(vmi)))
       : null;
 
   return (
@@ -155,6 +156,7 @@ export const VMNics: React.FC<VMTabProps> = ({
           data={getNicsData(vmLikeEntity)}
           customData={{
             vmLikeEntity,
+            vmi,
             withProgress,
             isDisabled: isLocked || isCommonTemplate,
             pendingChangesNICs,
