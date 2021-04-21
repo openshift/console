@@ -60,7 +60,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       <AreaChart
         data={error ? [[]] : data}
         loading={!error && isLoading}
-        query={queries[0].query}
+        query={queries.map((q) => q.query)}
         xAxis={false}
         humanize={humanizeValue}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
@@ -290,7 +290,7 @@ type UtilizationItemProps = {
   requested?: PrometheusResponse;
   isLoading: boolean;
   humanizeValue: Humanize;
-  query: string;
+  query: string | string[];
   error: boolean;
   max?: number;
   byteDataType?: ByteDataTypes;

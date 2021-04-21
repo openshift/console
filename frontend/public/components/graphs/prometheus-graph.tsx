@@ -36,12 +36,13 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   ariaChartLinkLabel,
 }) => {
   const [perspective] = useActivePerspective();
-  if (!query) {
+  const queries = _.compact(_.castArray(query));
+  if (!queries.length) {
     return <>{children}</>;
   }
 
   const params = new URLSearchParams();
-  params.set('query0', query);
+  queries.forEach((q, index) => params.set(`query${index}`, q));
 
   const url =
     canAccessMonitoring && perspective === 'admin'
@@ -71,7 +72,7 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 
 type PrometheusGraphLinkProps = {
   canAccessMonitoring: boolean;
-  query: string;
+  query: string | string[];
   namespace?: string;
   ariaChartLinkLabel?: string;
 };
