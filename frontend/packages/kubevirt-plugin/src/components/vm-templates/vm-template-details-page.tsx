@@ -21,7 +21,7 @@ import { DataVolumeModel } from '../../models';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../types/api';
-import { VMDisksFirehose } from '../vm-disks';
+import { VMDisks } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
 import { menuActionsCreator } from './menu-actions';
 import { VMTemplateDetails } from './vm-template-details';
@@ -94,7 +94,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const disksPage = {
     href: 'disks',
     name: t('kubevirt-plugin~Disks'),
-    component: VMDisksFirehose,
+    component: VMDisks,
   };
 
   const pages = [navFactory.details(VMTemplateDetails), navFactory.editYaml(), nicsPage, disksPage];
