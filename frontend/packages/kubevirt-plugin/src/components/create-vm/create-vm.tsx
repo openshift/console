@@ -26,6 +26,10 @@ import useSSHKeys from '../../hooks/use-ssh-keys';
 import useSSHService from '../../hooks/use-ssh-service';
 import { useSupportModal } from '../../hooks/use-support-modal';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { selectVM } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../statuses/template/types';
 import { TemplateItem } from '../../types/template';
@@ -44,13 +48,9 @@ import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
 import { BootSource } from './tabs/boot-source';
 import { ReviewAndCreate } from './tabs/review-create';
 import { SelectTemplate } from './tabs/select-template';
-import { selectVM } from '../../selectors/vm-template/basic';
-import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 
 enum WizardStep {
   TEMPLATE = 'Template',
@@ -431,6 +431,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                       if (!isEmpty(tempSSHKey)) {
                         createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace, {
                           secretName: `${AUTHORIZED_SSH_KEYS}-${vm?.metadata?.name}`,
+                          create: true,
                         });
                         updateSSHKeyInGlobalNamespaceSecret &&
                           createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace);
