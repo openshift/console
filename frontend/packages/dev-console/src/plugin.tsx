@@ -72,6 +72,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('devconsole~+Add')
         name: '%devconsole~+Add%',
         href: '/add',
+        namespaced: true,
         testID: '+Add-header',
         'data-quickstart-id': 'qs-nav-add',
       },
@@ -87,6 +88,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('devconsole~Topology')
         name: '%devconsole~Topology%',
         href: '/topology',
+        namespaced: true,
         testID: 'topology-header',
         'data-quickstart-id': 'qs-nav-topology',
       },
@@ -105,6 +107,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('devconsole~Monitoring')
         name: '%devconsole~Monitoring%',
         href: '/dev-monitoring',
+        namespaced: true,
         testID: 'monitoring-header',
         'data-tour-id': 'tour-monitoring-nav',
         'data-quickstart-id': 'qs-nav-monitoring',
@@ -124,6 +127,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('devconsole~Search')
         name: '%devconsole~Search%',
         href: '/search',
+        namespaced: true,
         testID: 'search-header',
         'data-tour-id': 'tour-search-nav',
         'data-quickstart-id': 'qs-nav-search',
@@ -158,6 +162,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('devconsole~Project')
         name: '%devconsole~Project%',
         href: '/project-details',
+        namespaced: true,
         testID: 'project-details-header',
         'data-quickstart-id': 'qs-nav-project',
       },
