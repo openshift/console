@@ -1,16 +1,8 @@
 import { Simulate } from 'react-dom/test-utils';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import {
-  scriptIDPrefix,
-  getPluginID,
-  getScriptElementID,
-  loadDynamicPlugin,
-  registerPluginEntryCallback,
-  getPluginEntryCallback,
-  getStateForTestPurposes,
-  resetStateAndEnvForTestPurposes,
-} from '../plugin-loader';
+import * as pluginLoaderModule from '../plugin-loader';
+import * as pluginManifestModule from '../plugin-manifest';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
 import {
   getPluginManifest,
@@ -18,7 +10,27 @@ import {
   getEntryModuleMocks,
 } from '../../utils/test-utils';
 
+const {
+  scriptIDPrefix,
+  getPluginID,
+  getScriptElementID,
+  loadDynamicPlugin,
+  getPluginEntryCallback,
+  registerPluginEntryCallback,
+  loadPluginFromURL,
+  loadAndEnablePlugin,
+  getStateForTestPurposes,
+  resetStateAndEnvForTestPurposes,
+} = pluginLoaderModule;
+
+const fetchPluginManifest = jest.spyOn(pluginManifestModule, 'fetchPluginManifest');
+const loadDynamicPluginMock = jest.spyOn(pluginLoaderModule, 'loadDynamicPlugin');
+const loadPluginFromURLMock = jest.spyOn(pluginLoaderModule, 'loadPluginFromURL');
+
 beforeEach(() => {
+  [fetchPluginManifest, loadDynamicPluginMock, loadPluginFromURLMock].forEach((mock) =>
+    mock.mockReset(),
+  );
   resetStateAndEnvForTestPurposes();
 });
 
@@ -261,5 +273,62 @@ describe('window.loadPluginEntry', () => {
     expect(overrideSharedModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
+  });
+});
+
+describe('loadPluginFromURL', () => {
+  it('fetches the manifest and loads the plugin from the given URL', async () => {
+    const baseURL = 'http://example.com/test/';
+    const manifest = getPluginManifest('Test', '1.2.3');
+
+    fetchPluginManifest.mockImplementation(() => Promise.resolve(manifest));
+    loadDynamicPluginMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
+
+    expect(await loadPluginFromURL(baseURL)).toBe('Test@1.2.3');
+    expect(fetchPluginManifest).toHaveBeenCalledWith(baseURL);
+    expect(loadDynamicPluginMock).toHaveBeenCalledWith(baseURL, manifest);
+  });
+});
+
+describe('loadAndEnablePlugin', () => {
+  let pluginStore: PluginStore;
+  let setDynamicPluginEnabled: jest.SpyInstance<typeof pluginStore.setDynamicPluginEnabled>;
+
+  beforeEach(() => {
+    pluginStore = new PluginStore([]);
+    setDynamicPluginEnabled = jest.spyOn(pluginStore, 'setDynamicPluginEnabled');
+    setDynamicPluginEnabled.mockImplementation(() => {});
+  });
+
+  it('loads the plugin from URL /api/plugins/{pluginName}/', async () => {
+    loadPluginFromURLMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
+
+    await loadAndEnablePlugin('Test', pluginStore);
+
+    expect(loadPluginFromURLMock).toHaveBeenCalledWith(
+      `${window.SERVER_FLAGS.basePath}api/plugins/Test/`,
+    );
+  });
+
+  it('enables the plugin if it was loaded successfully', async () => {
+    const onError = jest.fn();
+
+    loadPluginFromURLMock.mockImplementation(() => Promise.resolve('Test@1.2.3'));
+
+    await loadAndEnablePlugin('Test', pluginStore, onError);
+
+    expect(setDynamicPluginEnabled).toHaveBeenCalledWith('Test@1.2.3', true);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it('calls the provided error handler upon a load error', async () => {
+    const onError = jest.fn();
+
+    loadPluginFromURLMock.mockImplementation(() => Promise.reject(new Error('boom')));
+
+    await loadAndEnablePlugin('Test', pluginStore, onError);
+
+    expect(setDynamicPluginEnabled).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledWith(new Error('boom'));
   });
 });
