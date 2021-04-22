@@ -32,6 +32,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
+import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { usePrevious } from '@console/shared/src/hooks/previous';
 
 import { coFetchJSON } from '../co-fetch';
@@ -41,11 +42,9 @@ import {
   getNewerClusterVersionChannel,
   getSimilarClusterVersionChannels,
   getSortedUpdates,
-  referenceForModel,
   splitClusterVersionChannel,
 } from '../module/k8s';
 import { ClusterVersionModel } from '../models';
-import { useK8sWatchResource, WatchK8sResource } from './utils/k8s-watch-hook';
 import { useAccessReview } from './utils/rbac';
 import { LinkifyExternal } from './utils';
 import { PrometheusEndpoint } from './graphs/helpers';
@@ -187,13 +186,6 @@ const getUpdateNotificationEntries = (
 
 const pollerTimeouts = {};
 const pollers = {};
-const cvResource: WatchK8sResource = {
-  kind: referenceForModel(ClusterVersionModel),
-  namespaced: false,
-  name: 'version',
-  isList: false,
-  optional: true,
-};
 
 export const refreshNotificationPollers = () => {
   _.each(pollerTimeouts, clearTimeout);
@@ -273,7 +265,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
 
     return () => _.each(pollerTimeouts, clearTimeout);
   }, [t]);
-  const [clusterVersionData] = useK8sWatchResource<ClusterVersionKind>(cvResource);
+  const clusterVersion: ClusterVersionKind = useClusterVersion();
   const alertActionExtensions = useExtensions<AlertAction>(isAlertAction);
 
   const { data, loaded, loadError } = alerts || {};
@@ -287,7 +279,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     }) && window.SERVER_FLAGS.branding !== 'dedicated';
 
   const updateList: React.ReactNode[] = getUpdateNotificationEntries(
-    clusterVersionData,
+    clusterVersion,
     clusterVersionIsEditable,
     toggleNotificationDrawer,
   );
