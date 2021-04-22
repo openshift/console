@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Title } from '@patternfly/react-core';
+import { Alert, Title, pluralize } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
+import {
+  convertTime,
+  getTimeUnitString,
+} from '@console/ceph-storage-plugin/src/utils/bucket-class';
 import { State } from '../state';
 import { StoreCard } from '../review-utils';
 import {
@@ -25,6 +29,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
     hubNamespaceStore,
     cacheBackingStore,
     timeToLive,
+    timeUnit,
     writeNamespaceStore,
   } = state;
   const { error, isLoading } = state;
@@ -54,7 +59,10 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
           </ReviewListBody>
           <ReviewListBody hideIcon>
             <span>{t('ceph-storage-plugin~Time to live: ')}</span>&nbsp;
-            <span className="text-secondary">{`${timeToLive} ms`}</span>
+            <span className="text-secondary">{`${pluralize(
+              convertTime(timeUnit, timeToLive),
+              getTimeUnitString(timeUnit, t),
+            )}`}</span>
           </ReviewListBody>
         </>
       )}

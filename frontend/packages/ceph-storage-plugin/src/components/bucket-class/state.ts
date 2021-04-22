@@ -1,4 +1,4 @@
-import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-class';
+import { BucketClassType, NamespacePolicyType, TimeUnits } from '../../constants/bucket-class';
 import { BackingStoreKind, NamespaceStoreKind, PlacementPolicy } from '../../types';
 
 export const initialState = {
@@ -11,6 +11,7 @@ export const initialState = {
   hubNamespaceStore: null,
   cacheBackingStore: null,
   timeToLive: 3600000,
+  timeUnit: TimeUnits.HOUR,
   description: '',
   tier1Policy: PlacementPolicy.Spread,
   tier2Policy: null,
@@ -31,6 +32,7 @@ export type State = {
   hubNamespaceStore: NamespaceStoreKind;
   cacheBackingStore: BackingStoreKind;
   timeToLive: number;
+  timeUnit: TimeUnits;
   tier1Policy: PlacementPolicy;
   tier2Policy: PlacementPolicy;
   tier1BackingStore: BackingStoreKind[];
@@ -49,6 +51,7 @@ export type Action =
   | { type: 'setHubNamespaceStore'; value: NamespaceStoreKind }
   | { type: 'setCacheBackingStore'; value: BackingStoreKind }
   | { type: 'setTimeToLive'; value: number }
+  | { type: 'setTimeUnit'; value: TimeUnits }
   | { type: 'setDescription'; value: string }
   | { type: 'setPlacementPolicyTier1'; value: PlacementPolicy }
   | { type: 'setPlacementPolicyTier2'; value: PlacementPolicy }
@@ -77,6 +80,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { cacheBackingStore: action.value });
     case 'setTimeToLive':
       return Object.assign({}, state, { timeToLive: action.value });
+    case 'setTimeUnit':
+      return Object.assign({}, state, { timeUnit: action.value });
     case 'setDescription':
       return Object.assign({}, state, { description: action.value });
     case 'setPlacementPolicyTier1':
