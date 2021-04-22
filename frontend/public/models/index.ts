@@ -675,21 +675,6 @@ export const PersistentVolumeClaimModel: K8sKind = {
   labelPluralKey: 'public~PersistentVolumeClaims',
 };
 
-export const PetsetModel: K8sKind = {
-  apiVersion: 'v1',
-  label: 'Petset',
-  // t('public~Petset')
-  labelKey: 'public~Petset',
-  plural: 'petsets',
-  abbr: 'PS',
-  propagationPolicy: 'Foreground',
-  kind: 'Petset',
-  id: 'petset',
-  labelPlural: 'Petsets',
-  // t('public~Petsets')
-  labelPluralKey: 'public~Petsets',
-};
-
 export const StatefulSetModel: K8sKind = {
   label: 'StatefulSet',
   // t('public~StatefulSet')
