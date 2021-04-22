@@ -29,6 +29,7 @@ export interface GitSectionProps {
   showSample?: boolean;
   buildStrategy?: string;
   builderImages: NormalizedBuilderImages;
+  hideAdvancedGitOptions?: boolean;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -36,6 +37,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   showSample = !!defaultSample,
   buildStrategy,
   builderImages,
+  hideAdvancedGitOptions,
 }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
@@ -50,7 +52,7 @@ const GitSection: React.FC<GitSectionProps> = ({
             annotations: {
               sampleRepo: defaultSampleURL,
               sampleContextDir: defaultSampleDir ?? './',
-              sampleRef: defaultSampleRef ?? 'master',
+              sampleRef: defaultSampleRef ?? '',
             },
           }
         : null,
@@ -284,6 +286,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         }}
         onBlur={handleGitUrlBlur}
         data-test-id="git-form-input-url"
+        isDisabled={hideAdvancedGitOptions}
         required
       />
       {sampleRepo && <SampleRepo onClick={fillSample} />}
@@ -304,7 +307,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           )}
         </>
       )}
-      <AdvancedGitOptions />
+      {!hideAdvancedGitOptions && <AdvancedGitOptions />}
     </FormSection>
   );
 };
