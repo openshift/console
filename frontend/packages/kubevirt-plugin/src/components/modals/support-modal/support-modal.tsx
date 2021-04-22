@@ -13,6 +13,7 @@ import { Checkbox, Label, Stack, StackItem } from '@patternfly/react-core';
 
 import { TEMPLATE_PROVIDER_ANNOTATION, TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
+import { SUPPORT_URL } from '../../../constants/vm-templates/constants';
 import { ModalFooter } from '../modal/modal-footer';
 
 import './support-modal.scss';
@@ -20,9 +21,15 @@ import './support-modal.scss';
 type SupportModalProps = ModalComponentProps & {
   onConfirm: (disable: boolean) => void;
   communityURL?: string;
+  isCommonTemplate?: boolean;
 };
 
-const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, communityURL }) => {
+const SupportModal: React.FC<SupportModalProps> = ({
+  onConfirm,
+  close,
+  communityURL,
+  isCommonTemplate,
+}) => {
   const { t } = useTranslation();
   const [doNotShow, setDoNotShow] = React.useState(false);
   return (
@@ -45,6 +52,13 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
                   href={communityURL}
                   text={t('kubevirt-plugin~Learn more about the community')}
                 />
+              </StackItem>
+            </>
+          ) : isCommonTemplate ? (
+            <>
+              <StackItem>
+                {t('kubevirt-plugin~This template is provided by Red Hat, But is not supported ')}
+                <ExternalLink href={SUPPORT_URL} text={t('kubevirt-plugin~Learn more')} />
               </StackItem>
             </>
           ) : (
