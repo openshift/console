@@ -241,6 +241,7 @@
   "Select a Project to view the list of Pipelines or <2>create a Project</2>.": "Select a Project to view the list of Pipelines or <2>create a Project</2>.",
   "Create Pipeline": "Create Pipeline",
   "by name": "by name",
+  "No options matching your criteria": "No options matching your criteria",
   "{{resourceName}} results": "{{resourceName}} results",
   "Value": "Value",
   "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",

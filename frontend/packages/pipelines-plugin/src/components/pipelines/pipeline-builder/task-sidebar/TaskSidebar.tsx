@@ -69,7 +69,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   return (
     <Stack className="opp-task-sidebar">
-      <StackItem>
+      <StackItem className="opp-task-sidebar__header">
         <TaskSidebarHeader
           onClose={onClose}
           taskResource={taskResource}

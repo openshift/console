@@ -10,7 +10,7 @@ import TextColumnItem from './TextColumnItem';
 import { TextColumnFieldProps } from './text-column-types';
 
 const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
-  const { required, name, label, addLabel, helpText, isReadOnly, onChange } = props;
+  const { required, name, label, addLabel, helpText, isReadOnly, onChange, children } = props;
   const [field, { touched, error }] = useField<string[]>(name);
   useFormikValidationFix(field.value);
   const rowValues = field.value ?? [];
@@ -37,7 +37,9 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
                     idx={idx}
                     arrayHelpers={arrayHelpers}
                     rowValues={rowValues}
-                  />
+                  >
+                    {children}
+                  </TextColumnItem>
                 );
               })}
             </FormGroup>

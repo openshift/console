@@ -1,4 +1,10 @@
 .opp-task-sidebar {
+  &__header {
+    // Hack for Popper to go under the header
+    background: white;
+    z-index: 10000;
+  }
+
   &__content {
     padding: var(--pf-global--spacer--lg);
     overflow-y: auto;

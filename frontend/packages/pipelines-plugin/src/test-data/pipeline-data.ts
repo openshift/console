@@ -26,8 +26,10 @@ export enum PipelineExampleNames {
   CONDITIONAL_PIPELINE = 'conditional-pipeline',
   INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
   INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
+  EMBEDDED_TASK_SPEC_MOCK_APP = 'embedded-task-spec',
   EMBEDDED_PIPELINE_SPEC = 'embedded-pipeline-spec',
   PIPELINE_WITH_FINALLY = 'pipeline-with-finally',
+  RESULTS = 'results-pipeline',
 }
 
 type CombinedPipelineTestData = {
@@ -254,7 +256,6 @@ const pipelineSpec: PipelineSpecData = {
       },
     ],
   },
-
   [PipelineExampleNames.CONDITIONAL_PIPELINE]: {
     tasks: [
       {
@@ -288,6 +289,96 @@ const pipelineSpec: PipelineSpecData = {
       },
     ],
   },
+  [PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP]: {
+    tasks: [
+      {
+        name: 'install-deps',
+        taskSpec: {
+          metadata: {},
+          steps: [
+            {
+              args: ['Installing dependencies...\n\nDependencies installed successfully.'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'install',
+              resources: {},
+            },
+          ],
+        },
+      },
+      {
+        name: 'code-sanity',
+        runAfter: ['install-deps'],
+        taskSpec: {
+          metadata: {},
+          steps: [
+            {
+              args: ['Running Linter and Tests'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'startup',
+              resources: {},
+            },
+            {
+              args: ['0 Lint Errors'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'lint-errors',
+              resources: {},
+            },
+            {
+              args: ['0 Test Failures'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'test-status',
+              resources: {},
+            },
+            {
+              args: [
+                'Exporting Test Coverage Report...\n\nCoverage report can be found in __coverage__',
+              ],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'coverage-report',
+              resources: {},
+            },
+          ],
+        },
+      },
+      {
+        name: 'compile',
+        runAfter: ['install-deps'],
+        taskSpec: {
+          metadata: {},
+          steps: [
+            {
+              args: ['Compiling code and producing dist folder...\n\nFolder public/dist created'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'build',
+              resources: {},
+            },
+          ],
+        },
+      },
+      {
+        name: 'e2e-tests',
+        runAfter: ['code-sanity', 'compile'],
+        taskSpec: {
+          metadata: {},
+          steps: [
+            {
+              args: ['Running end-to-end tests...\n\nAll tests pass'],
+              command: ['echo'],
+              image: 'ubuntu',
+              name: 'status',
+              resources: {},
+            },
+          ],
+        },
+      },
+    ],
+  },
   [PipelineExampleNames.PIPELINE_WITH_FINALLY]: {
     tasks: [
       {
@@ -303,6 +394,78 @@ const pipelineSpec: PipelineSpecData = {
       {
         name: 'run-anyway',
         taskRef: { name: 'run-anyway' },
+      },
+    ],
+  },
+  [PipelineExampleNames.RESULTS]: {
+    params: [
+      {
+        description: 'the first operand',
+        name: 'first',
+        type: 'string',
+      },
+      {
+        description: 'the second operand',
+        name: 'second',
+        type: 'string',
+      },
+      {
+        description: 'the third operand',
+        name: 'third',
+        type: 'string',
+      },
+    ],
+    results: [
+      {
+        description: 'the sum of all three operands',
+        name: 'sum',
+        value: '$(tasks.second-add.results.sum)',
+      },
+      {
+        description: 'the sum of first two operands',
+        name: 'partial-sum',
+        value: '$(tasks.first-add.results.sum)',
+      },
+      {
+        description: 'the sum of everything',
+        name: 'all-sum',
+        value: '$(tasks.second-add.results.sum)-$(tasks.first-add.results.sum)',
+      },
+    ],
+    tasks: [
+      {
+        name: 'first-add',
+        params: [
+          {
+            name: 'first',
+            value: '$(params.first)',
+          },
+          {
+            name: 'second',
+            value: '$(params.second)',
+          },
+        ],
+        taskRef: {
+          kind: 'Task',
+          name: 'add-task',
+        },
+      },
+      {
+        name: 'second-add',
+        params: [
+          {
+            name: 'first',
+            value: '$(tasks.first-add.results.sum)',
+          },
+          {
+            name: 'second',
+            value: '$(params.third)',
+          },
+        ],
+        taskRef: {
+          kind: 'Task',
+          name: 'add-task',
+        },
       },
     ],
   },
@@ -1902,6 +2065,390 @@ export const pipelineTestData: PipelineTestData = {
       },
     },
   },
+  [PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP]: {
+    dataSource: 'mock-app-embedded-pipeline',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'mock-app-embedded-pipeline',
+        uid: '702ba12f-e159-44b4-827f-7e3d0696ca6e',
+      },
+      spec: pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP],
+    },
+    pipelineRuns: {
+      [DataState.IN_PROGRESS]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          annotations: {
+            'pipeline.openshift.io/preferredName': 'mock-app-embedded-pipeline',
+            'pipeline.openshift.io/started-by': 'kube:admin',
+          },
+          name: 'mock-app-embedded-pipeline-zuazs0',
+          uid: '7d03e1f1-69d7-4c2d-90b6-e17316482e68',
+          labels: {
+            'tekton.dev/pipeline': 'mock-app-embedded-pipeline',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'mock-app-embedded-pipeline',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          conditions: [
+            {
+              lastTransitionTime: '2021-04-23T14:43:50Z',
+              message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Incomplete: 3, Skipped: 0',
+              reason: 'Running',
+              status: 'Unknown',
+              type: 'Succeeded',
+            },
+          ],
+          pipelineSpec: pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP],
+          startTime: '2021-04-23T14:43:30Z',
+          taskRuns: {
+            'mock-app-embedded-pipeline-zuazs0-code-sanity-6hpzr': {
+              pipelineTaskName: 'code-sanity',
+              status: {
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:43:56Z',
+                    message:
+                      'pod status "Ready":"False"; message: "containers with unready status: [step-startup step-lint-errors step-test-status step-coverage-report]"',
+                    reason: 'Pending',
+                    status: 'Unknown',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-code-sanity-6hpzr-pod-tgrm2',
+                startTime: '2021-04-23T14:43:50Z',
+                steps: [
+                  {
+                    container: 'step-startup',
+                    name: 'startup',
+                    waiting: {
+                      reason: 'PodInitializing',
+                    },
+                  },
+                  {
+                    container: 'step-lint-errors',
+                    name: 'lint-errors',
+                    waiting: {
+                      reason: 'PodInitializing',
+                    },
+                  },
+                  {
+                    container: 'step-test-status',
+                    name: 'test-status',
+                    waiting: {
+                      reason: 'PodInitializing',
+                    },
+                  },
+                  {
+                    container: 'step-coverage-report',
+                    name: 'coverage-report',
+                    waiting: {
+                      reason: 'PodInitializing',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[1].taskSpec,
+              },
+            },
+            'mock-app-embedded-pipeline-zuazs0-compile-gtx5z': {
+              pipelineTaskName: 'compile',
+              status: {
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:43:57Z',
+                    message: 'Not all Steps in the Task have finished executing',
+                    reason: 'Running',
+                    status: 'Unknown',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-compile-gtx5z-pod-hhbgw',
+                startTime: '2021-04-23T14:43:50Z',
+                steps: [
+                  {
+                    container: 'step-build',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'build',
+                    running: {
+                      startedAt: '2021-04-23T14:43:56Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[2].taskSpec,
+              },
+            },
+            'mock-app-embedded-pipeline-zuazs0-install-deps-75vvh': {
+              pipelineTaskName: 'install-deps',
+              status: {
+                completionTime: '2021-04-23T14:43:49Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:43:49Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-install-deps-75vvh-pod-pdldm',
+                startTime: '2021-04-23T14:43:30Z',
+                steps: [
+                  {
+                    container: 'step-install',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'install',
+                    terminated: {
+                      containerID:
+                        'cri-o://4e21f21a73bf9d3d650464821e30adcaa282b6a4b6cbaca642deebdd1da3aeb2',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:43:49Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:43:49Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[0].taskSpec,
+              },
+            },
+          },
+        },
+      },
+      [DataState.SUCCESS]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          annotations: {
+            'pipeline.openshift.io/preferredName': 'mock-app-embedded-pipeline',
+            'pipeline.openshift.io/started-by': 'kube:admin',
+          },
+          name: 'mock-app-embedded-pipeline-zuazs0',
+          uid: '7d03e1f1-69d7-4c2d-90b6-e17316482e68',
+          labels: {
+            'tekton.dev/pipeline': 'mock-app-embedded-pipeline',
+          },
+        },
+        spec: {
+          pipelineRef: {
+            name: 'mock-app-embedded-pipeline',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2021-04-23T14:44:11Z',
+          conditions: [
+            {
+              lastTransitionTime: '2021-04-23T14:44:11Z',
+              message: 'Tasks Completed: 4 (Failed: 0, Cancelled 0), Skipped: 0',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+          pipelineSpec: pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP],
+          startTime: '2021-04-23T14:43:30Z',
+          taskRuns: {
+            'mock-app-embedded-pipeline-zuazs0-code-sanity-6hpzr': {
+              pipelineTaskName: 'code-sanity',
+              status: {
+                completionTime: '2021-04-23T14:44:03Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:44:03Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-code-sanity-6hpzr-pod-tgrm2',
+                startTime: '2021-04-23T14:43:50Z',
+                steps: [
+                  {
+                    container: 'step-startup',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'startup',
+                    terminated: {
+                      containerID:
+                        'cri-o://3cf477b2c7bd79d5a0b09c7b06b7f73e29037034a63cd6d0b14dde552194dc57',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:44:00Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:44:00Z',
+                    },
+                  },
+                  {
+                    container: 'step-lint-errors',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'lint-errors',
+                    terminated: {
+                      containerID:
+                        'cri-o://52029e07d5f1da01d5d43d7b9b8bf2de9344e871d024a9eb811ee8283d015b6b',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:44:01Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:44:01Z',
+                    },
+                  },
+                  {
+                    container: 'step-test-status',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'test-status',
+                    terminated: {
+                      containerID:
+                        'cri-o://a8e63c405c9c2ccd017daf610a1424285202ceed001ebe93aeaf038298ca998f',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:44:01Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:44:01Z',
+                    },
+                  },
+                  {
+                    container: 'step-coverage-report',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'coverage-report',
+                    terminated: {
+                      containerID:
+                        'cri-o://66696f96ad23e0fd383f076e0845963953f2559d79133fe8533efefc3eeadb7c',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:44:02Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:44:02Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[1].taskSpec,
+              },
+            },
+            'mock-app-embedded-pipeline-zuazs0-compile-gtx5z': {
+              pipelineTaskName: 'compile',
+              status: {
+                completionTime: '2021-04-23T14:43:59Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:43:59Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-compile-gtx5z-pod-hhbgw',
+                startTime: '2021-04-23T14:43:50Z',
+                steps: [
+                  {
+                    container: 'step-build',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'build',
+                    terminated: {
+                      containerID:
+                        'cri-o://86be196caf01689b4900d17fc71bc34751ce45e01433931ef8c3a0222f1ae474',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:43:58Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:43:58Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[2].taskSpec,
+              },
+            },
+            'mock-app-embedded-pipeline-zuazs0-e2e-tests-7zrkm': {
+              pipelineTaskName: 'e2e-tests',
+              status: {
+                completionTime: '2021-04-23T14:44:11Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:44:11Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-e2e-tests-7zrkm-pod-qcr97',
+                startTime: '2021-04-23T14:44:04Z',
+                steps: [
+                  {
+                    container: 'step-status',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'status',
+                    terminated: {
+                      containerID:
+                        'cri-o://8a5989caa2ddcc7a2b838150c028bc27e1a2d7bc6a458cad651ae67c3cef31b4',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:44:10Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:44:10Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[3].taskSpec,
+              },
+            },
+            'mock-app-embedded-pipeline-zuazs0-install-deps-75vvh': {
+              pipelineTaskName: 'install-deps',
+              status: {
+                completionTime: '2021-04-23T14:43:49Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T14:43:49Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'mock-app-embedded-pipeline-zuazs0-install-deps-75vvh-pod-pdldm',
+                startTime: '2021-04-23T14:43:30Z',
+                steps: [
+                  {
+                    container: 'step-install',
+                    imageID:
+                      'docker.io/library/ubuntu@sha256:3c9c713e0979e9bd6061ed52ac1e9e1f246c9495aa063619d9d695fb8039aa1f',
+                    name: 'install',
+                    terminated: {
+                      containerID:
+                        'cri-o://4e21f21a73bf9d3d650464821e30adcaa282b6a4b6cbaca642deebdd1da3aeb2',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T14:43:49Z',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T14:43:49Z',
+                    },
+                  },
+                ],
+                taskSpec:
+                  pipelineSpec[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].tasks[0].taskSpec,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   [PipelineExampleNames.EMBEDDED_PIPELINE_SPEC]: {
     dataSource: 'embedded-pipelineSpec',
     pipeline: null,
@@ -2054,6 +2601,242 @@ export const pipelineTestData: PipelineTestData = {
                 conditions: [{ status: 'True', type: 'Succeeded' }],
                 podName: 'test',
                 startTime: '2019-12-10T11:18:38Z',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.RESULTS]: {
+    dataSource: 'upstream-results-example',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1beta1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'sum-three-pipeline',
+        uid: 'de0ace30-54f1-4e77-b99f-1894263f1d20',
+      },
+      spec: pipelineSpec[PipelineExampleNames.RESULTS],
+    },
+    pipelineRuns: {
+      [DataState.SUCCESS]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'sum-three-pipeline-run',
+          uid: 'fc2f17c0-f53d-4373-99e9-14f4636696a0',
+          labels: {
+            'tekton.dev/pipeline': 'sum-three-pipeline',
+          },
+        },
+        spec: {
+          params: [
+            {
+              name: 'first',
+              value: '2',
+            },
+            {
+              name: 'second',
+              value: '10',
+            },
+            {
+              name: 'third',
+              value: '10',
+            },
+          ],
+          pipelineRef: {
+            name: 'sum-three-pipeline',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2021-04-23T15:22:32Z',
+          conditions: [
+            {
+              lastTransitionTime: '2021-04-23T15:22:32Z',
+              message: 'Tasks Completed: 2 (Failed: 0, Cancelled 0), Skipped: 0',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+          pipelineResults: [
+            {
+              name: 'sum',
+              value: '22',
+            },
+            {
+              name: 'partial-sum',
+              value: '12',
+            },
+            {
+              name: 'all-sum',
+              value: '22-12',
+            },
+          ],
+          pipelineSpec: pipelineSpec[PipelineExampleNames.RESULTS],
+          startTime: '2021-04-23T15:22:19Z',
+          taskRuns: {
+            'sum-three-pipeline-run-first-add-tpmxp': {
+              pipelineTaskName: 'first-add',
+              status: {
+                completionTime: '2021-04-23T15:22:27Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T15:22:27Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'sum-three-pipeline-run-first-add-tpmxp-pod-22wv9',
+                startTime: '2021-04-23T15:22:19Z',
+                steps: [
+                  {
+                    container: 'step-add',
+                    imageID:
+                      'docker.io/library/alpine@sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f',
+                    name: 'add',
+                    terminated: {
+                      containerID:
+                        'cri-o://52386d3a95311cd3104289b077bb89952b7263d52dd2cc0b34460b4c7b5428cd',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T15:22:27Z',
+                      message: '[{"key":"sum","value":"12","type":"TaskRunResult"}]',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T15:22:27Z',
+                    },
+                  },
+                ],
+                taskResults: [
+                  {
+                    name: 'sum',
+                    value: '12',
+                  },
+                ],
+                taskSpec: {
+                  params: [
+                    {
+                      description: 'the first operand',
+                      name: 'first',
+                      type: 'string',
+                    },
+                    {
+                      description: 'the second operand',
+                      name: 'second',
+                      type: 'string',
+                    },
+                  ],
+                  results: [
+                    {
+                      description: 'the sum of the first and second operand',
+                      name: 'sum',
+                    },
+                  ],
+                  steps: [
+                    {
+                      // eslint-disable-next-line no-template-curly-in-string
+                      args: ['echo -n $((${OP1}+${OP2})) | tee $(results.sum.path);'],
+                      command: ['/bin/sh', '-c'],
+                      env: [
+                        {
+                          name: 'OP1',
+                          value: '$(params.first)',
+                        },
+                        {
+                          name: 'OP2',
+                          value: '$(params.second)',
+                        },
+                      ],
+                      image: 'alpine',
+                      name: 'add',
+                      resources: {},
+                    },
+                  ],
+                },
+              },
+            },
+            'sum-three-pipeline-run-second-add-tt8n6': {
+              pipelineTaskName: 'second-add',
+              status: {
+                completionTime: '2021-04-23T15:22:32Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-04-23T15:22:32Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'sum-three-pipeline-run-second-add-tt8n6-pod-jlfxr',
+                startTime: '2021-04-23T15:22:27Z',
+                steps: [
+                  {
+                    container: 'step-add',
+                    imageID:
+                      'docker.io/library/alpine@sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f',
+                    name: 'add',
+                    terminated: {
+                      containerID:
+                        'cri-o://9861764a11f0a12af4c1fa61b5c185947abb79b20c6d99fe3334d35b84f88eb2',
+                      exitCode: 0,
+                      finishedAt: '2021-04-23T15:22:32Z',
+                      message: '[{"key":"sum","value":"22","type":"TaskRunResult"}]',
+                      reason: 'Completed',
+                      startedAt: '2021-04-23T15:22:32Z',
+                    },
+                  },
+                ],
+                taskResults: [
+                  {
+                    name: 'sum',
+                    value: '22',
+                  },
+                ],
+                taskSpec: {
+                  params: [
+                    {
+                      description: 'the first operand',
+                      name: 'first',
+                      type: 'string',
+                    },
+                    {
+                      description: 'the second operand',
+                      name: 'second',
+                      type: 'string',
+                    },
+                  ],
+                  results: [
+                    {
+                      description: 'the sum of the first and second operand',
+                      name: 'sum',
+                    },
+                  ],
+                  steps: [
+                    {
+                      // eslint-disable-next-line no-template-curly-in-string
+                      args: ['echo -n $((${OP1}+${OP2})) | tee $(results.sum.path);'],
+                      command: ['/bin/sh', '-c'],
+                      env: [
+                        {
+                          name: 'OP1',
+                          value: '$(params.first)',
+                        },
+                        {
+                          name: 'OP2',
+                          value: '$(params.second)',
+                        },
+                      ],
+                      image: 'alpine',
+                      name: 'add',
+                      resources: {},
+                    },
+                  ],
+                },
               },
             },
           },
