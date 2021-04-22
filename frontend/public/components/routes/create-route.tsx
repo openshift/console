@@ -3,6 +3,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+/* eslint-disable-next-line */
+import { useTranslation, withTranslation, WithTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
@@ -41,7 +44,7 @@ const DroppableFileInput = (props) => (
   />
 );
 
-export class CreateRoute extends React.Component<{}, CreateRouteState> {
+class CreateRouteWithTranslation extends React.Component<CreateRouteProps, CreateRouteState> {
   state = {
     name: '',
     hostname: '',
@@ -284,7 +287,8 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
   };
 
   render() {
-    const title = 'Create Route';
+    const { t } = this.props;
+    const title = t('public~Create Route');
     const {
       loaded,
       services,
@@ -335,7 +339,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 isInline
               >
                 <MinusCircleIcon className="co-icon-space-r" />
-                Remove Alternate Service
+                {t('public~Remove alternate Service')}
               </Button>
             </div>
           )}
@@ -363,17 +367,17 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 data-test="yaml-link"
                 replace
               >
-                Edit YAML
+                {t('public~Edit YAML')}
               </Link>
             </div>
           </h1>
           <p className="co-m-pane__explanation">
-            Routing is a way to make your application publicly visible.
+            {t('public~Routing is a way to make your application publicly visible.')}
           </p>
           <form onSubmit={this.save} className="co-create-route">
             <div className="form-group co-create-route__name">
               <label className="co-required" htmlFor="name">
-                Name
+                {t('public~Name')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -387,11 +391,11 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 required
               />
               <div className="help-block" id="name-help">
-                <p>A unique name for the route within the project.</p>
+                <p>{t('public~A unique name for the Route within the project.')}</p>
               </div>
             </div>
             <div className="form-group co-create-route__hostname">
-              <label htmlFor="hostname">Hostname</label>
+              <label htmlFor="hostname">{t('public~Hostname')}</label>
               <input
                 className="pf-c-form-control"
                 type="text"
@@ -403,11 +407,15 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 aria-describedby="hostname-help"
               />
               <div className="help-block" id="hostname-help">
-                <p>Public hostname for the route. If not specified, a hostname is generated.</p>
+                <p>
+                  {t(
+                    'public~Public hostname for the Route. If not specified, a hostname is generated.',
+                  )}
+                </p>
               </div>
             </div>
             <div className="form-group co-create-route__path">
-              <label htmlFor="path">Path</label>
+              <label htmlFor="path">{t('public~Path')}</label>
               <input
                 className="pf-c-form-control"
                 type="text"
@@ -419,12 +427,12 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 aria-describedby="path-help"
               />
               <div className="help-block" id="path-help">
-                <p>Path that the router watches to route traffic to the service.</p>
+                <p>{t('public~Path that the router watches to route traffic to the service.')}</p>
               </div>
             </div>
             <div className="form-group co-create-route__service">
               <label className="co-required" htmlFor="service">
-                Service
+                {t('public~Service')}
               </label>
               {loaded && _.isEmpty(serviceOptions) && (
                 <Alert
@@ -433,7 +441,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                   variant="info"
                   title="No services"
                 >
-                  There are no services in your project to expose with a route.
+                  {t('public~There are no Services in your project to expose with a Route.')}
                 </Alert>
               )}
               {loaded && !_.isEmpty(serviceOptions) && (
@@ -447,13 +455,13 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 />
               )}
               <div className="help-block" id="service-help">
-                <p>Service to route to.</p>
+                <p>{t('public~Service to route to.')}</p>
               </div>
             </div>
             {alternateServicesList.length > 0 && (
               <>
                 <div className="form-group co-create-route__weight">
-                  <label htmlFor="weight">Weight</label>
+                  <label htmlFor="weight">{t('public~Weight')}</label>
                   <input
                     className="pf-c-form-control co-create-route__weight-label"
                     type="number"
@@ -464,8 +472,9 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                   />
                   <div className="help-block" id="weight-help">
                     <p>
-                      A number between 0 and 255 that depicts relative weight compared with other
-                      targets.
+                      {t(
+                        'public~A number between 0 and 255 that depicts relative weight compared with other targets.',
+                      )}
                     </p>
                   </div>
                 </div>
@@ -483,14 +492,14 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                   isInline
                 >
                   <PlusCircleIcon className="co-icon-space-r" />
-                  Add Alternate Service
+                  {t('public~Add alternate Service')}
                 </Button>
               )}
             <div className="form-group co-create-route__target-port">
               <label className="co-required" htmlFor="target-port">
-                Target Port
+                {t('public~Target port')}
               </label>
-              {_.isEmpty(portOptions) && <p>Select a service above</p>}
+              {_.isEmpty(portOptions) && <p>{t('public~Select a Service above')}</p>}
               {!_.isEmpty(portOptions) && (
                 <Dropdown
                   items={portOptions}
@@ -502,11 +511,11 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 />
               )}
               <div className="help-block" id="target-port-help">
-                <p>Target port for traffic.</p>
+                <p>{t('public~Target port for traffic.')}</p>
               </div>
             </div>
             <div className="form-group co-create-route__security">
-              <label className="control-label">Security</label>
+              <label className="control-label">{t('public~Security')}</label>
               <div className="checkbox">
                 <label>
                   <input
@@ -517,12 +526,13 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                     name="secure"
                     aria-describedby="secure-help"
                   />
-                  Secure route
+                  {t('public~Secure Route')}
                 </label>
                 <div className="help-block" id="secure-help">
                   <p>
-                    Routes can be secured using several TLS termination types for serving
-                    certificates.
+                    {t(
+                      'public~Routes can be secured using several TLS termination types for serving certificates.',
+                    )}
                   </p>
                 </div>
               </div>
@@ -530,7 +540,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                 <div className="co-create-route__security">
                   <div className="form-group co-create-route__tls-termination">
                     <label className="co-required" htmlFor="tls-termination">
-                      TLS Termination
+                      {t('public~TLS termination')}
                     </label>
                     <Dropdown
                       items={terminationTypes}
@@ -541,7 +551,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                     />
                   </div>
                   <div className="form-group co-create-route__insecure-traffic">
-                    <label htmlFor="insecure-traffic">Insecure Traffic</label>
+                    <label htmlFor="insecure-traffic">{t('public~Insecure traffic')}</label>
                     <Dropdown
                       items={
                         termination === 'passthrough'
@@ -555,16 +565,17 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                       describedBy="insecure-traffic-help"
                     />
                     <div className="help-block" id="insecure-traffic-help">
-                      <p>Policy for traffic on insecure schemes like HTTP.</p>
+                      <p>{t('public~Policy for traffic on insecure schemes like HTTP.')}</p>
                     </div>
                   </div>
                   {termination && termination !== 'passthrough' && (
                     <>
-                      <h2 className="h3">Certificates</h2>
+                      <h2 className="h3">{t('public~Certificates')}</h2>
                       <div className="help-block">
                         <p>
-                          TLS certificates for edge and re-encrypt termination. If not specified,
-                          the router&apos;s default certificate is used.
+                          {t(
+                            'public~TLS certificates for edge and re-encrypt termination. If not specified, the router&apos;s default certificate is used.',
+                          )}
                         </p>
                       </div>
                       <div className="form-group co-create-route__certificate">
@@ -572,8 +583,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                           onChange={this.onCertificateChange}
                           inputFileData={this.state.certificate}
                           id="certificate"
-                          label="Certificate"
-                          inputFieldHelpText="The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
+                          label={t('public~Certificate')}
+                          inputFieldHelpText={t(
+                            'public~The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                          )}
                         />
                       </div>
                       <div className="form-group co-create-route__private-key">
@@ -581,8 +594,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                           onChange={this.onPrivateKeyChange}
                           inputFileData={this.state.key}
                           id="private-key"
-                          label="Private Key"
-                          inputFieldHelpText="The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
+                          label={t('public~Private key')}
+                          inputFieldHelpText={t(
+                            'public~The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                          )}
                         />
                       </div>
                       <div className="form-group co-create-route__caCertificate">
@@ -590,8 +605,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                           onChange={this.onCaCertificateChange}
                           inputFileData={this.state.caCertificate}
                           id="ca-certificate"
-                          label="CA Certificate"
-                          inputFieldHelpText="The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard."
+                          label={t('public~CA certificate')}
+                          inputFieldHelpText={t(
+                            'public~The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                          )}
                         />
                       </div>
                       {termination === 'reencrypt' && (
@@ -600,7 +617,7 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                             onChange={this.onDestinationCACertificateChange}
                             inputFileData={this.state.destinationCACertificate}
                             id="destination-ca-certificate"
-                            label="Destination CA Certificate"
+                            label={t('public~Destination CA certificate')}
                           />
                         </div>
                       )}
@@ -621,10 +638,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
                     id="save-changes"
                     variant="primary"
                   >
-                    Create
+                    {t('public~Create')}
                   </Button>
                   <Button onClick={history.goBack} id="cancel" variant="secondary">
-                    Cancel
+                    {t('public~Cancel')}
                   </Button>
                 </ActionGroup>
               </ButtonBar>
@@ -636,7 +653,10 @@ export class CreateRoute extends React.Component<{}, CreateRouteState> {
   }
 }
 
+export const CreateRoute = withTranslation()(CreateRouteWithTranslation);
+
 export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> = (props) => {
+  const { t } = useTranslation();
   const [weight, setWeight] = React.useState(props.weight);
   const [name, setName] = React.useState(props.name);
 
@@ -657,7 +677,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
   return (
     <>
       <div className="form-group">
-        <label htmlFor={`${index}-alt-service`}>Alternate Service Target</label>
+        <label htmlFor={`${index}-alt-service`}>{t('public~Alternate Service target')}</label>
         <Dropdown
           items={availableServiceOptions}
           title={name ? serviceOptions[name] : 'Select a service'}
@@ -667,11 +687,11 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
           describedBy={`${index}-alt-service-help`}
         />
         <div className="help-block" id={`${index}-alt-service-help`}>
-          <p>Alternate service to route to.</p>
+          <p>{t('public~Alternate Service to route to.')}</p>
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor={`${index}-weight`}>Alternate Service Weight</label>
+        <label htmlFor={`${index}-weight`}>{t('public~Alternate Service weight')}</label>
         <input
           className="pf-c-form-control co-create-route__weight-label"
           id={`${index}-weight`}
@@ -682,7 +702,9 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
         />
         <div className="help-block" id={`${index}-alt-weight-help`}>
           <p>
-            A number between 0 and 255 that depicts relative weight compared with other targets.
+            {t(
+              'public~A number between 0 and 255 that depicts relative weight compared with other targets.',
+            )}
           </p>
         </div>
       </div>
@@ -708,6 +730,10 @@ type AlternateServiceEntryGroupProps = {
   onChange: Function;
   serviceOptions: any;
   availableServiceOptions: any;
+};
+
+type CreateRouteProps = WithTranslation & {
+  t: TFunction;
 };
 
 export type CreateRouteState = {
