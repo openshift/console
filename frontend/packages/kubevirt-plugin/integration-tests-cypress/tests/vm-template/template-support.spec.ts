@@ -37,21 +37,13 @@ describe('test VM template support', () => {
     wizard.template.createTemplate(TEMPLATE_NAME, 'bar', true);
     virtualization.templates.testProvider(TEMPLATE_NAME, 'bar');
     virtualization.templates.testSource(TEMPLATE_NAME, 'bar');
-    virtualization.templates.testSupport(
-      TEMPLATE_NAME,
-      'bar',
-      Cypress.env('DOWNSTREAM') ? 'Red Hat' : undefined,
-    );
+    virtualization.templates.testSupport(TEMPLATE_NAME, 'bar');
 
     wizard.template.open();
     wizard.template.createTemplate(TEMPLATE_NO_SUPPORT_NAME, 'bar', false);
     virtualization.templates.testProvider(TEMPLATE_NO_SUPPORT_NAME, 'bar');
     virtualization.templates.testSource(TEMPLATE_NO_SUPPORT_NAME, 'bar');
-    virtualization.templates.testSupport(
-      TEMPLATE_NO_SUPPORT_NAME,
-      undefined,
-      Cypress.env('DOWNSTREAM') ? 'Red Hat' : undefined,
-    );
+    virtualization.templates.testSupport(TEMPLATE_NO_SUPPORT_NAME, undefined);
   });
 
   if (Cypress.env('DOWNSTREAM')) {

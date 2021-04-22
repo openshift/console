@@ -12,12 +12,9 @@ export default ({ vmName }) =>
       cy.byLegacyTestID('wizard-next')
         .as('nextButton')
         .click();
-      cy.window().then((win) => {
-        // @ts-expect-error
-        if (win?.SERVER_FLAGS?.branding !== 'okd') {
-          cy.byTestID('SupportModal').within(() => {
-            cy.get('[id=confirm-action]').click();
-          });
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-test-id="modal-title"]').length) {
+          cy.get('[id=confirm-action]').click();
         }
       });
       cy.get('[id=image-source-type-dropdown]').click();
