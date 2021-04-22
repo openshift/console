@@ -48,6 +48,9 @@
     "properties": {
       "name": "ObjectBucketClaim",
       "Component": { "$codeRef": "storageProvider" }
+    },
+    "flags": {
+      "required": ["OCS"]
     }
   }
 ]
