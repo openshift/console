@@ -21,6 +21,7 @@ import {
   ImportData,
   Resources,
   BaseFormData,
+  ImportTypes,
 } from './import-types';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
@@ -51,6 +52,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   projects,
 }) => {
   const { t } = useTranslation();
+  const searchParams = new URLSearchParams(window.location.search);
+  const gitRepoUrl = searchParams.get('gitRepoUrl');
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const postFormCallback = usePostFormSubmitAction();
@@ -71,7 +74,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       enabled: false,
     },
     git: {
-      url: '',
+      url: importData.type === ImportTypes.devfile ? gitRepoUrl : '',
       type: '',
       ref: '',
       dir: '/',
