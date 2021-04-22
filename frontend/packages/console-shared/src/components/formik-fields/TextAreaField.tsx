@@ -4,13 +4,10 @@ import { FormGroup, TextArea } from '@patternfly/react-core';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
-const TextAreaField: React.FC<TextAreaProps> = ({
-  label,
-  helpText,
-  required,
-  onChange,
-  ...props
-}) => {
+const TextAreaField: React.FC<TextAreaProps> = (
+  { label, helpText, required, onChange, ...props },
+  ref,
+) => {
   const [field, { touched, error }] = useField(props.name);
   const fieldId = getFieldId(props.name, 'input');
   const isValid = !(touched && error);
@@ -27,6 +24,7 @@ const TextAreaField: React.FC<TextAreaProps> = ({
       <TextArea
         {...field}
         {...props}
+        ref={ref}
         id={fieldId}
         style={{ resize: 'vertical' }}
         validated={isValid ? 'default' : 'error'}
@@ -41,4 +39,4 @@ const TextAreaField: React.FC<TextAreaProps> = ({
   );
 };
 
-export default TextAreaField;
+export default React.forwardRef(TextAreaField);

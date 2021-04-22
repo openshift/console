@@ -194,37 +194,33 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
         }}
       >
         {() => (
-          <div className="pf-c-form">
-            <TaskSidebar
-              // Intentional remount when selection changes
-              key={selectedTask.taskIndex}
-              onClose={() => setSelectedTask(null)}
-              resourceList={formData.resources || []}
-              workspaceList={formData.workspaces || []}
-              errorMap={status?.tasks || {}}
-              onRenameTask={(data: UpdateOperationRenameTaskData) => {
-                updateTasks(
-                  applyChange(taskGroup, { type: UpdateOperationType.RENAME_TASK, data }),
-                );
-              }}
-              onRemoveTask={(taskName: string) => {
-                removeTaskModal(
-                  taskName,
-                  () => {
-                    setSelectedTask(null);
-                    updateTasks(
-                      applyChange(taskGroup, {
-                        type: UpdateOperationType.REMOVE_TASK,
-                        data: { taskName },
-                      }),
-                    );
-                  },
-                  t,
-                );
-              }}
-              selectedData={selectedTask}
-            />
-          </div>
+          <TaskSidebar
+            // Intentional remount when selection changes
+            key={selectedTask.taskIndex}
+            onClose={() => setSelectedTask(null)}
+            resourceList={formData.resources || []}
+            workspaceList={formData.workspaces || []}
+            errorMap={status?.tasks || {}}
+            onRenameTask={(data: UpdateOperationRenameTaskData) => {
+              updateTasks(applyChange(taskGroup, { type: UpdateOperationType.RENAME_TASK, data }));
+            }}
+            onRemoveTask={(taskName: string) => {
+              removeTaskModal(
+                taskName,
+                () => {
+                  setSelectedTask(null);
+                  updateTasks(
+                    applyChange(taskGroup, {
+                      type: UpdateOperationType.REMOVE_TASK,
+                      data: { taskName },
+                    }),
+                  );
+                },
+                t,
+              );
+            }}
+            selectedData={selectedTask}
+          />
         )}
       </Sidebar>
     </>

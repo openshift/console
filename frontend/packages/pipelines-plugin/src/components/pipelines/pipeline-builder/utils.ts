@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { FormikErrors } from 'formik';
+import i18n from '@console/internal/i18n';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { ClusterTaskModel, PipelineModel, TaskModel } from '../../../models';
@@ -60,7 +61,7 @@ export const getTopLevelErrorMessage: GetErrorMessage = (errors) => (taskIndex) 
 export const findTask = (
   resourceTasks: PipelineBuilderTaskResources,
   task: PipelineTask,
-  t: TFunction,
+  t: TFunction = i18n.t,
 ): TaskKind => {
   if (task?.taskRef) {
     if (
