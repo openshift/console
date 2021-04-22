@@ -12,7 +12,7 @@ import {
 
 import { StoragePoolKind } from '../types';
 import { CephBlockPoolModel } from '../models';
-import { CEPH_STORAGE_NAMESPACE } from '../constants/index';
+import { CEPH_STORAGE_NAMESPACE, OCS_INTERNAL_CR_NAME } from '../constants/index';
 import { COMPRESSION_ON, ROOK_MODEL, POOL_PROGRESS } from '../constants/storage-pool-const';
 
 export const LoadingComponent: React.FC = () => {
@@ -90,6 +90,7 @@ export type BlockPoolState = {
   isCompressed: boolean;
   isArbiterCluster: boolean;
   volumeType: string;
+  failureDomain: string;
   inProgress: boolean;
   errorMessage: string;
 };
@@ -101,6 +102,7 @@ export enum BlockPoolActionType {
   SET_POOL_COMPRESSED = 'SET_POOL_COMPRESSED',
   SET_POOL_ARBITER = 'SET_POOL_ARBITER',
   SET_POOL_VOLUME_TYPE = 'SET_POOL_VOLUME_TYPE',
+  SET_FAILURE_DOMAIN = 'SET_FAILURE_DOMAIN',
   SET_INPROGRESS = 'SET_INPROGRESS',
   SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE',
 }
@@ -112,6 +114,7 @@ export type BlockPoolAction =
   | { type: BlockPoolActionType.SET_POOL_COMPRESSED; payload: boolean }
   | { type: BlockPoolActionType.SET_POOL_ARBITER; payload: boolean }
   | { type: BlockPoolActionType.SET_POOL_VOLUME_TYPE; payload: string }
+  | { type: BlockPoolActionType.SET_FAILURE_DOMAIN; payload: string }
   | { type: BlockPoolActionType.SET_INPROGRESS; payload: boolean }
   | { type: BlockPoolActionType.SET_ERROR_MESSAGE; payload: string };
 
@@ -122,6 +125,7 @@ export const blockPoolInitialState: BlockPoolState = {
   isCompressed: false,
   isArbiterCluster: false,
   volumeType: '',
+  failureDomain: '',
   inProgress: false,
   errorMessage: '',
 };
@@ -164,6 +168,12 @@ export const blockPoolReducer = (state: BlockPoolState, action: BlockPoolAction)
         volumeType: action.payload,
       };
     }
+    case BlockPoolActionType.SET_FAILURE_DOMAIN: {
+      return {
+        ...state,
+        failureDomain: action.payload,
+      };
+    }
     case BlockPoolActionType.SET_INPROGRESS: {
       return {
         ...state,
@@ -193,6 +203,7 @@ export const getPoolKindObj = (state: BlockPoolState): StoragePoolKind => ({
   spec: {
     compressionMode: state.isCompressed ? COMPRESSION_ON : '',
     deviceClass: state.volumeType || '',
+    failureDomain: state.failureDomain,
     parameters: {
       compression_mode: state.isCompressed ? COMPRESSION_ON : '', // eslint-disable-line @typescript-eslint/camelcase
     },
@@ -214,3 +225,8 @@ export enum FooterPrimaryActions {
   DELETE = 'Delete',
   UPDATE = 'Save',
 }
+
+export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
+  !!blockPoolConfig?.metadata.ownerReferences?.find(
+    (ownerReference) => ownerReference.name === OCS_INTERNAL_CR_NAME,
+  );
