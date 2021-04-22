@@ -33,6 +33,7 @@ describe('ImageVulnerabilitiesList', () => {
   });
   it('should have Type and Severity row filter', () => {
     const { rowFilters } = wrapper.find(MultiListPage).props();
-    expect(rowFilters[0].filterGroupName).toBe('container-security~Severity');
+    expect(rowFilters[0].filterGroupName).toBe('container-security~Type');
+    expect(rowFilters[1].filterGroupName).toBe('container-security~Severity');
   });
 });

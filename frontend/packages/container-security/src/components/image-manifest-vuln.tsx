@@ -29,7 +29,6 @@ import {
   FirehoseResult,
   Loading,
 } from '@console/internal/components/utils';
-import { ChartDonut } from '@patternfly/react-charts';
 import { DefaultList } from '@console/internal/components/default-resource';
 import { ContainerLink } from '@console/internal/components/pod';
 import { vulnPriority, totalFor, priorityFor } from '../const';
@@ -37,6 +36,7 @@ import { ImageManifestVuln } from '../types';
 import { ImageManifestVulnModel } from '../models';
 import { quayURLFor } from './summary';
 import ImageVulnerabilitiesList from './ImageVulnerabilitiesList';
+import ImageVulnerabilityToggleGroup from './ImageVulnerabilityToggleGroup';
 import './image-manifest-vuln.scss';
 
 const shortenImage = (img: string) =>
@@ -59,55 +59,11 @@ export const highestSeverityIndex = (obj: ImageManifestVuln) =>
 
 export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> = (props) => {
   const { t } = useTranslation();
-  const total = props.obj.spec.features.reduce((sum, f) => sum + f.vulnerabilities.length, 0);
   return (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
-        <div style={{ display: 'flex' }}>
-          <div className="cs-imagemanifestvuln-details__donut">
-            <ChartDonut
-              colorScale={vulnPriority.map((priority) => priority.color.value).toArray()}
-              data={vulnPriority
-                .map((priority, key) => ({
-                  label: priority.title,
-                  x: priority.value,
-                  y: totalFor(key)(props.obj),
-                }))
-                .toArray()}
-              title={t('container-security~{{total, number}} total', { total })}
-            />
-          </div>
-          <div className="cs-imagemanifestvuln-details__summary">
-            <h3>
-              {t(
-                'container-security~Quay Security Scanner has detected {{total, number}} vulnerabilities.',
-                { total },
-              )}
-            </h3>
-            <h4>
-              {t(
-                'container-security~Patches are available for {{fixableCount, number}} vulnerabilities.',
-                {
-                  fixableCount: props.obj.status.fixableCount,
-                },
-              )}
-            </h4>
-            <div className="cs-imagemanifestvuln-details__summary-list">
-              {vulnPriority
-                .map((v, k) =>
-                  totalFor(k)(props.obj) > 0 ? (
-                    <span style={{ margin: '5px' }} key={v.index}>
-                      <SecurityIcon color={v.color.value} />
-                      &nbsp;<strong>{totalFor(k)(props.obj)}</strong>{' '}
-                      {t('container-security~{{title}} vulnerabilities', { title: v.title })}.
-                    </span>
-                  ) : null,
-                )
-                .toArray()}
-            </div>
-          </div>
-        </div>
+        <ImageVulnerabilityToggleGroup obj={props.obj} />
       </div>
       <div className="co-m-pane__body">
         <div className="row">

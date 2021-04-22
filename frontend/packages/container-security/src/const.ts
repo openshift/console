@@ -124,6 +124,30 @@ export const totalFor = (priority: Priority) => (obj: ImageManifestVuln) => {
   }
 };
 
+export const totalVulnFor = (priority: Priority) => (imageVulns): number => {
+  if (!imageVulns) {
+    return 0;
+  }
+  switch (priority) {
+    case Priority.Defcon1:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Defcon1).length;
+    case Priority.Critical:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Critical).length;
+    case Priority.High:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.High).length;
+    case Priority.Medium:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Medium).length;
+    case Priority.Low:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Low).length;
+    case Priority.Negligible:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Negligible).length;
+    case Priority.Unknown:
+      return imageVulns.filter((imageVuln) => imageVuln.severity === Priority.Unknown).length;
+    default:
+      return 0;
+  }
+};
+
 const vulnPriorityByTitle = vulnPriority.mapEntries(
   ([, vulnPriorityDescription]: [Priority, VulnPriorityDescription]) => [
     vulnPriorityDescription.title,

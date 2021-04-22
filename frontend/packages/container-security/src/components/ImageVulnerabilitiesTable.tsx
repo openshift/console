@@ -6,6 +6,7 @@ import { MsgBox } from '@console/internal/components/utils';
 import ImageVulnerabilityRow, {
   imageVulnerabilitiesTableColumnClasses,
 } from './ImageVulnerabilityRow';
+import { getVulnerabilitySource, getVulnerabilityType } from './image-vulnerability-utils';
 import { Feature } from '../types';
 
 type ImageVulnerabilitiesTableProps = {
@@ -37,6 +38,18 @@ const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (pro
       props: { className: imageVulnerabilitiesTableColumnClasses[2] },
     },
     {
+      title: t('container-security~Type'),
+      transforms: [sortable],
+      sortFunc: 'vulnerabilityType',
+      props: { className: imageVulnerabilitiesTableColumnClasses[3] },
+    },
+    {
+      title: t('container-security~Source'),
+      transforms: [sortable],
+      sortFunc: 'vulnerabilitySource',
+      props: { className: imageVulnerabilitiesTableColumnClasses[4] },
+    },
+    {
       title: t('container-security~Current version'),
       transforms: [sortable],
       sortField: 'feature.version',
@@ -52,6 +65,10 @@ const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (pro
   return (
     <Table
       {...props}
+      customSorts={{
+        vulnerabilityType: (obj) => getVulnerabilityType(obj.vulnerability),
+        vulnerabilitySource: (obj) => getVulnerabilitySource(obj.vulnerability),
+      }}
       aria-label={t('container-security~Vulnerabilities')}
       Header={ImageVulnerabilitiesTableHeader}
       Row={ImageVulnerabilityRow}

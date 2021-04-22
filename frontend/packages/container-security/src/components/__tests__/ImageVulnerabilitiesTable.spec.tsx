@@ -31,6 +31,8 @@ describe('ImageVulnerabilitiesTable', () => {
       'container-security~Name',
       'container-security~Severity',
       'container-security~Package',
+      'container-security~Type',
+      'container-security~Source',
       'container-security~Current version',
       'container-security~Fixed in version',
     ];

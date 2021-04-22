@@ -1,16 +1,3 @@
-.cs-imagemanifestvuln-details {
-  &__donut {
-    padding: 30px;
-    width: 20%;
-  }
-  &__summary {
-    width: 80%;
-  }
-  &__summary-list {
-    display: flex;
-    flex-direction: column;
-  }
-}
 .cs-imagevulnerabilitieslist {
   &__wrapper {
     border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);

@@ -2,13 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { ImageManifestVulnModel } from '../models';
 import { Priority, priorityFor } from '../const';
 import { Feature, ImageManifestVuln, Vulnerability } from '../types';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
+import { getVulnerabilityType, VulnerabilitiesType } from './image-vulnerability-utils';
 
 type ImageVulnerabilitiesListProps = {
   match?: match<{ ns?: string }>;
@@ -32,6 +33,17 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
   } = props;
 
   const imageVulnerabilitiesRowFilters: RowFilter[] = [
+    {
+      filterGroupName: t('container-security~Type'),
+      items: [
+        { id: VulnerabilitiesType.appDependency, title: VulnerabilitiesType.appDependency },
+        { id: VulnerabilitiesType.baseImage, title: VulnerabilitiesType.baseImage },
+      ],
+      type: 'vulnerability-type',
+      reducer: (v) => getVulnerabilityType(v.vulnerability),
+      filter: (filter, vuln) =>
+        filter.selected.has(getVulnerabilityType(vuln.vulnerability)) || _.isEmpty(filter.selected),
+    },
     {
       filterGroupName: t('container-security~Severity'),
       items: [
