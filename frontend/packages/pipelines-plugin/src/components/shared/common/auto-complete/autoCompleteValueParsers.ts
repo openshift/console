@@ -1,4 +1,5 @@
 import { useFormikContext } from 'formik';
+import { AddTriggerFormValues } from '../../../pipelines/modals/triggers/types';
 import {
   PipelineBuilderFormikValues,
   SelectedBuilderTask,
@@ -37,4 +38,18 @@ export const useBuilderParams = (selectedData: SelectedBuilderTask): string[] =>
   const taskResultACs: string[] = computeAvailableResultACs(tasks, taskResources, taskIndex);
 
   return [...paramACs, ...workspaceACs, ...contextualACs, ...finallyStatusACs, ...taskResultACs];
+};
+
+export const useAddTriggerParams = (): string[] => {
+  const {
+    values: { triggerBinding },
+  } = useFormikContext<AddTriggerFormValues>();
+
+  const bindingParamACs: string[] =
+    triggerBinding?.resource?.spec?.params?.map((param) => `tt.${paramToAutoComplete(param)}`) ||
+    [];
+
+  const staticACs: string[] = ['uid'];
+
+  return [...bindingParamACs, ...staticACs];
 };
