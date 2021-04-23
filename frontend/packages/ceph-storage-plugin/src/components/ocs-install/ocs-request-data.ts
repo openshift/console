@@ -14,6 +14,7 @@ import {
   OCS_DEVICE_SET_REPLICA,
   ATTACHED_DEVICES_ANNOTATION,
   OCS_DEVICE_SET_ARBITER_REPLICA,
+  OCS_DEVICE_SET_FLEXIBLE_REPLICA,
 } from '../../constants';
 import { cephStorageLabel } from '../../selectors';
 import {
@@ -56,6 +57,9 @@ const MIN_DEVICESET_RESOURCES: ResourceConstraints = {
     memory: '5Gi',
   },
 };
+
+export const getDeviceSetCount = (pvCount: number, replica: number): number =>
+  Math.floor(pvCount / replica) || 1;
 
 export const labelNodes = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
   const patch = [
@@ -132,21 +136,17 @@ export const getOCSRequestData = (
   kmsEnable?: boolean,
   selectedArbiterZone?: string,
   stretchClusterChecked?: boolean,
+  availablePvsCount?: number,
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
-  let isPortable: boolean = !isNoProvisioner;
-  let deviceSetReplica: number = OCS_DEVICE_SET_REPLICA;
-  let deviceSetCount: number = 1;
-
-  if (stretchClusterChecked) {
-    deviceSetReplica = OCS_DEVICE_SET_ARBITER_REPLICA;
-  }
-  if (flexibleScaling) {
-    deviceSetReplica = 1;
-    deviceSetCount = 3;
-    isPortable = false;
-  }
+  const isPortable: boolean = flexibleScaling ? false : !isNoProvisioner;
+  const deviceSetReplica: number = stretchClusterChecked
+    ? OCS_DEVICE_SET_ARBITER_REPLICA
+    : flexibleScaling
+    ? OCS_DEVICE_SET_FLEXIBLE_REPLICA
+    : OCS_DEVICE_SET_REPLICA;
+  const deviceSetCount = getDeviceSetCount(availablePvsCount, deviceSetReplica);
 
   const requestData: StorageClusterKind = {
     apiVersion: 'ocs.openshift.io/v1',

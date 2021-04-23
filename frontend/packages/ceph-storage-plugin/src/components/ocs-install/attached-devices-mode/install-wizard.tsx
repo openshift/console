@@ -61,6 +61,7 @@ const createCluster = async (
     selectedArbiterZone,
     stretchClusterChecked,
     enableTaint,
+    availablePvsCount,
   },
   setInProgress,
   flagDispatcher,
@@ -82,6 +83,7 @@ const createCluster = async (
       kms.hasHandled && encryption.advanced,
       selectedArbiterZone,
       stretchClusterChecked,
+      availablePvsCount,
     );
     const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
     if (encryption.advanced && kms.hasHandled) {

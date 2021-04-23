@@ -69,6 +69,7 @@ export const initialState: State = {
     clientCertFile: '',
     clientKeyFile: '',
   },
+  availablePvsCount: 0,
   networkType: NetworkType.DEFAULT,
   clusterNetwork: '',
   publicNetwork: '',
@@ -106,6 +107,7 @@ export type State = {
   storageClass: StorageClassResourceKind;
   nodes: NodeKind[];
   enableTaint: boolean;
+  availablePvsCount: number;
   // Encryption state declare
   encryption: EncryptionType;
   kms: KMSConfig;
@@ -147,6 +149,7 @@ export type Action =
   | { type: 'setStorageClass'; value: StorageClassResourceKind }
   | { type: 'setNodes'; value: NodeKind[] }
   | { type: 'setEnableTaint'; value: boolean }
+  | { type: 'setAvailablePvsCount'; value: number }
   // Encryption state actions
   | { type: 'setEncryption'; value: EncryptionType }
   | { type: 'setKmsEncryption'; value: KMSConfig }
@@ -214,6 +217,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { nodes: action.value });
     case 'setEnableTaint':
       return Object.assign({}, state, { enableTaint: action.value });
+    case 'setAvailablePvsCount':
+      return Object.assign({}, state, { availablePvsCount: action.value });
     // Encryption state reducer
     case 'setEncryption':
       return Object.assign({}, state, { encryption: action.value });
