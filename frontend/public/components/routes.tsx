@@ -30,7 +30,7 @@ import {
 } from '../module/k8s';
 import { RouteModel } from '../models';
 import { Conditions } from './conditions';
-import { RouteCharts } from './routes/route-charts';
+import { RouteMetrics } from './routes/route-metrics';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
@@ -396,7 +396,6 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Route details')} />
-        <RouteCharts namespace={route.metadata.namespace} route={route.metadata.name} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={route}>
@@ -494,7 +493,15 @@ export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
     getResourceStatus={routeStatus}
     kind={RoutesReference}
     menuActions={menuActions}
-    pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
+    pages={[
+      navFactory.details(detailsPage(RouteDetails)),
+      {
+        href: 'metrics',
+        nameKey: 'public~Metrics',
+        component: RouteMetrics,
+      },
+      navFactory.editYaml(),
+    ]}
   />
 );
 

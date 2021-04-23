@@ -11,6 +11,7 @@ import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
+import { ResourceMetricsDashboard } from './resource-metrics';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -162,6 +163,12 @@ export const navFactory: NavFactory = {
     // t('public~History')
     nameKey: 'public~History',
     component,
+  }),
+  metrics: (component) => ({
+    href: 'metrics',
+    // t('public~Metrics')
+    nameKey: 'public~Metrics',
+    component: component ?? ResourceMetricsDashboard,
   }),
 };
 
