@@ -6,7 +6,14 @@ import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { RootState } from '../../redux';
-import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
+import {
+  K8sKind,
+  k8sList,
+  referenceForModel,
+  getResourceDescription,
+  modelFor,
+  referenceForGroupVersionKind,
+} from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
@@ -16,6 +23,8 @@ import {
   ClusterGlobalConfig,
   isClusterGlobalConfig,
 } from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
+
+type ConfigDataType = { model: K8sKind; id: string; name: string; namespace: string };
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
@@ -88,14 +97,19 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       }),
     ).then((responses) => {
       const flattenedResponses = _.flatten(responses);
-      const winnowedResponses = flattenedResponses.map((item) => ({
+      const winnowedResponses: ConfigDataType[] = flattenedResponses.map((item) => ({
         model: item.model,
         id: item.metadata.uid,
         name: item.metadata.name,
         namespace: item.metadata.namespace,
-        kind: item.kind,
       }));
-      const usableConfigs = globalConfigs.map((item) => item.properties);
+      const usableConfigs: ConfigDataType[] = globalConfigs.map(({ properties }) => {
+        const { group, version, kind } = properties.model;
+        return {
+          ...properties,
+          model: modelFor(referenceForGroupVersionKind(group)(version)(kind)),
+        };
+      });
       const allItems = [...winnowedResponses, ...usableConfigs]
         .map((item) => {
           const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;

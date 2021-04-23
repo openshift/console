@@ -78,7 +78,7 @@
       "namespace": "knative-serving"
     },
     "flags": {
-      "required": ["FLAG_KNATIVE_SERVING"]
+      "required": ["KNATIVE_SERVING"]
     }
   }
 ]
