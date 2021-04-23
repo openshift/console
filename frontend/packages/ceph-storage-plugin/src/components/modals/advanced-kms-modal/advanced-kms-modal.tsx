@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, TextInput, FileUpload, Tooltip, Form } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { FormGroup, TextInput, FileUpload, Form } from '@patternfly/react-core';
 
 import {
   createModalLauncher,
@@ -14,6 +13,7 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
+import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 
 import { State, Action } from '../../ocs-install/attached-devices-mode/reducer';
 import {
@@ -155,11 +155,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-tls"
             label={t('ceph-storage-plugin~TLS Server Name')}
             className="ceph-advanced-kms__form-body"
-            labelIcon={
-              <Tooltip position="top" content={vaultTLSTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
-            }
+            labelIcon={<FieldLevelHelp>{vaultTLSTooltip}</FieldLevelHelp>}
           >
             <TextInput
               value={tlsName}
@@ -173,11 +169,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-namespace"
             label={t('ceph-storage-plugin~Vault Enterprise Namespace')}
             className="ceph-advanced-kms__form-body"
-            labelIcon={
-              <Tooltip position="top" content={vaultNamespaceTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
-            }
+            labelIcon={<FieldLevelHelp>{vaultNamespaceTooltip}</FieldLevelHelp>}
             helperText={t(
               'ceph-storage-plugin~The name must be accurate and must match the service namespace',
             )}
@@ -195,11 +187,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-ca-cert"
             label={t('ceph-storage-plugin~CA Certificate')}
             className="ceph-advanced-kms__form-body"
-            labelIcon={
-              <Tooltip position="top" content={vaultCACertTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
-            }
+            labelIcon={<FieldLevelHelp>{vaultCACertTooltip}</FieldLevelHelp>}
           >
             <FileUpload
               id="kms-service-ca-cert"
@@ -219,11 +207,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-cert"
             label={t('ceph-storage-plugin~Client Certificate')}
             className="ceph-advanced-kms__form-body"
-            labelIcon={
-              <Tooltip position="top" content={vaultClientCertTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
-            }
+            labelIcon={<FieldLevelHelp>{vaultClientCertTooltip}</FieldLevelHelp>}
           >
             <FileUpload
               id="kms-service-cert"
@@ -243,11 +227,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-key"
             label={t('ceph-storage-plugin~Client Private Key')}
             className="ceph-advanced-kms__form-body"
-            labelIcon={
-              <Tooltip position="top" content={vaultClientKeyTooltip}>
-                <QuestionCircleIcon />
-              </Tooltip>
-            }
+            labelIcon={<FieldLevelHelp>{vaultClientKeyTooltip}</FieldLevelHelp>}
           >
             <FileUpload
               id="kms-service-key"
