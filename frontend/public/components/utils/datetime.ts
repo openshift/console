@@ -47,7 +47,9 @@ export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undef
   timeZoneName: 'short',
 });
 
-export const relativeTimeFormatter = new Intl.RelativeTimeFormat(getLocale() || undefined);
+export const relativeTimeFormatter = Intl.RelativeTimeFormat
+  ? new Intl.RelativeTimeFormat(getLocale() || undefined)
+  : null;
 
 export const getDuration = (ms: number) => {
   if (!ms || ms < 0) {
@@ -97,6 +99,13 @@ export const fromNow = (dateTime: string | Date, now?: Date, options?) => {
       return i18n.t('public~{{count}} hour', { count: hours });
     }
     return i18n.t('public~{{count}} minute', { count: minutes });
+  }
+
+  // Fallback to normal date/time formatting if Intl.RelativeTimeFormat is not
+  // available. This is the case for older Safari versions.
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat#browser_compatibility
+  if (!relativeTimeFormatter) {
+    return dateTimeFormatter.format(d);
   }
 
   if (!days && !hours && !minutes) {
