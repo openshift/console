@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared';
+import { FormSelectField, FormSelectFieldOption } from '@console/shared';
 import { TektonResource } from '../../../../types';
 import { PipelineBuilderFormikValues } from '../types';
 
@@ -23,28 +23,32 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   } = props;
 
   const dropdownResources = availableResources.filter(
-    (resource) => resourceType === resource.type && !!resource.name,
+    (resource) => resourceType === resource.type && !!resource.name?.trim(),
   );
+  const options: FormSelectFieldOption[] = [
+    {
+      label: t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType }),
+      value: '',
+      isPlaceholder: true,
+      isDisabled: true,
+    },
+    ...dropdownResources.map((resource) => ({ label: resource.name, value: resource.name })),
+  ];
 
   return (
-    <DropdownField
+    <FormSelectField
       name={`${name}.resource`}
       label={resourceName}
-      title={t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType })}
       helpText={t('pipelines-plugin~Only showing resources for this type ({{resourceType}}).', {
         resourceType,
       })}
-      disabled={dropdownResources.length === 0}
-      items={dropdownResources.reduce(
-        (acc, resource) => ({ ...acc, [resource.name]: resource.name }),
-        {},
-      )}
+      options={options}
+      isDisabled={dropdownResources.length === 0}
       onChange={(selectedResource: string) => {
         if (!hasResource) {
           setFieldValue(name, { name: resourceName, resource: selectedResource });
         }
       }}
-      fullWidth
       required
     />
   );

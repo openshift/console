@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormikValues, useField, useFormikContext } from 'formik';
-import { FormSelectField, FormSelectFieldOptions } from '@console/shared';
+import { FormSelectField, FormSelectFieldOption } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingInline } from '@console/internal/components/utils';
@@ -48,7 +48,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
     }
   }, [canAutoSelect, name, availableResources, setFieldTouched, setFieldValue]);
 
-  const options: FormSelectFieldOptions<string>[] = [
+  const options: FormSelectFieldOption<string>[] = [
     {
       value: '',
       label: t('pipelines-plugin~Select Pipeline resource'),
@@ -60,7 +60,7 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
       value: CREATE_PIPELINE_RESOURCE,
     },
     ...availableResources.map(
-      (resource): FormSelectFieldOptions => {
+      (resource): FormSelectFieldOption => {
         const resourceName = resource.metadata.name;
         const url = _.find(resource.spec.params, ['name', 'url'])?.value || '';
         const label = url.trim().length > 0 ? `${url} (${resourceName})` : resourceName;

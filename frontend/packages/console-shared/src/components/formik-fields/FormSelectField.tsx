@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useFormikValidationFix } from '../../hooks';
-import { FormSelectFieldProps } from './field-types';
+import { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
 const FormSelectField: React.FC<FormSelectFieldProps> = ({
@@ -19,6 +19,18 @@ const FormSelectField: React.FC<FormSelectFieldProps> = ({
   const errorMessage = !isValid ? error : '';
 
   useFormikValidationFix(field.value);
+
+  // PF bug workaround
+  // Return to field.value when fixed: https://github.com/patternfly/patternfly-react/issues/5687
+  const hasSelectedOption: boolean = options.some(({ value }) => field.value === value);
+  const placeholderOption: FormSelectFieldOption = options.find(
+    ({ isPlaceholder }) => isPlaceholder,
+  );
+  const safeValue: string = hasSelectedOption
+    ? field.value
+    : placeholderOption
+    ? placeholderOption.value
+    : field.value;
 
   return (
     <FormGroup
@@ -39,7 +51,7 @@ const FormSelectField: React.FC<FormSelectFieldProps> = ({
           setFieldValue(props.name, value, false);
           setFieldTouched(props.name, true, false);
         }}
-        value={field.value}
+        value={safeValue}
       >
         {options.map((option) => (
           <FormSelectOption {...option} key={option.label} />

@@ -63,7 +63,7 @@ export interface DropdownFieldProps extends FieldProps {
   onChange?: (value: string) => void;
 }
 
-export type FormSelectFieldOptions<T = any> = {
+export type FormSelectFieldOption<T = any> = {
   label: string;
   value: T;
   isPlaceholder?: boolean;
@@ -71,8 +71,8 @@ export type FormSelectFieldOptions<T = any> = {
 };
 
 export type FormSelectFieldProps = FieldProps & {
-  disabled?: boolean;
-  options: FormSelectFieldOptions[];
+  isDisabled?: boolean;
+  options: FormSelectFieldOption[];
   onChange?: (selectedValue: any) => void;
 };
 
