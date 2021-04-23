@@ -23,8 +23,8 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { Timestamp } from '@console/internal/components/utils';
 import { CloudKafka } from '../../utils/rhoas-types';
-
 import './ServiceInstanceTable.scss';
+import ServiceIconStatus from './ServiceIconStatus';
 
 type FormattedKafkas = {
   cells: JSX.Element[];
@@ -62,7 +62,7 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
               { title: provider === 'aws' ? 'Amazon Web Services' : provider },
               { title: region === 'us-east-1' ? 'US East, N.Virginia' : region },
               { title: owner },
-              { title: status[0].toUpperCase() + status.substring(1) },
+              { title: <ServiceIconStatus status={status} /> },
               { title: <Timestamp timestamp={createdAt} /> },
             ],
             ...((currentKafkaConnections.includes(id) || status !== 'ready') && {
@@ -82,8 +82,8 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
   }, [pageKafkas, currentKafkaConnections, formatTableRowData, kafkaRows]);
 
   const tableColumns = [
-    { title: t('rhoas-plugin~Cluster Name'), transforms: [sortable] },
-    { title: t('rhoas-plugin~Provider'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Name'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Cloud provider'), transforms: [sortable] },
     { title: t('rhoas-plugin~Region'), transforms: [sortable] },
     { title: t('rhoas-plugin~Owner'), transforms: [sortable] },
     { title: t('rhoas-plugin~Status'), transforms: [sortable] },
@@ -103,15 +103,13 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
             <EmptyState variant={EmptyStateVariant.small}>
               <EmptyStateIcon icon={SearchIcon} />
               <Title headingLevel="h2" size="lg">
-                {t('rhoas-plugin~No results found')}
+                {t('rhoas-plugin~No Kafka instances found')}
               </Title>
               <EmptyStateBody>
-                {t(
-                  'rhoas-plugin~No results match the filter criteria. Remove all filters or clear all filters to show results.',
-                )}
+                {t('rhoas-plugin~No results match the filter criteria.')}
               </EmptyStateBody>
               <Button variant="link" onClick={clearFilters}>
-                {t('rhoas-plugin~Clear all filters')}
+                {t('rhoas-plugin~Clear filters')}
               </Button>
             </EmptyState>
           </Bullseye>

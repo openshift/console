@@ -19,7 +19,7 @@ import {
   CloudServiceAccountRequest,
   CloudServicesRequestModel,
 } from '../models/rhoas';
-import { getFinishedCondition, isResourceStatusSuccessfull } from './conditionHandler';
+import { getFinishedCondition, isResourceStatusSuccessful } from './conditionHandler';
 
 /**
  * Create service account for purpose of supplying connection credentials
@@ -35,7 +35,6 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
       namespace: currentNamespace,
     },
     spec: {
-      forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
       serviceAccountName: `rhoas-operator-${getRandomChars(4)}`,
       serviceAccountDescription: 'Created by rhoas operator',
@@ -58,7 +57,6 @@ export const createCloudServicesRequest = async (currentNamespace: string) => {
       namespace: currentNamespace,
     },
     spec: {
-      forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
     },
   };
@@ -71,7 +69,7 @@ export const patchServiceAccountRequest = async (request: any) => {
   return k8sPatch(CloudServiceAccountRequest, request, [
     {
       path,
-      op: 'replace',
+      op: 'add',
       value: new Date().toISOString(),
     },
   ]);
@@ -83,7 +81,7 @@ export const patchCloudServicesRequest = async (request: any) => {
   return k8sPatch(CloudServicesRequestModel, request, [
     {
       path,
-      op: 'replace',
+      op: 'add',
       value: new Date().toISOString(),
     },
   ]);
@@ -162,7 +160,7 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
       const condition = getFinishedCondition(resource);
 
       if (condition) {
-        if (isResourceStatusSuccessfull(resource)) {
+        if (isResourceStatusSuccessful(resource)) {
           return true;
         }
         const errorToLog = condition.message;
