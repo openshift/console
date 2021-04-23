@@ -20,6 +20,7 @@ export enum PipelineResourceType {
 }
 
 export enum VolumeTypes {
+  NoWorkspace = 'noWorkspace',
   EmptyDirectory = 'emptyDirectory',
   ConfigMap = 'configMap',
   Secret = 'secret',

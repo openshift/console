@@ -19,25 +19,43 @@ export type PipelineModalFormResource = {
   };
 };
 
-export type PipelineModalFormWorkspace = TektonWorkspace & {
-  type: VolumeTypes;
-  data:
-    | {
+export type PipelineModalFormWorkspaceStructure =
+  | {
+      type: VolumeTypes.NoWorkspace;
+      data: {};
+    }
+  | {
+      type: VolumeTypes.EmptyDirectory;
+      data: {
         emptyDir: {};
-      }
-    | {
+      };
+    }
+  | {
+      type: VolumeTypes.Secret;
+      data: {
         secret: VolumeTypeSecret;
-      }
-    | {
+      };
+    }
+  | {
+      type: VolumeTypes.ConfigMap;
+      data: {
         configMap: VolumeTypeConfigMaps;
-      }
-    | {
+      };
+    }
+  | {
+      type: VolumeTypes.PVC;
+      data: {
         persistentVolumeClaim: VolumeTypePVC;
-      }
-    | {
+      };
+    }
+  | {
+      type: VolumeTypes.VolumeClaimTemplate;
+      data: {
         volumeClaimTemplate: VolumeTypeClaim;
       };
-};
+    };
+
+export type PipelineModalFormWorkspace = TektonWorkspace & PipelineModalFormWorkspaceStructure;
 
 export type CommonPipelineModalFormikValues = FormikValues & {
   namespace: string;

@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared';
 import { PipelineRunModel } from '../../../../models';
 import {
-  PersistentVolumeClaimType,
   PipelineKind,
   TektonResource,
   PipelineRunKind,
@@ -20,6 +19,7 @@ import {
   CommonPipelineModalFormikValues,
   PipelineModalFormResource,
   PipelineModalFormWorkspace,
+  PipelineModalFormWorkspaceStructure,
 } from './types';
 
 /**
@@ -148,13 +148,38 @@ export const getDefaultVolumeClaimTemplate = (pipelineName: string): VolumeClaim
     },
   };
 };
-export const getDefaultPVC = (claimName: string): PersistentVolumeClaimType => {
+
+const supportWorkspaceDefaults = (preselectPVC: string) => (
+  workspace: TektonWorkspace,
+): PipelineModalFormWorkspace => {
+  let workspaceSetting: PipelineModalFormWorkspaceStructure = {
+    type: VolumeTypes.EmptyDirectory,
+    data: { emptyDir: {} },
+  };
+
+  if (preselectPVC) {
+    workspaceSetting = {
+      type: VolumeTypes.PVC,
+      data: {
+        persistentVolumeClaim: {
+          claimName: preselectPVC,
+        },
+      },
+    };
+  }
+  if (workspace.optional) {
+    workspaceSetting = {
+      type: VolumeTypes.NoWorkspace,
+      data: {},
+    };
+  }
+
   return {
-    persistentVolumeClaim: {
-      claimName,
-    },
+    ...workspace,
+    ...workspaceSetting,
   };
 };
+
 export const convertPipelineToModalData = (
   pipeline: PipelineKind,
   alwaysCreateResources: boolean = false,
@@ -176,20 +201,7 @@ export const convertPipelineToModalData = (
         type: resource.type,
       },
     })),
-    workspaces: (pipeline.spec.workspaces || []).map(
-      (workspace: TektonWorkspace): PipelineModalFormWorkspace => ({
-        ...workspace,
-        ...(preselectPVC
-          ? {
-              type: VolumeTypes.PVC,
-              data: getDefaultPVC(preselectPVC),
-            }
-          : {
-              type: VolumeTypes.EmptyDirectory,
-              data: { emptyDir: {} },
-            }),
-      }),
-    ),
+    workspaces: (pipeline.spec.workspaces || []).map(supportWorkspaceDefaults(preselectPVC)),
   };
 };
 

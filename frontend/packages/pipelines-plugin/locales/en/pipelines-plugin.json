@@ -95,6 +95,7 @@
   "Add item": "Add item",
   "Config Map": "Config Map",
   "Empty Directory doesn't support shared data between tasks.": "Empty Directory doesn't support shared data between tasks.",
+  "No workspace": "No workspace",
   "Empty Directory": "Empty Directory",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
   "VolumeClaimTemplate": "VolumeClaimTemplate",
