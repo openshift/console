@@ -356,7 +356,8 @@ export const createOrUpdateJarFile = async (
     resources === Resources.KnativeService &&
     imageStreamList &&
     imageStreamList.length &&
-    verb === 'update'
+    verb === 'update' &&
+    fileValue !== ''
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
