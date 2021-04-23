@@ -5,6 +5,8 @@ export const ZONE_LABELS = [
   'failure-domain.beta.kubernetes.io/zone', // deprecated
 ];
 
+export const RACK_LABEL = 'topology.rook.io/rack';
+
 export enum MODES {
   INTERNAL = 'Internal',
   ATTACHED_DEVICES = 'Internal - Attached Devices',

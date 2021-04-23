@@ -16,7 +16,7 @@ import {
 import { humanizeBinaryBytes, Dropdown, FieldLevelHelp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { TechPreviewBadge, useDeepCompareMemoize } from '@console/shared';
+import { TechPreviewBadge, useDeepCompareMemoize, getName } from '@console/shared';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { scResource } from '../../../resources';
 import { arbiterText, MODES } from '../../../constants';
@@ -125,7 +125,8 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
   const nodesDataMemoized: NodeKind[] = useDeepCompareMemoize(nodesData, true);
 
   const isArbiterDisabled = React.useCallback(
-    (): boolean => !storageClassData?.some((sc) => isArbiterSC(sc, pvData, nodesDataMemoized)),
+    (): boolean =>
+      !storageClassData?.some((sc) => isArbiterSC(getName(sc), pvData, nodesDataMemoized)),
     [nodesDataMemoized, pvData, storageClassData],
   );
 

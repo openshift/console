@@ -268,6 +268,8 @@
   "Token": "Token",
   "Advanced Settings": "Advanced Settings",
   "No StorageClass selected": "No StorageClass selected",
+  "The Arbiter stretch cluster requires a minimum of 4 nodes (2 different zones, 2 nodes per zone). Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.": "The Arbiter stretch cluster requires a minimum of 4 nodes (2 different zones, 2 nodes per zone). Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.",
+  "The StorageCluster requires a minimum of 3 nodes. Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.": "The StorageCluster requires a minimum of 3 nodes. Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.",
   "Adding capacity for <1>{{name}}</1>, may increase your expenses.": "Adding capacity for <1>{{name}}</1>, may increase your expenses.",
   "Storage Class": "Storage Class",
   "x {{ replica, number }} replicas =": "x {{ replica, number }} replicas =",
