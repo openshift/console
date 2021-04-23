@@ -1,6 +1,6 @@
 import { createContext, useCallback } from 'react';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
-import { QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY } from './const';
+import { QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY, QUICKSTART_TASKS_INITIAL_STATES } from './const';
 import {
   AllQuickStartStates,
   QuickStartState,
@@ -8,6 +8,7 @@ import {
   QuickStartTaskStatus,
 } from './quick-start-types';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { getTaskStatusKey } from './quick-start-utils';
 
 export type QuickStartContextValues = {
   activeQuickStartID: string;
@@ -39,7 +40,7 @@ const getDefaultQuickStartState = (totalTasks: number, initialStatus?: QuickStar
   };
   if (totalTasks) {
     for (let i = 0; i < totalTasks; i++) {
-      defaultQuickStartState[`taskStatus${i}`] = QuickStartTaskStatus.INIT;
+      defaultQuickStartState[getTaskStatusKey(i)] = QuickStartTaskStatus.INIT;
     }
   }
   return defaultQuickStartState;
@@ -127,7 +128,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         const quickStart = qs[activeQuickStartID];
         const status = quickStart?.status;
         const taskNumber = quickStart?.taskNumber;
-        const taskStatus = quickStart[`taskStatus${taskNumber}`];
+        const taskStatus = quickStart[getTaskStatusKey(taskNumber)];
 
         let updatedStatus;
         let updatedTaskNumber;
@@ -141,7 +142,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
           updatedStatus = QuickStartStatus.IN_PROGRESS;
         } else if (
           status === QuickStartStatus.IN_PROGRESS &&
-          taskStatus !== QuickStartTaskStatus.INIT &&
+          !QUICKSTART_TASKS_INITIAL_STATES.includes(taskStatus) &&
           taskNumber === totalTasks - 1
         ) {
           fireTelemetryEvent('Quick Start Completed', {
@@ -150,21 +151,30 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
           updatedStatus = QuickStartStatus.COMPLETE;
         }
 
-        if (taskStatus === QuickStartTaskStatus.INIT) {
+        if (taskStatus === QuickStartTaskStatus.VISITED) {
           updatedTaskStatus = QuickStartTaskStatus.REVIEW;
         }
 
         if (taskNumber < totalTasks && !updatedTaskStatus) {
           updatedTaskNumber = taskNumber + 1;
         }
-
+        const markInitialStepVisited =
+          updatedTaskNumber > -1 &&
+          quickStart[getTaskStatusKey(updatedTaskNumber)] === QuickStartTaskStatus.INIT
+            ? QuickStartTaskStatus.VISITED
+            : quickStart[getTaskStatusKey(updatedTaskNumber)];
         const newState = {
           ...qs,
           [activeQuickStartID]: {
             ...quickStart,
             ...(updatedStatus ? { status: updatedStatus } : {}),
-            ...(updatedTaskNumber > -1 ? { taskNumber: updatedTaskNumber } : {}),
-            ...(updatedTaskStatus ? { [`taskStatus${taskNumber}`]: updatedTaskStatus } : {}),
+            ...(updatedTaskNumber > -1
+              ? {
+                  taskNumber: updatedTaskNumber,
+                  [getTaskStatusKey(updatedTaskNumber)]: markInitialStepVisited,
+                }
+              : {}),
+            ...(updatedTaskStatus ? { [getTaskStatusKey(taskNumber)]: updatedTaskStatus } : {}),
           },
         };
         return newState;
@@ -180,7 +190,13 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
 
       if (taskNumber < 0) return qs;
 
-      return { ...qs, [activeQuickStartID]: { ...quickStart, taskNumber: taskNumber - 1 } };
+      return {
+        ...qs,
+        [activeQuickStartID]: {
+          ...quickStart,
+          taskNumber: taskNumber - 1,
+        },
+      };
     });
   }, [activeQuickStartID, setAllQuickStartStates]);
 
@@ -193,10 +209,24 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         if (taskNumber > -1 && status === QuickStartStatus.NOT_STARTED) {
           updatedStatus = QuickStartStatus.IN_PROGRESS;
         }
+
+        let updatedTaskStatus = {};
+        for (let taskIndex = 0; taskIndex <= taskNumber; taskIndex++) {
+          const taskStatus = quickStart[getTaskStatusKey(taskIndex)];
+          const newTaskStatus =
+            taskStatus === QuickStartTaskStatus.INIT ? QuickStartTaskStatus.VISITED : undefined;
+          if (newTaskStatus) {
+            updatedTaskStatus = {
+              ...updatedTaskStatus,
+              [getTaskStatusKey(taskIndex)]: newTaskStatus,
+            };
+          }
+        }
         const updatedQuickStart = {
           ...quickStart,
           ...(updatedStatus ? { status: updatedStatus } : {}),
           taskNumber,
+          ...updatedTaskStatus,
         };
         return { ...qs, [quickStartId]: updatedQuickStart };
       });
@@ -208,7 +238,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     (taskStatus: QuickStartTaskStatus) => {
       const quickStart = allQuickStartStates[activeQuickStartID];
       const { taskNumber } = quickStart;
-      const updatedQuickStart = { ...quickStart, [`taskStatus${taskNumber}`]: taskStatus };
+      const updatedQuickStart = { ...quickStart, [getTaskStatusKey(taskNumber)]: taskStatus };
       setAllQuickStartStates((qs) => ({ ...qs, [activeQuickStartID]: updatedQuickStart }));
     },
     [allQuickStartStates, activeQuickStartID, setAllQuickStartStates],

@@ -12,6 +12,8 @@ export const getQuickStartStatus = (
 ): QuickStartStatus =>
   (allQuickStartStates?.[quickStartID]?.status as QuickStartStatus) ?? QuickStartStatus.NOT_STARTED;
 
+export const getTaskStatusKey = (taskNumber: number): string => `taskStatus${taskNumber}`;
+
 export const getQuickStartStatusCount = (
   allQuickStartStates: AllQuickStartStates,
   quickStarts: QuickStart[],
