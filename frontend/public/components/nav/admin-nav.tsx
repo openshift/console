@@ -134,7 +134,7 @@ const AdminNav = () => {
         <HrefLink
           id="explore"
           href="/api-explorer"
-          name={t('public~Explore')}
+          name={t('public~API Explorer')}
           startsWith={apiExplorerStartsWith}
         />
         <ResourceNSLink id="events" resource="events" name={t('public~Events')} />

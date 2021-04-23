@@ -347,13 +347,14 @@ APIResourcesList.displayName = 'APIResourcesList';
 
 export const APIExplorerPage: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const title = t('public~API Explorer');
   return (
     <>
       <Helmet>
-        <title>{t('public~Explore API Resources')}</title>
+        <title>{title}</title>
       </Helmet>
       <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">{t('public~Explore API Resources')}</h1>
+        <h1 className="co-m-pane__heading">{title}</h1>
       </div>
       <APIResourcesList />
     </>
