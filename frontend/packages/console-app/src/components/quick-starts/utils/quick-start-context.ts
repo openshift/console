@@ -7,6 +7,7 @@ import {
   QuickStartStatus,
   QuickStartTaskStatus,
 } from './quick-start-types';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 export type QuickStartContextValues = {
   activeQuickStartID: string;
@@ -56,6 +57,7 @@ const useAllQuickStartStates = () =>
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
+  const fireTelemetryEvent = useTelemetry();
 
   const setActiveQuickStart = useCallback(
     (quickStartId: string, totalTasks?: number) => {
@@ -89,8 +91,12 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
           [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
         };
       });
+      fireTelemetryEvent('Quick Start Initiated', {
+        id: quickStartId,
+        type: 'start',
+      });
     },
-    [setActiveQuickStartID, setAllQuickStartStates],
+    [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
   const restartQuickStart = useCallback(
@@ -105,8 +111,12 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         ...qs,
         [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
       }));
+      fireTelemetryEvent('Quick Start Initiated', {
+        id: quickStartId,
+        type: 'restart',
+      });
     },
-    [setActiveQuickStartID, setAllQuickStartStates],
+    [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
   const nextStep = useCallback(
@@ -124,12 +134,19 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         let updatedTaskStatus;
 
         if (status === QuickStartStatus.NOT_STARTED) {
+          fireTelemetryEvent('Quick Start Initiated', {
+            id: activeQuickStartID,
+            type: 'start',
+          });
           updatedStatus = QuickStartStatus.IN_PROGRESS;
         } else if (
           status === QuickStartStatus.IN_PROGRESS &&
           taskStatus !== QuickStartTaskStatus.INIT &&
           taskNumber === totalTasks - 1
         ) {
+          fireTelemetryEvent('Quick Start Completed', {
+            id: activeQuickStartID,
+          });
           updatedStatus = QuickStartStatus.COMPLETE;
         }
 
@@ -153,7 +170,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
         return newState;
       });
     },
-    [activeQuickStartID, setAllQuickStartStates],
+    [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
   const previousStep = useCallback(() => {

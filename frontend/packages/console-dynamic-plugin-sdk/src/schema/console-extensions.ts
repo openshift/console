@@ -18,6 +18,7 @@ import { ModelMetadata } from '../extensions/resource-metadata';
 import { AlertAction } from '../extensions/notification-alert';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { StorageProvider } from '../extensions/storage-provider';
+import { TelemetryListener } from '../extensions/telemetry';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -43,7 +44,8 @@ export type SupportedExtension =
   | FileUpload
   | ModelMetadata
   | AlertAction
-  | StorageProvider;
+  | StorageProvider
+  | TelemetryListener;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

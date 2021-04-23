@@ -3,7 +3,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
@@ -36,6 +36,8 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -241,6 +243,40 @@ const AppRouter = () => {
   );
 };
 
+const CaptureTelemetry = React.memo(() => {
+  const fireTelemetryEvent = useTelemetry();
+
+  // notify of identity change
+  const user = useSelector(({ UI }) => UI.get('user'));
+  React.useEffect(() => {
+    if (user.metadata?.uid || user.metadata?.name) {
+      fireTelemetryEvent('identify', { user });
+    }
+    // Only trigger identify event when the user identifier changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.metadata?.uid || user.metadata?.name, fireTelemetryEvent]);
+
+  // notify url change events
+  // Debouncing the url change events so that redirects don't fire multiple events.
+  // Also because some pages update the URL as the user enters a search term.
+  const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
+  React.useEffect(() => {
+    fireUrlChangeEvent('page', history.location);
+
+    let { pathname, search } = history.location;
+    history.listen((location) => {
+      const { pathname: nextPathname, search: nextSearch } = history.location;
+      if (pathname !== nextPathname || search !== nextSearch) {
+        pathname = nextPathname;
+        search = nextSearch;
+        fireUrlChangeEvent('page', location);
+      }
+    });
+  }, [fireUrlChangeEvent]);
+
+  return null;
+});
+
 graphQLReady.onReady(() => {
   const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -312,6 +348,7 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
+        <CaptureTelemetry />
         <ToastProvider>
           <AppRouter />
         </ToastProvider>

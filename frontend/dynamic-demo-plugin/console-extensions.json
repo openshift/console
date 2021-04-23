@@ -23,5 +23,13 @@
         "kind": "ExampleModel"
       }
     }
+  },
+  {
+    "type": "console.telemetry/listener",
+    "properties": {
+      "listener": {
+        "$codeRef": "telemetry.eventListener"
+      }
+    }
   }
 ]
