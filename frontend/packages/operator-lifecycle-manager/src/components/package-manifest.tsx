@@ -11,6 +11,7 @@ import {
   TableData,
   RowFunction,
   Flatten,
+  Filter,
 } from '@console/internal/components/factory';
 import {
   MsgBox,
@@ -204,7 +205,7 @@ export type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];
-  filters?: { [name: string]: string };
+  filters?: Filter[];
   loaded: boolean;
   loadError?: string | Record<string, any>;
   showDetailsLink?: boolean;

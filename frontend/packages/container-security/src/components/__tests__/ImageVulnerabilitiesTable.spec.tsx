@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { Table } from '@console/internal/components/factory';
+import { Table, ComponentProps } from '@console/internal/components/factory';
 import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import ImageVulnerabilitiesTable from '../ImageVulnerabilitiesTable';
@@ -37,7 +37,7 @@ describe('ImageVulnerabilitiesTable', () => {
     const headers = wrapper
       .find(Table)
       .props()
-      .Header();
+      .Header({} as ComponentProps);
     expectedImageVulnerabilitiesTableHeader.forEach((header, i) => {
       expect(headers[i].title).toBe(header);
     });
