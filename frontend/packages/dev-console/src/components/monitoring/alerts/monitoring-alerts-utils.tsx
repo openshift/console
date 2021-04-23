@@ -102,7 +102,7 @@ export const monitoringAlertRows = (
   return rows;
 };
 
-export const alertFilters: RowFilter[] = [alertStateFilter, severityRowFilter];
+export const alertFilters: RowFilter[] = [alertStateFilter(), severityRowFilter()];
 
 const setOrderBy = (orderBy: SortByDirection, data: Rule[]): Rule[] => {
   return orderBy === SortByDirection.asc ? data : data.reverse();
