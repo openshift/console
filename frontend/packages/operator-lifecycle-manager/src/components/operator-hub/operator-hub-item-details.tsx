@@ -229,10 +229,21 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   value={mappedValidSubscription}
                 />
               )}
-              <PropertyItem label={t('olm~Repository')} value={repository || notAvailable} />
+              <PropertyItem
+                label={t('olm~Repository')}
+                value={
+                  repository ? <ExternalLink href={repository} text={repository} /> : notAvailable
+                }
+              />
               <PropertyItem
                 label={t('olm~Container image')}
-                value={containerImage || notAvailable}
+                value={
+                  containerImage ? (
+                    <div className="co-break-all co-select-to-copy">{containerImage}</div>
+                  ) : (
+                    notAvailable
+                  )
+                }
               />
               <PropertyItem label={t('olm~Created at')} value={created || notAvailable} />
               <PropertyItem
