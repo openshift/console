@@ -71,11 +71,13 @@ export const createOrUpdateDeployment = (
   const templateLabels = getTemplateLabels(originalDeployment);
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
-  if (jArgsIndex !== -1 && javaArgs !== '') {
-    (env[jArgsIndex] as NameValuePair).value = javaArgs;
-  } else if (jArgsIndex !== -1 && javaArgs === '') {
-    env.splice(jArgsIndex, 1);
-  } else {
+  if (jArgsIndex !== -1) {
+    if (javaArgs !== '') {
+      (env[jArgsIndex] as NameValuePair).value = javaArgs;
+    } else {
+      env.splice(jArgsIndex, 1);
+    }
+  } else if (javaArgs !== '') {
     env.push({ name: 'JAVA_ARGS', value: javaArgs });
   }
 
@@ -146,11 +148,13 @@ const createOrUpdateDeploymentConfig = (
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
   const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
-  if (jArgsIndex !== -1 && javaArgs !== '') {
-    (env[jArgsIndex] as NameValuePair).value = javaArgs;
-  } else if (jArgsIndex !== -1 && javaArgs === '') {
-    env.splice(jArgsIndex, 1);
-  } else {
+  if (jArgsIndex !== -1) {
+    if (javaArgs !== '') {
+      (env[jArgsIndex] as NameValuePair).value = javaArgs;
+    } else {
+      env.splice(jArgsIndex, 1);
+    }
+  } else if (javaArgs !== '') {
     env.push({ name: 'JAVA_ARGS', value: javaArgs });
   }
 

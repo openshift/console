@@ -72,11 +72,13 @@ export const getKnativeServiceDepResource = (
   delete defaultLabel.app;
   if (fileUpload) {
     const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
-    if (jArgsIndex !== -1 && fileUpload.javaArgs !== '') {
-      (env[jArgsIndex] as NameValuePair).value = fileUpload.javaArgs;
-    } else if (jArgsIndex !== -1 && fileUpload.javaArgs === '') {
-      env.splice(jArgsIndex, 1);
-    } else {
+    if (jArgsIndex !== -1) {
+      if (fileUpload.javaArgs !== '') {
+        (env[jArgsIndex] as NameValuePair).value = fileUpload.javaArgs;
+      } else {
+        env.splice(jArgsIndex, 1);
+      }
+    } else if (fileUpload.javaArgs !== '') {
       env.push({ name: 'JAVA_ARGS', value: fileUpload.javaArgs });
     }
   }
