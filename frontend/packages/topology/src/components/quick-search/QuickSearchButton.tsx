@@ -16,7 +16,10 @@ const QuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
       <Button
         className="odc-quick-search-button"
         variant="plain"
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
         aria-label={t('topology~Quick search button')}
       >
         <QuickSearchIcon />

@@ -29,7 +29,8 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
           <Button
             isInline
             variant="link"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setIsQuickSearchOpen(true);
             }}
           >
