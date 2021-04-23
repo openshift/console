@@ -3,6 +3,7 @@ import { CatalogService } from '@console/dev-console/src/components/catalog/serv
 import { getQueryArgument } from '@console/internal/components/utils';
 import QuickSearchButton from './QuickSearchButton';
 import QuickSearchModal from './QuickSearchModal';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type QuickSearchControllerProps = CatalogService & {
   namespace: string;
@@ -18,7 +19,16 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(
     !!getQueryArgument('catalogSearch'),
   );
-
+  const fireTelemetryEvent = useTelemetry();
+  const setIsQuickSearchActiveAndFireEvent = React.useCallback(
+    (active: boolean) => {
+      if (active) {
+        fireTelemetryEvent('Quick Search Accessed');
+      }
+      setIsQuickSearchActive(active);
+    },
+    [fireTelemetryEvent],
+  );
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       const { nodeName } = e.target as Element;
@@ -28,7 +38,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
 
       if (e.code === 'Space' && e.ctrlKey) {
         e.preventDefault();
-        setIsQuickSearchActive(true);
+        setIsQuickSearchActiveAndFireEvent(true);
       }
     };
 
@@ -37,14 +47,14 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [setIsQuickSearchActiveAndFireEvent]);
 
   return (
     <>
-      <QuickSearchButton onClick={() => setIsQuickSearchActive(true)} />
+      <QuickSearchButton onClick={() => setIsQuickSearchActiveAndFireEvent(true)} />
       <QuickSearchModal
         isOpen={isQuickSearchActive}
-        closeModal={() => setIsQuickSearchActive(false)}
+        closeModal={() => setIsQuickSearchActiveAndFireEvent(false)}
         namespace={namespace}
         allCatalogItemsLoaded={loaded}
         searchCatalog={searchCatalog}

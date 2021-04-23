@@ -27,6 +27,7 @@ import {
 } from '@console/app/src/components/quick-starts/utils/quick-start-context';
 import { useUserSettingsCompatibility } from '../../hooks';
 import './QuickStartsCatalogCard.scss';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type QuickStartsCatalogCardProps = {
   quickStarts: QuickStart[];
@@ -49,8 +50,12 @@ const QuickStartsCatalogCard: React.FC<QuickStartsCatalogCardProps> = ({
     true,
   );
   const [isOpen, setOpen] = React.useState<boolean>(false);
+  const fireTelemetryEvent = useTelemetry();
 
   const onRemove = () => {
+    fireTelemetryEvent('Dev Customized', {
+      event: 'remove quick start card',
+    });
     setShowTile(false);
   };
 

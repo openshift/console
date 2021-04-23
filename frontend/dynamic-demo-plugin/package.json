@@ -25,7 +25,8 @@
     "displayName": "Dynamic Demo Plugin",
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
-      "barUtils": "./utils/bar"
+      "barUtils": "./utils/bar",
+      "telemetry": "./utils/telemetry"
     },
     "dependencies": {
       "@console/pluginAPI": "~0.0.1"

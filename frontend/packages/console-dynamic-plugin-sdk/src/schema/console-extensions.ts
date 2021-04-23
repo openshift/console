@@ -1,6 +1,7 @@
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
+import { TelemetryListener } from '../extensions/telemetry';
 
-export type SupportedExtension = FeatureFlag | ModelFeatureFlag;
+export type SupportedExtension = FeatureFlag | ModelFeatureFlag | TelemetryListener;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

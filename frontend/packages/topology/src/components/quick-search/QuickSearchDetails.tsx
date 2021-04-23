@@ -11,6 +11,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
@@ -18,6 +19,7 @@ interface QuickSearchDetailsProps {
 
 const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   return (
     <div className="odc-quick-search-details">
@@ -32,6 +34,11 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem })
         className="odc-quick-search-details__form-button"
         onClick={() => {
           history.push(selectedItem.cta.href);
+          fireTelemetryEvent('Quick Search Used', {
+            id: selectedItem.uid,
+            type: selectedItem.type,
+            name: selectedItem.name,
+          });
         }}
       >
         {selectedItem.cta.label}

@@ -10,6 +10,7 @@ import {
   setQueryArgument,
 } from '@console/internal/components/utils';
 import './QuickSearchModalBody.scss';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
@@ -24,6 +25,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   closeModal,
   allCatalogItemsLoaded,
 }) => {
+  const fireTelemetryEvent = useTelemetry();
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [searchTerm, setSearchTerm] = React.useState<string>(
     getQueryArgument('catalogSearch') || '',
@@ -83,8 +85,13 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       history.push(`/catalog/ns/${namespace}?keyword=${searchTerm}`);
     } else if (selectedItem) {
       history.push(selectedItem.cta.href);
+      fireTelemetryEvent('Quick Search Used', {
+        id: selectedItem.uid,
+        type: selectedItem.type,
+        name: selectedItem.name,
+      });
     }
-  }, [selectedItem, namespace, searchTerm]);
+  }, [selectedItem, namespace, searchTerm, fireTelemetryEvent]);
 
   const selectPrevious = React.useCallback(() => {
     let index = getIndexOfSelectedItem();
