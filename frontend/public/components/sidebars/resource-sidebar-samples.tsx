@@ -81,14 +81,34 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
   snippet,
   insertSnippetYaml,
 }) => {
-  const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
-  const toggleYamlPreview = () => setYamlPreviewOpen(!yamlPreviewOpen);
-
   const { highlightText, title, id, yaml, lazyYaml, targetResource, description } = snippet;
+
+  const [yamlPreview, setYamlPreview] = React.useState<string>(yaml);
+  const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
+
+  const resolveYaml = async (callback: (resolvedYaml: string) => void) => {
+    if (yaml) {
+      callback(yaml);
+    } else if (lazyYaml) {
+      try {
+        callback(await lazyYaml());
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn(`Error while running lazy yaml snippet ${id} (${title})`, error);
+      }
+    }
+  };
 
   const insertSnippet = () => {
     const reference = referenceFor(targetResource);
-    insertSnippetYaml(id, typeof lazyYaml === 'function' ? lazyYaml() : yaml, reference);
+    resolveYaml((resolvedYaml) => insertSnippetYaml(id, resolvedYaml, reference));
+  };
+
+  const toggleYamlPreview = () => {
+    setYamlPreviewOpen((open) => !open);
+    if (!yamlPreview && !yamlPreviewOpen) {
+      resolveYaml((resolvedYaml) => setYamlPreview(resolvedYaml));
+    }
   };
 
   const { t } = useTranslation();
@@ -108,7 +128,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
         className="pull-right"
         variant="link"
         isInline
-        onClick={() => toggleYamlPreview()}
+        onClick={toggleYamlPreview}
       >
         {yamlPreviewOpen ? (
           <>
@@ -122,7 +142,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
           </>
         )}
       </Button>
-      {yamlPreviewOpen && <PreviewYAML yaml={typeof lazyYaml === 'function' ? lazyYaml() : yaml} />}
+      {yamlPreviewOpen && yamlPreview && <PreviewYAML yaml={yamlPreview} />}
     </li>
   );
 };
