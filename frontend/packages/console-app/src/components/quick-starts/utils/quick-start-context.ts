@@ -109,7 +109,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
       });
       setAllQuickStartStates((qs) => ({
         ...qs,
-        [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
+        [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.NOT_STARTED),
       }));
       fireTelemetryEvent('Quick Start Initiated', {
         id: quickStartId,
