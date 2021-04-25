@@ -21,6 +21,9 @@ export enum detailsTab {
 }
 
 export const waitForStatus = (status: string, timeout: number) => {
+  cy.get('.co-m-horizontal-nav__menu-item')
+    .contains('Details')
+    .click();
   cy.get(detailsTab.vmStatus, { timeout }).should('contain', status);
   if (status === VM_STATUS.Running) {
     cy.get(detailsTab.vmName).then(($vmName) => {
