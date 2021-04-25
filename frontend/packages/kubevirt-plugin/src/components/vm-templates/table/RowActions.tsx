@@ -125,7 +125,7 @@ const RowActions: React.FC<RowActionsProps> = ({
         variant="secondary"
         className="kubevirt-vm-template-details"
       >
-        {t('kubevirt-plugin~Create')}
+        {t('kubevirt-plugin~Create VM')}
       </Button>
     </>
   );
