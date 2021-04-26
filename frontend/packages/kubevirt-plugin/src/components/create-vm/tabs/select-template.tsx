@@ -2,7 +2,6 @@ import * as classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
 import { ProjectModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
@@ -14,6 +13,7 @@ import {
   AlertVariant,
   Button,
   ButtonVariant,
+  Divider,
   InputGroup,
   SelectOption,
   SelectVariant,
@@ -30,7 +30,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-
+import { createProjectModal } from '@console/internal/components/modals';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { getWorkloadProfile } from '../../../selectors/vm';
@@ -237,6 +237,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
   });
 
   const canListNs = useFlag(FLAGS.CAN_LIST_NS);
+  const canCreateNs = useFlag(FLAGS.CAN_CREATE_PROJECT);
   const allProjects = t('kubevirt-plugin~All projects');
 
   return (
@@ -282,14 +283,38 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           selections={namespace}
                           className="kv-select-template__project"
                         >
-                          {(canListNs
-                            ? [allProjects, ...namespaces.sort()]
-                            : namespaces.sort()
-                          ).map((ns) => (
-                            <SelectOption key={ns} value={ns}>
-                              <ResourceName kind={ProjectModel.kind} name={ns} />
-                            </SelectOption>
-                          ))}
+                          <>
+                            {canCreateNs && (
+                              <>
+                                <Button
+                                  className="kv-select-template__create-project-btn"
+                                  variant="plain"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    createProjectModal({
+                                      blocking: true,
+                                      onSubmit: (newProject) => {
+                                        setNamespace(newProject.metadata.name);
+                                      },
+                                    });
+                                  }}
+                                >
+                                  {t('kubevirt-plugin~Create Project')}
+                                </Button>
+                                <Divider component="li" key={5} />
+                              </>
+                            )}
+                          </>
+                          <>
+                            {(canListNs
+                              ? [allProjects, ...namespaces.sort()]
+                              : namespaces.sort()
+                            ).map((ns) => (
+                              <SelectOption key={ns} value={ns}>
+                                <ResourceName kind={ProjectModel.kind} name={ns} />
+                              </SelectOption>
+                            ))}
+                          </>
                         </FormPFSelect>
                       </ToolbarItem>
                     </SplitItem>

@@ -341,6 +341,7 @@
   "Select a template": "Select a template",
   "The virtual machine can be <1>customized</1> in the next step.": "The virtual machine can be <1>customized</1> in the next step.",
   "Templates that are in an <1>error</1> or <3>in-progress</3> state will not be shown.": "Templates that are in an <1>error</1> or <3>in-progress</3> state will not be shown.",
+  "Create Project": "Create Project",
   "All template providers": "All template providers",
   "All boot sources": "All boot sources",
   "text filter": "text filter",
