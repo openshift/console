@@ -443,16 +443,14 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
       <MultiListPage
         canCreate={true}
         createAccessReview={accessReview}
-        createButtonText={t('resource-quota~Create {{resource}}', {
-          resource: ResourceQuotaModel.label,
-        })}
+        createButtonText={t('resource-quota~Create ResourceQuota')}
         createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
         ListComponent={ResourceQuotasList}
         resources={resources}
-        label={ResourceQuotaModel.labelPlural}
+        label={t(ResourceQuotaModel.labelPluralKey)}
         namespace={namespace}
         flatten={flatten}
-        title={ResourceQuotaModel.labelPlural}
+        title={t(ResourceQuotaModel.labelPluralKey)}
         rowFilters={rowFilters}
         mock={mock}
         showTitle={showTitle}
