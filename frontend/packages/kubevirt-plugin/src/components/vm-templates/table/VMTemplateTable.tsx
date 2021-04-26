@@ -6,9 +6,9 @@ import { RowFunction, Table } from '@console/internal/components/factory';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader } from '@console/shared';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Bullseye, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { info, sortable } from '@patternfly/react-table';
-
+import { StarIcon } from '@patternfly/react-icons';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { useNamespace } from '../../../hooks/use-namespace';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
@@ -27,12 +27,29 @@ const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
   dimensifyHeader(
     [
       {
+        title: '',
+        transforms: [
+          () => ({
+            children: (
+              <Tooltip
+                position={TooltipPosition.top}
+                content={t('kubevirt-plugin~Favorite templates are pinned to the top of the list')}
+              >
+                <Bullseye>
+                  <StarIcon className="kv-pin-row-icon" />
+                </Bullseye>
+              </Tooltip>
+            ),
+          }),
+        ],
+      },
+      {
         title: t('kubevirt-plugin~Name'),
         sortFunc: 'vmTemplateName',
         transforms: [sortable],
       },
       {
-        title: t('kubevirt-plugin~Provider'),
+        title: t('kubevirt-plugin~Template Provider'),
         sortFunc: 'vmTemplateProvider',
         transforms: [sortable],
       },
