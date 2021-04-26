@@ -29,7 +29,7 @@ describe('test vm template source image', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
   });
@@ -38,7 +38,7 @@ describe('test vm template source image', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.URL);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
   });
@@ -51,7 +51,7 @@ describe('test vm template source image', () => {
       pvcNamespace: 'default',
     });
     virtualization.templates.testSource(TEMPLATE_NAME, 'Cloning');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
   });
@@ -66,7 +66,7 @@ describe('test vm template source image', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.UPLOAD);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Uploading');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
   });

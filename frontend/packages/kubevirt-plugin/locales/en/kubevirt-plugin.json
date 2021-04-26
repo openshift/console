@@ -721,7 +721,6 @@
   "{{provider}} boot source": "{{provider}} boot source",
   "Preparing boot source": "Preparing boot source",
   "Boot source required": "Boot source required",
-  "Available": "Available",
   "{{provider}} defined": "{{provider}} defined",
   "This operating system boot source was added to the cluster by user on {{date}}": "This operating system boot source was added to the cluster by user on {{date}}",
   "Unknown source": "Unknown source",

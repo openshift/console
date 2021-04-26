@@ -456,11 +456,12 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
         </FormRow>
       )}
       {withUpload && (
-        <FormRow fieldId="form-ds-provider" title={t('kubevirt-plugin~Source provider')}>
+        <FormRow fieldId="form-ds-provider" isRequired title={t('kubevirt-plugin~Source provider')}>
           <TextInput
             isDisabled={disabled}
             value={state.provider?.value}
             type="text"
+            isRequired
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })}
             aria-label={t('kubevirt-plugin~Source provider')}
             id="form-ds-provider-input"
