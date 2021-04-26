@@ -1,3 +1,4 @@
+import cn from 'classnames';
 import { isEmpty } from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +60,12 @@ export const VMEventsStatusCard: React.FC<VMEventsStatusCardProps> = ({ vm }) =>
     : null;
 
   return title ? (
-    <Text component={TextVariants.p} className="VMEventsStatusCard-title">
+    <Text
+      component={TextVariants.p}
+      className={cn('kv--vm-event-status-card__title text-secondary', {
+        eventsErrors: 'kv--vm-event-status-card__title--errors',
+      })}
+    >
       {title}
     </Text>
   ) : (

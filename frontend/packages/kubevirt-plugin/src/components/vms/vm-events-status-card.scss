@@ -1,3 +1,8 @@
-.VMEventsStatusCard-title {
+.kv--vm-event-status-card__title {
   margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  &.kv--vm-event-status-card__title--errors {
+    color: var(--pf-global--danger-color--200);
+  }
 }
