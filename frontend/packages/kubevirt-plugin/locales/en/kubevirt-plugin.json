@@ -557,6 +557,7 @@
   "Edit the disk or contact your cluster admin for further details.": "Edit the disk or contact your cluster admin for further details.",
   "Edit the disk or contact your cluster admin for further details._plural": "Edit the disks or contact your cluster admin for further details.",
   "Learn more about snapshots": "Learn more about snapshots",
+  "The VM {{vmName}} is still running. It will be powered off.": "The VM {{vmName}} is still running. It will be powered off.",
   "unsupported approve checkbox": "unsupported approve checkbox",
   "I am aware of this warning and wish to proceed": "I am aware of this warning and wish to proceed",
   "Restore Snapshot": "Restore Snapshot",

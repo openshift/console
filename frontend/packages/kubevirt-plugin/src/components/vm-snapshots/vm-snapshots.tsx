@@ -18,10 +18,10 @@ import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMSnapshot } from '../../types';
 import { wrapWithProgress } from '../../utils/utils';
 import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
+import { VMTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { snapshotsTableColumnClasses } from './utils';
 import { VMSnapshotRow } from './vm-snapshot-row';
-import { VMTabProps } from '../vms/types';
 
 export type VMSnapshotsTableProps = {
   data?: any[];
@@ -124,10 +124,14 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
                   SnapshotModal({
                     blocking: true,
                     vmLikeEntity,
+                    isVMRunningOrExpectedRunning: isVMRunningOrExpectedRunning(
+                      asVM(vmLikeEntity),
+                      vmi,
+                    ),
+                    snapshots,
                   }).result,
                 )
               }
-              isDisabled={isDisabled}
             >
               {t('kubevirt-plugin~Take Snapshot')}
             </Button>

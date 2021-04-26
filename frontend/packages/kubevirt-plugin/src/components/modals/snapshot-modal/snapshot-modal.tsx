@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -27,8 +28,10 @@ import {
 } from '@patternfly/react-core';
 
 import { SNAPSHOT_SUPPORT_URL } from '../../../constants';
+import { stopVM } from '../../../k8s/requests/vm/actions';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
+import { VMSnapshot } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { buildOwnerReference, prefixedID } from '../../../utils';
 import { FormRow } from '../../form/form-row';
@@ -42,7 +45,16 @@ const getSnapshotName = (vmName: string) => {
 };
 
 const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
-  const { vmLikeEntity, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const {
+    vmLikeEntity,
+    inProgress,
+    errorMessage,
+    handlePromise,
+    close,
+    cancel,
+    isVMRunningOrExpectedRunning,
+    snapshots,
+  } = props;
   const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
   const [name, setName] = React.useState(getSnapshotName(vmName));
@@ -65,7 +77,11 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         vmName,
       })
       .addOwnerReferences(buildOwnerReference(vmLikeEntity, { blockOwnerDeletion: false }));
-
+    const isValidName = isEmpty(snapshots.filter(({ metadata }) => metadata?.name === name));
+    snapshotWrapper &&
+      isVMRunningOrExpectedRunning &&
+      isValidName &&
+      (await stopVM(asVM(vmLikeEntity)));
     handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
   };
 
@@ -152,16 +168,28 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                   </Alert>
                 </StackItem>
               )}
+              {isVMRunningOrExpectedRunning && (
+                <StackItem>
+                  <Alert
+                    variant={AlertVariant.warning}
+                    isInline
+                    title={t(
+                      'kubevirt-plugin~The VM {{vmName}} is still running. It will be powered off.',
+                      { vmName },
+                    )}
+                  />
+                </StackItem>
+              )}
             </Stack>
           </FormRow>
-          {hasUnsupportedVolumes && (
+          {(hasUnsupportedVolumes || isVMRunningOrExpectedRunning) && (
             <FormRow fieldId="unsupported-approve-checkbox">
               <Checkbox
                 id="approve-checkbox"
                 isChecked={approveUnsupported}
                 aria-label={t('kubevirt-plugin~unsupported approve checkbox')}
                 label={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
-                onChange={(v) => setApproveUnsupported(v)}
+                onChange={setApproveUnsupported}
               />
             </FormRow>
           )}
@@ -187,5 +215,7 @@ export default createModalLauncher(SnapshotsModal);
 
 export type SnapshotsModalProps = {
   vmLikeEntity: VMLikeEntityKind;
+  isVMRunningOrExpectedRunning: boolean;
+  snapshots: VMSnapshot[];
 } & ModalComponentProps &
   HandlePromiseProps;
