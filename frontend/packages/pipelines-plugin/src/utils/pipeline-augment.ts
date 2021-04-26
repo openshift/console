@@ -1,12 +1,12 @@
 import { TFunction } from 'i18next';
-import {
-  chart_color_green_400 as successColor,
-  chart_color_blue_300 as runningColor,
-  global_danger_color_100 as failureColor,
-  chart_color_blue_100 as pendingColor,
-  chart_color_black_400 as skippedColor,
-  chart_color_black_500 as cancelledColor,
-} from '@patternfly/react-tokens';
+
+import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
+import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
+import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
+
 import {
   K8sKind,
   referenceForModel,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens';
+import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { observer, Node, NodeModel } from '@patternfly/react-topology';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
 import {
@@ -68,7 +68,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
       {finallyListTasks.map((flt, i) => (
         <g
           key={flt.name}
-          transform={`translate(${FINALLY_NODE_PADDING}, 
+          transform={`translate(${FINALLY_NODE_PADDING},
               ${NODE_HEIGHT * (i + finallyTasks.length) +
                 FINALLY_NODE_VERTICAL_SPACING * (i + finallyTasks.length) +
                 FINALLY_NODE_PADDING})`}

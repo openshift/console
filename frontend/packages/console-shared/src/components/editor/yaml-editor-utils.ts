@@ -8,7 +8,7 @@ import {
 import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
-import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens';
+import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_dark_100';
 import * as yaml from 'yaml-ast-parser';
 
 window.monaco.editor.defineTheme('console', {

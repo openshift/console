@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { ExclamationIcon } from '@patternfly/react-icons';
-import { global_danger_color_100 as redColor } from '@patternfly/react-tokens';
+import { global_danger_color_100 as redColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { BUILDER_NODE_ERROR_RADIUS } from './const';
 
 import './ErrorNodeDecorator.scss';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Split, SplitItem } from '@patternfly/react-core';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens';
+import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { PipelineKind } from '../../../../types';
 import TriggerTemplateSelector from './TriggerTemplateSelector';
