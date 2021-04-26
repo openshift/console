@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormikProps } from 'formik';
+import { useAddTriggerParams } from '../../../shared/common/auto-complete/autoCompleteValueParsers';
 import PipelineResourceSection from '../common/PipelineResourceSection';
 import PipelineParameterSection from '../common/PipelineParameterSection';
 import PipelineWorkspacesSection from '../common/PipelineWorkspacesSection';
@@ -11,10 +12,15 @@ type AddTriggerFormProps = FormikProps<AddTriggerFormValues>;
 const AddTriggerForm: React.FC<AddTriggerFormProps> = (props) => {
   const { values } = props;
 
+  const autoCompleteValues: string[] = useAddTriggerParams();
+
   return (
     <>
       <TriggerBindingSection />
-      <PipelineParameterSection parameters={values.parameters} />
+      <PipelineParameterSection
+        autoCompleteValues={autoCompleteValues}
+        parameters={values.parameters}
+      />
       <PipelineResourceSection />
       <PipelineWorkspacesSection />
     </>
