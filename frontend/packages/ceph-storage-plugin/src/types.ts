@@ -21,6 +21,7 @@ export type StoragePoolKind = K8sResourceCommon & {
   spec: {
     compressionMode?: string;
     deviceClass?: string;
+    failureDomain?: string;
     replicated: {
       size: number;
     };
@@ -62,6 +63,7 @@ export type StorageClusterKind = K8sResourceCommon & {
   };
   status?: {
     phase: string;
+    failureDomain?: string;
   };
 };
 

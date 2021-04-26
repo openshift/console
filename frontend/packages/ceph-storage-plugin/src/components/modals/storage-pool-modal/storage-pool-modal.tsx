@@ -92,6 +92,10 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
   const [isPerfObjOpen, setPerfObjOpen] = React.useState(false);
   const [deviceClass, setdeviceClass] = React.useState(''); */
 
+  const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
+    ListKind<StorageClusterKind>
+  >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
+
   const poolResource: WatchK8sResource = React.useMemo(() => {
     return {
       kind: referenceForModel(CephBlockPoolModel),
@@ -123,10 +127,6 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
       }
     }
   }, [isSubmit, newPool, newPoolLoadError, newPoolLoaded, timer]);
-
-  const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
-    ListKind<StorageClusterKind>
-  >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
 
   React.useEffect(() => {
     setArbiterCluster(checkArbiterCluster(storageCluster?.items[0]));
@@ -200,6 +200,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         replicated: {
           size: Number(replicaSize),
         },
+        failureDomain: storageCluster?.items[0]?.status?.failureDomain || '',
       },
     };
 
