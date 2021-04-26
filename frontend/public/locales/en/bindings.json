@@ -14,6 +14,7 @@
   "No RoleBindings found": "No RoleBindings found",
   "Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a RoleBinding.": "Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a RoleBinding.",
   "RoleBindings": "RoleBindings",
+  "Kind": "Kind",
   "Namespace RoleBindings": "Namespace RoleBindings",
   "System RoleBindings": "System RoleBindings",
   "Cluster-wide RoleBindings": "Cluster-wide RoleBindings",

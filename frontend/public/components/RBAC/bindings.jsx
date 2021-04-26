@@ -292,7 +292,7 @@ export const RoleBindingsPage = ({
   const { t } = useTranslation();
   const rowFilters = [
     {
-      filterGroupName: 'Kind',
+      filterGroupName: t('bindings~Kind'),
       type: 'role-binding-kind',
       reducer: bindingType,
       itemsGenerator: ({ ClusterRoleBinding: data }) => {
