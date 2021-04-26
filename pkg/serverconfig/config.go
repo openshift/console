@@ -263,6 +263,12 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		}
 	}
 
+	addPage, err := json.Marshal(customization.AddPage)
+	if err == nil {
+		fs.Set("add-page", string(addPage))
+	} else {
+		klog.Fatalf("Could not marshal ConsoleConfig customization.addPage field: %v", err)
+	}
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {
