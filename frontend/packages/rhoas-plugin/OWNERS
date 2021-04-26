@@ -1,0 +1,13 @@
+reviewers:
+  - andrewballantyne
+  - christianvogt
+  - invincibleJai
+  - jeff-phillips-18
+  - vikram-raj
+approvers:
+  - andrewballantyne
+  - christianvogt
+  - invincibleJai
+  - rohitkrai03
+labels:
+  - component/rhoas
