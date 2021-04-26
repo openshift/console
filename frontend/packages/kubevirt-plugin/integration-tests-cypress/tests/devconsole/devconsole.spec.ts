@@ -153,6 +153,8 @@ describe('test dev console', () => {
       // delete origin VM
       waitForStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
       detailViewAction(VM_ACTION.Delete);
+
+      cy.byLegacyTestID('base-node-handler').should('have.length', 1);
     });
 
     // delete cloned vm

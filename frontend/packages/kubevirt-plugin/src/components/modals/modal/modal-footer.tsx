@@ -129,6 +129,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
         <Button
           variant={ButtonVariant.primary}
           isDisabled={isDisabled}
+          data-test="confirm-action"
           id="confirm-action"
           onClick={onSubmit}
         >
