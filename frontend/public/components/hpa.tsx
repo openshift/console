@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -95,16 +95,17 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   const objectRow = (metric, current, ns, key, scaleTarget) => {
     const { object } = metric;
+    const name = object.metric.name;
     const type = (
-      <>
-        {object.metric.name} {t('public~on')}
+      <Trans t={t} ns="public">
+        {{ name }} on
         <ResourceLink
           kind={scaleTarget.kind}
           name={scaleTarget.name}
           namespace={ns}
           title={object.metric.name}
         />
-      </>
+      </Trans>
     );
     const currentValue = current?.object?.current.value;
     const targetValue = object.target.value;
