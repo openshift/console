@@ -4,7 +4,7 @@ import { TemplateKind } from '@console/internal/module/k8s';
 
 import { createSupportModal } from '../components/modals/support-modal/support-modal';
 import { TEMPLATE_WARN_SUPPORT } from '../constants';
-import { getTemplateSupport } from '../selectors/vm-template/basic';
+import { getTemplateSupport, isCommonTemplate } from '../selectors/vm-template/basic';
 import { useLocalStorage } from './use-local-storage';
 
 export type SupportModalFunction = (template: TemplateKind, onConfirm: VoidFunction) => void;
@@ -15,6 +15,7 @@ export const useSupportModal = (): SupportModalFunction => {
     (template, onConfirm) => {
       const isUpstream = window.SERVER_FLAGS.branding === 'okd';
       const templateSupport = getTemplateSupport(template);
+      const commonTemplat = isCommonTemplate(template);
       const showSupportModal =
         !isUpstream &&
         template &&
@@ -31,6 +32,7 @@ export const useSupportModal = (): SupportModalFunction => {
         : createSupportModal({
             onConfirm: onModalConfirm,
             communityURL: templateSupport.providerURL || templateSupport.parentURL,
+            isCommonTemplate: commonTemplat,
           });
     },
     [setWarnSupport, warnSupport],
