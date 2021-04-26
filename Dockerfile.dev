@@ -1,0 +1,15 @@
+# Dockerfile to build console image from pre-built front end.
+
+FROM quay.io/coreos/tectonic-console-builder:v22 AS build
+RUN mkdir -p /go/src/github.com/openshift/console/
+ADD . /go/src/github.com/openshift/console/
+WORKDIR /go/src/github.com/openshift/console/
+RUN ./build-backend.sh
+
+FROM openshift/origin-base
+COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
+COPY ./frontend/public/dist /opt/bridge/static
+COPY ./pkg/graphql/schema.graphql /pkg/graphql/schema.graphql
+
+USER 1001
+CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]
