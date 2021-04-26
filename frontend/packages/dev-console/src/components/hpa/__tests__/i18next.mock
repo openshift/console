@@ -1,9 +1,0 @@
-const i18next = jest.genMockFromModule('i18next');
-
-function t(key) {
-  return key;
-}
-
-i18next.t = t;
-
-module.exports = i18next;
