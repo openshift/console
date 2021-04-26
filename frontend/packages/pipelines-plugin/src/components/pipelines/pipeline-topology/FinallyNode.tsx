@@ -27,7 +27,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
 
   const { finallyTasks = [] } = task;
   return (
-    <>
+    <g transform="translate(0.5, 0.5)">
       <rect
         className="opp-finally-node"
         strokeWidth={1}
@@ -72,7 +72,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
           </>
         );
       })}
-    </>
+    </g>
   );
 };
 

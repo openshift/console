@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
 import TextColumnItem from '../TextColumnItem';
+import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
+import TextColumnItemContent from '../TextColumnItemContent';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -51,10 +52,9 @@ describe('TextColumnItem', () => {
       />,
     );
     expect(wrapper.isEmptyRender()).toBe(false);
-    expect(wrapper.find(MinusCircleIcon).exists()).toBe(true);
   });
 
-  it('should render GripLinesVerticalIcon if dndEnabled is true', () => {
+  it('should not contain dndEnabled if the props is not passed', () => {
     const wrapper = shallow(
       <TextColumnItem
         name={'fieldName'}
@@ -64,13 +64,15 @@ describe('TextColumnItem', () => {
         arrayHelpers={mockArrayHelper}
       />,
     );
-    expect(wrapper.find(GripVerticalIcon).exists()).toBe(false);
-    expect(wrapper.find(MinusCircleIcon).exists()).toBe(true);
+    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
+    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBeUndefined();
   });
+});
 
-  it('should not render GripLinesVerticalIcon if dndEnabled is false', () => {
+describe('TextColumnItemWithDnd', () => {
+  it('should render TextColumnItemWithDnd', () => {
     const wrapper = shallow(
-      <TextColumnItem
+      <TextColumnItemWithDnd
         name={'fieldName'}
         label={'label value'}
         idx={0}
@@ -78,7 +80,24 @@ describe('TextColumnItem', () => {
         arrayHelpers={mockArrayHelper}
       />,
     );
-    expect(wrapper.find(GripVerticalIcon).exists()).toBe(false);
-    expect(wrapper.find(MinusCircleIcon).exists()).toBe(true);
+    expect(wrapper.isEmptyRender()).toBe(false);
+    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
+  });
+
+  it('should pass dndEnabled props to TextColumnItemContent', () => {
+    const wrapper = shallow(
+      <TextColumnItemWithDnd
+        name={'fieldName'}
+        label={'label value'}
+        idx={0}
+        rowValues={['']}
+        dndEnabled
+        arrayHelpers={mockArrayHelper}
+      />,
+    );
+    expect(wrapper.find(TextColumnItemContent).exists()).toBe(true);
+    expect(wrapper.find(TextColumnItemContent).props().dndEnabled).toBe(true);
+    expect(wrapper.find(TextColumnItemContent).props().previewDropRef).not.toBe(null);
+    expect(wrapper.find(TextColumnItemContent).props().dragRef).not.toBe(null);
   });
 });

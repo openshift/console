@@ -32,6 +32,7 @@ export enum DrawDesign {
 }
 export enum PipelineLayout {
   DAGRE_BUILDER = 'dagre-builder',
+  DAGRE_BUILDER_SPACED = 'dagre-builder-spaced',
   DAGRE_VIEWER = 'dagre-viewer',
   DAGRE_VIEWER_SPACED = 'dagre-viewer-spaced',
 }
@@ -82,4 +83,9 @@ export const DAGRE_BUILDER_PROPS: dagre.GraphLabel = {
   nodesep: NODE_SEPARATION_VERTICAL + BUILDER_NODE_ADD_RADIUS,
   marginx: DAGRE_SHARED_PROPS.marginx + BUILDER_NODE_ADD_RADIUS * 2,
   marginy: DAGRE_SHARED_PROPS.marginy + BUILDER_NODE_ADD_RADIUS * 2,
+};
+
+export const DAGRE_BUILDER_SPACED_PROPS: dagre.GraphLabel = {
+  ...DAGRE_BUILDER_PROPS,
+  ranksep: NODE_SEPARATION_HORIZONTAL + WHEN_EXPRESSION_SPACING + BUILDER_NODE_ADD_RADIUS * 2,
 };

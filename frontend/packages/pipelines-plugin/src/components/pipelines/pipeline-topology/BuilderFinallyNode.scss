@@ -1,0 +1,11 @@
+.opp-builder-finally-node {
+  fill: var(--pf-global--BackgroundColor--light-100);
+  stroke-width: 1;
+  stroke: var(--pf-global--BorderColor--light-100);
+
+  &__task-connectors {
+    stroke: var(--pf-global--BorderColor--light-100);
+    fill: none;
+    transform: translate(0.5, 0.5);
+  }
+}

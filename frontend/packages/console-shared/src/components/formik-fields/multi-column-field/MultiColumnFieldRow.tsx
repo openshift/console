@@ -14,29 +14,32 @@ import {
 } from '@patternfly/react-core';
 import './MultiColumnField.scss';
 
-export interface MultiColumnFieldRowProps {
-  name: string;
-  toolTip?: string;
-  rowIndex: number;
-  children: React.ReactNode;
-  onDelete: () => void;
+export interface RowRendererProps {
+  fieldName: string;
   isReadOnly?: boolean;
   disableDeleteRow?: boolean;
   spans: gridItemSpanValueShape[];
   complexFields?: boolean[];
+  toolTip?: string;
+  onDelete: () => void;
+}
+export interface MultiColumnFieldRowProps extends Omit<RowRendererProps, 'fieldName'> {
+  name: string;
+  rowIndex: number;
+  children?: React.ReactNode;
+  rowRenderer?: (row: RowRendererProps) => React.ReactNode;
 }
 
-const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
-  name,
-  toolTip,
-  rowIndex,
-  onDelete,
+const DEFAULT_ROW_RENDERER = ({
+  fieldName,
+  complexFields,
   children,
   isReadOnly,
-  disableDeleteRow,
+  toolTip,
   spans,
-  complexFields = [],
-}) => {
+  disableDeleteRow,
+  onDelete,
+}): React.ReactNode => {
   const { t } = useTranslation();
   return (
     <div
@@ -46,7 +49,6 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
     >
       <Grid>
         {React.Children.map(children, (child: React.ReactElement, i) => {
-          const fieldName = `${name}.${rowIndex}`;
           let newProps = child.props;
           if (complexFields[i]) {
             newProps = { ...newProps, namePrefix: fieldName };
@@ -79,6 +81,35 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
         </div>
       )}
     </div>
+  );
+};
+
+const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
+  name,
+  toolTip,
+  rowIndex,
+  onDelete,
+  children,
+  isReadOnly,
+  disableDeleteRow,
+  spans,
+  complexFields = [],
+  rowRenderer = DEFAULT_ROW_RENDERER,
+}) => {
+  const fieldName = `${name}.${rowIndex}`;
+  return (
+    <>
+      {rowRenderer({
+        fieldName,
+        complexFields,
+        children,
+        isReadOnly,
+        toolTip,
+        spans,
+        disableDeleteRow,
+        onDelete,
+      })}
+    </>
   );
 };
 

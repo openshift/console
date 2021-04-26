@@ -19,6 +19,7 @@ import TaskSidebarResource from './TaskSidebarResource';
 import TaskSidebarName from './TaskSidebarName';
 import TaskSidebarWorkspace from './TaskSidebarWorkspace';
 import TaskSidebarHeader from './TaskSidebarHeader';
+import TaskSidebarWhenExpression from './TaskSidebarWhenExpression';
 
 import './TaskSidebar.scss';
 
@@ -109,7 +110,6 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
             })}
           </div>
         )}
-
         {workspaces.length > 0 && (
           <div>
             <h2>{t('pipelines-plugin~Workspaces')}</h2>
@@ -145,6 +145,13 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
             {outputResources.map(renderResource('outputs'))}
           </div>
         )}
+        <div className="opp-task-sidebar__when-expressions">
+          <TaskSidebarWhenExpression
+            hasParam={false}
+            name={`${formikTaskReference}.when`}
+            selectedData={selectedData}
+          />
+        </div>
       </StackItem>
     </Stack>
   );

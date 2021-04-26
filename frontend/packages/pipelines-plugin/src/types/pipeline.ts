@@ -30,9 +30,9 @@ export type PipelineTaskParam = {
 };
 
 export type WhenExpression = {
-  Input: string;
-  Operator: string;
-  Values: string[];
+  input: string;
+  operator: string;
+  values: string[];
 };
 
 export type PipelineResult = {

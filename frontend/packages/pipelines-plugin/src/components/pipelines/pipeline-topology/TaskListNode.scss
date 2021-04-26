@@ -6,6 +6,7 @@
     box-shadow: var(--pf-c-dropdown__menu--BoxShadow);
   }
   &__trigger-background {
+    stroke: var(--pf-global--BorderColor--100);
     fill: var(--pf-global--BackgroundColor--light-100);
     &.is-disabled {
       fill: var(--pf-global--disabled-color--300);
