@@ -39,8 +39,9 @@ import {
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
   OCS_CONVERGED_FLAG,
+  MCG_FLAG,
   OCS_FLAG,
-  NOOBAA_FLAG,
+  detectComponents,
 } from './features';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 
@@ -69,6 +70,8 @@ type ConsumedExtensions =
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
 
+const OCS_MODEL_FLAG = 'OCS_MODEL';
+
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
@@ -80,7 +83,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Model',
     properties: {
       model: models.OCSServiceModel,
-      flag: CEPH_FLAG,
+      flag: OCS_MODEL_FLAG,
     },
   },
   {
@@ -89,7 +92,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectOCSSupportedFeatures,
     },
     flags: {
-      required: [CEPH_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
@@ -98,13 +101,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       detect: detectOCS,
     },
     flags: {
-      required: [CEPH_FLAG],
+      required: [OCS_MODEL_FLAG],
     },
   },
   {
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectRGW,
+    },
+    flags: {
+      required: [MCG_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectComponents,
     },
     flags: {
       required: [OCS_FLAG],
@@ -125,7 +137,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
-      required: [OCS_CONVERGED_FLAG],
+      required: [OCS_CONVERGED_FLAG, CEPH_FLAG],
       disallowed: [OCS_INDEPENDENT_FLAG],
     },
   },
@@ -338,7 +350,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
-      required: [OCS_INDEPENDENT_FLAG],
+      required: [OCS_INDEPENDENT_FLAG, CEPH_FLAG],
     },
   },
   // Left Cards
@@ -479,7 +491,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -498,7 +510,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -517,14 +529,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.NooBaaSystemModel,
-      flag: NOOBAA_FLAG,
+      required: [MCG_FLAG],
     },
   },
   {
@@ -536,7 +541,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: '%ceph-storage-plugin~Object%',
     },
     flags: {
-      required: [NOOBAA_FLAG, OCS_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -550,7 +555,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -564,7 +569,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.DetailsCard),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -578,7 +583,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -592,7 +597,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.BucketsCard),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -606,7 +611,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -620,7 +625,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -634,7 +639,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -648,7 +653,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ResourceProvidersCard),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -665,6 +670,24 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_FLAG],
+    },
+  },
+  // In case Noobaa is deployed without OCS Operator
+  {
+    type: 'NavItem/Href',
+    properties: {
+      id: 'ocsdashboards',
+      section: 'storage',
+      insertBefore: 'persistentvolumes',
+      componentProps: {
+        // t('ceph-storage-plugin~Overview')
+        name: '%ceph-storage-plugin~Overview%',
+        href: '/ocs-dashboards',
+      },
+    },
+    flags: {
+      required: [MCG_FLAG],
+      disallowed: [OCS_FLAG],
     },
   },
   {
@@ -689,7 +712,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -701,6 +724,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
         ).then((m) => m.ObjectBucketsPage),
     },
+    flags: {
+      required: [MCG_FLAG],
+    },
   },
   {
     type: 'Page/Resource/Details',
@@ -710,6 +736,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
         ).then((m) => m.ObjectBucketDetailsPage),
+    },
+    flags: {
+      required: [MCG_FLAG],
     },
   },
   {
@@ -724,7 +753,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -736,6 +765,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
         ).then((m) => m.ObjectBucketClaimsPage),
     },
+    flags: {
+      required: [MCG_FLAG],
+    },
   },
   {
     type: 'Page/Resource/Details',
@@ -745,6 +777,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
         ).then((m) => m.ObjectBucketClaimsDetailsPage),
+    },
+    flags: {
+      required: [MCG_FLAG],
     },
   },
   {
@@ -757,7 +792,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.CreateOBCPage),
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -767,7 +802,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       mapper: getObcStatusGroups,
     },
     flags: {
-      required: [NOOBAA_FLAG],
+      required: [MCG_FLAG],
     },
   },
   {
@@ -784,6 +819,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           // eslint-disable-next-line no-console
           .catch((e) => console.error(e)),
     },
+    flags: {
+      required: [MCG_FLAG],
+    },
   },
   {
     type: 'Page/Route',
@@ -794,6 +832,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/block-pool/create-block-pool' /* webpackChunkName: "create-block-pool" */
         ).then((m) => m.default),
+    },
+    flags: {
+      required: [CEPH_FLAG],
     },
   },
   {

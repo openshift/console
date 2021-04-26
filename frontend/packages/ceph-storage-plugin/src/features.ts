@@ -10,7 +10,7 @@ import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations, getName } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { StorageClassModel } from '@console/internal/models';
-import { OCSServiceModel } from './models';
+import { OCSServiceModel, CephClusterModel, NooBaaSystemModel } from './models';
 import {
   CEPH_STORAGE_NAMESPACE,
   OCS_SUPPORT_ANNOTATION,
@@ -23,16 +23,17 @@ import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
-export const NOOBAA_FLAG = 'NOOBAA';
-
-// Used to activate NooBaa dashboard
-export const OCS_FLAG = 'OCS';
-// Todo(bipuladh): Remove this completely in 4.6
-export const CEPH_FLAG = 'CEPH';
 
 export const LSO_FLAG = 'LSO';
 
 export const RGW_FLAG = 'RGW';
+
+// Based on the existence of NooBaaSystem
+export const MCG_FLAG = 'MCG';
+// Based on the existence of CephCluster
+export const CEPH_FLAG = 'CEPH';
+// Based on the existence of StorageCluster
+export const OCS_FLAG = 'OCS';
 
 export enum GUARDED_FEATURES {
   // Flag names to be prefixed with "OCS_" so as to seperate from console flags
@@ -127,15 +128,44 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
         (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
       );
       const isInternal = _.isEmpty(storageCluster?.spec?.externalStorage);
-      dispatch(setFlag(OCS_FLAG, true));
       dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
       dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
+      dispatch(setFlag(OCS_FLAG, true));
     }
   } catch (error) {
+    dispatch(setFlag(OCS_FLAG, false));
     dispatch(setFlag(OCS_CONVERGED_FLAG, false));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
-    dispatch(setFlag(OCS_FLAG, false));
   }
+};
+
+export const detectComponents: FeatureDetector = async (dispatch) => {
+  let id = null;
+  let noobaaFound = false;
+  let cephFound = false;
+  const detector = async () => {
+    try {
+      if (!cephFound) {
+        const cephClusters = await k8sList(CephClusterModel, { ns: CEPH_STORAGE_NAMESPACE });
+        if (cephClusters?.length > 0) {
+          dispatch(setFlag(CEPH_FLAG, true));
+          cephFound = true;
+        }
+      }
+      if (!noobaaFound) {
+        const noobaaSystems = await k8sList(NooBaaSystemModel, { ns: CEPH_STORAGE_NAMESPACE });
+        if (noobaaSystems?.length > 0) {
+          dispatch(setFlag(MCG_FLAG, true));
+          noobaaFound = true;
+          clearInterval(id);
+        }
+      }
+    } catch {
+      dispatch(setFlag(CEPH_FLAG, false));
+      dispatch(setFlag(MCG_FLAG, false));
+    }
+  };
+  id = setInterval(detector, 15 * SECOND);
 };
 
 const detectFeatures = (dispatch, csv: ClusterServiceVersionKind) => {
