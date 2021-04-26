@@ -82,3 +82,23 @@ func TestUnknownPropertyInDeveloperCatalogCategory(t *testing.T) {
 		t.Errorf("Unexpected error: actual\n%s\n, expected\n%s", actualMsg, expectedMsg)
 	}
 }
+
+func TestValidEmptyQuickStarts(t *testing.T) {
+	_, err := validateQuickStarts("")
+	if err != nil {
+		t.Error("Unexpected error when parsing an empty string.", err)
+	}
+}
+
+func TestValidObjectForQuickStarts(t *testing.T) {
+	quickStarts, err := validateQuickStarts("{ \"disabled\": [ \"quickstarts0\", \"quickstarts1\", \"quickstarts2\" ] }")
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	if quickStarts.Disabled == nil {
+		t.Errorf("Unexpected value: actual %v, expected array of strings", quickStarts.Disabled)
+	}
+	if len(quickStarts.Disabled) != 3 {
+		t.Errorf("Unexpected value: actual %v, expected %v", len(quickStarts.Disabled), 3)
+	}
+}

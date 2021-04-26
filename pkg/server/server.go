@@ -92,6 +92,7 @@ type jsGlobals struct {
 	DevCatalogCategories     string   `json:"developerCatalogCategories"`
 	UserSettingsLocation     string   `json:"userSettingsLocation"`
 	ConsolePlugins           []string `json:"consolePlugins"`
+	QuickStarts              string   `json:"quickStarts"`
 }
 
 type Server struct {
@@ -139,6 +140,7 @@ type Server struct {
 	ThanosPublicURL       *url.URL
 	DevCatalogCategories  string
 	UserSettingsLocation  string
+	QuickStarts           string
 }
 
 func (s *Server) authDisabled() bool {
@@ -520,6 +522,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DevCatalogCategories:  s.DevCatalogCategories,
 		UserSettingsLocation:  s.UserSettingsLocation,
 		ConsolePlugins:        getMapKeys(s.EnabledConsolePlugins),
+		QuickStarts:           s.QuickStarts,
 	}
 
 	if !s.authDisabled() {

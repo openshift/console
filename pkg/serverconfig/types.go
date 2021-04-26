@@ -68,6 +68,12 @@ type Customization struct {
 	CustomLogoFile       string `yaml:"customLogoFile,omitempty"`
 	// developerCatalog allows to configure the shown developer catalog categories.
 	DeveloperCatalog DeveloperConsoleCatalogCustomization `yaml:"developerCatalog,omitempty"`
+	QuickStarts      QuickStarts                          `yaml:"quickStarts,omitempty"`
+}
+
+// QuickStarts contains options for ConsoleQuickStarts resource
+type QuickStarts struct {
+	Disabled []string `json:"disabled,omitempty" yaml:"disabled,omitempty"`
 }
 
 // DeveloperConsoleCatalogCustomization allow cluster admin to configure developer catalog.
