@@ -28,7 +28,7 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   if (!capacityUsed || !top5MetricsStats.length || hasLoadError) {
     return (
       <div className="text-secondary capacity-breakdown-card--error">
-        {t('dashboard~Not available')}
+        {t('ceph-storage-plugin~Not available')}
       </div>
     );
   }

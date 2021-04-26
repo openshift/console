@@ -25,7 +25,7 @@ export const BucketsTitle: React.FC<BucketsTitleProps> = ({ objects, link, error
       <div className="co-dashboard-text--small text-secondary">
         {!error && objectsCount
           ? formatCount(Number(objectsCount), t)
-          : t('dashboard~Not available')}
+          : t('ceph-storage-plugin~Not available')}
       </div>
     );
   }
