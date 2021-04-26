@@ -1,8 +1,12 @@
 import * as React from 'react';
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const { t } = useTranslation();
 
   const handlePromise = (promise, onFulfill, onError) => {
     setInProgress(true);
@@ -13,7 +17,7 @@ export const withHandlePromise: WithHandlePromise = (Component) => (props) => {
         onFulfill && onFulfill(res);
       },
       (error) => {
-        const errorMsg = error.message || 'An error occurred. Please try again.';
+        const errorMsg = error.message || t('public~An error occurred. Please try again.');
         setInProgress(false);
         setErrorMessage(errorMsg);
         // eslint-disable-next-line no-console
@@ -60,7 +64,7 @@ export class PromiseComponent<P, S extends PromiseComponentState> extends React.
   }
 
   private catch(error) {
-    const errorMessage = error.message || 'An error occurred. Please try again.';
+    const errorMessage = error.message || i18next.t('public~An error occurred. Please try again.');
     this.setState({
       inProgress: false,
       errorMessage,

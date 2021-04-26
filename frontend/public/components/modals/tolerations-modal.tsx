@@ -15,7 +15,6 @@ import {
 } from '../factory';
 
 const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
-  const [errorMessage] = React.useState();
   const getTolerationsFromResource = (): Toleration[] => {
     const { resource } = props;
     return props.resourceKind.kind === 'Pod'
@@ -100,6 +99,8 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
   const isEditable = (toleration: TolerationModalItem) => {
     return props.resourceKind.kind !== 'Pod' || toleration.isNew;
   };
+
+  const { errorMessage } = props;
 
   return (
     <form

@@ -660,6 +660,7 @@
   "Decrement": "Decrement",
   "Increment": "Increment",
   "Managed by:": "Managed by:",
+  "An error occurred. Please try again.": "An error occurred. Please try again.",
   "Select claim": "Select claim",
   "Number of {{sizeUnit}}": "Number of {{sizeUnit}}",
   "No {{label}} found": "No {{label}} found",
