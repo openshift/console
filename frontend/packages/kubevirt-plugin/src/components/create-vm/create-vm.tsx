@@ -432,6 +432,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                       if (!isEmpty(tempSSHKey)) {
                         createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace, {
                           secretName: `${AUTHORIZED_SSH_KEYS}-${vm?.metadata?.name}`,
+                          create: true,
                         });
                         updateSSHKeyInGlobalNamespaceSecret &&
                           createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace);

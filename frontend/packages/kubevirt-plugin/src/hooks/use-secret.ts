@@ -16,7 +16,7 @@ export type useSecretResult = {
   createOrUpdateSecret: (
     keyValue: string,
     selectedNamespace: string,
-    opts?: { secretName: string },
+    opts?: { secretName: string; create: boolean },
   ) => void;
 };
 
@@ -28,8 +28,12 @@ const useSecret = ({ secretName, namespace }: useSecretArgs) => {
   });
 
   const createOrUpdateSecret = React.useCallback(
-    async (secretValue: string, selectedNamespace: string, opts?: { secretName: string }) => {
-      const createOrUpdate = secret ? k8sUpdate : k8sCreate;
+    async (
+      secretValue: string,
+      selectedNamespace: string,
+      opts?: { secretName: string; create: boolean },
+    ) => {
+      const createOrUpdate = opts?.create ? k8sCreate : secret ? k8sUpdate : k8sCreate;
       try {
         await createOrUpdate(SecretModel, {
           kind: SecretModel.kind,
