@@ -26,11 +26,12 @@ import {
   blockPoolInitialState,
   BlockPoolActionType,
   FooterPrimaryActions,
+  isDefaultPool,
 } from '../../../utils/block-pool';
 import { commaSeparatedString } from '../../../utils/common';
 import { POOL_PROGRESS } from '../../../constants/storage-pool-const';
 import { CephBlockPoolModel } from '../../../models';
-import { CEPH_EXTERNAL_CR_NAME, OCS_INTERNAL_CR_NAME } from '../../../constants';
+import { CEPH_EXTERNAL_CR_NAME } from '../../../constants';
 import { getStorageClassName } from '../../../selectors';
 
 const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps) => {
@@ -54,10 +55,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
 
   React.useEffect(() => {
     // restrict pool management for default pool and external cluster
-    cephCluster?.metadata.name === CEPH_EXTERNAL_CR_NAME ||
-    blockPoolConfig?.metadata?.ownerReferences?.find(
-      (ownerReference) => ownerReference.name === OCS_INTERNAL_CR_NAME,
-    )
+    cephCluster?.metadata.name === CEPH_EXTERNAL_CR_NAME || isDefaultPool(blockPoolConfig)
       ? dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.NOTALLOWED })
       : dispatch({
           type: BlockPoolActionType.SET_POOL_NAME,

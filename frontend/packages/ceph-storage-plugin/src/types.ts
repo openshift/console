@@ -194,6 +194,7 @@ export type StoragePoolKind = K8sResourceCommon & {
   spec: {
     compressionMode?: string;
     deviceClass?: string;
+    failureDomain?: string;
     replicated: {
       size: number;
     };
