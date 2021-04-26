@@ -66,12 +66,16 @@ export const flatten = (resources) =>
     return ret;
   });
 
+const getKindLabel = (kind) => (kind.labelKey ? i18next.t(kind.labelKey) : kind.label);
+
 const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
   const subject = subjects[subjectIndex];
 
   const actions = [
     (kind, obj) => ({
-      label: i18next.t('public~Duplicate {{label}}', kind),
+      label: i18next.t('public~Duplicate {{kindLabel}}', {
+        kindLabel: getKindLabel(kind),
+      }),
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
       // Only perform access checks when duplicating cluster role bindings.
       // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
@@ -80,7 +84,9 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
         : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
     }),
     (kind, obj) => ({
-      label: i18next.t('public~Edit {{label}} subject', kind),
+      label: i18next.t('public~Edit {{kindLabel}} subject', {
+        kindLabel: getKindLabel(kind),
+      }),
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
       accessReview: {
         group: kind.apiGroup,
