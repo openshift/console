@@ -113,7 +113,7 @@ export class Wizard {
 
   async fillName(name: string) {
     await fillInput(view.nameInput, name);
-    return checkForError(view.vmNameHelper);
+    return checkForError(view.invalidMessageContainer);
   }
 
   async fillDescription(description: string) {
