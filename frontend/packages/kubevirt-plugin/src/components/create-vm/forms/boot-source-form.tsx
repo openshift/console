@@ -470,7 +470,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           </div>
         </FormRow>
       )}
-      <ExpandableSection toggleText={t('kubevirt-plugin~Advanced')} data-test="advanced-section">
+      <ExpandableSection
+        toggleText={t('kubevirt-plugin~Advanced Storage settings')}
+        data-test="advanced-section"
+      >
         <AdvancedSection
           state={state}
           dispatch={dispatch}

@@ -320,6 +320,7 @@
   "Ensure your PVC size covers the requirements of the uncompressed image and any other space requirements. More storage can be added later.": "Ensure your PVC size covers the requirements of the uncompressed image and any other space requirements. More storage can be added later.",
   "Source provider": "Source provider",
   "Example: your company name": "Example: your company name",
+  "Advanced Storage settings": "Advanced Storage settings",
   "Permissions required": "Permissions required",
   "You do not have permissions to clone base image into this namespace.": "You do not have permissions to clone base image into this namespace.",
   "You are creating a virtual machine from the <1>{getTemplateName(template)}</1> template.": "You are creating a virtual machine from the <1>{getTemplateName(template)}</1> template.",
