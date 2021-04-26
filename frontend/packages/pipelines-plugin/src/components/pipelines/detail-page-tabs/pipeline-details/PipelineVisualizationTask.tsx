@@ -5,10 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import {
-  global_BackgroundColor_light_100 as lightBackgroundColor,
-  global_BackgroundColor_200 as greyBackgroundColor,
-} from '@patternfly/react-tokens';
+import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
+import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Firehose,

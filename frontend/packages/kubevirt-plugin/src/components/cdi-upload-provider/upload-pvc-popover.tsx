@@ -2,7 +2,7 @@ import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ProgressStatus } from '@console/shared';
 import { InProgressIcon, ErrorCircleOIcon, BanIcon } from '@patternfly/react-icons';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens';
+import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import {
   Button,
   Popover,

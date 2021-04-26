@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens';
+import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
 import { Humanize } from '../utils';
