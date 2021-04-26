@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import {
   getQueryArgument,
   removeQueryArgument,
@@ -28,6 +29,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   allCatalogItemsLoaded,
 }) => {
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
+  const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
   const [searchTerm, setSearchTerm] = React.useState<string>(
     getQueryArgument('catalogSearch') || '',
   );
@@ -40,8 +42,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
 
   React.useEffect(() => {
     if (searchTerm) {
-      const { filteredItems, viewAllLinks } = searchCatalog(searchTerm);
+      const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(searchTerm);
       setCatalogItems(filteredItems);
+      setCatalogTypes(catalogItemTypes);
       setViewAll(viewAllLinks);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,8 +61,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     (value: string) => {
       setSearchTerm(value);
       if (value) {
-        const { filteredItems, viewAllLinks } = searchCatalog(value);
+        const { filteredItems, viewAllLinks, catalogItemTypes } = searchCatalog(value);
         setCatalogItems(filteredItems);
+        setCatalogTypes(catalogItemTypes);
         setViewAll(viewAllLinks);
         setQueryArgument('catalogSearch', value);
       } else {
@@ -169,6 +173,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       {catalogItems && selectedItem && (
         <QuickSearchContent
           catalogItems={catalogItems}
+          catalogItemTypes={catalogTypes}
           viewAll={viewAll}
           searchTerm={searchTerm}
           selectedItemId={selectedItemId}

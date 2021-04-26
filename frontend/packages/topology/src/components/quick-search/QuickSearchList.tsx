@@ -16,6 +16,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { getIconProps } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
+import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import './QuickSearchList.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
@@ -25,6 +26,7 @@ import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];
+  catalogItemTypes: CatalogType[];
   viewAll?: CatalogLinkData[];
   selectedItemId: string;
   searchTerm: string;
@@ -35,6 +37,7 @@ interface QuickSearchListProps {
 
 const QuickSearchList: React.FC<QuickSearchListProps> = ({
   listItems,
+  catalogItemTypes,
   viewAll,
   selectedItemId,
   onSelectListItem,
@@ -63,48 +66,53 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
         onSelectDataListItem={onSelectListItem}
         isCompact
       >
-        {listItems.map((item) => (
-          <DataListItem
-            id={item.uid}
-            key={item.uid}
-            tabIndex={-1}
-            className={cx('odc-quick-search-list__item', {
-              'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
-            })}
-            onDoubleClick={(e: React.SyntheticEvent) => {
-              handleCta(e, item, closeModal, fireTelemetryEvent);
-            }}
-          >
-            <DataListItemRow className="odc-quick-search-list__item-row">
-              <DataListItemCells
-                className="odc-quick-search-list__item-content"
-                dataListCells={[
-                  <DataListCell isIcon key={`${item.uid}-icon`}>
-                    {getIcon(item)}
-                  </DataListCell>,
-                  <DataListCell
-                    style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}
-                    width={2}
-                    wrapModifier="truncate"
-                    key={`${item.uid}-name`}
-                  >
-                    <span className="odc-quick-search-list__item-name">{item.name}</span>
-                    <Split style={{ alignItems: 'center' }} hasGutter>
-                      <SplitItem>
-                        <Label>{item.type}</Label>
-                      </SplitItem>
-                      <SplitItem>
-                        <TextContent>
-                          <Text component={TextVariants.small}>{item.provider}</Text>
-                        </TextContent>
-                      </SplitItem>
-                    </Split>
-                  </DataListCell>,
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-        ))}
+        {listItems.map((item) => {
+          const itemType =
+            catalogItemTypes.find((type) => type.value === item.type)?.label || item.type;
+
+          return (
+            <DataListItem
+              id={item.uid}
+              key={item.uid}
+              tabIndex={-1}
+              className={cx('odc-quick-search-list__item', {
+                'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
+              })}
+              onDoubleClick={(e: React.SyntheticEvent) => {
+                handleCta(e, item, closeModal, fireTelemetryEvent);
+              }}
+            >
+              <DataListItemRow className="odc-quick-search-list__item-row">
+                <DataListItemCells
+                  className="odc-quick-search-list__item-content"
+                  dataListCells={[
+                    <DataListCell isIcon key={`${item.uid}-icon`}>
+                      {getIcon(item)}
+                    </DataListCell>,
+                    <DataListCell
+                      style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}
+                      width={2}
+                      wrapModifier="truncate"
+                      key={`${item.uid}-name`}
+                    >
+                      <span className="odc-quick-search-list__item-name">{item.name}</span>
+                      <Split style={{ alignItems: 'center' }} hasGutter>
+                        <SplitItem>
+                          <Label>{itemType}</Label>
+                        </SplitItem>
+                        <SplitItem>
+                          <TextContent>
+                            <Text component={TextVariants.small}>{item.provider}</Text>
+                          </TextContent>
+                        </SplitItem>
+                      </Split>
+                    </DataListCell>,
+                  ]}
+                />
+              </DataListItemRow>
+            </DataListItem>
+          );
+        })}
       </DataList>
       <div className="odc-quick-search-list__all-items-link">
         {viewAll?.map((catalogLink) => (
