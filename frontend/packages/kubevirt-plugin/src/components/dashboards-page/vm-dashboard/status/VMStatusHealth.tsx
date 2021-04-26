@@ -22,7 +22,7 @@ const VMStatusHealth: React.FC<VMStatusHealthProps> = ({ vmStatusBundle }) => {
       Error: HealthState.ERROR,
       Running: HealthState.OK,
       Completed: HealthState.OK,
-      Pending: HealthState.LOADING,
+      Pending: HealthState.PROGRESS,
       Importing: HealthState.PROGRESS,
       InProgress: HealthState.PROGRESS,
       Starting: HealthState.PROGRESS,
