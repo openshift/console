@@ -155,9 +155,10 @@ const menuActionStop = (
   { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
   const isImporting = vmStatusBundle?.status?.isImporting();
+  const isPending = vmStatusBundle?.status?.isPending();
   return {
     isDisabled: isImporting,
-    hidden: !isImporting && !isVMExpectedRunning(vm, vmi),
+    hidden: isPending || (!isImporting && !isVMExpectedRunning(vm, vmi)),
     // t('kubevirt-plugin~Stop Virtual Machine')
     labelKey: 'kubevirt-plugin~Stop Virtual Machine',
     callback: () =>
