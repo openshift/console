@@ -12,7 +12,7 @@ export default ({ vmName }) =>
     });
 
     it('checking ssh user has value', () => {
-      cy.byTestID('SSHDetailsPage-user')
+      cy.byTestID('SSHDetailsPage-user', { timeout: 600000 })
         .invoke('text')
         .then((text) => {
           expect(text).toMatch(/^user: [a-zA-z0-9].*$/);
@@ -20,7 +20,7 @@ export default ({ vmName }) =>
     });
 
     it('checking ssh port has value', () => {
-      cy.byTestID('SSHDetailsPage-port')
+      cy.byTestID('SSHDetailsPage-port', { timeout: 600000 })
         .invoke('text')
         .then((text) => {
           expect(text).toMatch(/^port: [0-9]*$/);

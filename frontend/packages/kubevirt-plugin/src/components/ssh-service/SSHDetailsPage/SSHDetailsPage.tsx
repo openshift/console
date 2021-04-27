@@ -13,9 +13,10 @@ import './ssh-details-page.scss';
 
 type SSHDetailsPageProps = {
   vm: VMKind | VMIKind;
+  isVMReady: boolean;
 };
 
-const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
+const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
   const { sshServices } = useSSHService(vm);
   const { command, user } = useSSHCommand(vm);
 
@@ -24,20 +25,26 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
     <>
       <Stack hasGutter>
         <StackItem>
-          <Text component={TextVariants.p} data-test="SSHDetailsPage-user">
-            {t('kubevirt-plugin~user: {{user}}', { user })}
-          </Text>
-          <ClipboardCopy
-            isReadOnly
-            data-test="SSHDetailsPage-command"
-            className="SSHDetailsPage-clipboard-command"
-          >
-            {sshServices?.running ? command : `ssh ${user}@`}
-          </ClipboardCopy>
-          {!sshServices?.running && (
-            <span className="kubevirt-menu-actions__secondary-title">
-              {t('kubevirt-plugin~Requires SSH Service')}
-            </span>
+          {isVMReady ? (
+            <>
+              <Text component={TextVariants.p} data-test="SSHDetailsPage-user">
+                {t('kubevirt-plugin~user: {{user}}', { user })}
+              </Text>
+              <ClipboardCopy
+                isReadOnly
+                data-test="SSHDetailsPage-command"
+                className="SSHDetailsPage-clipboard-command"
+              >
+                {sshServices?.running ? command : `ssh ${user}@`}
+              </ClipboardCopy>
+              {!sshServices?.running && (
+                <span className="kubevirt-menu-actions__secondary-title">
+                  {t('kubevirt-plugin~Requires SSH Service')}
+                </span>
+              )}
+            </>
+          ) : (
+            <div className="text-secondary">{t('kubevirt-plugin~VM not running')}</div>
           )}
         </StackItem>
         <StackItem>
@@ -45,15 +52,19 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
             <b>{t('kubevirt-plugin~SSH Service ')}</b>
             <EditButton
               id="SSHDetailsPage-service-modal"
-              canEdit
+              canEdit={isVMReady}
               onClick={() => SSHModal({ vm })}
             />
           </div>
-          <Text component={TextVariants.p} data-test="SSHDetailsPage-port">
-            {sshServices?.running
-              ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
-              : t('kubevirt-plugin~SSH Service unavailable')}
-          </Text>
+          {isVMReady ? (
+            <Text component={TextVariants.p} data-test="SSHDetailsPage-port">
+              {sshServices?.running
+                ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
+                : t('kubevirt-plugin~SSH Service unavailable')}
+            </Text>
+          ) : (
+            <div className="text-secondary">{t('kubevirt-plugin~VM not running')}</div>
+          )}
         </StackItem>
       </Stack>
     </>
