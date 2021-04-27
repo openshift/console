@@ -16,6 +16,7 @@ import {
   TableRow,
   TableData,
   RowFunctionArgs,
+  Flatten,
 } from '@console/internal/components/factory';
 import { deleteModal } from '@console/internal/components/modals';
 import {
@@ -48,6 +49,7 @@ import {
   nameForModel,
   CustomResourceDefinitionKind,
   definitionFor,
+  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import {
   ClusterServiceVersionAction,
@@ -377,7 +379,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
     ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
-  const flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) =>
+  const flatten: Flatten<{ [key: string]: K8sResourceCommon[] }> = (resources) =>
     _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
       ({ kind, metadata }, i, allResources) =>
         providedAPIs.filter((item) => item.kind === kind).length > 0 ||

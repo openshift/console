@@ -29,15 +29,11 @@ import {
   KebabOption,
   ResourceSummary,
   DetailsItem,
+  FirehoseResult,
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
-import {
-  K8sResourceKind,
-  referenceForModel,
-  K8sKind,
-  k8sPatch,
-} from '@console/internal/module/k8s';
+import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import { PopoverStatus, StatusIconAndText } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
@@ -627,8 +623,8 @@ type DisabledPopoverProps = {
 };
 
 type FlattenArgType = {
-  catalogSources: { data: CatalogSourceKind[] };
-  packageManifests: { data: PackageManifestKind[] };
+  catalogSources?: FirehoseResult<CatalogSourceKind[]>;
+  packageManifests?: FirehoseResult<PackageManifestKind[]>;
   operatorHub: OperatorHubKind;
 };
 
@@ -642,7 +638,7 @@ export type CatalogSourceDetailsPageProps = {
 };
 
 export type CatalogSourceListPageProps = {
-  obj: K8sResourceKind;
+  obj: OperatorHubKind;
 } & ListPageProps;
 
 export type CreateSubscriptionYAMLProps = {
