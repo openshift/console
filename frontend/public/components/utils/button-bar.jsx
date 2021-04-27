@@ -25,16 +25,35 @@ const ErrorMessage = ({ message }) => {
       className="co-alert co-alert--scrollable"
       variant="danger"
       title={t('public~An error occurred')}
+      isLiveRegion
+      aria-live="assertive"
+      aria-atomic="true"
     >
       <div className="co-pre-line">{message}</div>
     </Alert>
   );
 };
 const InfoMessage = ({ message }) => (
-  <Alert isInline className="co-alert" variant="info" title={message} />
+  <Alert
+    isInline
+    className="co-alert"
+    variant="info"
+    title={message}
+    isLiveRegion
+    aria-live="polite"
+    aria-atomic="true"
+  />
 );
 const SuccessMessage = ({ message }) => (
-  <Alert isInline className="co-alert" variant="success" title={message} />
+  <Alert
+    isInline
+    className="co-alert"
+    variant="success"
+    title={message}
+    isLiveRegion
+    aria-live="polite"
+    aria-atomic="true"
+  />
 );
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.
