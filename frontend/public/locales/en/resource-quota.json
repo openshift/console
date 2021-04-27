@@ -23,5 +23,5 @@
   "Role": "Role",
   "Cluster-wide {{resource}}": "Cluster-wide {{resource}}",
   "Namespace {{resource}}": "Namespace {{resource}}",
-  "Create {{resource}}": "Create {{resource}}"
+  "Create ResourceQuota": "Create ResourceQuota"
 }

@@ -97,13 +97,7 @@ export const LimitRangeList: React.FC = (props) => {
 };
 
 export const LimitRangeListPage: React.FC<LimitRangeListPageProps> = (props) => (
-  <ListPage
-    {...props}
-    title={LimitRangeModel.labelPlural}
-    kind={LimitRangeReference}
-    ListComponent={LimitRangeList}
-    canCreate={true}
-  />
+  <ListPage {...props} kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />
 );
 
 export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
