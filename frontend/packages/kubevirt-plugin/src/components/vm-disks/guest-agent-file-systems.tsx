@@ -4,9 +4,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Table, TableData, TableRow } from '@console/internal/components/factory';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { Button, Popover } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
@@ -123,21 +121,11 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
     <div className="kubevirt-vm-details__file-systems">
       <h3 id="file-systems-header">
         {t('kubevirt-plugin~File Systems')}
-        <Popover
-          aria-label={t('kubevirt-plugin~File systems description')}
-          position="top"
-          bodyContent={
-            <>
-              {t(
-                'kubevirt-plugin~The following information regarding how the disks are partitioned is provided by the guest agent.',
-              )}
-            </>
-          }
-        >
-          <Button variant="plain">
-            <QuestionCircleIcon />
-          </Button>
-        </Popover>
+        <FieldLevelHelp>
+          {t(
+            'kubevirt-plugin~The following information regarding how the disks are partitioned is provided by the guest agent.',
+          )}
+        </FieldLevelHelp>
       </h3>
       {body()}
     </div>
