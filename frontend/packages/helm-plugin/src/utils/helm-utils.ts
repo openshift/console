@@ -7,6 +7,7 @@ import { Flatten } from '@console/internal/components/factory/list-page';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
+import { Flatten } from '@console/internal/components/factory/list-page';
 import {
   HelmRelease,
   HelmChart,
