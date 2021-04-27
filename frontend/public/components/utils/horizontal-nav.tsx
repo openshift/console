@@ -58,6 +58,7 @@ export type Page = {
   component?: React.ComponentType<PageComponentProps>;
   badge?: React.ReactNode;
   pageData?: any;
+  queryParams?: string;
 };
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
@@ -178,7 +179,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
 
   const tabs = (
     <>
-      {pages.map(({ name, nameKey, href, path }) => {
+      {pages.map(({ name, nameKey, href, path, queryParams }) => {
         const matchURL = matchPath(location.pathname, {
           path: `${basePath}/${path || href}`,
           exact: true,
@@ -189,7 +190,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         return (
           <li className={klass} key={nameKey || name}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
+              to={`${baseURL.replace(/\/$/, '')}/${href}${queryParams ? queryParams : ''}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
