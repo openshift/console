@@ -208,6 +208,17 @@
     }
   },
   {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "samples-catalog",
+      "type": "Sample",
+      "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
     "type": "console.file-upload",
     "properties": {
       "fileExtensions": ["jar"],

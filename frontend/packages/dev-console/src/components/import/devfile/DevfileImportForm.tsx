@@ -76,7 +76,7 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
         isSubmitting={isSubmitting}
         submitLabel={t('devconsole~Create')}
         sticky
-        disableSubmit={!dirty || !_.isEmpty(errors)}
+        disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('devconsole~Cancel')}
       />
     </form>

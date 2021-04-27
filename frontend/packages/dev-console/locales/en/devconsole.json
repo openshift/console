@@ -68,6 +68,7 @@
   "A <1>DeploymentConfig</1> to rollout new revisions when the Image changes.": "A <1>DeploymentConfig</1> to rollout new revisions when the Image changes.",
   "A <1>Service</1> to expose your workload inside the Cluster.": "A <1>Service</1> to expose your workload inside the Cluster.",
   "An optional <1>Route</1> to expose your workload outside the Cluster.": "An optional <1>Route</1> to expose your workload outside the Cluster.",
+  "Create Devfile Sample": "Create Devfile Sample",
   "Instantiate Template": "Instantiate Template",
   "Select Secret name": "Select Secret name",
   "Save": "Save",
