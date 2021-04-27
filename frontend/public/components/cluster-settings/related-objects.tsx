@@ -58,25 +58,25 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
   const { t } = useTranslation();
   const Header = () => [
     {
-      title: t('related-objects~Name'),
+      title: t('public~Name'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('related-objects~Resource'),
+      title: t('public~Resource'),
       sortField: 'resource',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('related-objects~Group'),
+      title: t('public~Group'),
       sortField: 'group',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('related-objects~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -89,7 +89,7 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
         Header={Header}
         Row={Row}
         customData={{ findModel }}
-        aria-label={t('related-objects~Related objects')}
+        aria-label={t('public~Related objects')}
         NoDataEmptyMsg={EmptyMessage}
       />
     </div>

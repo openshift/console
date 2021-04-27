@@ -74,20 +74,20 @@ const NetworkPoliciesList = (props) => {
   const NetworkPolicyTableHeader = () => {
     return [
       {
-        title: t('network-policy~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('network-policy~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('network-policy~Pod selector'),
+        title: t('public~Pod selector'),
         sortField: 'spec.podSelector',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -101,7 +101,7 @@ const NetworkPoliciesList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('network-policy~NetworkPolicies')}
+      aria-label={t('public~NetworkPolicies')}
       Header={NetworkPolicyTableHeader}
       Row={NetworkPolicyTableRow}
       virtualize
@@ -117,9 +117,9 @@ const IngressHeader = () => {
   const { t } = useTranslation();
   return (
     <div className="row co-m-table-grid__head">
-      <div className="col-xs-4">{t('network-policy~Target pods')}</div>
-      <div className="col-xs-5">{t('network-policy~From')}</div>
-      <div className="col-xs-3">{t('network-policy~To ports')}</div>
+      <div className="col-xs-4">{t('public~Target pods')}</div>
+      <div className="col-xs-5">{t('public~From')}</div>
+      <div className="col-xs-3">{t('public~To ports')}</div>
     </div>
   );
 };
@@ -150,7 +150,7 @@ const IngressRow = ({ ingress, namespace, podSelector }) => {
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
         <div>
-          <span className="text-muted">{t('network-policy~Pod selector')}:</span>
+          <span className="text-muted">{t('public~Pod selector')}:</span>
         </div>
         <div style={style}>
           <Selector selector={podSelector} namespace={namespace} />
@@ -160,13 +160,13 @@ const IngressRow = ({ ingress, namespace, podSelector }) => {
         <div>
           {!podSelectors.length ? null : (
             <div>
-              <span className="text-muted">{t('network-policy~Pod selector')}:</span>
+              <span className="text-muted">{t('public~Pod selector')}:</span>
               {podSelectors}
             </div>
           )}
           {!nsSelectors.length ? null : (
             <div style={{ paddingTop: podSelectors.length ? 10 : 0 }}>
-              <span className="text-muted">{t('network-policy~NS selector')}:</span>
+              <span className="text-muted">{t('public~NS selector')}:</span>
               {nsSelectors}
             </div>
           )}
@@ -188,7 +188,7 @@ const Details_ = ({ obj: np, flags }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('network-policy~Network policy details')} />
+        <SectionHeading text={t('public~Network policy details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector />
@@ -196,19 +196,19 @@ const Details_ = ({ obj: np, flags }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('network-policy~Ingress rules')} />
+        <SectionHeading text={t('public~Ingress rules')} />
         <p className="co-m-pane__explanation">
           {t(
-            'network-policy~Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:',
+            'public~Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:',
           )}
           <ExternalLink
             href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-            text={t('network-policy~NetworkPolicies documentation')}
+            text={t('public~NetworkPolicies documentation')}
           />
           .
         </p>
         {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
-          t('network-policy~All traffic is allowed to Pods in {{namespace}}', {
+          t('public~All traffic is allowed to Pods in {{namespace}}', {
             namespace: np.metadata.namespace,
           })
         ) : (

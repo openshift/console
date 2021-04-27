@@ -63,7 +63,7 @@ const AlertErrorState: React.FC<AlertErrorProps> = ({ errorText }) => {
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon className="co-status-card__alerts-icon" icon={RedExclamationCircleIcon} />
       <Title headingLevel="h5" size="lg">
-        {t('notification-drawer~Alerts could not be loaded')}
+        {t('public~Alerts could not be loaded')}
       </Title>
       {errorText && <EmptyStateBody>{errorText}</EmptyStateBody>}
     </EmptyState>
@@ -75,16 +75,16 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
   return (
     <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
       <Title headingLevel="h5" size="lg">
-        {t('notification-drawer~No critical alerts')}
+        {t('public~No critical alerts')}
       </Title>
       <EmptyStateBody>
         {t(
-          'notification-drawer~There are currently no critical alerts firing. There may be firing alerts of other severities or silenced critical alerts however.',
+          'public~There are currently no critical alerts firing. There may be firing alerts of other severities or silenced critical alerts however.',
         )}
       </EmptyStateBody>
       <EmptyStateSecondaryActions>
         <Link to="/monitoring/alerts" onClick={drawerToggle}>
-          {t('notification-drawer~View all alerts')}
+          {t('public~View all alerts')}
         </Link>
       </EmptyStateSecondaryActions>
     </EmptyState>
@@ -96,7 +96,7 @@ export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction
     string,
     Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
   >().set('AlertmanagerReceiversNotConfigured', {
-    text: i18next.t('notification-drawer~Configure'),
+    text: i18next.t('public~Configure'),
     action: () => history.push('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
@@ -160,11 +160,11 @@ const getUpdateNotificationEntries = (
     entries.push(
       <NotificationEntry
         actionPath="/settings/cluster?showVersions"
-        actionText={i18next.t('notification-drawer~Update cluster')}
+        actionText={i18next.t('public~Update cluster')}
         key="cluster-update"
-        description={updateData[0].version || i18next.t('notification-drawer~Unknown')}
+        description={updateData[0].version || i18next.t('public~Unknown')}
         type={NotificationTypes.update}
-        title={i18next.t('notification-drawer~Cluster update available')}
+        title={i18next.t('public~Cluster update available')}
         toggleNotificationDrawer={toggleNotificationDrawer}
         targetPath="/settings/cluster?showVersions"
       />,
@@ -174,14 +174,14 @@ const getUpdateNotificationEntries = (
     entries.push(
       <NotificationEntry
         actionPath="/settings/cluster?showChannels"
-        actionText={i18next.t('notification-drawer~Update channel')}
+        actionText={i18next.t('public~Update channel')}
         key="channel-update"
         description={i18next.t(
-          'notification-drawer~The {{newerChannel}} channel is available. If you are interested in updating this cluster to {{newerChannelVersion}} in the future, change the update channel to {{newerChannel}} to receive recommended updates.',
+          'public~The {{newerChannel}} channel is available. If you are interested in updating this cluster to {{newerChannelVersion}} in the future, change the update channel to {{newerChannel}} to receive recommended updates.',
           { newerChannel, newerChannelVersion },
         )}
         type={NotificationTypes.update}
-        title={i18next.t('notification-drawer~{{newerChannel}} channel available', {
+        title={i18next.t('public~{{newerChannel}} channel available', {
           newerChannel,
         })}
         toggleNotificationDrawer={toggleNotificationDrawer}
@@ -243,7 +243,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       store.dispatch(
         UIActions.monitoringErrored(
           'notificationAlerts',
-          new Error(t('notification-drawer~prometheusBaseURL not set')),
+          new Error(t('public~prometheusBaseURL not set')),
         ),
       );
     }
@@ -264,10 +264,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
       });
     } else {
       store.dispatch(
-        UIActions.monitoringErrored(
-          'silences',
-          new Error(t('notification-drawer~alertManagerBaseURL not set')),
-        ),
+        UIActions.monitoringErrored('silences', new Error(t('public~alertManagerBaseURL not set'))),
       );
     }
 
@@ -351,7 +348,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     <NotificationCategory
       key="critical-alerts"
       isExpanded={isAlertExpanded}
-      label={t('notification-drawer~Critical Alerts')}
+      label={t('public~Critical Alerts')}
       count={criticalAlertList.length}
       onExpandContents={toggleAlertExpanded}
     >
@@ -362,7 +359,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     <NotificationCategory
       key="other-alerts"
       isExpanded={isNonCriticalAlertExpanded}
-      label={t('notification-drawer~Other Alerts')}
+      label={t('public~Other Alerts')}
       count={otherAlertList.length}
       onExpandContents={toggleNonCriticalAlertExpanded}
     >
@@ -374,7 +371,7 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     <NotificationCategory
       key="recommendations"
       isExpanded={isClusterUpdateExpanded}
-      label={t('notification-drawer~Recommendations')}
+      label={t('public~Recommendations')}
       count={updateList.length}
       onExpandContents={toggleClusterUpdateExpanded}
     >

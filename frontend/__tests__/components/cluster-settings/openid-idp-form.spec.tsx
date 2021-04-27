@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'openid-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: OpenID Connect', () => {
   let wrapper: ShallowWrapper<{}, AddOpenIDIDPPageState>;

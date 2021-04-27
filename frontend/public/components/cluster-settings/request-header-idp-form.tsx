@@ -94,7 +94,7 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
     e.preventDefault();
     if (!this.state.caFileContent) {
       this.setState({
-        errorMessage: this.props.t('request-header-idp-form~You must specify a CA File.'),
+        errorMessage: this.props.t('public~You must specify a CA File.'),
       });
       return;
     }
@@ -155,7 +155,7 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
   render() {
     const { name, challengeURL, loginURL, caFileContent } = this.state;
     const { t } = this.props;
-    const title = t('request-header-idp-form~Add Identity Provider: Request Header');
+    const title = t('public~Add Identity Provider: Request Header');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -165,18 +165,16 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'request-header-idp-form~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
+              'public~Use request header to identify users from request header values. It is typically used in combination with an authenticating proxy, which sets the request header value.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="co-form-section__separator" />
-          <h3 className="co-required">{t('request-header-idp-form~URLs')}</h3>
-          <p className="co-m-pane__explanation">
-            {t('request-header-idp-form~At least one URL must be provided.')}
-          </p>
+          <h3 className="co-required">{t('public~URLs')}</h3>
+          <p className="co-m-pane__explanation">{t('public~At least one URL must be provided.')}</p>
           <div className="form-group">
             <label className="control-label" htmlFor="challenge-url">
-              {t('request-header-idp-form~Challenge URL')}
+              {t('public~Challenge URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -188,13 +186,13 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
             />
             <div className="help-block" id="challenge-url-help">
               {t(
-                'request-header-idp-form~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
+                'public~The URL to redirect unauthenticated requests from OAuth clients which expect interactive logins.',
               )}
             </div>
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="login-url">
-              {t('request-header-idp-form~Login URL')}
+              {t('public~Login URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -206,46 +204,38 @@ class AddRequestHeaderPageWithTranslation extends PromiseComponent<
             />
             <div className="help-block" id="login-url-help">
               {t(
-                'request-header-idp-form~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
+                'public~The URL to redirect unauthenticated requests from OAuth clients which expect WWW-Authenticate challenges.',
               )}
             </div>
           </div>
           <div className="co-form-section__separator" />
-          <h3>{t('request-header-idp-form~More options')}</h3>
+          <h3>{t('public~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} isRequired />
           <ListInput
-            label={t('request-header-idp-form~Client common names')}
+            label={t('public~Client common names')}
             onChange={this.clientCommonNamesChanged}
-            helpText={t('request-header-idp-form~The set of common names to require a match from.')}
+            helpText={t('public~The set of common names to require a match from.')}
           />
           <ListInput
-            label={t('request-header-idp-form~Headers')}
+            label={t('public~Headers')}
             onChange={this.headersChanged}
-            helpText={t(
-              'request-header-idp-form~The set of headers to check for identity information.',
-            )}
+            helpText={t('public~The set of headers to check for identity information.')}
             required
           />
           <ListInput
-            label={t('request-header-idp-form~Preferred username headers')}
+            label={t('public~Preferred username headers')}
             onChange={this.preferredUsernameHeadersChanged}
-            helpText={t(
-              'request-header-idp-form~The set of headers to check for the preferred username.',
-            )}
+            helpText={t('public~The set of headers to check for the preferred username.')}
           />
           <ListInput
-            label={t('request-header-idp-form~Name headers')}
+            label={t('public~Name headers')}
             onChange={this.nameHeadersChanged}
-            helpText={t(
-              'request-header-idp-form~The set of headers to check for the display name.',
-            )}
+            helpText={t('public~The set of headers to check for the display name.')}
           />
           <ListInput
-            label={t('request-header-idp-form~Email headers')}
+            label={t('public~Email headers')}
             onChange={this.emailHeadersChanged}
-            helpText={t(
-              'request-header-idp-form~The set of headers to check for the email address.',
-            )}
+            helpText={t('public~The set of headers to check for the email address.')}
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">

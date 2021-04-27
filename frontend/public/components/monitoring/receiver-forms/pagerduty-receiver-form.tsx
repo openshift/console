@@ -26,11 +26,11 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
     <div data-test-id="pagerduty-receiver-form">
       <div className="form-group">
         <label className="control-label" htmlFor="integration-type-events">
-          {t('pagerduty-receiver-form~Integration type')}
+          {t('public~Integration type')}
         </label>
         <div>
           <RadioInput
-            title={t('pagerduty-receiver-form~Events API v2')}
+            title={t('public~Events API v2')}
             id="integration-type-events"
             value="events"
             onChange={(e) =>
@@ -44,7 +44,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             inline
           />
           <RadioInput
-            title={t('pagerduty-receiver-form~Prometheus')}
+            title={t('public~Prometheus')}
             name="pagerdutyIntegrationKeyType"
             data-test-id="integration-type-prometheus"
             value="prometheus"
@@ -67,8 +67,8 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           htmlFor="integration-key"
         >
           {formValues.pagerdutyIntegrationKeyType === 'events'
-            ? t('pagerduty-receiver-form~Routing key')
-            : t('pagerduty-receiver-form~Service key')}
+            ? t('public~Routing key')
+            : t('public~Service key')}
         </label>
         <input
           className="pf-c-form-control"
@@ -85,7 +85,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="integration-key-help">
-          {t('pagerduty-receiver-form~PagerDuty integration key.')}
+          {t('public~PagerDuty integration key.')}
         </div>
       </div>
       <div className="form-group">
@@ -94,7 +94,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           className="control-label co-required"
           htmlFor="pagerduty-url"
         >
-          {t('pagerduty-receiver-form~PagerDuty URL')}
+          {t('public~PagerDuty URL')}
         </label>
         <div className="row">
           <div className="col-sm-7">
@@ -117,23 +117,23 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <SaveAsDefaultCheckbox
               formField="pagerdutySaveAsDefault"
               disabled={formValues.pagerduty_url === globals?.pagerduty_url}
-              label={t('pagerduty-receiver-form~Save as default PagerDuty URL')}
+              label={t('public~Save as default PagerDuty URL')}
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
               tooltip={t(
-                'pagerduty-receiver-form~Checking this box will write the url to the global section of the configuration file where it will become default url for future PagerDuty receivers.',
+                'public~Checking this box will write the url to the global section of the configuration file where it will become default url for future PagerDuty receivers.',
               )}
             />
           </div>
         </div>
         <div className="help-block" id="pagerduty-url-help">
-          {t('pagerduty-receiver-form~The URL of your PagerDuty installation.')}
+          {t('public~The URL of your PagerDuty installation.')}
         </div>
       </div>
       <div className="form-group">
         <ExpandCollapse
-          textCollapsed={t('pagerduty-receiver-form~Show advanced configuration')}
-          textExpanded={t('pagerduty-receiver-form~Hide advanced configuration')}
+          textCollapsed={t('public~Show advanced configuration')}
+          textExpanded={t('public~Hide advanced configuration')}
         >
           <div className="co-form-subsection">
             <SendResolvedAlertsCheckbox
@@ -141,10 +141,10 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
             />
-            <h3>{t('pagerduty-receiver-form~Client details')}</h3>
+            <h3>{t('public~Client details')}</h3>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-client">
-                {t('pagerduty-receiver-form~Client')}
+                {t('public~Client')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -161,12 +161,12 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
               <div className="help-block" id="client-help">
-                {t('pagerduty-receiver-form~The client identification of the Alertmanager.')}
+                {t('public~The client identification of the Alertmanager.')}
               </div>
             </div>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-client-url">
-                {t('pagerduty-receiver-form~Client URL')}
+                {t('public~Client URL')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -183,13 +183,13 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
               <div className="help-block" id="client-url-help">
-                {t('pagerduty-receiver-form~A backlink to the sender of the notification.')}
+                {t('public~A backlink to the sender of the notification.')}
               </div>
             </div>
-            <h3>{t('pagerduty-receiver-form~Incident details')}</h3>
+            <h3>{t('public~Incident details')}</h3>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-description">
-                {t('pagerduty-receiver-form~Description')}
+                {t('public~Description')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -206,12 +206,12 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
               <div className="help-block" id="description-help">
-                {t('pagerduty-receiver-form~Description of the incident.')}
+                {t('public~Description of the incident.')}
               </div>
             </div>
             <div className="form-group">
               <label className="control-label" htmlFor="pagerduty-severity">
-                {t('pagerduty-receiver-form~Severity')}
+                {t('public~Severity')}
               </label>
               <input
                 className="pf-c-form-control"
@@ -228,7 +228,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 }
               />
               <div className="help-block" id="severity-help">
-                {t('pagerduty-receiver-form~Severity of the incident.')}
+                {t('public~Severity of the incident.')}
               </div>
             </div>
           </div>
