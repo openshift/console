@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -39,11 +37,7 @@ const MultiColumnFieldRow: React.FC<MultiColumnFieldRowProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <div
-      className={cx('odc-multi-column-field__row', {
-        'odc-multi-column-field__row--singleLine': _.isEmpty(complexFields),
-      })}
-    >
+    <div className="odc-multi-column-field__row">
       <Grid>
         {React.Children.map(children, (child: React.ReactElement, i) => {
           const fieldName = `${name}.${rowIndex}`;
