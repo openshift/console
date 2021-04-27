@@ -114,6 +114,9 @@ export class AlertLogs extends React.Component {
             />
           </div>
         )}
+        {!this.props.alert?.labels?.namespace && (
+          <div className="co-m-pane__body">No logs for this Alert</div>
+        )}
       </>
     );
   }
