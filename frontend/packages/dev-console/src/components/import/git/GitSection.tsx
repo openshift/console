@@ -29,7 +29,6 @@ export interface GitSectionProps {
   showSample?: boolean;
   buildStrategy?: string;
   builderImages: NormalizedBuilderImages;
-  hideAdvancedGitOptions?: boolean;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
@@ -37,7 +36,6 @@ const GitSection: React.FC<GitSectionProps> = ({
   showSample = !!defaultSample,
   buildStrategy,
   builderImages,
-  hideAdvancedGitOptions,
 }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
@@ -61,6 +59,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const tag = isEmpty(values.image.tagObj) ? defaultSampleTagObj : values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
   const { application = {}, name: nameTouched, git = {}, image = {} } = touched;
+  const { url: gitUrlTouched } = git as FormikTouched<{ url: boolean }>;
   const { type: gitTypeTouched } = git as FormikTouched<{ type: boolean }>;
   const { dir: gitDirTouched } = git as FormikTouched<{ dir: boolean }>;
   const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
@@ -102,7 +101,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
-      if (buildStrategy === 'Devfile') {
+      if (buildStrategy === 'Devfile' && !values.devfile?.devfileSourceUrl) {
         // No need to check the existence of the file, waste of a call to the gitService for this need
         const devfileContents = gitService && (await gitService.getDevfileContent());
         if (!devfileContents) {
@@ -129,6 +128,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.formType,
       values.git.type,
       values.name,
+      values.devfile,
     ],
   );
 
@@ -210,11 +210,12 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
 
   React.useEffect(() => {
-    (!dirty || gitTypeTouched || gitDirTouched) &&
+    (!dirty || gitUrlTouched || gitTypeTouched || gitDirTouched) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
     dirty,
+    gitUrlTouched,
     gitTypeTouched,
     gitDirTouched,
     debouncedHandleGitUrlChange,
@@ -286,7 +287,6 @@ const GitSection: React.FC<GitSectionProps> = ({
         }}
         onBlur={handleGitUrlBlur}
         data-test-id="git-form-input-url"
-        isDisabled={hideAdvancedGitOptions}
         required
       />
       {sampleRepo && <SampleRepo onClick={fillSample} />}
@@ -307,7 +307,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           )}
         </>
       )}
-      {!hideAdvancedGitOptions && <AdvancedGitOptions />}
+      <AdvancedGitOptions />
     </FormSection>
   );
 };
