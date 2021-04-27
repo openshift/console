@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getMostRecentBuilderTag, isBuilder } from '@console/internal/components/image-stream';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,6 +16,7 @@ import { prettifyName } from '../../../utils/imagestream-utils';
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],
   activeNamespace: string,
+  t: TFunction,
 ): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
     const { uid, name, namespace: imageStreamNS, annotations } = imageStream.metadata;
@@ -27,10 +30,12 @@ const normalizeBuilderImages = (
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
     const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
+    const createLabel = t('devconsole~Create Application');
+    const type = 'Sample';
 
     const item: CatalogItem = {
-      uid,
-      type: 'Sample',
+      uid: `${type}-${uid}`,
+      type,
       name: title,
       provider,
       description,
@@ -40,7 +45,7 @@ const normalizeBuilderImages = (
         class: iconClass,
       },
       cta: {
-        label: '',
+        label: createLabel,
         href,
       },
     };
@@ -57,6 +62,7 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => 
     namespace: 'openshift',
     prop: 'imageStreams',
   };
+  const { t } = useTranslation();
   const [imageStreams, loaded, loadedError] = useK8sWatchResource<K8sResourceKind[]>(
     resourceSelector,
   );
@@ -66,8 +72,8 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => 
   ]);
 
   const normalizedBuilderImages = React.useMemo(
-    () => normalizeBuilderImages(builderImageStreams, namespace),
-    [builderImageStreams, namespace],
+    () => normalizeBuilderImages(builderImageStreams, namespace, t),
+    [builderImageStreams, namespace, t],
   );
 
   return [normalizedBuilderImages, loaded, loadedError];

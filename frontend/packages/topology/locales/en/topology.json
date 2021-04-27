@@ -60,6 +60,7 @@
   "Drop file ({{fileTypes}}) here": "Drop file ({{fileTypes}}) here",
   "View all developer catalog items ({{itemCount, number}})": "View all developer catalog items ({{itemCount, number}})",
   "View all quick starts ({{itemCount, number}})": "View all quick starts ({{itemCount, number}})",
+  "View all samples ({{itemCount, number}})": "View all samples ({{itemCount, number}})",
   "Quick search bar": "Quick search bar",
   "Add to Project": "Add to Project",
   "No results": "No results",
