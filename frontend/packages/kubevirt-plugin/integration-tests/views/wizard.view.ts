@@ -30,7 +30,7 @@ export const footerError = $('div[aria-label="Danger Alert"]');
 export const footerErrorDescroption = footerError.$('.pf-c-alert__description');
 export const bootError = $('#image-source-type-dropdown-helper');
 export const errorHelper = $('.pf-c-form__helper-text.pf-m-error');
-export const vmNameHelper = $('#vm-name-helper');
+export const invalidMessageContainer = $('.kubevirt-fort-row__invalid-message-container');
 
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');

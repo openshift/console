@@ -3,13 +3,12 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { click } from '@console/shared/src/test-utils/utils';
 
-import { tableRows } from '../views/kubevirtUIResource.view';
 import * as view from '../views/wizard.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { Wizard } from './models/wizard';
 import { Disk, FlavorConfig } from './types/types';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { DISK_INTERFACE, DISK_SOURCE } from './utils/constants/vm';
+import { DISK_SOURCE } from './utils/constants/vm';
 import { Flavor, TemplateByName, Workload } from './utils/constants/wizard';
 import { getRandStr } from './utils/utils';
 
@@ -30,26 +29,10 @@ describe('Wizard validation', () => {
     await click(view.cancelButton);
   });
 
-  it('ID(CNV-3698) Verify default disk interface for RHEL6 is sata', async () => {
-    await browser.wait(until.presenceOf(view.operatingSystemSelect));
-    await wizard.fillName(getRandStr(5));
-    await wizard.selectProvisionSource(ProvisionSource.CONTAINER);
-    await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(Workload.DESKTOP);
-    await wizard.next();
-    // Network tab
-    await wizard.next();
-    // Storage tab
-    const rows = await tableRows();
-    rows.forEach((row) => {
-      expect(row).toContain(DISK_INTERFACE.sata);
-    });
-  });
-
   it('ID(CNV-4551) Import Wizard shows warning when using incorrect VM name', async () => {
     const WRONG_VM_NAME = 'VMNAME';
     await wizard.fillName(WRONG_VM_NAME);
-    await browser.wait(until.presenceOf(view.vmNameHelper));
+    await browser.wait(until.presenceOf(view.invalidMessageContainer));
   });
 
   it('ID(CNV-5469) Blank disk cannot be used as bootdisk', async () => {
@@ -68,7 +51,7 @@ describe('Wizard validation', () => {
     await click(view.addDiskButton);
     await diskDialog.create(disk);
     await wizard.selectBootableDisk(disk.name);
-    await browser.wait(until.presenceOf(view.storageBootsourceHelper));
+    await browser.wait(until.presenceOf(view.invalidMessageContainer));
   });
 
   it('ID(CNV-5468) Ephemeral Container disk can be used as bootdisk', async () => {
