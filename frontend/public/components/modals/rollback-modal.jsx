@@ -113,7 +113,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
     if (loaded && !loadError && deployment) {
       if (deployment.spec.paused) {
         setDeploymentError(
-          t('modal~You cannot rollback a paused {{ deployType }}. You must resume it first.', {
+          t('public~You cannot rollback a paused {{ deployType }}. You must resume it first.', {
             deployType: isDCRollback ? DeploymentConfigModel.label : DeploymentModel.label,
           }),
         );
@@ -126,7 +126,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
       return (
         <>
           <p>
-            <Trans t={t} ns="modal">
+            <Trans t={t} ns="public">
               Use the following settings from{' '}
               <strong className="co-break-word">
                 {{ resourceName: props.resource.metadata.name }}
@@ -141,7 +141,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
                 onChange={() => setChangeScaleSettings(!changeScaleSettings)}
                 checked={changeScaleSettings}
               />
-              {t('modal~Replica count and selector')}
+              {t('public~Replica count and selector')}
             </label>
           </div>
           <div className="checkbox">
@@ -151,7 +151,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
                 onChange={() => setChangeStrategy(!changeStrategy)}
                 checked={changeStrategy}
               />
-              {t('modal~Deployment strategy')}
+              {t('public~Deployment strategy')}
             </label>
           </div>
           <div className="checkbox">
@@ -161,7 +161,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
                 onChange={() => setChangeTriggers(!changeTriggers)}
                 checked={changeTriggers}
               />
-              {t('modal~Deployment trigger')}
+              {t('public~Deployment trigger')}
             </label>
           </div>
         </>
@@ -170,7 +170,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
 
     return (
       <p>
-        <Trans t={t} ns="modal">
+        <Trans t={t} ns="public">
           Are you sure you want to rollback to{' '}
           <strong className="co-break-word">
             {{ resourceName: props.resource.metadata.name }}
@@ -183,7 +183,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle>{t('modal~Rollback')}</ModalTitle>
+      <ModalTitle>{t('public~Rollback')}</ModalTitle>
       <ModalBody>
         {loaded ? (
           !loadError && !deploymentError ? (
@@ -193,7 +193,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
               isInline
               className="co-alert co-alert--scrollable"
               variant="danger"
-              title={t('modal~Unable to Rollback')}
+              title={t('public~Unable to Rollback')}
             >
               <div className="co-pre-line">{loadError?.message || deploymentError}</div>
             </Alert>
@@ -205,7 +205,7 @@ const BaseRollbackModal = withHandlePromise((props) => {
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={false}
-        submitText={t('modal~Rollback')}
+        submitText={t('public~Rollback')}
         cancel={props.cancel}
         submitDisabled={loadError?.message || deploymentError}
       />

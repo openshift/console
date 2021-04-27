@@ -394,11 +394,11 @@ export const ListPage = withFallback((props) => {
       canCreate={canCreate}
       createAccessReview={createAccessReview}
       createButtonText={
-        createButtonText || t('list-page~Create {{label}}', { label: t(labelKey) || label })
+        createButtonText || t('public~Create {{label}}', { label: t(labelKey) || label })
       }
       createProps={createProps}
       customData={customData}
-      filterLabel={filterLabel || t('list-page~by name')}
+      filterLabel={filterLabel || t('public~by name')}
       nameFilterPlaceholder={nameFilterPlaceholder}
       labelFilterPlaceholder={labelFilterPlaceholder}
       flatten={flatten}
@@ -409,7 +409,7 @@ export const ListPage = withFallback((props) => {
       namespace={usedNamespace}
       resources={resources}
       rowFilters={rowFilters}
-      selectorFilterLabel={t('list-page~Filter by selector (app=nginx) ...')}
+      selectorFilterLabel={t('public~Filter by selector (app=nginx) ...')}
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
@@ -469,10 +469,10 @@ export const MultiListPage = (props) => {
       createAccessReview={createAccessReview}
       createButtonText={createButtonText || t('public~Create')}
       createProps={createProps}
-      filterLabel={filterLabel || t('list-page~by name')}
+      filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
       resources={mock ? [] : resources}
-      selectorFilterLabel={t('list-page~Filter by selector (app=nginx) ...')}
+      selectorFilterLabel={t('public~Filter by selector (app=nginx) ...')}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}

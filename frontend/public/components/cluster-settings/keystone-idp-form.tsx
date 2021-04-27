@@ -121,7 +121,7 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
       this.setState({
         errorMessage: this.props.t(
-          'keystone-idp-form~Values for certificate and key should both be either excluded or provided.',
+          'public~Values for certificate and key should both be either excluded or provided.',
         ),
       });
       return;
@@ -176,7 +176,7 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
   render() {
     const { name, domainName, url, caFileContent, certFileContent, keyFileContent } = this.state;
     const { t } = this.props;
-    const title = t('keystone-idp-form~Add Identity Provider: Keystone Authentication');
+    const title = t('public~Add Identity Provider: Keystone Authentication');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -186,13 +186,13 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'keystone-idp-form~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
+              'public~Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="domain-name">
-              {t('keystone-idp-form~Domain name')}
+              {t('public~Domain name')}
             </label>
             <input
               className="pf-c-form-control"
@@ -205,7 +205,7 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              {t('keystone-idp-form~URL')}
+              {t('public~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -217,7 +217,7 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
               required
             />
             <p className="help-block" id="idp-url-help">
-              {t('keystone-idp-form~The remote URL to connect to.')}
+              {t('public~The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
@@ -226,10 +226,10 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
               onChange={this.certFileChanged}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label={t('keystone-idp-form~Certificate')}
+              label={t('public~Certificate')}
               hideContents
               inputFieldHelpText={t(
-                'keystone-idp-form~PEM-encoded TLS client certificate to present when connecting to the server.',
+                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
           </div>
@@ -238,10 +238,10 @@ class AddKeystonePageWithTranslation extends PromiseComponent<
               onChange={this.keyFileChanged}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label={t('keystone-idp-form~Key')}
+              label={t('public~Key')}
               hideContents
               inputFieldHelpText={t(
-                'keystone-idp-form~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />
           </div>

@@ -76,19 +76,19 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('modal~Delete {{kind}}?', { kind: kind.labelKey ? t(kind.labelKey) : kind.label })}
+        {t('public~Delete {{kind}}?', { kind: kind.labelKey ? t(kind.labelKey) : kind.label })}
       </ModalTitle>
       <ModalBody className="modal-body">
         {message}
         <div>
           {_.has(resource.metadata, 'namespace') ? (
-            <Trans t={t} ns="modal">
+            <Trans t={t} ns="public">
               Are you sure you want to delete{' '}
               <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>{' '}
               in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>?
             </Trans>
           ) : (
-            <Trans t={t} ns="modal">
+            <Trans t={t} ns="public">
               Are you sure you want to delete{' '}
               <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>?
             </Trans>
@@ -101,7 +101,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
                   onChange={() => setIsChecked(!isChecked)}
                   checked={!!isChecked}
                 />
-                {t('modal~Delete dependent objects of this resource')}
+                {t('public~Delete dependent objects of this resource')}
               </label>
             </div>
           )}
@@ -110,9 +110,9 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
               className="co-alert co-alert--margin-top"
               isInline
               variant="warning"
-              title={t('modal~Managed resource')}
+              title={t('public~Managed resource')}
             >
-              <Trans t={t} ns="modal">
+              <Trans t={t} ns="public">
                 This resource is managed by{' '}
                 <ResourceLink
                   className="modal__inline-resource-link"
@@ -132,7 +132,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
         errorMessage={errorMessage}
         inProgress={false}
         submitDanger
-        submitText={props.btnText || t('modal~Delete')}
+        submitText={props.btnText || t('public~Delete')}
         cancel={props.cancel}
       />
     </form>

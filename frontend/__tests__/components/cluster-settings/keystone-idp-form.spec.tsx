@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'keystone-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: Keystone', () => {
   let wrapper: ShallowWrapper<{}, AddKeystonePageState>;

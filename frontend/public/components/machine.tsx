@@ -95,7 +95,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machines~Machine details')} />
+        <SectionHeading text={t('public~Machine details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -103,11 +103,11 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <DetailsItem label={t('machines~Phase')} obj={obj} path="status.phase">
+                <DetailsItem label={t('public~Phase')} obj={obj} path="status.phase">
                   <Status status={getMachinePhase(obj)} />
                 </DetailsItem>
                 <DetailsItem
-                  label={t('machines~Provider state')}
+                  label={t('public~Provider state')}
                   obj={obj}
                   path="status.providerStatus.instanceState"
                 >
@@ -115,7 +115,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 </DetailsItem>
                 {nodeName && (
                   <>
-                    <dt>{t('machines~Node')}</dt>
+                    <dt>{t('public~Node')}</dt>
                     <dd>
                       <NodeLink name={nodeName} />
                     </dd>
@@ -123,29 +123,29 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
                 )}
                 {machineRole && (
                   <>
-                    <dt>{t('machines~Machine role')}</dt>
+                    <dt>{t('public~Machine role')}</dt>
                     <dd>{machineRole}</dd>
                   </>
                 )}
                 {instanceType && (
                   <>
-                    <dt>{t('machines~Instance type')}</dt>
+                    <dt>{t('public~Instance type')}</dt>
                     <dd>{instanceType}</dd>
                   </>
                 )}
                 {region && (
                   <>
-                    <dt>{t('machines~Region')}</dt>
+                    <dt>{t('public~Region')}</dt>
                     <dd>{region}</dd>
                   </>
                 )}
                 {zone && (
                   <>
-                    <dt>{t('machines~Availability zone')}</dt>
+                    <dt>{t('public~Availability zone')}</dt>
                     <dd>{zone}</dd>
                   </>
                 )}
-                <dt>{t('machines~Machine addresses')}</dt>
+                <dt>{t('public~Machine addresses')}</dt>
                 <dd>
                   <NodeIPList ips={getMachineAddresses(obj)} expand />
                 </dd>
@@ -155,7 +155,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machines~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={obj.status?.providerStatus?.conditions} />
       </div>
     </>
@@ -167,44 +167,44 @@ export const MachineList: React.SFC = (props) => {
   const MachineTableHeader = () => {
     return [
       {
-        title: t('machines~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('machines~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('machines~Node'),
+        title: t('public~Node'),
         sortField: 'status.nodeRef.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('machines~Phase'),
+        title: t('public~Phase'),
         sortFunc: 'machinePhase',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('machines~Provider state'),
+        title: t('public~Provider state'),
         sortField: 'status.providerStatus.instanceState',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
-        title: t('machines~Region'),
+        title: t('public~Region'),
         sortField: "metadata.labels['machine.openshift.io/region']",
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
-        title: t('machines~Availability zone'),
+        title: t('public~Availability zone'),
         sortField: "metadata.labels['machine.openshift.io/zone']",
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
@@ -218,7 +218,7 @@ export const MachineList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('machines~Machines')}
+      aria-label={t('public~Machines')}
       Header={MachineTableHeader}
       Row={MachineTableRow}
       virtualize
@@ -235,7 +235,7 @@ export const MachinePage: React.SFC<MachinePageProps> = (props) => {
       ListComponent={MachineList}
       kind={machineReference}
       textFilter="machine"
-      filterLabel={t('machines~by machine or node name')}
+      filterLabel={t('public~by machine or node name')}
       canCreate
     />
   );

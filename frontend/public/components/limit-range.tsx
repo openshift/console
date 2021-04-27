@@ -60,20 +60,20 @@ export const LimitRangeList: React.FC = (props) => {
   const LimitRangeTableHeader = () => {
     return [
       {
-        title: t('limit-range~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('limit-range~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('limit-range~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -143,18 +143,18 @@ export const LimitRangeDetailsList = (resource) => {
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('limit-range~Limits')} />
+      <SectionHeading text={t('public~Limits')} />
       <div className="table-responsive">
         <table className="co-m-table-grid co-m-table-grid--bordered table">
           <thead className="co-m-table-grid__head">
             <tr>
-              <td>{t('limit-range~Type')}</td>
-              <td>{t('limit-range~Resource')}</td>
-              <td>{t('limit-range~Min')}</td>
-              <td>{t('limit-range~Max')}</td>
-              <td>{t('limit-range~Default request')}</td>
-              <td>{t('limit-range~Default limit')}</td>
-              <td>{t('limit-range~Max limit/request ratio')}</td>
+              <td>{t('public~Type')}</td>
+              <td>{t('public~Resource')}</td>
+              <td>{t('public~Min')}</td>
+              <td>{t('public~Max')}</td>
+              <td>{t('public~Default request')}</td>
+              <td>{t('public~Default limit')}</td>
+              <td>{t('public~Max limit/request ratio')}</td>
             </tr>
           </thead>
           <tbody className="co-m-table-grid__body">
@@ -174,7 +174,7 @@ export const LimitRangeDetailsPage = (props) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading
-          text={t('limit-range~{{resource}} details', { resource: LimitRangeModel.label })}
+          text={t('public~{{resource}} details', { resource: LimitRangeModel.label })}
         />
         <div className="row">
           <div className="col-md-6">

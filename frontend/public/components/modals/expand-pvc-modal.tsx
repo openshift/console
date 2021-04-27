@@ -60,19 +60,19 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('modal~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
+      <ModalTitle>{t('public~Expand {{kind}}', { kind: kind.label })}</ModalTitle>
       <ModalBody>
         <p>
-          <Trans t={t} ns="modal">
+          <Trans t={t} ns="public">
             Increase the capacity of PVC{' '}
             <strong className="co-break-word">{{ resourceName: resource.metadata.name }}.</strong>{' '}
             Note that capacity can't be less than the current PVC size. This can be a time-consuming
             process.
           </Trans>
         </p>
-        <label className="control-label co-required">{t('modal~Size')}</label>
+        <label className="control-label co-required">{t('public~Size')}</label>
         <RequestSizeInput
-          name={t('modal~requestSize')}
+          name={t('public~requestSize')}
           required
           onChange={handleRequestSizeInputChange}
           defaultRequestSizeUnit={requestSizeUnit}
@@ -84,7 +84,7 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText={t('modal~Expand')}
+        submitText={t('public~Expand')}
         cancel={props.cancel}
       />
     </form>

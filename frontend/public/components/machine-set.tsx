@@ -34,10 +34,10 @@ const machineReplicasModal = (
   configureReplicaCountModal({
     resourceKind,
     resource,
-    // t('machine-sets~Edit Machine count')
-    titleKey: 'machine-sets~Edit Machine count',
-    // t('machine-sets~{{resourceKind}} maintain the proper number of healthy machines.')
-    messageKey: 'machine-sets~{{resourceKind}} maintain the proper number of healthy machines.',
+    // t('public~Edit Machine count')
+    titleKey: 'public~Edit Machine count',
+    // t('public~{{resourceKind}} maintain the proper number of healthy machines.')
+    messageKey: 'public~{{resourceKind}} maintain the proper number of healthy machines.',
     messageVariables: { resourceKind: resourceKind.labelPlural },
   });
 
@@ -45,8 +45,8 @@ export const editCountAction: KebabAction = (
   kind: K8sKind,
   resource: MachineSetKind | MachineDeploymentKind,
 ) => ({
-  // t('machine-sets~Edit Machine count')
-  labelKey: 'machine-sets~Edit Machine count',
+  // t('public~Edit Machine count')
+  labelKey: 'public~Edit Machine count',
   callback: () => machineReplicasModal(kind, resource),
   accessReview: {
     group: kind.apiGroup,
@@ -58,8 +58,8 @@ export const editCountAction: KebabAction = (
 });
 
 const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: MachineSetKind) => ({
-  // t('machine-sets~Create MachineAutoscaler')
-  labelKey: 'machine-sets~Create MachineAutoscaler',
+  // t('public~Create MachineAutoscaler')
+  labelKey: 'public~Create MachineAutoscaler',
   callback: () => configureMachineAutoscalerModal({ machineSet, cancel: _.noop, close: _.noop }),
   accessReview: {
     group: MachineAutoscalerModel.apiGroup,
@@ -123,7 +123,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
     namespace: resource.metadata.namespace,
   });
   const { t } = useTranslation();
-  const desiredReplicasText = `${desiredReplicas}  ${t('machine-sets~machine', {
+  const desiredReplicasText = `${desiredReplicas}  ${t('public~machine', {
     count: desiredReplicas,
   })}`;
 
@@ -133,7 +133,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('machine-sets~Desired count')}</dt>
+              <dt className="co-detail-table__section-header">{t('public~Desired count')}</dt>
               <dd>
                 {canUpdate ? (
                   <Button variant="link" type="button" isInline onClick={editReplicas}>
@@ -148,11 +148,11 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
           </div>
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('machine-sets~Current count')}</dt>
+              <dt className="co-detail-table__section-header">{t('public~Current count')}</dt>
               <dd>
-                <Tooltip content={t('machine-sets~The most recently observed number of replicas.')}>
+                <Tooltip content={t('public~The most recently observed number of replicas.')}>
                   <span>
-                    {replicas} {t('machine-sets~machine', { count: replicas })}
+                    {replicas} {t('public~machine', { count: replicas })}
                   </span>
                 </Tooltip>
               </dd>
@@ -160,15 +160,15 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
           </div>
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">{t('machine-sets~Ready count')}</dt>
+              <dt className="co-detail-table__section-header">{t('public~Ready count')}</dt>
               <dd>
                 <Tooltip
                   content={t(
-                    'machine-sets~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
+                    'public~The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.',
                   )}
                 >
                   <span>
-                    {readyReplicas} {t('machine-sets~machine', { count: readyReplicas })}
+                    {readyReplicas} {t('public~machine', { count: readyReplicas })}
                   </span>
                 </Tooltip>
               </dd>
@@ -176,17 +176,15 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({
           </div>
           <div className="co-detail-table__section co-detail-table__section--last">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">
-                {t('machine-sets~Available count')}
-              </dt>
+              <dt className="co-detail-table__section-header">{t('public~Available count')}</dt>
               <dd>
                 <Tooltip
                   content={t(
-                    'machine-sets~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
+                    'public~The number of available replicas (ready for at least minReadySeconds) for this MachineSet.',
                   )}
                 >
                   <span>
-                    {availableReplicas} {t('machine-sets~machine', { count: availableReplicas })}
+                    {availableReplicas} {t('public~machine', { count: availableReplicas })}
                   </span>
                 </Tooltip>
               </dd>
@@ -213,12 +211,12 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machine-sets~Machine set details')} />
+        <SectionHeading text={t('public~Machine set details')} />
         <MachineCounts resourceKind={MachineSetModel} resource={obj} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj}>
-              <dt>{t('machine-sets~Selector')}</dt>
+              <dt>{t('public~Selector')}</dt>
               <dd>
                 <Selector
                   kind={machineReference}
@@ -228,19 +226,19 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
               </dd>
               {machineRole && (
                 <>
-                  <dt>{t('machine-sets~Machine role')}</dt>
+                  <dt>{t('public~Machine role')}</dt>
                   <dd>{machineRole}</dd>
                 </>
               )}
               {region && (
                 <>
-                  <dt>{t('machine-sets~Region')}</dt>
+                  <dt>{t('public~Region')}</dt>
                   <dd>{region}</dd>
                 </>
               )}
               {availabilityZone && (
                 <>
-                  <dt>{t('machine-sets~Availability zone')}</dt>
+                  <dt>{t('public~Availability zone')}</dt>
                   <dd>{availabilityZone}</dd>
                 </>
               )}
@@ -257,20 +255,20 @@ export const MachineSetList: React.SFC = (props) => {
   const MachineSetTableHeader = () => {
     return [
       {
-        title: t('machine-sets~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('machine-sets~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('machine-sets~Machines'),
+        title: t('public~Machines'),
         sortField: 'status.readyReplicas',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -306,8 +304,8 @@ export const MachineSetList: React.SFC = (props) => {
               obj.metadata.namespace,
             )}/machines`}
           >
-            {getReadyReplicas(obj)} {t('machine-sets~of')} {getDesiredReplicas(obj)}{' '}
-            {t('machine-sets~machines')}
+            {getReadyReplicas(obj)} {t('public~of')} {getDesiredReplicas(obj)}{' '}
+            {t('public~machines')}
           </Link>
         </TableData>
         <TableData className={tableColumnClasses[3]}>
@@ -319,7 +317,7 @@ export const MachineSetList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('machine-sets~Machine sets')}
+      aria-label={t('public~Machine sets')}
       Header={MachineSetTableHeader}
       Row={MachineSetTableRow}
       virtualize

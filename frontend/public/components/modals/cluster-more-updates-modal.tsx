@@ -25,13 +25,13 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
 
   return (
     <div className="modal-content">
-      <ModalTitle>{t('modal~Other available paths')}</ModalTitle>
+      <ModalTitle>{t('public~Other available paths')}</ModalTitle>
       <ModalBody>
         <table className="table">
           <thead>
             <tr>
-              <th>{t('modal~Version')}</th>
-              {releaseNotes && <th>{t('modal~Release notes')}</th>}
+              <th>{t('public~Version')}</th>
+              {releaseNotes && <th>{t('public~Release notes')}</th>}
             </tr>
           </thead>
           <tbody>

@@ -36,7 +36,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
 
     const keys = usedTags.map((tag) => tag[NameValueEditorPair.Name]);
     if (_.uniq(keys).length !== keys.length) {
-      setErrorMessage(t('modal~Duplicate keys found.'));
+      setErrorMessage(t('public~Duplicate keys found.'));
       return;
     }
     // Make sure to 'add' if the path does not already exist, otherwise the patch request will fail
@@ -57,7 +57,7 @@ export const TagsModal = withHandlePromise((props: TagsModalProps) => {
         />
       </ModalBody>
       <ModalSubmitFooter
-        submitText={t('modal~Save')}
+        submitText={t('public~Save')}
         cancel={props.cancel}
         errorMessage={props.errorMessage || errorMessage}
         inProgress={props.inProgress}
@@ -70,8 +70,8 @@ export const annotationsModal = createModalLauncher((props: AnnotationsModalProp
   <TagsModal
     path="/metadata/annotations"
     tags={props.resource.metadata.annotations}
-    // t('modal~Edit annotations')
-    titleKey="modal~Edit annotations"
+    // t('public~Edit annotations')
+    titleKey="public~Edit annotations"
     {...props}
   />
 ));

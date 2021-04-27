@@ -33,11 +33,9 @@ import {
 import { ResourceEventStream } from './events';
 
 const pauseAction: KebabAction = (kind, obj) => ({
-  // t('machine-config-pools~Resume updates')
-  // t('machine-config-pools~Pause updates')
-  labelKey: obj.spec.paused
-    ? 'machine-config-pools~Resume updates'
-    : 'machine-config-pools~Pause updates',
+  // t('public~Resume updates')
+  // t('public~Pause updates')
+  labelKey: obj.spec.paused ? 'public~Resume updates' : 'public~Pause updates',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
   accessReview: {
     group: kind.apiGroup,
@@ -71,11 +69,11 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
 
   return (
     <dl className="co-m-pane__details">
-      <dt>{t('machine-config-pools~Max unavailable machines')}</dt>
+      <dt>{t('public~Max unavailable machines')}</dt>
       <dd>{maxUnavailable}</dd>
       {configuration && (
         <>
-          <dt>{t('machine-config-pools~Current configuration')}</dt>
+          <dt>{t('public~Current configuration')}</dt>
           <dd>
             {configuration.name ? (
               <ResourceLink
@@ -87,7 +85,7 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
               '-'
             )}
           </dd>
-          <dt>{t('machine-config-pools~Current configuration source')}</dt>
+          <dt>{t('public~Current configuration source')}</dt>
           <dd>
             {configuration.source
               ? _.map(configuration.source, ({ apiVersion, kind, name }) => (
@@ -100,8 +98,8 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
                 ))
               : '-'}
           </dd>
-          <DetailsItem label={t('machine-config-pools~Paused')} obj={obj} path={'spec.paused'}>
-            {obj.spec?.paused ? t('machine-config-pools~True') : t('machine-config-pools~False')}
+          <DetailsItem label={t('public~Paused')} obj={obj} path={'spec.paused'}>
+            {obj.spec?.paused ? t('public~True') : t('public~False')}
           </DetailsItem>
         </>
       )}
@@ -118,16 +116,12 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">
-                {t('machine-config-pools~Total machine count')}
-              </dt>
+              <dt className="co-detail-table__section-header">{t('public~Total machine count')}</dt>
               <dd>
-                <Tooltip
-                  content={t('machine-config-pools~Total number of machines in the machine pool.')}
-                >
+                <Tooltip content={t('public~Total number of machines in the machine pool.')}>
                   <span>
                     {obj?.status?.machineCount}{' '}
-                    {t('machine-config-pools~machine', { count: obj?.status?.machineCount })}
+                    {t('public~machine', { count: obj?.status?.machineCount })}
                   </span>
                 </Tooltip>
               </dd>
@@ -135,18 +129,12 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
           </div>
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">
-                {t('machine-config-pools~Ready machines')}
-              </dt>
+              <dt className="co-detail-table__section-header">{t('public~Ready machines')}</dt>
               <dd>
-                <Tooltip
-                  content={t(
-                    'machine-config-pools~Total number of ready machines targeted by the pool.',
-                  )}
-                >
+                <Tooltip content={t('public~Total number of ready machines targeted by the pool.')}>
                   <span>
                     {obj?.status?.readyMachineCount}{' '}
-                    {t('machine-config-pools~machine', { count: obj?.status?.readyMachineCount })}
+                    {t('public~machine', { count: obj?.status?.readyMachineCount })}
                   </span>
                 </Tooltip>
               </dd>
@@ -154,18 +142,16 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
           </div>
           <div className="co-detail-table__section">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">
-                {t('machine-config-pools~Updated count')}
-              </dt>
+              <dt className="co-detail-table__section-header">{t('public~Updated count')}</dt>
               <dd>
                 <Tooltip
                   content={t(
-                    'machine-config-pools~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
+                    'public~Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.',
                   )}
                 >
                   <span>
                     {obj?.status?.updatedMachineCount}{' '}
-                    {t('machine-config-pools~machine', { count: obj?.status?.updatedMachineCount })}
+                    {t('public~machine', { count: obj?.status?.updatedMachineCount })}
                   </span>
                 </Tooltip>
               </dd>
@@ -173,18 +159,16 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({ obj 
           </div>
           <div className="co-detail-table__section co-detail-table__section--last">
             <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">
-                {t('machine-config-pools~Unavailable count')}
-              </dt>
+              <dt className="co-detail-table__section-header">{t('public~Unavailable count')}</dt>
               <dd>
                 <Tooltip
                   content={t(
-                    'machine-config-pools~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
+                    'public~Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.',
                   )}
                 >
                   <span>
                     {obj?.status?.unavailableMachineCount}{' '}
-                    {t('machine-config-pools~machine', {
+                    {t('public~machine', {
                       count: obj?.status?.unavailableMachineCount,
                     })}
                   </span>
@@ -203,7 +187,7 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({ ob
   const { t } = useTranslation();
   return (
     <ResourceSummary resource={obj} showNodeSelector nodeSelector="spec.nodeSelector">
-      <dt>{t('machine-config-pools~MachineConfig selector')}</dt>
+      <dt>{t('public~MachineConfig selector')}</dt>
       <dd>
         <Selector kind={machineConfigReference} selector={machineConfigSelector} />
       </dd>
@@ -225,7 +209,7 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machine-config-pools~MachineConfigPool details')} />
+        <SectionHeading text={t('public~MachineConfigPool details')} />
         {paused && <WorkloadPausedAlert model={MachineConfigPoolModel} obj={obj} />}
         <MachineConfigPoolCounts obj={obj} />
         <div className="row">
@@ -238,7 +222,7 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({ ob
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machine-config-pools~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={_.get(obj, 'status.conditions')} />
       </div>
     </>
@@ -276,31 +260,31 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   const MachineConfigPoolTableHeader = () => {
     return [
       {
-        title: t('machine-config-pools~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('machine-config-pools~Configuration'),
+        title: t('public~Configuration'),
         sortField: 'status.configuration.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('machine-config-pools~Updated'),
+        title: t('public~Updated'),
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('machine-config-pools~Updating'),
+        title: t('public~Updating'),
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('machine-config-pools~Paused'),
+        title: t('public~Paused'),
         props: { className: tableColumnClasses[4] },
       },
       {
-        title: t('machine-config-pools~Degraded'),
+        title: t('public~Degraded'),
         props: { className: tableColumnClasses[5] },
       },
       {
@@ -343,7 +327,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
           {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
         </TableData>
         <TableData className={tableColumnClasses[4]}>
-          {obj.spec?.paused ? t('machine-config-pools~True') : t('machine-config-pools~False')}
+          {obj.spec?.paused ? t('public~True') : t('public~False')}
         </TableData>
         <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
           {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
@@ -362,7 +346,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('machine-config-pools~MachineConfigPools')}
+      aria-label={t('public~MachineConfigPools')}
       Header={MachineConfigPoolTableHeader}
       Row={MachineConfigPoolTableRow}
       virtualize

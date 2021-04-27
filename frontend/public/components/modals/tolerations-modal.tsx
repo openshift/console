@@ -108,17 +108,17 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
       name="form"
       className="modal-content modal-content--accommodate-dropdown toleration-modal"
     >
-      <ModalTitle>{t('modal~Edit tolerations')}</ModalTitle>
+      <ModalTitle>{t('public~Edit tolerations')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(tolerations) ? (
-          <EmptyBox label={t('modal~Tolerations')} />
+          <EmptyBox label={t('public~Tolerations')} />
         ) : (
           <>
             <div className="row toleration-modal__heading hidden-sm hidden-xs">
-              <div className="col-md-4 text-secondary text-uppercase">{t('modal~Key')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('modal~Operator')}</div>
-              <div className="col-md-3 text-secondary text-uppercase">{t('modal~Value')}</div>
-              <div className="col-md-2 text-secondary text-uppercase">{t('modal~Effect')}</div>
+              <div className="col-md-4 text-secondary text-uppercase">{t('public~Key')}</div>
+              <div className="col-md-2 text-secondary text-uppercase">{t('public~Operator')}</div>
+              <div className="col-md-3 text-secondary text-uppercase">{t('public~Value')}</div>
+              <div className="col-md-2 text-secondary text-uppercase">{t('public~Effect')}</div>
               <div className="col-md-1" />
             </div>
             {_.map(tolerations, (toleration, i) => {
@@ -127,7 +127,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                 <div className="row toleration-modal__row" key={i}>
                   <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('modal~Key')}
+                      {t('public~Key')}
                     </div>
                     <input
                       type="text"
@@ -139,7 +139,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('modal~Operator')}
+                      {t('public~Operator')}
                     </div>
                     {isEditable(toleration) ? (
                       <Dropdown
@@ -157,7 +157,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                   <div className="clearfix visible-sm visible-xs" />
                   <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('modal~Value')}
+                      {t('public~Value')}
                     </div>
                     <input
                       type="text"
@@ -169,7 +169,7 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                   </div>
                   <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
                     <div className="toleration-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                      {t('modal~Effect')}
+                      {t('public~Effect')}
                     </div>
                     {isEditable(toleration) ? (
                       <Dropdown
@@ -191,12 +191,12 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
                   </div>
                   <div className="col-md-1 col-sm-2 col-xs-2">
                     {isEditable(toleration) && (
-                      <Tooltip content={t('modal~Remove')}>
+                      <Tooltip content={t('public~Remove')}>
                         <Button
                           type="button"
                           className="toleration-modal__delete-icon"
                           onClick={() => remove(i)}
-                          aria-label={t('modal~Remove')}
+                          aria-label={t('public~Remove')}
                           variant="plain"
                         >
                           <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
@@ -211,13 +211,13 @@ const TolerationsModal = withHandlePromise((props: TolerationsModalProps) => {
         )}
         <Button className="pf-m-link--align-left" onClick={addRow} type="button" variant="link">
           <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
-          {t('modal~Add more')}
+          {t('public~Add more')}
         </Button>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={false}
-        submitText={t('modal~Save')}
+        submitText={t('public~Save')}
         cancel={cancel}
       />
     </form>

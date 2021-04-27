@@ -25,7 +25,7 @@ const ResourceLimitsModal: React.FC<Props> = ({
   const { t } = useTranslation();
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
-      <ModalTitle>{t('modal~Edit resource limits')}</ModalTitle>
+      <ModalTitle>{t('console-app~Edit resource limits')}</ModalTitle>
       <ModalBody>
         <ResourceLimitSection hideTitle />
       </ModalBody>
@@ -33,7 +33,7 @@ const ResourceLimitsModal: React.FC<Props> = ({
         submitDisabled={!_.isEmpty(errors)}
         inProgress={isSubmitting}
         errorMessage={status && status.submitError}
-        submitText={t('modal~Save')}
+        submitText={t('console-app~Save')}
         cancel={cancel}
       />
     </form>
