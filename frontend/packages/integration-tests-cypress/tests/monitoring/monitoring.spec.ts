@@ -24,7 +24,7 @@ const shouldBeWatchdogSilencePage = () => {
   detailsPage.labelShouldExist('alertname=Watchdog');
 };
 
-describe('Monitoring: Alerts', () => {
+xdescribe('Monitoring: Alerts', () => {
   before(() => {
     cy.login();
     cy.createProject(testName);
