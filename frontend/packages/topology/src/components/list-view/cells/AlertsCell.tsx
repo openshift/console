@@ -116,7 +116,9 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
       <div className="odc-topology-list-view__alert-cell">
         {(error || warning || info) && (
           <div className="odc-topology-list-view__alert-cell__status">
-            <span className="odc-topology-list-view__alert-cell__label">Alerts:</span>
+            <span className="odc-topology-list-view__alert-cell__label">
+              {t('topology~Alerts:')}
+            </span>
             <AlertTooltip severity="Error" alerts={error} isMobile={isMobile} />
             <AlertTooltip severity="Warning" alerts={warning} isMobile={isMobile} />
             <AlertTooltip severity="Info" alerts={info} isMobile={isMobile} />

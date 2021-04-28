@@ -1,11 +1,22 @@
 import * as _ from 'lodash';
-import { modelFor } from '@console/internal/module/k8s';
+import { K8sKind, modelFor } from '@console/internal/module/k8s';
 import { isNode, Node, GraphElement } from '@patternfly/react-topology';
 import { getResourceKind } from '../../utils/topology-utils';
 
 export const labelForNodeKind = (kindString: string) => {
-  const model = modelFor(kindString);
+  const model: K8sKind | undefined = modelFor(kindString);
   if (model) {
+    return model.label;
+  }
+  return _.startCase(kindString);
+};
+
+export const labelKeyForNodeKind = (kindString: string) => {
+  const model: K8sKind | undefined = modelFor(kindString);
+  if (model) {
+    if (model.labelKey) {
+      return model.labelKey;
+    }
     return model.label;
   }
   return _.startCase(kindString);
