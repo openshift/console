@@ -14,7 +14,7 @@ describe('Connect to a VM using SSH testing', () => {
     sshVMDetailsPageTesting,
   ];
   before(() => {
-    cy.login();
+    cy.Login();
     cy.visit('');
     cy.createProject(testName);
   });
