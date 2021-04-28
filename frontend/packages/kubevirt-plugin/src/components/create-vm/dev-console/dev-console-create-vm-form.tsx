@@ -4,9 +4,15 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-
-import { ButtonBar, ExternalLink, history, StatusBox } from '@console/internal/components/utils';
-import { getNamespace, getUID } from '@console/shared';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  ButtonBar,
+  ExternalLink,
+  history,
+  setQueryArgument,
+  StatusBox,
+} from '@console/internal/components/utils';
+import { ALL_NAMESPACES_KEY, getNamespace, getUID } from '@console/shared';
 import {
   ActionGroup,
   Button,
@@ -33,8 +39,11 @@ import { AUTHORIZED_SSH_KEYS } from '../../ssh-service/SSHForm/ssh-form-utils';
 import { getTemplateOSIcon } from '../../vm-templates/os-icons';
 import { filterTemplates } from '../../vm-templates/utils';
 import { CreateVMForm } from '../forms/create-vm-form';
-import { formReducer, initFormState } from '../forms/create-vm-form-reducer';
+import { formReducer, FORM_ACTION_TYPE, initFormState } from '../forms/create-vm-form-reducer';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
+import { VMKind } from '../../../types';
+import { VirtualMachineModel } from '../../../models';
+import { validateVmLikeEntityName } from '../../../utils/validations';
 
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
@@ -71,6 +80,12 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     resourcesLoaded,
     resourcesLoadError,
   } = useVmTemplatesResources(namespace);
+
+  const [vms, vmsLoaded] = useK8sWatchResource<VMKind[]>({
+    kind: VirtualMachineModel.kind,
+    namespace,
+    isList: true,
+  });
 
   const selectedTemplate = filterTemplates([...userTemplates, ...baseTemplates])
     .filter((tmp) => {
@@ -114,8 +129,28 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const { createOrDeleteSSHService } = useSSHService();
   const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
 
+  const handleNamespaceChange = (newNamespace: string): void => {
+    if (newNamespace !== ALL_NAMESPACES_KEY) {
+      const validation = validateVmLikeEntityName(state?.name, newNamespace, vms, {
+        // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+        existsErrorMessage:
+          'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
+      });
+      dispatch({
+        type: FORM_ACTION_TYPE.SET_NAMESPACE,
+        payload: { value: newNamespace, validation },
+      });
+
+      setQueryArgument('namespace', newNamespace);
+    }
+  };
+
   return (
-    <NamespacedPage hideApplications disabled variant={NamespacedPageVariants.light}>
+    <NamespacedPage
+      hideApplications
+      onNamespaceChange={handleNamespaceChange}
+      variant={NamespacedPageVariants.light}
+    >
       <div className="co-m-pane__body">
         <h1 className="co-m-pane__heading">
           {t('kubevirt-plugin~Review and create virtual machine')}
@@ -125,7 +160,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
         </Helmet>
         <StatusBox
           data={template}
-          loaded={resourcesLoaded}
+          loaded={resourcesLoaded && vmsLoaded}
           loadError={resourcesLoadError}
           label={t('kubevirt-plugin~Virtual Machine Template')}
           EmptyMsg={() => <DevConsoleCreateVmFormEmptyState templateParam={templateParam} t={t} />}
