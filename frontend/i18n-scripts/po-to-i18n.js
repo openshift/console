@@ -10,6 +10,9 @@ function save(target) {
 }
 
 function processFile(fileName, language) {
+  if (fileName.includes('.DS_Store')) {
+    return;
+  }
   let newFilePath;
   const packageDir =
     fileName.includes('_package=') && path.basename(fileName, '.po').split('_package=')[1];
