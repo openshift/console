@@ -58,7 +58,9 @@
     "i18n-to-po": "node ./i18n-scripts/i18n-to-po.js",
     "po-to-i18n": "node ./i18n-scripts/po-to-i18n.js",
     "i18n": "./i18n-scripts/build-i18n.sh && node ./i18n-scripts/consolidate-public-folders && node ./i18n-scripts/set-english-defaults.js",
-    "export-pos": "./i18n-scripts/export-pos.sh"
+    "export-pos": "./i18n-scripts/export-pos.sh",
+    "memsource-upload": "./i18n-scripts/memsource-upload.sh",
+    "memsource-download": "./i18n-scripts/memsource-download.sh"
   },
   "jest": {
     "moduleFileExtensions": [
