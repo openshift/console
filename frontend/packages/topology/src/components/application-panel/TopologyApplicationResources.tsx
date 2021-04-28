@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { modelFor } from '@console/internal/module/k8s';
 import { OdcNodeModel } from '../../topology-types';
+import { labelKeyForNodeKind } from '../list-view/list-view-utils';
 import ApplicationGroupResource from './ApplicationGroupResource';
 
 import './TopologyApplicationResources.scss';
@@ -40,7 +40,7 @@ const TopologyApplicationResources: React.FC<TopologyApplicationResourcesProps> 
       {_.map(_.keys(resourcesData), (key) => (
         <ApplicationGroupResource
           key={`${group}-${key}`}
-          title={modelFor(key) ? modelFor(key).label : key}
+          title={t(labelKeyForNodeKind(key))}
           resourcesData={resourcesData[key]}
           group={group}
         />

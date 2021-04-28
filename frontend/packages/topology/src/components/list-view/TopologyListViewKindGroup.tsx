@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   DataList,
   DataListCell,
@@ -8,7 +9,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { GraphElement, isNode, Node, observer } from '@patternfly/react-topology';
-import { labelForNodeKind } from './list-view-utils';
+import { labelKeyForNodeKind } from './list-view-utils';
 import ListElementWrapper from './ListElementWrapper';
 
 interface TopologyListViewKindGroupProps {
@@ -24,6 +25,9 @@ const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
   selectedIds,
   onSelect,
 }) => {
+  const { t } = useTranslation();
+  const resourceLabel = t(labelKeyForNodeKind(kind));
+
   const childNodes = childElements.filter((n) => isNode(n)) as Node[];
   childNodes.sort((a, b) => a.getLabel().localeCompare(b.getLabel()));
 
@@ -37,14 +41,14 @@ const TopologyListViewKindGroup: React.FC<TopologyListViewKindGroupProps> = ({
               className="odc-topology-list-view__kind-label"
               id={`${kind}_label`}
             >
-              {labelForNodeKind(kind)}
+              {resourceLabel}
             </DataListCell>,
           ]}
         />
       </DataListItemRow>
       <DataListContent aria-label={kind} id={kind} isHidden={false}>
         <DataList
-          aria-label={`${labelForNodeKind(kind)} sub-resources}`}
+          aria-label={t('topology~{{resourceLabel}} sub-resources', { resourceLabel })}
           selectedDataListItemId={selectedIds[0]}
           onSelectDataListItem={(id) => onSelect(selectedIds[0] === id ? [] : [id])}
         >
