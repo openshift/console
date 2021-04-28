@@ -53,5 +53,5 @@ export const computeAvailableResultACs = (
 export type CursorPosition = [number, number];
 export const insertIntoValue = (value: string, position: CursorPosition, insertText = '') => {
   const [startPos, endPos] = position;
-  return `${value.substr(0, startPos)}${insertText}${value.substr(endPos)}`;
+  return `${value.substring(0, startPos)}${insertText}${value.substring(endPos)}`;
 };

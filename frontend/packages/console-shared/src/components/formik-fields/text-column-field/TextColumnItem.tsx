@@ -12,7 +12,34 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
 import { InputField } from '@console/shared';
-import { TextColumnItemProps, ItemTypes, DragItem } from './text-column-types';
+import {
+  TextColumnItemProps,
+  ItemTypes,
+  DragItem,
+  TextColumnFieldChildParameterProps,
+  MergeNewValueUtil,
+} from './text-column-types';
+
+const DEFAULT_CHILDREN = (
+  props: TextColumnFieldChildParameterProps,
+  mergeNewValue: MergeNewValueUtil,
+) => {
+  const { name, onChange, ...otherProps } = props;
+
+  return (
+    <InputField
+      {...otherProps}
+      name={name}
+      type={TextInputTypes.text}
+      onChange={(e) => {
+        if (onChange) {
+          const values = mergeNewValue(e.target.value);
+          onChange(values);
+        }
+      }}
+    />
+  );
+};
 
 const TextColumnItem: React.FC<TextColumnItemProps> = ({
   idx,
@@ -25,6 +52,7 @@ const TextColumnItem: React.FC<TextColumnItemProps> = ({
   disableDeleteRow,
   arrayHelpers,
   dndEnabled = false,
+  children = DEFAULT_CHILDREN,
 }) => {
   const { t } = useTranslation();
   const [, drag, preview] = useDrag({
@@ -50,9 +78,19 @@ const TextColumnItem: React.FC<TextColumnItemProps> = ({
     },
   });
 
+  const mergeNewValue: MergeNewValueUtil = (newValue) => {
+    const values: string[] = [...rowValues];
+    values[idx] = newValue;
+
+    return values;
+  };
+
   return (
     <div ref={(node) => preview(drop(node))} style={{ opacity }}>
-      <Flex style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}>
+      <Flex
+        alignItems={{ default: 'alignItemsFlexStart' }}
+        style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}
+      >
         {dndEnabled && (
           <FlexItem style={{ cursor: 'move' }}>
             <div ref={drag}>
@@ -61,19 +99,7 @@ const TextColumnItem: React.FC<TextColumnItemProps> = ({
           </FlexItem>
         )}
         <FlexItem grow={{ default: 'grow' }}>
-          <InputField
-            type={TextInputTypes.text}
-            name={`${name}.${idx}`}
-            placeholder={placeholder}
-            isReadOnly={isReadOnly}
-            onChange={(e) => {
-              if (onChange) {
-                const values = [...rowValues];
-                values[idx] = e.target.value;
-                onChange(values);
-              }
-            }}
-          />
+          {children({ name: `${name}.${idx}`, isReadOnly, placeholder, onChange }, mergeNewValue)}
         </FlexItem>
         {!isReadOnly && (
           <FlexItem>

@@ -1,6 +1,20 @@
 import { ArrayHelpers } from 'formik';
 import { FieldProps } from '../field-types';
 
+export type OnChangeHandler = (newValue: string[]) => void;
+export type TextColumnFieldChildParameterProps = {
+  name: string;
+  onChange?: OnChangeHandler;
+  isReadOnly?: boolean;
+  placeholder?: string;
+};
+
+export type MergeNewValueUtil = (newValue: string) => string[];
+export type TextColumnFieldChildProps = (
+  data: TextColumnFieldChildParameterProps,
+  mergeNewValue: MergeNewValueUtil,
+) => React.ReactNode;
+
 export type TextColumnFieldProps = FieldProps & {
   required?: boolean;
   name: string;
@@ -8,8 +22,9 @@ export type TextColumnFieldProps = FieldProps & {
   addLabel?: string;
   tooltip?: string;
   placeholder?: string;
-  onChange?: (newValue: string[]) => void;
+  onChange?: OnChangeHandler;
   dndEnabled?: boolean;
+  children?: TextColumnFieldChildProps;
 };
 
 export type TextColumnItemProps = TextColumnFieldProps & {

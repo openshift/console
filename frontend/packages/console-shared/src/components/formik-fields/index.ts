@@ -16,6 +16,7 @@ export { default as TextAreaField } from './TextAreaField';
 export { default as YAMLEditorField } from './YAMLEditorField';
 export { default as ItemSelectorField } from './item-selector-field/ItemSelectorField';
 export { default as InputGroupField } from './InputGroupField';
+export * from './text-column-field/text-column-types';
 export { default as TextColumnField } from './text-column-field/TextColumnField';
 export { default as DynamicFormField } from './DynamicFormField';
 export { default as SyncedEditorField } from './SyncedEditorField';
