@@ -1,15 +1,11 @@
 import * as React from 'react';
 import { ChartAxis, ChartContainer } from '@patternfly/react-charts';
 import { Grid } from '@patternfly/react-core';
+import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useTranslation } from 'react-i18next';
 
 import './utilization-card.scss';
-
-const formatDate = (date: Date): string => {
-  const minutes = `0${date.getMinutes()}`.slice(-2);
-  return `${date.getHours()}:${minutes}`;
-};
 
 const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) => {
   const [containerRef, width] = useRefWidth();
@@ -21,7 +17,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) =>
           containerComponent={<ChartContainer title={t('dashboard~time axis')} />}
           scale={{ x: 'time' }}
           domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
-          tickFormat={formatDate}
+          tickFormat={timeFormatter.format}
           orientation="top"
           height={15}
           width={width}

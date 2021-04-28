@@ -33,7 +33,7 @@ $tooltip-background-color: #151515;
 
 .graph-wrapper--query-browser {
   padding-left: 50px;
-  padding-right: 10px;
+  padding-right: 15px;
 
   &--with-legend {
     min-height: 305px;
@@ -45,7 +45,7 @@ $tooltip-background-color: #151515;
   margin: 0 0 20px 0;
 
   .co-dashboard-card__body--dashboard-graph {
-    padding: 10px;
+    padding: 10px 15px 10px 10px;
   }
 
   &.co-dashboard-card--gradient {
