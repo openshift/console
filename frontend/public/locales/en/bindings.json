@@ -1,0 +1,8 @@
+{
+  "Kind": "Kind",
+  "Cluster-wide RoleBindings": "Cluster-wide RoleBindings",
+  "Namespace RoleBindings": "Namespace RoleBindings",
+  "System RoleBindings": "System RoleBindings",
+  "RoleBindings": "RoleBindings",
+  "Create binding": "Create binding"
+}

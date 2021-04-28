@@ -32,7 +32,11 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, Table, TableRow, TableData, RowFunctionArgs } from './factory';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   AsyncComponent,
   DetailsItem,
@@ -82,6 +86,8 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -865,7 +871,7 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
 });
 PodList.displayName = 'PodList';
 
-export const getFilters = () => [
+export const filters = [
   {
     filterGroupName: i18next.t('public~Status'),
     type: 'pod-status',
@@ -912,7 +918,9 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         setPodMetrics,
         customData,
         userSettingState: tableColumns,
-        ...listProps
+        showTitle = true,
+        selector,
+        fieldSelector,
       } = props;
       const { t } = useTranslation();
 
@@ -936,28 +944,54 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         }
       }, [namespace]);
       /* eslint-enable react-hooks/exhaustive-deps */
+
+      const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
+        kind,
+        isList: true,
+        namespaced: true,
+        namespace,
+        selector,
+        fieldSelector,
+      });
+
+      const [data, filteredData, onFilterChange] = useListPageFilter(pods);
+
       return (
-        <ListPage
-          {...listProps}
-          canCreate={canCreate}
-          kind={kind}
-          ListComponent={PodList}
-          rowFilters={getFilters()}
-          namespace={namespace}
-          customData={customData}
-          columnLayout={{
-            columns: getHeader(props?.customData?.showNodes)().map((column) =>
-              _.pick(column, ['title', 'additional', 'id']),
-            ),
-            id: columnManagementID,
-            selectedColumns:
-              tableColumns?.[columnManagementID]?.length > 0
-                ? new Set(tableColumns[columnManagementID])
-                : null,
-            showNamespaceOverride: props?.customData?.showNamespaceOverride,
-            type: t('public~Pod'),
-          }}
-        />
+        <>
+          <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
+            {canCreate && (
+              <ListPageCreate groupVersionKind={referenceForModel(PodModel)}>
+                {t('public~Create Pod')}
+              </ListPageCreate>
+            )}
+          </ListPageHeader>
+          <ListPageBody>
+            <ListPageFilter
+              data={data}
+              loaded={loaded}
+              rowFilters={filters}
+              onFilterChange={onFilterChange}
+              columnLayout={{
+                columns: getHeader(props?.customData?.showNodes)().map((column) =>
+                  _.pick(column, ['title', 'additional', 'id']),
+                ),
+                id: columnManagementID,
+                selectedColumns:
+                  tableColumns?.[columnManagementID]?.length > 0
+                    ? new Set(tableColumns[columnManagementID])
+                    : null,
+                showNamespaceOverride: props?.customData?.showNamespaceOverride,
+                type: t('public~Pod'),
+              }}
+            />
+            <PodList
+              data={filteredData}
+              loaded={loaded}
+              loadError={loadError}
+              customData={customData}
+            />
+          </ListPageBody>
+        </>
       );
     },
   ),
@@ -1021,6 +1055,9 @@ type PodTableRowPropsFromState = {
 };
 
 type PodListProps = {
+  data: PodKind[];
+  loaded: boolean;
+  loadError: any;
   customData?: any;
 };
 
