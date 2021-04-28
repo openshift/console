@@ -304,7 +304,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       clearFiltersButtonText={t('filter-toolbar~Clear all filters')}
     >
       <ToolbarContent>
-        {rowFilters?.length && (
+        {rowFilters?.length > 0 && (
           <ToolbarItem>
             {_.reduce(
               Object.keys(filters),
