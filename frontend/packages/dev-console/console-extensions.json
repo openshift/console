@@ -189,6 +189,29 @@
   {
     "type": "console.catalog/item-type",
     "properties": {
+      "type": "Devfile",
+      "title": "%devconsole~Devfiles%",
+      "catalogDescription": "%devconsole~Browse for devfiles that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Devfiles** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "Devfile",
+      "provider": { "$codeRef": "catalog.devfileProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
       "type": "Sample",
       "title": "%devconsole~Samples%"
     },
