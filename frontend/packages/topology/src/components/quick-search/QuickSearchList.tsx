@@ -20,6 +20,7 @@ import {
 import { getIconProps } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import './QuickSearchList.scss';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];
@@ -39,6 +40,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   onSelectListItem,
 }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   const openForm = (e: React.SyntheticEvent, item: CatalogItem) => {
     e.preventDefault();
@@ -77,7 +79,14 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
             className={cx('odc-quick-search-list__item', {
               'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
             })}
-            onDoubleClick={(e: React.SyntheticEvent) => openForm(e, item)}
+            onDoubleClick={(e: React.SyntheticEvent) => {
+              openForm(e, item);
+              fireTelemetryEvent('Quick Search Used', {
+                id: item.uid,
+                type: item.type,
+                name: item.name,
+              });
+            }}
           >
             <DataListItemRow className="odc-quick-search-list__item-row">
               <DataListItemCells

@@ -7,6 +7,7 @@ import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { history } from '../utils';
 import { useActivePerspective } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 type StateProps = {
   flags: FlagsObject;
@@ -23,6 +24,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   }, [isPerspectiveDropdownOpen]);
+  const fireTelemetryEvent = useTelemetry();
 
   const onPerspectiveSelect = React.useCallback(
     (event: React.MouseEvent<HTMLLinkElement>, perspective: Perspective): void => {
@@ -30,12 +32,14 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
       if (perspective.properties.id !== activePerspective) {
         setActivePerspective(perspective.properties.id);
         history.push(perspective.properties.getLandingPageURL(flags));
+        fireTelemetryEvent('Perspective Changed', {
+          perspective: perspective.properties.id,
+        });
       }
-
       setPerspectiveDropdownOpen(false);
       onPerspectiveSelected && onPerspectiveSelected();
     },
-    [activePerspective, flags, onPerspectiveSelected, setActivePerspective],
+    [activePerspective, fireTelemetryEvent, flags, onPerspectiveSelected, setActivePerspective],
   );
 
   const renderToggle = React.useCallback(

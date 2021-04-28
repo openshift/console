@@ -11,6 +11,7 @@ import { HIDE_QUICK_START_ADD_TILE_STORAGE_KEY } from '@console/shared/src/compo
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import QuickStartsCatalogCard from '@console/shared/src/components/quick-starts/QuickStartsCatalogCard';
 import { isAddAction, AddAction } from '../extensions/add-actions';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -28,6 +29,7 @@ const Item: React.FC<ItemProps> = ({
   },
   namespace,
 }) => {
+  const fireTelemetryEvent = useTelemetry();
   const access =
     !accessReview ||
     // Defined extensions are immutable. This check will be consistent.
@@ -43,7 +45,13 @@ const Item: React.FC<ItemProps> = ({
       <CatalogTile
         data-test-id={id}
         className="co-catalog-tile"
-        onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedUrl)}
+        onClick={(e: React.SyntheticEvent) => {
+          fireTelemetryEvent('Add Item Selected', {
+            id,
+            name: label,
+          });
+          navigateTo(e, resolvedUrl);
+        }}
         href={resolvedUrl}
         title={label}
         iconImg={typeof icon === 'string' ? icon : undefined}

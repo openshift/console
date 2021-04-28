@@ -33,6 +33,7 @@ import TopologyListView from '../list-view/TopologyListView';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { getTopologySideBar } from '../side-bar/TopologySideBar';
 import { FilterContext } from '../../filters/FilterProvider';
+
 import './TopologyView.scss';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
