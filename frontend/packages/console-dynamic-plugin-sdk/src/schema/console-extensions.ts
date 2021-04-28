@@ -1,7 +1,13 @@
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { ReduxReducer } from '../extensions/redux';
 import { ContextProvider } from '../extensions/context-providers';
-import { StandaloneRoutePage } from '../extensions/pages';
+import {
+  StandaloneRoutePage,
+  RoutePage,
+  ResourceDetailsPage,
+  ResourceListPage,
+  ResourceTabPage,
+} from '../extensions/pages';
 import { YAMLTemplate } from '../extensions/yaml-templates';
 import { AddAction } from '../extensions/add-actions';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
@@ -47,7 +53,11 @@ export type SupportedExtension =
   | TelemetryListener
   | SupportedCatalogExtensions
   | SupportedActionExtensions
-  | SupportedTopologyDetailsExtensions;
+  | SupportedTopologyDetailsExtensions
+  | RoutePage
+  | ResourceListPage
+  | ResourceTabPage
+  | ResourceDetailsPage;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

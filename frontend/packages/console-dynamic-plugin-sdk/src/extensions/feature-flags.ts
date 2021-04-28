@@ -1,3 +1,4 @@
+import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** Gives full control over Console feature flags. */
@@ -16,11 +17,7 @@ export type ModelFeatureFlag = ExtensionDeclaration<
     /** The name of the flag to set once the CRD is detected. */
     flag: string;
     /** The model which refers to a `CustomResourceDefinition`. */
-    model: {
-      group: string;
-      version: string;
-      kind: string;
-    };
+    model: ExtensionK8sModel;
   }
 >;
 

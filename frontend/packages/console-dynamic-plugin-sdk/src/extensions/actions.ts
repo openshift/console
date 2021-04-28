@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ExtensionDeclaration, CodeRef } from '../types';
-import { ExtensionHook } from '../api/common-types';
+import { ExtensionHook, ExtensionK8sGroupModel } from '../api/common-types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */
@@ -22,11 +22,7 @@ export type ResourceActionProvider = ExtensionDeclaration<
   'console.action/resource-provider',
   {
     /** The model for which this provider provides actions for. */
-    model: {
-      group: string;
-      version?: string;
-      kind?: string;
-    };
+    model: ExtensionK8sGroupModel;
     /** A react hook which returns actions for the given resource model */
     provider: CodeRef<ExtensionHook<Action[]>>;
   }

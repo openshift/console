@@ -1,3 +1,4 @@
+import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration } from '../types';
 
 type NavItemProperties = {
@@ -33,11 +34,7 @@ export type ResourceNSNavItem = ExtensionDeclaration<
     /** Overrides the default name. If not supplied the name of the link will equal the plural value of the model. */
     name?: string;
     /** The model for which this nav item links to. */
-    model: {
-      group: string;
-      version: string;
-      kind: string;
-    };
+    model: ExtensionK8sModel;
   }
 >;
 
@@ -47,11 +44,7 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
     /** Overrides the default name. If not supplied the name of the link will equal the plural value of the model. */
     name?: string;
     /** The model for which this nav item links to. */
-    model: {
-      group: string;
-      version: string;
-      kind: string;
-    };
+    model: ExtensionK8sModel;
   }
 >;
 
