@@ -50,7 +50,7 @@ import {
 } from '../utils';
 import {
   dateFormatterNoYear,
-  dateTimeFormatter,
+  dateTimeFormatterWithSeconds,
   formatPrometheusDuration,
   parsePrometheusDuration,
   timeFormatter,
@@ -198,7 +198,9 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
               <div className="query-browser__tooltip-group">
-                <div className="query-browser__tooltip-time">{dateTimeFormatter.format(time)}</div>
+                <div className="query-browser__tooltip-time">
+                  {dateTimeFormatterWithSeconds.format(time)}
+                </div>
               </div>
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-group" key={i}>

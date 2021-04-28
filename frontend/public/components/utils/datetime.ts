@@ -37,6 +37,15 @@ export const dateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefine
   year: 'numeric',
 });
 
+export const dateTimeFormatterWithSeconds = new Intl.DateTimeFormat(getLocale() || undefined, {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  year: 'numeric',
+});
+
 export const utcDateTimeFormatter = new Intl.DateTimeFormat(getLocale() || undefined, {
   month: 'short',
   day: 'numeric',
