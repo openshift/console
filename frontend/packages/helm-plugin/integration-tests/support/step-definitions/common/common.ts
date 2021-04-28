@@ -19,6 +19,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
+  cy.testA11y('Developer perspective with guider tour modal');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {

@@ -35,8 +35,7 @@ export const perspective = {
       // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Developer perspective with guider tour modal');
       guidedTour.close();
-      // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-      // cy.testA11y('Developer perspective');
+      cy.testA11y('Developer perspective');
     }
     nav.sidenav.switcher.shouldHaveText(perspectiveName);
   },
