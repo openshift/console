@@ -175,11 +175,11 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
     </EmptyState>
   );
 
-  const diskFilters: RowFilter[] = [
+  const diskFilters: RowFilter<DiskMetadata>[] = [
     {
       type: 'disk-state',
       filterGroupName: t('lso-plugin~Disk State'),
-      reducer: (disk: DiskMetadata) => {
+      reducer: (disk) => {
         return disk?.status?.state;
       },
       items: [
@@ -187,15 +187,12 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
         { id: DiskStates.NotAvailable, title: t('lso-plugin~NotAvailable') },
         { id: DiskStates.Unknown, title: t('lso-plugin~Unknown') },
       ],
-      filter: (
-        states: { all: (keyof typeof DiskStates)[]; selected: Set<keyof typeof DiskStates> },
-        disk: DiskMetadata,
-      ) => {
+      filter: (states, disk) => {
         if (!states || !states.selected || _.isEmpty(states.selected)) {
           return true;
         }
         const diskState = disk?.status.state;
-        return states.selected.has(diskState) || !_.includes(states.all, diskState);
+        return states.selected.includes(diskState) || !_.includes(states.all, diskState);
       },
     },
   ];

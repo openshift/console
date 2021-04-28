@@ -82,9 +82,7 @@ const environmentComponent = (props) => (
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
 
-const ReplicationControllerPods = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
-);
+const ReplicationControllerPods = (props) => <PodsComponent {...props} showNodes />;
 
 export const ReplicationControllersDetailsPage = (props) => {
   const { t } = useTranslation();

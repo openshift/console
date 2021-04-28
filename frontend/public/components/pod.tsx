@@ -2,7 +2,7 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -12,17 +12,13 @@ import * as _ from 'lodash-es';
 import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
 import {
   Status,
-  TableColumnsType,
   LazyActionMenu,
   ActionServiceProvider,
   ActionMenu,
   ActionMenuVariant,
+  useUserSettingsCompatibility,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  withUserSettingsCompatibility,
-  WithUserSettingsCompatibilityProps,
-} from '@console/shared/src/hoc/withUserSettingsCompatibility';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
@@ -35,6 +31,7 @@ import {
   PodKind,
   referenceForModel,
   referenceFor,
+  Selector,
 } from '../module/k8s';
 import {
   getRestartPolicyLabel,
@@ -45,7 +42,11 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
+import { DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   AsyncComponent,
   DetailsItem,
@@ -94,6 +95,9 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import { RowFilter } from './filter-toolbar';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -831,18 +835,14 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
 };
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
-  PodListProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
-  TableColumnsType
->(
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  undefined,
-  true,
-)(({ userSettingState: tableColumns, ...props }) => {
-  const showNodes = props?.customData?.showNodes;
-  const showNamespaceOverride = props?.customData?.showNamespaceOverride;
+export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNodes, ...props }) => {
   const { t } = useTranslation();
+  const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  );
   const selectedColumns: Set<string> =
     tableColumns?.[columnManagementID]?.length > 0
       ? new Set(tableColumns[columnManagementID])
@@ -853,22 +853,24 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
     [showNamespaceOverride, showNodes, tableColumns],
   );
   return (
-    <Table
-      {...props}
-      activeColumns={selectedColumns}
-      columnManagementID={columnManagementID}
-      showNamespaceOverride={showNamespaceOverride}
-      aria-label={t('public~Pods')}
-      Header={getHeader(showNodes)}
-      Row={PodTableRow}
-      customData={customData}
-      virtualize
-    />
+    userSettingsLoaded && (
+      <Table
+        {...props}
+        activeColumns={selectedColumns}
+        columnManagementID={columnManagementID}
+        showNamespaceOverride={showNamespaceOverride}
+        aria-label={t('public~Pods')}
+        Header={getHeader(showNodes)}
+        Row={PodTableRow}
+        customData={customData}
+        virtualize
+      />
+    )
   );
-});
+};
 PodList.displayName = 'PodList';
 
-export const getFilters = () => [
+export const filters: RowFilter<PodKind>[] = [
   {
     filterGroupName: i18next.t('public~Status'),
     type: 'pod-status',
@@ -887,84 +889,102 @@ export const getFilters = () => [
   },
 ];
 
-const dispatchToProps = (dispatch): PodPagePropsFromDispatch => ({
-  setPodMetrics: (metrics) => dispatch(UIActions.setPodMetrics(metrics)),
-});
-
-export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
-  null,
-  dispatchToProps,
-)(
-  withUserSettingsCompatibility<
-    PodPagePropsFromDispatch & PodPageProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
-    TableColumnsType
-  >(
+export const PodsPage: React.FC<PodPageProps> = ({
+  canCreate = true,
+  namespace,
+  showNodes,
+  showTitle = true,
+  selector,
+  fieldSelector,
+  hideNameLabelFilters,
+  hideLabelFilter,
+  hideColumnManagement,
+  showNamespaceOverride,
+}) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
     COLUMN_MANAGEMENT_CONFIGMAP_KEY,
     COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
     undefined,
     true,
-  )(
-    (
-      props: PodPageProps &
-        PodPagePropsFromDispatch &
-        WithUserSettingsCompatibilityProps<TableColumnsType>,
-    ) => {
-      const {
-        canCreate = true,
-        namespace,
-        setPodMetrics,
-        customData,
-        userSettingState: tableColumns,
-        ...listProps
-      } = props;
-      const { t } = useTranslation();
+  );
 
-      /* eslint-disable react-hooks/exhaustive-deps */
-      React.useEffect(() => {
-        if (showMetrics) {
-          const updateMetrics = () =>
-            fetchPodMetrics(namespace)
-              .then(setPodMetrics)
-              .catch((e) => {
-                // Just log the error here. Showing a warning alert could be more annoying
-                // than helpful. It should be obvious there are no metrics in the list, and
-                // if monitoring is broken, it'll be really apparent since none of the
-                // graphs and dashboards will load in the UI.
-                // eslint-disable-next-line no-console
-                console.error('Unable to fetch pod metrics', e);
-              });
-          updateMetrics();
-          const id = setInterval(updateMetrics, 30 * 1000);
-          return () => clearInterval(id);
-        }
-      }, [namespace]);
-      /* eslint-enable react-hooks/exhaustive-deps */
-      return (
-        <ListPage
-          {...listProps}
-          canCreate={canCreate}
-          kind={kind}
-          ListComponent={PodList}
-          rowFilters={getFilters()}
-          namespace={namespace}
-          customData={customData}
-          columnLayout={{
-            columns: getHeader(props?.customData?.showNodes)().map((column) =>
-              _.pick(column, ['title', 'additional', 'id']),
-            ),
-            id: columnManagementID,
-            selectedColumns:
-              tableColumns?.[columnManagementID]?.length > 0
-                ? new Set(tableColumns[columnManagementID])
-                : null,
-            showNamespaceOverride: props?.customData?.showNamespaceOverride,
-            type: t('public~Pod'),
-          }}
-        />
-      );
-    },
-  ),
-);
+  /* eslint-disable react-hooks/exhaustive-deps */
+  React.useEffect(() => {
+    if (showMetrics) {
+      const updateMetrics = () =>
+        fetchPodMetrics(namespace)
+          .then((metrics) => dispatch(UIActions.setPodMetrics(metrics)))
+          .catch((e) => {
+            // Just log the error here. Showing a warning alert could be more annoying
+            // than helpful. It should be obvious there are no metrics in the list, and
+            // if monitoring is broken, it'll be really apparent since none of the
+            // graphs and dashboards will load in the UI.
+            // eslint-disable-next-line no-console
+            console.error('Unable to fetch pod metrics', e);
+          });
+      updateMetrics();
+      const id = setInterval(updateMetrics, 30 * 1000);
+      return () => clearInterval(id);
+    }
+  }, [namespace]);
+  /* eslint-enable react-hooks/exhaustive-deps */
+
+  const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
+    kind,
+    isList: true,
+    namespaced: true,
+    namespace,
+    selector,
+    fieldSelector,
+  });
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(pods);
+
+  return (
+    userSettingsLoaded && (
+      <>
+        <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
+          {canCreate && (
+            <ListPageCreate groupVersionKind={referenceForModel(PodModel)}>
+              {t('public~Create Pod')}
+            </ListPageCreate>
+          )}
+        </ListPageHeader>
+        <ListPageBody>
+          <ListPageFilter
+            data={data}
+            loaded={loaded}
+            rowFilters={filters}
+            onFilterChange={onFilterChange}
+            columnLayout={{
+              columns: getHeader(showNodes)().map((column) =>
+                _.pick(column, ['title', 'additional', 'id']),
+              ),
+              id: columnManagementID,
+              selectedColumns:
+                tableColumns?.[columnManagementID]?.length > 0
+                  ? new Set(tableColumns[columnManagementID])
+                  : null,
+              showNamespaceOverride,
+              type: t('public~Pod'),
+            }}
+            hideNameLabelFilters={hideNameLabelFilters}
+            hideLabelFilter={hideLabelFilter}
+            hideColumnManagement={hideColumnManagement}
+          />
+          <PodList
+            data={filteredData}
+            loaded={loaded}
+            loadError={loadError}
+            showNodes={showNodes}
+          />
+        </ListPageBody>
+      </>
+    )
+  );
+};
 
 type ContainerLinkProps = {
   pod: PodKind;
@@ -1016,20 +1036,24 @@ type RowCustomData = {
 };
 
 type PodListProps = {
-  customData?: any;
+  data: PodKind[];
+  loaded: boolean;
+  loadError: any;
+  showNodes?: boolean;
+  showNamespaceOverride?: boolean;
 };
 
 type PodPageProps = {
   canCreate?: boolean;
-  fieldSelector?: any;
+  fieldSelector?: string;
   namespace?: string;
-  selector?: any;
+  selector?: Selector;
   showTitle?: boolean;
-  customData?: any;
-};
-
-type PodPagePropsFromDispatch = {
-  setPodMetrics: (metrics) => void;
+  showNodes?: boolean;
+  hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideColumnManagement?: boolean;
+  showNamespaceOverride?: boolean;
 };
 
 type PodDetailsPageProps = {

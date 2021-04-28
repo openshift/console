@@ -1457,8 +1457,8 @@ const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
   state === AlertStates.NotFiring ? _.isEmpty(rule.alerts) : _.some(rule.alerts, { state });
 
 const ruleAlertStateFilter = (filter, rule: Rule) =>
-  (filter.selected.has(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
-  _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
+  (filter.selected?.includes(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
+  _.some(rule.alerts, (a) => filter.selected?.includes(a.state)) ||
   _.isEmpty(filter.selected);
 
 export const alertStateFilter = (): RowFilter => ({

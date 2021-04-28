@@ -13,10 +13,15 @@ import {
   getMachinePhase,
 } from '@console/shared';
 import { MachineModel } from '../models';
-import { MachineKind, referenceForModel } from '../module/k8s';
+import { MachineKind, referenceForModel, Selector } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   DetailsItem,
   Kebab,
@@ -28,7 +33,7 @@ import {
   navFactory,
 } from './utils';
 import { ResourceEventStream } from './events';
-
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(MachineModel), ...common];
 export const machineReference = referenceForModel(MachineModel);
@@ -161,7 +166,13 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({ obj }: { obj: MachineK
   );
 };
 
-export const MachineList: React.SFC = (props) => {
+type MachineListProps = {
+  data: MachineKind[];
+  loaded: boolean;
+  loadError: any;
+};
+
+export const MachineList: React.FC<MachineListProps> = (props) => {
   const { t } = useTranslation();
   const MachineTableHeader = () => {
     return [
@@ -225,18 +236,44 @@ export const MachineList: React.SFC = (props) => {
   );
 };
 
-export const MachinePage: React.SFC<MachinePageProps> = (props) => {
+export const MachinePage: React.FC<MachinePageProps> = ({
+  selector,
+  namespace,
+  showTitle = true,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  hideColumnManagement,
+}) => {
   const { t } = useTranslation();
 
+  const [machines, loaded, loadError] = useK8sWatchResource<MachineKind[]>({
+    kind: referenceForModel(MachineModel),
+    isList: true,
+    selector,
+    namespace,
+  });
+
+  const [data, filteredData, onFilterChange] = useListPageFilter(machines);
+
   return (
-    <ListPage
-      {...props}
-      ListComponent={MachineList}
-      kind={machineReference}
-      textFilter="machine"
-      filterLabel={t('public~by machine or node name')}
-      canCreate
-    />
+    <>
+      <ListPageHeader title={showTitle ? t(MachineModel.labelPluralKey) : undefined}>
+        <ListPageCreate groupVersionKind={referenceForModel(MachineModel)}>
+          {t('public~Create machine')}
+        </ListPageCreate>
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={data}
+          loaded={loaded}
+          onFilterChange={onFilterChange}
+          hideNameLabelFilters={hideNameLabelFilters}
+          hideLabelFilter={hideLabelFilter}
+          hideColumnManagement={hideColumnManagement}
+        />
+        <MachineList data={filteredData} loaded={loaded} loadError={loadError} />
+      </ListPageBody>
+    </>
   );
 };
 
@@ -261,7 +298,10 @@ export type MachineDetailsProps = {
 export type MachinePageProps = {
   showTitle?: boolean;
   namespace?: string;
-  selector?: any;
+  selector?: Selector;
+  hideLabelFilter?: boolean;
+  hideNameLabelFilters?: boolean;
+  hideColumnManagement?: boolean;
 };
 
 export type MachineDetailsPageProps = {

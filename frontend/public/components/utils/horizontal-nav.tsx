@@ -31,7 +31,7 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
       metadata: { namespace },
       spec: { selector },
     } = this.props.obj;
-    const { customData } = this.props;
+    const { showNodes } = this.props;
     if (_.isEmpty(selector)) {
       return <EmptyBox label="Pods" />;
     }
@@ -45,7 +45,7 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
         namespace={namespace}
         selector={selector}
         canCreate={false}
-        customData={customData}
+        showNodes={showNodes}
       />
     );
   }
@@ -305,7 +305,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;
-  customData?: any;
+  showNodes?: boolean;
 };
 
 export type NavBarProps = {

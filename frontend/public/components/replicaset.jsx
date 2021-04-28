@@ -152,7 +152,7 @@ const environmentComponent = (props) => (
   />
 );
 
-const ReplicaSetPods = (props) => <PodsComponent {...props} customData={{ showNodes: true }} />;
+const ReplicaSetPods = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
 const ReplicaSetsDetailsPage = (props) => (

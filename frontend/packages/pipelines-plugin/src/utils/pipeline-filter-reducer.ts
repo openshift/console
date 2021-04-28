@@ -65,20 +65,20 @@ export const pipelineRunFilterReducer = (pipelineRun): string => {
 };
 
 export const pipelineStatusFilter = (filters, pipeline) => {
-  if (!filters || !filters.selected || !filters.selected.size) {
+  if (!filters || !filters.selected || !filters.selected.length) {
     return true;
   }
   const status = pipelineFilterReducer(pipeline);
-  return filters.selected.has(status) || !_.includes(filters.all, status);
+  return filters.selected?.includes(status) || !_.includes(filters.all, status);
 };
 
 export const pipelineRunStatusFilter = (phases, pipeline) => {
-  if (!phases || !phases.selected || !phases.selected.size) {
+  if (!phases || !phases.selected || !phases.selected.length) {
     return true;
   }
 
   const status = pipelineRunFilterReducer(pipeline);
-  return phases.selected.has(status) || !_.includes(phases.all, status);
+  return phases.selected?.includes(status) || !_.includes(phases.all, status);
 };
 
 export const pipelineResourceFilterReducer = (pipelineResource): string => {
@@ -86,11 +86,11 @@ export const pipelineResourceFilterReducer = (pipelineResource): string => {
 };
 
 export const pipelineResourceTypeFilter = (filters, pipelineResource): boolean => {
-  if (!filters || !filters.selected || !filters.selected.size) {
+  if (!filters || !filters.selected || !filters.selected.length) {
     return true;
   }
   const type = pipelineResourceFilterReducer(pipelineResource);
-  return filters.selected.has(type) || !_.includes(filters.all, type);
+  return filters.selected?.includes(type) || !_.includes(filters.all, type);
 };
 
 export const taskRunFilterReducer = (taskRun): string => {
