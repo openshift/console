@@ -24,7 +24,7 @@ const getGlobalsAndReceiverConfig = (configName: string, yamlStr: string) => {
   };
 };
 
-describe('Alertmanager: PagerDuty Receiver Form', () => {
+xdescribe('Alertmanager: PagerDuty Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -203,7 +203,7 @@ describe('Alertmanager: PagerDuty Receiver Form', () => {
   });
 });
 
-describe('Alertmanager: Email Receiver Form', () => {
+xdescribe('Alertmanager: Email Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -327,7 +327,7 @@ describe('Alertmanager: Email Receiver Form', () => {
   });
 });
 
-describe('Alertmanager: Slack Receiver Form', () => {
+xdescribe('Alertmanager: Slack Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
@@ -440,7 +440,7 @@ describe('Alertmanager: Slack Receiver Form', () => {
   });
 });
 
-describe('Alertmanager: Webhook Receiver Form', () => {
+xdescribe('Alertmanager: Webhook Receiver Form', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
