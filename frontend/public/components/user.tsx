@@ -38,7 +38,7 @@ const UserKebab_: React.FC<UserKebabProps & UserKebabDispatchProps> = ({
 }) => {
   const { t } = useTranslation();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: t('user~Impersonate User {{name}}', obj.metadata),
+    label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
   });
   return (
@@ -75,7 +75,7 @@ const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
 
 const EmptyMsg = () => {
   const { t } = useTranslation();
-  return <MsgBox title={t('user~No Users found')} />;
+  return <MsgBox title={t('public~No Users found')} />;
 };
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
@@ -83,17 +83,17 @@ const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
   return (
     <MsgBox
-      title={t('user~No Users found')}
+      title={t('public~No Users found')}
       detail={
         <>
           <p>
             {t(
-              'user~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
+              'public~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
             )}
           </p>
           <p>
             <Link to={oAuthResourcePath}>
-              <Button variant="primary">{t('user~Add IDP')}</Button>
+              <Button variant="primary">{t('public~Add IDP')}</Button>
             </Link>
           </p>
         </>
@@ -107,19 +107,19 @@ export const UserList: React.FC = (props) => {
   const UserTableHeader = () => {
     return [
       {
-        title: t('user~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('user~Full name'),
+        title: t('public~Full name'),
         sortField: 'fullName',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('user~Identities'),
+        title: t('public~Identities'),
         sortField: 'identities[0]',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -134,7 +134,7 @@ export const UserList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('user~Users')}
+      aria-label={t('public~Users')}
       Header={UserTableHeader}
       Row={UserTableRow}
       EmptyMsg={EmptyMsg}
@@ -149,8 +149,8 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('user~Users')}
-      helpText={<>{t('user~Users are automatically added the first time they log in.')}</>}
+      title={t('public~Users')}
+      helpText={<>{t('public~Users are automatically added the first time they log in.')}</>}
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
       canCreate={false}
@@ -171,11 +171,11 @@ const UserDetails: React.FC<UserDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('user~User details')} />
+      <SectionHeading text={t('public~User details')} />
       <ResourceSummary resource={obj}>
-        <dt>{t('user~Full name')}</dt>
+        <dt>{t('public~Full name')}</dt>
         <dd>{obj.fullName || '-'}</dd>
-        <dt>{t('user~Identities')}</dt>
+        <dt>{t('public~Identities')}</dt>
         <dd>
           {_.map(obj.identities, (identity: string) => (
             <div key={identity}>{identity}</div>
@@ -200,7 +200,7 @@ const UserDetailsPage_: React.FC<UserDetailsPageProps & UserKebabDispatchProps> 
 }) => {
   const { t } = useTranslation();
   const impersonateAction: KebabAction = (kind: K8sKind, obj: UserKind) => ({
-    label: t('user~Impersonate User {{name}}', obj.metadata),
+    label: t('public~Impersonate User {{name}}', obj.metadata),
     callback: () => startImpersonate('User', obj.metadata.name),
   });
   return (
