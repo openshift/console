@@ -10,8 +10,8 @@ import {
 
 import { CLOUD, SSH } from '../../../../utils/strings';
 import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
-import { CloudInitWizardForm } from './cloud-init/cloud-init';
 import { CloudInitInfoHelper } from './cloud-init/cloud-init-info-helper';
+import CloudInitAdvancedTab from './cloud-init/CloudInitAdvancedTab';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
 
 import './advanced-tab.scss';
@@ -43,7 +43,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           {t('kubevirt-plugin~Cloud-init')} <CloudInitInfoHelper />
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== CLOUD}>
-          <CloudInitWizardForm wizardReduxID={wizardReduxID} key={key} />
+          <CloudInitAdvancedTab wizardReduxID={wizardReduxID} key={key} />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem>
