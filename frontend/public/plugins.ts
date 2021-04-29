@@ -6,7 +6,6 @@ import { ActivePlugin } from '@console/plugin-sdk/src/typings';
 import { initSubscriptionService } from '@console/plugin-sdk/src/api/subscribeToExtensions';
 import { fetchPluginManifest } from '@console/dynamic-plugin-sdk/src/runtime/plugin-manifest';
 import {
-  getPluginID,
   loadDynamicPlugin,
   registerPluginEntryCallback,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-loader';
@@ -28,23 +27,8 @@ export const initConsolePlugins = _.once((reduxStore: Store<RootState>) => {
 
 const loadPluginFromURL = async (baseURL: string) => {
   const manifest = await fetchPluginManifest(baseURL);
-  loadDynamicPlugin(baseURL, manifest);
-  return getPluginID(manifest);
+  return await loadDynamicPlugin(baseURL, manifest);
 };
-
-// Load all dynamic plugins which are currently enabled on the cluster
-window.SERVER_FLAGS.consolePlugins.forEach((pluginName) => {
-  const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}`;
-
-  loadPluginFromURL(url)
-    .then((pluginID) => {
-      pluginStore.setDynamicPluginEnabled(pluginID, true);
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(`Error while loading plugin from ${url}`, error);
-    });
-});
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging
@@ -60,3 +44,17 @@ if (process.env.NODE_ENV !== 'test') {
   // eslint-disable-next-line no-console
   console.info(`Dynamic plugins: [${window.SERVER_FLAGS.consolePlugins.join(', ')}]`);
 }
+
+// Load all dynamic plugins which are currently enabled on the cluster
+window.SERVER_FLAGS.consolePlugins.forEach((pluginName) => {
+  const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
+
+  loadPluginFromURL(url)
+    .then((pluginID) => {
+      pluginStore.setDynamicPluginEnabled(pluginID, true);
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(`Error while loading plugin from ${url}`, error);
+    });
+});

@@ -14,10 +14,12 @@ export const validatePackageFileSchema = (
   description = 'package.json',
 ) => {
   const validator = new SchemaValidator(description);
-  validator.assert.validSemverString(pkg.version, 'pkg.version');
 
   if (pkg.consolePlugin) {
     validator.validate(consolePkgMetadataSchema, pkg.consolePlugin, 'pkg.consolePlugin');
+
+    validator.assert.validDNSSubdomainName(pkg.consolePlugin.name, 'pkg.consolePlugin.name');
+    validator.assert.validSemverString(pkg.consolePlugin.version, 'pkg.consolePlugin.version');
 
     if (_.isPlainObject(pkg.consolePlugin.dependencies)) {
       Object.entries(pkg.consolePlugin.dependencies).forEach(([depName, versionRange]) => {
@@ -53,7 +55,7 @@ export class ConsoleRemotePlugin {
     // Apply relevant webpack plugins
     compiler.hooks.afterPlugins.tap(ConsoleRemotePlugin.name, () => {
       new webpack.container.ContainerPlugin({
-        name: this.pkg.name,
+        name: this.pkg.consolePlugin.name,
         library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
         filename: remoteEntryFile,
         exposes: this.pkg.consolePlugin.exposedModules || {},
@@ -68,17 +70,28 @@ export class ConsoleRemotePlugin {
         const newSource = new ReplaceSource(source);
         newSource.insert(
           remoteEntryCallback.length + 1,
-          `'${this.pkg.name}@${this.pkg.version}', `,
+          `'${this.pkg.consolePlugin.name}@${this.pkg.consolePlugin.version}',`,
         );
         return newSource;
       });
     });
 
-    // Skip processing config.entry option if it's missing or empty
+    // Skip processing entry option if it's missing or empty
     // TODO(vojtech): latest webpack 5 allows `entry: {}` so use that & remove following code
     if (_.isPlainObject(compiler.options.entry) && _.isEmpty(compiler.options.entry)) {
       compiler.hooks.entryOption.tap(ConsoleRemotePlugin.name, () => {
         return true;
+      });
+    }
+
+    // Set default publicPath if output.publicPath option is missing or empty
+    // TODO(vojtech): mainTemplate is deprecated in latest webpack 5, adapt code accordingly
+    if (_.isEmpty(compiler.options.output.publicPath)) {
+      compiler.hooks.thisCompilation.tap(ConsoleRemotePlugin.name, (compilation) => {
+        compilation.mainTemplate.hooks.requireExtensions.tap(ConsoleRemotePlugin.name, () => {
+          const pluginBaseURL = `/api/plugins/${this.pkg.consolePlugin.name}/`;
+          return `${webpack.RuntimeGlobals.publicPath} = "${pluginBaseURL}";`;
+        });
       });
     }
   }

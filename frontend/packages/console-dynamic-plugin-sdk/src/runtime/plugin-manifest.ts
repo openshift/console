@@ -17,8 +17,8 @@ export const validatePluginManifestSchema = async (
   const validator = new SchemaValidator(manifestURL);
   validator.validate(pluginManifestSchema, manifest, 'manifest');
 
-  validator.assert.nonEmptyString(manifest.name, 'manifest.name');
-  validator.assert.nonEmptyString(manifest.version, 'manifest.version');
+  validator.assert.validDNSSubdomainName(manifest.name, 'manifest.name');
+  validator.assert.validSemverString(manifest.version, 'manifest.version');
 
   if (_.isPlainObject(manifest.dependencies)) {
     Object.entries(manifest.dependencies).forEach(([depName, versionRange]) => {
@@ -30,7 +30,7 @@ export const validatePluginManifestSchema = async (
 };
 
 export const fetchPluginManifest = async (baseURL: string) => {
-  const url = resolveURL(baseURL, pluginManifestFile, { trailingSlashInBaseURL: true });
+  const url = resolveURL(baseURL, pluginManifestFile);
   // eslint-disable-next-line no-console
   console.info(`Loading plugin manifest from ${url}`);
 

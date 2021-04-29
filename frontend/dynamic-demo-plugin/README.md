@@ -28,6 +28,10 @@ the script, for example:
 yarn http-server -a 127.0.0.1
 ```
 
+See the plugin development section in
+[Console Dynamic Plugins README](/frontend/packages/console-dynamic-plugin-sdk/README.md) for details
+on how to run Bridge using local plugins.
+
 ## Deployment on cluster
 
 Console dynamic plugins are supposed to be deployed via [OLM operators](https://github.com/operator-framework).
@@ -41,6 +45,25 @@ Note that the `Service` exposing the HTTP server is annotated to have a signed
 [service serving certificate](https://docs.openshift.com/container-platform/4.6/security/certificates/service-serving-certificate.html)
 generated and mounted into the image. This allows us to run the server with HTTP/TLS enabled, using
 a trusted CA certificate.
+
+## Enabling the plugin
+
+Once deployed on the cluster, demo plugin must be enabled before it can be loaded by Console.
+
+To enable the plugin manually, edit [Console operator](https://github.com/openshift/console-operator)
+config and make sure the plugin's name is listed in the `spec.plugins` sequence (add one if missing):
+
+```sh
+oc edit console.operator.openshift.io cluster
+```
+
+```yaml
+# ...
+spec:
+  plugins:
+    - console-demo-plugin
+# ...
+```
 
 ## Docker image
 
@@ -59,28 +82,4 @@ Following commands should be executed in Console repository root.
    docker push quay.io/$USER/console-demo-plugin
    ```
 
-To test a locally built demo plugin image, simply update and re-apply `oc-manifest.yaml`.
-
-
-## Enable plugin
-
-To enable a Console plugin on the OpenShift cluster you need to edit console-operator's config.
-There you need to list all the Console plugins that you want to enable.
-
-To update the console-operator config use:
-
-  ```sh
-  oc edit console.operator.openshift.io cluster
-  ```
-
-There you need to update the config's spec by adding `plugins` field with the list of enabled Console plugins.
-
-```yaml
-...
-spec:
-  plugins:
-    - console-demo-plugin
-...
-```
-
-Only enabled Console plugins will be served.
+Update and apply `oc-manifest.yaml` to use a custom plugin image.

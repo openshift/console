@@ -9,6 +9,10 @@ released, installed and upgraded independently from each other. To ensure compat
 other plugins, each plugin must declare its dependencies using [semantic version](https://semver.org/)
 ranges.
 
+See the
+[OpenShift Console Dynamic Plugins feature page](https://github.com/openshift/enhancements/blob/master/enhancements/console/dynamic-plugins.md)
+for a high level overview of dynamic plugins in relation to OLM operators and cluster administration.
+
 Example project structure:
 
 ```
@@ -22,8 +26,7 @@ dynamic-demo-plugin/
 
 ## `package.json`
 
-`name` and `version` are used to identify the plugin instance at runtime. Additional plugin metadata is
-declared via the `consolePlugin` object.
+Plugin metadata is declared via the `consolePlugin` object.
 
 ```jsonc
 {
@@ -32,7 +35,9 @@ declared via the `consolePlugin` object.
   "private": true,
   // scripts, dependencies, devDependencies, ...
   "consolePlugin": {
-    "displayName": "Dynamic Demo Plugin",
+    "name": "console-demo-plugin",
+    "version": "0.0.0",
+    "displayName": "Console Demo Plugin",
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
       "barUtils": "./utils/bar"
@@ -44,9 +49,18 @@ declared via the `consolePlugin` object.
 }
 ```
 
+`consolePlugin.name` should be the same as `metadata.name` of the corresponding `ConsolePlugin` resource
+used to represent the plugin on the cluster. Therefore, it must be a valid
+[DNS subdomain name](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-subdomain-names).
+
+`consolePlugin.version` must be [semver](https://semver.org/) compliant.
+
 Dynamic plugins can expose modules representing additional code to be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
-each exposed module. Exposed modules are resolved relative to webpack `context` option.
+each exposed module. Exposed modules are resolved relative to plugin's webpack `context` option.
+
+See [`ConsolePluginMetadata` type](/frontend/packages/console-dynamic-plugin-sdk/src/schema/plugin-package.ts)
+for details on the `consolePlugin` object and its schema.
 
 ## `console-extensions.json`
 
@@ -81,20 +95,19 @@ Declares all extensions contributed by the plugin. The `$schema` property is opt
 
 Depending on extension `type`, the `properties` object may contain code references, encoded as object
 literals `{ $codeRef: string }`. When loading dynamic plugins, encoded code references are transformed
-into functions `CodeRef<T> = () => Promise<T>` used to load the referenced objects.
+into functions `() => Promise<T>` used to load the referenced objects.
 
 The `$codeRef` value should be formatted as either `moduleName.exportName` (referring to a named export)
 or `moduleName` (referring to the `default` export). Only the plugin's exposed modules (i.e. the keys of
-`consolePlugin.exposedModules` object in `package.json` file) may be used in code references.
+`consolePlugin.exposedModules` object) may be used in code references.
 
 ## Webpack config
 
 Dynamic plugins _must_ be built with [webpack](https://webpack.js.org/) in order for their modules to
-seamlessly integrate with Console at runtime. Use webpack version 5+ which includes native support for
-module federation.
+seamlessly integrate with Console application at runtime. Use webpack version 5+ which includes native
+support for module federation.
 
 All dynamic plugin assets are managed via webpack plugin `ConsoleRemotePlugin`.
-
 
 ```ts
 import * as webpack from 'webpack';
@@ -123,17 +136,43 @@ dynamic-demo-plugin/dist/
 └── utils_bar_ts-chunk.js
 ```
 
-`plugin-manifest.json`: dynamic plugin manifest. Contains both metadata and extension declarations to be
-interpreted by Console at runtime.
+`plugin-manifest.json`: dynamic plugin manifest. Contains both metadata and extension declarations to
+be parsed and interpreted by Console at runtime. This is the first plugin asset loaded by Console.
 
 `plugin-entry.js`: [webpack container entry chunk](https://webpack.js.org/concepts/module-federation/#low-level-concepts).
-Provides asynchronous access to specific modules exposed by the plugin.
+Provides asynchronous access to specific modules exposed by the plugin. Loaded right after the plugin
+manifest.
 
-`utils_bar_ts-chunk.js`: webpack chunk corresponding to the exposed `barUtils` module.
+`utils_bar_ts-chunk.js`: webpack chunk for the exposed `barUtils` module. Loaded via the plugin entry
+chunk when needed.
+
+## Plugin development
+
+Run Bridge locally and instruct it to proxy e.g. `/api/plugins/console-demo-plugin` requests directly
+to your local plugin asset server (web server hosting the plugin's generated assets):
+
+```sh
+./bin/bridge -plugins console-demo-plugin=http://localhost:9001/
+```
+
+Your plugin should start loading automatically upon Console application startup. Inspect the value of
+`window.SERVER_FLAGS.consolePlugins` to see the list of plugins which Console loads upon its startup.
+
+## Plugin detection and management
+
+[Console operator](https://github.com/openshift/console-operator) detects available plugins through
+`ConsolePlugin` resources on the cluster. It also maintains a cluster-wide list of currently enabled
+plugins via `spec.plugins` field in its config (`Console` resource instance named `cluster`).
+
+When the `spec.plugins` value in Console operator config changes, Console operator computes the actual
+list of plugins to load in Console as an intersection between all available plugins vs. plugins marked
+as enabled. Updating Console operator config triggers a new rollout of the Console (Bridge) deployment.
+Bridge reads the computed list of plugins upon its startup and injects this list into Console web page
+via `SERVER_FLAGS` object.
 
 ## Runtime constraints and specifics
 
-- Loading multiple plugins with the same `name` is not allowed.
+- Loading multiple plugins with the same `name` (but with a different `version`) is not allowed.
 - Console will [override](https://webpack.js.org/concepts/module-federation/#overriding) certain modules
   to ensure a single version of React etc. is loaded and used by the application.
 - Enabling a plugin makes all of its extensions available for consumption. Individual extensions cannot
