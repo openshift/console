@@ -40,8 +40,7 @@ export const operatorsPage = {
     cy.get(operatorsPO.subscription.logo).should('have.text', operatorLogo),
 
   verifyInstalledOperator: (operatorName: string) => {
-    cy.get(operatorsPO.installOperators.search)
-      .should('be.visible')
+    cy.get(operatorsPO.installOperators.search, { timeout: 50000 })
       .clear()
       .type(operatorName);
     cy.get(operatorsPO.installOperators.operatorsNameRow, {

@@ -4,7 +4,7 @@ Feature: Create Pipeline from Add Options
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-add-options"
               And user is at Add page
 
 
@@ -63,10 +63,10 @@ Feature: Create Pipeline from Add Options
         Scenario Outline: Pipeline in topology page : P-02-TC02
             Given workload "<name>" is created from add page with pipeline
               And user is at the Topology page
-              And workload "<name>" is added to namespace
              When user searches for "<name>" in topology page
               And user clicks node "<name>" in topology page
-             Then pipeline name "<name>" is displayed in topology side bar
+             Then user can see sidebar opens with Resources tab selected by default
+              And side bar is displayed with the pipelines section
 
         Examples:
                   | name       |
@@ -149,18 +149,3 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/django-ex.git                   |
                   | https://github.com/jboss-openshift/openshift-quickstarts  |
                   | https://github.com/sclorg/nodejs-ex.git                   |
-
-
-        @regression
-        Scenario Outline: Pipelines section in topology page: P-02-TC09
-            Given user is at the Topology page
-             When user searches for "<node_name>" in topology page
-              And user clicks on workload "<node_name>"
-             Then user can see sidebar opens with Resources tab selected by default
-              And side bar is displayed with the pipelines section
-      # Below step is commented due to the 4.7 Release UI change
-      # And Start LastRun button is disabled
-
-        Examples:
-                  | node_name       |
-                  | nodejs-ex-D-git |

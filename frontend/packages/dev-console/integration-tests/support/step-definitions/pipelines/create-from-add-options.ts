@@ -143,6 +143,7 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   gitPage.selectAddPipeline();
   gitPage.clickCreate();
   topologyPage.verifyTopologyPage();
+  topologyPage.verifyWorkloadInTopologyPage(pipelineName);
 });
 
 Given('user is at Developer Catalog form with builder images', () => {

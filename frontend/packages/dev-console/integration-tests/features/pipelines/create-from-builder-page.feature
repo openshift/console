@@ -4,7 +4,7 @@ Feature: Create the pipeline from builder page
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-buidler"
               And user is at Add page
 
 

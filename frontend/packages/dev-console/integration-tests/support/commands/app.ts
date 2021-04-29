@@ -1,6 +1,7 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
-import { verifyAndInstallPipelinesOperator } from '../pages';
+import { operators } from '../constants';
+import { installOperator } from '../pages';
 
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
@@ -18,17 +19,18 @@ declare global {
 }
 
 before(() => {
+  cy.clearCookie('openshift-session-token');
   cy.login();
   cy.visit('');
   cy.document()
     .its('readyState')
     .should('eq', 'complete');
-  verifyAndInstallPipelinesOperator();
+  installOperator(operators.PipelineOperator);
 });
 
 after(() => {
   cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
-  cy.logout();
+  // cy.logout();
 });
 
 afterEach(() => {

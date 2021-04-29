@@ -27,7 +27,7 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: '.odc-task-sidebar [data-test-id="dropdown-button"]',
+      inputResource: 'select[id*=resources-inputs-0-resource-field]',
     },
   },
   yamlView: {
@@ -51,6 +51,7 @@ export const pipelineBuilderPO = {
     cancel: '[data-test-id="reset-button"]',
     yamlEditor: '[data-mode-id="yaml"]',
     samples: {
+      sidebar: '[data-test="resource-sidebar"]',
       s2iPipelineWithWorkspace:
         'div.osc-yaml-editor__sidebar ol li:nth-child(3) > button:nth-child(3)',
       dockerPipelineWithResource:
@@ -212,7 +213,7 @@ export const pipelinesPO = {
   },
   startPipeline: {
     sectionTitle: 'h2.odc-form-section__heading',
-    gitResourceDropdown: '.odc-pipeline-resource-dropdown button',
+    gitResourceDropdown: 'button[aria-haspopup="listbox"]',
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',

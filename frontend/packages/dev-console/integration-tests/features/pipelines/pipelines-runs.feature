@@ -4,7 +4,7 @@ Feature: Pipeline Runs
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-runs"
               And user is at pipelines page
 
 

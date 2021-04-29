@@ -7,7 +7,12 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 export const app = {
-  waitForLoad: (timeout: number = 30000) => cy.get('.co-m-loader', { timeout }).should('not.exist'),
+  waitForLoad: (timeout: number = 30000) => {
+    cy.get('.co-m-loader', { timeout }).should('not.exist');
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+  },
   waitForNameSpacesToLoad: () => {
     cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
   },
@@ -140,21 +145,63 @@ export const projectNameSpace = {
 
   selectOrCreateProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    // Bug: ODC-5129 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-    // cy.testA11y('Create Project modal');
+    app.waitForNameSpacesToLoad();
+    // cy.get('[id="#ALL_NS#-link"]').click();
+    // cy.byLegacyTestID('item-filter')
+    //   .clear()
+    //   .type(projectName);
+    //   var filteredProjectsData = new Array();
+    // cy.get('body').then(($body) => {
+    //     if ($body.find('[role="grid"]').length !== 0) {
+    //       return new Cypress.Promise((resolve, reject) => {
+    //       cy.get('[role="grid"] tr td:nth-child(1)').each(($el) => {
+    //         filteredProjectsData.push($el.find('button').text());
+    //         cy.log(`$el.find('button').text()`);
+    //       }).then(() => {
+    //         return resolve(filteredProjectsData)
+    //       });
+    //       });
+    //     }
+    //   });
+    //     if(filteredProjectsData.includes(projectName)) {
+    //       cy.get('[role="grid"] tr td:nth-child(1) button').contains(projectName).click();
+    //     }
+    //     else {
+    //       projectNameSpace.selectCreateProjectOption();
+    //       projectNameSpace.enterProjectName(projectName);
+    //       modal.submit();
+    //       modal.shouldBeClosed();
+    //     }
+
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-dropdown__toggle-text')
+      .first()
+      .as('projectNameSpaceDropdown');
     cy.get('[role="listbox"]').then(($el) => {
       if ($el.find('li[role="option"]').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
-        cy.byTestID('input-name').type(projectName);
-        cy.byTestID('confirm-action').click();
+        projectNameSpace.enterProjectName(projectName);
+        modal.submit();
         cy.log(`User has created namespace "${projectName}"`);
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
-          .contains(projectName)
-          .click();
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .each(($ele) => {
+            if ($ele.text() === projectName) {
+              cy.get(`[id="${projectName}-link"]`).click();
+            }
+          });
         cy.log(`User has selected namespace "${projectName}"`);
+        cy.get('@projectNameSpaceDropdown').then(($el1) => {
+          if ($el1.text().includes(projectName)) {
+            cy.get('@projectNameSpaceDropdown').should('contain.text', projectName);
+          } else {
+            cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+            projectNameSpace.enterProjectName(projectName);
+            modal.submit();
+          }
+        });
       }
     });
   },

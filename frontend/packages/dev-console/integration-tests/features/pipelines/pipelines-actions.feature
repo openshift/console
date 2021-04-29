@@ -4,7 +4,7 @@ Feature: Perform the actions on Pipelines page
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-actions"
               And user is at pipelines page
 
 

@@ -41,7 +41,7 @@ export const pipelinesPage = {
     switch (action) {
       case pipelineActions.Start: {
         cy.byTestActionID('Start').click();
-        cy.get('[data-test-section-heading="Pipeline Run Details"]').should('be.visible');
+        cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
       case pipelineActions.AddTrigger: {
@@ -171,23 +171,22 @@ export const startPipelineInPipelinesPage = {
     cy.get(pipelinesPO.startPipeline.revision).type(revision);
   },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
-    cy.get('.modal-body-content').should('be.visible');
-    cy.get('form').within(() => {
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000);
-      cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
-        // if ($btn.attr('aria-haspopup', 'listbox')) {
-        if ($btn.attr('disabled')) {
-          cy.log('Pipeline resource is not available, so adding a new git resource');
-        } else {
-          cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
-          cy.get('[role="option"]')
-            .first()
-            .click();
-        }
-        startPipelineInPipelinesPage.enterGitUrl(gitUrl);
-        startPipelineInPipelinesPage.enterRevision(revision);
-      });
+    modal.shouldBeOpened();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
+      if ($btn.attr('disabled')) {
+        cy.log('Pipeline resource is not available, so adding a new git resource');
+      } else if ($btn.attr('aria-haspopup', 'listbox')) {
+        cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
+        cy.get('ul li')
+          .contains('Create Pipeline resource')
+          .click();
+        // Below line commented, because tags in the DOM got changed
+        // cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+      }
+      startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+      startPipelineInPipelinesPage.enterRevision(revision);
     });
   },
   clickStart: () => cy.get(pipelinesPO.startPipeline.start).click(),

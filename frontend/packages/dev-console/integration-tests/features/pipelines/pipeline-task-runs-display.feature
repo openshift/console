@@ -4,7 +4,7 @@ Feature: Display task runs page
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-task-runs"
               And user is at pipelines page
 
 

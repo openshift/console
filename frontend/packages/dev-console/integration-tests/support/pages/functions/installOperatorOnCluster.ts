@@ -36,12 +36,25 @@ export const verifyAndInstallPipelinesOperator = () => {
     } else {
       perspective.switchTo(switchPerspective.Administrator);
       operatorsPage.navigateToInstallOperatorsPage();
-      cy.get(operatorsPO.installOperators.search).type(operators.PipelineOperator);
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-test="msg-box-detail"]').length) {
+          cy.get(operatorsPO.installOperators.search)
+            .should('be.visible')
+            .clear()
+            .type(operators.PipelineOperator);
+        } else {
+          cy.log(
+            `Operators are not installed in this cluster, so lets install the operator from operator Hub`,
+          );
+        }
+      });
       cy.get('body', {
         timeout: 50000,
       }).then(($body) => {
         if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
           installOperator(operators.PipelineOperator);
+          cy.wait(30000);
+          cy.reload();
         }
       });
       perspective.switchTo(switchPerspective.Developer);

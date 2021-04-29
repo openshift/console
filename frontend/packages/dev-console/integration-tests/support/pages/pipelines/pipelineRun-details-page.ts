@@ -10,6 +10,7 @@ export const pipelineRunDetailsPage = {
   verifyTitle: () =>
     cy
       .get(pipelineRunDetailsPO.details.sectionTitle)
+      .find('span')
       .should('have.text', pageTitle.PipelineRunDetails),
   waitForTaskRunToComplete: () => {
     pipelineRunDetailsPage.waitForTaskRunToComplete();

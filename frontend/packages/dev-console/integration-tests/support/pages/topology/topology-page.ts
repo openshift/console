@@ -2,6 +2,7 @@ import { displayOptions, nodeActions } from '../../constants/topology';
 import { topologyPO } from '../../pageObjects/topology-po';
 import { createHelmRelease } from '../functions/createHelmRelease';
 import { sideBarTabs } from '../../constants/staticText/topology-text';
+import { app } from '../app';
 
 export const topologyPage = {
   verifyTitle: () => {
@@ -9,9 +10,7 @@ export const topologyPage = {
     cy.get(topologyPO.title).should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    app.waitForLoad();
     cy.url().should('include', 'topology');
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
