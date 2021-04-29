@@ -862,7 +862,9 @@ class StorageClassFormWithTranslation extends React.Component<
         return (
           <Component
             key={key}
-            onParamChange={(value: string) => this.setParameterHandler(key, value, false)}
+            parameterKey={key}
+            parameterValue={this.state.newStorageClass.parameters[key]?.value || ''}
+            onParamChange={this.setParameterHandler}
           />
         );
       }

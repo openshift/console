@@ -19,19 +19,25 @@ import {
   ActionGroup,
 } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-
-import { LoadingInline } from '@console/internal/components/utils/status-box';
+import { StatusBox, LoadingInline } from '@console/internal/components/utils/status-box';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ProvisionerProps } from '@console/plugin-sdk';
-import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s/types';
-import { ButtonBar } from '@console/internal/components/utils/button-bar';
-import { ConfigMapModel } from '@console/internal/models';
-
 import {
+  ConfigMapKind,
+  K8sResourceKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s/types';
+import { ButtonBar } from '@console/internal/components/utils/button-bar';
+import { ConfigMapModel, StorageClassModel } from '@console/internal/models';
+import { OCS_INDEPENDENT_FLAG, GUARDED_FEATURES } from '../../features';
+import {
+  OCS_INTERNAL_CR_NAME,
+  OCS_EXTERNAL_CR_NAME,
   CEPH_INTERNAL_CR_NAME,
   CEPH_EXTERNAL_CR_NAME,
   CLUSTER_STATUS,
@@ -52,18 +58,68 @@ import {
   getPort,
 } from '../kms-config/utils';
 import './ocs-storage-class-form.scss';
-import { GUARDED_FEATURES } from '../../features';
 
-export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+export const CephFsNameComponent: React.FC<ProvisionerProps> = ({
+  parameterKey,
+  parameterValue,
+  onParamChange,
+}) => {
+  const { t } = useTranslation();
+
+  const isExternal = useFlag(OCS_INDEPENDENT_FLAG);
+  const scName = `${isExternal ? OCS_EXTERNAL_CR_NAME : OCS_INTERNAL_CR_NAME}-cephfs`;
+  const [sc, scLoaded, scLoadError] = useK8sGet<StorageClassResourceKind>(
+    StorageClassModel,
+    scName,
+  );
+
+  React.useEffect(() => {
+    if (scLoaded && !scLoadError) {
+      const fsName = sc?.parameters?.fsName;
+      if (fsName) {
+        onParamChange(parameterKey, fsName, false);
+      }
+    }
+  }, [sc, scLoaded, scLoadError, parameterKey, onParamChange]);
+
+  if (scLoaded && !scLoadError) {
+    return (
+      <div className="form-group">
+        <label htmlFor="filesystem-name" className="co-required">
+          {t('ceph-storage-plugin~Filesystem name')}
+        </label>
+        <input
+          className="pf-c-form-control"
+          type="text"
+          value={parameterValue}
+          disabled={!isExternal}
+          onChange={(e) => onParamChange(parameterKey, e.currentTarget.value, false)}
+          placeholder={t('ceph-storage-plugin~Enter filesystem name')}
+          id="filesystem-name"
+          required
+        />
+        <span className="help-block">
+          {t('ceph-storage-plugin~CephFS filesystem name into which the volume shall be created')}
+        </span>
+      </div>
+    );
+  }
+  return <StatusBox loadError={scLoadError} loaded={scLoaded} />;
+};
+
+export const PoolResourceComponent: React.FC<ProvisionerProps> = ({
+  parameterKey,
+  onParamChange,
+}) => {
   const { t } = useTranslation();
 
   const [poolData, poolDataLoaded, poolDataLoadError] = useK8sWatchResource<StoragePoolKind[]>(
     cephBlockPoolResource,
   );
 
-  const [cephClusters, loaded, loadError] = useK8sWatchResource<CephClusterKind[]>(
-    cephClusterResource,
-  );
+  const [cephClusters, cephClusterLoaded, cephClusterLoadError] = useK8sWatchResource<
+    CephClusterKind[]
+  >(cephClusterResource);
 
   const [isOpen, setOpen] = React.useState(false);
   const [poolName, setPoolName] = React.useState('');
@@ -71,17 +127,17 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
   const handleDropdownChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const name = e.currentTarget.id;
     setPoolName(name);
-    onParamChange(name);
+    onParamChange(parameterKey, name, false);
   };
 
   const onPoolCreation = (name: string) => {
     setPoolName(name);
-    onParamChange(name);
+    onParamChange(parameterKey, name, false);
   };
 
   const onPoolInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPoolName(e.currentTarget.value);
-    onParamChange(e.currentTarget.value);
+    onParamChange(parameterKey, e.currentTarget.value, false);
   };
 
   const poolDropdownItems = _.reduce(
@@ -161,7 +217,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
             </span>
           </div>
         )}
-        {(poolDataLoadError || loadError) && (
+        {(poolDataLoadError || cephClusterLoadError) && (
           <Alert
             className="co-alert"
             variant="danger"
@@ -194,7 +250,12 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
       </div>
     );
   }
-  return <>{(!loaded || !poolDataLoaded) && <LoadingInline />}</>;
+  return (
+    <StatusBox
+      loadError={cephClusterLoadError && poolDataLoadError}
+      loaded={cephClusterLoaded && poolDataLoaded}
+    />
+  );
 };
 
 const StorageClassEncryptionLabel: React.FC = () => {
@@ -270,7 +331,10 @@ type KMSDetailsProps = {
   setEditKMS: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
+  parameterKey,
+  onParamChange,
+}) => {
   const { t } = useTranslation();
   const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
   const [state, dispatch] = React.useReducer(scReducer, scInitialState);
@@ -349,7 +413,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
   ]);
 
   const setChecked = (value: boolean) => {
-    onParamChange(value.toString());
+    onParamChange(parameterKey, value.toString(), false);
     isChecked(value);
   };
 
@@ -459,7 +523,10 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
   );
 };
 
-export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
+  parameterKey,
+  onParamChange,
+}) => {
   const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
 
   const csiCMWatchResource: WatchK8sResource = {
@@ -476,7 +543,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({ onPara
     if (isKmsSupported && csiConfigMapLoaded && csiConfigMap) {
       const serviceNames: string[] = Object.keys(csiConfigMap?.data);
       const targetServiceName: string = serviceNames[serviceNames.length - 1];
-      onParamChange(targetServiceName);
+      onParamChange(parameterKey, targetServiceName, false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csiConfigMap]);

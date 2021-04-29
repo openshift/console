@@ -16,7 +16,9 @@ export const isStorageClassProvisioner = (e: Extension): e is StorageClassProvis
 };
 
 export type ProvisionerProps = {
-  onParamChange: (id: string) => void;
+  parameterKey: string;
+  parameterValue: string;
+  onParamChange: (param: string, event: string, checkbox: boolean) => void;
 };
 
 export type ExtensionSCProvisionerProp = {

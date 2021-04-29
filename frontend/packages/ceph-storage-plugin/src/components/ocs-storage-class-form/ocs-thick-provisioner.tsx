@@ -9,14 +9,14 @@ import { GUARDED_FEATURES } from '../../features';
 
 import './ocs-storage-class-form.scss';
 
-export const ThickProvision: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+export const ThickProvision: React.FC<ProvisionerProps> = ({ parameterKey, onParamChange }) => {
   const { t } = useTranslation();
   const isThickProvisionSupported = useFlag(GUARDED_FEATURES.OCS_THICK_PROVISION);
 
   const [checked, isChecked] = React.useState(false);
 
   const setChecked = (value: boolean) => {
-    onParamChange(value.toString());
+    onParamChange(parameterKey, value.toString(), false);
     isChecked(value);
   };
 
