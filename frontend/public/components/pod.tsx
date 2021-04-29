@@ -772,7 +772,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
 );
 
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
-  // t('details-page~Terminal')
+  // t('public~Terminal')
   return (
     <DetailsPage
       {...props}
@@ -786,7 +786,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
         navFactory.events(ResourceEventStream),
         {
           href: 'terminal',
-          nameKey: 'details-page~Terminal',
+          nameKey: 'public~Terminal',
           component: PodExecLoader,
         },
       ]}

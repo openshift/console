@@ -48,8 +48,8 @@ import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 const BuildsReference: K8sResourceKindReference = 'Build';
 
 const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
-  // t('build~Rebuild')
-  labelKey: 'build~Rebuild',
+  // t('public~Rebuild')
+  labelKey: 'public~Rebuild',
   callback: () =>
     cloneBuild(build)
       .then((clone) => {
@@ -70,22 +70,22 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
 });
 
 const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
-  // t('build~Cancel build')
-  labelKey: 'build~Cancel build',
+  // t('public~Cancel build')
+  labelKey: 'public~Cancel build',
   hidden:
     build.status.phase !== 'Running' &&
     build.status.phase !== 'Pending' &&
     build.status.phase !== 'New',
   callback: () =>
     confirmModal({
-      // t('build~Cancel build'),
-      // t('build~Are you sure you want to cancel this build?'),
-      // t('build~Yes, cancel'),
-      // t("build~No, don't cancel"),
-      titleKey: 'build~Cancel build',
-      messageKey: 'build~Are you sure you want to cancel this build?',
-      btnTextKey: 'build~Yes, cancel',
-      cancelTextKey: "build~No, don't cancel",
+      // t('public~Cancel build'),
+      // t('public~Are you sure you want to cancel this build?'),
+      // t('public~Yes, cancel'),
+      // t("public~No, don't cancel"),
+      titleKey: 'public~Cancel build',
+      messageKey: 'public~Are you sure you want to cancel this build?',
+      btnTextKey: 'public~Yes, cancel',
+      cancelTextKey: "public~No, don't cancel",
       executeFn: () =>
         k8sPatch(kind, build, [{ op: 'add', path: '/status/cancelled', value: true }]),
     }),
@@ -122,7 +122,7 @@ export const BuildLogLink = ({ build }) => {
   return isPipeline ? (
     <BuildPipelineLogLink obj={build} />
   ) : (
-    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('build~View logs')}</Link>
+    <Link to={`${resourcePath('Build', name, namespace)}/logs`}>{t('public~View logs')}</Link>
   );
 };
 
@@ -171,7 +171,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
             byteDataType={ByteDataTypes.BinaryBytes}
             humanize={humanizeBinaryBytes}
             query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
-            title={t('build~Memory usage')}
+            title={t('public~Memory usage')}
             {...areaProps}
           />
         </div>
@@ -179,7 +179,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
           <Area
             humanize={humanizeCpuCores}
             query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
-            title={t('build~CPU usage')}
+            title={t('public~CPU usage')}
             {...areaProps}
           />
         </div>
@@ -188,7 +188,7 @@ const BuildGraphs = requirePrometheus(({ build }) => {
             byteDataType={ByteDataTypes.BinaryBytes}
             humanize={humanizeBinaryBytes}
             query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
-            title={t('build~Filesystem')}
+            title={t('public~Filesystem')}
             {...areaProps}
           />
         </div>
@@ -205,19 +205,19 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
       isInline
       className="co-alert"
       variant="info"
-      title={t('build~Pipeline build strategy deprecation')}
+      title={t('public~Pipeline build strategy deprecation')}
     >
-      <Trans i18nKey="build~pipelineBuildStrategyAlert">
+      <Trans i18nKey="public~pipelineBuildStrategyAlert">
         With the release of{' '}
         <ExternalLink
           href="https://openshift.github.io/pipelines-docs/"
-          text={t('build~OpenShift Pipelines based on Tekton')}
+          text={t('public~OpenShift Pipelines based on Tekton')}
         />
         , the pipelines build strategy has been deprecated. Users should either use Jenkins files
         directly on Jenkins or use cloud-native CI/CD with Openshift Pipelines.
         <ExternalLink
           href="https://github.com/openshift/pipelines-tutorial/"
-          text={t('build~Try the OpenShift Pipelines tutorial')}
+          text={t('public~Try the OpenShift Pipelines tutorial')}
         />
       </Trans>
     </Alert>
@@ -234,7 +234,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
-        <SectionHeading text={t('build~Build details')} />
+        <SectionHeading text={t('public~Build details')} />
         <BuildGraphs build={build} />
         {hasPipeline && (
           <div className="row">
@@ -247,7 +247,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
           <div className="col-sm-6">
             <ResourceSummary resource={build}>
               <DetailsItem
-                label={t('build~Triggered by')}
+                label={t('public~Triggered by')}
                 obj={build}
                 path="spec.triggeredBy"
                 hideEmpty
@@ -255,7 +255,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
                 {triggeredBy}
               </DetailsItem>
               <DetailsItem
-                label={t('build~Started')}
+                label={t('public~Started')}
                 obj={build}
                 path="status.startTimestamp"
                 hideEmpty
@@ -266,21 +266,26 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
           </div>
           <div className="col-sm-6">
             <BuildStrategy resource={build}>
-              <DetailsItem label={t('build~Status')} obj={build} path="status.phase">
+              <DetailsItem label={t('public~Status')} obj={build} path="status.phase">
                 <Status status={build.status.phase} />
               </DetailsItem>
-              <DetailsItem label={t('build~Message')} obj={build} path="status.message" hideEmpty>
+              <DetailsItem label={t('public~Message')} obj={build} path="status.message" hideEmpty>
                 {message}
               </DetailsItem>
               <DetailsItem
-                label={t('build~Log snippet')}
+                label={t('public~Log snippet')}
                 obj={build}
                 path="status.logSnippet"
                 hideEmpty
               >
                 <pre>{logSnippet}</pre>
               </DetailsItem>
-              <DetailsItem label={t('build~Duration')} obj={build} path="status.duration" hideEmpty>
+              <DetailsItem
+                label={t('public~Duration')}
+                obj={build}
+                path="status.duration"
+                hideEmpty
+              >
                 {duration}
               </DetailsItem>
             </BuildStrategy>
@@ -339,7 +344,7 @@ export const BuildEnvironmentComponent = (props) => {
   return (
     <div className="cos-status-box">
       <div className="text-center">
-        {t('build~The environment variable editor does not support build strategy: {{ type }}', {
+        {t('public~The environment variable editor does not support build strategy: {{ type }}', {
           type: obj.spec.strategy.type,
         })}
         .
@@ -404,26 +409,26 @@ export const BuildsList: React.SFC = (props) => {
   const BuildsTableHeader = () => {
     return [
       {
-        title: t('build~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('build~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('build~Status'),
+        title: t('public~Status'),
         sortField: 'status.phase',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('build~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
@@ -439,7 +444,7 @@ export const BuildsList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('build~Builds')}
+      aria-label={t('public~Builds')}
       Header={BuildsTableHeader}
       Row={BuildsTableRow}
       virtualize
@@ -458,7 +463,7 @@ export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('build~Builds')}
+      title={t('public~Builds')}
       kind={BuildsReference}
       ListComponent={BuildsList}
       canCreate={false}

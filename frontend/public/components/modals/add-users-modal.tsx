@@ -28,20 +28,15 @@ export const AddUsersModal = withHandlePromise((props: AddUsersModalProps) => {
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>{t('add-users-modal~Add users')}</ModalTitle>
+      <ModalTitle>{t('public~Add users')}</ModalTitle>
       <ModalBody>
-        <p>{t('add-users-modal~Add new Users to Group {name}.', props.group.metadata)}</p>
-        <ListInput
-          label={t('add-users-modal~Users')}
-          required
-          initialValues={values}
-          onChange={setValues}
-        />
+        <p>{t('public~Add new Users to Group {name}.', props.group.metadata)}</p>
+        <ListInput label={t('public~Users')} required initialValues={values} onChange={setValues} />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={props.errorMessage}
         inProgress={props.inProgress}
-        submitText={t('add-users-modal~Save')}
+        submitText={t('public~Save')}
         cancel={props.cancel}
       />
     </form>

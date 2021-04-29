@@ -94,25 +94,25 @@ export const ClusterOperatorList: React.FC = (props) => {
   const ClusterOperatorTableHeader = () => {
     return [
       {
-        title: t('cluster-operator~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('cluster-operator~Status'),
+        title: t('public~Status'),
         sortFunc: 'getClusterOperatorStatus',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('cluster-operator~Version'),
+        title: t('public~Version'),
         sortFunc: 'getClusterOperatorVersion',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('cluster-operator~Message'),
+        title: t('public~Message'),
         props: { className: tableColumnClasses[3] },
       },
     ];
@@ -163,7 +163,7 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
   const { t } = useTranslation();
   const filters = [
     {
-      filterGroupName: t('cluster-operator~Status'),
+      filterGroupName: t('public~Status'),
       type: 'cluster-operator-status',
       reducer: getClusterOperatorStatus,
       items: _.map(allStatuses, (phase) => ({
@@ -196,8 +196,8 @@ const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
       <table className="table">
         <thead>
           <tr>
-            <th>{t('cluster-operator~Name')}</th>
-            <th>{t('cluster-operator~Version')}</th>
+            <th>{t('public~Name')}</th>
+            <th>{t('public~Version')}</th>
           </tr>
         </thead>
         <tbody>
@@ -225,7 +225,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
     <>
       <div className="co-m-pane__body">
         <SectionHeading
-          text={t('cluster-operator~{{resource}} details', {
+          text={t('public~{{resource}} details', {
             resource: ClusterOperatorModel.label,
           })}
         />
@@ -237,26 +237,26 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
             <dl>
               {operatorVersion && (
                 <>
-                  <dt>{t('cluster-operator~Version')}</dt>
+                  <dt>{t('public~Version')}</dt>
                   <dd>{operatorVersion}</dd>
                 </>
               )}
-              <dt>{t('cluster-operator~Status')}</dt>
+              <dt>{t('public~Status')}</dt>
               <dd>
                 <OperatorStatusIconAndLabel status={status} />
               </dd>
-              <dt>{t('cluster-operator~Message')}</dt>
+              <dt>{t('public~Message')}</dt>
               <dd className="co-pre-line">{message || '-'}</dd>
             </dl>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('cluster-operator~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={conditions} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('cluster-operator~Operand versions')} />
+        <SectionHeading text={t('public~Operand versions')} />
         <OperandVersions versions={versions} />
       </div>
     </>
@@ -274,14 +274,14 @@ export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProp
         navFactory.editYaml(),
         {
           href: 'related-objects',
-          name: t('cluster-operator~Related objects'),
+          name: t('public~Related objects'),
           component: RelatedObjectsPage,
         },
       ]}
       breadcrumbsFor={() => [
         { name: ClusterOperatorModel.labelPlural, path: '/settings/cluster/clusteroperators' },
         {
-          name: t('cluster-operator~{{resource}} details', {
+          name: t('public~{{resource}} details', {
             resource: ClusterOperatorModel.label,
           }),
           path: props.match.url,

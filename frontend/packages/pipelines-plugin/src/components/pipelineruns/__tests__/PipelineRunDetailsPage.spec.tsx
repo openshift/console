@@ -13,7 +13,7 @@ import TaskRuns from '../detail-page-tabs/TaskRuns';
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');
 type PipelineRunDetailsPageProps = React.ComponentProps<typeof PipelineRunDetailsPage>;
-const i18nNS = 'details-page';
+const i18nNS = 'public';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

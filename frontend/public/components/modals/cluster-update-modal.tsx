@@ -58,21 +58,21 @@ const ClusterUpdateModal = withHandlePromise((props: ClusterUpdateModalProps) =>
 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('cluster-update-modal~Update cluster')}</ModalTitle>
+      <ModalTitle>{t('public~Update cluster')}</ModalTitle>
       <ModalBody>
         <div className="form-group">
-          <label>{t('cluster-update-modal~Current version')}</label>
+          <label>{t('public~Current version')}</label>
           <p>{currentVersion}</p>
         </div>
         <div className="form-group">
-          <label htmlFor="version_dropdown">{t('cluster-update-modal~Select new version')}</label>
+          <label htmlFor="version_dropdown">{t('public~Select new version')}</label>
           <Dropdown
             className="cluster-update-modal__dropdown"
             id="version_dropdown"
             items={dropdownItems}
             onChange={(newDesiredVersion: string) => setDesiredVersion(newDesiredVersion)}
             selectedKey={desiredVersion}
-            title={t('cluster-update-modal~Select version')}
+            title={t('public~Select version')}
           />
         </div>
       </ModalBody>

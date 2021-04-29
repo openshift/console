@@ -34,7 +34,7 @@ const ConsumerPopover: React.FC<ConsumerPopoverProps> = React.memo(
     const [isOpen, setOpen] = React.useState(false);
     return (
       <DashboardCardPopupLink
-        popupTitle={t('dashboard~{{title}} breakdown', { title })}
+        popupTitle={t('console-shared~{{title}} breakdown', { title })}
         linkTitle={current}
         onHide={React.useCallback(() => setOpen(false), [])}
         onShow={React.useCallback(() => setOpen(true), [])}
@@ -88,14 +88,14 @@ export const LimitsBody: React.FC<LimitsBodyProps> = ({
     ((!!limitState && limitState !== LIMIT_STATE.OK) ||
       (!!requestedState && requestedState !== LIMIT_STATE.OK)) && (
       <ul className="co-utilization-card-popover__consumer-list">
-        <Status value={total}>{t('dashboard~Total capacity')}</Status>
+        <Status value={total}>{t('console-shared~Total capacity')}</Status>
         <Status value={limit} icon={getLimitIcon(limitState)}>
-          {t('dashboard~Total limit')}
+          {t('console-shared~Total limit')}
         </Status>
-        <Status value={current}>{t('dashboard~Current utilization')}</Status>
-        <Status value={available}>{t('dashboard~Current available capacity')}</Status>
+        <Status value={current}>{t('console-shared~Current utilization')}</Status>
+        <Status value={available}>{t('console-shared~Current available capacity')}</Status>
         <Status value={requested} icon={getLimitIcon(requestedState)}>
-          {t('dashboard~Total requested')}
+          {t('console-shared~Total requested')}
         </Status>
       </ul>
     )
@@ -171,7 +171,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       const dropdownItems = React.useMemo(
         () =>
           consumers.reduce((items, curr) => {
-            items[referenceForModel(curr.model)] = t('dashboard~By {{label}}', {
+            items[referenceForModel(curr.model)] = t('console-shared~By {{label}}', {
               label: curr.model.label,
             });
             return items;
@@ -191,7 +191,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {
-        body = <div className="text-secondary">{t('public~Not available')}</div>;
+        body = <div className="text-secondary">{t('console-shared~Not available')}</div>;
       } else if (!consumerLoaded || !data) {
         body = (
           <ul className="co-utilization-card-popover__consumer-list">
@@ -207,7 +207,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           <>
             <ul
               className="co-utilization-card-popover__consumer-list"
-              aria-label={t('dashboard~Top consumer by {{label}}', { label: model.label })}
+              aria-label={t('console-shared~Top consumer by {{label}}', { label: model.label })}
             >
               {top5Data &&
                 top5Data.map((item) => {
@@ -224,7 +224,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
                   );
                 })}
             </ul>
-            <Link to={monitoringURL}>{t('dashboard~View more')}</Link>
+            <Link to={monitoringURL}>{t('console-shared~View more')}</Link>
           </>
         );
       }
@@ -237,17 +237,17 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
           {children}
           <div className="co-utilization-card-popover__title">
             {consumers.length === 1
-              ? t('dashboard~Top {{label}} consumers', {
+              ? t('console-shared~Top {{label}} consumers', {
                   label: currentConsumer.model.label.toLowerCase(),
                 })
-              : t('dashboard~Top consumers')}
+              : t('console-shared~Top consumers')}
           </div>
           {consumers.length > 1 && (
             <Dropdown
               className="co-utilization-card-popover__dropdown"
               id="consumer-select"
               name="selectConsumerType"
-              aria-label={t('dashboard~Select consumer type')}
+              aria-label={t('console-shared~Select consumer type')}
               items={dropdownItems}
               onChange={onDropdownChange}
               selectedKey={referenceForModel(model)}

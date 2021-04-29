@@ -154,8 +154,8 @@ class DropDownRowWithTranslation extends React.PureComponent {
           }}
           aria-label={
             isBookmarked
-              ? t('dropdown~Remove bookmark {{content}}', { content: contentString })
-              : t('dropdown~Add bookmark {{content}}', { content: contentString })
+              ? t('public~Remove bookmark {{content}}', { content: contentString })
+              : t('public~Add bookmark {{content}}', { content: contentString })
           }
         >
           {isBookmarked ? <MinusCircleIcon /> : <PlusCircleIcon />}
@@ -177,8 +177,8 @@ class DropDownRowWithTranslation extends React.PureComponent {
           }}
           aria-label={
             isFavorite
-              ? t('dropdown~Remove favorite {{content}}', { content: contentString })
-              : t('dropdown~Add favorite {{content}}', { content: contentString })
+              ? t('public~Remove favorite {{content}}', { content: contentString })
+              : t('public~Add favorite {{content}}', { content: contentString })
           }
         >
           <StarIcon className={classNames({ favorite: isFavorite })} />
@@ -658,13 +658,13 @@ class ActionsMenuDropdown_ extends DropdownMixin {
         <button
           type="button"
           aria-haspopup="true"
-          aria-label={t('dropdown~Actions')}
+          aria-label={t('public~Actions')}
           aria-expanded={this.state.active}
           className="pf-c-dropdown__toggle"
           onClick={this.toggle}
           data-test-id="actions-menu-button"
         >
-          <span className="pf-c-dropdown__toggle-text">{title || t('dropdown~Actions')}</span>
+          <span className="pf-c-dropdown__toggle-text">{title || t('public~Actions')}</span>
           <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
         {this.state.active && <KebabItems options={actions} onClick={onClick} />}
@@ -733,8 +733,8 @@ export const ContainerDropdown = (props) => {
   const getHeaders = (container, initContainer) => {
     return initContainer
       ? {
-          [container.name]: t('dropdown~Containers'),
-          [initContainer.name]: t('dropdown~Init containers'),
+          [container.name]: t('public~Containers'),
+          [initContainer.name]: t('public~Init containers'),
         }
       : {};
   };

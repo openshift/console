@@ -21,7 +21,7 @@ export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
     <div className="co-activity-item__ongoing" data-test="activity">
       {timestamp && (
         <span className="text-secondary">
-          {t('dashboard~Started')}{' '}
+          {t('console-shared~Started')}{' '}
           <span data-test="timestamp">
             <Timestamp simple timestamp={timestamp.toString()} />
           </span>
@@ -91,7 +91,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
   if (sortedEvents.length === 0) {
     return (
       <Activity>
-        <div className="text-secondary">{t('dashboard~There are no recent events.')}</div>
+        <div className="text-secondary">{t('console-shared~There are no recent events.')}</div>
       </Activity>
     );
   }
@@ -112,7 +112,7 @@ export const RecentEventsBodyContent: React.FC<RecentEventsBodyContentProps> = (
           to={moreLink}
           data-test="events-view-all-link"
         >
-          {t('dashboard~View all events')}
+          {t('console-shared~View all events')}
         </Link>
       )}
     </>
@@ -129,7 +129,7 @@ export const PauseButton: React.FC<PauseButtonProps> = ({ paused, togglePause })
       data-test-id="events-pause-button"
       data-test="events-pause-button"
     >
-      {paused ? t('public~Resume') : t('public~Pause')}
+      {paused ? t('console-shared~Resume') : t('console-shared~Pause')}
     </DashboardCardButtonLink>
   );
 };
@@ -141,7 +141,7 @@ export const RecentEventsBody: React.FC<RecentEventsBodyProps> = (props) => {
   return (
     <>
       <div className="co-activity-card__recent-title" data-test="activity-recent-title">
-        {t('dashboard~Recent events')}
+        {t('console-shared~Recent events')}
         <PauseButton paused={paused} togglePause={togglePause} />
       </div>
       <RecentEventsBodyContent {...props} paused={paused} setPaused={setPaused} />
@@ -184,14 +184,14 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       allActivities
     ) : (
       <Activity>
-        <div className="text-secondary">{t('dashboard~There are no ongoing activities.')}</div>
+        <div className="text-secondary">{t('console-shared~There are no ongoing activities.')}</div>
       </Activity>
     );
   }
   return (
     <>
       <div className="co-activity-card__ongoing-title" data-test="ongoing-title">
-        {t('dashboard~Ongoing')}
+        {t('console-shared~Ongoing')}
       </div>
       <div className="co-activity-card__ongoing-body">{body}</div>
     </>

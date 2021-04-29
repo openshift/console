@@ -77,12 +77,12 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
       <DetailsItem
-        label={t('details-page~Name')}
+        label={t('public~Name')}
         obj={resource}
         path={customPathName || 'metadata.name'}
       />
       {metadata.namespace && (
-        <DetailsItem label={t('details-page~Namespace')} obj={resource} path="metadata.namespace">
+        <DetailsItem label={t('public~Namespace')} obj={resource} path="metadata.namespace">
           <ResourceLink
             kind="Namespace"
             name={metadata.namespace}
@@ -92,7 +92,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         </DetailsItem>
       )}
       <DetailsItem
-        label={t('details-page~Labels')}
+        label={t('public~Labels')}
         obj={resource}
         path="metadata.labels"
         valueClassName="details-item__value--labels"
@@ -103,7 +103,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         <LabelList kind={reference} labels={metadata.labels} />
       </DetailsItem>
       {showPodSelector && (
-        <DetailsItem label={t('details-page~Pod selector')} obj={resource} path={podSelector}>
+        <DetailsItem label={t('public~Pod selector')} obj={resource} path={podSelector}>
           <Selector
             selector={_.get(resource, podSelector)}
             namespace={_.get(resource, 'metadata.namespace')}
@@ -111,12 +111,12 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
         </DetailsItem>
       )}
       {showNodeSelector && (
-        <DetailsItem label={t('details-page~Node selector')} obj={resource} path={nodeSelector}>
-          <Selector kind={t('details-page~Node')} selector={_.get(resource, nodeSelector)} />
+        <DetailsItem label={t('public~Node selector')} obj={resource} path={nodeSelector}>
+          <Selector kind={t('public~Node')} selector={_.get(resource, nodeSelector)} />
         </DetailsItem>
       )}
       {showTolerations && (
-        <DetailsItem label={t('details-page~Tolerations')} obj={resource} path={tolerationsPath}>
+        <DetailsItem label={t('public~Tolerations')} obj={resource} path={tolerationsPath}>
           {canUpdate ? (
             <Button
               type="button"
@@ -124,20 +124,16 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               onClick={Kebab.factory.ModifyTolerations(model, resource).callback}
               variant="link"
             >
-              {t('details-page~{{count}} toleration', { count: _.size(tolerations) })}
+              {t('public~{{count}} toleration', { count: _.size(tolerations) })}
               <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
             </Button>
           ) : (
-            t('details-page~{{count}} toleration', { count: _.size(tolerations) })
+            t('public~{{count}} toleration', { count: _.size(tolerations) })
           )}
         </DetailsItem>
       )}
       {showAnnotations && (
-        <DetailsItem
-          label={t('details-page~Annotations')}
-          obj={resource}
-          path="metadata.annotations"
-        >
+        <DetailsItem label={t('public~Annotations')} obj={resource} path="metadata.annotations">
           {canUpdate ? (
             <Button
               data-test="edit-annotations"
@@ -146,23 +142,19 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
               onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}
               variant="link"
             >
-              {t('details-page~{{count}} annotation', { count: _.size(metadata.annotations) })}
+              {t('public~{{count}} annotation', { count: _.size(metadata.annotations) })}
               <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
             </Button>
           ) : (
-            t('details-page~{{count}} annotation', { count: _.size(metadata.annotations) })
+            t('public~{{count}} annotation', { count: _.size(metadata.annotations) })
           )}
         </DetailsItem>
       )}
       {children}
-      <DetailsItem
-        label={t('details-page~Created at')}
-        obj={resource}
-        path="metadata.creationTimestamp"
-      >
+      <DetailsItem label={t('public~Created at')} obj={resource} path="metadata.creationTimestamp">
         <Timestamp timestamp={metadata.creationTimestamp} />
       </DetailsItem>
-      <DetailsItem label={t('details-page~Owner')} obj={resource} path="metadata.ownerReferences">
+      <DetailsItem label={t('public~Owner')} obj={resource} path="metadata.ownerReferences">
         <OwnerReferences resource={resource} />
       </DetailsItem>
     </dl>
@@ -174,13 +166,13 @@ export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({ resource })
   return (
     <>
       <DetailsItem
-        label={t('details-page~Current count')}
+        label={t('public~Current count')}
         obj={resource}
         path="status.replicas"
         defaultValue="0"
       />
       <DetailsItem
-        label={t('details-page~Desired count')}
+        label={t('public~Desired count')}
         obj={resource}
         path="spec.replicas"
         defaultValue="0"

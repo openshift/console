@@ -44,17 +44,17 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditions }) => {
       {conditions?.length ? (
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
-            <div className="col-xs-4 col-sm-2 col-md-2">{t('details-page~Type')}</div>
-            <div className="col-xs-4 col-sm-2 col-md-2">{t('details-page~Status')}</div>
-            <div className="hidden-xs hidden-sm col-md-2">{t('details-page~Updated')}</div>
-            <div className="col-xs-4 col-sm-3 col-md-2">{t('details-page~Reason')}</div>
-            <div className="hidden-xs col-sm-5 col-md-4">{t('details-page~Message')}</div>
+            <div className="col-xs-4 col-sm-2 col-md-2">{t('public~Type')}</div>
+            <div className="col-xs-4 col-sm-2 col-md-2">{t('public~Status')}</div>
+            <div className="hidden-xs hidden-sm col-md-2">{t('public~Updated')}</div>
+            <div className="col-xs-4 col-sm-3 col-md-2">{t('public~Reason')}</div>
+            <div className="hidden-xs col-sm-5 col-md-4">{t('public~Message')}</div>
           </div>
           <div className="co-m-table-grid__body">{rows}</div>
         </div>
       ) : (
         <div className="cos-status-box">
-          <div className="text-center">{t('details-page~No conditions found')}</div>
+          <div className="text-center">{t('public~No conditions found')}</div>
         </div>
       )}
     </>

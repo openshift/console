@@ -97,7 +97,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
                 <div className="co-inventory-card__item-status">
                   {error ? (
                     <div className="co-dashboard-text--small text-secondary">
-                      {t('dashboard~Not available')}
+                      {t('console-shared~Not available')}
                     </div>
                   ) : (
                     children
@@ -124,7 +124,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
           <div className="co-inventory-card__item-status">
             {error ? (
               <div className="co-dashboard-text--small text-secondary">
-                {t('dashboard~Not available')}
+                {t('console-shared~Not available')}
               </div>
             ) : (
               children

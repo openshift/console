@@ -255,7 +255,7 @@ const getBreadcrumbs = (model, kindObj, match) => {
       ),
     },
     {
-      name: i18next.t('details-page~{{kind}} details', {
+      name: i18next.t('public~{{kind}} details', {
         kind: kindObj.labelKey ? i18next.t(kindObj.labelKey) : kindObj.label,
       }),
       path: `${match.url}`,

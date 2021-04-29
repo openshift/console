@@ -54,7 +54,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   return (
     <>
       {t(
-        'dashboard~Operators create, configure, and manage applications by extending the Kubernetes API.',
+        'public~Operators create, configure, and manage applications by extending the Kubernetes API.',
       )}
       {sections}
     </>
@@ -100,10 +100,10 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
 
     return (
       <HealthItem
-        title={t('dashboard~Operators')}
+        title={t('public~Operators')}
         state={operatorsHealth.health}
         details={operatorsHealth.detailMessage}
-        popupTitle={t('dashboard~Operator status')}
+        popupTitle={t('public~Operator status')}
       >
         <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />
       </HealthItem>

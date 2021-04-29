@@ -255,8 +255,8 @@ export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => 
 
 const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
-    // t('details-page~Delete {{kind}}', {kind: kind.label})
-    labelKey: 'details-page~Delete {{kind}}',
+    // t('public~Delete {{kind}}', {kind: kind.label})
+    labelKey: 'public~Delete {{kind}}',
     labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
     callback: () =>
       deleteModal({
@@ -266,8 +266,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind, obj) => ({
-    // t('details-page~Edit {{kind}}', {kind: kind.label})
-    labelKey: 'details-page~Edit {{kind}}',
+    // t('public~Edit {{kind}}', {kind: kind.label})
+    labelKey: 'public~Edit {{kind}}',
     labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
     dataTest: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
@@ -275,8 +275,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
   ModifyLabels: (kind, obj) => ({
-    // t('details-page~Edit labels')
-    labelKey: 'details-page~Edit labels',
+    // t('public~Edit labels')
+    labelKey: 'public~Edit labels',
     callback: () =>
       labelsModal({
         kind,
@@ -286,8 +286,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
-    // t('details-page~Edit Pod selector')
-    labelKey: 'details-page~Edit Pod selector',
+    // t('public~Edit Pod selector')
+    labelKey: 'public~Edit Pod selector',
     callback: () =>
       podSelectorModal({
         kind,
@@ -297,8 +297,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind, obj) => ({
-    // t('details-page~Edit annotations')
-    labelKey: 'details-page~Edit annotations',
+    // t('public~Edit annotations')
+    labelKey: 'public~Edit annotations',
     callback: () =>
       annotationsModal({
         kind,
@@ -308,8 +308,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
-    // t('details-page~Edit Pod count')
-    labelKey: 'details-page~Edit Pod count',
+    // t('public~Edit Pod count')
+    labelKey: 'public~Edit Pod count',
     callback: () =>
       configureReplicaCountModal({
         resourceKind: kind,
@@ -318,8 +318,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
   }),
   ModifyTaints: (kind, obj) => ({
-    // t('details-page~Edit taints')
-    labelKey: 'details-page~Edit taints',
+    // t('public~Edit taints')
+    labelKey: 'public~Edit taints',
     callback: () =>
       taintsModal({
         resourceKind: kind,
@@ -329,8 +329,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTolerations: (kind, obj) => ({
-    // t('details-page~Edit tolerations')
-    labelKey: 'details-page~Edit tolerations',
+    // t('public~Edit tolerations')
+    labelKey: 'public~Edit tolerations',
     callback: () =>
       tolerationsModal({
         resourceKind: kind,
@@ -340,14 +340,14 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind, obj) => ({
-    // t('details-page~Add storage')
-    labelKey: 'details-page~Add storage',
+    // t('public~Add storage')
+    labelKey: 'public~Add storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ExpandPVC: (kind, obj) => ({
-    // t('details-page~Expand PVC')
-    labelKey: 'details-page~Expand PVC',
+    // t('public~Expand PVC')
+    labelKey: 'public~Expand PVC',
     callback: () =>
       expandPVCModal({
         kind,
@@ -356,8 +356,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   PVCSnapshot: (kind, obj) => ({
-    // t('details-page~Create snapshot')
-    labelKey: 'details-page~Create snapshot',
+    // t('public~Create snapshot')
+    labelKey: 'public~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
@@ -366,8 +366,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   ClonePVC: (kind, obj) => ({
-    // t('details-page~Clone PVC')
-    labelKey: 'details-page~Clone PVC',
+    // t('public~Clone PVC')
+    labelKey: 'public~Clone PVC',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
     callback: () =>
@@ -378,8 +378,8 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   RestorePVC: (kind, obj: VolumeSnapshotKind) => ({
-    // t('details-page~Restore as new PVC')
-    labelKey: 'details-page~Restore as new PVC',
+    // t('public~Restore as new PVC')
+    labelKey: 'public~Restore as new PVC',
     isDisabled: !obj?.status?.readyToUse,
     tooltip: !obj?.status?.readyToUse ? 'Volume Snapshot is not Ready' : '',
     callback: () =>

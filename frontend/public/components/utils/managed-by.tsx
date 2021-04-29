@@ -70,7 +70,7 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
   if (owner && csv) {
     return (
       <div className={classNames('co-m-pane__heading-owner', className)}>
-        {t('details-page~Managed by')}{' '}
+        {t('public~Managed by')}{' '}
         <ManagedByOperatorResourceLink
           className="co-resource-item"
           namespace={namespace}

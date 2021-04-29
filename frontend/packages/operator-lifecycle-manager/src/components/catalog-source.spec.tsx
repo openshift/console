@@ -32,7 +32,6 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key) => key }),
   };
 });
-const i18nNS = 'details-page';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -80,8 +79,8 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     const detailsPage = wrapper.find(DetailsPage);
     const { pages } = detailsPage.props();
     expect(pages.length).toEqual(3);
-    expect(pages[0].nameKey).toEqual(`${i18nNS}~Details`);
-    expect(pages[1].nameKey).toEqual(`${i18nNS}~YAML`);
+    expect(pages[0].nameKey).toEqual(`public~Details`);
+    expect(pages[1].nameKey).toEqual(`public~YAML`);
     expect(pages[2].nameKey).toEqual(`olm~Operators`);
 
     expect(pages[0].component).toEqual(CatalogSourceDetails);

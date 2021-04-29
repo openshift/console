@@ -16,7 +16,7 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({ error = false, children }) => {
         {error ? (
           <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
             <EmptyStateIcon className="co-status-card__alerts-icon" icon={UnknownIcon} />
-            <EmptyStateBody>{t('dashboard~Alerts could not be loaded.')}</EmptyStateBody>
+            <EmptyStateBody>{t('console-shared~Alerts could not be loaded.')}</EmptyStateBody>
           </EmptyState>
         ) : (
           children

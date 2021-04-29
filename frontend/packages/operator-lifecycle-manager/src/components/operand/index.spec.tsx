@@ -86,7 +86,7 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
   ],
 }));
 
-const i18nNS = 'details-page';
+const i18nNS = 'public';
 
 describe(OperandTableRow.displayName, () => {
   let wrapper: ShallowWrapper<OperandTableRowProps>;

@@ -24,7 +24,7 @@ export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () =>
           path: getBreadcrumbPath(match),
         },
         {
-          name: i18next.t('details-page~{{kind}} details', {
+          name: i18next.t('public~{{kind}} details', {
             kind: i18next.t(kindObj.labelKey) || kindObj.label,
           }),
           path: `${match.url}`,

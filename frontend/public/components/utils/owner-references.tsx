@@ -14,11 +14,7 @@ export const OwnerReferences: React.FC<OwnerReferencesProps> = ({ resource }) =>
       namespace={resource.metadata.namespace}
     />
   ));
-  return owners.length ? (
-    <>{owners}</>
-  ) : (
-    <span className="text-muted">{t('details-page~No owner')}</span>
-  );
+  return owners.length ? <>{owners}</> : <span className="text-muted">{t('public~No owner')}</span>;
 };
 
 type OwnerReferencesProps = {
