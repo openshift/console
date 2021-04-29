@@ -40,8 +40,8 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
             label={label}
             validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
             isRequired={required}
-            helperText={helpText}
           >
+            <div className="pf-c-form__helper-text">{helpText}</div>
             {dndEnabled ? (
               <DragAndDrop>
                 {rowValues.map((v, idx) => {
