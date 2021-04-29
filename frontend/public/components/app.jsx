@@ -159,7 +159,7 @@ class App_ extends React.PureComponent {
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
-          <div id="app-content" className="co-m-page__body">
+          <div id="app-content" className="co-m-app__content">
             <ConsoleNotifier location="BannerTop" />
             <Page
               header={<Masthead onNavToggle={this._onNavToggle} />}
