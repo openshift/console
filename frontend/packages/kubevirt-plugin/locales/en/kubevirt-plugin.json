@@ -696,6 +696,8 @@
   "Launch console": "Launch console",
   "Preparing for customization": "Preparing for customization",
   "Boot source is being prepared for customization.": "Boot source is being prepared for customization.",
+  "Favorite templates are pinned to the top of the list": "Favorite templates are pinned to the top of the list",
+  "Template Provider": "Template Provider",
   "Any template with an available source will show in the developer catalog.": "Any template with an available source will show in the developer catalog.",
   "Virtual Machine Templates": "Virtual Machine Templates",
   "Virtualization": "Virtualization",

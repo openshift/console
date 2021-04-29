@@ -9,6 +9,7 @@ import {
   LoadingInline,
   ResourceLink,
 } from '@console/internal/components/utils';
+import { StarIcon } from '@patternfly/react-icons';
 import { NamespaceModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyRow, PendingStatus } from '@console/shared';
@@ -123,6 +124,16 @@ const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemp
       style={style}
     >
       <TableData className={dimensify()}>
+        <Button
+          className={'kv-pin-customize-btn'}
+          variant="plain"
+          aria-label="pin-templte-action"
+          isDisabled
+        >
+          <StarIcon />
+        </Button>
+      </TableData>
+      <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         {template.metadata.name}
       </TableData>
@@ -141,6 +152,8 @@ const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemp
       </TableData>
       <TableData className={dimensify(true)}>
         <RowActions template={template} sourceStatus={null} namespace={namespace} disableCreate />
+      </TableData>
+      <TableData className={dimensify(true)}>
         <Kebab
           options={customizeTemplateActions(vm)}
           key={`kebab-for-${vm.metadata.uid}`}

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
+import { Button } from '@patternfly/react-core';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
 import { dimensifyRow } from '@console/shared';
-
+import { StarIcon } from '@patternfly/react-icons';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { TemplateItem } from '../../../types/template';
 import { menuActionsCreator } from '../menu-actions';
-import { getTemplateOSIcon, PinnedIcon } from '../os-icons';
+import { getTemplateOSIcon } from '../os-icons';
 import { TemplateSource } from '../vm-template-source';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
@@ -35,7 +35,6 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
   const pinned = isPinned(obj);
   const withSupportModal = useSupportModal();
   const withCustomizeModal = useCustomizeSourceModal();
-
   return (
     <TableRow
       className="kv-vm-template__row"
@@ -44,6 +43,16 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
       trKey={key}
       style={style}
     >
+      <TableData className={dimensify()}>
+        <Button
+          className={pinned ? 'kv-pin-remove-btn' : 'kv-pin-btn'}
+          variant="plain"
+          aria-label="pin-templte-action"
+          onClick={() => togglePin(obj)}
+        >
+          <StarIcon />
+        </Button>
+      </TableData>
       <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
@@ -54,7 +63,6 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
         >
           {getTemplateName(template)}
         </Link>
-        {pinned && <PinnedIcon />}
       </TableData>
       <TableData data-test="template-provider" className={dimensify()}>
         {getTemplateProvider(t, template)}
