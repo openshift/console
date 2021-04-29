@@ -30,3 +30,8 @@ $color-log-window-divider: $color-log-window-header-bg;
   white-space: pre;
   width: 0;
 }
+
+.log-window__lines--wrap {
+  white-space: pre-wrap;
+  width: inherit;
+}
