@@ -344,10 +344,10 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
       <SuccessStatus
         popoverTitle={
           provider === BOOT_SOURCE_AVAILABLE
-            ? t('kubevirt-plugin~Available')
+            ? t('kubevirt-plugin~Unknown')
             : t('kubevirt-plugin~{{provider}} defined', { provider })
         }
-        title={provider === BOOT_SOURCE_AVAILABLE ? t('kubevirt-plugin~Available') : provider}
+        title={provider === BOOT_SOURCE_AVAILABLE ? t('kubevirt-plugin~Unknown') : provider}
       >
         <Stack hasGutter>
           <StackItem className="text-secondary">

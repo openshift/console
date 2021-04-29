@@ -122,7 +122,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       : null,
   );
   const isSCAvailable = storageClasses?.length > 0;
-
+  const withUpload = true; // to be dynamic in future?
   const { dataSource, file, isValid } = state;
 
   const onSubmit = async () => {
@@ -241,7 +241,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                 <BootSourceForm
                   state={state}
                   dispatch={dispatch}
-                  withUpload
+                  withUpload={withUpload}
                   disabled={isCheckingCert}
                   storageClasses={storageClasses}
                   storageClassesLoaded={scLoaded}
@@ -298,7 +298,9 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
             </Button>
             <Button
               variant="primary"
-              isDisabled={!isValid || isSubmitting || !isSCAvailable}
+              isDisabled={
+                !isValid || isSubmitting || !isSCAvailable || (withUpload && !state?.provider)
+              }
               data-test="confirm-action"
               id="confirm-action"
               onClick={onSubmit}

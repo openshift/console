@@ -42,7 +42,7 @@ const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
         transforms: [sortable],
       },
       {
-        title: t('kubevirt-plugin~Boot source'),
+        title: t('kubevirt-plugin~Source provider'),
         transforms: [
           info({
             tooltip: t(

@@ -36,7 +36,7 @@ describe('test vm template source image', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Available');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
 
     virtualization.templates.customizeSource(TEMPLATE_NAME);
     customizeSource.fillForm({ vmtName });

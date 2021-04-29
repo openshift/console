@@ -35,9 +35,7 @@ export const addSource = {
         .clear()
         .type('5');
     }
-    if (provider) {
-      cy.get('#form-ds-provider-input').type(provider);
-    }
+    cy.get('#form-ds-provider-input').type(provider || 'test-provider');
     if (Cypress.env('STORAGE_CLASS')) {
       cy.byTestID('advanced-section').within(() =>
         cy
