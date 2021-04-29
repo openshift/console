@@ -86,7 +86,6 @@ export const getKnativeServiceDepResource = (
             }),
             ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
             ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
-            ...annotations,
           },
         },
         spec: {
