@@ -21,6 +21,7 @@ declare global {
       createUserTemplate(namespace: string): void;
       cdiCloner(namespace: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
+      Login(): void;
     }
   }
 }
@@ -144,4 +145,12 @@ Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) =
     failOnNonZeroExit: false,
     timeout: 180000,
   });
+});
+
+Cypress.Commands.add('Login', () => {
+  if (Cypress.env('IDP')) {
+    cy.login(Cypress.env('IDP'), Cypress.env('IDP_USERNAME'), Cypress.env('IDP_PASSWORD'));
+  } else {
+    cy.login();
+  }
 });

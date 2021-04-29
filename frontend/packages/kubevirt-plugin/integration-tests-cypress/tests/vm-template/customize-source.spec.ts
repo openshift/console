@@ -7,7 +7,7 @@ import { TEMPLATE_NAME, TEMPLATE_BASE_IMAGE, OS_IMAGES_NS } from '../../const/in
 
 describe('test vm template source image', () => {
   before(() => {
-    cy.login();
+    cy.Login();
     cy.visit('');
     cy.createProject(testName);
     cy.deleteResource({

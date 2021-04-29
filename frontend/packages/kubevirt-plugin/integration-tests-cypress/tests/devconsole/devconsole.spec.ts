@@ -23,7 +23,7 @@ const vmName = `test-devconsole-${testName}`;
 describe('test dev console', () => {
   before(() => {
     cy.viewport(1536, 960);
-    cy.login();
+    cy.Login();
     cy.visit('/');
     cy.createProject(testName);
     cy.cdiCloner(testName);
