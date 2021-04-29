@@ -26,50 +26,11 @@ done
 
 echo "Downloading PO files from Project ID \"$PROJECT_ID\""
 
-# Memsource job listing is limited to 50 jobs per page
-# We need to pull all the files down by page and stop when we reach a page with no data
-for i in "${LANGUAGES[@]}"
-do
-  COUNTER=0
-  CURRENT_PAGE=$(memsource job list --project-id $PROJECT_ID --target-lang $i -f value --page-number 0 -c uid | tr '\n' ' ')
-  until [ -z "$CURRENT_PAGE" ]
-  do
-    ((COUNTER++))
-    echo Downloading page $COUNTER
-    memsource job download --project-id $PROJECT_ID --output-dir downloaded_po_files/$i --job-id $CURRENT_PAGE
-    CURRENT_PAGE=$(memsource job list --project-id $PROJECT_ID --target-lang $i -f value --page-number $COUNTER -c uid | tr '\n' ' ')
-  done
-done
-
-# Memsource gives us weird file names back, so we need to clean them up
-# in order to use our existing name-based sorting mechanism.
-echo Cleaning up files
-cd downloaded_po_files
-for i in "${LANGUAGES[@]}"
-do
-  cd $i
-  rename 's/%3D/=/' *
-  cd ..
-done
-cd ..
-
-echo Importing downloaded PO files into OpenShift
-for i in "${LANGUAGES[@]}"
-do
-  # We don't treat zh-cn as a dialect in i18next right now, so we need to alter it to zh
-  if [ $i == 'zh-cn' ]
-  then
-    yarn po-to-i18n -d downloaded_po_files/$i -l 'zh'
-  else
-    yarn po-to-i18n -d downloaded_po_files/$i -l $i
-  fi
-done
 
 # Clean up PO file directory
 rm -rf downloaded_po_files
 
 echo Creating PR
-git checkout master
 git checkout -b translation-update
 git add *
 git commit -m "UI Translation update"
