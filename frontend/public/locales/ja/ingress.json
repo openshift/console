@@ -12,5 +12,5 @@
   "Namespace": "namespace",
   "Labels": "ラベル",
   "Hosts": "ホスト",
-  "Ingresses": "Ingresses"
+  "Ingresses": "Ingress"
 }

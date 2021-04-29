@@ -12,7 +12,7 @@
   "The hostname to identify to the SMTP server.": "SMTP サーバーに対して識別するホスト名。",
   "Auth username": "認証ユーザー名",
   "Auth password (using LOGIN and PLAIN)": "認証パスワード (LOGIN および PLAIN を使用)",
-  "Auth identity (using PLAIN)": "認証 ID（PLAIN を使用）",
+  "Auth identity (using PLAIN)": "認証 ID (PLAIN を使用)",
   "Auth secret (CRAM-MDS)": "認証シークレット (CRAM-MDS)",
   "Require TLS": "TLS が必須",
   "Show advanced configuration": "詳細設定の表示",
