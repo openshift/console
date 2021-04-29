@@ -9,7 +9,7 @@ import * as sidenavView from '../views/sidenav.view';
 import * as horizontalnavView from '../views/horizontal-nav.view';
 import { execSync } from 'child_process';
 
-xdescribe('Alertmanager: YAML', () => {
+describe('Alertmanager: YAML', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
@@ -37,7 +37,7 @@ xdescribe('Alertmanager: YAML', () => {
   });
 });
 
-xdescribe('Alertmanager: Configuration', () => {
+describe('Alertmanager: Configuration', () => {
   afterAll(() => {
     execSync(
       `kubectl patch secret 'alertmanager-main' -n 'openshift-monitoring' --type='json' -p='[{ op: 'replace', path: '/data/alertmanager.yaml', value: ${monitoringView.defaultAlertmanagerYaml}}]'`,
