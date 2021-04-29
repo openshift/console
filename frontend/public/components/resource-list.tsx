@@ -24,6 +24,12 @@ import {
   ResourceListPage as ResourceListPageExt,
   isResourceListPage,
 } from '@console/plugin-sdk';
+import {
+  ResourceDetailsPage as DynamicResourceDetailsPage,
+  isResourceDetailsPage as isDynamicResourceDetailsPage,
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
@@ -31,6 +37,9 @@ const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), pro
 export const ResourceListPage = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
     const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
+    const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
+      isDynamicResourceListPage,
+    );
     const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
 
     if (!kindObj) {
@@ -47,9 +56,10 @@ export const ResourceListPage = connectToPlural(
       );
     }
     const ref = referenceForModel(kindObj);
-    const componentLoader = getResourceListPages(resourceListPageExtensions).get(ref, () =>
-      Promise.resolve(DefaultPage),
-    );
+    const componentLoader = getResourceListPages(
+      resourceListPageExtensions,
+      dynamicResourceListPageExtensions,
+    ).get(ref, () => Promise.resolve(DefaultPage));
 
     return (
       <div className="co-m-list">
@@ -72,6 +82,9 @@ export const ResourceListPage = connectToPlural(
 
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
+  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceDetailsPage>(
+    isDynamicResourceDetailsPage,
+  );
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
   const decodedName = decodeURIComponent(name);
 
@@ -86,9 +99,10 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     props.match.path.indexOf('customresourcedefinitions') === -1
       ? referenceForModel(kindObj)
       : null;
-  const componentLoader = getResourceDetailsPages(detailsPageExtensions).get(ref, () =>
-    Promise.resolve(DefaultDetailsPage),
-  );
+  const componentLoader = getResourceDetailsPages(
+    detailsPageExtensions,
+    dynamicResourceListPageExtensions,
+  ).get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return (
     <>

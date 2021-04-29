@@ -28,6 +28,12 @@ import {
   RoutePage,
   isRoutePage,
 } from '@console/plugin-sdk';
+import {
+  RoutePage as DynamicRoutePage,
+  isRoutePage as isDynamicRoutePage,
+  useResolvedExtensions,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
 
 const RedirectComponent = (props) => {
   const to = `/k8s${props.location.pathname}`;
@@ -109,15 +115,21 @@ const getPluginPageRoutes = (
   activePerspective: string,
   setActivePerspective: (perspective: string) => void,
   routePages: RoutePage[],
+  dynamicRoutePages: ResolvedExtension<DynamicRoutePage>[],
 ) => {
-  const activeRoutes = routePages
-    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-    .map((r) => {
-      const Component = r.properties.loader ? LazyRoute : Route;
-      return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-    });
+  const activeRoutes = [
+    ...routePages
+      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+      .map((r) => {
+        const Component = r.properties.loader ? LazyRoute : Route;
+        return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+      }),
+    ...dynamicRoutePages
+      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+      .map((r) => <Route {...r.properties} key={Array.from(r.properties.path).join(',')} />),
+  ];
 
-  const inactiveRoutes = routePages
+  const inactiveRoutes = [...routePages, ...dynamicRoutePages]
     .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
     .map((r) => {
       const key = Array.from(r.properties.path)
@@ -142,9 +154,16 @@ const getPluginPageRoutes = (
 const AppContents: React.FC<{}> = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
+  const [dynamicRoutePages] = useResolvedExtensions<DynamicRoutePage>(isDynamicRoutePage);
   const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
-    () => getPluginPageRoutes(activePerspective, setActivePerspective, routePageExtensions),
-    [activePerspective, setActivePerspective, routePageExtensions],
+    () =>
+      getPluginPageRoutes(
+        activePerspective,
+        setActivePerspective,
+        routePageExtensions,
+        dynamicRoutePages,
+      ),
+    [activePerspective, setActivePerspective, routePageExtensions, dynamicRoutePages],
   );
 
   return (
