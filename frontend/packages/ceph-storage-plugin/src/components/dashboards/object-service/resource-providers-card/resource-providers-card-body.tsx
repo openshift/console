@@ -18,7 +18,7 @@ export const ResourceProvidersBody: React.FC<ResourceProvidersBodyProps> = ({
   if (error || !hasProviders) {
     body = (
       <div className="nb-resource-providers-card__not-available text-secondary">
-        {t('dashboard~Not available')}
+        {t('ceph-storage-plugin~Not available')}
       </div>
     );
   }

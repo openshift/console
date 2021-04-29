@@ -88,6 +88,6 @@ describe('<BreakdownCardBody>', () => {
 
   it('Shows not available', () => {
     wrapper.setProps({ capacityUsed: null, top5MetricsStats: [], hasLoadError: true });
-    expect(wrapper.text()).toBe(`dashboard~Not available`);
+    expect(wrapper.text()).toBe(`ceph-storage-plugin~Not available`);
   });
 });
