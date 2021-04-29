@@ -101,9 +101,8 @@ export const startPipeline: KebabAction = (
     }
   },
   accessReview: {
-    group: kind.apiGroup,
-    resource: kind.plural,
-    name: pipeline.metadata.name,
+    group: PipelineRunModel.apiGroup,
+    resource: PipelineRunModel.plural,
     namespace: pipeline.metadata.namespace,
     verb: 'create',
   },
