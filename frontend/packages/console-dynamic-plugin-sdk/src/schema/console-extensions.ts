@@ -12,13 +12,15 @@ import {
   Separator,
   NavSection,
 } from '../extensions/navigation';
-import { CatalogItemType, CatalogItemProvider, CatalogItemFilter } from '../extensions/catalog';
+import { SupportedCatalogExtensions } from '../extensions/catalog';
 import { FileUpload } from '../extensions/file-upload';
 import { ModelMetadata } from '../extensions/resource-metadata';
 import { AlertAction } from '../extensions/notification-alert';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { StorageProvider } from '../extensions/storage-provider';
 import { TelemetryListener } from '../extensions/telemetry';
+import { SupportedActionExtensions } from '../extensions/actions';
+import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -38,14 +40,14 @@ export type SupportedExtension =
   | ResourceClusterNavItem
   | Separator
   | NavSection
-  | CatalogItemType
-  | CatalogItemProvider
-  | CatalogItemFilter
   | FileUpload
   | ModelMetadata
   | AlertAction
   | StorageProvider
-  | TelemetryListener;
+  | TelemetryListener
+  | SupportedCatalogExtensions
+  | SupportedActionExtensions
+  | SupportedTopologyDetailsExtensions;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

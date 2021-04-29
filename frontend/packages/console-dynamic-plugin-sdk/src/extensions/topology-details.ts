@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { GraphElement } from '@patternfly/react-topology';
-import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
+import { CodeRef, ExtensionDeclaration } from '../types';
 
-namespace ExtensionProperties {
-  export type DetailsTab = {
+/** DetailsTab contributes a tab for the topology details panel. */
+export type DetailsTab = ExtensionDeclaration<
+  'topology.details/tab',
+  {
     /** A unique identifier for this details tab. */
     id: string;
     /** The tab label to display in the UI. */
@@ -18,9 +20,13 @@ namespace ExtensionProperties {
      * insertBefore takes precedence.
      * */
     insertAfter?: string | string[];
-  };
+  }
+>;
 
-  export type DetailsTabSection = {
+/** DetailsTabSection contributes a section for a specific tab in topology details panel. */
+export type DetailsTabSection = ExtensionDeclaration<
+  'topology.details/tab-section',
+  {
     /** A unique identifier for this details tab section. */
     id: string;
     /** The parent tab ID that this section should contribute to. */
@@ -28,7 +34,7 @@ namespace ExtensionProperties {
     /** Returns a section for the graph element or undefined if not provided.
      * SDK component: <Section title={<optional>}>... padded area </Section>
      * */
-    section: EncodedCodeRef;
+    section: CodeRef<(element: GraphElement) => React.Component | undefined>;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -38,85 +44,58 @@ namespace ExtensionProperties {
      * insertBefore takes precedence.
      * */
     insertAfter?: string | string[];
-  };
+  }
+>;
 
-  export type DetailsResourceLink = {
+/** DetailsResourceLink contributes a link for specific topology context or graph element. */
+export type DetailsResourceLink = ExtensionDeclaration<
+  'topology.details/resource-link',
+  {
     /** A higher priority factory will get the first chance to create the link. */
     priority?: number;
     /** Return the resource link if provided, otherwise undefined.
      * Use ResourceIcon and ResourceLink for styles.
      * */
-    link: EncodedCodeRef;
-  };
+    link: CodeRef<(element: GraphElement) => React.Component | undefined>;
+  }
+>;
 
-  export type DetailsResourceAlert = {
+/** DetailsResourceAlert contributes an alert for specific topology context or graph element. */
+export type DetailsResourceAlert = ExtensionDeclaration<
+  'topology.details/resource-alert',
+  {
     /** The ID of this alert. Used to save state if the alert should be shown after dismissed. */
     id: string;
     /** The title of the alert */
     title: string;
     /** Hook to return the contents of the Alert. */
-    contentProvider: EncodedCodeRef;
+    contentProvider: CodeRef<(element: GraphElement) => DetailsResourceAlertContent>;
     /** Whether to show a dismiss button. false by default */
     dismissible?: boolean;
-  };
-
-  export type DetailsTabSectionCodeRefs = {
-    section: CodeRef<(element: GraphElement) => React.Component | undefined>;
-  };
-
-  export type DetailsResourceLinkCodeRefs = {
-    link: CodeRef<(element: GraphElement) => React.Component | undefined>;
-  };
-
-  export type DetailsResourceAlertCodeRefs = {
-    contentProvider: CodeRef<(element: GraphElement) => DetailsResourceAlertContent>;
-  };
-}
-
-export type DetailsTab = Extension<ExtensionProperties.DetailsTab> & {
-  type: 'topology.details/tab';
-};
-
-export type DetailsTabSection = Extension<ExtensionProperties.DetailsTabSection> & {
-  type: 'topology.details/tab-section';
-};
-
-export type DetailsResourceLink = Extension<ExtensionProperties.DetailsResourceLink> & {
-  type: 'topology.details/resource-link';
-};
-
-export type DetailsResourceAlert = Extension<ExtensionProperties.DetailsResourceAlert> & {
-  type: 'topology.details/resource-alert';
-};
-
-export type ResolvedDetailsTabSection = UpdateExtensionProperties<
-  DetailsTabSection,
-  ExtensionProperties.DetailsTabSectionCodeRefs
+  }
 >;
 
-export type ResolvedDetailsResourceLink = UpdateExtensionProperties<
-  DetailsResourceLink,
-  ExtensionProperties.DetailsResourceLinkCodeRefs
->;
+export type SupportedTopologyDetailsExtensions =
+  | DetailsTab
+  | DetailsTabSection
+  | DetailsResourceLink
+  | DetailsResourceAlert;
 
-export type ResolvedDetailsResourceAlert = UpdateExtensionProperties<
-  DetailsResourceAlert,
-  ExtensionProperties.DetailsResourceAlertCodeRefs
->;
+// Type guards
 
 export const isDetailsTab = (e: Extension): e is DetailsTab => {
   return e.type === 'topology.details/tab';
 };
 
-export const isDetailsTabSection = (e: Extension): e is ResolvedDetailsTabSection => {
+export const isDetailsTabSection = (e: Extension): e is DetailsTabSection => {
   return e.type === 'topology.details/tab-section';
 };
 
-export const isDetailsResourceLink = (e: Extension): e is ResolvedDetailsResourceLink => {
+export const isDetailsResourceLink = (e: Extension): e is DetailsResourceLink => {
   return e.type === 'topology.details/resource-link';
 };
 
-export const isDetailsResourceAlert = (e: Extension): e is ResolvedDetailsResourceAlert => {
+export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert => {
   return e.type === 'topology.details/resource-alert';
 };
 

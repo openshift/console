@@ -4,9 +4,10 @@ import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Status } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Timestamp, Kebab } from '@console/internal/components/utils';
+import { Timestamp } from '@console/internal/components/utils';
 import { confirmModal } from '@console/internal/components/modals';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import KebabMenu from '@console/shared/src/components/kebab/KebabMenu';
 import { HelmRelease } from '../../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
 
@@ -36,8 +37,9 @@ const confirmModalRollbackHelmRelease = (
   const executeFn = () => coFetchJSON.patch('/api/helm/release', payload);
 
   return {
+    id: 'helm-rollback-modal-action',
     label: t('helm-plugin~Rollback to Revision {{revision}}', { revision }),
-    callback: () => {
+    cta: () => {
       confirmModal({
         title: t('helm-plugin~Rollback'),
         btnText: t('helm-plugin~Rollback'),
@@ -51,7 +53,7 @@ const confirmModalRollbackHelmRelease = (
 const HelmReleaseHistoryKebab: React.FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const menuActions = [confirmModalRollbackHelmRelease(obj.name, obj.namespace, obj.version, t)];
-  return <Kebab options={menuActions} />;
+  return <KebabMenu actions={menuActions} />;
 };
 
 const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => (

@@ -60,6 +60,7 @@
   "Are you sure you want to remove the {{hpaLabel}}": "Are you sure you want to remove the {{hpaLabel}}",
   "from": "from",
   "The resources that are attached to the {{hpaLabel}} will be deleted.": "The resources that are attached to the {{hpaLabel}} will be deleted.",
+  "Actions": "Actions",
   "Copy to clipboard": "Copy to clipboard",
   "Run in Web Terminal": "Run in Web Terminal",
   "Successfully copied to clipboard!": "Successfully copied to clipboard!",

@@ -44,5 +44,15 @@
     "flags": {
       "required": ["OPENSHIFT_HELM"]
     }
+  },
+  {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "helm-actions",
+      "provider": { "$codeRef": "actions.useHelmActionProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
   }
 ]
