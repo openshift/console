@@ -22,7 +22,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     return null;
   }
 
-  const { name, badges } = item;
+  const { name, title, badges } = item;
 
   const provider = item.provider
     ? t('devconsole~Provided by {{provider}}', { provider: item.provider })
@@ -39,7 +39,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
     <>
       <CatalogItemHeader
         className="co-catalog-page__overlay-header"
-        title={name}
+        title={title || name}
         vendor={vendor}
         {...getIconProps(item)}
       />

@@ -34,6 +34,9 @@ export interface HelmChartMetaData {
   digest?: string;
   apiVersion: string;
   appVersion?: string;
+  annotations?: {
+    [key: string]: string;
+  };
   keywords?: string[];
   home?: string;
   icon?: string;

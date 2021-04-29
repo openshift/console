@@ -23,7 +23,7 @@ type CatalogTileProps = {
 
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
-  const { name, provider, description, type, badges } = item;
+  const { name, title, provider, description, type, badges } = item;
 
   const vendor = provider ? t('devconsole~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
@@ -47,7 +47,7 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
         }
       }}
       href={href}
-      title={name}
+      title={title || name}
       badges={typeBadges}
       vendor={vendor}
       description={isDescriptionReactElement ? undefined : description}
