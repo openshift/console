@@ -3,7 +3,7 @@
   "Accessible outside the cluster": "在集群外可以访问",
   "(all nodes): ": "（所有节点）：",
   "External load balancer": "外部负载均衡器",
-  "Ingress points of load balancer": "负载均衡器的入口点",
+  "Ingress points of load balancer": "负载均衡器的入站点",
   "External service name": "外部服务名称",
   "Location of the resource that backs the service": "支持服务的资源的位置",
   "Cluster IP": "集群 IP",

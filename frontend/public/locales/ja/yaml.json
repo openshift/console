@@ -15,7 +15,7 @@
   "An error occurred.": "エラーが発生しました。",
   "View sidebar": "サイドバーの表示",
   "Drop file here": "ここにファイルをドロップ",
-  "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "YAML または JSON 定義を手動で入力するか、またはファイルをエディターにドラッグし、ドロップして作成します。",
+  "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "YAML または JSON 定義を手動で入力するか、またはファイルをエディターにドラッグアンドドロップして作成します。",
   "An error occurred": "エラーが発生しました",
   "This object has been updated.": "このオブジェクトは更新されました。",
   "Click reload to see the new version.": "「reload」をクリックして新規バージョンを表示します。",
