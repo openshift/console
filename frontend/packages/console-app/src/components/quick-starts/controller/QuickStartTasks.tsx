@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import QuickStartMarkdownView from '../QuickStartMarkdownView';
+import { QUICKSTART_TASKS_INITIAL_STATES } from '../utils/const';
 import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
 import QuickStartTaskReview from './QuickStartTaskReview';
@@ -24,14 +25,11 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
   return (
     <>
       {tasks
-        .filter((_, index) => index <= taskNumber)
+        .filter((_, index) => allTaskStatuses[index] !== QuickStartTaskStatus.INIT)
         .map((task, index) => {
-          const { title, description, review, summary } = task;
+          const { title, description, review } = task;
           const isActiveTask = index === taskNumber;
           const taskStatus = allTaskStatuses[index];
-          const summaryInstructions =
-            taskStatus === QuickStartTaskStatus.SUCCESS ? summary?.success : summary?.failed;
-          const taskInstructions = isActiveTask ? description : summaryInstructions;
 
           return (
             <React.Fragment key={title}>
@@ -47,13 +45,17 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
                 isActiveTask={isActiveTask}
                 onTaskSelect={onTaskSelect}
               />
-              <QuickStartMarkdownView content={taskInstructions} />
-              {isActiveTask && taskStatus !== QuickStartTaskStatus.INIT && review && (
-                <QuickStartTaskReview
-                  review={review}
-                  taskStatus={taskStatus}
-                  onTaskReview={onTaskReview}
-                />
+              {isActiveTask && (
+                <div style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
+                  <QuickStartMarkdownView content={description} />
+                  {!QUICKSTART_TASKS_INITIAL_STATES.includes(taskStatus) && review && (
+                    <QuickStartTaskReview
+                      review={review}
+                      taskStatus={taskStatus}
+                      onTaskReview={onTaskReview}
+                    />
+                  )}
+                </div>
               )}
             </React.Fragment>
           );

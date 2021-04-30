@@ -50,6 +50,7 @@ export enum QuickStartStatus {
 
 export enum QuickStartTaskStatus {
   INIT = 'Initial',
+  VISITED = 'Visited',
   REVIEW = 'Review',
   SUCCESS = 'Success',
   FAILED = 'Failed',
