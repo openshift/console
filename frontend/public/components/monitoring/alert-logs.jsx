@@ -90,7 +90,7 @@ const AlertLogs = (props) => {
       const firstContainer = _.find(containers, { order: 0 });
       setCurrentKey(firstContainer ? firstContainer.name : '');
     }
-  }, [containers, currentKey, props.obj]);
+  }, [props.obj]);
 
   function _selectContainer(name) {
     setCurrentKey(name);
