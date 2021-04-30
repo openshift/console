@@ -135,9 +135,11 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       trimSecondsXMutator,
     );
     const [utilizationData, limitData, requestedData] = data;
-    setTimestamps &&
-      utilizationData &&
-      setTimestamps(utilizationData.map((datum) => datum.x as Date));
+    React.useEffect(() => {
+      setTimestamps &&
+        utilizationData &&
+        setTimestamps(utilizationData.map((datum) => datum.x as Date));
+    }, [setTimestamps, utilizationData]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
 
     let humanMax: string;
