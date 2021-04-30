@@ -135,7 +135,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const filterSC = ({ resource }): boolean => {
     const noProvSC = filterSCWithNoProv(resource);
     if (hasStretchClusterChecked && noProvSC && !nodesError && nodesData.length && nodesLoaded) {
-      return isArbiterSC(resource, pvData, nodesData);
+      return isArbiterSC(getName(resource), pvData, nodesData);
     }
     return noProvSC;
   };

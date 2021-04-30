@@ -1,10 +1,17 @@
-import { testEbsSC, testNoProvisionerSC } from '../mocks/storageclass';
+import {
+  testEbsSC,
+  testNoProvisionerSC,
+  testPersistentVolume1,
+  testPersistentVolume2,
+  testPersistentVolume3,
+} from '../mocks/storageclass';
 import { commonFlows } from '../views/common';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DeviceSet } from '../../src/types';
 import { OCS_INTERNAL_CR_NAME } from '../../src/constants';
 import { NS } from '../consts';
 import { getCurrentDeviceSetIndex } from '../../src/utils/add-capacity';
+import { getNodeRole } from '../../../console-shared/src/selectors/node';
 
 interface IndexAndDeviceSet {
   index: number;
@@ -28,6 +35,11 @@ const addCapacity = (uid: string, scName: string) => {
   cy.byTestID('dropdown-menu-item-link')
     .contains(scName)
     .click();
+
+  // wait for Pvs & Nodes data to load (used for validations)
+  // to-do (Sanjal): add a more robust way instead of wait by checking the currentCapacity/PVsAvailableCapacity components state
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(5000);
   cy.byTestID('confirm-action').click();
 };
 
@@ -44,12 +56,28 @@ describe('Add capacity using multiple storage classes', () => {
     cy.install();
     cy.exec(`echo '${JSON.stringify(testEbsSC)}' | kubectl apply -f -`);
     cy.exec(`echo '${JSON.stringify(testNoProvisionerSC)}' | kubectl apply -f -`);
+    cy.exec('oc get nodes -o json').then((res) => {
+      const nodes = JSON.parse(res.stdout);
+      const allWorkerNodes = nodes.items.filter((node) => getNodeRole(node) === 'worker');
+      testPersistentVolume1.spec.nodeAffinity.required.nodeSelectorTerms[0].matchExpressions[0].values[0] =
+        allWorkerNodes[0].metadata.name;
+      testPersistentVolume2.spec.nodeAffinity.required.nodeSelectorTerms[0].matchExpressions[0].values[0] =
+        allWorkerNodes[1].metadata.name;
+      testPersistentVolume3.spec.nodeAffinity.required.nodeSelectorTerms[0].matchExpressions[0].values[0] =
+        allWorkerNodes[2].metadata.name;
+      cy.exec(`echo '${JSON.stringify(testPersistentVolume1)}' | kubectl apply -f -`);
+      cy.exec(`echo '${JSON.stringify(testPersistentVolume2)}' | kubectl apply -f -`);
+      cy.exec(`echo '${JSON.stringify(testPersistentVolume3)}' | kubectl apply -f -`);
+    });
     commonFlows.navigateToOCS();
     cy.byLegacyTestID('horizontal-link-Storage Cluster').click();
   });
   after(() => {
     cy.exec(`echo '${JSON.stringify(testEbsSC)}' | kubectl delete -f -`);
     cy.exec(`echo '${JSON.stringify(testNoProvisionerSC)}' | kubectl delete -f -`);
+    cy.exec(`echo '${JSON.stringify(testPersistentVolume1)}' | kubectl delete -f -`);
+    cy.exec(`echo '${JSON.stringify(testPersistentVolume2)}' | kubectl delete -f -`);
+    cy.exec(`echo '${JSON.stringify(testPersistentVolume3)}' | kubectl delete -f -`);
     cy.logout();
   });
 

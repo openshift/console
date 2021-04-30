@@ -10,7 +10,12 @@ import {
   ModalBody,
 } from '@console/internal/components/factory';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  k8sPatch,
+  StorageClassResourceKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
@@ -31,10 +36,11 @@ import {
 } from '../../../constants';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
-import { pvResource } from '../../../resources';
+import { pvResource, nodeResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
+import { isArbiterSC, isValidTopology } from '../../../utils/install';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
@@ -48,7 +54,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
 
   const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
-
+  const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+  const [nodesData] = useK8sWatchResource<NodeKind[]>(nodeResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   /* TBD(Afreen): Show installation storage class as preselected
                   Change state metadata
@@ -56,8 +63,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
-
-  const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
   const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
@@ -73,6 +78,22 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const usedCapacityMetric = values?.[1];
   const usedCapacity = humanizeBinaryBytes(usedCapacityMetric);
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
+
+  const validateSC = React.useCallback(() => {
+    if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
+    if (!isNoProvionerSC || hasFlexibleScaling) return '';
+    if (isArbiterEnabled && !isArbiterSC(selectedSCName, pvData, nodesData)) {
+      return t(
+        'ceph-storage-plugin~The Arbiter stretch cluster requires a minimum of 4 nodes (2 different zones, 2 nodes per zone). Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.',
+      );
+    }
+    if (!isArbiterEnabled && !isValidTopology(selectedSCName, pvData, nodesData)) {
+      return t(
+        'ceph-storage-plugin~The StorageCluster requires a minimum of 3 nodes. Please choose a different StorageClass or create a new LocalVolumeSet that matches the minimum node requirement.',
+      );
+    }
+    return '';
+  }, [selectedSCName, t, isNoProvionerSC, isArbiterEnabled, hasFlexibleScaling, pvData, nodesData]);
 
   let currentCapacity: React.ReactNode;
   let availablePvsCount: number = 0;
@@ -133,8 +154,9 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       patch.value = deviceSets[deviceSetIndex].count + deviceSetCount;
     }
 
-    if (!selectedSCName) {
-      setError(t('ceph-storage-plugin~No StorageClass selected'));
+    const validation: string = validateSC();
+    if (validation) {
+      setError(validation);
       setProgress(false);
     } else {
       k8sPatch(OCSServiceModel, ocsConfig, [patch])
