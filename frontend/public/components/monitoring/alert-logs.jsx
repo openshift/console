@@ -58,70 +58,6 @@ const containerToLogSourceStatus = (container) => {
   return LOG_SOURCE_RUNNING;
 };
 
-export class AlertLogs extends React.Component {
-  constructor(props) {
-    super(props);
-    this._selectContainer = this._selectContainer.bind(this);
-    this.state = {
-      containers: {},
-      currentKey: getQueryArgument('container') || '',
-      initContainers: {},
-    };
-  }
-
-  static getDerivedStateFromProps({ obj: build }, { currentKey }) {
-    const newState = {};
-    const containers = _.get(build, 'spec.containers', []);
-    const initContainers = _.get(build, 'spec.initContainers', []);
-    newState.containers = containersToStatuses(build, containers);
-    newState.initContainers = containersToStatuses(build, initContainers);
-    if (!currentKey) {
-      const firstContainer = _.find(newState.containers, { order: 0 });
-      newState.currentKey = firstContainer ? firstContainer.name : '';
-    }
-    return newState;
-  }
-
-  _selectContainer(name) {
-    this.setState({ currentKey: name }, () => {
-      setQueryArgument('container', this.state.currentKey);
-    });
-  }
-
-  render() {
-    const { containers, currentKey, initContainers } = this.state;
-    const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
-    const currentContainerStatus = containerToLogSourceStatus(currentContainer);
-    const containerDropdown = (
-      <ContainerDropdown
-        currentKey={currentKey}
-        containers={containers}
-        initContainers={initContainers}
-        onChange={this._selectContainer}
-      />
-    );
-
-    return (
-      <>
-        {this.props.alert?.labels?.namespace && (
-          <div className="co-m-pane__body">
-            <ResourceLog
-              containerName={currentContainer ? currentContainer.name : ''}
-              dropdown={containerDropdown}
-              resource={this.props.obj}
-              resourceStatus={currentContainerStatus}
-              alertLogs={this.state.alertLogs}
-            />
-          </div>
-        )}
-        {!this.props.alert?.labels?.namespace && (
-          <div className="co-m-pane__body">No logs for this Alert</div>
-        )}
-      </>
-    );
-  }
-}
-
 const alertStateToProps = (state, props) => {
   const { match } = props;
   const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
@@ -138,4 +74,58 @@ const alertStateToProps = (state, props) => {
     rule,
   };
 };
-export default connect(alertStateToProps)(AlertLogs);
+
+const AlertLogs1 = (props) => {
+  const [containers, setContainers] = React.useState({});
+  const [currentKey, setCurrentKey] = React.useState(getQueryArgument('container') || '');
+  const [initContainers, setInitContainers] = React.useState({});
+
+  React.useEffect(() => {
+    const build = props.obj;
+    const currentContainers = _.get(build, 'spec.containers', []);
+    const currentInitContainers = _.get(build, 'spec.initContainers', []);
+    setContainers(containersToStatuses(build, currentContainers));
+    setInitContainers(containersToStatuses(build, currentInitContainers));
+    if (!currentKey) {
+      const firstContainer = _.find(containers, { order: 0 });
+      setCurrentKey(firstContainer ? firstContainer.name : '');
+    }
+  }, [containers, currentKey, props.obj]);
+
+  function _selectContainer(name) {
+    setCurrentKey(name);
+    setQueryArgument('container', currentKey);
+  }
+
+  const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
+  const currentContainerStatus = containerToLogSourceStatus(currentContainer);
+
+  const containerDropdown = (
+    <ContainerDropdown
+      currentKey={currentKey}
+      containers={containers}
+      initContainers={initContainers}
+      onChange={_selectContainer}
+    />
+  );
+
+  return (
+    <>
+      {props.alert?.labels?.namespace && (
+        <div className="co-m-pane__body">
+          <ResourceLog
+            containerName={currentContainer ? currentContainer.name : ''}
+            dropdown={containerDropdown}
+            resource={props.obj}
+            resourceStatus={currentContainerStatus}
+          />
+        </div>
+      )}
+      {!props.alert?.labels?.namespace && (
+        <div className="co-m-pane__body">No logs for this Alert</div>
+      )}
+    </>
+  );
+};
+
+export default connect(alertStateToProps)(AlertLogs1);
