@@ -75,7 +75,7 @@ const alertStateToProps = (state, props) => {
   };
 };
 
-const AlertLogs1 = (props) => {
+const AlertLogs = (props) => {
   const [containers, setContainers] = React.useState({});
   const [currentKey, setCurrentKey] = React.useState(getQueryArgument('container') || '');
   const [initContainers, setInitContainers] = React.useState({});
@@ -128,4 +128,4 @@ const AlertLogs1 = (props) => {
   );
 };
 
-export default connect(alertStateToProps)(AlertLogs1);
+export default connect(alertStateToProps)(AlertLogs);
