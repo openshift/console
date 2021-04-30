@@ -432,7 +432,7 @@ export const createOrUpdateResources = async (
 
   createNewProject && (await createProject(formData.project));
 
-  const requests: Promise<K8sResourceKind>[] = [];
+  const responses: K8sResourceKind[] = [];
   let generatedImageStreamName: string = '';
   const imageStreamList = appResources?.imageStream?.data;
   if (
@@ -443,16 +443,17 @@ export const createOrUpdateResources = async (
   ) {
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
-  requests.push(
-    createOrUpdateImageStream(
-      formData,
-      imageStream,
-      dryRun,
-      appResources,
-      generatedImageStreamName ? 'create' : verb,
-      generatedImageStreamName,
-    ),
-    createOrUpdateBuildConfig(
+  const imageStreamResponse = await createOrUpdateImageStream(
+    formData,
+    imageStream,
+    dryRun,
+    appResources,
+    generatedImageStreamName ? 'create' : verb,
+    generatedImageStreamName,
+  );
+  responses.push(imageStreamResponse);
+  responses.push(
+    await createOrUpdateBuildConfig(
       formData,
       imageStream,
       dryRun,
@@ -462,20 +463,21 @@ export const createOrUpdateResources = async (
     ),
   );
 
-  verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));
+  if (verb === 'create') {
+    responses.push(await createWebhookSecret(formData, 'generic', dryRun));
+  }
 
   const defaultAnnotations = getGitAnnotations(repository, ref);
 
   if (pipeline.enabled && pipeline.template && !dryRun) {
-    requests.push(createPipelineForImportFlow(formData));
+    responses.push(await createPipelineForImportFlow(formData));
   }
 
   if (formData.resources === Resources.KnativeService) {
     // knative service doesn't have dry run capability so returning the promises.
     if (dryRun) {
-      return Promise.all(requests);
+      return responses;
     }
-    const [imageStreamResponse] = await Promise.all(requests);
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
@@ -507,8 +509,8 @@ export const createOrUpdateResources = async (
   }
 
   if (formData.resources === Resources.Kubernetes) {
-    requests.push(
-      createOrUpdateDeployment(
+    responses.push(
+      await createOrUpdateDeployment(
         formData,
         imageStream,
         dryRun,
@@ -517,8 +519,8 @@ export const createOrUpdateResources = async (
       ),
     );
   } else if (formData.resources === Resources.OpenShift) {
-    requests.push(
-      createOrUpdateDeploymentConfig(
+    responses.push(
+      await createOrUpdateDeploymentConfig(
         formData,
         imageStream,
         dryRun,
@@ -531,27 +533,27 @@ export const createOrUpdateResources = async (
   if (!_.isEmpty(ports) || buildStrategy === 'Docker' || buildStrategy === 'Source') {
     const originalService = _.get(appResources, 'service.data');
     const service = createService(formData, imageStream, originalService);
-    const request =
-      verb === 'update'
-        ? !_.isEmpty(originalService)
-          ? k8sUpdate(ServiceModel, service)
-          : null
-        : k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {});
-    requests.push(request);
+
+    if (verb === 'create') {
+      responses.push(await k8sCreate(ServiceModel, service, dryRun ? dryRunOpt : {}));
+    } else if (verb === 'update' && !_.isEmpty(originalService)) {
+      responses.push(await k8sUpdate(ServiceModel, service));
+    }
+
     const originalRoute = _.get(appResources, 'route.data');
     const route = createRoute(formData, imageStream, originalRoute);
     if (verb === 'update' && disable) {
-      requests.push(k8sUpdate(RouteModel, route, namespace, name));
+      responses.push(await k8sUpdate(RouteModel, route, namespace, name));
     } else if (canCreateRoute) {
-      requests.push(k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
+      responses.push(await k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {}));
     }
   }
 
   if (webhookTrigger && verb === 'create') {
-    requests.push(createWebhookSecret(formData, gitType, dryRun));
+    responses.push(await createWebhookSecret(formData, gitType, dryRun));
   }
 
-  return Promise.all(requests);
+  return responses;
 };
 
 export const handleRedirect = (
