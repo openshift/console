@@ -18,21 +18,23 @@ import { useActivePerspective } from '@console/shared';
 import { EditDeploymentData, EditDeploymentFormikValues } from './utils/edit-deployment-types';
 import { validationSchema } from './utils/edit-deployment-validation-utils';
 
-const EditDeployment: React.FC<{
+export interface EditDeploymentProps {
   heading: string;
   resource: K8sResourceKind;
   name: string;
   namespace: string;
-}> = ({ heading, resource, namespace, name }) => {
+}
+
+const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, namespace, name }) => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
 
-  const initialValues = {
+  const initialValues = React.useRef({
     editorType: EditorType.Form,
     yamlData: '',
     formData: convertDeploymentToEditForm(resource),
-  };
+  });
 
   const handleSubmit = (
     values: EditDeploymentFormikValues,
@@ -44,7 +46,10 @@ const EditDeployment: React.FC<{
       try {
         deploymentRes = safeLoad(values.yamlData);
       } catch (err) {
-        actions.setStatus({ submitError: `Invalid YAML - ${err}` });
+        actions.setStatus({
+          submitSuccess: '',
+          submitError: t('devconsole~Invalid YAML - {{err}}', { err }),
+        });
         return null;
       }
     } else {
@@ -60,23 +65,28 @@ const EditDeployment: React.FC<{
 
     return resourceCall
       .then((res: K8sResourceKind) => {
-        actions.setStatus({ submitError: '' });
+        const resVersion = res.metadata.resourceVersion;
         actions.setStatus({
-          submitSuccess: `${name} has been updated to version ${res.metadata.resourceVersion}`,
+          submitError: '',
+          submitSuccess: t('devconsole~{{name}} has been updated to version {{resVersion}}', {
+            name,
+            resVersion,
+          }),
         });
         handleRedirect(namespace, perspective, perspectiveExtensions);
       })
       .catch((e) => {
-        actions.setStatus({ submitSuccess: '' });
-        actions.setStatus({ submitError: e.message });
+        const err = e.message;
+        actions.setStatus({ submitSuccess: '', submitError: t('devconsole~{{err}}', { err }) });
       });
   };
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues.current}
       onSubmit={handleSubmit}
-      validationSchema={validationSchema(t)}
+      validationSchema={validationSchema()}
+      enableReinitialize
     >
       {(formikProps) => {
         return <EditDeploymentForm {...formikProps} heading={heading} resource={resource} />;

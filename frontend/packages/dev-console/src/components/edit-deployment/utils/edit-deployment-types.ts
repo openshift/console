@@ -51,8 +51,7 @@ export interface CustomStrategyParamsData {
   image?: string;
 }
 
-export interface DeploymentStrategy {
-  type: string;
+export interface DeploymentStrategyData {
   recreateParams?: CommonStrategyParamsData;
   customParams?: CustomStrategyParamsData;
   rollingParams?: CommonStrategyParamsData;
@@ -62,10 +61,22 @@ export interface DeploymentStrategy {
     mid?: LifecycleHookImagestreamData;
     post?: LifecycleHookImagestreamData;
   };
+}
+
+export interface DeploymentStrategy extends DeploymentStrategyData {
+  type: string;
   [key: string]: any;
 }
 
-export interface EditDeploymentFormData {
+export interface TriggersAndImageStreamFormData {
+  triggers?: { image?: boolean; config?: boolean };
+  fromImageStreamTag: boolean;
+  isSearchingForImage: boolean;
+  imageStream?: { namespace: string; image: string; tag: string };
+  isi?: ImageStreamImageData;
+  image?: ImageStreamImageData;
+}
+export interface EditDeploymentFormData extends TriggersAndImageStreamFormData {
   name: string;
   project: ProjectData;
   resourceVersion: string;
@@ -76,12 +87,6 @@ export interface EditDeploymentFormData {
   imagePullSecret?: string;
   paused?: boolean;
   replicas?: number;
-  triggers?: { image?: boolean; config?: boolean };
-  fromImageStreamTag: boolean;
-  isSearchingForImage: boolean;
-  imageStream?: { namespace: string; image: string; tag: string };
-  isi?: ImageStreamImageData;
-  image?: ImageStreamImageData;
 }
 
 export interface EditDeploymentData {

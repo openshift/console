@@ -20,14 +20,18 @@ export const OpenshiftDeploymentStrategyOptions = {
 };
 
 export const KubernetesDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreateParams]: 'Recreate',
-  [DeploymentStrategyType.rollingUpdate]: 'Rolling Update',
+  [DeploymentStrategyType.recreateParams]: 'The recreate strategy has basic rollout behavior.',
+  [DeploymentStrategyType.rollingUpdate]:
+    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
 };
 
 export const OpenshiftDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreateParams]: 'Recreate',
-  [DeploymentStrategyType.rollingParams]: 'Rolling',
-  [DeploymentStrategyType.customParams]: 'Custom',
+  [DeploymentStrategyType.recreateParams]:
+    'The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.',
+  [DeploymentStrategyType.rollingParams]:
+    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+  [DeploymentStrategyType.customParams]:
+    'The custom strategy allows you to specify container image that will provide your own deployment behavior.',
 };
 
 export const DeploymentStrategyDropdownData = {

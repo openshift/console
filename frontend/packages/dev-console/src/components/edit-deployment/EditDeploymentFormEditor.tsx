@@ -22,7 +22,7 @@ const EditDeploymentFormEditor: React.FC<EditDeploymentFormEditorProps> = ({
       <DeploymentStrategySection resourceType={resourceType} resourceObj={resourceObj} />
       <ImagesSection resourceType={resourceType} />
       <EnvironmentVariablesSection resourceObj={resourceObj} />
-      <AdvancedSection />
+      <AdvancedSection resourceType={resourceType} />
     </>
   );
 };

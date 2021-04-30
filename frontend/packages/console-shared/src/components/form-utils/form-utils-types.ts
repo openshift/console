@@ -2,7 +2,7 @@ export interface FormFooterProps {
   handleSubmit?: () => void;
   handleReset?: () => void;
   handleCancel?: () => void;
-  downloadYAML?: () => void;
+  handleDownload?: () => void;
   sticky?: boolean;
   submitLabel?: string;
   resetLabel?: string;

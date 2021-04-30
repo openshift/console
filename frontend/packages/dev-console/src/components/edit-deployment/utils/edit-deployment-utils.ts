@@ -13,10 +13,12 @@ import {
 } from '../deployment-strategy/utils/types';
 import {
   DeploymentStrategy,
+  DeploymentStrategyData,
   EditDeploymentFormData,
   LifecycleHookData,
   LifecycleHookFormData,
   LifecycleHookImagestreamData,
+  TriggersAndImageStreamFormData,
 } from './edit-deployment-types';
 
 export const getContainerNames = (containers: ContainerSpec[]) => {
@@ -71,7 +73,7 @@ export const getLifecycleHookData = (lch: any): LifecycleHookData => {
   return {
     failurePolicy: lch?.failurePolicy ?? FailurePolicyType.Abort,
     execNewPod: {
-      command: lch?.execNewPod?.command,
+      command: lch?.execNewPod?.command ?? [''],
       containerName: lch?.execNewPod?.containerName,
       env: lch?.execNewPod?.env,
       volumes: _.join(lch?.execNewPod?.volumes, ','),
@@ -98,9 +100,11 @@ export const getStrategyData = (
   strategy: any,
   resName: string,
   resNamespace: string,
-) => {
+  resourceType: string,
+): DeploymentStrategyData => {
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
+      if (resourceType === Resources.Kubernetes) return {};
       const { mid: midHook, post: postHook, pre: preHook, timeoutSeconds } =
         strategy.recreateParams ?? {};
       return {
@@ -118,7 +122,7 @@ export const getStrategyData = (
       };
     }
     case DeploymentStrategyType.customParams: {
-      const { command, environment, image } = strategy.customParams ?? {};
+      const { command = [''], environment, image } = strategy.customParams ?? {};
       return {
         customParams: {
           command,
@@ -172,9 +176,15 @@ export const getStrategy = (
   if (resourceType === Resources.OpenShift) {
     type = strategy?.type ?? DeploymentStrategyType.rollingParams;
     return {
-      ...(_.omit(strategy, ['rollingParams', 'recreateParams', 'customParams']) ?? {}),
+      ..._.omit(strategy, ['rollingParams', 'recreateParams', 'customParams']),
       type,
-      ...getStrategyData(type, strategy, deployment.metadata.name, deployment.metadata.namespace),
+      ...getStrategyData(
+        type,
+        strategy,
+        deployment.metadata.name,
+        deployment.metadata.namespace,
+        resourceType,
+      ),
     };
   }
 
@@ -182,7 +192,13 @@ export const getStrategy = (
   return {
     type,
     ...(type === DeploymentStrategyType.rollingUpdate
-      ? getStrategyData(type, strategy, deployment.metadata.name, deployment.metadata.namespace)
+      ? getStrategyData(
+          type,
+          strategy,
+          deployment.metadata.name,
+          deployment.metadata.namespace,
+          resourceType,
+        )
       : {}),
   };
 };
@@ -190,7 +206,7 @@ export const getStrategy = (
 export const getTriggersAndImageStreamValues = (
   deployment: K8sResourceKind,
   resourceType: string,
-) => {
+): TriggersAndImageStreamFormData => {
   let imageName: string;
   let imageTrigger;
   const data = {
@@ -230,7 +246,7 @@ export const getTriggersAndImageStreamValues = (
       imageStream: {
         image: imageName[0] ?? '',
         tag: imageName[1] ?? '',
-        namespace: imageTrigger?.imageChangeParams.from.namespace ?? '',
+        namespace: imageTrigger?.imageChangeParams.from.namespace ?? deployment.metadata.namespace,
       },
     };
   }
@@ -248,7 +264,7 @@ export const getTriggersAndImageStreamValues = (
     imageStream: {
       image: imageName[0] ?? '',
       tag: imageName[1] ?? '',
-      namespace: imageTrigger?.from?.namespace ?? '',
+      namespace: imageTrigger?.from?.namespace ?? deployment.metadata.namespace,
     },
   };
 };
@@ -280,7 +296,7 @@ export const getUpdatedContainers = (
   isi: ImageStreamImageData,
   imageName?: string,
   envs?: EnvVar[],
-) => {
+): ContainerSpec[] => {
   const { image } = isi;
   const newContainers: ContainerSpec[] = containers;
   const imageRef = fromImageStreamTag && !_.isEmpty(image) ? image.dockerImageReference : imageName;
@@ -321,8 +337,10 @@ export const getUpdatedLchData = (
       failurePolicy: lch.failurePolicy,
       ...(lcAction === LifecycleAction.execNewPod && {
         execNewPod: {
-          ...lch.execNewPod,
-          volumes: lch.execNewPod.volumes ? _.split(lch.execNewPod.volumes, ',') : [],
+          containerName: lch.execNewPod.containerName,
+          command: lch.execNewPod.command,
+          ...(!_.isEmpty(lch.execNewPod.env) ? { env: lch.execNewPod.env } : {}),
+          ...(lch.execNewPod.volumes ? { volumes: _.split(lch.execNewPod.volumes, ',') } : {}),
         },
       }),
       ...(lcAction === LifecycleAction.tagImages && {
@@ -334,12 +352,18 @@ export const getUpdatedLchData = (
 
 export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: string) => {
   const { type, imageStreamData } = strategy;
+  const newStrategy = _.omit(strategy, [
+    'rollingParams',
+    'recreateParams',
+    'customParams',
+    'imageStreamData',
+  ]);
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
       const { mid: midHook, post: postHook, pre: preHook, timeoutSeconds } =
         strategy.recreateParams ?? {};
       return {
-        type,
+        ...newStrategy,
         ...(resourceType === Resources.OpenShift
           ? {
               recreateParams: {
@@ -360,7 +384,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
     }
     case DeploymentStrategyType.customParams: {
       return {
-        type,
+        ...newStrategy,
         customParams: strategy.customParams,
       };
     }
@@ -375,7 +399,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
         intervalSeconds,
       } = strategy.rollingParams;
       return {
-        type,
+        ...newStrategy,
         rollingParams: {
           ...(timeoutSeconds ? { timeoutSeconds } : {}),
           ...(updatePeriodSeconds ? { updatePeriodSeconds } : {}),
@@ -425,7 +449,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
 export const convertEditFormToDeployment = (
   formValues: EditDeploymentFormData,
   deployment: K8sResourceKind,
-) => {
+): K8sResourceKind => {
   const {
     deploymentStrategy,
     containers,
@@ -438,11 +462,16 @@ export const convertEditFormToDeployment = (
     isi,
     triggers,
     fromImageStreamTag,
+    resourceVersion,
   } = formValues;
   const resourceType = getResourcesType(deployment);
 
   let newDeployment: K8sResourceKind = {
     ...deployment,
+    metadata: {
+      ...deployment.metadata,
+      resourceVersion,
+    },
     spec: {
       ...deployment.spec,
       paused,
@@ -468,7 +497,7 @@ export const convertEditFormToDeployment = (
       spec: {
         ...newDeployment.spec,
         triggers: [
-          ...(fromImageStreamTag && !_.isEmpty(isi.image)
+          ...(fromImageStreamTag
             ? [
                 {
                   type: 'ImageChange',
@@ -495,7 +524,7 @@ export const convertEditFormToDeployment = (
         ...newDeployment.metadata,
         annotations: {
           ...newDeployment.metadata.annotations,
-          ...(fromImageStreamTag && !_.isEmpty(isi.image)
+          ...(fromImageStreamTag
             ? getTriggerAnnotation(containers[0].name, image, imgNs, triggers.image, tag)
             : {}),
         },

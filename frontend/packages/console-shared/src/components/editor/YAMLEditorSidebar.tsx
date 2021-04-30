@@ -4,7 +4,7 @@ import { JSONSchema6 } from 'json-schema';
 import { K8sKind } from '@console/internal/module/k8s';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { Sample } from '../../utils';
-import { downloadYaml } from './yaml-editor-utils';
+import { downloadYaml } from './yaml-download-utils';
 
 type YAMLEditorSidebarProps = {
   editorRef: React.MutableRefObject<MonacoEditor>;

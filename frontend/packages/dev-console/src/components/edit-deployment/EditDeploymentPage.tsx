@@ -18,6 +18,7 @@ const EditDeploymentPage: React.FC<EditDeploymentPageProps> = ({ match, location
   const kind = queryParams.get('kind');
   const name = queryParams.get('name');
   const heading = t('devconsole~Edit {{kind}}', { kind });
+  const label = t('devconsole~Edit {{kind}} form', { kind });
 
   const [deployment, loaded, loadError] = useK8sWatchResource<K8sResourceKind>({
     kind,
@@ -30,12 +31,7 @@ const EditDeploymentPage: React.FC<EditDeploymentPageProps> = ({ match, location
       <Helmet>
         <title>{heading}</title>
       </Helmet>
-      <StatusBox
-        loaded={loaded}
-        loadError={loadError}
-        label={`${heading}${t('devconsole~form')}`}
-        data={deployment}
-      >
+      <StatusBox loaded={loaded} loadError={loadError} label={label} data={deployment}>
         <EditDeployment heading={heading} resource={deployment} name={name} namespace={namespace} />
       </StatusBox>
     </NamespacedPage>

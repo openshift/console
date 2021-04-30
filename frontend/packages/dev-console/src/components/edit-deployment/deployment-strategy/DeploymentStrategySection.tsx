@@ -29,6 +29,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
         deploymentStrategy: { type },
       },
     },
+    initialValues,
     setFieldValue,
   } = useFormikContext<FormikValues>();
 
@@ -46,6 +47,32 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
     }
   }, [type, resourceObj, resourceType]);
 
+  const onChange = React.useCallback(
+    (value) => {
+      const strategyDefaultValues = getStrategyData(value, {}, resName, resNamespace, resourceType);
+      const strategyData = {
+        ..._.omit(resourceObj.spec?.strategy, [
+          'rollingParams',
+          'recreateParams',
+          'customParams',
+          'rollingUpdate',
+        ]),
+        type: value,
+        ...strategyDefaultValues,
+      };
+      initialValues.formData.deploymentStrategy = strategyData;
+      setFieldValue('formData.deploymentStrategy', strategyData);
+    },
+    [
+      initialValues.formData.deploymentStrategy,
+      resName,
+      resNamespace,
+      resourceObj.spec,
+      resourceType,
+      setFieldValue,
+    ],
+  );
+
   return (
     <FormSection title={t('devconsole~Deployment strategy')}>
       <DropdownField
@@ -53,18 +80,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
         label={t('devconsole~Strategy type')}
         items={DeploymentStrategyDropdownData[resourceType].items}
         helpText={DeploymentStrategyDropdownData[resourceType].helpText[type]}
-        onChange={(value) => {
-          const strategyDefaultValues = getStrategyData(value, {}, resName, resNamespace);
-          setFieldValue('formData.deploymentStrategy', {
-            ...(_.omit(resourceObj.spec?.strategy, [
-              'rollingParams',
-              'recreateParams',
-              'customParams',
-            ]) ?? {}),
-            type: value,
-            ...strategyDefaultValues,
-          });
-        }}
+        onChange={onChange}
         fullWidth
       />
       {deploymentStrategyFields}

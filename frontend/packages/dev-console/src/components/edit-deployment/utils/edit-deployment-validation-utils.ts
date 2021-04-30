@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { TFunction } from 'i18next';
+import i18n from '@console/internal/i18n';
 import {
   DeploymentStrategy,
   EditDeploymentData,
@@ -9,19 +9,19 @@ import {
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { DeploymentStrategyType, LifecycleAction } from '../deployment-strategy/utils/types';
 
-export const lchValidationSchema = (lch: LifecycleHookFormData, t: TFunction) =>
+export const lchValidationSchema = (lch: LifecycleHookFormData) =>
   yup.object().shape({
-    action: yup.string().required(t('devconsole~Required')),
+    action: yup.string().required(i18n.t('devconsole~Required')),
     lch: yup.object().shape({
-      failurePolicy: yup.string().required(t('devconsole~Required')),
+      failurePolicy: yup.string().required(i18n.t('devconsole~Required')),
       ...(lch.action === LifecycleAction.execNewPod
         ? {
             execNewPod: yup.object().shape({
-              containerName: yup.string().required(t('devconsole~Required')),
+              containerName: yup.string().required(i18n.t('devconsole~Required')),
               command: yup
                 .array()
-                .of(yup.string().required(t('devconsole~Required')))
-                .required(t('devconsole~Required')),
+                .of(yup.string().required(i18n.t('devconsole~Required')))
+                .required(i18n.t('devconsole~Required')),
               volumes: yup.string(),
             }),
           }
@@ -29,35 +29,35 @@ export const lchValidationSchema = (lch: LifecycleHookFormData, t: TFunction) =>
     }),
   });
 
-export const lchImageStreamDataSchema = (action: string, t: TFunction) => {
+export const lchImageStreamDataSchema = (action: string) => {
   return action === LifecycleAction.tagImages
     ? yup.object().shape({
-        containerName: yup.string().required(t('devconsole~Required')),
+        containerName: yup.string().required(i18n.t('devconsole~Required')),
         imageStream: yup.object({
-          namespace: yup.string().required(t('devconsole~Required')),
-          image: yup.string().required(t('devconsole~Required')),
-          tag: yup.string().required(t('devconsole~Required')),
+          namespace: yup.string().required(i18n.t('devconsole~Required')),
+          image: yup.string().required(i18n.t('devconsole~Required')),
+          tag: yup.string().required(i18n.t('devconsole~Required')),
         }),
       })
     : null;
 };
 
-export const deploymentStrategySchema = (strategy: DeploymentStrategy, t: TFunction) => {
+export const deploymentStrategySchema = (strategy: DeploymentStrategy) => {
   switch (strategy.type) {
     case DeploymentStrategyType.recreateParams: {
-      const { pre, mid, post } = strategy.recreateParams;
+      const { pre, mid, post } = strategy.recreateParams ?? {};
       return yup.object().shape({
         type: yup.string(),
         recreateParams: yup.object().shape({
           timeoutSeconds: yup.number(),
-          ...(pre?.isAddingLch ? { pre: lchValidationSchema(pre, t) } : {}),
-          ...(mid?.isAddingLch ? { mid: lchValidationSchema(mid, t) } : {}),
-          ...(post?.isAddingLch ? { post: lchValidationSchema(post, t) } : {}),
+          ...(pre?.isAddingLch ? { pre: lchValidationSchema(pre) } : {}),
+          ...(mid?.isAddingLch ? { mid: lchValidationSchema(mid) } : {}),
+          ...(post?.isAddingLch ? { post: lchValidationSchema(post) } : {}),
         }),
         imageStreamData: yup.object().shape({
-          ...(pre?.isAddingLch ? { pre: lchImageStreamDataSchema(pre.action, t) } : {}),
-          ...(mid?.isAddingLch ? { mid: lchImageStreamDataSchema(mid.action, t) } : {}),
-          ...(post?.isAddingLch ? { post: lchImageStreamDataSchema(post.action, t) } : {}),
+          ...(pre?.isAddingLch ? { pre: lchImageStreamDataSchema(pre.action) } : {}),
+          ...(mid?.isAddingLch ? { mid: lchImageStreamDataSchema(mid.action) } : {}),
+          ...(post?.isAddingLch ? { post: lchImageStreamDataSchema(post.action) } : {}),
         }),
       });
     }
@@ -76,16 +76,16 @@ export const deploymentStrategySchema = (strategy: DeploymentStrategy, t: TFunct
         type: yup.string(),
         rollingParams: yup.object().shape({
           timeoutSeconds: yup.number(),
-          ...(pre?.isAddingLch ? { pre: lchValidationSchema(pre, t) } : {}),
-          ...(post?.isAddingLch ? { post: lchValidationSchema(post, t) } : {}),
+          ...(pre?.isAddingLch ? { pre: lchValidationSchema(pre) } : {}),
+          ...(post?.isAddingLch ? { post: lchValidationSchema(post) } : {}),
           updatePeriodSeconds: yup.number(),
           intervalSeconds: yup.number(),
           maxSurge: yup.string(),
           maxUnavailable: yup.string(),
         }),
         imageStreamData: yup.object().shape({
-          ...(pre?.isAddingLch ? { pre: lchImageStreamDataSchema(pre.action, t) } : {}),
-          ...(post?.isAddingLch ? { post: lchImageStreamDataSchema(post.action, t) } : {}),
+          ...(pre?.isAddingLch ? { pre: lchImageStreamDataSchema(pre.action) } : {}),
+          ...(post?.isAddingLch ? { post: lchImageStreamDataSchema(post.action) } : {}),
         }),
       });
     }
@@ -103,24 +103,30 @@ export const deploymentStrategySchema = (strategy: DeploymentStrategy, t: TFunct
   }
 };
 
-export const editDeploymentFormSchema = (formValues: EditDeploymentFormData, t: TFunction) =>
+export const editDeploymentFormSchema = (formValues: EditDeploymentFormData) =>
   yup.object({
-    deploymentStrategy: deploymentStrategySchema(formValues.deploymentStrategy, t),
+    deploymentStrategy: deploymentStrategySchema(formValues.deploymentStrategy),
     fromImageStreamTag: yup.boolean(),
     ...(!formValues.fromImageStreamTag
-      ? { imageName: yup.string().required(t('devconsole~Required')) }
+      ? { imageName: yup.string().required(i18n.t('devconsole~Required')) }
       : {}),
     imageStream: yup.object().when('fromImageStreamTag', {
       is: true,
       then: yup.object({
-        namespace: yup.string().required(t('devconsole~Required')),
-        image: yup.string().required(t('devconsole~Required')),
-        tag: yup.string().required(t('devconsole~Required')),
+        namespace: yup.string().required(i18n.t('devconsole~Required')),
+        image: yup.string().required(i18n.t('devconsole~Required')),
+        tag: yup.string().required(i18n.t('devconsole~Required')),
+      }),
+    }),
+    isi: yup.object().when('fromImageStreamTag', {
+      is: true,
+      then: yup.object({
+        name: yup.string().required(i18n.t('devconsole~Required')),
       }),
     }),
   });
 
-export const validationSchema = (t: TFunction) =>
+export const validationSchema = () =>
   yup.mixed().test({
     test(formValues: EditDeploymentData) {
       const formYamlDefinition = yup.object({
@@ -128,7 +134,7 @@ export const validationSchema = (t: TFunction) =>
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: editDeploymentFormSchema(formValues.formData, t),
+          then: editDeploymentFormSchema(formValues.formData),
         }),
       });
 

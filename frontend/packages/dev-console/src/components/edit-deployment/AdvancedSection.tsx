@@ -6,7 +6,7 @@ import ProgressiveList from '../progressive-list/ProgressiveList';
 import ProgressiveListItem from '../progressive-list/ProgressiveListItem';
 import PauseRolloutsSection from './PauseRolloutsSection';
 
-const AdvancedSection: React.FC = () => {
+const AdvancedSection: React.FC<{ resourceType: string }> = ({ resourceType }) => {
   const { t } = useTranslation();
   const [visibleItems, setVisibleItems] = React.useState<string[]>([]);
   const handleVisibleItemChange = (item: string) => {
@@ -20,7 +20,7 @@ const AdvancedSection: React.FC = () => {
         onVisibleItemChange={handleVisibleItemChange}
       >
         <ProgressiveListItem name={t('devconsole~Pause rollouts')}>
-          <PauseRolloutsSection name="formData.paused" />
+          <PauseRolloutsSection name="formData.paused" resourceType={resourceType} />
         </ProgressiveListItem>
         <ProgressiveListItem name={t('devconsole~Scaling')}>
           <ScalingSection name="formData.replicas" />

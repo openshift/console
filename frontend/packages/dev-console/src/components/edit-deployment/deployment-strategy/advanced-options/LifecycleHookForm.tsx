@@ -11,13 +11,21 @@ import TagImagesForm from './TagImagesForm';
 import FormSection from '../../../import/section/FormSection';
 import './LifecycleHookForm.scss';
 
-const LifecycleHookForm: React.FC<{
+interface LifecycleHookFormProps {
   lifecycleHook: string;
   resourceObj: K8sResourceKind;
   dataAttribute: string;
   onSubmit: () => void;
   onClose: () => void;
-}> = ({ lifecycleHook, resourceObj, dataAttribute, onSubmit, onClose }) => {
+}
+
+const LifecycleHookForm: React.FC<LifecycleHookFormProps> = ({
+  lifecycleHook,
+  resourceObj,
+  dataAttribute,
+  onSubmit,
+  onClose,
+}) => {
   const { t } = useTranslation();
   const { errors } = useFormikContext<FormikValues>();
   return (

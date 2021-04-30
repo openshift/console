@@ -12,7 +12,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
   handleSubmit,
   handleReset,
   handleCancel,
-  downloadYAML,
+  handleDownload,
   submitLabel,
   resetLabel,
   cancelLabel,
@@ -89,13 +89,13 @@ const FormFooter: React.FC<FormFooterProps> = ({
               {cancelLabel || t('console-shared~Cancel')}
             </Button>
           )}
-          {downloadYAML && (
+          {handleDownload && (
             <Button
               type="button"
               data-test-id="download-button"
               variant={ButtonVariant.secondary}
               className="pf-c-button--align-right hidden-sm hidden-xs"
-              onClick={downloadYAML}
+              onClick={handleDownload}
               icon={<DownloadIcon />}
             >
               {t('console-shared~Download')}

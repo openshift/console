@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
@@ -12,11 +12,14 @@ const ContainerField: React.FC = () => {
       formData: { containers },
     },
   } = useFormikContext<FormikValues>();
+  const containerName = containers[0]?.name;
   return (
     <FormGroup fieldId="container-name">
       <span style={{ fontWeight: 'bold' }}>
-        {t('devconsole~Container:')}&nbsp; <ResourceIcon kind={ContainerModel.kind} />
-        {containers[0]?.name}
+        <Trans t={t} ns="devconsole">
+          Container: <ResourceIcon kind={ContainerModel.kind} />
+          {{ containerName }}
+        </Trans>
       </span>
     </FormGroup>
   );

@@ -1,6 +1,4 @@
 import * as URL from 'url';
-import { safeLoad } from 'js-yaml';
-import { saveAs } from 'file-saver';
 import {
   MonacoToProtocolConverter,
   ProtocolToMonacoConverter,
@@ -275,18 +273,4 @@ export const registerYAMLinMonaco = (editor, monaco) => {
   registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
   registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, yamlService);
   registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
-};
-
-export const downloadYaml = (data) => {
-  const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
-  let filename = 'k8s-object.yaml';
-  try {
-    const obj = safeLoad(data);
-    if (obj.kind) {
-      filename = `${obj.kind.toLowerCase()}-${obj.metadata.name}.yaml`;
-    }
-  } catch (unused) {
-    // unused
-  }
-  saveAs(blob, filename);
 };

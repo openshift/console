@@ -41,7 +41,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
             validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
             isRequired={required}
           >
-            <div className="pf-c-form__helper-text">{helpText}</div>
+            {helpText && <div className="pf-c-form__helper-text">{helpText}</div>}
             {dndEnabled ? (
               <DragAndDrop>
                 {rowValues.map((v, idx) => {

@@ -24,7 +24,12 @@ const ContainerImageField: React.FC = () => {
           required
         />
       ) : (
-        <InputField name="formData.imageName" label={t('devconsole~Image Name')} required />
+        <InputField
+          name="formData.imageName"
+          label={t('devconsole~Image Name')}
+          helpText={t('devconsole~Container image name')}
+          required
+        />
       )}
     </>
   );

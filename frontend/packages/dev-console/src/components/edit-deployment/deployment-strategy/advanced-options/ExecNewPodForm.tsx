@@ -6,11 +6,17 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getContainerNames } from '../../utils/edit-deployment-utils';
 import { FormSection } from '@patternfly/react-core';
 
-const ExecNewPodForm: React.FC<{
+interface ExecNewPodFormProps {
   resourceObj: K8sResourceKind;
   lifecycleHook: string;
   dataAttribute: string;
-}> = ({ resourceObj, lifecycleHook, dataAttribute }) => {
+}
+
+const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
+  resourceObj,
+  lifecycleHook,
+  dataAttribute,
+}) => {
   const { t } = useTranslation();
   const {
     values: {
@@ -43,7 +49,7 @@ const ExecNewPodForm: React.FC<{
       />
       <EnvironmentField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.env`}
-        label={t('devconsole~Environment variables (runtime only')}
+        label={t('devconsole~Environment variables (runtime only)')}
         envs={deploymentStrategy[dataAttribute][lifecycleHook].lch.execNewPod.env ?? []}
         obj={resourceObj}
         envPath={['spec', 'template', 'spec', 'containers']}

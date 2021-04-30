@@ -20,59 +20,55 @@ const AdvancedStrategyOptions: React.FC<{
       },
     },
   } = useFormikContext<FormikValues>();
-  const [showAdditionalParams, setShowAdditionalParams] = React.useState<boolean>(false);
   return (
-    <>
-      {showAdditionalParams && type === DeploymentStrategyType.rollingParams && (
-        <>
-          <InputField
-            name="formData.deploymentStrategy.rollingParams.updatePeriodSeconds"
-            style={{ maxWidth: 'unset' }}
-            label={t('devconsole~Update Period')}
-            type={TextInputTypes.number}
-          />
-          <InputField
-            name="formData.deploymentStrategy.rollingParams.intervalSeconds"
-            style={{ maxWidth: 'unset' }}
-            label={t('devconsole~Interval')}
-            type={TextInputTypes.number}
-          />
-        </>
-      )}
-      <ExpandCollapse
-        textExpanded={t('devconsole~Hide additional parameters and lifecycle hooks')}
-        textCollapsed={t('devconsole~Show additional parameters and lifecycle hooks')}
-        onToggle={(isExpanded) => setShowAdditionalParams(isExpanded)}
-      >
-        <FormSection>
-          <LifecycleHookField
-            title={t('devconsole~Pre Lifecycle Hook')}
-            subTitle={t('devconsole~Pre hooks execute before the deployment begins.')}
-            dataAttribute={dataAttribute}
-            resourceObj={resourceObj}
-            lifecycleHookName="pre"
-          />
-          {type === DeploymentStrategyType.recreateParams && (
-            <LifecycleHookField
-              title={t('devconsole~Mid Lifecycle Hook')}
-              subTitle={t(
-                'devconsole~Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
-              )}
-              dataAttribute={dataAttribute}
-              resourceObj={resourceObj}
-              lifecycleHookName="mid"
+    <ExpandCollapse
+      textExpanded={t('devconsole~Hide additional parameters and lifecycle hooks')}
+      textCollapsed={t('devconsole~Show additional parameters and lifecycle hooks')}
+    >
+      <FormSection>
+        {type === DeploymentStrategyType.rollingParams && (
+          <>
+            <InputField
+              name="formData.deploymentStrategy.rollingParams.updatePeriodSeconds"
+              style={{ maxWidth: 'unset' }}
+              label={t('devconsole~Update Period')}
+              type={TextInputTypes.number}
             />
-          )}
+            <InputField
+              name="formData.deploymentStrategy.rollingParams.intervalSeconds"
+              style={{ maxWidth: 'unset' }}
+              label={t('devconsole~Interval')}
+              type={TextInputTypes.number}
+            />
+          </>
+        )}
+        <LifecycleHookField
+          title={t('devconsole~Pre Lifecycle Hook')}
+          subTitle={t('devconsole~Pre hooks execute before the deployment begins.')}
+          dataAttribute={dataAttribute}
+          resourceObj={resourceObj}
+          lifecycleHookName="pre"
+        />
+        {type === DeploymentStrategyType.recreateParams && (
           <LifecycleHookField
-            title={t('devconsole~Post Lifecycle Hook')}
-            subTitle={t('devconsole~Post hooks execute after the deployment strategy completes.')}
+            title={t('devconsole~Mid Lifecycle Hook')}
+            subTitle={t(
+              'devconsole~Mid hooks execute after the previous deployment is scaled down to zero and before the first pod of the new deployment is created.',
+            )}
             dataAttribute={dataAttribute}
             resourceObj={resourceObj}
-            lifecycleHookName="post"
+            lifecycleHookName="mid"
           />
-        </FormSection>
-      </ExpandCollapse>
-    </>
+        )}
+        <LifecycleHookField
+          title={t('devconsole~Post Lifecycle Hook')}
+          subTitle={t('devconsole~Post hooks execute after the deployment strategy completes.')}
+          dataAttribute={dataAttribute}
+          resourceObj={resourceObj}
+          lifecycleHookName="post"
+        />
+      </FormSection>
+    </ExpandCollapse>
   );
 };
 
