@@ -41,7 +41,7 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
                   helpText={parameter.description}
                   placeholder={t('pipelines-plugin~Name')}
                   required
-                  autocomplete="off"
+                  autoComplete="off"
                 />
               );
 

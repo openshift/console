@@ -15,6 +15,7 @@ import {
   TektonResource,
   ResourceTarget,
   TektonResourceGroup,
+  WhenExpression,
 } from '../../../types';
 import { PipelineResourceType } from '../const';
 
@@ -43,6 +44,17 @@ const areRequiredParamsAdded = (
     const matchingParam = params.find(({ name }) => name === requiredParam.name);
     return !matchingParam || !matchingParam.value;
   });
+};
+
+const areRequiredWhenExpressionsAdded = (when: WhenExpression[] = []) => {
+  if (when.length === 0) {
+    return true;
+  }
+  const invalidValues = (values: string[]) =>
+    (values || []).length === 0 || values.some((v) => v?.length === 0);
+  return !when?.some(
+    (w) => w?.input?.length === 0 || w?.operator?.length === 0 || invalidValues(w?.values),
+  );
 };
 
 /**
@@ -323,6 +335,23 @@ const taskValidation = (
               );
             },
           ),
+        when: yup
+          .array()
+          .of(
+            yup.object({
+              input: yup.string().required(t('pipelines-plugin~Required')),
+              operator: yup.string().required(t('pipelines-plugin~Required')),
+              values: yup.array().of(yup.string().required(t('pipelines-plugin~Required'))),
+            }),
+          )
+          .test(
+            'is-when-expression-required',
+            TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS],
+            function(when?: WhenExpression[]) {
+              return areRequiredWhenExpressionsAdded(when);
+            },
+          ),
+
         workspaces: yup
           .array()
           .of(

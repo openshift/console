@@ -11,6 +11,7 @@ type WhenExpressionDecoratorProps = {
   width: number;
   height: number;
   color: string;
+  leftOffset?: number;
   stroke?: string;
   status?: string;
   appendLine?: boolean;
@@ -25,13 +26,14 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   stroke = lightBorderColor.value,
   appendLine = false,
   status,
+  leftOffset = 2,
 }) => {
   const { t } = useTranslation();
   const rotation = 45; // 45deg
   const diamondHeight =
     Math.round(width * Math.sin(rotation)) + Math.round(height * Math.cos(rotation));
   const diamondNode = (
-    <g transform={`translate(-${width * 2}, ${NODE_HEIGHT / 2 - diamondHeight / 2})`}>
+    <g transform={`translate(-${width * leftOffset}, ${NODE_HEIGHT / 2 - diamondHeight / 2})`}>
       <rect
         className="opp-when-expression-decorator-diamond"
         width={width}
@@ -43,7 +45,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
         <line
           x1={diamondHeight / 2}
           y1={diamondHeight / 2}
-          x2={width + height}
+          x2={width * leftOffset}
           y2={diamondHeight / 2}
           stroke={lightBorderColor.value}
         />

@@ -5,7 +5,7 @@ import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import { PipelineLayout } from '../pipeline-topology/const';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
-import { getEdgesFromNodes } from '../pipeline-topology/utils';
+import { getEdgesFromNodes, nodesHasWhenExpression } from '../pipeline-topology/utils';
 import { useNodes } from './hooks';
 import {
   PipelineBuilderFormikValues,
@@ -39,6 +39,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
     getBuilderTasksErrorGroup(errors?.formData),
   );
   const taskCount = taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
+  const hasWhenExpression = nodesHasWhenExpression(nodes);
 
   if (status?.taskLoadingError) {
     return (
@@ -60,12 +61,14 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   return (
     <PipelineTopologyGraph
       // TODO: fix this; the graph layout isn't properly laying out nodes
-      key={nodes.map((n) => n.id).join('-')}
+      key={`${nodes.map((n) => n.id).join('-')}${hasWhenExpression ? '-spaced' : ''}`}
       id="pipeline-builder"
       fluid
       nodes={nodes}
       edges={getEdgesFromNodes(nodes)}
-      layout={PipelineLayout.DAGRE_BUILDER}
+      layout={
+        hasWhenExpression ? PipelineLayout.DAGRE_BUILDER_SPACED : PipelineLayout.DAGRE_BUILDER
+      }
     />
   );
 };

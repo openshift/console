@@ -833,5 +833,94 @@ describe('Pipeline Build validation schema', () => {
           .catch(shouldHavePassed);
       });
     });
+    describe('Validate When Expresssions', () => {
+      const invalidWhenExpressionCheck = hasError(
+        'formData.tasks[0].when',
+        TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS],
+      );
+
+      it('should fail if the when expression is missing input value', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              when: [{ input: '', operator: 'in', values: ['test-value'] }],
+            },
+          ],
+        })
+          .then(shouldHaveFailed)
+          .catch(invalidWhenExpressionCheck);
+      });
+
+      it('should fail if the when expression is missing operator value', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              when: [
+                { input: '$(params.test)', operator: 'in', values: ['test-values'] },
+                { input: '$(params.test)', operator: '', values: ['value-2'] },
+              ],
+            },
+          ],
+        })
+          .then(shouldHaveFailed)
+          .catch(invalidWhenExpressionCheck);
+      });
+
+      it('should fail if the when expression is missing values', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              when: [
+                { input: '$(params.test)', operator: 'in', values: ['test-values'] },
+                { input: '$(params.test)', operator: 'in', values: [''] },
+              ],
+            },
+          ],
+        })
+          .then(shouldHaveFailed)
+          .catch(invalidWhenExpressionCheck);
+      });
+
+      it('should fail if the when expression has partial missing values', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              when: [
+                { input: '$(params.test)', operator: 'in', values: ['test-values'] },
+                { input: '$(params.test)', operator: 'in', values: ['value-2', ''] },
+              ],
+            },
+          ],
+        })
+          .then(shouldHaveFailed)
+          .catch(invalidWhenExpressionCheck);
+      });
+
+      it('should pass if the when expression is valid', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test-task',
+              taskSpec: embeddedTaskSpec,
+              when: [
+                { input: '$(params.test)', operator: 'in', values: ['test-values'] },
+                { input: '$(params.test)', operator: 'in', values: ['test-value-two'] },
+              ],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+    });
   });
 });

@@ -1,6 +1,7 @@
 import { JSONSchema6 } from 'json-schema';
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
 export interface FieldProps {
   name: string;
@@ -22,7 +23,7 @@ export interface BaseInputFieldProps extends FieldProps {
   placeholder?: string;
   onChange?: (event) => void;
   onBlur?: (event) => void;
-  autocomplete?: string;
+  autoComplete?: string;
 }
 
 export interface GroupInputProps extends BaseInputFieldProps {
@@ -93,12 +94,13 @@ export interface ResourceLimitFieldProps extends FieldProps {
 export interface MultiColumnFieldProps extends FieldProps {
   addLabel?: string;
   toolTip?: string;
-  emptyValues: { [name: string]: string | boolean };
+  emptyValues: { [name: string]: string | boolean | string[] };
   emptyMessage?: string;
   headers: ({ name: string; required: boolean } | string)[];
   complexFields?: boolean[];
-  children: React.ReactNode;
+  children?: React.ReactNode;
   spans?: gridItemSpanValueShape[];
+  rowRenderer?: (row: RowRendererProps) => React.ReactNode;
 }
 
 export interface YAMLEditorFieldProps extends FieldProps {

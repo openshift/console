@@ -17,6 +17,7 @@ import {
   createInvalidTaskListNode,
   createTaskListNode,
   getFinallyTaskHeight,
+  getFinallyTaskWidth,
   getLastRegularTasks,
   handleParallelToParallelNodes,
   tasksToBuilderNodes,
@@ -115,7 +116,10 @@ const useConnectFinally = (
   const finallyNodeName = `finally-node-${taskGroup.finallyTasks.length}-${taskGroup.finallyListTasks.length}`;
   const regularRunAfters = getLastRegularTasks(nodes);
 
-  return createBuilderFinallyNode(getFinallyTaskHeight(allTasksLength, false))(finallyNodeName, {
+  return createBuilderFinallyNode(
+    getFinallyTaskHeight(allTasksLength, false),
+    getFinallyTaskWidth(allTasksLength),
+  )(finallyNodeName, {
     isFinallyTask: true,
     namespace,
     namespaceTaskList: namespacedTasks,

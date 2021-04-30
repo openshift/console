@@ -229,26 +229,9 @@ const TaskComponent: React.FC<TaskProps> = ({
     </g>
   );
 
-  const taskColor = showStatusState
-    ? taskStatusColor
-    : !isFinallyTask
-    ? greyBackgroundColor.value
-    : lightBackgroundColor.value;
-
   if (!disableVisualizationTooltip) {
     taskPill = (
       <>
-        {hasWhenExpression && (
-          <WhenExpressionDecorator
-            width={WHEN_EXPRESSSION_DIAMOND_SIZE}
-            height={WHEN_EXPRESSSION_DIAMOND_SIZE}
-            stroke={showStatusState ? taskColor : undefined}
-            color={taskColor}
-            appendLine={!hasRunAfter && !isFinallyTask}
-            status={status.reason}
-            enableTooltip
-          />
-        )}
         <Tooltip
           position="bottom"
           enableFlip={false}
@@ -267,7 +250,30 @@ const TaskComponent: React.FC<TaskProps> = ({
     );
   }
 
-  return enableLogLink ? <Link to={path}>{taskPill}</Link> : taskPill;
+  const taskColor = showStatusState
+    ? taskStatusColor
+    : !isFinallyTask
+    ? greyBackgroundColor.value
+    : lightBackgroundColor.value;
+
+  const taskNode = (
+    <>
+      {hasWhenExpression && (
+        <WhenExpressionDecorator
+          width={WHEN_EXPRESSSION_DIAMOND_SIZE}
+          height={WHEN_EXPRESSSION_DIAMOND_SIZE}
+          stroke={showStatusState ? taskColor : undefined}
+          color={taskColor}
+          appendLine={!hasRunAfter && !isFinallyTask}
+          status={status.reason}
+          enableTooltip
+          leftOffset={disableVisualizationTooltip && !isFinallyTask ? 3 : 2}
+        />
+      )}
+      {taskPill}
+    </>
+  );
+  return enableLogLink ? <Link to={path}>{taskNode}</Link> : taskNode;
 };
 
 interface SvgTaskStatusProps {

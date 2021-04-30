@@ -6,11 +6,15 @@
   }
 
   &__content {
+    margin-bottom: var(--pf-global--spacer--lg);
     padding: var(--pf-global--spacer--lg);
     overflow-y: auto;
   }
 
-  &__param, &__resource, &__workspace {
+  &__param,
+  &__resource,
+  &__workspace,
+  &__when-expressions {
     margin-bottom: var(--pf-global--spacer--md);
   }
 

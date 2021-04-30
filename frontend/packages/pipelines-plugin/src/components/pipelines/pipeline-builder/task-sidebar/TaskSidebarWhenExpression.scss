@@ -1,0 +1,23 @@
+.opp-task-sidebar-when-expression {
+  margin-bottom: var(--pf-global--spacer--lg);
+
+  &__section {
+    margin-bottom: var(--pf-global--spacer--md);
+    border: 1px dashed var(--pf-global--BorderColor--100);
+    padding: var(--pf-global--spacer--md);
+  }
+  &__control-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+  &__control-button {
+    padding: 0;
+    color: var(--pf-c-button--m-link--Color);
+  }
+  &__control-label {
+    margin-left: var(--pf-global--spacer--xs);
+  }
+  &__field {
+    margin-right: var(--pf-global--spacer--md);
+  }
+}

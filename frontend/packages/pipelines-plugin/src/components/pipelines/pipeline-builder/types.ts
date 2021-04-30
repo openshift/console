@@ -6,6 +6,7 @@ import {
   TektonResource,
   TaskKind,
   TektonWorkspace,
+  WhenExpression,
 } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 // eslint-disable-next-line import/no-cycle
@@ -48,6 +49,7 @@ export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   params: TektonParam[];
   resources: TektonResource[];
   workspaces: TektonWorkspace[];
+  when?: WhenExpression[];
 };
 
 export type PipelineBuilderFormYamlValues = {

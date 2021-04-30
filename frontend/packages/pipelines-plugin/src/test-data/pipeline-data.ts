@@ -276,9 +276,9 @@ const pipelineSpec: PipelineSpecData = {
       {
         when: [
           {
-            Input: '$(params.path)',
-            Operator: 'in',
-            Values: ['README.md'],
+            input: '$(params.path)',
+            operator: 'in',
+            values: ['README.md'],
           },
         ],
         name: 'then-check',
@@ -2028,9 +2028,9 @@ export const pipelineTestData: PipelineTestData = {
                 },
                 when: [
                   {
-                    Input: '$(params.path)',
-                    Operator: 'in',
-                    Values: ['README.md'],
+                    input: '$(params.path)',
+                    operator: 'in',
+                    values: ['README.md'],
                   },
                 ],
               },
