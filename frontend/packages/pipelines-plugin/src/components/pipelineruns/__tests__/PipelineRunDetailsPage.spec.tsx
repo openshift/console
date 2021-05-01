@@ -23,6 +23,14 @@ jest.mock('react-i18next', () => {
   };
 });
 
+jest.mock('@console/internal/i18n', () => {
+  const reactI18next = require.requireActual('@console/internal/i18n');
+  return {
+    ...reactI18next,
+    t: (key) => key,
+  };
+});
+
 describe('PipelineRunDetailsPage:', () => {
   let pipelineRunDetailsPageProps: PipelineRunDetailsPageProps;
   let wrapper: ShallowWrapper<PipelineRunDetailsPageProps>;
@@ -63,7 +71,7 @@ describe('PipelineRunDetailsPage:', () => {
   it('Should contain task runs page', () => {
     const { pages } = wrapper.props();
 
-    const taskRunsPage = pages.find((page) => page.name === 'pipelines-plugin~Task Runs');
+    const taskRunsPage = pages.find((page) => page.name === 'pipelines-plugin~TaskRuns');
     expect(taskRunsPage).toBeDefined();
     expect(taskRunsPage.component).toBe(TaskRuns);
   });

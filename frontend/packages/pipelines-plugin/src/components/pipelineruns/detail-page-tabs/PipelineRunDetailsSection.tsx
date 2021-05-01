@@ -13,7 +13,7 @@ const PipelineRunDetailsSection: React.FC<PipelineRunDetailsSectionProps> = ({ p
   const { t } = useTranslation();
   return (
     <>
-      <SectionHeading text={t('pipelines-plugin~Pipeline Run details')} />
+      <SectionHeading text={t('pipelines-plugin~PipelineRun details')} />
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <div className="row">
         <div className="col-sm-6">

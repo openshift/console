@@ -28,7 +28,7 @@ const TaskRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
         <Firehose resources={podResources}>
           <LogsWrapperComponent
             taskName={obj.metadata.name}
-            downloadAllLabel={t('pipelines-plugin~Download all Task Run logs')}
+            downloadAllLabel={t('pipelines-plugin~Download all TaskRun logs')}
           />
         </Firehose>
       </div>
@@ -37,7 +37,7 @@ const TaskRunLog: React.FC<TaskRunLogProps> = ({ obj }) => {
   return (
     <StatusBox
       loadError={t('pipelines-plugin~Pod not found')}
-      label={t('pipelines-plugin~Task Run log')}
+      label={t('pipelines-plugin~TaskRun log')}
     />
   );
 };

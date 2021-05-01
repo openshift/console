@@ -33,7 +33,7 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.editYaml(viewYamlComponent),
         {
           href: 'task-runs',
-          name: t('pipelines-plugin~Task Runs'),
+          name: t('pipelines-plugin~TaskRuns'),
           component: TaskRuns,
         },
         {

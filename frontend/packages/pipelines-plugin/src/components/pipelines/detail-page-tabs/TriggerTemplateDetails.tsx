@@ -21,7 +21,7 @@ const TriggerTemplateDetails: React.FC<TriggerTemplateDetailsProps> = ({
   const pipelineName: string = getTriggerTemplatePipelineName(triggerTemplate);
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('pipelines-plugin~Trigger Template details')} />
+      <SectionHeading text={t('pipelines-plugin~TriggerTemplate details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={triggerTemplate} />

@@ -62,7 +62,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         navFactory.editYaml(),
         {
           href: 'Runs',
-          name: t('pipelines-plugin~Pipeline Runs'),
+          name: t('pipelines-plugin~PipelineRuns'),
           component: PipelineRuns,
         },
         {

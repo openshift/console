@@ -52,7 +52,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
       <TriggeredBySection pipelineRun={pipelineRun} />
       <DynamicResourceLinkList
         links={pipelineResourceLinks}
-        title={t('pipelines-plugin~Pipeline Resources')}
+        title={t('pipelines-plugin~PipelineResources')}
         namespace={pipelineRun.metadata.namespace}
       />
       <WorkspaceResourceLinkList

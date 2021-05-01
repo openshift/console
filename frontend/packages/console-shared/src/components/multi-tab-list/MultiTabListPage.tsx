@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import {
   history,
   PageHeading,
@@ -47,6 +46,20 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
     }
   };
 
+  const items = Object.keys(menuActions).reduce((acc, key) => {
+    const menuAction: MenuAction = menuActions[key];
+    const label =
+      menuAction.label || menuAction.model?.labelKey
+        ? t(menuAction.model.labelKey)
+        : menuAction.model?.label;
+    if (!label) return acc;
+
+    return {
+      ...acc,
+      [key]: menuAction,
+    };
+  }, {});
+
   return (
     <>
       <PageHeading className="co-m-nav-title--row" title={title} badge={badge}>
@@ -55,10 +68,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
           menuClassName="pf-m-align-right-on-md"
           title={t('console-shared~Create')}
           noSelection
-          items={_.mapValues(
-            menuActions,
-            (menuAction: MenuAction) => menuAction.label || menuAction.model.label,
-          )}
+          items={items}
           onChange={onSelectCreateAction}
         />
       </PageHeading>

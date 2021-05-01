@@ -72,7 +72,7 @@ export const getPipelineResourceLinks = (
 
       return {
         resourceKind: 'EmbeddedPipelineResource',
-        name: t('pipelines-plugin~Embedded Pipeline Resource'),
+        name: t('pipelines-plugin~Embedded PipelineResource'),
         qualifier,
       };
     },
