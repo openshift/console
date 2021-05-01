@@ -320,7 +320,6 @@
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
     "postcss": "^8.2.10"
-
   },
   "husky": {
     "hooks": {
