@@ -20,6 +20,10 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
+	if _, err := validateAddPage(fs.Lookup("add-page").Value.String()); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -62,4 +66,25 @@ func validateQuickStarts(value string) (QuickStarts, error) {
 	}
 
 	return quickStarts, nil
+}
+
+func validateAddPage(value string) (*AddPage, error) {
+	if value == "" {
+		return nil, nil
+	}
+	var addPage AddPage
+
+	decoder := json.NewDecoder(strings.NewReader(value))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&addPage); err != nil {
+		return nil, err
+	}
+
+	for index, action := range addPage.DisabledActions {
+		if action == "" {
+			return &addPage, fmt.Errorf("Add page disabled action at index %d must not be empty.", index)
+		}
+	}
+
+	return &addPage, nil
 }

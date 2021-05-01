@@ -9,13 +9,10 @@ import { ALL_NAMESPACES_KEY, PageLayout } from '@console/shared';
 import { HIDE_QUICK_START_ADD_TILE_STORAGE_KEY } from '@console/shared/src/components/quick-starts/quick-starts-catalog-card-constants';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import QuickStartsCatalogCard from '@console/shared/src/components/quick-starts/QuickStartsCatalogCard';
-import {
-  ResolvedExtension,
-  useResolvedExtensions,
-  AddAction,
-  isAddAction,
-} from '@console/dynamic-plugin-sdk';
+import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+
+import { useAddActionExtensions } from '../utils/useAddActionExtensions';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -84,7 +81,7 @@ const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) =
   const defaultHintBlockText = t(
     'devconsole~Select a way to create an Application, component or service from one of the options.',
   );
-  const [addActionExtensions, resolved] = useResolvedExtensions<AddAction>(isAddAction);
+  const [addActionExtensions, resolved] = useAddActionExtensions();
 
   if (!resolved) return <LoadingBox />;
 

@@ -91,6 +91,7 @@ type jsGlobals struct {
 	GraphQLBaseURL           string   `json:"graphqlBaseURL"`
 	DevCatalogCategories     string   `json:"developerCatalogCategories"`
 	UserSettingsLocation     string   `json:"userSettingsLocation"`
+	AddPage                  string   `json:"addPage"`
 	ConsolePlugins           []string `json:"consolePlugins"`
 	QuickStarts              string   `json:"quickStarts"`
 }
@@ -141,6 +142,7 @@ type Server struct {
 	DevCatalogCategories  string
 	UserSettingsLocation  string
 	QuickStarts           string
+	AddPage               string
 }
 
 func (s *Server) authDisabled() bool {
@@ -523,6 +525,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		UserSettingsLocation:  s.UserSettingsLocation,
 		ConsolePlugins:        getMapKeys(s.EnabledConsolePlugins),
 		QuickStarts:           s.QuickStarts,
+		AddPage:               s.AddPage,
 	}
 
 	if !s.authDisabled() {
