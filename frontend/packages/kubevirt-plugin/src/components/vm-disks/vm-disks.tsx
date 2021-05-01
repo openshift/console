@@ -4,13 +4,11 @@ import { useTranslation } from 'react-i18next';
 
 import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { FirehoseResult } from '@console/internal/components/utils';
+import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getNamespace } from '@console/shared';
-import { Button, Popover } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
@@ -124,21 +122,11 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
         <>
           <h3>
             {t('kubevirt-plugin~Disks')}
-            <Popover
-              aria-label={t('kubevirt-plugin~Disks description')}
-              position="top"
-              bodyContent={
-                <>
-                  {t(
-                    'kubevirt-plugin~The following information is provided by the OpenShift Virtualization operator.',
-                  )}
-                </>
-              }
-            >
-              <Button variant="plain">
-                <QuestionCircleIcon />
-              </Button>
-            </Popover>
+            <FieldLevelHelp>
+              {t(
+                'kubevirt-plugin~The following information is provided by the OpenShift Virtualization operator.',
+              )}
+            </FieldLevelHelp>
           </h3>
         </>
       )}
