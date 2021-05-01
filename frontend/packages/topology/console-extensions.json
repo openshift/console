@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "devconsole",
+      "reducer": { "$codeRef": "reduxReducer" }
+    }
+  }
+]

@@ -16,6 +16,9 @@
       "exact": false,
       "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
       "component": { "$codeRef": "standaloneConsole" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
     }
   },
   {
@@ -60,13 +63,22 @@
       "required": ["KUBEVIRT"]
     }
   },
-
   {
     "type": "console.catalog/item-filter",
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Template",
       "filter": { "$codeRef": "createVM.catalogVMTemplateFilter" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "kubevirt",
+      "reducer": { "$codeRef": "reduxReducer" }
     },
     "flags": {
       "required": ["KUBEVIRT"]
