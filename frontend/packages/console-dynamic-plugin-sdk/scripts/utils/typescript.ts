@@ -3,7 +3,14 @@ import * as ts from 'typescript';
 import * as tsj from 'ts-json-schema-generator';
 import * as tsu from 'tsutils';
 import * as _ from 'lodash';
-import { resolvePath } from './path';
+import { resolvePath, relativePath } from './path';
+
+const formatDiagnostics = (diagnostics: readonly ts.Diagnostic[], currentDirectory: string) =>
+  ts.formatDiagnosticsWithColorAndContext(diagnostics, {
+    getCurrentDirectory: () => currentDirectory,
+    getCanonicalFileName: _.identity,
+    getNewLine: () => ts.sys.newLine,
+  });
 
 export const getSchemaGeneratorConfig = (srcFile: string, typeName?: string): tsj.Config => ({
   path: resolvePath(srcFile),
@@ -11,9 +18,24 @@ export const getSchemaGeneratorConfig = (srcFile: string, typeName?: string): ts
   tsconfig: findUp.sync('tsconfig.json'),
   topRef: false,
   jsDoc: 'extended',
+  skipTypeCheck: true,
 });
 
-export const getProgram = (config: tsj.Config): ts.Program => tsj.createProgram(config);
+export const getProgram = (config: tsj.Config): ts.Program => {
+  const program = tsj.createProgram(config);
+
+  const diagnostics = ts.sortAndDeduplicateDiagnostics(ts.getPreEmitDiagnostics(program));
+  if (diagnostics.length > 0) {
+    console.error(formatDiagnostics(diagnostics, program.getCurrentDirectory()));
+  }
+
+  const hasDiagnosticErrors = diagnostics.some((d) => d.category === ts.DiagnosticCategory.Error);
+  if (hasDiagnosticErrors) {
+    throw new Error(`Detected errors while parsing ${relativePath(config.path)}`);
+  }
+
+  return program;
+};
 
 export const getProgramFromFile = (srcFile: string): ts.Program =>
   getProgram(getSchemaGeneratorConfig(srcFile));
