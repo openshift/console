@@ -76,11 +76,11 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
 
   React.useEffect(() => {
     const editYAMLMenuItem = (name: string, resourceLink: string) => ({
-      label: t('global-config~Edit {{name}} resource', { name }),
+      label: t('public~Edit {{name}} resource', { name }),
       href: `${resourceLink}/yaml`,
     });
     const viewAPIExplorerMenuItem = (name: string, apiExplorerLink: string) => ({
-      label: t('global-config~Explore {{name}} API', { name }),
+      label: t('public~Explore {{name}} API', { name }),
       href: apiExplorerLink,
     });
     let isSubscribed = true;
@@ -134,11 +134,11 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
             path: '/monitoring/alertmanagerconfig',
             menuItems: [
               {
-                label: t('global-config~Create Receiver'),
+                label: t('public~Create Receiver'),
                 href: '/monitoring/alertmanagerconfig/receivers/~new',
               },
               {
-                label: t('global-config~Edit configuration YAML'),
+                label: t('public~Edit configuration YAML'),
                 href: `/monitoring/alertmanageryaml`,
               },
             ],
@@ -164,14 +164,12 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       {!loading && (
         <>
           <p className="co-help-text">
-            {t(
-              'global-config~Edit the following resources to manage the configuration of your cluster.',
-            )}
+            {t('public~Edit the following resources to manage the configuration of your cluster.')}
           </p>
           <div className="co-m-pane__filter-row">
             <TextFilter
               value={textFilter}
-              label={t('global-config~by name or description')}
+              label={t('public~by name or description')}
               onChange={(val) => setTextFilter(val)}
             />
           </div>
@@ -188,12 +186,12 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       {loading && <LoadingBox />}
       {!loading &&
         (_.isEmpty(visibleItems) ? (
-          <EmptyBox label={t('global-config~Configuration resources')} />
+          <EmptyBox label={t('public~Configuration resources')} />
         ) : (
           <div className="co-m-table-grid co-m-table-grid--bordered">
             <div className="row co-m-table-grid__head">
-              <div className="col-xs-10 col-sm-4">{t('global-config~Configuration resource')}</div>
-              <div className="hidden-xs col-sm-7">{t('global-config~Description')}</div>
+              <div className="col-xs-10 col-sm-4">{t('public~Configuration resource')}</div>
+              <div className="hidden-xs col-sm-7">{t('public~Description')}</div>
               <div />
             </div>
             <div className="co-m-table-grid__body">

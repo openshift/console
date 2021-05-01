@@ -20,7 +20,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'htpasswd-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: HTPasswd', () => {
   let wrapper: ShallowWrapper<{}, AddHTPasswdPageState>;

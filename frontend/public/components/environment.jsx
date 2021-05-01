@@ -323,7 +323,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     Promise.all([
       k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
         if (err.response.status !== 403) {
-          const errorMessage = err.message || t('environment~Could not load ConfigMaps.');
+          const errorMessage = err.message || t('public~Could not load ConfigMaps.');
           this.setState({ errorMessage });
         }
         return {
@@ -332,7 +332,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
       }),
       k8sGet(SecretModel, null, envNamespace).catch((err) => {
         if (err.response.status !== 403) {
-          const errorMessage = err.message || t('environment~Could not load Secrets.');
+          const errorMessage = err.message || t('public~Could not load Secrets.');
           this.setState({ errorMessage });
         }
         return {
@@ -464,7 +464,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         dirty: false,
         errorMessage: null,
         stale: false,
-        success: t('environment~Successfully updated the environment variables.'),
+        success: t('public~Successfully updated the environment variables.'),
       });
     });
   }
@@ -525,10 +525,10 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
               isInline
               className="co-alert col-md-11 col-xs-10"
               variant="info"
-              title={t('environment~Environment variables set from parent')}
+              title={t('public~Environment variables set from parent')}
             >
-              {t('environment~View environment for resource')}{' '}
-              {owners.length > 1 ? <>t('environment~owners:') {owners}</> : owners}
+              {t('public~View environment for resource')}{' '}
+              {owners.length > 1 ? <>t('public~owners:') {owners}</> : owners}
             </Alert>
           </div>
         )}
@@ -536,8 +536,8 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
           <div className="co-toolbar__group co-toolbar__group--left">
             <div className="co-toolbar__item">
               {containerType === 'containers'
-                ? t('environment~Container:')
-                : t('environment~Init container:')}
+                ? t('public~Container:')
+                : t('public~Init container:')}
             </div>
             <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
@@ -545,10 +545,10 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         <div className={classNames({ 'co-m-pane__body-group': !currentEnvVars.isCreate })}>
           {!currentEnvVars.isCreate && (
             <h3 className="co-section-heading-tertiary">
-              {t('environment~Single values (env)')}
+              {t('public~Single values (env)')}
               {!readOnly && (
                 <FieldLevelHelp>
-                  <Trans t={t} ns="environment">
+                  <Trans t={t} ns="public">
                     Define environment variables as key-value pairs to store configuration settings.
                     You can enter text or add values from a ConfigMap or Secret. Drag and drop
                     environment variables to change the order in which they are run. A variable can
@@ -563,7 +563,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
             nameValueId={containerIndex}
             nameValuePairs={envVar[EnvType.ENV]}
             updateParentData={this.updateEnvVars}
-            nameString={t('environment~Name')}
+            nameString={t('public~Name')}
             readOnly={readOnly}
             allowSorting={true}
             configMaps={configMaps}
@@ -574,17 +574,17 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
         {currentEnvVars.isContainerArray && (
           <div className="co-m-pane__body-group environment-buttons">
             <h3 className="co-section-heading-tertiary">
-              {t('environment~All values from existing ConfigMaps or Secrets (envFrom)')}
+              {t('public~All values from existing ConfigMaps or Secrets (envFrom)')}
               {!readOnly && (
                 <FieldLevelHelp>
                   <>
                     {t(
-                      'environment~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
+                      'public~Add new values by referencing an existing ConfigMap or Secret. Drag and drop environment variables within this section to change the order in which they are run.',
                     )}
                     <br />
-                    <strong>{t('environment~Note:')}</strong>{' '}
+                    <strong>{t('public~Note:')}</strong>{' '}
                     {t(
-                      'environment~If identical values exist in both lists, the single value in the list above will take precedence.',
+                      'public~If identical values exist in both lists, the single value in the list above will take precedence.',
                     )}
                   </>
                 </FieldLevelHelp>
@@ -617,11 +617,9 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                   isInline
                   className="co-alert"
                   variant="info"
-                  title={t('environment~The information on this page is no longer current.')}
+                  title={t('public~The information on this page is no longer current.')}
                 >
-                  {t(
-                    'environment~Click Reload to update and lose edits, or Save Changes to overwrite.',
-                  )}
+                  {t('public~Click Reload to update and lose edits, or Save Changes to overwrite.')}
                 </Alert>
               )}
               {success && (
@@ -641,7 +639,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                     variant="primary"
                     onClick={this.saveChanges}
                   >
-                    {t('environment~Save')}
+                    {t('public~Save')}
                   </Button>
                   <Button
                     isDisabled={inProgress}
@@ -649,7 +647,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
                     variant="secondary"
                     onClick={this.reload}
                   >
-                    {t('environment~Reload')}
+                    {t('public~Reload')}
                   </Button>
                 </ActionGroup>
               )}

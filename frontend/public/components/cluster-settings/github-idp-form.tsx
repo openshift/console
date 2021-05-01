@@ -104,9 +104,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
     e.preventDefault();
     if (this.state.organizations.length > 0 && this.state.teams.length > 0) {
       this.setState({
-        errorMessage: this.props.t(
-          'github-idp-form~Specify either organizations or teams, but not both.',
-        ),
+        errorMessage: this.props.t('public~Specify either organizations or teams, but not both.'),
       });
       return;
     }
@@ -163,7 +161,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
   render() {
     const { name, clientID, clientSecret, hostname, caFileContent } = this.state;
     const { t } = this.props;
-    const title = t('github-idp-form~Add Identity Provider: GitHub');
+    const title = t('public~Add Identity Provider: GitHub');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -173,13 +171,13 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'github-idp-form~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
+              'public~You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              {t('github-idp-form~Client ID')}
+              {t('public~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -192,7 +190,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              {t('github-idp-form~Client secret')}
+              {t('public~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -205,7 +203,7 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label" htmlFor="hostname">
-              {t('github-idp-form~Hostname')}
+              {t('public~Hostname')}
             </label>
             <input
               className="pf-c-form-control"
@@ -216,40 +214,38 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
               aria-describedby="idp-hostname-help"
             />
             <p className="help-block" id="idp-hostname-help">
-              {t(
-                'github-idp-form~Optional domain for use with a hosted instance of GitHub Enterprise.',
-              )}
+              {t('public~Optional domain for use with a hosted instance of GitHub Enterprise.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <div className="co-form-section__separator" />
-          <h3>{t('github-idp-form~Organizations')}</h3>
+          <h3>{t('public~Organizations')}</h3>
           <p className="co-help-text">
-            <Trans i18nKey="teams-help" ns="github-idp-form">
+            <Trans i18nKey="teams-help" ns="public">
               Optionally list organizations. If specified, only GitHub users that are members of at
               least one of the listed organizations will be allowed to log in. Cannot be used in
               combination with <strong>teams</strong>.
             </Trans>
           </p>
           <ListInput
-            label={t('github-idp-form~Organization')}
+            label={t('public~Organization')}
             onChange={this.organizationsChanged}
-            helpText={t('github-idp-form~Restricts which organizations are allowed to log in.')}
+            helpText={t('public~Restricts which organizations are allowed to log in.')}
           />
           <div className="co-form-section__separator" />
-          <h3>{t('github-idp-form~Teams')}</h3>
+          <h3>{t('public~Teams')}</h3>
           <p className="co-help-text">
-            <Trans i18nKey="organizations-help" ns="github-idp-form">
+            <Trans i18nKey="organizations-help" ns="public">
               Optionally list teams. If specified, only GitHub users that are members of at least
               one of the listed teams will be allowed to log in. Cannot be used in combination with{' '}
               <strong>organizations</strong>.
             </Trans>
           </p>
           <ListInput
-            label={t('github-idp-form~Team')}
+            label={t('public~Team')}
             onChange={this.teamsChanged}
             helpText={t(
-              'github-idp-form~Restricts which teams are allowed to log in. The format is <org>/<team>.',
+              'public~Restricts which teams are allowed to log in. The format is <org>/<team>.',
             )}
           />
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>

@@ -103,7 +103,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
   render() {
     const { name, clientID, clientSecret, hostedDomain } = this.state;
     const { t } = this.props;
-    const title = t('google-idp-form~Add Identity Provider: Google');
+    const title = t('public~Add Identity Provider: Google');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -113,13 +113,13 @@ class AddGooglePageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'google-idp-form~You can use Google integration for users authenticating with Google credentials.',
+              'public~You can use Google integration for users authenticating with Google credentials.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              {t('google-idp-form~Client ID')}
+              {t('public~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -132,7 +132,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              {t('google-idp-form~Client secret')}
+              {t('public~Client secret')}
             </label>
             <input
               className="pf-c-form-control"
@@ -145,7 +145,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="hosted-domain">
-              {t('google-idp-form~Hosted domain')}
+              {t('public~Hosted domain')}
             </label>
             <input
               className="pf-c-form-control"
@@ -157,7 +157,7 @@ class AddGooglePageWithTranslation extends PromiseComponent<
               required
             />
             <p className="help-block" id="idp-hosted-domain-help">
-              {t('google-idp-form~Restrict users to a Google App domain.')}
+              {t('public~Restrict users to a Google App domain.')}
             </p>
           </div>
           <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>

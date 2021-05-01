@@ -19,7 +19,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'google-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: Google', () => {
   let wrapper: ShallowWrapper<{}, AddGooglePageState>;

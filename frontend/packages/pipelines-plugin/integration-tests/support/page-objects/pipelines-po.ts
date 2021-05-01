@@ -75,9 +75,9 @@ export const pipelineBuilderPO = {
 
 export const pipelineDetailsPO = {
   title: '[data-test-section-heading="Pipeline details"]',
-  detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
+  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
-  yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
+  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
   pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
@@ -123,8 +123,8 @@ export const pipelineDetailsPO = {
 
 export const triggerTemplateDetailsPO = {
   title: '[data-test-section-heading="Trigger Template details"]',
-  detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
-  yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
+  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
+  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
   details: {
     pipelinesIcon: '[title="Pipeline"]',
     eventListenerLink: '[data-test-id^="event-listener-"]',
@@ -162,10 +162,10 @@ export const clusterTriggerBindingDetailsPO = {
 
 export const pipelineRunDetailsPO = {
   logsTab: '[data-test-id="horizontal-link-Logs"]',
-  yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
-  detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
+  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
+  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-Task Runs"]',
-  eventsTab: '[data-test-id="horizontal-link-details-page~Events"]',
+  eventsTab: '[data-test-id="horizontal-link-public~Events"]',
   pipelineRunStatus: 'h1 [data-test="status-text"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',

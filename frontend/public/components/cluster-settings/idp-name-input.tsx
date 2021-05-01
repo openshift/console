@@ -6,7 +6,7 @@ export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) =
   return (
     <div className="form-group">
       <label className="control-label co-required" htmlFor="idp-name">
-        {t('idp-name-input~Name')}
+        {t('public~Name')}
       </label>
       <input
         className="pf-c-form-control"
@@ -18,9 +18,7 @@ export const IDPNameInput: React.FC<IDPNameInputProps> = ({ value, onChange }) =
         required
       />
       <p className="help-block" id="idp-name-help">
-        {t(
-          'idp-name-input~Unique name of the new identity provider. This cannot be changed later.',
-        )}
+        {t('public~Unique name of the new identity provider. This cannot be changed later.')}
       </p>
     </div>
   );
