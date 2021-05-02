@@ -165,18 +165,28 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       </div>
     );
   } else {
-    const allActivities = prometheusActivities.map(({ results, loader }, idx) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <Activity key={idx}>
-        <AsyncComponent loader={loader} results={results} />
-      </Activity>
-    ));
+    const allActivities = prometheusActivities.map(
+      ({ results, loader, component: Component }, idx) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <Activity key={idx}>
+          {loader ? (
+            <AsyncComponent loader={loader} results={results} />
+          ) : (
+            <Component results={results} />
+          )}
+        </Activity>
+      ),
+    );
     resourceActivities
       .sort((a, b) => +b.timestamp - +a.timestamp)
-      .forEach(({ resource, timestamp, loader }) =>
+      .forEach(({ resource, timestamp, loader, component: Component }) =>
         allActivities.push(
           <Activity key={resource.metadata.uid} timestamp={timestamp}>
-            <AsyncComponent loader={loader} resource={resource} />
+            {loader ? (
+              <AsyncComponent loader={loader} resource={resource} />
+            ) : (
+              <Component resource={resource} />
+            )}
           </Activity>,
         ),
       );
@@ -218,11 +228,13 @@ type OngoingActivityBodyProps = {
   resourceActivities?: {
     resource: K8sResourceKind;
     timestamp: Date;
-    loader: LazyLoader<K8sActivityProps>;
+    loader?: LazyLoader<K8sActivityProps>;
+    component?: React.ComponentType<K8sActivityProps>;
   }[];
   prometheusActivities?: {
     results: PrometheusResponse[];
-    loader: LazyLoader<PrometheusActivityProps>;
+    loader?: LazyLoader<PrometheusActivityProps>;
+    component?: React.ComponentType<PrometheusActivityProps>;
   }[];
   loaded: boolean;
 };

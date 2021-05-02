@@ -19,6 +19,11 @@ import {
   DashboardsOverviewUtilizationItem,
   isDashboardsOverviewUtilizationItem,
 } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  DashboardsOverviewUtilizationItem as DynamicDashboardsOverviewUtilizationItem,
+  isDashboardsOverviewUtilizationItem as isDynamicDashboardsOverviewUtilizationItem,
+} from '@console/dynamic-plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
@@ -348,13 +353,13 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
   },
 );
 
-const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem[]) => {
+const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem['properties'][]) => {
   const pluginQueries = {};
   itemExtensions.forEach((e) => {
-    if (!pluginQueries[e.properties.id]) {
-      pluginQueries[e.properties.id] = {
-        utilization: e.properties.query,
-        total: e.properties.totalQuery,
+    if (!pluginQueries[e.id]) {
+      pluginQueries[e.id] = {
+        utilization: e.query,
+        total: e.totalQuery,
       };
     }
   });
@@ -367,8 +372,14 @@ export const UtilizationCard = () => {
   const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(
     isDashboardsOverviewUtilizationItem,
   );
+  const [dynamicItemExtensions] = useResolvedExtensions<DynamicDashboardsOverviewUtilizationItem>(
+    isDynamicDashboardsOverviewUtilizationItem,
+  );
 
-  const queries = React.useMemo(() => getQueries(itemExtensions), [itemExtensions]);
+  const queries = React.useMemo(
+    () => getQueries([...itemExtensions, ...dynamicItemExtensions].map((e) => e.properties)),
+    [itemExtensions, dynamicItemExtensions],
+  );
 
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration(t);

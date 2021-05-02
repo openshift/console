@@ -36,6 +36,16 @@ import {
   ProjectDashboardInventoryItem,
   isProjectDashboardInventoryItem,
 } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
+  isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk';
+import {
+  useK8sWatchResources,
+  WatchK8sResources,
+} from '@console/internal/components/utils/k8s-watch-hook';
 
 const createFirehoseResource = (model: K8sKind, projectName: string): FirehoseResource => ({
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -53,6 +63,7 @@ const ProjectInventoryItem = withDashboardResources(
     model,
     mapper,
     additionalResources,
+    additionalDynamicResources,
   }: ProjectInventoryItemProps) => {
     React.useEffect(() => {
       if (projectName) {
@@ -91,12 +102,21 @@ const ProjectInventoryItem = withDashboardResources(
           .some((r) => !!_.get(resources[r.prop], 'loadError'))
       : false;
 
+    const dynamicResources = useK8sWatchResources(additionalDynamicResources || {});
+    const dynamicResourcesError = Object.values(dynamicResources).find((r) => r.loadError)
+      ?.loadError;
+    const dynamicResourcesLoaded = Object.keys(dynamicResources).every(
+      (key) => dynamicResources[key].loaded,
+    );
+
     return (
       <ResourceInventoryItem
         kind={model}
-        isLoading={!projectName || !resourceLoaded || !additionalResourcesLoaded}
+        isLoading={
+          !projectName || !resourceLoaded || !additionalResourcesLoaded || !dynamicResourcesLoaded
+        }
         namespace={projectName}
-        error={!!resourceLoadError || additionalResourcesLoadError}
+        error={!!resourceLoadError || additionalResourcesLoadError || dynamicResourcesError}
         resources={resourceData}
         additionalResources={additionalResourcesData}
         mapper={mapper}
@@ -108,6 +128,9 @@ const ProjectInventoryItem = withDashboardResources(
 export const InventoryCard = () => {
   const itemExtensions = useExtensions<ProjectDashboardInventoryItem>(
     isProjectDashboardInventoryItem,
+  );
+  const [dynamicItemExtensions] = useResolvedExtensions<DynamicProjectDashboardInventoryItem>(
+    isDynamicProjectDashboardInventoryItem,
   );
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
@@ -151,6 +174,15 @@ export const InventoryCard = () => {
             additionalResources={item.properties.additionalResources}
           />
         ))}
+        {dynamicItemExtensions.map((item) => (
+          <ProjectInventoryItem
+            key={item.properties.model.kind}
+            projectName={projectName}
+            model={item.properties.model}
+            mapper={item.properties.mapper}
+            additionalDynamicResources={item.properties.additionalResources}
+          />
+        ))}
         <ProjectInventoryItem
           projectName={projectName}
           model={VolumeSnapshotModel}
@@ -166,4 +198,7 @@ type ProjectInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
   mapper?: StatusGroupMapper;
   additionalResources?: FirehoseResource[];
+  additionalDynamicResources?: WatchK8sResources<{
+    [key: string]: K8sResourceCommon[];
+  }>;
 };

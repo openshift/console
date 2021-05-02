@@ -1,7 +1,6 @@
-import { TFunction } from 'i18next';
-import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { K8sKind } from '../api/common-types';
+import { Extension, ExtensionDeclaration, CodeRef, ResolvedExtension } from '../types';
 import {
-  HealthState,
   K8sResourceCommon,
   PrometheusResponse,
   ResourcesObject,
@@ -9,9 +8,19 @@ import {
   WatchK8sResources,
   WatchK8sResults,
   FirehoseResource,
-  FirehoseResourcesResult,
   FirehoseResult,
 } from './console-types';
+import {
+  DashboardCardSpan,
+  GetOperatorsWithStatuses,
+  K8sActivityProps,
+  OperatorRowProps,
+  PrometheusActivityProps,
+  PrometheusHealthHandler,
+  PrometheusHealthPopupProps,
+  ResourceHealthHandler,
+  URLHealthHandler,
+} from './dashboard-types';
 
 /** Adds a new dashboard tab, placed after the Overview tab. */
 export type DashboardsTab = ExtensionDeclaration<
@@ -19,6 +28,8 @@ export type DashboardsTab = ExtensionDeclaration<
   {
     /** A unique tab identifier, used as tab link `href` and when adding cards to this tab. */
     id: string;
+    /** NavSection to which the tab belongs to */
+    navSection: 'home' | 'storage';
     /** The title of the tab. */
     title: string;
   }
@@ -33,7 +44,7 @@ export type DashboardsCard = ExtensionDeclaration<
     /** The grid position of the card on the dashboard. */
     position: 'LEFT' | 'RIGHT' | 'MAIN';
     /** Dashboard card component. */
-    loader: CodeRef<React.ComponentType>;
+    component: CodeRef<React.ComponentType>;
     /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
     span?: DashboardCardSpan;
   }
@@ -45,6 +56,8 @@ export type DashboardsOverviewHealthPrometheusSubsystem = ExtensionDeclaration<
   {
     /** The display name of the subsystem. */
     title: string;
+    /** The Prometheus queries */
+    queries: string[];
     /** Resolve the subsystem's health. */
     healthHandler: CodeRef<PrometheusHealthHandler>;
     /** Additional resource which will be fetched and passed to `healthHandler`. */
@@ -59,7 +72,7 @@ export type DashboardsOverviewHealthPrometheusSubsystem = ExtensionDeclaration<
 >;
 
 /** Adds a health subsystem to the status card of Overview dashboard where the source of status is a K8s REST API. */
-export type DashboardsOverviewURLSubsystem<
+export type DashboardsOverviewHealthURLSubsystem<
   T = any,
   R extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
 > = ExtensionDeclaration<
@@ -126,7 +139,7 @@ export type DashboardsOverviewHealthOperator<
 
 /** Adds an inventory status group. */
 export type DashboardsInventoryItemGroup = ExtensionDeclaration<
-  'console.dashboards/inventory/item/group',
+  'console.dashboards/overview/inventory/item/group',
   {
     /** The id of the status group. */
     id: string;
@@ -135,20 +148,44 @@ export type DashboardsInventoryItemGroup = ExtensionDeclaration<
   }
 >;
 
+/** Adds a resource tile to the overview utilization card. */
+export type DashboardsOverviewUtilizationItem = ExtensionDeclaration<
+  'console.dashboards/overview/utilization/item',
+  {
+    /** The utilization item to be replaced */
+    id: string;
+    /** The Prometheus utilization query */
+    query: string;
+    /** The Prometheus total query */
+    totalQuery: string;
+  }
+>;
+
 /** Adds a resource tile to the overview inventory card. */
 export type DashboardsOverviewInventoryItem<
-  T extends K8sResourceCommon = K8sResourceCommon,
-  R extends { [key: string]: K8sResourceCommon[] } = {}
+  T extends K8sKind = K8sKind,
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
 > = ExtensionDeclaration<
-  'console.dashboards/inventory/item',
-  {
-    /** The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. */
-    model: CodeRef<T>;
-    /** Function which maps various statuses to groups. */
-    mapper?: CodeRef<StatusGroupMapper<T, R>>;
-    /** Additional resources which will be fetched and passed to the `mapper` function. */
-    additionalResources?: CodeRef<WatchK8sResources<R>>;
-  }
+  'console.dashboards/overview/inventory/item',
+  DashboardsOverviewInventoryItemProperties<T, R> & {}
+>;
+
+/** Replaces an overview inventory card. */
+export type DashboardsOverviewInventoryItemReplacement<
+  T extends K8sKind = K8sKind,
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+> = ExtensionDeclaration<
+  'console.dashboards/overview/inventory/item/replacement',
+  DashboardsOverviewInventoryItemProperties<T, R> & {}
+>;
+
+/** Adds a resource tile to the project overview inventory card. */
+export type ProjectDashboardInventoryItem<
+  T extends K8sKind = K8sKind,
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+> = ExtensionDeclaration<
+  'console.dashboards/project/overview/item',
+  DashboardsOverviewInventoryItemProperties<T, R> & {}
 >;
 
 /** Adds an activity to the Activity Card of Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
@@ -163,8 +200,21 @@ export type DashboardsOverviewResourceActivity<
     isActivity?: CodeRef<(resource: T) => boolean>;
     /** Timestamp for the given action, which will be used for ordering. */
     getTimestamp?: CodeRef<(resource: T) => Date>;
-    /** Loader for the corresponding action component. */
-    loader: CodeRef<React.ComponentType<K8sActivityProps<T>>>;
+    /** The action component. */
+    component: CodeRef<React.ComponentType<K8sActivityProps<T>>>;
+  }
+>;
+
+/** Adds an activity to the Activity Card of Prometheus Overview Dashboard where the triggering of activity is based on watching a K8s resource. */
+export type DashboardsOverviewPrometheusActivity = ExtensionDeclaration<
+  'console.dashboards/overview/prometheus/activity/resource',
+  {
+    /** Queries to watch */
+    queries: string[];
+    /** Function which determines if the given resource represents the action. If not defined, every resource represents activity. */
+    isActivity?: CodeRef<(results: PrometheusResponse[]) => boolean>;
+    /** The action component. */
+    component: CodeRef<React.ComponentType<PrometheusActivityProps>>;
   }
 >;
 
@@ -181,13 +231,28 @@ export const isDashboardsOverviewHealthPrometheusSubsystem = (
 ): e is DashboardsOverviewHealthPrometheusSubsystem =>
   e.type === 'console.dashboards/overview/health/prometheus';
 
-export const isDashboardsOverviewURLSubsystem = (
+export const isResolvedDashboardsOverviewHealthPrometheusSubsystem = (
   e: Extension,
-): e is DashboardsOverviewURLSubsystem => e.type === 'console.dashboards/overview/health/url';
+): e is ResolvedExtension<DashboardsOverviewHealthPrometheusSubsystem> =>
+  e.type === 'console.dashboards/overview/health/prometheus';
+
+export const isDashboardsOverviewHealthURLSubsystem = (
+  e: Extension,
+): e is DashboardsOverviewHealthURLSubsystem => e.type === 'console.dashboards/overview/health/url';
+
+export const isResolvedDashboardsOverviewHealthURLSubsystem = (
+  e: Extension,
+): e is ResolvedExtension<DashboardsOverviewHealthURLSubsystem> =>
+  e.type === 'console.dashboards/overview/health/url';
 
 export const isDashboardsOverviewHealthResourceSubsystem = (
   e: Extension,
 ): e is DashboardsOverviewHealthResourceSubsystem =>
+  e.type === 'console.dashboards/overview/health/resource';
+
+export const isResolvedDashboardsOverviewHealthResourceSubsystem = (
+  e: Extension,
+): e is ResolvedExtension<DashboardsOverviewHealthResourceSubsystem> =>
   e.type === 'console.dashboards/overview/health/resource';
 
 export const isDashboardsOverviewHealthOperator = (
@@ -195,66 +260,63 @@ export const isDashboardsOverviewHealthOperator = (
 ): e is DashboardsOverviewHealthOperator =>
   e.type === 'console.dashboards/overview/health/operator';
 
+export const isResolvedDashboardsOverviewHealthOperator = (
+  e: Extension,
+): e is ResolvedExtension<DashboardsOverviewHealthOperator> =>
+  e.type === 'console.dashboards/overview/health/operator';
+
 export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
-  e.type === 'console.dashboards/inventory/item/group';
+  e.type === 'console.dashboards/overview/inventory/item/group';
+
+export const isDashboardsOverviewUtilizationItem = (
+  e: Extension,
+): e is DashboardsOverviewUtilizationItem =>
+  e.type === 'console.dashboards/overview/utilization/item';
 
 export const isDashboardsOverviewInventoryItem = (
   e: Extension,
-): e is DashboardsOverviewInventoryItem => e.type === 'console.dashboards/inventory/item';
+): e is DashboardsOverviewInventoryItem => e.type === 'console.dashboards/overview/inventory/item';
+
+export const isDashboardsOverviewInventoryItemReplacement = (
+  e: Extension,
+): e is DashboardsOverviewInventoryItemReplacement =>
+  e.type === 'console.dashboards/overview/inventory/item/replacement';
+
+export const isProjectDashboardInventoryItem = (e: Extension): e is ProjectDashboardInventoryItem =>
+  e.type === 'console.dashboards/project/overview/item';
 
 export const isDashboardsOverviewResourceActivity = (
   e: Extension,
 ): e is DashboardsOverviewResourceActivity =>
   e.type === 'console.dashboards/overview/activity/resource';
 
-export type DashboardCardSpan = 4 | 6 | 12;
+export const isDashboardsOverviewPrometheusActivity = (
+  e: Extension,
+): e is DashboardsOverviewPrometheusActivity =>
+  e.type === 'console.dashboards/overview/prometheus/activity/resource';
 
-export type GetOperatorsWithStatuses<R extends K8sResourceCommon = K8sResourceCommon> = (
-  resources: FirehoseResourcesResult,
-) => OperatorStatusWithResources<R>[];
+export type DashboardsOverviewHealthSubsystem =
+  | DashboardsOverviewHealthURLSubsystem
+  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthResourceSubsystem
+  | DashboardsOverviewHealthOperator;
 
-export type K8sActivityProps<R extends K8sResourceCommon = K8sResourceCommon> = {
-  resource: R;
+export const isDashboardsOverviewHealthSubsystem = (
+  e: Extension,
+): e is DashboardsOverviewHealthSubsystem =>
+  isDashboardsOverviewHealthURLSubsystem(e) ||
+  isDashboardsOverviewHealthPrometheusSubsystem(e) ||
+  isDashboardsOverviewHealthResourceSubsystem(e) ||
+  isDashboardsOverviewHealthOperator(e);
+
+type DashboardsOverviewInventoryItemProperties<
+  T extends K8sKind = K8sKind,
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+> = {
+  /** The model for `resource` which will be fetched. Used to get the model's `label` or `abbr`. */
+  model: CodeRef<T>;
+  /** Function which maps various statuses to groups. */
+  mapper?: CodeRef<StatusGroupMapper<T, R>>;
+  /** Additional resources which will be fetched and passed to the `mapper` function. */
+  additionalResources?: CodeRef<WatchK8sResources<R>>;
 };
-
-export type OperatorRowProps<R extends K8sResourceCommon = K8sResourceCommon> = {
-  operatorStatus: OperatorStatusWithResources<R>;
-};
-
-export type OperatorStatusWithResources<R extends K8sResourceCommon = K8sResourceCommon> = {
-  operators: R[];
-  status: OperatorStatusPriority;
-};
-
-export type OperatorStatusPriority = {
-  title: string;
-  priority: number;
-  icon: React.ReactNode;
-  health: keyof typeof HealthState;
-};
-
-export type PrometheusHealthHandler = (
-  responses: { response: PrometheusResponse; error: any }[],
-  t?: TFunction,
-  additionalResource?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>,
-) => SubsystemHealth;
-
-export type PrometheusHealthPopupProps = {
-  responses: { response: PrometheusResponse; error: any }[];
-  k8sResult?: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
-};
-
-export type ResourceHealthHandler<R extends ResourcesObject> = (
-  resourcesResult: WatchK8sResults<R>,
-  t?: TFunction,
-) => SubsystemHealth;
-
-export type SubsystemHealth = {
-  message?: string;
-  state: HealthState;
-};
-
-export type URLHealthHandler<
-  R,
-  T extends K8sResourceCommon | K8sResourceCommon[] = K8sResourceCommon | K8sResourceCommon[]
-> = (response: R, error: any, additionalResource?: FirehoseResult<T>) => SubsystemHealth;

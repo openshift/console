@@ -20,6 +20,12 @@ import {
   DashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity,
 } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
+  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
@@ -69,14 +75,17 @@ const OngoingActivity = connect(mapStateToProps)(
       const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
         isDashboardsOverviewResourceActivity,
       );
+      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
+        DynamicDashboardsOverviewResourceActivity
+      >(isDynamicDashboardsOverviewResourceActivity);
 
       const resourceActivities = React.useMemo(
         () =>
-          resourceActivityExtensions.filter((e) => {
+          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter((e) => {
             const model = models.get(e.properties.k8sResource.kind);
             return model && model.namespaced;
           }),
-        [resourceActivityExtensions, models],
+        [resourceActivityExtensions, dynamicResourceActivityExtensions, models],
       );
 
       React.useEffect(() => {
@@ -108,7 +117,9 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: a.properties.loader,
+                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
+                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
+                    ?.properties?.component,
                 }));
             }),
           ),

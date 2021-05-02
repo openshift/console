@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { GetOperatorsWithStatuses, LazyLoader } from '@console/plugin-sdk';
-import { AsyncComponent, FirehoseResourcesResult } from '@console/internal/components/utils';
+import { GetOperatorsWithStatuses, LazyLoader, OperatorRowProps } from '@console/plugin-sdk';
+import { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { HealthState } from './states';
 import { getMostImportantStatuses } from './state-utils';
 
@@ -14,7 +14,9 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
   getOperatorsWithStatuses,
   title,
   linkTo,
-  rowLoader,
+  Row,
+  Component,
+  isResolved,
 }) => {
   const { t } = useTranslation();
   const error = _.values(resources).some((r) => r.loadError);
@@ -43,11 +45,12 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
       ) : (
         !operatorsHealthy &&
         sortedOperatorStatuses.map((operatorStatus) => (
-          <AsyncComponent
+          <Row
             key={operatorStatus.operators[0].metadata.uid}
+            Component={Component}
             operatorStatus={operatorStatus}
-            loader={rowLoader}
             LoadingComponent={RowLoading}
+            isResolved={isResolved}
           />
         ))
       )}
@@ -73,5 +76,14 @@ type OperatorsSectionProps = {
   getOperatorsWithStatuses: GetOperatorsWithStatuses;
   title: string;
   linkTo: string;
-  rowLoader: LazyLoader;
+  Row: React.ComponentType<
+    OperatorRowProps & {
+      LoadingComponent: () => JSX.Element;
+      Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
+      key: string;
+      isResolved: boolean;
+    }
+  >;
+  isResolved: boolean;
+  Component: React.ComponentType<OperatorRowProps> | LazyLoader<OperatorRowProps>;
 };

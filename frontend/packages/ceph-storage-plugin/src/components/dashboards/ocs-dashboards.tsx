@@ -10,6 +10,12 @@ import {
   isDashboardsTab,
 } from '@console/plugin-sdk';
 import {
+  DashboardsCard as DynamicDashboardsCard,
+  DashboardsTab as DynamicDashboardsTab,
+  isDashboardsCard as isDynamicDashboardsCard,
+  isDashboardsTab as isDynamicDashboardsTab,
+} from '@console/dynamic-plugin-sdk';
+import {
   getPluginTabPages,
   mapStateToProps,
   DashboardsPageProps,
@@ -21,10 +27,19 @@ const OCSDashboardsPage: React.FC<DashboardsPageProps> = ({ match, kindsInFlight
   const title = t('ceph-storage-plugin~OpenShift Container Storage Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
+  const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
+  const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
   const pluginPages = React.useMemo(
-    () => getPluginTabPages(tabExtensions, cardExtensions, 'storage', 'persistent-storage'),
-    [tabExtensions, cardExtensions],
+    () =>
+      getPluginTabPages(
+        [...tabExtensions, ...dynamicTabExtensions],
+        cardExtensions,
+        dynamicCardExtensions,
+        'storage',
+        'persistent-storage',
+      ),
+    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
   );
 
   return kindsInFlight && k8sModels.size === 0 ? (

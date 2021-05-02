@@ -21,6 +21,14 @@ import {
   LazyLoader,
 } from '@console/plugin-sdk';
 import {
+  useResolvedExtensions,
+  DashboardsOverviewInventoryItem as DynamicDashboardsOverviewInventoryItem,
+  DashboardsOverviewInventoryItemReplacement as DynamicDashboardsOverviewInventoryItemReplacement,
+  isDashboardsOverviewInventoryItem as isDynamicDashboardsOverviewInventoryItem,
+  isDashboardsOverviewInventoryItemReplacement as isDynamicDashboardsOverviewInventoryItemReplacement,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
+import {
   useK8sWatchResource,
   useK8sWatchResources,
   WatchK8sResources,
@@ -34,6 +42,14 @@ const mergeItems = (
     (item) => replacements.find((r) => r.properties.model === item.properties.model) || item,
   );
 
+const mergeDynamicItems = (
+  dynamicItems: ResolvedExtension<DynamicDashboardsOverviewInventoryItem>[],
+  dynamicReplacements: ResolvedExtension<DynamicDashboardsOverviewInventoryItemReplacement>[],
+) =>
+  dynamicItems.map(
+    (item) => dynamicReplacements.find((r) => r.properties.model === item.properties.model) || item,
+  );
+
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
   kind: model.crd ? referenceForModel(model) : model.kind,
@@ -44,6 +60,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
   React.memo(
     ({
       model,
+      resolvedMapper,
       mapperLoader,
       additionalResources,
       expandedComponent,
@@ -97,7 +114,7 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
           error={!!resourceLoadError || additionalResourcesLoadError}
           kind={model}
           resources={resourceData}
-          mapper={mapper}
+          mapper={mapper || resolvedMapper}
           additionalResources={additionalResourcesData}
           ExpandedComponent={expandedComponent ? ExpandedComponent : null}
         />
@@ -110,15 +127,26 @@ export const InventoryCard = () => {
   const itemExtensions = useExtensions<DashboardsOverviewInventoryItem>(
     isDashboardsOverviewInventoryItem,
   );
+  const [dynamicItemExtensions] = useResolvedExtensions<DynamicDashboardsOverviewInventoryItem>(
+    isDynamicDashboardsOverviewInventoryItem,
+  );
 
   const replacementExtensions = useExtensions<DashboardsOverviewInventoryItemReplacement>(
     isDashboardsOverviewInventoryItemReplacement,
   );
+  const [dynamicReplacementExtensions] = useResolvedExtensions<
+    DynamicDashboardsOverviewInventoryItemReplacement
+  >(isDynamicDashboardsOverviewInventoryItemReplacement);
 
   const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
     itemExtensions,
     replacementExtensions,
   ]);
+
+  const dynamicMergedItems = React.useMemo(
+    () => mergeDynamicItems(dynamicItemExtensions, dynamicReplacementExtensions),
+    [dynamicItemExtensions, dynamicReplacementExtensions],
+  );
 
   const { t } = useTranslation();
 
@@ -137,6 +165,14 @@ export const InventoryCard = () => {
             expandedComponent={item.properties.expandedComponent}
           />
         ))}
+        {dynamicMergedItems.map((item) => (
+          <ClusterInventoryItem
+            key={item.properties.model.kind}
+            model={item.properties.model}
+            resolvedMapper={item.properties.mapper}
+            additionalResources={item.properties.additionalResources}
+          />
+        ))}
       </DashboardCardBody>
     </DashboardCard>
   );
@@ -145,6 +181,7 @@ export const InventoryCard = () => {
 type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
   mapperLoader?: () => Promise<StatusGroupMapper>;
+  resolvedMapper?: StatusGroupMapper;
   additionalResources?: WatchK8sResources<any>;
   expandedComponent?: LazyLoader;
 };
