@@ -11,7 +11,7 @@ export const TEMPLATE_BASE_IMAGE = 'rhel6';
 export enum DEFAULTS_VALUES {
   NOT_AVAILABLE = 'Not available',
   GUEST_AGENT_REQUIRED = 'Guest agent required',
-  VM_NOT_RUNNING = 'VM not running',
+  VM_NOT_RUNNING = 'Virtual machine not running',
 }
 
 // VM Actions

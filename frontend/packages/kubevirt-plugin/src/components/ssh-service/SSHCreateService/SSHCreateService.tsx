@@ -1,21 +1,25 @@
 import { isEmpty } from 'lodash';
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
-import { ResourceIcon } from '@console/internal/components/utils';
 import { Alert, Checkbox, Stack, StackItem } from '@patternfly/react-core';
 
 import useSSHKeys from '../../../hooks/use-ssh-keys';
-import { VirtualMachineModel } from '../../../models/index';
+import SSHCreateServiceMessage from './SSHCreateServiceMessage';
+import SSHCreateServicePopup from './SSHCreateServicePopup';
+
+import './ssh-service.scss';
 
 type SSHCreateServiceProps = {
   vmName?: string;
   disableAuthorizedKeyMessage?: boolean;
+  hidePopup?: boolean;
 };
 
 const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
   vmName,
   disableAuthorizedKeyMessage = false,
+  hidePopup = false,
 }) => {
   const { t } = useTranslation();
   const { enableSSHService, tempSSHKey, setEnableSSHService } = useSSHKeys();
@@ -25,15 +29,8 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
       <StackItem>
         <Checkbox
           id="ssh-service-checkbox"
-          label={
-            vmName ? (
-              <Trans ns="kubevirt-plugin" t={t}>
-                Expose SSH access for <ResourceIcon kind={VirtualMachineModel.kind} /> {vmName}
-              </Trans>
-            ) : (
-              t('kubevirt-plugin~Expose SSH access to this virtual machine')
-            )
-          }
+          className="kv-ssh-service-checkbox--main"
+          label={<SSHCreateServicePopup vmName={vmName} hidePopup={hidePopup} />}
           isChecked={enableSSHService}
           onChange={(checked) => {
             setEnableSSHService(checked);
@@ -49,8 +46,15 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
             title={t('kubevirt-plugin~Missing Authorized key')}
           >
             {t(
-              `kubevirt-plugin~We haven't detected authorized key for the SSH access. SSH access will be enabled without authorized key`,
+              `kubevirt-plugin~An authorized key is not detected. SSH access is enabled with the password.`,
             )}
+          </Alert>
+        </StackItem>
+      )}
+      {hidePopup && (
+        <StackItem>
+          <Alert variant="info" isInline title={t('kubevirt-plugin~Node port')}>
+            <SSHCreateServiceMessage />
           </Alert>
         </StackItem>
       )}

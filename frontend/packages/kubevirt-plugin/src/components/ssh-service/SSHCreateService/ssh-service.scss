@@ -1,0 +1,10 @@
+.kv-ssh-service-checkbox--main {
+  label {
+    display: flex;
+    align-items: center;
+    button {
+      margin-left: var(--pf-global--spacer--sm);
+      padding: 0;
+    }
+  }
+}

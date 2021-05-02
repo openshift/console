@@ -20,7 +20,7 @@ export const getGuestAgentFieldNotAvailMsg = (
   vmStatus: VMStatus,
 ): string => {
   if (vmStatus !== VMStatus.RUNNING) {
-    return t('kubevirt-plugin~VM not running');
+    return t('kubevirt-plugin~Virtual machine not running');
   }
 
   return isGuestAgentInstalled

@@ -18,7 +18,8 @@ const SSHPopover: React.FC = () => {
         <Trans t={t} ns="kubevirt-plugin">
           <Text component={TextVariants.h6}>Remember authorized SSH key</Text>
           <Text component={TextVariants.p}>
-            Store this key in a namespaced secret and suggest it next time creating a VM.
+            Store the key in a project secret. Suggest the key next time you create a virtual
+            machine.
           </Text>
           <Text component={TextVariants.p}>
             The key will be stored after the machine will be created.

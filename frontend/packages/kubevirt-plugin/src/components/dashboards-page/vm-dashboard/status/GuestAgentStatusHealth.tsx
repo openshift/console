@@ -42,7 +42,7 @@ const GuestAgentStatusHealth: React.FC<GuestAgentProps> = ({ vmi }) => {
   const details =
     (guestAgentNotSupportedMessage && t('kubevirt-plugin~Not Supported')) ||
     (guestAgentNotInstalledMessage && t('kubevirt-plugin~No Guest agent')) ||
-    (!vmi?.status && t('kubevirt-plugin~VM not running')) ||
+    (!vmi?.status && t('kubevirt-plugin~Virtual machine not running')) ||
     HealthState.OK;
 
   return (

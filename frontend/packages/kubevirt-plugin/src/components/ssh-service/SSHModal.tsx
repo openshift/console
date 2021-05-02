@@ -25,7 +25,7 @@ const SSHModal: React.FC<SSHModalProps> = ({ vm, close }) => {
     <div className="SSHModal-main">
       <ModalTitle>{t('kubevirt-plugin~SSH access')}</ModalTitle>
       <ModalBody>
-        <SSHCreateService vmName={vm?.metadata?.name} disableAuthorizedKeyMessage />
+        <SSHCreateService vmName={vm?.metadata?.name} disableAuthorizedKeyMessage hidePopup />
       </ModalBody>
       <ModalFooter
         onSubmit={() => {
