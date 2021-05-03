@@ -145,5 +145,192 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/persistentvolumeclaims/~new/upload-form"],
+      "component": {
+        "$codeRef": "UploadPVCPage.UploadPVCPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/virtualization/~new"],
+      "component": {
+        "$codeRef": "VMCreateYAML.VMCreateYAML"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/virtualization/~new-wizard"],
+      "component": {
+        "$codeRef": "CreateVMWizardPage.CreateVMWizardPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/virtualization/~new-from-template"],
+      "component": {
+        "$codeRef": "CreateVM.CreateVM"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/virtualmachines/:name"],
+      "component": {
+        "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/virtualmachineinstances/:name"],
+      "component": {
+        "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/virtualization", "/k8s/all-namespaces/virtualization"],
+      "component": {
+        "$codeRef": "VirtualizationPage.VirtualizationPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/virtualmachines", "/k8s/all-namespaces/virtualmachines"],
+      "component": {
+        "$codeRef": "VirtualizationPage.RedirectToVirtualizationPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/vmtemplates", "/k8s/all-namespaces/vmtemplates"],
+      "component": {
+        "$codeRef": "VirtualizationPage.RedirectToVirtualizationTemplatePage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/vmtemplates/:name"],
+      "component": {
+        "$codeRef": "VMTemplateDetailsPage.VMTemplateDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/vmtemplates", "/k8s/all-namespaces/vmtemplates"],
+      "component": {
+        "$codeRef": "VirtualMachineTemplatesPage.VirtualMachineTemplatesPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/virtualmachinesnapshots/:name"],
+      "component": {
+        "$codeRef": "SnapshotDetailsPage.SnapshotDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/catalog/create-vm"],
+      "component": {
+        "$codeRef": "DevConsoleCreateVmForm.DevConsoleCreateVmForm"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/virtualization/new-customize-source"],
+      "component": {
+        "$codeRef": "CustomizeSourceForm"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/virtualization/customize-source"],
+      "component": {
+        "$codeRef": "CustomizeSource"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]
