@@ -1,4 +1,3 @@
-import * as operatorLogo from '../../images/operator.svg';
 import { getImageForCSVIcon, CSVIcon } from '../icon-utils';
 
 const mockCSVIconObject: CSVIcon = {
@@ -14,6 +13,6 @@ describe('Icon Utils', () => {
   });
 
   it('should return operator icon if csv has no icon data', () => {
-    expect(getImageForCSVIcon(undefined)).toBe(operatorLogo);
+    expect(getImageForCSVIcon(undefined)).toBe('icon-operator');
   });
 });

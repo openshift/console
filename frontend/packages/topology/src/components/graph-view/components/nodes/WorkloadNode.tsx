@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-topology';
 import { Tooltip } from '@patternfly/react-core';
 import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BaseNode from './BaseNode';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
@@ -53,6 +54,8 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
     const showPodCount = showPodCountFilter?.value ?? false;
     const { decorators } = element.getGraph().getData();
     const nodeDecorators = getNodeDecorators(element, decorators, cx, cy, radius, decoratorRadius);
+    const iconImageUrl =
+      getImageForIconClass(workloadData.builderImage) ?? workloadData.builderImage;
     return (
       <g>
         <Tooltip
@@ -65,7 +68,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
             className="odc-workload-node"
             outerRadius={radius}
             innerRadius={donutStatus ? podSetInnerRadius(size, donutStatus) : 0}
-            icon={!showPodCount ? workloadData.builderImage : undefined}
+            icon={!showPodCount ? iconImageUrl : undefined}
             kind={workloadData.kind}
             element={element}
             dropTarget={dropTarget}

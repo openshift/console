@@ -96,6 +96,7 @@ import * as windowsImg from '../../imgs/logos/windows.svg';
 import * as wordpressImg from '../../imgs/logos/wordpress.svg';
 import * as xamarinImg from '../../imgs/logos/xamarin.svg';
 import * as zendImg from '../../imgs/logos/zend.svg';
+import * as operatorImg from '../../imgs/logos/operator.svg';
 
 const logos = new Map<string, any>()
   .set('icon-3scale', threeScaleImg)
@@ -177,6 +178,7 @@ const logos = new Map<string, any>()
   // Use the upstream icon.
   .set('icon-redhat', redhatImg)
   .set('icon-rh-openjdk', openjdkImg)
+  .set('icon-operator', operatorImg)
   .set('icon-rh-tomcat', rhTomcatImg)
   .set('icon-ruby', rubyImg)
   .set('icon-scala', scalaImg)
