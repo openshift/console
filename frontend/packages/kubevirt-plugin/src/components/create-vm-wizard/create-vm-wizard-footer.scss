@@ -5,6 +5,6 @@
 
 .kv-create-vm-modal__footer {
   // --pf-global--ZIndex--xs == 100
-  z-index: calc(var(--pf-global--ZIndex--xs) - 4); 
+  z-index: calc(var(--pf-global--ZIndex--xs) - 4) !important; // Fixing Regression for Bug https://bugzilla.redhat.com/show_bug.cgi?id=1930015
   display: block;
 }

@@ -10,7 +10,7 @@ export const wizard = {
       name: string,
       provider: string,
       supported: boolean,
-      baseOS = 'Red Hat Enterprise Linux 6.0 or higher',
+      baseOS = 'Red Hat Enterprise Linux 7.0 or higher',
     ) => {
       cy.get('#vm-name').type(name);
       cy.get('#template-provider').type(provider);

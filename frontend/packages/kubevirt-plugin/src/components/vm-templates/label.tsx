@@ -4,46 +4,32 @@ import { useTranslation } from 'react-i18next';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { Label, Tooltip } from '@patternfly/react-core';
 
-import {
-  getTemplateParentProvider,
-  getTemplateProvider,
-  getTemplateSupport,
-  isCommonTemplate,
-} from '../../selectors/vm-template/basic';
+import { getTemplateProvider } from '../../selectors/vm-template/basic';
 
 type VMTemplateLabelProps = {
   template: TemplateKind;
   className?: string;
+  showProvider?: boolean;
 };
 
-export const VMTemplateLabel: React.FC<VMTemplateLabelProps> = ({ template, className }) => {
+export const VMTemplateLabel: React.FC<VMTemplateLabelProps> = ({
+  template,
+  className,
+  showProvider,
+}) => {
   const { t } = useTranslation();
-  const templateSupport = getTemplateSupport(template);
   const provider = getTemplateProvider(t, template);
-  const parentProvider = getTemplateParentProvider(template);
 
   return (
     <div className={className}>
-      {templateSupport.parent === 'Full' && parentProvider && (
-        <Tooltip
-          content={t('kubevirt-plugin~{{provider}} supported', { provider: parentProvider })}
-        >
-          <Label data-test="template-support-parent" isTruncated color="green">
-            {parentProvider}
+      <Tooltip content={t('kubevirt-plugin~Community Supported')}>
+        <span>
+          {showProvider ? provider : null}{' '}
+          <Label data-test="template-support" color="green" isTruncated>
+            {t('kubevirt-plugin~Community')}
           </Label>
-        </Tooltip>
-      )}
-      {templateSupport.provider === 'Full' && provider && (
-        <Tooltip content={t('kubevirt-plugin~{{provider}} supported', { provider })}>
-          <Label
-            data-test="template-support"
-            color={isCommonTemplate(template) ? 'green' : 'blue'}
-            isTruncated
-          >
-            {provider}
-          </Label>
-        </Tooltip>
-      )}
+        </span>
+      </Tooltip>
     </div>
   );
 };

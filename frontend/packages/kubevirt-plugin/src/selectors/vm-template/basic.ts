@@ -65,8 +65,9 @@ export const getTemplateProvider = (
   withProviderPrefix = false,
 ): string => {
   let provider = getAnnotation(template, TEMPLATE_PROVIDER_ANNOTATION);
-  if (!provider && isCommonTemplate(template)) {
-    const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+  const isCommon = isCommonTemplate(template);
+  if ((!provider || provider === 'Red Hat' || provider === 'KubeVirt') && isCommon) {
     provider = isUpstream ? 'KubeVirt' : 'Red Hat';
   }
   if (provider) {
@@ -83,21 +84,12 @@ export const getTemplateParentProvider = (template: TemplateKind): string =>
 export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => {
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   const providers: { id: ProvidedType; title: string }[] = [
-    { id: 'user-supported', title: t('kubevirt-plugin~User Supported') },
     {
       id: 'provided',
-      title: isUpstream
-        ? t('kubevirt-plugin~KubeVirt Provided')
-        : t('kubevirt-plugin~Red Hat Provided'),
+      title: isUpstream ? t('kubevirt-plugin~KubeVirt') : t('kubevirt-plugin~Red Hat'),
     },
-    { id: 'user', title: t('kubevirt-plugin~User Provided') },
+    { id: 'user', title: t('kubevirt-plugin~User') },
   ];
-  if (!isUpstream) {
-    providers.unshift({
-      id: 'supported',
-      title: t('kubevirt-plugin~Red Hat Supported'),
-    });
-  }
   return providers;
 };
 
@@ -105,12 +97,18 @@ export type ProvidedType = 'supported' | 'provided' | 'user' | 'user-supported';
 
 export const getTemplateKindProviderType = (template: TemplateKind): ProvidedType => {
   const isCommon = isCommonTemplate(template);
-  const support = getTemplateSupport(template);
-  if (support.parent || support.provider) {
-    return isCommon ? 'supported' : 'user-supported';
-  }
   return isCommon ? 'provided' : 'user';
 };
 
 export const getTemplateProviderType = (templateItem: TemplateItem): ProvidedType =>
   getTemplateKindProviderType(templateItem?.variants?.[0]);
+
+export const isLabeledTemplate = (t: TFunction, template: TemplateKind): boolean => {
+  const provider = getTemplateProvider(t, template);
+  const support = getTemplateSupport(template);
+  const isSupported = support.parent === 'Full' || support.provider === 'Full';
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+  const isUserProvider = provider && provider !== (isUpstream ? 'KubeVirt' : 'Red Hat');
+
+  return (!isSupported || isUpstream) && !isUserProvider;
+};
