@@ -11,6 +11,19 @@ import {
 import * as UIActions from '../../../public/actions/ui';
 import * as k8sActions from '../../../public/module/k8s';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'public';
+
 describe('Create Route', () => {
   let wrapper: ShallowWrapper<{}, CreateRouteState>;
 
@@ -32,7 +45,7 @@ describe('Create Route', () => {
   });
 
   it('should render correct Create Route page title', () => {
-    expect(wrapper.contains('Create Route')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Create Route`)).toBeTruthy();
   });
 
   it('should render the form elements of CreateRoute component', () => {
@@ -51,18 +64,18 @@ describe('Create Route', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toEqual('Create');
+    ).toEqual(`${i18nNS}~Create`);
     expect(
       wrapper
         .find(Button)
         .at(1)
         .childAt(0)
         .text(),
-    ).toEqual('Cancel');
+    ).toEqual(`${i18nNS}~Cancel`);
   });
 
-  it('should display the Add Alternate Service link when a service is selected', () => {
-    expect(wrapper.contains('Add Alternate Service')).not.toBeTruthy();
+  it('should display the Add alternate Service link when a service is selected', () => {
+    expect(wrapper.contains(`${i18nNS}~Add alternate Service`)).not.toBeTruthy();
 
     wrapper.setState({
       service: {
@@ -72,12 +85,12 @@ describe('Create Route', () => {
       },
       weight: 100,
     });
-    expect(wrapper.contains('Add Alternate Service')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add alternate Service`)).toBeTruthy();
   });
 
   it('should display/remove the Add/Remove and Alt Services Group based on alternate services', () => {
-    expect(wrapper.contains('Add Alternate Service')).not.toBeTruthy();
-    expect(wrapper.contains('Remove Alternate Service')).not.toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add alternate Service`)).not.toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Remove alternate Service`)).not.toBeTruthy();
     expect(wrapper.find('input[id="weight"]').exists()).toBe(false);
 
     wrapper.setState({
@@ -96,8 +109,8 @@ describe('Create Route', () => {
       ],
     });
 
-    expect(wrapper.contains('Remove Alternate Service')).toBeTruthy();
-    expect(wrapper.contains('Add Alternate Service')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Remove alternate Service`)).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add alternate Service`)).toBeTruthy();
     expect(wrapper.find('input[id="weight"]').exists()).toBe(true);
     expect(wrapper.find(AlternateServicesGroup).exists()).toBe(true);
   });
@@ -122,13 +135,13 @@ describe('Create Route', () => {
     });
 
     expect(wrapper.find(AlternateServicesGroup).exists()).toBe(true);
-    expect(wrapper.contains('Remove Alternate Service')).toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Remove alternate Service`)).toBeTruthy();
     wrapper
       .find(Button)
       .at(0)
       .simulate('click');
     expect(wrapper.find(AlternateServicesGroup).exists()).toBe(false);
-    expect(wrapper.contains('Remove Alternate Service')).not.toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Remove alternate Service`)).not.toBeTruthy();
   });
 
   it('should only allow 3 alt services', () => {
@@ -161,6 +174,6 @@ describe('Create Route', () => {
     });
 
     expect(wrapper.find(AlternateServicesGroup).length).toEqual(3);
-    expect(wrapper.contains('Add Alternate Service')).not.toBeTruthy();
+    expect(wrapper.contains(`${i18nNS}~Add alternate Service`)).not.toBeTruthy();
   });
 });
