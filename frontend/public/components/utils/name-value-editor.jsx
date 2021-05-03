@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
 import { Button, Tooltip } from '@patternfly/react-core';
-import { PficonDragdropIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { GripVerticalIcon, MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { withTranslation } from 'react-i18next';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
@@ -482,7 +482,7 @@ const PairElement_ = DragSource(
               variant="plain"
               aria-label={t('public~Drag to reorder')}
             >
-              <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
+              <GripVerticalIcon className="pairs-list__action-icon--reorder" />
             </Button>
           </div>
         );
@@ -651,7 +651,7 @@ const EnvFromPairElement_ = DragSource(
                       variant="plain"
                       aria-label={t('public~Drag to reorder')}
                     >
-                      <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
+                      <GripVerticalIcon className="pairs-list__action-icon--reorder" />
                     </Button>
                   </div>,
                 )}
