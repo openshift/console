@@ -41,17 +41,24 @@ import {
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import {
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
+    isDynamicResourceListPage,
+  );
   if (!kindObj) {
     return <LoadingBox />;
   }
 
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
-  );
+  const componentLoader = getResourceListPages(
+    resourceListPageExtensions,
+    dynamicResourceListPageExtensions,
+  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (

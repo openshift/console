@@ -49,6 +49,10 @@ import {
   setQueryArgument,
 } from './utils';
 import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
+import {
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -417,10 +421,13 @@ const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
-  const componentLoader = getResourceListPages(resourceListPageExtensions).get(
-    referenceForModel(kindObj),
-    () => Promise.resolve(DefaultPage),
+  const dynamicResourceListPageExtensions = useExtensions<DynamicResourceListPage>(
+    isDynamicResourceListPage,
   );
+  const componentLoader = getResourceListPages(
+    resourceListPageExtensions,
+    dynamicResourceListPageExtensions,
+  ).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return (
