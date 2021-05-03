@@ -106,6 +106,11 @@ export const pipelineRunDetailsPage = {
       }
     }
   },
+  verifyWorkspacesSection: () => {
+    cy.get(pipelineRunDetailsPO.details.workspacesSection)
+      .scrollIntoView()
+      .should('be.visible');
+  },
 };
 
 export const pipelineRunsPage = {

@@ -145,3 +145,25 @@ Feature: Perform the actions on Pipelines page
             Given pipeline run is displayed for "pipeline-fff" with resource
              When user selects "Start Last Run" from the kebab menu for "pipeline-fff"
              Then user will be redirected to Pipeline Run Details page
+
+
+        @odc-3991
+        Scenario: Edit the workspace name for pipeline from pipelines page
+            Given pipeline "pipe-edit-wp" is created with "git-wp" workspace
+             When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp"
+              And user edits the Workspace name as "git-opt"
+              And user selects the "git-clone" node
+              And user selects the "git-opt" workspace in the Output of Workspaces in cluster task sidebar
+              And user clicks Save button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pipe-edit-wp"
+              And user will see workspace mentioned as "git-opt" in the Workspaces section of Pipeline Details page
+
+
+        @odc-3991
+        Scenario: Update the pipeline workspace as optional from pipelines page
+            Given pipeline "pipe-edit-wp-op" is created with "git-wp" workspace
+             When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp-op"
+              And user clicks on Optional Workspace checkbox
+              And user clicks Save button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pipe-edit-wp-op"
+              And user will see workspace mentioned as "git-wp (optional)" in the Workspaces section of Pipeline Details page

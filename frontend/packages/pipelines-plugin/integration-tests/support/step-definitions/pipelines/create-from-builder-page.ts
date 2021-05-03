@@ -1,8 +1,13 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, pipelineBuilderPage, pipelineDetailsPage } from '../../pages';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import {
+  pipelinesPage,
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  pipelineBuilderSidePane,
+} from '../../pages';
+import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { pipelineBuilderPO } from '../../page-objects/pipelines-po';
+import { pipelineBuilderPO, pipelineDetailsPO } from '../../page-objects/pipelines-po';
 
 When('user clicks Create Pipeline button on Pipelines page', () => {
   pipelinesPage.clickOnCreatePipeline();
@@ -92,8 +97,7 @@ When('user adds the parameter details like Name, Description and Default Value',
 When('user adds the image name to the pipeline task {string}', (pipelineTaskName: string) => {
   pipelineBuilderPage.clickOnTask(pipelineTaskName);
   cy.get(pipelineBuilderPO.formView.sidePane.imageName).type('openshift/hello-openshift');
-  //  Close button is missing in side pane, Defect: ODC-5519 raised
-  // sidePane.close();
+  sidePane.close();
 });
 
 When('user selects YAML view', () => {
@@ -106,4 +110,42 @@ When('user clicks Create button on Pipeline Yaml page', () => {
 
 When('user clicks on Add parameter link', () => {
   cy.byButtonText('Add parameter').click();
+});
+
+When('user selects the {string} node', (taskName: string) => {
+  pipelineBuilderPage.clickOnTask(taskName);
+});
+
+When('user adds the git url in the url Parameter in cluster task sidebar', () => {
+  pipelineBuilderSidePane.enterParameterUrl();
+});
+
+When('user clicks on Add workspace', () => {
+  cy.byButtonText('Add workspace').click();
+});
+
+When('user adds the Workspace name as {string}', (workspaceName: string) => {
+  pipelineBuilderPage.addWorkspace(workspaceName);
+});
+
+When('user edits the Workspace name as {string}', (workspaceName: string) => {
+  pipelineBuilderPage.addWorkspace(workspaceName);
+});
+
+When(
+  'user selects the {string} workspace in the Output of Workspaces in cluster task sidebar',
+  (workspaceName: string) => {
+    pipelineBuilderSidePane.selectWorkspace(workspaceName);
+  },
+);
+
+Then(
+  'user will see workspace mentioned as {string} in the Workspaces section of Pipeline Details page',
+  (workspaceName: string) => {
+    cy.get(pipelineDetailsPO.details.fieldValues.workspace).should('contain.text', workspaceName);
+  },
+);
+
+When('user clicks on Optional Workspace checkbox', () => {
+  pipelineBuilderPage.selectOptionalWorkspace(true);
 });

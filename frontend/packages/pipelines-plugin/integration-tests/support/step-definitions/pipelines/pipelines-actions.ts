@@ -6,13 +6,12 @@ import {
 } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import {
-  pipelinesPage,
-  pipelineBuilderPage,
-  pipelineDetailsPage,
-  pipelineRunDetailsPage,
-} from '../../pages';
+  pipelineBuilderPO,
+  pipelineRunDetailsPO,
+  pipelinesPO,
+} from '../../page-objects/pipelines-po';
+import { pipelinesPage, pipelineBuilderPage, pipelineDetailsPage } from '../../pages';
 import { pipelineActions } from '../../constants';
 import { actionsDropdownMenu } from '../../pages/functions/common';
 
@@ -227,7 +226,7 @@ Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {
-  pipelineRunDetailsPage.verifyTitle();
+  cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
 });
 
 Then('user is able to see pipeline run in topology side bar', () => {
@@ -236,4 +235,8 @@ Then('user is able to see pipeline run in topology side bar', () => {
 
 Then('user will be redirected to Pipelines page', () => {
   detailsPage.titleShouldContain(adminNavigationMenu.pipelines);
+});
+
+When('user clicks Save button on Pipeline Builder page', () => {
+  pipelineBuilderPage.clickSaveButton();
 });

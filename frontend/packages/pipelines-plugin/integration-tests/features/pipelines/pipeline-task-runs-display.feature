@@ -18,7 +18,7 @@ Feature: Display task runs page
               And user can see Name, Task, Pod, Status and Started columns
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Options in kebab menu of task runs
             Given user is at pipeline details page with pipeline runs
              When user clicks on Task Runs tab
@@ -26,7 +26,7 @@ Feature: Display task runs page
              Then user can see kebab menu options Edit labels, Edit annotations, Edit Task Run and Delete Task Run
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Task Runs Details page for passed task runs
             Given user is at pipeline details page with pipeline runs
              When user clicks on pipeline runs tab
@@ -38,7 +38,7 @@ Feature: Display task runs page
               And user can see Status and Pods in "Details" tab
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Task Runs Details page for failed task runs
             Given user is at pipeline details page with pipeline runs
              When user clicks on pipeline runs tab
@@ -50,20 +50,22 @@ Feature: Display task runs page
               And user can see Status, Message and Log snippet in "Details" tab
 
 
-        @regression, @manual
+        @regression @manual @odc-3991
         Scenario Outline: Task Runs Details page with Workspaces
-            Given user is at Task Runs tab of pipeline run with all kind of Workspaces
+            Given pipeline "<pipeline_name>" is created with "<workspace_name>" workspace
+             And pipeline "<pipeline_name>" is executed with workspace type "<workspace_type>"
+             And user is at Task Runs tab of pipeline run with all kind of Workspaces
              When user clicks on a task run associated with "<workspace_name>" "<resource>" Resources
              Then user is redirected to Task Run Details tab
               And user will see "<workspace_type>" label with "<workspace_name>" Workspace "shared-task-storage" mentioned in the "<resource>" Resources section of Task Run Details page
 
         Examples:
-                  | workspace_type | workspace_name  | resource            |
-                  | PVC            | PVC             | Workspace           |
-                  | CM             | Config Map      | Workspace           |
-                  | S              | Secret          | Workspace           |
-                  |                | Empty Directory | Workspace           |
-                  | PVC            | PVC             | VolumeClaimTemplate |
+                  | pipeline_name | workspace_type        | workspace_name      | resource            |
+                  | pipe-wp-t1    | PersistentVolumeClaim | PVC                 | Workspace           |
+                  | pipe-wp-t2    | Config Map            | Config Map          | Workspace           |
+                  | pipe-wp-t3    | Secret                | Secret              | Workspace           |
+                  | pipe-wp-t4    | Empty Directory       | Empty Directory     | Workspace           |
+                  | pipe-wp-t5    | VolumeClaimTemplate   | VolumeClaimTemplate | VolumeClaimTemplate |
 
 
         @regression @to-do

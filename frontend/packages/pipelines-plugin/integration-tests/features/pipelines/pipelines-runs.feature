@@ -257,27 +257,19 @@ Feature: Pipeline Runs
               And user will also see the log snippet
 
 
-        @regression @to-do
-        Scenario Outline: Start pipeline modal with different Workspaces
-            Given pipeline "pipeline-workspace" with PVC "git-PVC" workspace is present
+        @regression @odc-3991
+        Scenario: Start pipeline modal with different Workspaces
+            Given pipeline "pipeline-workspace" is created with "git-PVC" workspace
              When user selects "Start" option from kebab menu for pipeline "pipeline-workspace"
               And user navigates to Workspaces section
-              And user clicks on dropdown with PVC selected by default to check options
+              And user clicks on "git-PVC" workspace dropdown with Empty Directory selected by default
              Then user sees option Empty Directory, Config Map, Secret, PersistentVolumeClaim, VolumeClaimTemplate
 
 
-        @regression @to-do
-        Scenario Outline: Start pipeline modal with Empty directory
-            Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
-             When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
-              And user navigates to Workspaces section
-             Then user can see on dropdown with Empty Directory selected by default
-
-
-        @regression, @manual
-        Scenario Outline: Show VolumeClaimTemplate options
-            Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
-             When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
+        @regression, @manual @odc-3991
+        Scenario: Show VolumeClaimTemplate options
+            Given pipeline "pipevc-no-workspace" with at least one workspace and no previous Pipeline Runs
+             When user selects "Start" option from kebab menu for pipeline "pipevc-no-workspace"
               And user navigates to Workspaces section
               And user clicks Show VolumeClaimTemplate options
              Then user can see Storage Class
@@ -286,11 +278,12 @@ Feature: Pipeline Runs
               And user can see Volume Mode
 
 
-        @regression @to-do
-        Scenario Outline: Create PVC workspace in Start pipeline modal
+        @regression @odc-3991
+        Scenario: Create PVC workspace in Start pipeline modal
             Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
               And user navigates to Workspaces section
+              And user selects "VolumeClaimTemplate" option from workspace dropdown
               And user clicks Show VolumeClaimTemplate options
               And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
