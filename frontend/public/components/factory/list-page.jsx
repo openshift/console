@@ -120,7 +120,7 @@ ListPageWrapper_.propTypes = {
   hideLabelFilter: PropTypes.bool,
 };
 
-/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
+/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode, toggleViewComponent?: React.ReactNode} >}*/
 export const FireMan_ = connect(null, { filterList })(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
@@ -204,6 +204,7 @@ export const FireMan_ = connect(null, { filterList })(
         resources,
         badge,
         title,
+        toggleViewComponent,
       } = this.props;
 
       let createLink;
@@ -260,6 +261,7 @@ export const FireMan_ = connect(null, { filterList })(
             badge={title ? badge : null}
             className={classNames({ 'co-m-nav-title--row': createLink })}
           >
+            {toggleViewComponent}
             {createLink && (
               <div className={classNames({ 'co-m-pane__createLink--no-title': !title })}>
                 {createLink}
@@ -380,7 +382,6 @@ export const ListPage = withFallback((props) => {
       selector,
     },
   ];
-
   // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
   const rowFilters = _.isEmpty(filters) ? props.rowFilters : undefined;
 
@@ -424,7 +425,7 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean, nameFilterPlaceholder?: string >} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean, nameFilterPlaceholder?: string, toggleViewComponent?: React.ReactNode} }> */
 export const MultiListPage = (props) => {
   const {
     autoFocus,
@@ -452,6 +453,7 @@ export const MultiListPage = (props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
+    toggleViewComponent,
   } = props;
 
   const { t } = useTranslation();
@@ -476,6 +478,7 @@ export const MultiListPage = (props) => {
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
+      toggleViewComponent={toggleViewComponent}
     >
       <Firehose resources={mock ? [] : resources}>
         <ListPageWrapper_
