@@ -129,7 +129,7 @@ export const deleteRow = (kind: string) => (name: string) => {
   });
 };
 
-export const rowFiltersButton = $('[data-test-id="filter-dropdown-toggle"]');
+export const rowFiltersButton = $('[data-test-id="filter-dropdown-toggle"] button');
 export const rowFiltersPresent = () => browser.wait(until.presenceOf(rowFiltersButton));
 export const rowFilterFor = (name: string) => $(`[data-test-row-filter="${name}"]`);
 

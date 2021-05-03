@@ -37,7 +37,7 @@ export const monitoringPO = {
     types: '[data-test-id="dropdown-button"]',
   },
   alertsTab: {
-    filter: 'button[data-test-id="filter-dropdown-toggle"]',
+    filter: '[data-test-id="filter-dropdown-toggle"] button',
     search: 'input[data-test-id="item-filter"]',
     table: '[role="grid"]',
     alertsTable: {
