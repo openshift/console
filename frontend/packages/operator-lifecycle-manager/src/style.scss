@@ -311,3 +311,27 @@ $co-affinity-row-margin: 15px;
 .co-operator-uninstall__operands-section loading-skeleton--table::after {
   min-height: 160px;
 }
+
+.co-operator-details__actions {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+.co-operator-details__toggle-value {
+  flex-grow: 1;
+  margin-right: var(--pf-global--spacer--xl);
+  margin-left: var(--pf-global--spacer--xl);
+  margin-top: var(--pf-global--spacer--xs);
+  font-size: var(--pf-global--FontSize--xl);
+  line-height: var(--pf-global--LineHeight--sm);
+}
+
+.co-operator-details__toggle-value .radio-inline input[type="radio"]
+{
+  position: relative;  //To override bootstrap absolute position
+}
+
+.co-operator-details__toggle-value label {
+ font-weight: var(--pf-global--FontWeight--normal);
+}
