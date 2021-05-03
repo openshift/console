@@ -1,3 +1,4 @@
+import { ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration } from '../types';
 
 export type ClusterGlobalConfig = ExtensionDeclaration<
@@ -8,11 +9,7 @@ export type ClusterGlobalConfig = ExtensionDeclaration<
     /** The name of the cluster config resource instance. */
     name: string;
     /** The model which refers to a cluster config resource. */
-    model: {
-      group: string;
-      version: string;
-      kind: string;
-    };
+    model: ExtensionK8sModel;
     /** The namespace of the cluster config resource instance. */
     namespace: string;
   }
