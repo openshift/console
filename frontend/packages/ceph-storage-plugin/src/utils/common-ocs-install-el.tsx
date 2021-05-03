@@ -107,9 +107,11 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
     case ValidationType.NETWORK:
       return {
         variant: AlertVariant.danger,
-        title: t('ceph-storage-plugin~Public Network Attachment Definition cannot be empty'),
+        title: t(
+          'ceph-storage-plugin~Both public and cluster network attachment definition cannot be empty',
+        ),
         text: t(
-          'ceph-storage-plugin~To use Multus networking the public Network Attachment Definition must be selected.',
+          'ceph-storage-plugin~A public or cluster network attachment definition must be selected to use Multus.',
         ),
       };
     case ValidationType.INTERNAL_FLEXIBLE_SCALING:

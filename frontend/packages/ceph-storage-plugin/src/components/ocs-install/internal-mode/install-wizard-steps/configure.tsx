@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
-import { useFlag } from '@console/shared';
+import { useFlag, getNamespace, getName } from '@console/shared';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { InternalClusterAction, InternalClusterState, ActionType } from '../reducer';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';
-import { NetworkType } from '../../../../types';
+import { NetworkType, NADSelectorType } from '../../../../types';
 import { GUARDED_FEATURES } from '../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {
@@ -18,10 +19,15 @@ export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) =
       dispatch({ type: ActionType.SET_PUBLIC_NETWORK, payload: '' });
     }
   };
-  const setNetwork = (type, payload) =>
-    type === 'Cluster'
-      ? dispatch({ type: ActionType.SET_CLUSTER_NETWORK, payload })
-      : dispatch({ type: ActionType.SET_PUBLIC_NETWORK, payload });
+  const setNetwork = (network: NADSelectorType, resource: K8sResourceCommon) => {
+    dispatch({
+      type:
+        network === NADSelectorType.CLUSTER
+          ? ActionType.SET_CLUSTER_NETWORK
+          : ActionType.SET_PUBLIC_NETWORK,
+      payload: `${getNamespace(resource)}/${getName(resource)}`,
+    });
+  };
 
   return (
     <Form noValidate={false}>

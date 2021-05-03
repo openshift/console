@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
-import { useFlag } from '@console/shared';
+import { useFlag, getNamespace, getName } from '@console/shared';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { State, Action } from '../reducer';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';
-import { NetworkType } from '../../../../types';
+import { NetworkType, NADSelectorType } from '../../../../types';
 import { GUARDED_FEATURES } from '../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {
@@ -19,10 +20,10 @@ export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) =
     }
   };
 
-  const setNetwork = (network: 'Cluster' | 'Public', NADName: string) =>
+  const setNetwork = (network: NADSelectorType, resource: K8sResourceCommon) =>
     dispatch({
-      type: network === 'Cluster' ? 'setClusterNetwork' : 'setPublicNetwork',
-      value: NADName,
+      type: network === NADSelectorType.CLUSTER ? 'setClusterNetwork' : 'setPublicNetwork',
+      value: `${getNamespace(resource)}/${getName(resource)}`,
     });
 
   return (

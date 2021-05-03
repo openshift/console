@@ -5,15 +5,16 @@ import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
 import { getName, ResourceDropdown, useFlag } from '@console/shared';
 import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../internal-mode/reducer';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { KMSConfigure } from '../../kms-config/kms-config';
-import { NetworkType } from '../../../types';
+import { NetworkType, NADSelectorType } from '../../../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
 import { GUARDED_FEATURES } from '../../../features';
 import { setEncryptionDispatch } from '../../kms-config/utils';
 import { AdvancedSubscription } from '../subscription-icon';
+import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
 import './install-wizard.scss';
 import './_configure.scss';
 
@@ -34,8 +35,14 @@ const resources = [
   {
     isList: true,
     kind: referenceForModel(NetworkAttachmentDefinitionModel),
-    namespace: 'openshift-storage',
-    prop: 'ocsDevices',
+    namespace: CEPH_STORAGE_NAMESPACE,
+    prop: 'openshift-storage-nad',
+  },
+  {
+    isList: true,
+    kind: referenceForModel(NetworkAttachmentDefinitionModel),
+    namespace: 'default',
+    prop: 'default-nad',
   },
 ];
 
@@ -200,14 +207,17 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const clusterNetworkName = React.useMemo(() => clusterNetwork.split('/')?.[1], [clusterNetwork]);
+  const publicNetworkName = React.useMemo(() => publicNetwork.split('/')?.[1], [publicNetwork]);
+
   const filterForPublicDevices = React.useCallback(
-    (device: NetworkAttachmentDefinitionKind) => clusterNetwork !== getName(device),
-    [clusterNetwork],
+    (device: NetworkAttachmentDefinitionKind) => clusterNetworkName !== getName(device),
+    [clusterNetworkName],
   );
 
   const filterForClusterDevices = React.useCallback(
-    (device: NetworkAttachmentDefinitionKind) => publicNetwork !== getName(device),
-    [publicNetwork],
+    (device: NetworkAttachmentDefinitionKind) => publicNetworkName !== getName(device),
+    [publicNetworkName],
   );
   return (
     <>
@@ -247,17 +257,19 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
           <FormGroup
             fieldId="configure-multus"
             label={t('ceph-storage-plugin~Public Network Interface')}
-            isRequired
           >
             <Firehose resources={resources}>
               <ResourceDropdown
                 dropDownClassName="ceph__multus-dropdown"
                 buttonClassName="ceph__multus-dropdown-button"
-                selectedKey={publicNetwork}
+                selectedKey={publicNetworkName}
                 placeholder={t('ceph-storage-plugin~Select a network')}
                 dataSelector={['metadata', 'name']}
-                onChange={(key, name) => setNetwork('Public', name)}
+                onChange={(_key, _name, selectedResource) =>
+                  setNetwork(NADSelectorType.PUBLIC, selectedResource)
+                }
                 resourceFilter={filterForPublicDevices}
+                showBadge
               />
             </Firehose>
           </FormGroup>
@@ -269,11 +281,14 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
               <ResourceDropdown
                 dropDownClassName="ceph__multus-dropdown"
                 buttonClassName="ceph__multus-dropdown-button"
-                selectedKey={clusterNetwork}
+                selectedKey={clusterNetworkName}
                 placeholder={t('ceph-storage-plugin~Select a network')}
                 dataSelector={['metadata', 'name']}
-                onChange={(key, name) => setNetwork('Cluster', name)}
+                onChange={(_key, _name, selectedResource) =>
+                  setNetwork(NADSelectorType.CLUSTER, selectedResource)
+                }
                 resourceFilter={filterForClusterDevices}
+                showBadge
               />
             </Firehose>
           </FormGroup>
@@ -294,5 +309,5 @@ type NetworkFormGroupProps = {
   networkType: NetworkType;
   publicNetwork: string;
   clusterNetwork: string;
-  setNetwork: any;
+  setNetwork: (type: NADSelectorType, resource: K8sResourceCommon) => void;
 };

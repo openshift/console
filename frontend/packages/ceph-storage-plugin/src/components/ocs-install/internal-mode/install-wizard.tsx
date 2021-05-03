@@ -77,9 +77,10 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
 
   const title = t('ceph-storage-plugin~create internal mode storage cluster wizard');
   const scName = getName(state.storageClass);
-  // User can't have empty public NAD when using multus
   const hasConfiguredNetwork =
-    state.networkType === NetworkType.MULTUS ? !!state.publicNetwork : true;
+    state.networkType === NetworkType.MULTUS
+      ? !!(state.publicNetwork || state.clusterNetwork)
+      : true;
   const hasEnabledCreateStep =
     !!(state.nodes.length >= MINIMUM_NODES && scName && state.kms.hasHandled) &&
     hasConfiguredNetwork;

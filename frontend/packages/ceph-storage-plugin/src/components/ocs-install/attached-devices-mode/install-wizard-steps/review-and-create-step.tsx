@@ -36,6 +36,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
     kms,
     networkType,
     publicNetwork,
+    clusterNetwork,
     stretchClusterChecked,
     selectedArbiterZone,
   } = state;
@@ -121,7 +122,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
         {isMultusSupported && (
           <ReviewListBody
             validation={
-              networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+              networkType === NetworkType.MULTUS &&
+              !publicNetwork &&
+              !clusterNetwork &&
+              ValidationType.NETWORK
             }
           >
             <p>
