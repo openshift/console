@@ -293,6 +293,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       },
       healthHandler: getCephHealthState,
+      // t('ceph-storage-plugin~Storage')
+      popupTitle: '%ceph-storage-plugin~Storage%',
+      popupComponent: () => import('./components/storage-popover').then((m) => m.StoragePopover),
     },
     flags: {
       required: [CEPH_FLAG],
