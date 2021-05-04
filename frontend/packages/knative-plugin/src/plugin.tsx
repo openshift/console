@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
 import {
   Plugin,
-  NavSection,
-  ResourceNSNavItem,
   ModelFeatureFlag,
   ModelDefinition,
   OverviewResourceTab,
@@ -11,7 +9,6 @@ import {
   RoutePage,
   KebabActions,
   YAMLTemplate,
-  HrefNavItem,
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
@@ -42,15 +39,12 @@ import {
 } from './providers';
 
 type ConsumedExtensions =
-  | NavSection
-  | ResourceNSNavItem
   | ModelFeatureFlag
   | ModelDefinition
   | OverviewResourceTab
   | ResourceListPage
   | RoutePage
   | KebabActions
-  | HrefNavItem
   | YAMLTemplate
   | ResourceDetailsPage
   | TopologyConsumedExtensions
@@ -125,56 +119,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.CamelKameletModel,
       flag: FLAG_CAMEL_KAMELETS,
-    },
-  },
-  {
-    type: 'Nav/Section',
-    properties: {
-      id: 'serverless',
-      // t('knative-plugin~Serverless')
-      name: '%knative-plugin~Serverless%',
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'serverlessserving',
-      perspective: 'admin',
-      section: 'serverless',
-      componentProps: {
-        // t('knative-plugin~Serving')
-        name: '%knative-plugin~Serving%',
-        href: '/serving',
-        namespaced: true,
-      },
-    },
-    flags: {
-      required: [
-        FLAG_KNATIVE_SERVING_SERVICE,
-        FLAG_KNATIVE_SERVING_REVISION,
-        FLAG_KNATIVE_SERVING_ROUTE,
-      ],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'serverlesseventing',
-      perspective: 'admin',
-      section: 'serverless',
-      componentProps: {
-        // t('knative-plugin~Eventing')
-        name: '%knative-plugin~Eventing%',
-        href: '/eventing',
-        namespaced: true,
-      },
-    },
-    flags: {
-      required: [
-        FLAG_KNATIVE_EVENTING,
-        FLAG_KNATIVE_EVENTING_BROKER,
-        FLAG_KNATIVE_EVENTING_CHANNEL,
-      ],
     },
   },
   {

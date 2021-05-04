@@ -4,10 +4,6 @@ import {
   Plugin,
   ModelFeatureFlag,
   KebabActions,
-  NavSection,
-  HrefNavItem,
-  ResourceNSNavItem,
-  ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   Perspective,
@@ -20,7 +16,6 @@ import {
   CustomFeatureFlag,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { FLAGS } from '@console/shared/src/constants';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
@@ -31,11 +26,7 @@ import { getGuidedTour } from './components/guided-tour';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
-  | NavSection
   | CustomFeatureFlag
-  | HrefNavItem
-  | ResourceClusterNavItem
-  | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
@@ -48,129 +39,6 @@ type ConsumedExtensions =
   | PostFormSubmissionAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'Nav/Section',
-    properties: {
-      id: 'top',
-      perspective: 'dev',
-    },
-  },
-  {
-    type: 'Nav/Section',
-    properties: {
-      id: 'resources',
-      perspective: 'dev',
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'add',
-      perspective: 'dev',
-      section: 'top',
-      componentProps: {
-        // t('devconsole~+Add')
-        name: '%devconsole~+Add%',
-        href: '/add',
-        namespaced: true,
-        testID: '+Add-header',
-        'data-quickstart-id': 'qs-nav-add',
-      },
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'topology',
-      perspective: 'dev',
-      section: 'top',
-      componentProps: {
-        // t('devconsole~Topology')
-        name: '%devconsole~Topology%',
-        href: '/topology',
-        namespaced: true,
-        testID: 'topology-header',
-        'data-quickstart-id': 'qs-nav-topology',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'monitoring',
-      perspective: 'dev',
-      section: 'top',
-      componentProps: {
-        // t('devconsole~Monitoring')
-        name: '%devconsole~Monitoring%',
-        href: '/dev-monitoring',
-        namespaced: true,
-        testID: 'monitoring-header',
-        'data-tour-id': 'tour-monitoring-nav',
-        'data-quickstart-id': 'qs-nav-monitoring',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'search',
-      perspective: 'dev',
-      section: 'top',
-      componentProps: {
-        // t('devconsole~Search')
-        name: '%devconsole~Search%',
-        href: '/search',
-        namespaced: true,
-        testID: 'search-header',
-        'data-tour-id': 'tour-search-nav',
-        'data-quickstart-id': 'qs-nav-search',
-      },
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'builds',
-      perspective: 'dev',
-      section: 'resources',
-      componentProps: {
-        // t('devconsole~Builds')
-        name: '%devconsole~Builds%',
-        resource: 'buildconfigs',
-        testID: 'build-header',
-        'data-quickstart-id': 'qs-nav-builds',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'project',
-      perspective: 'dev',
-      section: 'resources',
-      componentProps: {
-        // t('devconsole~Project')
-        name: '%devconsole~Project%',
-        href: '/project-details',
-        namespaced: true,
-        testID: 'project-details-header',
-        'data-quickstart-id': 'qs-nav-project',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT],
-    },
-  },
   {
     type: 'Overview/Resource',
     properties: {

@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "imagevulnerabilities",
+      "perspective": "admin",
+      "section": "administration",
+      "name": "Image Vulnerabilities",
+      "insertBefore": "customresourcedefinitions",
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "kind": "ImageManifestVuln",
+        "version": "v1alpha1"
+      },
+      "dataAttributes": {
+        "data-test-id": "imagemanifestvuln-header"
+      }
+    },
+    "flags": {
+      "required": ["SECURITY_LABELLER"]
+    }
+  }
+]

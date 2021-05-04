@@ -1,4 +1,5 @@
 {
+  "Bare Metal Hosts": "Bare Metal Hosts",
   "resources": "resources",
   "Name \"${value}\" is already taken.": "Name \"${value}\" is already taken.",
   "Value provided is not a valid BMC address": "Value provided is not a valid BMC address",
@@ -59,7 +60,6 @@
   "New with Dialog": "New with Dialog",
   "New from YAML": "New from YAML",
   "Add Host": "Add Host",
-  "Bare Metal Hosts": "Bare Metal Hosts",
   "Management Address": "Management Address",
   "Add credentials": "Add credentials",
   "View all": "View all",

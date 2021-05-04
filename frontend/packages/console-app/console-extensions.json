@@ -37,5 +37,22 @@
       "scope": "console",
       "reducer": { "$codeRef": "reduxReducer" }
     }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "volumesnapshots",
+      "section": "storage",
+      "name": "%console-app~VolumeSnapshotContents%",
+      "insertBefore": "deployments",
+      "model": {
+        "group": "snapshot.storage.k8s.io",
+        "kind": "VolumeSnapshotContent",
+        "version": "v1"
+      }
+    },
+    "flags": {
+      "required": ["CAN_LIST_VSC"]
+    }
   }
 ]

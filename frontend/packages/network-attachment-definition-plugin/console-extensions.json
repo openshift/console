@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "id": "networkattachmentdefinitions",
+      "section": "networking",
+      "name": "Network Attachment Definitions",
+      "model": {
+        "group": "k8s.cni.cncf.io",
+        "kind": "NetworkAttachmentDefinition",
+        "version": "v1"
+      }
+    },
+    "flags": {
+      "required": ["NET_ATTACH_DEF", "KUBEVIRT"]
+    }
+  }
+]

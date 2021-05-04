@@ -3,14 +3,13 @@ import * as React from 'react';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import {
+  Plugin,
+  ModelDefinition,
   DashboardsInventoryItemGroup,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
   DashboardsOverviewResourceActivity,
-  ModelDefinition,
-  Plugin,
   ProjectDashboardInventoryItem,
-  ResourceNSNavItem,
   YAMLTemplate,
 } from '@console/plugin-sdk';
 import { getName } from '@console/shared/src/selectors/common';
@@ -28,7 +27,6 @@ import '@console/internal/i18n.js';
 import './style.scss';
 
 type ConsumedExtensions =
-  | ResourceNSNavItem
   | YAMLTemplate
   | ModelDefinition
   | DashboardsOverviewHealthURLSubsystem
@@ -46,22 +44,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'virtualization',
-      section: 'workloads',
-      componentProps: {
-        // t('kubevirt-plugin~Virtualization')
-        name: '%kubevirt-plugin~Virtualization%',
-        resource: 'virtualization',
-      },
-      insertBefore: 'deployments',
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
     },
   },
   {

@@ -16,9 +16,6 @@ import {
   CustomFeatureFlag,
   StorageClassProvisioner,
   ProjectDashboardInventoryItem,
-  HrefNavItem,
-  ResourceClusterNavItem,
-  ResourceNSNavItem,
   ResourceListPage,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
@@ -62,9 +59,6 @@ type ConsumedExtensions =
   | DashboardsOverviewResourceActivity
   | StorageClassProvisioner
   | ProjectDashboardInventoryItem
-  | HrefNavItem
-  | ResourceClusterNavItem
-  | ResourceNSNavItem
   | ResourceListPage;
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
@@ -660,40 +654,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'ocsdashboards',
-      section: 'storage',
-      insertBefore: 'persistentvolumes',
-      componentProps: {
-        // t('ceph-storage-plugin~Overview')
-        name: '%ceph-storage-plugin~Overview%',
-        href: '/ocs-dashboards',
-      },
-    },
-    flags: {
-      required: [OCS_FLAG],
-    },
-  },
-  // In case Noobaa is deployed without OCS Operator
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'ocsdashboards',
-      section: 'storage',
-      insertBefore: 'persistentvolumes',
-      componentProps: {
-        // t('ceph-storage-plugin~Overview')
-        name: '%ceph-storage-plugin~Overview%',
-        href: '/ocs-dashboards',
-      },
-    },
-    flags: {
-      required: [MCG_FLAG],
-      disallowed: [OCS_FLAG],
-    },
-  },
-  {
     type: 'Page/Route',
     properties: {
       path: `/ocs-dashboards`,
@@ -701,21 +661,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_FLAG],
-    },
-  },
-  {
-    type: 'NavItem/ResourceCluster',
-    properties: {
-      id: 'objectbuckets',
-      section: 'storage',
-      componentProps: {
-        // t('ceph-storage-plugin~Object Buckets')
-        name: '%ceph-storage-plugin~Object Buckets%',
-        resource: models.NooBaaObjectBucketModel.plural,
-      },
-    },
-    flags: {
-      required: [MCG_FLAG],
     },
   },
   {
@@ -739,21 +684,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
         ).then((m) => m.ObjectBucketDetailsPage),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'objectbucketclaims',
-      section: 'storage',
-      componentProps: {
-        // t('ceph-storage-plugin~Object Bucket Claims')
-        name: '%ceph-storage-plugin~Object Bucket Claims%',
-        resource: models.NooBaaObjectBucketClaimModel.plural,
-      },
     },
     flags: {
       required: [MCG_FLAG],

@@ -141,6 +141,17 @@
       "predicate": { "$codeRef": "pvcSelectors.isPvcBoundToCDI" },
       "onPVCKill": { "$codeRef": "pvcDelete.killCDIBoundPVC" },
       "alert": { "$codeRef": "pvcDelete.PVCDeleteAlertExtension" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "virtualization",
+      "section": "workloads",
+      "name": "%kubevirt-plugin~Virtualization%",
+      "insertBefore": "deployments",
+      "href": "/virtualization",
+      "prefixNamespaced": true
     },
     "flags": {
       "required": ["KUBEVIRT"]

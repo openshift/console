@@ -4,13 +4,9 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  HrefNavItem,
-  ResourceNSNavItem,
-  ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   Perspective,
-  NavSection,
   YAMLTemplate,
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
@@ -26,7 +22,6 @@ import {
 } from '@console/plugin-sdk';
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
 import { FooBarModel } from './models';
@@ -38,13 +33,9 @@ import { DemoGroupIcon } from './components/dashboards/inventory';
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
-  | HrefNavItem
-  | ResourceNSNavItem
-  | ResourceClusterNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
-  | NavSection
   | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
@@ -72,55 +63,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PodModel,
       flag: TEST_MODEL_FLAG,
-    },
-  },
-  {
-    type: 'Nav/Section',
-    properties: {
-      id: 'home',
-      name: 'Home',
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'testhreflink',
-      section: 'home',
-      componentProps: {
-        name: 'Test Href Link',
-        href: '/test',
-      },
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'testresourcens',
-      section: 'home',
-      componentProps: {
-        name: 'Test ResourceNS Link',
-        resource: 'pods',
-      },
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'NavItem/ResourceCluster',
-    properties: {
-      id: 'testresourcecluster',
-      section: 'home',
-      componentProps: {
-        name: 'Test ResourceCluster Link',
-        resource: 'projects',
-      },
-    },
-    flags: {
-      required: [FLAGS.OPENSHIFT, TEST_MODEL_FLAG],
     },
   },
   {
@@ -187,36 +129,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'testhome',
-      perspective: 'test',
-      componentProps: {
-        name: 'Test Home',
-        href: '/test',
-      },
-    },
-  },
-  {
-    type: 'Nav/Section',
-    properties: {
-      id: 'advanced',
-      name: 'Advanced',
-    },
-  },
-  {
-    type: 'NavItem/ResourceCluster',
-    properties: {
-      id: 'testprojects',
-      perspective: 'test',
-      section: 'advanced',
-      componentProps: {
-        name: 'Test Projects',
-        resource: 'projects',
-      },
     },
   },
   {

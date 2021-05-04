@@ -1,12 +1,6 @@
 import * as _ from 'lodash';
 import { AddAction } from '@console/dynamic-plugin-sdk';
-import {
-  ModelDefinition,
-  ModelFeatureFlag,
-  RoutePage,
-  Plugin,
-  HrefNavItem,
-} from '@console/plugin-sdk';
+import { ModelDefinition, ModelFeatureFlag, RoutePage, Plugin } from '@console/plugin-sdk';
 import { FLAG_RHOAS } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin';
 import * as models from './models';
@@ -16,7 +10,6 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | RoutePage
   | AddAction
-  | HrefNavItem
   | TopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [

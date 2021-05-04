@@ -8,7 +8,6 @@ import {
   DashboardsOverviewHealthResourceSubsystem,
   RoutePage,
   ResourceDetailsPage,
-  ResourceNSNavItem,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -26,7 +25,6 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
-  | ResourceNSNavItem
   | HorizontalNavTab;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -108,23 +106,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/summary' /* webpackChunkName: "container-security" */).then(
           (m) => m.SecurityBreakdownPopup,
         ),
-    },
-    flags: {
-      required: [ContainerSecurityFlag],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'imagevulnerabilities',
-      perspective: 'admin',
-      section: 'administration',
-      insertBefore: 'customresourcedefinitions',
-      componentProps: {
-        name: 'Image Vulnerabilities',
-        resource: referenceForModel(ImageManifestVulnModel),
-        testID: 'imagemanifestvuln-header',
-      },
     },
     flags: {
       required: [ContainerSecurityFlag],

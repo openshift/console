@@ -54,5 +54,24 @@
     "flags": {
       "required": ["OPENSHIFT_HELM"]
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "helm",
+      "perspective": "dev",
+      "section": "resources",
+      "insertBefore": "project",
+      "name": "%helm-plugin~Helm%",
+      "href": "/helm-releases",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-helm",
+        "data-test-id": "helm-releases-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
   }
 ]

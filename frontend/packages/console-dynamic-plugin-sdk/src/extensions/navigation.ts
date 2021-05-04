@@ -8,7 +8,7 @@ type NavItemProperties = {
   perspective?: string;
   /** Navigation section to which this item belongs to. If not specified, render this item as a top level link. */
   section?: string;
-  /** Adds `data-` attributes to the DOM. Each key will receive the `data-` prefix. */
+  /** Adds data attributes to the DOM. */
   dataAttributes?: { [key: string]: string };
   /** Mark this item as active when the URL starts with one of these paths. */
   startsWith?: string[];
@@ -18,6 +18,13 @@ type NavItemProperties = {
   insertAfter?: string | string[];
 };
 
+export type NavItem = ExtensionDeclaration<
+  'console.navigation/href',
+  NavItemProperties & {
+    name: string;
+  }
+>;
+
 export type HrefNavItem = ExtensionDeclaration<
   'console.navigation/href',
   NavItemProperties & {
@@ -25,6 +32,10 @@ export type HrefNavItem = ExtensionDeclaration<
     name: string;
     /** The link href value. */
     href: string;
+    /** if true, adds /ns/active-namespace to the end */
+    namespaced?: boolean;
+    /** if true, adds /k8s/ns/active-namespace to the begining */
+    prefixNamespaced?: boolean;
   }
 >;
 
@@ -77,3 +88,7 @@ export const isSeparator = (e: Extension): e is Separator =>
 
 export const isNavSection = (e: Extension): e is NavSection =>
   e.type === 'console.navigation/section';
+
+export const isNavItem = (e: Extension): e is NavItem => {
+  return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
+};

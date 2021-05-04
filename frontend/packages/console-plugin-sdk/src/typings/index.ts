@@ -5,7 +5,6 @@ export * from './dashboards';
 export * from './features';
 export * from './kebab-actions';
 export * from './models';
-export * from './nav-items';
 export * from './nav-section';
 export * from './overview';
 export * from './pages';

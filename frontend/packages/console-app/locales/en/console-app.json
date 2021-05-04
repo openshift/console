@@ -1,4 +1,5 @@
 {
+  "VolumeSnapshotContents": "VolumeSnapshotContents",
   "Edit resource limits": "Edit resource limits",
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
@@ -65,6 +66,5 @@
   "Cluster": "Cluster",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane status",
-  "Cluster operators": "Cluster operators",
-  "VolumeSnapshotContents": "VolumeSnapshotContents"
+  "Cluster operators": "Cluster operators"
 }

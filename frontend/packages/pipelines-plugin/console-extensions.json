@@ -18,5 +18,72 @@
         }
       ]
     }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "pipelines",
+      "perspective": "dev",
+      "section": "resources",
+      "insertAfter": "builds",
+      "name": "%pipelines-plugin~Pipelines%",
+      "model": {
+        "kind": "Pipeline",
+        "version": "v1beta1",
+        "group": "tekton.dev"
+      },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-pipelines",
+        "data-test-id": "pipeline-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipelines",
+      "perspective": "admin",
+      "section": "pipelines",
+      "name": "%pipelines-plugin~Pipelines%",
+      "href": "/pipelines",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-pipelines"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipelinetasks",
+      "perspective": "admin",
+      "section": "pipelines",
+      "name": "%pipelines-plugin~Tasks%",
+      "href": "/tasks",
+      "namespaced": true
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "pipelinetriggers",
+      "perspective": "admin",
+      "section": "pipelines",
+      "name": "%pipelines-plugin~Triggers%",
+      "href": "/triggers",
+      "namespaced": true
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
   }
 ]
