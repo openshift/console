@@ -18,7 +18,6 @@ import {
   withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  useUserSettingsCompatibility,
 } from '@console/shared';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
@@ -250,13 +249,8 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
     rowKey,
     style,
     metrics,
+    tableColumns,
   }: NodesTableRowProps & NodesRowMapFromStateProps) => {
-    const [tableColumns, , loaded] = useUserSettingsCompatibility(
-      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-      undefined,
-      true,
-    );
     const nodeName = getName(node);
     const nodeUID = getUID(node);
     const usedMem = metrics?.usedMemory?.[nodeName];
@@ -283,9 +277,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
     const labels = getLabels(node);
     const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
     const columns: Set<string> =
-      loaded && tableColumns?.[columnManagementID]?.length > 0
-        ? new Set(tableColumns[columnManagementID])
-        : getSelectedColumns();
+      tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns();
     return (
       <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
         <TableData className={nodeColumnInfo.name.classes}>
@@ -398,6 +390,7 @@ type NodesTableRowProps = {
   index: number;
   rowKey: string;
   style: object;
+  tableColumns: string[];
 };
 
 const NodesTable: React.FC<NodesTableProps &
@@ -410,6 +403,7 @@ const NodesTable: React.FC<NodesTableProps &
           index={rowArgs.index}
           rowKey={rowArgs.key}
           style={rowArgs.style}
+          tableColumns={rowArgs.customData?.tableColumns}
         />
       ),
       [],
@@ -428,6 +422,7 @@ const NodesTable: React.FC<NodesTableProps &
         showNamespaceOverride
         Header={NodeTableHeader}
         Row={Row}
+        customData={{ tableColumns: tableColumns?.[columnManagementID] }}
         virtualize
       />
     );
