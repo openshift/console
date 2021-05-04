@@ -67,7 +67,7 @@ class Terminal_ extends React.Component {
     terminal.write(`\x1b[31m${reason || 'disconnected'}\x1b[m\r\n`);
     terminal.cursorHidden = true;
     terminal.setOption('disableStdin', true);
-    terminal.refresh(terminal.y, terminal.y);
+    terminal.refresh(0, terminal.rows - 1);
   }
 
   componentDidMount() {
