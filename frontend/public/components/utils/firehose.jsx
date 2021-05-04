@@ -196,7 +196,7 @@ export const Firehose = connect(
     }
 
     start() {
-      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = this.props;
+      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight, models } = this.props;
 
       let firehoses = [];
       if (!(inFlight && _.some(resources, ({ kind }) => !k8sModels.get(kind)))) {
@@ -209,7 +209,7 @@ export const Firehose = connect(
               resource.name,
               resource.limit,
             );
-            const k8sKind = k8sModels.get(resource.kind);
+            const k8sKind = k8sModels.get(resource.kind) || models?.[resource.kind];
             const id = makeReduxID(k8sKind, query);
             return _.extend({}, resource, { query, id, k8sKind });
           })

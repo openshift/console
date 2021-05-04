@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
-import { referenceForModel } from '../../module/k8s';
+import { referenceForModel, kindForReference } from '../../module/k8s';
 import {
   Dropdown,
   Firehose,
@@ -120,23 +120,37 @@ ListPageWrapper_.propTypes = {
   hideLabelFilter: PropTypes.bool,
 };
 
-/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
+export const FireManWithModels = ({ resources, ...props }) => {
+  const [models, loadingModels] = useK8sModels();
+  const kindForReferenceModels = React.useMemo(() => {
+    return (
+      !loadingModels &&
+      Object.assign({}, ...Object.entries(models).map(([k, v]) => ({ [kindForReference(k)]: v })))
+    );
+  }, [loadingModels, models]);
+
+  return <FireMan_ models={kindForReferenceModels || {}} resources={resources} {...props} />;
+};
+
+/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, models: any, badge?: React.ReactNode}>*/
 export const FireMan_ = connect(null, { filterList })(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
       super(props);
       this.onExpandChange = this.onExpandChange.bind(this);
       this.applyFilter = this.applyFilter.bind(this);
-
       const reduxIDs = props.resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+        makeReduxID(
+          props?.models?.[r.kind],
+          makeQuery(r.namespace, r.selector, r.fieldSelector, r.name),
+        ),
       );
       this.state = { reduxIDs };
     }
 
-    UNSAFE_componentWillReceiveProps({ resources }) {
+    UNSAFE_componentWillReceiveProps({ resources, models }) {
       const reduxIDs = resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
+        makeReduxID(models?.[r.kind], makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
       );
       if (_.isEqual(reduxIDs, this.state.reduxIDs)) {
         return;
@@ -204,6 +218,7 @@ export const FireMan_ = connect(null, { filterList })(
         resources,
         badge,
         title,
+        models,
       } = this.props;
 
       let createLink;
@@ -271,6 +286,7 @@ export const FireMan_ = connect(null, { filterList })(
           <div className="co-m-pane__body co-m-pane__body--no-top-margin">
             {inject(this.props.children, {
               resources,
+              models,
               expand: this.state.expand,
               reduxIDs: this.state.reduxIDs,
               applyFilter: this.applyFilter,
@@ -344,11 +360,12 @@ export const ListPage = withFallback((props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
+    models,
     flatten = (_resources) => _.get(_resources, name || kind, {}).data,
   } = props;
   const { t } = useTranslation();
   let { createProps } = props;
-  const ko = kindObj(kind);
+  const ko = kindObj(kind) || models?.[kind];
   const { label, labelKey, labelPlural, labelPluralKey, namespaced, plural } = ko;
   const title = props.title || t(labelPluralKey) || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
@@ -463,7 +480,7 @@ export const MultiListPage = (props) => {
   }));
 
   return (
-    <FireMan_
+    <FireManWithModels
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
@@ -496,7 +513,7 @@ export const MultiListPage = (props) => {
           name={name}
         />
       </Firehose>
-    </FireMan_>
+    </FireManWithModels>
   );
 };
 
