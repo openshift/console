@@ -7,7 +7,7 @@ export const helmPO = {
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision History"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release Notes"]',
-  filterDropdown: 'button[data-test-id="filter-dropdown-toggle"]',
+  filterDropdown: '[data-test-id="filter-dropdown-toggle"] button',
   filterDropdownDialog: '.pf-c-dropdown__group.co-filter-dropdown-group',
   filterToolBar: '#filter-toolbar',
   clearAllFilter: '.pf-c-button.pf-m-link.pf-m-inline',

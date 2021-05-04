@@ -28,7 +28,9 @@ export const listPage = {
     },
     by: (rowFilter: string) => {
       cy.get('.pf-c-toolbar__content-section').within(() => {
-        cy.byLegacyTestID('filter-dropdown-toggle').click();
+        cy.byLegacyTestID('filter-dropdown-toggle')
+          .find('button')
+          .click();
         /* PF Filter dropdown menu items are:
            <li id="cluster">
              <a data-test-row-filter="cluster">

@@ -11,7 +11,7 @@ export const vmLinkByName = (vmName) => $(`[data-test-id="${vmName}"]`);
 export const restrictedAccessBlock = $('.cos-status-box__title');
 export const hintBlockTitle = $('.co-hint-block__title.h4');
 
-export const filterToggle = $('[data-test-id="filter-dropdown-toggle"]');
+export const filterToggle = $('[data-test-id="filter-dropdown-toggle"] button');
 
 const filterItem = async (status: Status) => {
   const statusElement = $(`#${status}`);

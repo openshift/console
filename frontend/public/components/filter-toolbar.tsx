@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import {
   Badge,
   Button,
-  Checkbox,
-  Dropdown,
-  DropdownGroup,
-  DropdownItem,
-  DropdownToggle,
+  Select,
+  SelectGroup,
+  SelectOption,
+  SelectVariant,
   Toolbar,
   ToolbarChip,
   ToolbarContent,
@@ -17,7 +16,7 @@ import {
   ToolbarItem,
   Tooltip,
 } from '@patternfly/react-core';
-import { CaretDownIcon, FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
+import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -54,33 +53,25 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
   rowFilters.map((grp) => {
     const items = grp.itemsGenerator ? grp.itemsGenerator(props, props.kind) : grp.items;
     return (
-      <DropdownGroup
-        key={grp.filterGroupName}
-        label={grp.filterGroupName}
-        className="co-filter-dropdown-group"
-      >
-        {_.map(items, (item) => (
-          <DropdownItem
-            data-test-row-filter={item.id}
-            key={item.id}
-            id={item.id}
-            className="co-filter-dropdown__item"
-            listItemClassName="co-filter-dropdown__list-item"
-          >
-            <div className="co-filter-dropdown-item">
-              <span className="co-filter-dropdown-item__checkbox">
-                <Checkbox isChecked={selectedItems.includes(item.id)} id={`${item.id}-checkbox`} />
-              </span>
+      <SelectGroup key={grp.filterGroupName} label={grp.filterGroupName}>
+        {_.map(items, (item) => {
+          return (
+            <SelectOption
+              data-test-row-filter={item.id}
+              key={item.id}
+              inputId={item.id}
+              value={item.id}
+            >
               <span className="co-filter-dropdown-item__name">{item.title}</span>
               <Badge key={item.id} isRead>
                 {grp.isMatch
                   ? _.filter(data, (d) => grp.isMatch(d, item.id)).length
                   : _.countBy(data, grp.reducer)?.[item.id] ?? '0'}
               </Badge>
-            </div>
-          </DropdownItem>
-        ))}
-      </DropdownGroup>
+            </SelectOption>
+          );
+        })}
+      </SelectGroup>
     );
   });
 
@@ -241,7 +232,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     const selectedNew = _.xor(selectedRowFilters, id);
     applyRowFilter(selectedNew);
     setQueryParameters(selectedNew);
-    setOpen(false);
   };
 
   const clearAllRowFilter = (f: string) => {
@@ -249,7 +239,6 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   };
 
   const onRowFilterSelect = (event) => {
-    event.preventDefault();
     updateRowFilterSelected([event?.target?.id]);
   };
 
@@ -321,21 +310,27 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                   {acc}
                 </ToolbarFilter>
               ),
-              <Dropdown
-                dropdownItems={dropdownItems}
-                onSelect={onRowFilterSelect}
-                isOpen={isOpen}
-                toggle={
-                  <DropdownToggle
-                    data-test-id="filter-dropdown-toggle"
-                    onToggle={() => setOpen(!isOpen)}
-                    toggleIndicator={CaretDownIcon}
-                  >
-                    <FilterIcon className="span--icon__right-margin" />
-                    {t('public~Filter')}
-                  </DropdownToggle>
-                }
-              />,
+              <div data-test-id="filter-dropdown-toggle">
+                <Select
+                  placeholderText={
+                    <span>
+                      <FilterIcon className="span--icon__right-margin" />
+                      {t('public~Filter')}
+                    </span>
+                  }
+                  isOpen={isOpen}
+                  onToggle={() => {
+                    setOpen(!isOpen);
+                  }}
+                  onSelect={onRowFilterSelect}
+                  variant={SelectVariant.checkbox}
+                  selections={selectedRowFilters}
+                  isCheckboxSelectionBadgeHidden
+                  isGrouped
+                >
+                  {dropdownItems}
+                </Select>
+              </div>,
             )}
           </ToolbarItem>
         )}
