@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { LoadingInline } from '@console/internal/components/utils';
+import { FieldLevelHelp, LoadingInline } from '@console/internal/components/utils';
 import { ValidationErrorType, ValidationObject } from '@console/shared';
-import { ExpandableSection, FormGroup, Popover, PopoverPosition } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
-
-import { preventDefault } from './utils';
+import { ExpandableSection, FormGroup } from '@patternfly/react-core';
 
 import './form-row.scss';
 
@@ -61,24 +58,7 @@ export const FormRow: React.FC<FormRowProps> = ({
         type === ValidationErrorType.Info || type === ValidationErrorType.Warn ? message : undefined
       }
       className={className}
-      labelIcon={
-        help && (
-          <Popover
-            position={PopoverPosition.right}
-            aria-label={`${fieldId} help`}
-            bodyContent={help}
-          >
-            <button
-              type="button"
-              onClick={preventDefault}
-              className="pf-c-form__group-label-help"
-              aria-label={`${fieldId} help`}
-            >
-              <HelpIcon noVerticalAlign />
-            </button>
-          </Popover>
-        )
-      }
+      labelIcon={help && <FieldLevelHelp>{help}</FieldLevelHelp>}
     >
       {isLoading && (
         <span className="kubevirt-form-row__loading-container">
