@@ -1,14 +1,6 @@
 #!/bin/bash
 
 TEMPLATES=(
-  'rhel6-desktop-tiny'
-  'rhel6-desktop-small'
-  'rhel6-desktop-medium'
-  'rhel6-desktop-large'
-  'rhel6-server-tiny'
-  'rhel6-server-small'
-  'rhel6-server-medium'
-  'rhel6-server-large'
   'rhel7-desktop-tiny'
   'rhel7-desktop-small'
   'rhel7-desktop-medium'
@@ -44,9 +36,9 @@ TEMPLATES=(
 )
 
 ANNOTATIONS=(
-  'template.kubevirt.io/provider="Red Hat"'
-  'template.kubevirt.io/provider-url='https://www.redhat.com''
-  'template.kubevirt.io/provider-support-level=Full'
+  template.kubevirt.io/provider='Red Hat'
+  template.kubevirt.io/provider-url='https://www.redhat.com'
+  template.kubevirt.io/provider-support-level=Full
 )
 
 IFS=""
