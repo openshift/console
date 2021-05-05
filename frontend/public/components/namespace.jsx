@@ -2,17 +2,18 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Button, Tooltip } from '@patternfly/react-core';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect } from 'react-redux';
-import { Tooltip, Button } from '@patternfly/react-core';
+
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import * as fuzzy from 'fuzzysearch';
+
 import {
   Status,
   getRequester,
@@ -43,7 +44,6 @@ import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   DetailsItem,
-  Dropdown,
   ExternalLink,
   Firehose,
   Kebab,
@@ -82,10 +82,15 @@ import {
 import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
+import NamespaceDropDown from './namespace-dropdown';
+import { isCurrentUser, isOtherUser, isSystemNamespace } from './factory/table-filters';
+
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
 const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
+
+const SYSTEM_NAMESPACES = ['kube-', 'openshift-']; // System namespaces start with these strings.  Used for filtering
 
 export const deleteModal = (kind, ns) => {
   const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
@@ -1032,8 +1037,6 @@ const RolesPage = ({ obj: { metadata } }) => (
   />
 );
 
-const autocompleteFilter = (text, item) => fuzzy(text, item);
-
 const namespaceBarDropdownStateToProps = (state) => {
   const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
   const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
@@ -1044,106 +1047,108 @@ const namespaceBarDropdownDispatchToProps = (dispatch) => ({
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
-class NamespaceBarDropdowns_ extends React.Component {
-  componentDidUpdate() {
-    const { namespace, showStartGuide } = this.props;
+const NamespaceBarDropdowns_ = (props) => {
+  //   // KKD TODO:
+  //   // X step 1 - convert to a function component
+  //   // step 2 - implement PF Select vs using custom drop down
+  //   // step 3 - consider moving toward TS ... maybe for this function just add as comments??
+  const {
+    activeNamespace,
+    canCreateProject,
+    canListNS,
+    children,
+    disabled,
+    namespace,
+    onNamespaceChange,
+    setActiveNamespace,
+    showStartGuide,
+    t,
+    useProjects,
+  } = props;
+
+  React.useEffect(() => {
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
       showStartGuide(noProjects);
     }
+  }, [namespace.data, namespace.loaded, showStartGuide]);
+
+  if (flagPending(canListNS)) {
+    return null;
   }
 
-  render() {
-    const {
-      activeNamespace,
-      onNamespaceChange,
-      setActiveNamespace,
-      canListNS,
-      canCreateProject,
-      useProjects,
-      children,
-      disabled,
-      t,
-    } = this.props;
-    if (flagPending(canListNS)) {
-      return null;
-    }
+  const { loaded, data } = namespace;
+  const model = getModel(useProjects);
+  const allNamespacesTitle =
+    model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
 
-    const { loaded, data } = this.props.namespace;
-    const model = getModel(useProjects);
-    const allNamespacesTitle =
-      model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
-    const items = {};
-    if (canListNS) {
-      items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
-    }
-
-    _.map(data, 'metadata.name')
-      .sort()
-      .forEach((name) => (items[name] = name));
-
-    let title = activeNamespace;
-    if (activeNamespace === ALL_NAMESPACES_KEY) {
-      title = allNamespacesTitle;
-    } else if (loaded && !_.has(items, title)) {
-      // If the currently active namespace is not found in the list of all namespaces, put it in anyway
-      items[title] = title;
-    }
-    const defaultActionItem = canCreateProject
-      ? [
-          {
-            actionTitle:
-              model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
-            actionKey: CREATE_NEW_RESOURCE,
-          },
-        ]
-      : [];
-
-    const onChange = (newNamespace) => {
-      if (newNamespace === CREATE_NEW_RESOURCE) {
-        createProjectModal({
-          blocking: true,
-          onSubmit: (newProject) => {
-            setActiveNamespace(newProject.metadata.name);
-            removeQueryArgument('project-name');
-          },
-        });
-      } else {
-        onNamespaceChange && onNamespaceChange(newNamespace);
-        setActiveNamespace(newNamespace);
-        removeQueryArgument('project-name');
-      }
-    };
-
-    return (
-      <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-        <Dropdown
-          disabled={disabled}
-          className="co-namespace-selector"
-          menuClassName="co-namespace-selector__menu"
-          buttonClassName="pf-m-plain"
-          canFavorite
-          items={items}
-          actionItems={defaultActionItem}
-          titlePrefix={model.label === 'Project' ? t('public~Project') : t('public~Namespace')}
-          title={title}
-          onChange={onChange}
-          selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
-          autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={
-            model.label === 'Project'
-              ? t('public~Select Project...')
-              : t('public~Select Namespace...')
-          }
-          userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
-          storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-          shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
-        />
-        {children}
-      </div>
-    );
+  let title = activeNamespace;
+  if (activeNamespace === ALL_NAMESPACES_KEY) {
+    title = allNamespacesTitle;
   }
-}
+
+  const defaultActionItem = canCreateProject
+    ? [
+        {
+          actionTitle:
+            model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
+          actionKey: CREATE_NEW_RESOURCE,
+        },
+      ]
+    : [];
+
+  const items = data.map((item) => ({ title: item.metadata.name, key: item.metadata.name }));
+
+  if (loaded && !items.find((option) => option.title === title) && title !== allNamespacesTitle) {
+    // Add current namespace if it isn't included
+    items.push({ title, key: title });
+  }
+
+  items.sort((a, b) => a.title.localeCompare(b.title));
+
+  if (canListNS) {
+    items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
+  }
+
+  const onChange = (newNamespace) => {
+    if (newNamespace === CREATE_NEW_RESOURCE) {
+      createProjectModal({
+        blocking: true,
+        onSubmit: (newProject) => {
+          setActiveNamespace(newProject.metadata.name);
+          removeQueryArgument('project-name');
+        },
+      });
+    } else {
+      onNamespaceChange && onNamespaceChange(newNamespace);
+      setActiveNamespace(newNamespace);
+      removeQueryArgument('project-name');
+    }
+  };
+
+  return (
+    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+      <NamespaceDropDown
+        options={items}
+        onSelect={(event, newNamespace) => {
+          onChange(newNamespace);
+        }}
+        selected={activeNamespace || ALL_NAMESPACES_KEY}
+        title={`${
+          model.label === 'Project' ? t('public~Project') : t('public~Namespace')
+        }: ${title}`}
+        actions={defaultActionItem}
+        userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
+        storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
+        isProjects={model.label === 'Project'}
+        disabled={disabled}
+        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
+      />
+
+      {children}
+    </div>
+  );
+};
 
 const NamespaceBarDropdownsWithTranslation = connect(
   namespaceBarDropdownStateToProps,

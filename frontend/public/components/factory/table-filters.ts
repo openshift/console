@@ -29,6 +29,21 @@ import { Alert, Rule, Silence } from '../monitoring/types';
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
+export const isCurrentUser = (user: string): boolean => user === getActiveUserName();
+
+export const isSystemNamespace = (option: { title: string; key?: string }) => {
+  const SYSTEM_NAMESPACES_PREFIX = ['kube-', 'openshift-', 'kubernetes-'];
+  const SYSTEM_NAMESPACES = ['default', 'openshift'];
+  const startwithNamespace = SYSTEM_NAMESPACES_PREFIX.find((ns) => option.title?.startsWith(ns));
+  const isNamespace = SYSTEM_NAMESPACES.includes(option.title);
+
+  return startwithNamespace || isNamespace;
+};
+
+export const isOtherUser = (user: string, title: string): boolean => {
+  return !isCurrentUser(user) && !isSystemNamespace({ title });
+};
+
 const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
   csv?.spec?.displayName || csv?.metadata?.name;
 
@@ -36,6 +51,36 @@ const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
+<<<<<<< HEAD
+=======
+  requester: (filter, obj) => {
+    if (filter.selected.size === 0) {
+      return true;
+    }
+
+    const annotations = obj.metadata?.annotations;
+    const requestor = annotations ? annotations['openshift.io/requester'] : undefined;
+    if (filter.selected.has('me')) {
+      if (isCurrentUser(requestor)) {
+        return true;
+      }
+    }
+
+    if (filter.selected.has('user')) {
+      if (isOtherUser(requestor, obj.metadata?.name)) {
+        return true;
+      }
+    }
+    if (filter.selected.has('system')) {
+      if (isSystemNamespace({ title: obj.metadata?.name })) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
+>>>>>>> 0ac2e0693a... Namespace select - code cleanup
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
   'resource-list-text': (filter, resource: Rule | Alert) => {
