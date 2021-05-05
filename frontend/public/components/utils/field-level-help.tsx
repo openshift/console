@@ -4,7 +4,7 @@ import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
-  ({ children, popoverHasAutoWidth }) => {
+  ({ children, popoverHasAutoWidth, testId }) => {
     const { t } = useTranslation();
     if (React.Children.count(children) === 0) {
       return null;
@@ -20,6 +20,7 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
           variant="link"
           isInline
           className="co-field-level-help"
+          data-test-id={testId || null}
         >
           <OutlinedQuestionCircleIcon className="co-field-level-help__icon" />
         </Button>
@@ -31,4 +32,5 @@ export const FieldLevelHelp: React.FC<FieldLevelHelpProps> = React.memo(
 type FieldLevelHelpProps = {
   children: React.ReactNode;
   popoverHasAutoWidth?: PopoverProps['hasAutoWidth'];
+  testId?: string;
 };
