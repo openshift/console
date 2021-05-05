@@ -90,3 +90,12 @@ export enum FLAGS {
 export const CONFIG_STORAGE_CONSOLE = 'console';
 export const COLUMN_MANAGEMENT_CONFIGMAP_KEY = `${CONFIG_STORAGE_CONSOLE}.tableColumns`;
 export const ACM_LINK_ID = 'acm-console-link';
+
+export const SYSTEM_NAMESPACES_PREFIX = ['kube-', 'openshift-', 'kubernetes-'];
+export const SYSTEM_NAMESPACES = ['default', 'openshift'];
+
+export enum REQUESTER_FILTER {
+  ME = 'me',
+  USER = 'user',
+  SYSTEM = 'system',
+}
