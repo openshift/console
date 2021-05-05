@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { SearchIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import { Selector as SelectorKind } from '../../module/k8s';
 import { selectorToString } from '../../module/k8s/selector';
@@ -32,15 +33,18 @@ export const Selector: React.FC<SelectorProps> = ({
   kind = 'Pod',
   selector = {},
   namespace = undefined,
-}) => (
-  <div className="co-m-selector">
-    {_.isEmpty(selector) ? (
-      <p className="text-muted">No selector</p>
-    ) : (
-      <Requirement kind={kind} requirements={selector} namespace={namespace} />
-    )}
-  </div>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-selector">
+      {_.isEmpty(selector) ? (
+        <p className="text-muted">{t('public~No selector')}</p>
+      ) : (
+        <Requirement kind={kind} requirements={selector} namespace={namespace} />
+      )}
+    </div>
+  );
+};
 Selector.displayName = 'Selector';
 
 type RequirementProps = {

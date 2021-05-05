@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 import {
   ContainerSpec,
   K8sKind,
@@ -119,7 +120,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: subPath || <span className="text-muted">No subpath</span>,
+        title: subPath || <span className="text-muted">{i18next.t('public~No subpath')}</span>,
         props: {
           classname: volumeRowColumnClasses[2],
         },
@@ -131,7 +132,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title: readOnly ? 'Read-only' : 'Read/Write',
+        title: readOnly ? i18next.t('public~Read-only') : i18next.t('public~Read/Write'),
         props: {
           classname: volumeRowColumnClasses[4],
         },
