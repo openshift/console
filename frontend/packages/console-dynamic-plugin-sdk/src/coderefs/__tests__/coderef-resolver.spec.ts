@@ -1,18 +1,18 @@
 import * as _ from 'lodash';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import {
   applyCodeRefSymbol,
   isEncodedCodeRef,
   isExecutableCodeRef,
   filterEncodedCodeRefProperties,
   filterExecutableCodeRefProperties,
+  mergeExtensionProperties,
   parseEncodedCodeRefValue,
   loadReferencedObject,
   resolveEncodedCodeRefs,
   resolveCodeRefProperties,
   resolveExtension,
 } from '../coderef-resolver';
-import { EncodedCodeRef, CodeRef } from '../../types';
+import { Extension, EncodedCodeRef, CodeRef } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
@@ -81,6 +81,59 @@ describe('filterExecutableCodeRefProperties', () => {
     ).toEqual({
       qux: ref,
     });
+  });
+});
+
+describe('mergeExtensionProperties', () => {
+  it('shallowly merges the given object into extension properties', () => {
+    expect(
+      mergeExtensionProperties(
+        {
+          type: 'Foo/Bar',
+          properties: {},
+        },
+        {
+          test: true,
+          qux: { foo: ['value'], baz: 1 },
+        },
+      ),
+    ).toEqual({
+      type: 'Foo/Bar',
+      properties: {
+        test: true,
+        qux: { foo: ['value'], baz: 1 },
+      },
+    });
+
+    expect(
+      mergeExtensionProperties(
+        {
+          type: 'Foo/Bar',
+          properties: {
+            test: true,
+            qux: { foo: ['value'], baz: 1 },
+          },
+        },
+        {
+          test: false,
+          qux: { baz: 2 },
+        },
+      ),
+    ).toEqual({
+      type: 'Foo/Bar',
+      properties: {
+        test: false,
+        qux: { baz: 2 },
+      },
+    });
+  });
+
+  it('returns a new extension instance', () => {
+    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
+    const updatedExtension = mergeExtensionProperties(testExtension, {});
+
+    expect(updatedExtension).not.toBe(testExtension);
+    expect(Object.isFrozen(updatedExtension)).toBe(true);
   });
 });
 

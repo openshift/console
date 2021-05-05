@@ -5,6 +5,8 @@ import * as glob from 'glob';
 import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
 
+import { ConsolePluginMetadata } from '@console/dynamic-plugin-sdk/src/schema/plugin-package';
+
 export const consolePkgScope = '@console';
 
 // glob that matches all the monorepo packages
@@ -115,7 +117,7 @@ export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
     integrationTestSuites?: Record<string, string[]>;
-    exposedModules?: { [moduleName: string]: string };
+    exposedModules?: ConsolePluginMetadata['exposedModules'];
   };
 };
 

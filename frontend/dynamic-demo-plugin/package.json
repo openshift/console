@@ -28,8 +28,8 @@
     "displayName": "Console Demo Plugin",
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
-      "barUtils": "./utils/bar",
-      "telemetry": "./utils/telemetry"
+      "barUtils": "./src/utils/bar",
+      "telemetry": "./src/utils/telemetry"
     },
     "dependencies": {
       "@console/pluginAPI": "*"

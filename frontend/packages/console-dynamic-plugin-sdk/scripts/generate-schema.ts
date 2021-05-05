@@ -2,10 +2,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as tsj from 'ts-json-schema-generator';
 import chalk from 'chalk';
+import { getProgram } from '../src/utils/ts-program';
 import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
 import { CodeRefTypeReferenceParser } from './parsers/CodeRefTypeReferenceParser';
 import { ExtensionDeclarationParser } from './parsers/ExtensionDeclarationParser';
-import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
 import { getConsoleTypeResolver } from './utils/type-resolver';
 import { resolvePath, relativePath } from './utils/path';
 
@@ -33,9 +33,15 @@ const typeConfigs: SchemaTypeConfig[] = [
   },
 ];
 
+const getSchemaGeneratorOutputConfig = (typeName: string): tsj.Config => ({
+  type: typeName,
+  topRef: false,
+  jsDoc: 'extended',
+});
+
 const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTypeConfig) => {
-  const config = getSchemaGeneratorConfig(srcFile, typeName);
-  const program = getProgram(config);
+  const config = getSchemaGeneratorOutputConfig(typeName);
+  const program = getProgram(srcFile);
   const typeChecker = program.getTypeChecker();
   const annotationsReader = new tsj.ExtendedAnnotationsReader(typeChecker);
   const consoleTypeResolver = getConsoleTypeResolver(program);

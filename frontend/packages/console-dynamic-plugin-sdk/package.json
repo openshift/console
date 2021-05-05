@@ -20,6 +20,7 @@
     "@types/fs-extra": "9.x",
     "ejs": "3.x",
     "fs-extra": "9.x",
+    "require-from-memory": "1.x",
     "ts-json-schema-generator": "0.91.0",
     "tsutils": "3.x",
     "typescript": "~4.2.3",

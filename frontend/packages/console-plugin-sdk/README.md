@@ -86,7 +86,8 @@ on demand at runtime.
 
 ## Dynamic extensions
 
-Plugin's dynamic extensions are declared via `console-extensions.json` file; see the relevant section in
+Plugin's dynamic extensions are declared via `console-extensions.json` or `console-extensions.ts` file;
+see the relevant sections in
 [Console Dynamic Plugins README](/frontend/packages/console-dynamic-plugin-sdk/README.md) for details.
 
 When loading static plugins during Console startup, the overall list of plugin's extensions is computed

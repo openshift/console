@@ -1,13 +1,12 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
-import { resolvePath } from './path';
 import {
   getTypeAliasDeclaration,
   getTypeReferenceNode,
   getUnionMemberTypes,
-  getJSDocComments,
-  printJSDocComments,
-} from './typescript';
+} from '../../src/utils/ts-ast';
+import { getJSDocComments, printJSDocComments } from '../../src/utils/ts-jsdoc';
+import { resolvePath } from './path';
 
 export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.Declaration>;
 
@@ -143,8 +142,8 @@ export const getConsoleTypeResolver = (program: ts.Program): ConsoleTypeResolver
 
     getConsoleExtensions: (exitOnErrors = false) => {
       const types = getUnionMemberTypes(
-        typeChecker,
         getTypeAliasDeclaration(srcFile('src/schema/console-extensions.ts'), 'SupportedExtension'),
+        typeChecker,
       );
 
       const errors: string[] = [];

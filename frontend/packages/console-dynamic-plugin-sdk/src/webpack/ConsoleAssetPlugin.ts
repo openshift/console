@@ -1,20 +1,11 @@
 import * as webpack from 'webpack';
-import * as path from 'path';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { ConsoleExtensionsJSON } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
-import { SchemaValidator } from '../validation/SchemaValidator';
+import { validateExtensionsFileSchema } from '../schema/schema-validations';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
+import { parseConsoleExtensions } from '../extension-providers/provider-delegate';
+import { adaptExposedModulePaths } from '../utils/webpack';
 import { extensionsFile, pluginManifestFile } from '../constants';
-import { parseJSONC } from '../utils/jsonc';
-
-export const validateExtensionsFileSchema = (
-  ext: ConsoleExtensionsJSON,
-  description = extensionsFile,
-) => {
-  const schema = require('../../schema/console-extensions').default;
-  return new SchemaValidator(description).validate(schema, ext);
-};
 
 const emitJSON = (compilation: webpack.Compilation, filename: string, data: any) => {
   const content = JSON.stringify(data, null, 2);
@@ -35,9 +26,11 @@ const emitJSON = (compilation: webpack.Compilation, filename: string, data: any)
 export class ConsoleAssetPlugin {
   private readonly manifest: ConsolePluginManifestJSON;
 
-  constructor(private readonly pkg: ConsolePackageJSON) {
-    const ext = parseJSONC<ConsoleExtensionsJSON>(path.resolve(process.cwd(), extensionsFile));
-    validateExtensionsFileSchema(ext).report();
+  constructor(private readonly pkg: ConsolePackageJSON, private readonly pluginDir: string) {
+    const exposedModules = adaptExposedModulePaths(pkg.consolePlugin.exposedModules, pluginDir);
+
+    const { extensions, extensionsFilePath } = parseConsoleExtensions(pluginDir, exposedModules);
+    validateExtensionsFileSchema(extensions, extensionsFilePath).report();
 
     this.manifest = {
       name: pkg.consolePlugin.name,
@@ -45,12 +38,28 @@ export class ConsoleAssetPlugin {
       displayName: pkg.consolePlugin.displayName,
       description: pkg.consolePlugin.description,
       dependencies: pkg.consolePlugin.dependencies,
-      extensions: ext,
+      extensions,
     };
   }
 
   apply(compiler: webpack.Compiler) {
     const errors: string[] = [];
+
+    const validateExtensions = (compilation: webpack.Compilation) => {
+      const result = new ExtensionValidator(extensionsFile).validate(
+        compilation,
+        this.manifest.extensions,
+        adaptExposedModulePaths(
+          this.pkg.consolePlugin.exposedModules,
+          this.pluginDir,
+          compiler.context,
+        ),
+      );
+
+      if (result.hasErrors()) {
+        errors.push(result.formatErrors());
+      }
+    };
 
     const addErrorsToCompilation = (compilation: webpack.Compilation) => {
       errors.forEach((e) => {
@@ -61,17 +70,7 @@ export class ConsoleAssetPlugin {
       });
     };
 
-    compiler.hooks.afterCompile.tap(ConsoleAssetPlugin.name, (compilation) => {
-      const result = new ExtensionValidator(extensionsFile).validate(
-        compilation,
-        this.manifest.extensions,
-        this.pkg.consolePlugin.exposedModules || {},
-      );
-
-      if (result.hasErrors()) {
-        errors.push(result.formatErrors());
-      }
-    });
+    compiler.hooks.afterCompile.tap(ConsoleAssetPlugin.name, validateExtensions);
 
     compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
       addErrorsToCompilation(compilation);

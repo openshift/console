@@ -1,12 +1,13 @@
 import * as coFetchModule from '@console/internal/co-fetch';
 import * as pluginManifestModule from '../plugin-manifest';
+import * as schemaValidationsModule from '../../schema/schema-validations';
 import { SchemaValidator } from '../../validation/SchemaValidator';
 import { getPluginManifest } from '../../utils/test-utils';
 
 const coFetch = jest.spyOn(coFetchModule, 'coFetch');
 
 const validatePluginManifestSchema = jest.spyOn(
-  pluginManifestModule,
+  schemaValidationsModule,
   'validatePluginManifestSchema',
 );
 
@@ -25,7 +26,7 @@ describe('fetchPluginManifest', () => {
     const validatorResultReport = jest.spyOn(validator.result, 'report');
 
     coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
-    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
+    validatePluginManifestSchema.mockImplementation(() => validator.result);
 
     const result = await fetchPluginManifest('http://example.com/test/');
 
@@ -57,7 +58,7 @@ describe('fetchPluginManifest', () => {
     });
 
     coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
-    validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
+    validatePluginManifestSchema.mockImplementation(() => validator.result);
 
     expect.assertions(2);
     try {

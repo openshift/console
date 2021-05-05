@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { GraphElement } from '@patternfly/react-topology';
-import { CodeRef, ExtensionDeclaration } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** DetailsTab contributes a tab for the topology details panel. */
 export type DetailsTab = ExtensionDeclaration<

@@ -1,7 +1,8 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as fs from 'fs';
-import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
+import { adaptExposedModulePaths } from '@console/dynamic-plugin-sdk/src/utils/webpack';
+import { extensionsFile, extensionsTSFile } from '@console/dynamic-plugin-sdk/src/constants';
 import { PluginPackage } from '../codegen/plugin-resolver';
 import { getActivePluginsModule, getDynamicExtensions } from '../codegen/active-plugins';
 
@@ -9,14 +10,17 @@ type VirtualModulesPluginAPI = {
   writeModule: (filePath: string, source: string) => void;
 };
 
-const getExtensionsFilePath = (pkg: PluginPackage) => path.resolve(pkg._path, extensionsFile);
+const getExposedModules = (pkg: PluginPackage) =>
+  adaptExposedModulePaths(pkg.consolePlugin.exposedModules, pkg._path);
 
 const getPluginFiles = (pkg: PluginPackage) => {
   const files = new Set<string>();
-  files.add(getExtensionsFilePath(pkg));
 
-  Object.keys(pkg.consolePlugin.exposedModules || {}).forEach((moduleName) => {
-    files.add(path.resolve(pkg._path, pkg.consolePlugin.exposedModules[moduleName]));
+  files.add(path.resolve(pkg._path, extensionsFile));
+  files.add(path.resolve(pkg._path, extensionsTSFile));
+
+  Object.values(getExposedModules(pkg)).forEach((modulePath) => {
+    files.add(path.resolve(pkg._path, modulePath));
   });
 
   return files;
@@ -62,7 +66,7 @@ export class ConsoleActivePluginsModule {
             (pkg) =>
               getDynamicExtensions(
                 pkg,
-                getExtensionsFilePath(pkg),
+                getExposedModules(pkg),
                 (errorMessage) => {
                   errors.push(errorMessage);
                 },

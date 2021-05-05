@@ -40,7 +40,7 @@ Plugin metadata is declared via the `consolePlugin` object.
     "displayName": "Console Demo Plugin",
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
-      "barUtils": "./utils/bar"
+      "barUtils": "./src/utils/bar"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
@@ -57,7 +57,11 @@ used to represent the plugin on the cluster. Therefore, it must be a valid
 
 Dynamic plugins can expose modules representing additional code to be referenced, loaded and executed
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
-each exposed module. Exposed modules are resolved relative to plugin's webpack `context` option.
+each exposed module.
+
+Exposed module paths are relative to plugin package root directory. When using `console-extensions.ts`
+to declare the plugin's extensions, exposed module paths must match the module specifiers used in the
+`import` declarations, e.g. `./src/utils/bar` for `import { testHandler } from './src/utils/bar'`.
 
 See [`ConsolePluginMetadata` type](/frontend/packages/console-dynamic-plugin-sdk/src/schema/plugin-package.ts)
 for details on the `consolePlugin` object and its schema.
@@ -78,11 +82,7 @@ Declares all extensions contributed by the plugin.
     "type": "console.flag/model",
     "properties": {
       "flag": "EXAMPLE",
-      "model": {
-        "group": "kubevirt.io",
-        "version": "v1alpha3",
-        "kind": "ExampleModel"
-      }
+      "model": { "group": "foo.com", "version": "v1", "kind": "Example" }
     }
   }
 ]
@@ -93,8 +93,52 @@ literals `{ $codeRef: string }`. When loading dynamic plugins, encoded code refe
 into functions `() => Promise<T>` used to load the referenced objects.
 
 The `$codeRef` value should be formatted as either `moduleName.exportName` (referring to a named export)
-or `moduleName` (referring to the `default` export). Only the plugin's exposed modules (i.e. the keys of
-`consolePlugin.exposedModules` object) may be used in code references.
+or `moduleName` (referring to the default export). Only the plugin's exposed modules may be used in code
+references.
+
+The `console-extensions.json` file is parsed as JSONC (JSON with Comments), allowing the use of single
+line (`//`) and block (`/* */`) comments as used in JavaScript.
+
+## `console-extensions.ts`
+
+Plugins may opt into declaring their extensions programmatically via `console-extensions.ts` file.
+
+```ts
+import { ConsoleExtensions, codeRef } from '@console/dynamic-plugin-sdk/src/extension-providers/provider-types';
+import { testHandler } from './src/utils/bar';
+
+const exampleFlag = 'EXAMPLE';
+
+const extensions: ConsoleExtensions = [
+  {
+    type: 'console.flag',
+    properties: {
+      handler: codeRef(testHandler),
+    },
+  },
+  {
+    type: 'console.flag/model',
+    properties: {
+      flag: exampleFlag,
+      model: { group: 'foo.com', version: 'v1', kind: 'Example' },
+    },
+  },
+];
+
+export default extensions;
+```
+
+In order for `console-extensions.ts` to be processed successfully:
+
+- Node.js must be configured to support loading TypeScript modules
+  (typically via [ts-node](https://typestrong.org/ts-node/)).
+- All extensions must be declared in `console-extensions.ts` file.
+- `import` declarations for exposed modules must not use namespaces (`* as myModule`) or aliases
+  (`exportName as aliasName`).
+- `codeRef` call arguments must reference exposed module's (named or default) import identifiers.
+
+Code in `console-extensions.ts` file is parsed into AST, analyzed, transformed and evaluated via
+Node.js `require` API.
 
 ## Webpack config
 

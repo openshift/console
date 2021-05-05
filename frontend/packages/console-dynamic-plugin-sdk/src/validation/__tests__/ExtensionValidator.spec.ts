@@ -1,8 +1,9 @@
 import * as webpack from 'webpack';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { collectCodeRefData, findWebpackModules, ExtensionValidator } from '../ExtensionValidator';
 import { ValidationResult } from '../ValidationResult';
 import { SupportedExtension } from '../../schema/console-extensions';
+import { ConsolePluginMetadata } from '../../schema/plugin-package';
+import { Extension } from '../../types';
 
 const getWebpackCompilationMocks = (
   webpackModules: {}[],
@@ -63,7 +64,7 @@ describe('ExtensionValidator', () => {
     const testValidate = (
       extensions: Extension[],
       webpackModules: {}[],
-      exposedModules: { [moduleName: string]: string },
+      exposedModules: ConsolePluginMetadata['exposedModules'],
       beforeResult: (getProvidedExports: jest.Mock<any>) => void,
       afterResult: (result: ValidationResult, getProvidedExports: jest.Mock<any>) => void,
     ) => {

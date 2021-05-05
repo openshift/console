@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
-import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
+import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { subscribeToExtensions } from './subscribeToExtensions';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import useTranslationExt from '../utils/useTranslationExt';

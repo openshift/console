@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { mergeExtensionProperties } from '../utils/store';
 import {
   Extension,
   RemoteEntryModule,
@@ -36,6 +35,12 @@ export const filterEncodedCodeRefProperties = (properties) =>
 
 export const filterExecutableCodeRefProperties = (properties) =>
   _.pickBy(properties, isExecutableCodeRef) as { [propName: string]: CodeRef };
+
+export const mergeExtensionProperties = <E extends Extension>(e: E, properties): E =>
+  Object.freeze({
+    ...e,
+    properties: Object.assign({}, e.properties, properties),
+  });
 
 /**
  * Parse the `EncodedCodeRef` value into `[moduleName, exportName]` tuple.

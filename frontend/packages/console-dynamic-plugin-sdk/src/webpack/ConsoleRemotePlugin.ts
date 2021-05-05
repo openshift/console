@@ -4,37 +4,10 @@ import * as readPkg from 'read-pkg';
 import * as _ from 'lodash';
 import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 import { ConsolePackageJSON } from '../schema/plugin-package';
-import { SchemaValidator } from '../validation/SchemaValidator';
+import { validatePackageFileSchema } from '../schema/schema-validations';
 import { sharedVendorModules } from '../shared-modules';
+import { adaptExposedModulePaths } from '../utils/webpack';
 import { remoteEntryFile } from '../constants';
-
-export const validatePackageFileSchema = (
-  pkg: ConsolePackageJSON,
-  description = 'package.json',
-) => {
-  const schema = require('../../schema/plugin-package').default;
-  const validator = new SchemaValidator(description);
-
-  if (pkg.consolePlugin) {
-    validator.validate(schema, pkg.consolePlugin, 'pkg.consolePlugin');
-
-    validator.assert.validDNSSubdomainName(pkg.consolePlugin.name, 'pkg.consolePlugin.name');
-    validator.assert.validSemverString(pkg.consolePlugin.version, 'pkg.consolePlugin.version');
-
-    if (_.isPlainObject(pkg.consolePlugin.dependencies)) {
-      Object.entries(pkg.consolePlugin.dependencies).forEach(([depName, versionRange]) => {
-        validator.assert.validSemverRangeString(
-          versionRange,
-          `pkg.consolePlugin.dependencies['${depName}']`,
-        );
-      });
-    }
-  } else {
-    validator.result.addError('pkg.consolePlugin object is missing');
-  }
-
-  return validator.result;
-};
 
 const remoteEntryLibraryType = 'jsonp';
 const remoteEntryCallback = 'window.loadPluginEntry';
@@ -42,8 +15,10 @@ const remoteEntryCallback = 'window.loadPluginEntry';
 export class ConsoleRemotePlugin {
   private readonly pkg: ConsolePackageJSON;
 
+  private readonly pluginDir = process.cwd();
+
   constructor() {
-    this.pkg = readPkg.sync({ normalize: false }) as ConsolePackageJSON;
+    this.pkg = readPkg.sync({ cwd: this.pluginDir, normalize: false }) as ConsolePackageJSON;
     validatePackageFileSchema(this.pkg).report();
   }
 
@@ -56,12 +31,19 @@ export class ConsoleRemotePlugin {
     compiler.hooks.afterPlugins.tap(ConsoleRemotePlugin.name, () => {
       new webpack.container.ContainerPlugin({
         name: this.pkg.consolePlugin.name,
-        library: { type: remoteEntryLibraryType, name: remoteEntryCallback },
+        library: {
+          type: remoteEntryLibraryType,
+          name: remoteEntryCallback,
+        },
         filename: remoteEntryFile,
-        exposes: this.pkg.consolePlugin.exposedModules || {},
+        exposes: adaptExposedModulePaths(
+          this.pkg.consolePlugin.exposedModules,
+          this.pluginDir,
+          compiler.context,
+        ),
         overridables: sharedVendorModules,
       }).apply(compiler);
-      new ConsoleAssetPlugin(this.pkg).apply(compiler);
+      new ConsoleAssetPlugin(this.pkg, this.pluginDir).apply(compiler);
     });
 
     // Post-process generated remote entry source

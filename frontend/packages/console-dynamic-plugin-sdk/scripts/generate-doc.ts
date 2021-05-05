@@ -2,12 +2,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as ejs from 'ejs';
 import chalk from 'chalk';
-import { getProgramFromFile, printJSDocComments } from './utils/typescript';
+import { getProgram } from '../src/utils/ts-program';
+import { printJSDocComments } from '../src/utils/ts-jsdoc';
 import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
 import { resolvePath, relativePath } from './utils/path';
 
 const getConsoleExtensions = () => {
-  const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));
+  const program = getProgram(resolvePath('src/schema/console-extensions.ts'));
   return getConsoleTypeResolver(program).getConsoleExtensions(true).result;
 };
 

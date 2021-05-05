@@ -1,14 +1,14 @@
-import * as fs from 'fs';
+import * as path from 'path';
 import * as _ from 'lodash';
 import {
   isEncodedCodeRef,
   parseEncodedCodeRefValue,
 } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
+import { ConsolePluginMetadata } from '@console/dynamic-plugin-sdk/src/schema/plugin-package';
+import { validateExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/schema/schema-validations';
 import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
+import { parseConsoleExtensions } from '@console/dynamic-plugin-sdk/src/extension-providers/provider-delegate';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
-import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
-import { validateExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
@@ -78,10 +78,10 @@ export const getExecutableCodeRefSource = (
   ref: EncodedCodeRef,
   propName: string,
   pkg: PluginPackage,
+  exposedModules: ConsolePluginMetadata['exposedModules'],
   validationResult: ValidationResult,
 ) => {
   const [moduleName, exportName] = parseEncodedCodeRefValue(ref.$codeRef);
-  const exposedModules = pkg.consolePlugin.exposedModules || {};
 
   const errorTrace = `in property '${propName}'`;
   const emptyCodeRefSource = '() => Promise.resolve(null)';
@@ -96,7 +96,7 @@ export const getExecutableCodeRefSource = (
     return emptyCodeRefSource;
   }
 
-  const importPath = `${pkg.name}/${exposedModules[moduleName]}`;
+  const importPath = `${pkg.name}/${path.normalize(exposedModules[moduleName])}`;
   const pluginReference = pkg.name.replace(`${consolePkgScope}/`, '');
   const webpackChunkName = `${pluginReference}/code-refs/${moduleName}`;
   const webpackMagicComment = `/* webpackChunkName: '${webpackChunkName}' */`;
@@ -107,35 +107,31 @@ export const getExecutableCodeRefSource = (
 /**
  * Returns the array source containing the given plugin's dynamic extensions.
  *
- * If an error occurs, calls `errorCallback` and returns an empty array.
+ * If an error occurs after parsing extensions, calls `errorCallback` and returns an empty array.
+ * Errors due to parsing extensions are not handled, since these are supposed to block processing
+ * of the given Console plugin.
  */
 export const getDynamicExtensions = (
   pkg: PluginPackage,
-  extensionsFilePath: string,
+  exposedModules: ConsolePluginMetadata['exposedModules'],
   errorCallback: (errorMessage: string) => void,
   codeRefTransformer: (codeRefSource: string) => string = _.identity,
 ) => {
-  const emptyArraySource = '[]';
-
-  if (!fs.existsSync(extensionsFilePath)) {
-    return emptyArraySource;
-  }
-
-  const ext = parseJSONC<ConsoleExtensionsJSON>(extensionsFilePath);
-  const schemaValidationResult = validateExtensionsFileSchema(ext, extensionsFilePath);
+  const { extensions, extensionsFilePath } = parseConsoleExtensions(pkg._path, exposedModules);
+  const schemaValidationResult = validateExtensionsFileSchema(extensions, extensionsFilePath);
 
   if (schemaValidationResult.hasErrors()) {
     errorCallback(schemaValidationResult.formatErrors());
-    return emptyArraySource;
+    return '[]';
   }
 
   const codeRefValidationResult = new ValidationResult(extensionsFilePath);
   const source = JSON.stringify(
-    ext,
+    extensions,
     (key, value) =>
       isEncodedCodeRef(value)
         ? `@${codeRefTransformer(
-            getExecutableCodeRefSource(value, key, pkg, codeRefValidationResult),
+            getExecutableCodeRefSource(value, key, pkg, exposedModules, codeRefValidationResult),
           )}@`
         : value,
     2,
@@ -143,7 +139,7 @@ export const getDynamicExtensions = (
 
   if (codeRefValidationResult.hasErrors()) {
     errorCallback(codeRefValidationResult.formatErrors());
-    return emptyArraySource;
+    return '[]';
   }
 
   return trimStartMultiLine(source);
