@@ -57,7 +57,7 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
         {
           plugin: {
             name: 'web-terminal',
-            id: 'redhat-developer/web-terminal/4.5.0',
+            id: 'redhat-developer/web-terminal/latest',
           },
         },
       ],
