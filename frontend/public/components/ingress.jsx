@@ -37,7 +37,7 @@ const getHosts = (ingress) => {
   return <div className="text-muted">No hosts</div>;
 };
 
-const TLSCert = (ingress) => {
+const TLSCert = ({ ingress }) => {
   const { t } = useTranslation();
   if (!_.has(ingress.spec, 'tls')) {
     return (
