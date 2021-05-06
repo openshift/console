@@ -279,7 +279,14 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         </div>
       </div>
       <div className="nb-create-bc-wizard">
-        <Wizard steps={steps} onSave={finalStep} onClose={() => history.goBack()} />
+        <Wizard
+          steps={steps}
+          cancelButtonText={t('ceph-storage-plugin~Cancel')}
+          nextButtonText={t('ceph-storage-plugin~Next')}
+          backButtonText={t('ceph-storage-plugin~Back')}
+          onSave={finalStep}
+          onClose={() => history.goBack()}
+        />
       </div>
     </>
   );

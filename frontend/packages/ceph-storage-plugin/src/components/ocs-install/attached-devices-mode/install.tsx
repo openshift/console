@@ -65,7 +65,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
     <Alert
       className="co-alert ceph-ocs-install__lso-install-alert"
       variant="info"
-      title="Local Storage Operator Not Installed"
+      title={t('ceph-storage-plugin~Local Storage Operator not installed')}
       isInline
     >
       <Trans t={t} ns="ceph-storage-plugin">
