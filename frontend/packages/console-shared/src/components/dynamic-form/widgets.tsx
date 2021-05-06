@@ -109,7 +109,6 @@ export const PodCountWidget: React.FC<WidgetProps> = ({ value, id, onChange }) =
   return (
     <NumberSpinner
       id={id}
-      className="pf-c-form-control"
       value={value}
       onChange={({ currentTarget }) => onChange(_.toInteger(currentTarget.value))}
       changeValueBy={(operation) => onChange(_.toInteger(value) + operation)}

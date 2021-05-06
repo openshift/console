@@ -28,6 +28,7 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
       <NumberSpinner
         {...field}
         {...props}
+        value={parseInt(field.value, 10)}
         id={fieldId}
         changeValueBy={(operation: number) => {
           setFieldValue(props.name, _.toInteger(field.value) + operation);

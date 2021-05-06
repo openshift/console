@@ -1,48 +1,36 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { Button } from '@patternfly/react-core';
-import { MinusSquareIcon, PlusSquareIcon } from '@patternfly/react-icons';
+import { NumberInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
   className,
   changeValueBy,
   min,
+  value,
   ...inputProps
 }) => {
   const { t } = useTranslation();
+
   return (
     <div className="co-m-number-spinner">
-      <Button
-        onClick={() => changeValueBy(-1)}
-        type="button"
-        variant="plain"
-        isDisabled={!_.isNil(min) && inputProps.value <= min}
-        aria-label={t('public~Decrement')}
-        className="co-m-number-spinner__button"
-      >
-        <MinusSquareIcon className="co-m-number-spinner__down-icon" noVerticalAlign />
-      </Button>
-      <input
-        type="number"
-        className={classNames(className, 'co-m-number-spinner__input')}
-        {...inputProps}
+      <NumberInput
+        min={min}
+        value={value}
+        onMinus={() => changeValueBy(-1)}
+        onChange={inputProps.onChange}
+        onPlus={() => changeValueBy(1)}
+        inputProps={{ ...inputProps }}
+        className={className}
+        minusBtnAriaLabel={t('public~Decrement')}
+        plusBtnAriaLabel={t('public~Increment')}
+        isDisabled={inputProps.disabled}
       />
-      <Button
-        onClick={() => changeValueBy(1)}
-        type="button"
-        variant="plain"
-        aria-label={t('public~Increment')}
-        className="co-m-number-spinner__button"
-      >
-        <PlusSquareIcon className="co-m-number-spinner__up-icon" noVerticalAlign />
-      </Button>
     </div>
   );
 };
 
 type NumberSpinnerProps = {
+  value: number;
   className?: string;
   changeValueBy: (operation: number) => void;
   min?: number;

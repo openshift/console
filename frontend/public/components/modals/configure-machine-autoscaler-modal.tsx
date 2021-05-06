@@ -98,7 +98,6 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
             <label>
               {t('machine-sets~Minimum replicas:')}
               <NumberSpinner
-                className="pf-c-form-control"
                 value={minReplicas}
                 onChange={changeMinReplicas}
                 changeValueBy={changeMinReplicasBy}
@@ -111,7 +110,6 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
             <label>
               {t('machine-sets~Maximum replicas:')}
               <NumberSpinner
-                className="pf-c-form-control"
                 value={maxReplicas}
                 onChange={changeMaxReplicas}
                 changeValueBy={changeMaxReplicasBy}
