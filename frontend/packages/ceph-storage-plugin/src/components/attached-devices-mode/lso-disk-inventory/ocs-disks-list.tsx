@@ -41,6 +41,7 @@ import {
   OSD_DOWN_ALERT,
   OSD_DOWN_AND_OUT_ALERT,
 } from '../../../constants/index';
+import { getAnnotations } from '@console/shared/src';
 import { OCSKebabOptions } from './ocs-kebab-options';
 import { OCSStatus } from './ocs-status-column';
 import {
@@ -101,7 +102,7 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
   style,
   customData,
 }) => {
-  const { ocsState, dispatch } = customData;
+  const { ocsState, nodeName, dispatch } = customData;
   const diskName = obj.path;
   return (
     <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
@@ -117,6 +118,7 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       </TableData>
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions
+        nodeName={nodeName}
         diskName={diskName}
         alertsMap={ocsState.alertsMap}
         replacementMap={ocsState.replacementMap}
@@ -129,12 +131,13 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
 
 const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
   const { t } = useTranslation();
-
   const [ocsState, dispatch] = React.useReducer(reducer, initialState);
+
+  const nodeName = props.customData.node;
 
   const [cephDiskData, cephDiskLoadError, cephDiskLoading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
-    query: osdDiskInfoMetric({ nodeName: props.customData.node }),
+    query: osdDiskInfoMetric({ nodeName }),
   });
   const [progressData, progressLoadError, progressLoading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
@@ -185,9 +188,8 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
 
     if (tiLoaded && !tiLoadError && tiData.length) {
       const newData: OCSDiskList = tiData.reduce((data, ti) => {
-        const disk = ti.metadata.annotations?.disk;
-        const osd = ti.metadata.annotations?.osd;
-        if (osd && disk) {
+        const { disk, node, osd } = getAnnotations(ti) || {};
+        if (osd && disk && node === nodeName && ocsState.metricsMap?.[disk]?.osd === osd) {
           data[disk] = {
             osd,
             status: getTiBasedStatus(ti.status.conditions?.[0].type),
@@ -261,7 +263,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
       aria-label={t('ceph-storage-plugin~Disks List')}
       Header={diskHeader}
       Row={diskRow}
-      customData={{ ocsState, dispatch }}
+      customData={{ ocsState, dispatch, nodeName }}
       NoDataEmptyMsg={props.customData.EmptyMsg}
       virtualize
     />
@@ -273,6 +275,7 @@ export const OCSNodesDiskListPage = (props: NodesDisksListPageProps) => (
 );
 
 type OCSMetadata = {
+  nodeName: string;
   ocsState: OCSColumnState;
   dispatch: React.Dispatch<OCSColumnStateAction>;
 };

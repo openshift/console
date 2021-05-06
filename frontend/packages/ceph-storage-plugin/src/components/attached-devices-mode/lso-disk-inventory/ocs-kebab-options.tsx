@@ -6,7 +6,7 @@ import { diskReplacementModal } from './disk-replacement-modal';
 import { OCSDiskList, OCSColumnStateAction } from './state-reducer';
 
 export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
-  ({ diskName, alertsMap, replacementMap, isRebalancing, dispatch }) => {
+  ({ nodeName, diskName, alertsMap, replacementMap, isRebalancing, dispatch }) => {
     const { t } = useTranslation();
 
     const kebabOptions: KebabOption[] = [
@@ -15,6 +15,7 @@ export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
         labelKey: t('ceph-storage-plugin~Start Disk Replacement'),
         callback: () =>
           diskReplacementModal({
+            nodeName,
             diskName,
             alertsMap,
             replacementMap,
@@ -34,6 +35,7 @@ export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
 );
 
 type OCSKebabOptionsProps = {
+  nodeName: string;
   diskName: string;
   alertsMap: OCSDiskList;
   replacementMap: OCSDiskList;
