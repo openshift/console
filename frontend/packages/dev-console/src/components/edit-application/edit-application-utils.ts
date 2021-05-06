@@ -100,7 +100,7 @@ export const getValidationSchema = (
   }
 };
 
-const checkIfTriggerExists = (
+export const checkIfTriggerExists = (
   triggers: { [key: string]: any }[],
   type: string,
   resourceKind?: string,

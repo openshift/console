@@ -1,20 +1,24 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormSection } from '@patternfly/react-core';
 import { CheckboxField } from '@console/shared/src';
+import FormSection from '../import/section/FormSection';
+import { Resources } from '../import/import-types';
 
-const PauseRolloutsSection: React.FC = () => {
+const PauseRolloutsSection: React.FC<{ name: string; resourceType: string }> = ({
+  name,
+  resourceType,
+}) => {
   const { t } = useTranslation();
+  const resourceLabel = resourceType === Resources.OpenShift ? 'deployment config' : 'deployment';
   return (
     <FormSection title={t('devconsole~Pause rollouts')}>
       <CheckboxField
-        name="paused"
-        label={t('devconsole~Pause rollouts for this deployment config')}
+        name={name}
+        label={t('devconsole~Pause rollouts for this {{resourceLabel}}', { resourceLabel })}
         helpText={t(
           'devconsole~Pausing lets you make changes without triggering a rollout. You can resume rollouts at any time.',
         )}
       />
-      ;
     </FormSection>
   );
 };

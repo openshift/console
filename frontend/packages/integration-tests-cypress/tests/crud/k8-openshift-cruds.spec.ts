@@ -209,11 +209,13 @@ describe('Kubernetes resource CRUD operations', () => {
             }?kind=${kind}&q=${testLabel}%3d${testName}&name=${name}`,
           );
           listPage.rows.clickKebabAction(name, editKind(kind, humanizeKind));
-          if (kind !== 'Secret') {
-            yamlEditor.isLoaded();
-            yamlEditor.clickReloadButton();
+          if (!['Deployment', 'DeploymentConfig'].includes(kind)) {
+            if (kind !== 'Secret') {
+              yamlEditor.isLoaded();
+              yamlEditor.clickReloadButton();
+            }
+            yamlEditor.clickSaveCreateButton();
           }
-          yamlEditor.clickSaveCreateButton();
         });
 
         it(`deletes the resource instance`, () => {

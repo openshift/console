@@ -5,50 +5,56 @@ import { ResourceDropdownField } from '@console/shared';
 import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
+import * as _ from 'lodash';
 
-const ImageStreamNsDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
+const ImageStreamNsDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
+  disabled = false,
+  formContextField,
+}) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
+  const { imageStream } = _.get(values, formContextField) || values;
+  const { imageStream: initialImageStream, isi: initialIsi } =
+    _.get(initialValues, formContextField) || initialValues;
   const { dispatch } = React.useContext(ImageStreamContext);
+  const fieldPrefix = formContextField ? `${formContextField}.` : '';
   const onDropdownChange = React.useCallback(() => {
-    setFieldValue('imageStream.image', initialValues.imageStream.image);
-    setFieldValue('imageStream.tag', initialValues.imageStream.tag);
-    setFieldValue('isi', initialValues.isi);
+    setFieldValue(`${fieldPrefix}imageStream.image`, initialImageStream.image);
+    setFieldValue(`${fieldPrefix}imageStream.tag`, initialImageStream.tag);
+    setFieldValue(`${fieldPrefix}isi`, initialIsi);
     dispatch({ type: Action.setLoading, value: true });
   }, [
     dispatch,
-    initialValues.imageStream.image,
-    initialValues.imageStream.tag,
-    initialValues.isi,
+    fieldPrefix,
+    initialImageStream.image,
+    initialImageStream.tag,
+    initialIsi,
     setFieldValue,
   ]);
 
   React.useEffect(() => {
-    if (
-      initialValues.imageStream.image &&
-      values.imageStream.image !== initialValues.imageStream.image
-    ) {
-      initialValues.imageStream.image = values.imageStream.image;
+    if (initialImageStream.image && imageStream.image !== initialImageStream.image) {
+      initialImageStream.image = imageStream.image;
     }
-    values.imageStream.namespace && onDropdownChange();
+    imageStream.namespace && onDropdownChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onDropdownChange, values.imageStream.namespace]);
+  }, [onDropdownChange, imageStream.namespace]);
 
   React.useEffect(() => {
-    if (initialValues.imageStream.namespace !== values.imageStream.namespace) {
-      initialValues.imageStream.image = '';
-      initialValues.imageStream.tag = '';
+    if (initialImageStream.namespace !== imageStream.namespace) {
+      initialImageStream.image = '';
+      initialImageStream.tag = '';
     }
   }, [
-    initialValues.imageStream.image,
-    initialValues.imageStream.namespace,
-    initialValues.imageStream.tag,
-    values.imageStream.namespace,
+    imageStream.namespace,
+    initialImageStream.namespace,
+    initialImageStream.image,
+    initialImageStream.tag,
   ]);
 
   return (
     <ResourceDropdownField
-      name="imageStream.namespace"
+      name={`${fieldPrefix}imageStream.namespace`}
       label={t('devconsole~Project')}
       title={t('devconsole~Select Project')}
       fullWidth

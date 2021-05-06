@@ -144,6 +144,19 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
+      path: '/edit-deployment/ns/:ns',
+      loader: async () =>
+        (
+          await import(
+            './components/edit-deployment/EditDeploymentPage' /* webpackChunkName: "dev-console-edit-deployment" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
         (

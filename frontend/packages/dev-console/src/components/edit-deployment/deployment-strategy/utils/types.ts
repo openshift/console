@@ -1,31 +1,37 @@
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Resources } from '../../../import/import-types';
 
 export enum DeploymentStrategyType {
-  recreate = 'recreate',
-  rolling = 'rolling',
-  custom = 'custom',
+  recreateParams = 'Recreate',
+  rollingParams = 'Rolling',
+  customParams = 'Custom',
+  rollingUpdate = 'RollingUpdate',
 }
 
 export const KubernetesDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling Update',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingUpdate]: 'Rolling Update',
 };
 
 export const OpenshiftDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling',
-  [DeploymentStrategyType.custom]: 'Custom',
+  [DeploymentStrategyType.recreateParams]: 'Recreate',
+  [DeploymentStrategyType.rollingParams]: 'Rolling',
+  [DeploymentStrategyType.customParams]: 'Custom',
 };
 
 export const KubernetesDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling Update',
+  [DeploymentStrategyType.recreateParams]: 'The recreate strategy has basic rollout behavior.',
+  [DeploymentStrategyType.rollingUpdate]:
+    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
 };
 
 export const OpenshiftDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreate]: 'Recreate',
-  [DeploymentStrategyType.rolling]: 'Rolling',
-  [DeploymentStrategyType.custom]: 'Custom',
+  [DeploymentStrategyType.recreateParams]:
+    'The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.',
+  [DeploymentStrategyType.rollingParams]:
+    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+  [DeploymentStrategyType.customParams]:
+    'The custom strategy allows you to specify container image that will provide your own deployment behavior.',
 };
 
 export const DeploymentStrategyDropdownData = {
@@ -40,12 +46,13 @@ export const DeploymentStrategyDropdownData = {
 };
 
 export type StrategyFieldProps = {
-  resourceType: string;
+  resourceType?: string;
+  resourceObj: K8sResourceKind;
 };
 
 export enum LifecycleAction {
   execNewPod = 'execNewPod',
-  tagImages = 'tagImages[]',
+  tagImages = 'tagImages',
 }
 
 export enum FailurePolicyType {

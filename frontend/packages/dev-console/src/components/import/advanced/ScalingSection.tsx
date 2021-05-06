@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { NumberSpinnerField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
-const ScalingSection: React.FC = () => {
+const ScalingSection: React.FC<{ name: string }> = ({ name }) => {
   const { t } = useTranslation();
   return (
     <FormSection
@@ -11,7 +11,7 @@ const ScalingSection: React.FC = () => {
       subTitle={t('devconsole~Replicas are scaled manually based on CPU usage.')}
     >
       <NumberSpinnerField
-        name="deployment.replicas"
+        name={name}
         label={t('devconsole~Replicas')}
         helpText={t('devconsole~The number of instances of your Image.')}
       />
