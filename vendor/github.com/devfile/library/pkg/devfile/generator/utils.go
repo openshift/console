@@ -5,10 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	v1 "github.com/devfile/api/pkg/apis/workspaces/v1alpha2"
+	v1 "github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
 	"github.com/devfile/library/pkg/devfile/parser"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
-	"github.com/devfile/library/pkg/util"
 	buildv1 "github.com/openshift/api/build/v1"
 	routev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -34,14 +33,25 @@ func convertEnvs(vars []v1.EnvVar) []corev1.EnvVar {
 // convertPorts converts endpoint variables from the devfile structure to kubernetes ContainerPort
 func convertPorts(endpoints []v1.Endpoint) []corev1.ContainerPort {
 	containerPorts := []corev1.ContainerPort{}
+	portMap := make(map[string]bool)
 	for _, endpoint := range endpoints {
-		name := strings.TrimSpace(util.GetDNS1123Name(strings.ToLower(endpoint.Name)))
-		name = util.TruncateString(name, 15)
+		var portProtocol corev1.Protocol
+		portNumber := int32(endpoint.TargetPort)
 
-		containerPorts = append(containerPorts, corev1.ContainerPort{
-			Name:          name,
-			ContainerPort: int32(endpoint.TargetPort),
-		})
+		if endpoint.Protocol == v1.UDPEndpointProtocol {
+			portProtocol = corev1.ProtocolUDP
+		} else {
+			portProtocol = corev1.ProtocolTCP
+		}
+		name := fmt.Sprintf("%d-%s", portNumber, strings.ToLower(string(portProtocol)))
+		if _, exist := portMap[name]; !exist {
+			portMap[name] = true
+			containerPorts = append(containerPorts, corev1.ContainerPort{
+				Name:          name,
+				ContainerPort: portNumber,
+				Protocol:      portProtocol,
+			})
+		}
 	}
 	return containerPorts
 }

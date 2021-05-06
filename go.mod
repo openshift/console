@@ -5,8 +5,9 @@ go 1.13
 require (
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/devfile/api v0.0.0-20201126204309-ec222215253e
-	github.com/devfile/library v0.0.0-20201203185121-a216646cf21d
+	github.com/devfile/api/v2 v2.0.0-20210211160219-33a78aec06af
+	github.com/devfile/library v1.0.0-alpha.2
+	github.com/devfile/registry-support/index/generator v0.0.0-20210505173027-d06fe2bb3ee8
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/openshift/api v0.0.0-20210105115604-44119421ec6b

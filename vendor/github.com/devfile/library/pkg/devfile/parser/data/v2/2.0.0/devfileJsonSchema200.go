@@ -1,10 +1,10 @@
 package version200
 
-// https://raw.githubusercontent.com/devfile/api/master/schemas/devfile.json
+// https://raw.githubusercontent.com/devfile/api/2.0.x/schemas/latest/devfile.json
 const JsonSchema200 = `{
   "description": "Devfile describes the structure of a cloud-native workspace and development environment.",
   "type": "object",
-  "title": "Devfile schema - Version 2.0.0-alpha2",
+  "title": "Devfile schema - Version 2.0.0",
   "required": [
     "schemaVersion"
   ],
@@ -215,7 +215,9 @@ const JsonSchema200 = `{
           },
           "id": {
             "description": "Mandatory identifier that allows referencing this command in composite commands, from a parent, or in events.",
-            "type": "string"
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
           },
           "vscodeLaunch": {
             "description": "Command providing the definition of a VsCode launch action",
@@ -414,7 +416,9 @@ const JsonSchema200 = `{
                       ]
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "path": {
                       "description": "Path of the endpoint URL",
@@ -426,13 +430,15 @@ const JsonSchema200 = `{
                       "default": "http",
                       "enum": [
                         "http",
+                        "https",
                         "ws",
+                        "wss",
                         "tcp",
                         "udp"
                       ]
                     },
                     "secure": {
-                      "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                      "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                       "type": "boolean"
                     },
                     "targetPort": {
@@ -489,7 +495,9 @@ const JsonSchema200 = `{
                   "properties": {
                     "name": {
                       "description": "The volume mount name is the name of an existing 'Volume' component. If several containers mount the same volume name then they will reuse the same volume and will be able to access to the same files.",
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "path": {
                       "description": "The path in the component container where the volume should be mounted. If not path is mentioned, default path is the is '/\u003cname\u003e'.",
@@ -543,7 +551,9 @@ const JsonSchema200 = `{
                       ]
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "path": {
                       "description": "Path of the endpoint URL",
@@ -555,13 +565,15 @@ const JsonSchema200 = `{
                       "default": "http",
                       "enum": [
                         "http",
+                        "https",
                         "ws",
+                        "wss",
                         "tcp",
                         "udp"
                       ]
                     },
                     "secure": {
-                      "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                      "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                       "type": "boolean"
                     },
                     "targetPort": {
@@ -584,7 +596,9 @@ const JsonSchema200 = `{
           },
           "name": {
             "description": "Mandatory name that allows referencing the component from other elements (such as commands) or from an external devfile that may reference this component through a parent or a plugin.",
-            "type": "string"
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
           },
           "openshift": {
             "description": "Allows importing into the workspace the OpenShift resources defined in a given manifest. For example this allows reusing the OpenShift definitions used to deploy some runtime components in production.",
@@ -627,7 +641,9 @@ const JsonSchema200 = `{
                       ]
                     },
                     "name": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "path": {
                       "description": "Path of the endpoint URL",
@@ -639,13 +655,15 @@ const JsonSchema200 = `{
                       "default": "http",
                       "enum": [
                         "http",
+                        "https",
                         "ws",
+                        "wss",
                         "tcp",
                         "udp"
                       ]
                     },
                     "secure": {
-                      "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                      "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                       "type": "boolean"
                     },
                     "targetPort": {
@@ -876,7 +894,9 @@ const JsonSchema200 = `{
                     },
                     "id": {
                       "description": "Mandatory identifier that allows referencing this command in composite commands, from a parent, or in events.",
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "vscodeLaunch": {
                       "description": "Command providing the definition of a VsCode launch action",
@@ -1059,7 +1079,9 @@ const JsonSchema200 = `{
                                 ]
                               },
                               "name": {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 63,
+                                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                               },
                               "path": {
                                 "description": "Path of the endpoint URL",
@@ -1070,13 +1092,15 @@ const JsonSchema200 = `{
                                 "type": "string",
                                 "enum": [
                                   "http",
+                                  "https",
                                   "ws",
+                                  "wss",
                                   "tcp",
                                   "udp"
                                 ]
                               },
                               "secure": {
-                                "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                 "type": "boolean"
                               },
                               "targetPort": {
@@ -1131,7 +1155,9 @@ const JsonSchema200 = `{
                             "properties": {
                               "name": {
                                 "description": "The volume mount name is the name of an existing 'Volume' component. If several containers mount the same volume name then they will reuse the same volume and will be able to access to the same files.",
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 63,
+                                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                               },
                               "path": {
                                 "description": "The path in the component container where the volume should be mounted. If not path is mentioned, default path is the is '/\u003cname\u003e'.",
@@ -1183,7 +1209,9 @@ const JsonSchema200 = `{
                                 ]
                               },
                               "name": {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 63,
+                                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                               },
                               "path": {
                                 "description": "Path of the endpoint URL",
@@ -1194,13 +1222,15 @@ const JsonSchema200 = `{
                                 "type": "string",
                                 "enum": [
                                   "http",
+                                  "https",
                                   "ws",
+                                  "wss",
                                   "tcp",
                                   "udp"
                                 ]
                               },
                               "secure": {
-                                "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                 "type": "boolean"
                               },
                               "targetPort": {
@@ -1223,7 +1253,9 @@ const JsonSchema200 = `{
                     },
                     "name": {
                       "description": "Mandatory name that allows referencing the component from other elements (such as commands) or from an external devfile that may reference this component through a parent or a plugin.",
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 63,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                     },
                     "openshift": {
                       "description": "Allows importing into the workspace the OpenShift resources defined in a given manifest. For example this allows reusing the OpenShift definitions used to deploy some runtime components in production.",
@@ -1264,7 +1296,9 @@ const JsonSchema200 = `{
                                 ]
                               },
                               "name": {
-                                "type": "string"
+                                "type": "string",
+                                "maxLength": 63,
+                                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                               },
                               "path": {
                                 "description": "Path of the endpoint URL",
@@ -1275,13 +1309,15 @@ const JsonSchema200 = `{
                                 "type": "string",
                                 "enum": [
                                   "http",
+                                  "https",
                                   "ws",
+                                  "wss",
                                   "tcp",
                                   "udp"
                                 ]
                               },
                               "secure": {
-                                "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                 "type": "boolean"
                               },
                               "targetPort": {
@@ -1406,9 +1442,32 @@ const JsonSchema200 = `{
           "type": "object",
           "additionalProperties": true
         },
+        "description": {
+          "description": "Optional devfile description",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Optional devfile display name",
+          "type": "string"
+        },
+        "globalMemoryLimit": {
+          "description": "Optional devfile global memory limit",
+          "type": "string"
+        },
+        "icon": {
+          "description": "Optional devfile icon",
+          "type": "string"
+        },
         "name": {
           "description": "Optional devfile name",
           "type": "string"
+        },
+        "tags": {
+          "description": "Optional devfile tags",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "version": {
           "description": "Optional semver-compatible version",
@@ -1628,7 +1687,9 @@ const JsonSchema200 = `{
               },
               "id": {
                 "description": "Mandatory identifier that allows referencing this command in composite commands, from a parent, or in events.",
-                "type": "string"
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
               },
               "vscodeLaunch": {
                 "description": "Command providing the definition of a VsCode launch action",
@@ -1816,7 +1877,9 @@ const JsonSchema200 = `{
                           ]
                         },
                         "name": {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "path": {
                           "description": "Path of the endpoint URL",
@@ -1827,13 +1890,15 @@ const JsonSchema200 = `{
                           "type": "string",
                           "enum": [
                             "http",
+                            "https",
                             "ws",
+                            "wss",
                             "tcp",
                             "udp"
                           ]
                         },
                         "secure": {
-                          "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                          "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                           "type": "boolean"
                         },
                         "targetPort": {
@@ -1888,7 +1953,9 @@ const JsonSchema200 = `{
                       "properties": {
                         "name": {
                           "description": "The volume mount name is the name of an existing 'Volume' component. If several containers mount the same volume name then they will reuse the same volume and will be able to access to the same files.",
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "path": {
                           "description": "The path in the component container where the volume should be mounted. If not path is mentioned, default path is the is '/\u003cname\u003e'.",
@@ -1940,7 +2007,9 @@ const JsonSchema200 = `{
                           ]
                         },
                         "name": {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "path": {
                           "description": "Path of the endpoint URL",
@@ -1951,13 +2020,15 @@ const JsonSchema200 = `{
                           "type": "string",
                           "enum": [
                             "http",
+                            "https",
                             "ws",
+                            "wss",
                             "tcp",
                             "udp"
                           ]
                         },
                         "secure": {
-                          "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                          "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                           "type": "boolean"
                         },
                         "targetPort": {
@@ -1980,7 +2051,9 @@ const JsonSchema200 = `{
               },
               "name": {
                 "description": "Mandatory name that allows referencing the component from other elements (such as commands) or from an external devfile that may reference this component through a parent or a plugin.",
-                "type": "string"
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
               },
               "openshift": {
                 "description": "Allows importing into the workspace the OpenShift resources defined in a given manifest. For example this allows reusing the OpenShift definitions used to deploy some runtime components in production.",
@@ -2021,7 +2094,9 @@ const JsonSchema200 = `{
                           ]
                         },
                         "name": {
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "path": {
                           "description": "Path of the endpoint URL",
@@ -2032,13 +2107,15 @@ const JsonSchema200 = `{
                           "type": "string",
                           "enum": [
                             "http",
+                            "https",
                             "ws",
+                            "wss",
                             "tcp",
                             "udp"
                           ]
                         },
                         "secure": {
-                          "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                          "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                           "type": "boolean"
                         },
                         "targetPort": {
@@ -2269,7 +2346,9 @@ const JsonSchema200 = `{
                         },
                         "id": {
                           "description": "Mandatory identifier that allows referencing this command in composite commands, from a parent, or in events.",
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "vscodeLaunch": {
                           "description": "Command providing the definition of a VsCode launch action",
@@ -2452,7 +2531,9 @@ const JsonSchema200 = `{
                                     ]
                                   },
                                   "name": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 63,
+                                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                                   },
                                   "path": {
                                     "description": "Path of the endpoint URL",
@@ -2463,13 +2544,15 @@ const JsonSchema200 = `{
                                     "type": "string",
                                     "enum": [
                                       "http",
+                                      "https",
                                       "ws",
+                                      "wss",
                                       "tcp",
                                       "udp"
                                     ]
                                   },
                                   "secure": {
-                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                     "type": "boolean"
                                   },
                                   "targetPort": {
@@ -2524,7 +2607,9 @@ const JsonSchema200 = `{
                                 "properties": {
                                   "name": {
                                     "description": "The volume mount name is the name of an existing 'Volume' component. If several containers mount the same volume name then they will reuse the same volume and will be able to access to the same files.",
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 63,
+                                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                                   },
                                   "path": {
                                     "description": "The path in the component container where the volume should be mounted. If not path is mentioned, default path is the is '/\u003cname\u003e'.",
@@ -2576,7 +2661,9 @@ const JsonSchema200 = `{
                                     ]
                                   },
                                   "name": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 63,
+                                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                                   },
                                   "path": {
                                     "description": "Path of the endpoint URL",
@@ -2587,13 +2674,15 @@ const JsonSchema200 = `{
                                     "type": "string",
                                     "enum": [
                                       "http",
+                                      "https",
                                       "ws",
+                                      "wss",
                                       "tcp",
                                       "udp"
                                     ]
                                   },
                                   "secure": {
-                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                     "type": "boolean"
                                   },
                                   "targetPort": {
@@ -2616,7 +2705,9 @@ const JsonSchema200 = `{
                         },
                         "name": {
                           "description": "Mandatory name that allows referencing the component from other elements (such as commands) or from an external devfile that may reference this component through a parent or a plugin.",
-                          "type": "string"
+                          "type": "string",
+                          "maxLength": 63,
+                          "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                         },
                         "openshift": {
                           "description": "Allows importing into the workspace the OpenShift resources defined in a given manifest. For example this allows reusing the OpenShift definitions used to deploy some runtime components in production.",
@@ -2657,7 +2748,9 @@ const JsonSchema200 = `{
                                     ]
                                   },
                                   "name": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "maxLength": 63,
+                                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
                                   },
                                   "path": {
                                     "description": "Path of the endpoint URL",
@@ -2668,13 +2761,15 @@ const JsonSchema200 = `{
                                     "type": "string",
                                     "enum": [
                                       "http",
+                                      "https",
                                       "ws",
+                                      "wss",
                                       "tcp",
                                       "udp"
                                     ]
                                   },
                                   "secure": {
-                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process",
+                                    "description": "Describes whether the endpoint should be secured and protected by some authentication process. This requires a protocol of 'https' or 'wss'.",
                                     "type": "boolean"
                                   },
                                   "targetPort": {
@@ -2867,7 +2962,9 @@ const JsonSchema200 = `{
               },
               "name": {
                 "description": "Project name",
-                "type": "string"
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
               },
               "sparseCheckoutDirs": {
                 "description": "Populate the project sparsely with selected directories.",
@@ -2989,7 +3086,9 @@ const JsonSchema200 = `{
               },
               "name": {
                 "description": "Project name",
-                "type": "string"
+                "type": "string",
+                "maxLength": 63,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
               },
               "subDir": {
                 "description": "Sub-directory from a starter project to be used as root for starter project.",
@@ -3118,7 +3217,9 @@ const JsonSchema200 = `{
           },
           "name": {
             "description": "Project name",
-            "type": "string"
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
           },
           "sparseCheckoutDirs": {
             "description": "Populate the project sparsely with selected directories.",
@@ -3248,7 +3349,9 @@ const JsonSchema200 = `{
           },
           "name": {
             "description": "Project name",
-            "type": "string"
+            "type": "string",
+            "maxLength": 63,
+            "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$"
           },
           "subDir": {
             "description": "Sub-directory from a starter project to be used as root for starter project.",
