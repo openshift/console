@@ -1,11 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { safeLoad, safeDump } from 'js-yaml';
+import { safeLoad, safeLoadAll, safeDump } from 'js-yaml';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
-import { withTranslation } from 'react-i18next';
+import { Trans, withTranslation } from 'react-i18next';
+
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,
@@ -35,6 +36,7 @@ import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { k8sList } from '../module/k8s/resource';
 import { definitionFor } from '../module/k8s/swagger';
+import { ImportYAMLResults } from './import-yaml-results';
 
 const generateObjToLoad = (templateExtensions, kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : getYAMLTemplates(templateExtensions).getIn([kind, id]));
@@ -68,7 +70,7 @@ const WithYamlTemplates = (Component) =>
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void>} */
+/** @augments {React.Component<{allowMultiple?: boolean, obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void, clearFileUpload?: () => void>} */
 export const EditYAML_ = connect(stateToProps)(
   WithYamlTemplates(
     withPostFormSubmissionCallback(
@@ -76,7 +78,7 @@ export const EditYAML_ = connect(stateToProps)(
         constructor(props) {
           super(props);
           this.state = {
-            error: null,
+            errors: null,
             success: null,
             height: 500,
             initialized: false,
@@ -93,22 +95,52 @@ export const EditYAML_ = connect(stateToProps)(
           this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
           this.updateYAML = this.updateYAML.bind(this);
           this.loadCSVs = this.loadCSVs.bind(this);
-
+          this.setDisplayResults = this.setDisplayResults.bind(this);
+          this.onRetry = this.onRetry.bind(this);
+          this.createResources = this.createResources.bind(this);
           if (this.props.error) {
             this.handleError(this.props.error);
           }
         }
 
         getModel(obj) {
-          if (_.isEmpty(obj)) {
+          const { models } = this.props;
+          if (_.isEmpty(obj) || !models) {
             return null;
           }
-          const { models } = this.props;
           return models.get(referenceFor(obj)) || models.get(obj.kind);
         }
 
+        createResources(objs, isDryRun) {
+          return objs.map((obj) => {
+            return k8sCreate(
+              this.getModel(obj),
+              obj,
+              isDryRun
+                ? {
+                    queryParams: { dryRun: 'All' },
+                  }
+                : {},
+            );
+          });
+        }
+
         handleError(error) {
-          this.setState({ error, success: null });
+          this.setState({ errors: _.isEmpty(error) ? null : [error], success: null });
+        }
+
+        handleErrors(resourceObject, error) {
+          const resourceName = resourceObject?.metadata?.name;
+          const kind = resourceObject?.kind;
+          this.setState((prevState) => {
+            const errors = [
+              ...(prevState.errors || []),
+              resourceName ? `${kind} ${resourceName}: ${error}` : error,
+            ];
+            return {
+              errors,
+            };
+          });
         }
 
         loadCSVs() {
@@ -140,9 +172,7 @@ export const EditYAML_ = connect(stateToProps)(
           const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
           const stale = this.displayedVersion !== newVersion;
           this.setState({ stale });
-          if (nextProps.error) {
-            this.handleError(nextProps.error);
-          }
+          this.handleError(nextProps.error);
           if (nextProps.sampleObj) {
             this.loadYaml(
               !_.isEqual(this.state.sampleObj, nextProps.sampleObj),
@@ -164,7 +194,7 @@ export const EditYAML_ = connect(stateToProps)(
           fold(currentEditor, currentEditor.getModel(), false);
           this.setState({
             sampleObj: null,
-            error: null,
+            errors: null,
             success: null,
           });
         }
@@ -230,7 +260,6 @@ export const EditYAML_ = connect(stateToProps)(
           }
 
           const yaml = this.convertObjToYAMLString(obj);
-
           this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
           this.getEditor().setValue(yaml);
           this.setState({ initialized: true, stale: false });
@@ -242,7 +271,7 @@ export const EditYAML_ = connect(stateToProps)(
 
         updateYAML(obj, model, newNamespace, newName) {
           const { t, postFormSubmissionCallback } = this.props;
-          this.setState({ success: null, error: null }, () => {
+          this.setState({ success: null, errors: null }, () => {
             let action = k8sUpdate;
             let redirect = false;
             if (this.props.create) {
@@ -269,13 +298,86 @@ export const EditYAML_ = connect(stateToProps)(
                   newName,
                   version: o.metadata.resourceVersion,
                 });
-                this.setState({ success, error: null });
+                this.setState({ success, errors: null });
                 this.loadYaml(true, o);
               })
               .catch((e) => {
                 this.handleError(e.message);
               });
           });
+        }
+
+        performDryRun(objs) {
+          this.setState({ success: null, errors: null, sending: true }, () => {
+            const requests = this.createResources(objs, true);
+            //catch these individually so we can report out all errors
+            requests.forEach((request, i) =>
+              request.catch((error) => this.handleErrors(objs[i], error?.message)),
+            );
+            Promise.all(requests)
+              .then(() => {
+                this.setState({
+                  errors: null,
+                  sending: false,
+                  resourceObjects: objs,
+                });
+                this.setDisplayResults(true);
+              })
+              .catch(() => {
+                //catch this error but do nothing since we show individual errors above
+              });
+          });
+        }
+
+        setDisplayResults(value) {
+          this.props.clearFileUpload();
+          this.setState({ displayResults: value });
+        }
+
+        onRetry(retryObjs) {
+          this.setDisplayResults(false);
+          if (retryObjs) {
+            const yamlDocuments = retryObjs.map((obj) => this.convertObjToYAMLString(obj));
+            this.setState({ displayResults: false }, () => {
+              this.getEditor().setValue(yamlDocuments.join('---\n'));
+            });
+          }
+        }
+
+        validate(obj) {
+          const { t } = this.props;
+
+          if (!obj.apiVersion) {
+            return t('public~No "apiVersion" field found in YAML.');
+          }
+
+          if (!obj.kind) {
+            return t('public~No "kind" field found in YAML.');
+          }
+
+          const model = this.getModel(obj);
+          if (!model) {
+            return t(
+              'public~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
+              { kind: obj.kind, apiVersion: obj.apiVersion },
+            );
+          }
+
+          if (!obj.metadata) {
+            return t('public~No "metadata" field found in YAML.');
+          }
+
+          if (obj.metadata.namespace && !model.namespaced) {
+            delete obj.metadata.namespace;
+          }
+
+          // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
+          if (!obj.metadata.namespace && model.namespaced) {
+            if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
+              return t('public~No "metadata.namespace" field found in YAML.');
+            }
+            obj.metadata.namespace = this.props.activeNamespace;
+          }
         }
 
         save() {
@@ -295,43 +397,10 @@ export const EditYAML_ = connect(stateToProps)(
             return;
           }
 
-          if (!obj.apiVersion) {
-            this.handleError(t('public~No "apiVersion" field found in YAML.'));
+          const error = this.validate(obj);
+          if (error) {
+            this.handleError(error);
             return;
-          }
-
-          if (!obj.kind) {
-            this.handleError(t('public~No "kind" field found in YAML.'));
-            return;
-          }
-
-          const model = this.getModel(obj);
-          if (!model) {
-            this.handleError(
-              t(
-                'public~The server doesn\'t have a resource type "kind: {{kind}}, apiVersion: {{apiVersion}}".',
-                { kind: obj.kind, apiVersion: obj.apiVersion },
-              ),
-            );
-            return;
-          }
-
-          if (!obj.metadata) {
-            this.handleError(t('public~No "metadata" field found in YAML.'));
-            return;
-          }
-
-          if (obj.metadata.namespace && !model.namespaced) {
-            delete obj.metadata.namespace;
-          }
-
-          // If this is a namespaced resource, default to the active namespace when none is specified in the YAML.
-          if (!obj.metadata.namespace && model.namespaced) {
-            if (this.props.activeNamespace === ALL_NAMESPACES_KEY) {
-              this.handleError(t('public~No "metadata.namespace" field found in YAML.'));
-              return;
-            }
-            obj.metadata.namespace = this.props.activeNamespace;
           }
 
           const { namespace: newNamespace, name: newName } = obj.metadata;
@@ -383,14 +452,59 @@ export const EditYAML_ = connect(stateToProps)(
               managedResourceSaveModal({
                 kind: obj.kind,
                 resource: obj,
-                onSubmit: () => this.updateYAML(obj, model, newNamespace, newName),
+                onSubmit: () => this.updateYAML(obj, this.getModel(obj), newNamespace, newName),
                 owner,
               });
               return;
             }
           }
+          this.updateYAML(obj, this.getModel(obj), newNamespace, newName);
+        }
 
-          this.updateYAML(obj, model, newNamespace, newName);
+        saveAll() {
+          const { t } = this.props;
+          let objs;
+          let hasErrors = false;
+          this.setState({ errors: null }, () => {
+            try {
+              objs = safeLoadAll(this.getEditor().getValue());
+            } catch (e) {
+              this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
+              return;
+            }
+            if (objs.length === 1) {
+              this.save();
+              return;
+            } else if (objs.length === 0) {
+              return;
+            }
+            //Run through client side validation for all resources
+            objs.forEach((obj) => {
+              const validationError = this.validate(obj);
+              if (validationError) {
+                hasErrors = true;
+                this.handleErrors(obj, validationError);
+              }
+            });
+            if (!hasErrors) {
+              //Check for duplicate name/kinds. ~ is not a valid name character, so use it to separate the fields
+              const uniqueEntries = _.uniqBy(objs, (obj) =>
+                [
+                  obj.metadata.name,
+                  obj.metadata.namespace,
+                  obj.kind,
+                  groupVersionFor(obj.apiVersion).group,
+                ].join('~'),
+              );
+              if (uniqueEntries.length !== objs.length) {
+                this.handleError(
+                  t('public~Resources in the same namespace and API group must have unique names'),
+                );
+                return;
+              }
+              this.performDryRun(objs);
+            }
+          });
         }
 
         download() {
@@ -442,6 +556,7 @@ export const EditYAML_ = connect(stateToProps)(
           }
 
           const {
+            allowMultiple,
             connectDropTarget,
             isOver,
             canDrop,
@@ -450,12 +565,20 @@ export const EditYAML_ = connect(stateToProps)(
             customClass,
             onChange = () => null,
             t,
+            models,
           } = this.props;
           const klass = classNames('co-file-dropzone-container', {
             'co-file-dropzone--drop-over': isOver,
           });
 
-          const { error, success, stale, showSidebar } = this.state;
+          const {
+            errors,
+            success,
+            stale,
+            showSidebar,
+            displayResults,
+            resourceObjects,
+          } = this.state;
           const {
             obj,
             download = true,
@@ -463,6 +586,18 @@ export const EditYAML_ = connect(stateToProps)(
             genericYAML = false,
             children: customAlerts,
           } = this.props;
+
+          if (displayResults) {
+            return (
+              <ImportYAMLResults
+                createResources={this.createResources}
+                displayResults={this.setDisplayResults}
+                importResources={resourceObjects}
+                models={models}
+                retryFailed={this.onRetry}
+              />
+            );
+          }
           const readOnly = this.props.readOnly || this.state.notAllowed;
           const options = { readOnly, scrollBeyondLastLine: false };
           const model = this.getModel(obj);
@@ -497,8 +632,15 @@ export const EditYAML_ = connect(stateToProps)(
                     <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
                   </Split>
                   <p className="help-block">
-                    {t(
-                      'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+                    {allowMultiple ? (
+                      <Trans ns="public">
+                        Drag and drop YAML or JSON files into the editor, or manually enter files
+                        and use <kbd>---</kbd> to separate each definition.
+                      </Trans>
+                    ) : (
+                      t(
+                        'public~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+                      )
                     )}
                   </p>
                 </div>
@@ -518,18 +660,18 @@ export const EditYAML_ = connect(stateToProps)(
                         minHeight="100px"
                         toolbarLinks={sidebarLink ? [sidebarLink] : []}
                         onChange={onChange}
-                        onSave={() => this.save()}
+                        onSave={() => (allowMultiple ? this.saveAll() : this.save())}
                       />
                       <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
                         {customAlerts}
-                        {error && (
+                        {errors && (
                           <Alert
                             isInline
                             className="co-alert co-alert--scrollable"
                             variant="danger"
                             title={t('public~An error occurred')}
                           >
-                            <div className="co-pre-line">{error}</div>
+                            <div className="co-pre-line">{errors.join('\n')}</div>
                           </Alert>
                         )}
                         {success && (
@@ -552,7 +694,7 @@ export const EditYAML_ = connect(stateToProps)(
                               variant="primary"
                               id="save-changes"
                               data-test="save-changes"
-                              onClick={() => this.save()}
+                              onClick={() => (allowMultiple ? this.saveAll() : this.save())}
                             >
                               {t('public~Create')}
                             </Button>

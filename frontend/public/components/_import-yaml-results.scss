@@ -1,0 +1,25 @@
+// Bootstrap Core variables and mixins
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
+.co-import-yaml-results-page {
+  height: 100%;
+}
+
+.co-import-yaml-results-page__footer {
+  padding-top: 25px;
+  text-align: center;
+}
+
+.co-import-yaml-results-page__main {
+  margin: 0 ($grid-gutter-width / 2);
+  @media (min-width: $screen-sm-min) {
+    margin: $grid-gutter-width;
+    max-width: 600px;
+    min-width: 375px;
+    width: 100%;
+  }
+}
+
+.co-import-yaml-status {
+  margin-bottom: 20px;
+}
