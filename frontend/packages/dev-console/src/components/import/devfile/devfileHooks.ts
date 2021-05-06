@@ -4,12 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { parseDevfile } from '@console/internal/module/k8s';
 import { DevfileSuggestedResources } from '../import-types';
 
+import { getLimitsData } from '../../edit-application/edit-application-utils';
+
 const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
 const prefixDotSlash = (val) => (val.startsWith('/') ? `.${val}` : val);
 
-export const useDefileServer = (
+export const useDevfileServer = (
   values: FormikValues,
-  setFieldValue: (name: string, value: any) => any,
+  setFieldValue: (name: string, value: any, shouldValidate?: boolean) => any,
 ): [boolean, string] => {
   const { t } = useTranslation();
   const [devfileParseError, setDevfileParseError] = React.useState<string>(null);
@@ -56,6 +58,17 @@ export const useDefileServer = (
         if (value) {
           clearError();
           const { imageStream, buildResource, deployResource, service, route } = value;
+
+          if (deployResource.spec?.template?.spec?.containers?.length > 0) {
+            const buildGuidanceContainer = deployResource.spec.template.spec.containers[0];
+
+            setFieldValue('image.ports', buildGuidanceContainer.ports || [], false);
+            setFieldValue('deployment.env', buildGuidanceContainer.env || [], false);
+            setFieldValue('limits', getLimitsData(deployResource), false);
+
+            delete deployResource.spec.template.spec.containers;
+          }
+
           setFieldValue('devfile.devfileSuggestedResources', {
             imageStream,
             buildResource,

@@ -13,9 +13,13 @@ import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { Resources } from '../import-types';
 import * as submitUtils from '../import-submit-utils';
-import { defaultData, nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
+import {
+  defaultData,
+  nodeJsBuilderImage as buildImage,
+  sampleDevfileFormData,
+} from './import-submit-utils-data';
 
-const { createOrUpdateDeployment, createOrUpdateResources } = submitUtils;
+const { createOrUpdateDeployment, createOrUpdateResources, createDevfileResources } = submitUtils;
 
 describe('Import Submit Utils', () => {
   const t = jest.fn();
@@ -282,6 +286,103 @@ describe('Import Submit Utils', () => {
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models.includes(PipelineModel.kind)).toEqual(false);
       done();
+    });
+  });
+
+  describe('createDevfileResources', () => {
+    beforeAll(() => {
+      jest
+        .spyOn(k8s, 'k8sCreate')
+        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('return a Deployment with just one container which includes ports, env from Devfile container ', async () => {
+      const formData = sampleDevfileFormData;
+      const returnValue = await createDevfileResources(formData, false, {}, '');
+
+      const deployment = returnValue.find((resource) => resource.data.kind === 'Deployment').data;
+
+      expect(deployment).toEqual({
+        apiVersion: 'apps/v1',
+        kind: 'Deployment',
+        metadata: {
+          annotations: {
+            'alpha.image.policy.openshift.io/resolve-names': '*',
+            'app.openshift.io/vcs-ref': 'master',
+            'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/devfile-sample',
+            'image.openshift.io/triggers':
+              '[{"from":{"kind":"ImageStreamTag","name":"devfile-sample:latest","namespace":"gijohn"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"devfile-sample\\")].image","pause":"false"}]',
+            isFromDevfile: 'true',
+            'openshift.io/generated-by': 'OpenShiftWebConsole',
+          },
+          creationTimestamp: null,
+          labels: {
+            app: 'devfile-sample',
+            'app.kubernetes.io/component': 'devfile-sample',
+            'app.kubernetes.io/instance': 'devfile-sample',
+            'app.kubernetes.io/name': 'devfile-sample',
+            'app.kubernetes.io/part-of': 'devfile-sample-app',
+            'app.openshift.io/runtime': 'devfile-sample',
+          },
+          name: 'devfile-sample',
+          namespace: 'gijohn',
+        },
+        spec: {
+          replicas: 1,
+          selector: {
+            matchLabels: {
+              app: 'devfile-sample',
+            },
+          },
+          strategy: {
+            type: 'Recreate',
+          },
+          template: {
+            metadata: {
+              creationTimestamp: null,
+              labels: {
+                app: 'devfile-sample',
+                deploymentconfig: 'devfile-sample',
+              },
+            },
+            spec: {
+              containers: [
+                {
+                  env: [
+                    {
+                      name: 'PROJECTS_ROOT',
+                      value: '/projects',
+                    },
+                    {
+                      name: 'PROJECT_SOURCE',
+                      value: '/projects',
+                    },
+                  ],
+                  image: 'devfile-sample:latest',
+                  name: 'devfile-sample',
+                  ports: [
+                    {
+                      protocol: 'TCP',
+                      containerPort: 3001,
+                      name: 'http-3001',
+                    },
+                  ],
+                  resources: {
+                    limits: {
+                      memory: '1Gi',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+        status: {},
+      });
     });
   });
 });
