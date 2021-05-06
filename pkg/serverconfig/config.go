@@ -269,6 +269,15 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 	} else {
 		klog.Fatalf("Could not marshal ConsoleConfig customization.addPage field: %v", err)
 	}
+
+	if customization.ProjectAccess.AvailableClusterRoles != nil {
+		projectAccessClusterRoles, err := json.Marshal(customization.ProjectAccess.AvailableClusterRoles)
+		if err != nil {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.projectAccess field: %v", err)
+		} else {
+			fs.Set("project-access-cluster-roles", string(projectAccessClusterRoles))
+		}
+	}
 }
 
 func isAlreadySet(fs *flag.FlagSet, name string) bool {

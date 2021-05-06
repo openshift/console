@@ -24,6 +24,10 @@ func Validate(fs *flag.FlagSet) error {
 		return err
 	}
 
+	if _, err := validateProjectAccessClusterRolesJSON(fs.Lookup("project-access-cluster-roles").Value.String()); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -87,4 +91,19 @@ func validateAddPage(value string) (*AddPage, error) {
 	}
 
 	return &addPage, nil
+}
+
+func validateProjectAccessClusterRolesJSON(value string) ([]string, error) {
+	if value == "" {
+		return nil, nil
+	}
+	var projectAccessOptions []string
+
+	decoder := json.NewDecoder(strings.NewReader(value))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&projectAccessOptions); err != nil {
+		return nil, err
+	}
+
+	return projectAccessOptions, nil
 }
