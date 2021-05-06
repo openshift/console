@@ -75,10 +75,7 @@ export const listPage = {
     shouldExist: (resourceName: string) =>
       cy.get(`[data-test-rows="resource-row"]`).contains(resourceName),
     clickRowByName: (resourceName: string) =>
-      cy
-        .get(`[data-test-rows="resource-row"]`)
-        .contains(resourceName)
-        .click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
+      cy.get(`a[data-test-id="${resourceName}"]`).click({ force: true }), // after applying row filter, resource rows detached from DOM according to cypress, need to force the click
     shouldNotExist: (resourceName: string) =>
       cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
   },
