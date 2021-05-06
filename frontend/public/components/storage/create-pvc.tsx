@@ -13,13 +13,13 @@ import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
 import { StorageClass } from '../storage-class-form';
 import {
+  cephRBDProvisionerSuffix,
   provisionerAccessModeMapping,
   initialAccessModes,
   accessModeRadios,
   volumeModeRadios,
   dropdownUnits,
   getAccessModeForProvisioner,
-  getVolumeModeForProvisioner,
 } from './shared';
 
 const InfoToolTip = () => (
@@ -43,7 +43,6 @@ const NameValueEditorComponent = (props) => (
 export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
   const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
-  const [allowedVolumeModes, setAllowedVolumeModes] = React.useState([]);
   const [storageClass, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
@@ -98,7 +97,14 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
       if (storageClass) {
         obj.spec.storageClassName = storageClass;
-        obj.spec.volumeMode = volumeMode;
+
+        // should set block only for RBD + RWX
+        if (
+          _.endsWith(storageProvisioner, cephRBDProvisionerSuffix) &&
+          accessMode === 'ReadWriteMany'
+        ) {
+          obj.spec.volumeMode = 'Block';
+        }
       }
 
       return obj;
@@ -117,12 +123,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     storageProvisioner,
     volumeMode,
   ]);
-
-  React.useEffect(() => {
-    const volumeModes = getVolumeModeForProvisioner(storageProvisioner, accessMode);
-    setVolumeMode(volumeModes.includes(volumeMode) ? volumeMode : volumeModes[0]);
-    setAllowedVolumeModes(volumeModes);
-  }, [accessMode, storageProvisioner, volumeMode]);
 
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
     setNameValuePairs(updatedNameValuePairs);
@@ -292,7 +292,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
               inline
               checked={radio.value === volumeMode}
               name="volumeMode"
-              disabled={!allowedVolumeModes.includes(radio.value)}
             />
           ))
         )}
