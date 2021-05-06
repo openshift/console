@@ -293,7 +293,7 @@
       "id": "project",
       "perspective": "dev",
       "section": "resources",
-      "name": "%devconsole~+Project%",
+      "name": "%devconsole~Project%",
       "href": "/project-details",
       "namespaced": true,
       "dataAttributes": {
@@ -311,7 +311,8 @@
       "id": "builds",
       "perspective": "dev",
       "section": "resources",
-      "name": "%devconsole~+Builds%",
+      "name": "%devconsole~Builds%",
+      "insertBefore": ["helm", "pipelines"],
       "model": {
         "kind": "BuildConfig",
         "version": "v1",
@@ -336,8 +337,8 @@
   {
     "type": "console.navigation/section",
     "properties": {
-      "id": "top",
-      "perspective": "resources"
+      "id": "resources",
+      "perspective": "dev"
     }
   }
 ]

@@ -94,7 +94,7 @@
       "id": "serverlessserving",
       "perspective": "admin",
       "section": "serverless",
-      "name": "%knative-plugin~+Serving%",
+      "name": "%knative-plugin~Serving%",
       "href": "/serving",
       "namespaced": true
     },
@@ -108,7 +108,7 @@
       "id": "serverlesseventing",
       "perspective": "admin",
       "section": "serverless",
-      "name": "%knative-plugin~+Eventing%",
+      "name": "%knative-plugin~Eventing%",
       "href": "/eventing",
       "namespaced": true
     },
