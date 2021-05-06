@@ -1,0 +1,17 @@
+.kv-editor--main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  &.bottom {
+    flex-direction: column;
+  }
+  &.top {
+    flex-direction: column-reverse;
+  }
+  &.right {
+    flex-direction: row-reverse;
+  }
+  &.left {
+    flex-direction: row;
+  }
+}
