@@ -28,7 +28,7 @@ import {
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
-import { PodList, filters as PodFilters } from './pod';
+import { PodList, getFilters as getPodFilters } from './pod';
 import { JobsList } from './job';
 
 const { common } = Kebab.factory;
@@ -196,7 +196,7 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
         }}
         kinds={['Pods']}
         ListComponent={PodList}
-        rowFilters={PodFilters}
+        rowFilters={getPodFilters()}
       />
     </Firehose>
   </div>
