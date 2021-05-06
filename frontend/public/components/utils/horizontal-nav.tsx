@@ -190,7 +190,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         return (
           <li className={klass} key={nameKey || name}>
             <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}${queryParams ? queryParams : ''}`}
+              to={`${baseURL.replace(/\/$/, '')}/${href}${queryParams ?? ''}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
