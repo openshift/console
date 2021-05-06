@@ -28,9 +28,14 @@ describe('EventListener Details', () => {
     );
   });
 
-  it('should not render EventListenerTriggers section if the trigger contains binding ref', () => {
+  it('should render EventListenerTriggers section if the trigger contains binding & template.name', () => {
+    wrapper.setProps({ obj: EventlistenerTestData[EventlistenerTypes.BINDINGS_TEMPLATE_NAME] });
+    expect(wrapper.find(EventListenerTriggers).exists()).toBe(true);
+  });
+
+  it('should render EventListenerTriggers section if the trigger contains binding & template.ref', () => {
     wrapper.setProps({ obj: EventlistenerTestData[EventlistenerTypes.BINDINGS_TEMPLATE_REF] });
-    expect(wrapper.find(EventListenerTriggers).exists()).toBe(false);
+    expect(wrapper.find(EventListenerTriggers).exists()).toBe(true);
   });
 
   it('should not render EventListenerTriggers section if triggers contains triggerRef', () => {
