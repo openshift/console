@@ -46,6 +46,7 @@ const createTemplateInstance = async (
   template: TemplateKind,
   osd: string,
   disk: string,
+  nodeName: string,
 ) => {
   const templateInstance: TemplateInstanceKind = {
     apiVersion: apiVersionForModel(TemplateInstanceModel),
@@ -56,6 +57,7 @@ const createTemplateInstance = async (
       annotations: {
         disk,
         osd,
+        nodeName,
       },
     },
     spec: {
@@ -68,20 +70,29 @@ const createTemplateInstance = async (
   return k8sCreate(TemplateInstanceModel, templateInstance);
 };
 
-const instantiateTemplate = async (osdId: string, diskName: string) => {
+const instantiateTemplate = async (osdId: string, diskName: string, nodeName: string) => {
   const osdRemovalTemplate = await k8sGet(
     TemplateModel,
     OSD_REMOVAL_TEMPLATE,
     CEPH_STORAGE_NAMESPACE,
   );
   const templateSecret = await createTemplateSecret(osdRemovalTemplate, osdId);
-  await createTemplateInstance(templateSecret, osdRemovalTemplate, osdId, diskName);
+  await createTemplateInstance(templateSecret, osdRemovalTemplate, osdId, diskName, nodeName);
 };
 
 const DiskReplacementAction = (props: DiskReplacementActionProps) => {
   const { t } = useTranslation();
 
-  const { diskName, alertsMap, replacementMap, isRebalancing, dispatch, cancel, close } = props;
+  const {
+    diskName,
+    alertsMap,
+    nodeName,
+    replacementMap,
+    isRebalancing,
+    dispatch,
+    cancel,
+    close,
+  } = props;
 
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -103,7 +114,7 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
           ),
         );
       else {
-        instantiateTemplate(osd, diskName);
+        instantiateTemplate(osd, diskName, nodeName);
         dispatch({
           type: ActionType.SET_REPLACEMENT_MAP,
           payload: { [diskName]: { osd, status: Status.PreparingToReplace } },
@@ -157,5 +168,6 @@ export type DiskReplacementActionProps = {
   isRebalancing: boolean;
   alertsMap: OCSDiskList;
   replacementMap: OCSDiskList;
+  nodeName: string;
   dispatch: React.Dispatch<OCSColumnStateAction>;
 } & ModalComponentProps;
