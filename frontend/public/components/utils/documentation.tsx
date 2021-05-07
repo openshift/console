@@ -4,6 +4,6 @@ export const openshiftHelpBase =
 
 export const getNetworkPolicyDocLink = (openshiftFlag: boolean) => {
   return openshiftFlag
-    ? `${openshiftHelpBase}networking/configuring-networkpolicy.html`
+    ? `${openshiftHelpBase}networking/network_policy/about-network-policy.html`
     : 'https://kubernetes.io/docs/concepts/services-networking/network-policies/';
 };
