@@ -37,15 +37,15 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
   });
   const pipelineRunResultData = pipelineRunResult?.data?.result ?? [];
 
+  React.useEffect(() => {
+    if (!loaded && onInitialLoad) {
+      onInitialLoad({ chartName: 'pipelineRunCount', hasData: !!pipelineRunResultData.length });
+    }
+  }, [loaded, onInitialLoad, pipelineRunResultData]);
+
   if (loading) {
     return <LoadingInline />;
   }
-
-  if (!loaded) {
-    onInitialLoad &&
-      onInitialLoad({ chartName: 'pipelineRunCount', hasData: !!pipelineRunResultData.length });
-  }
-
   if ((!loaded && pipelineRunResultData.length) || error || pipelineRunResultData.length === 0) {
     return <GraphEmpty height={DEFAULT_CHART_HEIGHT} />;
   }
@@ -70,7 +70,7 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
                 labels={({ datum }) =>
                   datum.childName.includes('bar-') && datum.y !== null
                     ? `${formatDate(datum.x)}
-              ${datum.y}`
+                    ${t('pipelines-plugin~Pipeline Runs')}: ${datum.y}`
                     : null
                 }
               />

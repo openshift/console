@@ -35,18 +35,19 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
   const pipelineRunDurationData = runData?.data?.result ?? [];
 
   const chartHeight = DEFAULT_LEGEND_CHART_HEIGHT;
-  if (runDataLoading) {
-    return <LoadingInline />;
-  }
 
-  if (!loaded) {
-    onInitialLoad &&
+  React.useEffect(() => {
+    if (!loaded && onInitialLoad) {
       onInitialLoad({
         chartName: 'pipelineRunDuration',
         hasData: !!pipelineRunDurationData.length,
       });
-  }
+    }
+  }, [loaded, onInitialLoad, pipelineRunDurationData]);
 
+  if (runDataLoading) {
+    return <LoadingInline />;
+  }
   if (
     (!loaded && pipelineRunDurationData.length) ||
     runDataError ||
