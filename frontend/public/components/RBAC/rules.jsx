@@ -11,13 +11,13 @@ import { useTranslation } from 'react-i18next';
 export const RulesList = ({ rules, name, namespace }) => {
   const { t } = useTranslation();
   return _.isEmpty(rules) ? (
-    <EmptyBox label={t('rules~Rules')} />
+    <EmptyBox label={t('public~Rules')} />
   ) : (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
-        <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">{t('rules~Actions')}</div>
-        <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">{t('rules~API groups')}</div>
-        <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">{t('rules~Resources')}</div>
+        <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">{t('public~Actions')}</div>
+        <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">{t('public~API groups')}</div>
+        <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">{t('public~Resources')}</div>
       </div>
       <div className="co-m-table-grid__body">
         {rules.map((rule, i) => (
@@ -129,14 +129,14 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
 const RuleKebab = ({ name, namespace, i }) => {
   const { t } = useTranslation();
   const DeleteRule = () => ({
-    label: t('rules~Delete rule'),
+    label: t('public~Delete rule'),
     callback: () =>
       confirmModal({
-        title: t('rules~Delete rule'),
-        message: t('rules~Are you sure you want to delete rule #{{ruleNumber}}?', {
+        title: t('public~Delete rule'),
+        message: t('public~Are you sure you want to delete rule #{{ruleNumber}}?', {
           ruleNumber: i,
         }),
-        btnText: t('rules~Delete rule'),
+        btnText: t('public~Delete rule'),
         executeFn: () => {
           const kind = namespace ? RoleModel : ClusterRoleModel;
           return k8sPatch(kind, { metadata: { name, namespace } }, [

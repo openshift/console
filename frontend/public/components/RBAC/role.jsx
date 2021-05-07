@@ -39,7 +39,7 @@ const menuActions = [
   //   href: addHref(role.metadata.name, role.metadata.namespace),
   // }),
   (kind, role) => ({
-    label: i18next.t('role~Add RoleBinding'),
+    label: i18next.t('public~Add RoleBinding'),
     href: `/k8s/${
       role.metadata.namespace
         ? `ns/${role.metadata.namespace}/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
@@ -68,7 +68,7 @@ const RolesTableRow = ({ obj: role, index, key, style }) => {
         {role.metadata.namespace ? (
           <ResourceLink kind="Namespace" name={role.metadata.namespace} />
         ) : (
-          i18next.t('role~All namespaces')
+          i18next.t('public~All namespaces')
         )}
       </TableData>
       <TableData className={roleColumnClasses[2]}>
@@ -103,15 +103,15 @@ class Details extends React.Component {
     return (
       <div>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('role~Role details')} />
+          <SectionHeading text={t('public~Role details')} />
           <div className="row">
             <div className="col-xs-6">
               <dl className="co-m-pane__details">
-                <dt>{t('role~Role name')}</dt>
+                <dt>{t('public~Role name')}</dt>
                 <dd>{name}</dd>
                 {namespace && (
                   <div>
-                    <dt>{t('role~Namespace')}</dt>
+                    <dt>{t('public~Namespace')}</dt>
                     <dd>
                       <ResourceLink kind="Namespace" name={namespace} />
                     </dd>
@@ -121,7 +121,7 @@ class Details extends React.Component {
             </div>
             <div className="col-xs-6">
               <dl className="co-m-pane__details">
-                <dt>{t('role~Created at')}</dt>
+                <dt>{t('public~Created at')}</dt>
                 <dd>
                   <Timestamp timestamp={creationTimestamp} />
                 </dd>
@@ -130,7 +130,7 @@ class Details extends React.Component {
           </div>
         </div>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('role~Rules')} />
+          <SectionHeading text={t('public~Rules')} />
           <div className="co-m-pane__filter-row">
             {/* This page is temporarily disabled until we update the safe resources list.
           <div className="co-m-pane__filter-bar-group">
@@ -141,7 +141,7 @@ class Details extends React.Component {
           */}
 
             <TextFilter
-              label={t('role~rules by action or resource')}
+              label={t('public~rules by action or resource')}
               onChange={this.changeFilter}
             />
           </div>
@@ -170,7 +170,7 @@ const BindingsTableRow = ({ obj: binding, index, key, style }) => {
       <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
       <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
       <TableData className={bindingsColumnClasses[3]}>
-        {binding.namespace || t('role~All namespaces')}
+        {binding.namespace || t('public~All namespaces')}
       </TableData>
     </TableRow>
   );
@@ -181,25 +181,25 @@ const BindingsListComponent = (props) => {
   const BindingsTableHeader = () => {
     return [
       {
-        title: t('role~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: bindingsColumnClasses[0] },
       },
       {
-        title: t('role~Subject kind'),
+        title: t('public~Subject kind'),
         sortField: 'subject.kind',
         transforms: [sortable],
         props: { className: bindingsColumnClasses[1] },
       },
       {
-        title: t('role~Subject name'),
+        title: t('public~Subject name'),
         sortField: 'subject.name',
         transforms: [sortable],
         props: { className: bindingsColumnClasses[2] },
       },
       {
-        title: t('role~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: bindingsColumnClasses[3] },
@@ -227,7 +227,7 @@ export const BindingsForRolePage = (props) => {
   return (
     <MultiListPage
       canCreate={true}
-      createButtonText={t('role~Create binding')}
+      createButtonText={t('public~Create binding')}
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
@@ -237,7 +237,7 @@ export const BindingsForRolePage = (props) => {
       staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
       resources={resources}
       textFilter="role-binding"
-      filterLabel={t('role~by role or subject')}
+      filterLabel={t('public~by role or subject')}
       namespace={ns}
       flatten={bindingsFlatten}
     />
@@ -271,7 +271,7 @@ export const RolesDetailsPage = (props) => {
       pages={[
         navFactory.details(DetailsWithTranslation),
         navFactory.editYaml(),
-        { href: 'bindings', name: t('role~RoleBindings'), component: BindingsForRolePage },
+        { href: 'bindings', name: t('public~RoleBindings'), component: BindingsForRolePage },
       ]}
       menuActions={menuActions}
       breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match)}
@@ -299,9 +299,9 @@ const EmptyMsg = () => {
   const { t } = useTranslation();
   return (
     <MsgBox
-      title={t('role~No Roles found')}
+      title={t('public~No Roles found')}
       detail={t(
-        'role~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
+        'public~Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.',
       )}
     />
   );
@@ -312,13 +312,13 @@ const RolesList = (props) => {
   const RolesTableHeader = () => {
     return [
       {
-        title: t('role~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: roleColumnClasses[0] },
       },
       {
-        title: t('role~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: roleColumnClasses[1] },
@@ -329,7 +329,7 @@ const RolesList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('role~Roles')}
+      aria-label={t('public~Roles')}
       EmptyMsg={EmptyMsg}
       Header={RolesTableHeader}
       Row={RolesTableRow}
@@ -362,7 +362,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       showTitle={showTitle}
       namespace={namespace}
       createAccessReview={accessReview}
-      createButtonText={t('role~Create Role')}
+      createButtonText={t('public~Create Role')}
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
       flatten={(resources) => _.flatMap(resources, 'data').filter((r) => !!r)}
       resources={[
@@ -371,17 +371,17 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       ]}
       rowFilters={[
         {
-          filterGroupName: t('role~Role'),
+          filterGroupName: t('public~Role'),
           type: 'role-kind',
           reducer: roleType,
           items: [
-            { id: 'cluster', title: t('role~Cluster-wide Roles') },
-            { id: 'namespace', title: t('role~Namespace Roles') },
-            { id: 'system', title: t('role~System Roles') },
+            { id: 'cluster', title: t('public~Cluster-wide Roles') },
+            { id: 'namespace', title: t('public~Namespace Roles') },
+            { id: 'system', title: t('public~System Roles') },
           ],
         },
       ]}
-      title={t('role~Roles')}
+      title={t('public~Roles')}
     />
   );
 };

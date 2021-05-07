@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'request-header-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: Request Header', () => {
   let wrapper: ShallowWrapper<{}, AddRequestHeaderPageState>;

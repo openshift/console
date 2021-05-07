@@ -112,7 +112,7 @@ const NoQuotaGuage = ({ title, className }) => {
   const { t } = useTranslation();
   return (
     <GaugeChart
-      error={t('resource-quota~No quota')}
+      error={t('public~No quota')}
       thresholds={[{ value: 100 }]}
       title={title}
       className={className}
@@ -143,13 +143,13 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
               y: cpuRequestUsagePercent,
             }}
             thresholds={gaugeChartThresholds}
-            title={t('resource-quota~CPU request')}
+            title={t('public~CPU request')}
             className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title={t('resource-quota~CPU request')} />
+          <NoQuotaGuage title={t('public~CPU request')} />
         </div>
       )}
       {resourceTypesSet.has('limits.cpu') ? (
@@ -157,13 +157,13 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
           <GaugeChart
             data={{ x: `${cpuLimitUsagePercent}%`, y: cpuLimitUsagePercent }}
             thresholds={gaugeChartThresholds}
-            title={t('resource-quota~CPU limit')}
+            title={t('public~CPU limit')}
             className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title={t('resource-quota~CPU limit')} className={chartClassName} />
+          <NoQuotaGuage title={t('public~CPU limit')} className={chartClassName} />
         </div>
       )}
       {resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory') ? (
@@ -174,13 +174,13 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
               y: memoryRequestUsagePercent,
             }}
             thresholds={gaugeChartThresholds}
-            title={t('resource-quota~Memory request')}
+            title={t('public~Memory request')}
             className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title={t('resource-quota~Memory request')} className={chartClassName} />
+          <NoQuotaGuage title={t('public~Memory request')} className={chartClassName} />
         </div>
       )}
       {resourceTypesSet.has('limits.memory') ? (
@@ -188,13 +188,13 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
           <GaugeChart
             data={{ x: `${memoryLimitUsagePercent}%`, y: memoryLimitUsagePercent }}
             thresholds={gaugeChartThresholds}
-            title={t('resource-quota~Memory limit')}
+            title={t('public~Memory limit')}
             className={chartClassName}
           />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
-          <NoQuotaGuage title={t('resource-quota~Memory limit')} className={chartClassName} />
+          <NoQuotaGuage title={t('public~Memory limit')} className={chartClassName} />
         </div>
       )}
     </div>
@@ -210,22 +210,22 @@ export const QuotaScopesList = ({ scopes }) => {
   const quotaScopes = {
     Terminating: {
       description: t(
-        'resource-quota~Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
+        'public~Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
       ),
     },
     NotTerminating: {
       description: t(
-        'resource-quota~Affects pods that do not have an active deadline. These pods usually include your applications.',
+        'public~Affects pods that do not have an active deadline. These pods usually include your applications.',
       ),
     },
     BestEffort: {
       description: t(
-        'resource-quota~Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
+        'public~Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
       ),
     },
     NotBestEffort: {
       description: t(
-        'resource-quota~Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
+        'public~Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
       ),
     },
   };
@@ -265,7 +265,7 @@ const Details = ({ obj: rq }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('resource-quota~{{resource}} details', { resource: label })} />
+        <SectionHeading text={t('public~{{resource}} details', { resource: label })} />
         {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
         <div className="row">
           <div className="col-sm-6">
@@ -274,7 +274,7 @@ const Details = ({ obj: rq }) => {
           {scopes && (
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <dt>{t('resource-quota~Scopes')}</dt>
+                <dt>{t('public~Scopes')}</dt>
                 <QuotaScopesList scopes={scopes} />
               </dl>
             </div>
@@ -283,33 +283,33 @@ const Details = ({ obj: rq }) => {
       </div>
       <div className="co-m-pane__body">
         <SectionHeading
-          text={t('resource-quota~{{resource}} details', { resource: label })}
+          text={t('public~{{resource}} details', { resource: label })}
           style={{ display: 'block', marginBottom: '20px' }}
         >
           <FieldLevelHelp>
             <p>
               {t(
-                'resource-quota~Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
+                'public~Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.',
               )}
             </p>
             <p>
               {t(
-                'resource-quota~Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
+                'public~Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.',
               )}
             </p>
             <p>
               {t(
-                'resource-quota~A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
+                'public~A cluster administrator can establish limits on both the amount you can request and your limits with a ResourceQuota.',
               )}
             </p>
           </FieldLevelHelp>
         </SectionHeading>
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
-            <div className="col-sm-4 col-xs-6">{t('resource-quota~Resource type')}</div>
-            <div className="col-sm-2 hidden-xs">{t('resource-quota~Capacity')}</div>
-            <div className="col-sm-3 col-xs-3">{t('resource-quota~Used')}</div>
-            <div className="col-sm-3 col-xs-3">{t('resource-quota~Max')}</div>
+            <div className="col-sm-4 col-xs-6">{t('public~Resource type')}</div>
+            <div className="col-sm-2 hidden-xs">{t('public~Capacity')}</div>
+            <div className="col-sm-3 col-xs-3">{t('public~Used')}</div>
+            <div className="col-sm-3 col-xs-3">{t('public~Max')}</div>
           </div>
           <div className="co-m-table-grid__body">
             {resourceTypes.map((type) => (
@@ -327,13 +327,13 @@ export const ResourceQuotasList = (props) => {
   const ResourceQuotaTableHeader = () => {
     return [
       {
-        title: t('resource-quota~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('resource-quota~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
@@ -367,7 +367,7 @@ export const ResourceQuotasList = (props) => {
               title={rq.metadata.namespace}
             />
           ) : (
-            t('resource-quota~None')
+            t('public~None')
           )}
         </TableData>
         <TableData className={tableColumnClasses[2]}>
@@ -414,19 +414,19 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
       });
       rowFilters = [
         {
-          filterGroupName: t('resource-quota~Role'),
+          filterGroupName: t('public~Role'),
           type: 'role-kind',
           reducer: quotaType,
           items: [
             {
               id: 'cluster',
-              title: t('resource-quota~Cluster-wide {{resource}}', {
+              title: t('public~Cluster-wide {{resource}}', {
                 resource: ResourceQuotaModel.labelPlural,
               }),
             },
             {
               id: 'namespace',
-              title: t('resource-quota~Namespace {{resource}}', {
+              title: t('public~Namespace {{resource}}', {
                 resource: ResourceQuotaModel.labelPlural,
               }),
             },
@@ -443,7 +443,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(
       <MultiListPage
         canCreate={true}
         createAccessReview={accessReview}
-        createButtonText={t('resource-quota~Create ResourceQuota')}
+        createButtonText={t('public~Create ResourceQuota')}
         createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
         ListComponent={ResourceQuotasList}
         resources={resources}

@@ -103,27 +103,27 @@ const ServiceAddress = ({ s }) => {
     switch (type) {
       case 'NodePort':
         return ServiceIPsRow(
-          t('network-service~Node port'),
-          t('network-service~Accessible outside the cluster'),
+          t('public~Node port'),
+          t('public~Accessible outside the cluster'),
           _.map(s.spec.ports, 'nodePort'),
-          t('network-service~(all nodes): '),
+          t('public~(all nodes): '),
         );
       case 'LoadBalancer':
         return ServiceIPsRow(
-          t('network-service~External load balancer'),
-          t('network-service~Ingress points of load balancer'),
+          t('public~External load balancer'),
+          t('public~Ingress points of load balancer'),
           _.map(s.status.loadBalancer.ingress, (i) => i.hostname || i.ip || '-'),
         );
       case 'ExternalName':
         return ServiceIPsRow(
-          t('network-service~External service name'),
-          t('network-service~Location of the resource that backs the service'),
+          t('public~External service name'),
+          t('public~Location of the resource that backs the service'),
           [s.spec.externalName],
         );
       default:
         return ServiceIPsRow(
-          t('network-service~Cluster IP'),
-          t('network-service~Accessible within the cluster only'),
+          t('public~Cluster IP'),
+          t('public~Accessible within the cluster only'),
           [s.spec.clusterIP],
         );
     }
@@ -132,15 +132,15 @@ const ServiceAddress = ({ s }) => {
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-6">{t('network-service~Type')}</div>
-        <div className="col-xs-6">{t('network-service~Location')}</div>
+        <div className="col-xs-6">{t('public~Type')}</div>
+        <div className="col-xs-6">{t('public~Location')}</div>
       </div>
       <div className="rows">
         {ServiceType(s.spec.type)}
         {s.spec.externalIPs &&
           ServiceIPsRow(
-            t('network-service~External IP'),
-            t('network-service~IP Addresses accepting traffic for service'),
+            t('public~External IP'),
+            t('public~IP Addresses accepting traffic for service'),
             s.spec.externalIPs,
           )}
       </div>
@@ -153,10 +153,10 @@ const ServicePortMapping = ({ ports }) => {
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-3">{t('network-service~Name')}</div>
-        <div className="col-xs-3">{t('network-service~Port')}</div>
-        <div className="col-xs-3">{t('network-service~Protocol')}</div>
-        <div className="col-xs-3">{t('network-service~Pod port or name')}</div>
+        <div className="col-xs-3">{t('public~Name')}</div>
+        <div className="col-xs-3">{t('public~Port')}</div>
+        <div className="col-xs-3">{t('public~Protocol')}</div>
+        <div className="col-xs-3">{t('public~Pod port or name')}</div>
       </div>
       <div className="rows">
         {ports.map((portObj, i) => {
@@ -165,9 +165,7 @@ const ServicePortMapping = ({ ports }) => {
               <div className="row">
                 <div className="col-xs-3 co-text-service">
                   <p>{portObj.name || '-'}</p>
-                  {portObj.nodePort && (
-                    <p className="co-text-node">{t('network-service~Node port')}</p>
-                  )}
+                  {portObj.nodePort && <p className="co-text-node">{t('public~Node port')}</p>}
                 </div>
                 <div className="col-xs-3 co-text-service">
                   <p>
@@ -205,27 +203,19 @@ const Details = ({ obj: s }) => {
     <div className="co-m-pane__body">
       <div className="row">
         <div className="col-md-6">
-          <SectionHeading text={t('network-service~Service details')} />
+          <SectionHeading text={t('public~Service details')} />
           <ResourceSummary resource={s} showPodSelector>
-            <DetailsItem
-              label={t('network-service~Session affinity')}
-              obj={s}
-              path="spec.sessionAffinity"
-            />
+            <DetailsItem label={t('public~Session affinity')} obj={s} path="spec.sessionAffinity" />
           </ResourceSummary>
         </div>
         <div className="col-md-6">
-          <SectionHeading text={t('network-service~Service routing')} />
+          <SectionHeading text={t('public~Service routing')} />
           <dl>
-            <dt>{t('network-service~Service address')}</dt>
+            <dt>{t('public~Service address')}</dt>
             <dd className="service-ips">
               <ServiceAddress s={s} />
             </dd>
-            <DetailsItem
-              label={t('network-service~Service port mapping')}
-              obj={s}
-              path="spec.ports"
-            >
+            <DetailsItem label={t('public~Service port mapping')} obj={s} path="spec.ports">
               <div className="service-ips">
                 {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
               </div>
@@ -251,32 +241,32 @@ const ServicesList = (props) => {
   const ServiceTableHeader = () => {
     return [
       {
-        title: t('network-service~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('network-service~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('network-service~Labels'),
+        title: t('public~Labels'),
         sortField: 'metadata.labels',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('network-service~Pod selector'),
+        title: t('public~Pod selector'),
         sortField: 'spec.selector',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('network-service~Location'),
+        title: t('public~Location'),
         sortField: 'spec.clusterIP',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
@@ -290,7 +280,7 @@ const ServicesList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('network-service~Services')}
+      aria-label={t('public~Services')}
       Header={ServiceTableHeader}
       Row={ServiceTableRow}
       virtualize

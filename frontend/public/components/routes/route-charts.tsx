@@ -20,21 +20,21 @@ const RouteCharts_: React.FC<RouteChartsProps> = ({ namespace, route, flags }) =
     <div className="row">
       <div className={chartClasses}>
         <Area
-          title={t('network-route~Traffic in')}
+          title={t('public~Traffic in')}
           humanize={humanizeDecimalBytesPerSec}
           query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_in_total${namespaceRouteQuery}))`}
         />
       </div>
       <div className={chartClasses}>
         <Area
-          title={t('network-route~Traffic out')}
+          title={t('public~Traffic out')}
           humanize={humanizeDecimalBytesPerSec}
           query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_out_total${namespaceRouteQuery}))`}
         />
       </div>
       <div className={chartClasses}>
         <Area
-          title={t('network-route~Connection rate')}
+          title={t('public~Connection rate')}
           query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_backend_connections_total${namespaceRouteQuery}))`}
         />
       </div>
