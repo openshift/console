@@ -11,7 +11,7 @@ export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) =>
   return (
     <div data-test-id="webhook-receiver-form" className="form-group">
       <label className="control-label co-required" htmlFor="webhook-url">
-        {t('webhook-receiver-form~URL')}
+        {t('public~URL')}
       </label>
       <input
         className="pf-c-form-control"
@@ -28,12 +28,12 @@ export const Form: React.FC<FormProps> = ({ formValues, dispatchFormChange }) =>
         }
       />
       <div className="help-block" id="webhook-url-help">
-        {t('webhook-receiver-form~The endpoint to send HTTP POST requests to.')}
+        {t('public~The endpoint to send HTTP POST requests to.')}
       </div>
       <div className="form-group">
         <ExpandCollapse
-          textCollapsed={t('webhook-receiver-form~Show advanced configuration')}
-          textExpanded={t('webhook-receiver-form~Hide advanced configuration')}
+          textCollapsed={t('public~Show advanced configuration')}
+          textExpanded={t('public~Hide advanced configuration')}
         >
           <div className="co-form-subsection">
             <div className="form-group">

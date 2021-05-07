@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 const KubeConfigify = (kind, sa) => ({
-  label: i18next.t('service-account~Download kubeconfig file'),
+  label: i18next.t('public~Download kubeconfig file'),
   weight: 200,
   callback: () => {
     const name = sa.metadata.name;
@@ -44,7 +44,7 @@ const KubeConfigify = (kind, sa) => ({
         );
         if (!secret) {
           errorModal({
-            error: i18next.t('service-account~Unable to get ServiceAccount token.'),
+            error: i18next.t('public~Unable to get ServiceAccount token.'),
           });
           return;
         }
@@ -155,7 +155,7 @@ const Details = ({ obj: serviceaccount }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('service-account~ServiceAccount details')} />
+        <SectionHeading text={t('public~ServiceAccount details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={serviceaccount} />
@@ -163,7 +163,7 @@ const Details = ({ obj: serviceaccount }) => {
         </div>
       </div>
       <div className="co-m-pane__body co-m-pane__body--section-heading">
-        <SectionHeading text={t('service-account~Secrets')} />
+        <SectionHeading text={t('public~Secrets')} />
       </div>
       <SecretsPage
         kind="Secret"
@@ -190,26 +190,26 @@ const ServiceAccountsList = (props) => {
   const ServiceAccountTableHeader = () => {
     return [
       {
-        title: t('service-account~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('service-account~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('service-account~Secrets'),
+        title: t('public~Secrets'),
         sortField: 'secrets',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('service-account~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
@@ -225,7 +225,7 @@ const ServiceAccountsList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('service-account~ServiceAccounts')}
+      aria-label={t('public~ServiceAccounts')}
       Header={ServiceAccountTableHeader}
       Row={ServiceAccountTableRow}
       virtualize

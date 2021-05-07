@@ -28,7 +28,7 @@ const ResourceSidebarWrapper = (props) => {
           type="button"
           className="co-p-has-sidebar__sidebar-close"
           variant="plain"
-          aria-label={t('sidebar~Close')}
+          aria-label={t('public~Close')}
           onClick={toggleSidebar}
         >
           <CloseIcon />
@@ -86,20 +86,20 @@ export const ResourceSidebar = (props) => {
   let tabs: Tab[] = [];
   if (showSamples) {
     tabs.push({
-      name: t('sidebar~Samples'),
+      name: t('public~Samples'),
       component: ResourceSamples,
     });
   }
   if (showSnippets) {
     tabs.push({
-      name: t('sidebar~Snippets'),
+      name: t('public~Snippets'),
       component: ResourceSnippets,
     });
   }
   if (showSchema) {
     tabs = [
       {
-        name: t('sidebar~Schema'),
+        name: t('public~Schema'),
         component: ResourceSchema,
       },
       ...tabs,

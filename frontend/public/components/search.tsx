@@ -218,9 +218,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
   return (
     <>
       <Helmet>
-        <title>{t('search~Search')}</title>
+        <title>{t('public~Search')}</title>
       </Helmet>
-      <PageHeading detail={true} title={t('search~Search')}>
+      <PageHeading detail={true} title={t('public~Search')}>
         <Toolbar
           id="search-toolbar"
           clearAllFilters={clearAll}
@@ -241,7 +241,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                   ),
                 }))}
                 deleteChip={updateNewItems}
-                categoryName={t('search~Resource')}
+                categoryName={t('public~Resource')}
               >
                 <ResourceListDropdown
                   selected={[...selectedItems]}
@@ -254,12 +254,12 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                 deleteChipGroup={clearLabelFilter}
                 chips={[...labelFilter]}
                 deleteChip={removeLabelFilter}
-                categoryName={t('search~Label')}
+                categoryName={t('public~Label')}
               >
                 <ToolbarFilter
                   chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
                   deleteChip={clearNameFilter}
-                  categoryName={t('search~Name')}
+                  categoryName={t('public~Name')}
                 >
                   <SearchFilterDropdown
                     onChange={updateSearchFilter}
@@ -294,12 +294,12 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                       {pinnedResources.includes(resource) ? (
                         <>
                           <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('search~Remove from navigation')}
+                          {t('public~Remove from navigation')}
                         </>
                       ) : (
                         <>
                           <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          {t('search~Add to navigation')}
+                          {t('public~Add to navigation')}
                         </>
                       )}
                     </Button>
@@ -323,8 +323,8 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
         </Accordion>
         {selectedItems.size === 0 && (
           <MsgBox
-            title={t('search~No resources selected')}
-            detail={<p>{t('search~Select one or more resources from the dropdown.')}</p>}
+            title={t('public~No resources selected')}
+            detail={<p>{t('public~Select one or more resources from the dropdown.')}</p>}
           />
         )}
       </div>
