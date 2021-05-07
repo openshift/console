@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { LoadingBox } from '@console/internal/components/utils';
 import ProjectsExistWrapper from '../ProjectsExistWrapper';
-import ODCEmptyState from '../EmptyState';
+import AddPageLayout from '../add/AddPageLayout';
 
 type ProjectsExistWrapperProps = React.ComponentProps<typeof ProjectsExistWrapper>;
 
@@ -37,7 +37,7 @@ describe('ProjectsExistWrapper', () => {
 
   it('should show empty state when no project exist', () => {
     const wrapper = shallow(<ProjectsExistWrapper {...projectWrapperProps} />);
-    expect(wrapper.find(ODCEmptyState).exists()).toBe(true);
+    expect(wrapper.find(AddPageLayout).exists()).toBe(true);
   });
 
   it('should return children when project exist', () => {

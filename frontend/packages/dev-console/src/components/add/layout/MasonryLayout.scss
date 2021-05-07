@@ -1,0 +1,25 @@
+@media (prefers-reduced-motion: no-preference) {
+  .odc-masonry-layout {
+    transition: 0.25s ease-in-out;
+  }
+}
+
+.odc-masonry-layout {
+  display: flex;
+  flex-direction: row;
+  opacity: 0;
+  &__allRendered {
+    opacity: 1 !important;
+  }
+  &__column {
+    flex: 1;
+    padding-left: var(--pf-global--spacer--lg); /* gutter size */
+    background-clip: padding-box;
+    margin-bottom: var(--pf-global--spacer--xl);
+  }
+}
+
+.odc-masonry-container {
+  margin-left: calc(0px - var(--pf-global--spacer--lg)); /* gutter size offset */
+  width: auto;
+}

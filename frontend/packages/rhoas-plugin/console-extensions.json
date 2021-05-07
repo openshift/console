@@ -17,6 +17,7 @@
     },
     "properties": {
       "id": "rhoasAddAction",
+      "groupId": "developer-catalog",
       "href": "/catalog?catalogType=managedservices",
       "label": "%rhoas-plugin~Managed Services%",
       "description": "%rhoas-plugin~Discover managed services to simplify deployments and reduce operational overhead & complexities%",

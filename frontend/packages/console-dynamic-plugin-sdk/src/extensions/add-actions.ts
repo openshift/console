@@ -7,6 +7,8 @@ export type AddAction = ExtensionDeclaration<
   {
     /** ID used to identify the action. */
     id: string;
+    /** IDs used to identify the action groups the action would belong to. */
+    groupId?: string;
     /** The label of the action */
     label: string;
     /** The description of the action. */
@@ -20,8 +22,26 @@ export type AddAction = ExtensionDeclaration<
   }
 >;
 
+export type AddActionGroup = ExtensionDeclaration<
+  'dev-console.add/action-group',
+  {
+    /** ID used to identify the action group. */
+    id: string;
+    /** The title of the action group */
+    name: string;
+    /** ID of action group before which this group should be placed */
+    insertBefore?: string;
+    /** ID of action group after which this group should be placed */
+    insertAfter?: string;
+  }
+>;
+
 // Type guards
 
 export const isAddAction = (e: Extension): e is AddAction => {
   return e.type === 'dev-console.add/action';
+};
+
+export const isAddActionGroup = (e: Extension): e is AddActionGroup => {
+  return e.type === 'dev-console.add/action-group';
 };

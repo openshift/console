@@ -91,7 +91,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
-        (await import('./components/AddPage' /* webpackChunkName: "dev-console-add" */)).default,
+        (await import('./components/add/AddPage' /* webpackChunkName: "dev-console-add" */))
+          .default,
     },
   },
   {

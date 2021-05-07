@@ -1,7 +1,6 @@
 {
-  "Pipeline": "Pipeline",
-  "Create a Tekton Pipeline to automate delivery of your Application": "Create a Tekton Pipeline to automate delivery of your Application",
   "Pipelines": "Pipelines",
+  "Create a Tekton Pipeline to automate delivery of your Application": "Create a Tekton Pipeline to automate delivery of your Application",
   "Tasks": "Tasks",
   "Triggers": "Triggers",
   "{{clusterTaskLabel}} details": "{{clusterTaskLabel}} details",
@@ -18,6 +17,7 @@
   "Type": "Type",
   "Created": "Created",
   "Status": "Status",
+  "Pipeline": "Pipeline",
   "PipelineResources": "PipelineResources",
   "PipelineRun details": "PipelineRun details",
   "No task runs found": "No task runs found",
