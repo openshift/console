@@ -7,13 +7,12 @@ import {
   DropdownSeparator,
   DropdownToggle,
 } from '@patternfly/react-core';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { getName } from '@console/shared';
-import { ListKind } from 'public/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useDeepCompareMemoize, getName } from '@console/shared';
 import NamespaceStoreModal from './namespace-store-modal';
-import { NooBaaNamespaceStoreModel } from '../../models';
 import { NamespaceStoreKind } from '../../types';
 import { NamespacePolicyType } from '../../constants/bucket-class';
+import { namespaceStoreResource } from '../../resources';
 
 export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
   id,
@@ -27,15 +26,13 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
-  const [nnsObj, nnsLoaded, nnsErr] = useK8sGet<ListKind<NamespaceStoreKind>>(
-    NooBaaNamespaceStoreModel,
-    null,
-    namespace,
-  );
-  const [dropdownItems, setDropdownItems] = React.useState([]);
-  const nnsList = nnsLoaded && !nnsErr ? nnsObj.items : [];
+  const [dropdownItems, setDropdownItems] = React.useState<JSX.Element[]>([]);
+
+  const [nnsData, , nnsLoadErr] = useK8sWatchResource<NamespaceStoreKind[]>(namespaceStoreResource);
+  const noobaaNamespaceStores: NamespaceStoreKind[] = useDeepCompareMemoize(nnsData, true);
+
   React.useEffect(() => {
-    const nnsDropdownItems = nnsList.reduce(
+    const nnsDropdownItems = noobaaNamespaceStores.reduce(
       (res, nns) => {
         const name = getName(nns);
         res.push(
@@ -48,7 +45,9 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
               !enabledItems.some((itemName) => itemName === name)
             }
             onClick={(e) =>
-              onChange(nnsList.find((ns) => ns?.metadata?.name === e.currentTarget.id))
+              onChange(
+                noobaaNamespaceStores.find((ns) => ns?.metadata?.name === e.currentTarget.id),
+              )
             }
             data-test={name}
             description={t('ceph-storage-plugin~Provider {{provider}} | Region: {{region}}', {
@@ -77,10 +76,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
     );
     setDropdownItems(nnsDropdownItems);
   }, [
-    nnsObj,
-    nnsLoaded,
-    nnsErr,
-    nnsList,
+    noobaaNamespaceStores,
     t,
     namespace,
     creatorDisabled,
@@ -91,7 +87,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
 
   return (
     <div className={className}>
-      {nnsErr && (
+      {nnsLoadErr && (
         <Alert
           className="nb-create-bc-step-page--danger"
           variant="danger"
@@ -105,7 +101,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
           <DropdownToggle
             id="nns-dropdown-id"
             isDisabled={
-              !!nnsErr ||
+              !!nnsLoadErr ||
               (namespacePolicy === NamespacePolicyType.MULTI && enabledItems?.length === 0)
             }
             data-test="nns-dropdown-toggle"
