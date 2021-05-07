@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import { Formik } from 'formik';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
 import ProjectAccess from '../ProjectAccess';
+import { defaultAccessRoles } from '../project-access-form-utils';
 
 type ProjectAccessProps = React.ComponentProps<typeof ProjectAccess>;
 let projectAccessProps: ProjectAccessProps;
@@ -24,6 +25,10 @@ describe('Project Access', () => {
         data: [],
         loaded: false,
         loadError: {},
+      },
+      roles: {
+        data: defaultAccessRoles,
+        loaded: true,
       },
     };
   });

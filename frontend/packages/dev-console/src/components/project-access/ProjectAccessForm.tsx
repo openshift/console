@@ -1,23 +1,21 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Form, TextInputTypes } from '@patternfly/react-core';
-import { FormikProps, FormikValues } from 'formik';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
 import { useTranslation } from 'react-i18next';
+import { FormikProps, FormikValues } from 'formik';
+import { Form, TextInputTypes } from '@patternfly/react-core';
+import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+import { Roles } from './project-access-form-utils';
 
-enum accessRoles {
-  admin = 'Admin',
-  edit = 'Edit',
-  view = 'View',
-}
+type ProjectAccessFormProps = FormikProps<FormikValues> & { roles: Roles };
 
-const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({
+const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
   handleSubmit,
   handleReset,
   isSubmitting,
   status,
   errors,
   dirty,
+  roles,
 }) => {
   const { t } = useTranslation();
   const disableSubmit = !dirty || !_.isEmpty(errors);
@@ -26,7 +24,7 @@ const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({
       <div className="co-m-pane__form">
         <MultiColumnField
           name="projectAccess"
-          addLabel={t('devconsole~Add Access')}
+          addLabel={t('devconsole~Add access')}
           headers={[t('devconsole~Name'), t('devconsole~Role')]}
           emptyValues={{ user: '', role: '' }}
         >
@@ -34,10 +32,11 @@ const ProjectAccessForm: React.FC<FormikProps<FormikValues>> = ({
           <DropdownField
             name="role"
             title={t('devconsole~Select a role')}
-            items={accessRoles}
+            items={roles}
             fullWidth
           />
         </MultiColumnField>
+
         <hr />
         <FormFooter
           handleReset={handleReset}

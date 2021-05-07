@@ -1,5 +1,5 @@
 import { filterRoleBindings, getUserRoleBindings } from '../project-access-form-utils';
-import { Roles } from '../project-access-form-utils-types';
+
 import {
   roleBindingsResourceData,
   roleBindingsWithRequiredRolesResult,
@@ -9,7 +9,8 @@ import {
 
 describe('Fetch required roles', () => {
   it('should fetch the only the required rolebindings', async () => {
-    const filteredRoleBindings = filterRoleBindings(roleBindingsResourceData, Roles);
+    window.SERVER_FLAGS.projectAccessClusterRoles = '["admin", "view"]';
+    const filteredRoleBindings = filterRoleBindings(roleBindingsResourceData, ['admin', 'view']);
     expect(filteredRoleBindings).toEqual(roleBindingsWithRequiredRolesResult);
   });
 

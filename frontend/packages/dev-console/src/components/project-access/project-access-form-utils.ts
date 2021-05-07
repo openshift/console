@@ -5,8 +5,28 @@ import {
   ProjectAccessRoles,
 } from './project-access-form-utils-types';
 
-export const filterRoleBindings = (roleBindings: RoleBinding[], roles): RoleBinding[] => {
-  return _.filter(roleBindings, (user: RoleBinding) => _.keys(roles).includes(user.roleRef.name));
+export const defaultAccessRoles = {
+  admin: 'Admin',
+  edit: 'Edit',
+  view: 'View',
+};
+
+export type Roles = {
+  [key: string]: string;
+};
+
+export const getAvailableAccessRoles = (): string[] | undefined => {
+  if (!window.SERVER_FLAGS.projectAccessClusterRoles) return undefined;
+  return JSON.parse(window.SERVER_FLAGS.projectAccessClusterRoles);
+};
+
+export const filterRoleBindings = (
+  roleBindings: RoleBinding[],
+  clusterRoleNames: string[],
+): RoleBinding[] => {
+  return _.filter(roleBindings, (user: RoleBinding) =>
+    clusterRoleNames.includes(user.roleRef.name),
+  );
 };
 
 export const getUsersFromSubject = (user: RoleBinding): UserRoleBinding[] =>
