@@ -700,7 +700,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
 
   let columns, rows;
   if (data.resultType === 'scalar') {
-    columns = ['', { title: 'Value', ...cellProps }];
+    columns = ['', { title: t('public~Value'), ...cellProps }];
     rows = [[buttonCell({}), _.get(result, '[1]')]];
   } else {
     const allLabelKeys = _.uniq(_.flatMap(result, ({ metric }) => Object.keys(metric))).sort();
@@ -708,10 +708,10 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     columns = [
       '',
       ...allLabelKeys.map((k) => ({
-        title: <span>{k === '__name__' ? 'Name' : k}</span>,
+        title: <span>{k === '__name__' ? t('public~Name') : k}</span>,
         ...cellProps,
       })),
-      { title: 'Value', ...cellProps },
+      { title: t('public~Value'), ...cellProps },
     ];
 
     let rowMapper;
