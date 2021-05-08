@@ -70,23 +70,23 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
       name="form"
       className="modal-content modal-content--accommodate-dropdown taint-modal"
     >
-      <ModalTitle>{t('modal~Edit taints')}</ModalTitle>
+      <ModalTitle>{t('public~Edit taints')}</ModalTitle>
       <ModalBody>
         {_.isEmpty(taints) ? (
-          <EmptyBox label={t('modal~Taints')} />
+          <EmptyBox label={t('public~Taints')} />
         ) : (
           <>
             <div className="row taint-modal__heading hidden-sm hidden-xs">
-              <div className="col-sm-4 text-secondary text-uppercase">{t('modal~Key')}</div>
-              <div className="col-sm-3 text-secondary text-uppercase">{t('modal~Value')}</div>
-              <div className="col-sm-4 text-secondary text-uppercase">{t('modal~Effect')}</div>
+              <div className="col-sm-4 text-secondary text-uppercase">{t('public~Key')}</div>
+              <div className="col-sm-3 text-secondary text-uppercase">{t('public~Value')}</div>
+              <div className="col-sm-4 text-secondary text-uppercase">{t('public~Effect')}</div>
               <div className="col-sm-1 co-empty__header" />
             </div>
             {_.map(taints, (c, i) => (
               <div className="row taint-modal__row" key={i}>
                 <div className="col-md-4 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('modal~Key')}
+                    {t('public~Key')}
                   </div>
                   <input
                     type="text"
@@ -98,7 +98,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                 </div>
                 <div className="col-md-3 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('modal~Value')}
+                    {t('public~Value')}
                   </div>
                   <input
                     type="text"
@@ -110,7 +110,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                 <div className="clearfix visible-sm visible-xs" />
                 <div className="col-md-4 col-xs-5 taint-modal__field">
                   <div className="taint-modal__heading hidden-md hidden-lg text-secondary text-uppercase">
-                    {t('modal~Effect')}
+                    {t('public~Effect')}
                   </div>
                   <Dropdown
                     className="taint-modal__dropdown"
@@ -127,7 +127,7 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
                       type="button"
                       className="taint-modal__delete-icon"
                       onClick={() => remove(i)}
-                      aria-label={t('modal~Remove')}
+                      aria-label={t('public~Remove')}
                       variant="plain"
                     >
                       <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
@@ -140,13 +140,13 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
         )}
         <Button className="pf-m-link--align-left" onClick={addRow} type="button" variant="link">
           <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />
-          {t('modal~Add more')}
+          {t('public~Add more')}
         </Button>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={false}
-        submitText={t('modal~Save')}
+        submitText={t('public~Save')}
         cancel={cancel}
       />
     </form>

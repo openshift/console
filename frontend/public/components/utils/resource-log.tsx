@@ -36,14 +36,14 @@ const DEFAULT_BUFFER_SIZE = 1000;
 
 // Messages to display for corresponding log status
 const streamStatusMessages = {
-  // t('logs~Log stream ended.')
-  [STREAM_EOF]: 'logs~Log stream ended.',
-  // t('logs~Loading log...')
-  [STREAM_LOADING]: 'logs~Loading log...',
-  // t('logs~Log stream paused.')
-  [STREAM_PAUSED]: 'logs~Log stream paused.',
-  // t('logs~Log streaming...')
-  [STREAM_ACTIVE]: 'logs~Log streaming...',
+  // t('public~Log stream ended.')
+  [STREAM_EOF]: 'public~Log stream ended.',
+  // t('public~Loading log...')
+  [STREAM_LOADING]: 'public~Loading log...',
+  // t('public~Log stream paused.')
+  [STREAM_PAUSED]: 'public~Log stream paused.',
+  // t('public~Log streaming...')
+  [STREAM_ACTIVE]: 'public~Log streaming...',
 };
 
 const replaceVariables = (template: string, values: any): string => {
@@ -146,7 +146,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
             );
           })}
         <Checkbox
-          label={t('logs~Wrap lines')}
+          label={t('public~Wrap lines')}
           id="wrapLogLines"
           isChecked={isWrapLines}
           onChange={(checked: boolean) => {
@@ -158,14 +158,14 @@ export const LogControls: React.FC<LogControlsProps> = ({
         </span>
         <a href={currentLogURL} target="_blank" rel="noopener noreferrer">
           <OutlinedWindowRestoreIcon className="co-icon-space-r" />
-          {t('logs~Raw')}
+          {t('public~Raw')}
         </a>
         <span aria-hidden="true" className="co-action-divider hidden-xs">
           |
         </span>
         <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
           <DownloadIcon className="co-icon-space-r" />
-          {t('logs~Download')}
+          {t('public~Download')}
         </a>
         {screenfull.enabled && (
           <>
@@ -176,12 +176,12 @@ export const LogControls: React.FC<LogControlsProps> = ({
               {isFullscreen ? (
                 <>
                   <CompressIcon className="co-icon-space-r" />
-                  {t('logs~Collapse')}
+                  {t('public~Collapse')}
                 </>
               ) : (
                 <>
                   <ExpandIcon className="co-icon-space-r" />
-                  {t('logs~Expand')}
+                  {t('public~Expand')}
                 </>
               )}
             </Button>
@@ -356,9 +356,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           isInline
           className="co-alert"
           variant="danger"
-          title={t('logs~An error occurred while retrieving the requested logs.')}
+          title={t('public~An error occurred while retrieving the requested logs.')}
           actionLinks={
-            <AlertActionLink onClick={() => setError(false)}>{t('logs~Retry')}</AlertActionLink>
+            <AlertActionLink onClick={() => setError(false)}>{t('public~Retry')}</AlertActionLink>
           }
         />
       )}
@@ -367,9 +367,9 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           isInline
           className="co-alert"
           variant="warning"
-          title={t('logs~Some lines have been abridged because they are exceptionally long.')}
+          title={t('public~Some lines have been abridged because they are exceptionally long.')}
         >
-          <Trans ns="logs" t={t}>
+          <Trans ns="public" t={t}>
             To view unabridged log content, you can either{' '}
             <a href={linkURL} target="_blank" rel="noopener noreferrer">
               open the raw file in another window
@@ -387,11 +387,11 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           isInline
           className="co-alert"
           variant="info"
-          title={t('logs~The logs for this {{resourceKind}} may be stale.', {
+          title={t('public~The logs for this {{resourceKind}} may be stale.', {
             resourceKind: resource.kind,
           })}
           actionLinks={
-            <AlertActionLink onClick={() => setStale(false)}>{t('logs~Refresh')}</AlertActionLink>
+            <AlertActionLink onClick={() => setStale(false)}>{t('public~Refresh')}</AlertActionLink>
           }
         />
       )}

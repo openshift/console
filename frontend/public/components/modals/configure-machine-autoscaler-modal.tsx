@@ -85,18 +85,16 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
 
     return (
       <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle className="modal-header">
-          {t('machine-sets~Create MachineAutoscaler')}
-        </ModalTitle>
+        <ModalTitle className="modal-header">{t('public~Create MachineAutoscaler')}</ModalTitle>
         <ModalBody>
           <p>
-            <Trans i18nKey="scale machine set" ns="machine-sets">
+            <Trans i18nKey="scale machine set" ns="public">
               This will automatically scale machine set <b>{{ name }}</b>.
             </Trans>
           </p>
           <div className="form-group">
             <label>
-              {t('machine-sets~Minimum replicas:')}
+              {t('public~Minimum replicas:')}
               <NumberSpinner
                 className="pf-c-form-control"
                 value={minReplicas}
@@ -109,7 +107,7 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
           </div>
           <div className="form-group">
             <label>
-              {t('machine-sets~Maximum replicas:')}
+              {t('public~Maximum replicas:')}
               <NumberSpinner
                 className="pf-c-form-control"
                 value={maxReplicas}

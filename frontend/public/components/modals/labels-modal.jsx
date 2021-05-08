@@ -52,8 +52,8 @@ const BaseLabelsModal = withHandlePromise((props) => {
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
         {descriptionKey
-          ? t('modal~Edit {{description}}', { description: t(descriptionKey) })
-          : t('modal~Edit labels')}
+          ? t('public~Edit {{description}}', { description: t(descriptionKey) })
+          : t('public~Edit labels')}
       </ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
@@ -61,7 +61,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
             {messageKey
               ? t(messageKey)
               : t(
-                  'modal~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
+                  'public~Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.',
                 )}
           </div>
         </div>
@@ -70,7 +70,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
             <label htmlFor="tags-input" className="control-label">
               {descriptionKey
                 ? t('{{description}} for', { description: t(descriptionKey) })
-                : t('modal~Labels for')}{' '}
+                : t('public~Labels for')}{' '}
               <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} />{' '}
               {resource.metadata.name}
             </label>
@@ -86,7 +86,7 @@ const BaseLabelsModal = withHandlePromise((props) => {
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={false}
-        submitText={t('modal~Save')}
+        submitText={t('public~Save')}
         cancel={props.cancel}
       />
     </form>
@@ -105,10 +105,10 @@ export const podSelectorModal = createModalLauncher((props) => (
         : '/spec/selector/matchLabels'
     }
     isPodSelector={true}
-    // t('modal~Pod selector')
-    descriptionKey="modal~Pod selector"
-    // t('modal~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.')
-    messageKey="modal~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}."
+    // t('public~Pod selector')
+    descriptionKey="public~Pod selector"
+    // t('public~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.')
+    messageKey="public~Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}."
     labelClassName="co-text-pod"
     {...props}
   />

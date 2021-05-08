@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'ldap-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: LDAP', () => {
   let wrapper: ShallowWrapper<{}, AddLDAPPageState>;

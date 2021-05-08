@@ -120,6 +120,7 @@
   "Right click": "Right click",
   "Drag + Drop": "Drag + Drop",
   "{{label}} details": "{{label}} details",
+  "Provisioned as node": "Provisioned as node",
   "Scheduling disabled": "Scheduling disabled",
   "Pod": "Pod",
   "Pods": "Pods",

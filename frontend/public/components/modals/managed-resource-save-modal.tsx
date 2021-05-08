@@ -19,10 +19,10 @@ const ManagedResourceSaveModal: React.SFC<ManagedResourceSaveModalProps> = (prop
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('modal~Managed resource')}
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('public~Managed resource')}
       </ModalTitle>
       <ModalBody className="modal-body">
-        <Trans t={t} ns="modal">
+        <Trans t={t} ns="public">
           This resource is managed by{' '}
           <ResourceLink
             className="modal__inline-resource-link"
@@ -34,7 +34,7 @@ const ManagedResourceSaveModal: React.SFC<ManagedResourceSaveModalProps> = (prop
           and any modifications may be overwritten. Edit the managing resource to preserve changes.
         </Trans>
       </ModalBody>
-      <ModalSubmitFooter submitText={t('modal~Save')} cancel={props.close} inProgress={false} />
+      <ModalSubmitFooter submitText={t('public~Save')} cancel={props.close} inProgress={false} />
     </form>
   );
 };

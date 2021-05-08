@@ -29,6 +29,7 @@
   "Used capacity": "Used capacity",
   "Access mode": "Access mode",
   "Volume mode": "Volume mode",
+  "Save": "Save",
   "Restore as new PVC": "Restore as new PVC",
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.",
   "Volume Mode": "Volume Mode",

@@ -79,14 +79,14 @@ export const configureReplicaCountModal = (props) => {
       {},
       {
         defaultValue: 0,
-        // t('modal~Edit Pod count')
-        titleKey: 'modal~Edit Pod count',
-        // t('modal~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
-        messageKey: 'modal~{{resourceKinds}} maintain the desired number of healthy pods.',
+        // t('public~Edit Pod count')
+        titleKey: 'public~Edit Pod count',
+        // t('public~{{resourceKinds}} maintain the desired number of healthy pods.', {resourceKind: props.resourceKind.labelPlural})
+        messageKey: 'public~{{resourceKinds}} maintain the desired number of healthy pods.',
         messageVariables: { resourceKinds: props.resourceKind.labelPlural },
         path: '/spec/replicas',
-        // t('modal~Save')
-        buttonTextKey: 'modal~Save',
+        // t('public~Save')
+        buttonTextKey: 'public~Save',
         opts: { path: 'scale' },
       },
       props,
@@ -100,15 +100,15 @@ export const configureJobParallelismModal = (props) => {
       {},
       {
         defaultValue: 1,
-        // t('modal~Edit parallelism')
-        titleKey: 'modal~Edit parallelism',
-        // t('modal~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.', {resourceKind: props.resourceKind.labelPlural})
+        // t('public~Edit parallelism')
+        titleKey: 'public~Edit parallelism',
+        // t('public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.', {resourceKind: props.resourceKind.labelPlural})
         messageKey:
-          'modal~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
+          'public~{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.',
         messageVariables: { resourceKinds: props.resourceKind.labelPlural },
         path: '/spec/parallelism',
-        // t('modal~Save')
-        buttonTextKey: 'modal~Save',
+        // t('public~Save')
+        buttonTextKey: 'public~Save',
       },
       props,
     ),

@@ -108,30 +108,30 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">{t('modal~Manage columns')}</ModalTitle>
+      <ModalTitle className="modal-header">{t('public~Manage columns')}</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
-          <p>{t('modal~Selected columns will appear in the table.')}</p>
+          <p>{t('public~Selected columns will appear in the table.')}</p>
         </div>
         <div className="co-m-form-row">
           <Alert
             className="co-alert"
             isInline
-            title={t('modal~You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS })}
+            title={t('public~You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS })}
             variant="info"
           >
             {!columnLayout?.showNamespaceOverride &&
-              t('modal~The namespace column is only shown when in "All projects"')}
+              t('public~The namespace column is only shown when in "All projects"')}
           </Alert>
         </div>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <span className="col-sm-6">
               <label className="control-label">
-                {t('modal~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
+                {t('public~Default {{resourceKind}} columns', { resourceKind: columnLayout.type })}
               </label>
               <DataList
-                aria-label={t('modal~Default column list')}
+                aria-label={t('public~Default column list')}
                 id="defalt-column-management"
                 isCompact
               >
@@ -147,9 +147,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
               </DataList>
             </span>
             <span className="col-sm-6">
-              <label className="control-label">{t('modal~Additional columns')}</label>
+              <label className="control-label">{t('public~Additional columns')}</label>
               <DataList
-                aria-label={t('modal~Additional column list')}
+                aria-label={t('public~Additional column list')}
                 id="additional-column-management"
                 isCompact
               >
@@ -171,7 +171,7 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
         inProgress={false}
         cancel={cancel}
         submitText={t('public~Save')}
-        resetText={t('modal~Restore default columns')}
+        resetText={t('public~Restore default columns')}
         reset={resetColumns}
       />
     </form>

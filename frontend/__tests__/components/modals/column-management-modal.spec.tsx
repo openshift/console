@@ -16,7 +16,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'modal';
+const i18nNS = 'public';
 
 const columnManagementID = referenceForModel(PodModel);
 const columnManagementType = 'Pod';

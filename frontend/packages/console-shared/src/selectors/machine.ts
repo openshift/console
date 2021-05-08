@@ -34,5 +34,5 @@ export const getMachineAddresses = (machine: MachineKind) => machine?.status?.ad
 
 export const getMachinePhase = (obj: MachineKind): string => {
   const phase = obj?.status?.phase;
-  return phase === 'Running' ? i18next.t('machines~Provisioned as node') : phase;
+  return phase === 'Running' ? i18next.t('console-shared~Provisioned as node') : phase;
 };

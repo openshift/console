@@ -38,16 +38,16 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('language-preferences-modal~Edit language preference')}</ModalTitle>
+      <ModalTitle>{t('public~Edit language preference')}</ModalTitle>
       <ModalBody>
         <div className="form-group">
-          <label htmlFor="language_dropdown">{t('language-preferences-modal~Language')}</label>
+          <label htmlFor="language_dropdown">{t('public~Language')}</label>
           <Dropdown
             id="language_dropdown"
             items={supportedLocales}
             onChange={(newLanguage: string) => setLanguage(newLanguage)}
             selectedKey={language}
-            title={t('language-preferences-modal~Select language')}
+            title={t('public~Select language')}
           />
         </div>
       </ModalBody>

@@ -63,20 +63,20 @@ const MachineHealthCheckList: React.FC = (props) => {
   const MachineHealthCheckTableHeader = () => {
     return [
       {
-        title: t('machine-health-checks~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('machine-health-checks~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('machine-health-checks~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -91,7 +91,7 @@ const MachineHealthCheckList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('machine-health-checks~MachineHealthChecks')}
+      aria-label={t('public~MachineHealthChecks')}
       Header={MachineHealthCheckTableHeader}
       Row={MachineHealthCheckTableRow}
       virtualize
@@ -102,14 +102,14 @@ const MachineHealthCheckList: React.FC = (props) => {
 const UnhealthyConditionsTable: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   const { t } = useTranslation();
   return _.isEmpty(obj.spec.unhealthyConditions) ? (
-    <EmptyBox label={t('machine-health-checks~Unhealthy conditions')} />
+    <EmptyBox label={t('public~Unhealthy conditions')} />
   ) : (
     <table className="table">
       <thead>
         <tr>
-          <th>{t('machine-health-checks~Status')}</th>
-          <th>{t('machine-health-checks~Timeout')}</th>
-          <th>{t('machine-health-checks~Type')}</th>
+          <th>{t('public~Status')}</th>
+          <th>{t('public~Timeout')}</th>
+          <th>{t('public~Type')}</th>
         </tr>
       </thead>
       <tbody>
@@ -130,16 +130,12 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machine-health-checks~MachineHealthCheck details')} />
+        <SectionHeading text={t('public~MachineHealthCheck details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
               <ResourceSummary resource={obj}>
-                <DetailsItem
-                  label={t('machine-health-checks~Selector')}
-                  obj={obj}
-                  path="spec.selector"
-                >
+                <DetailsItem label={t('public~Selector')} obj={obj} path="spec.selector">
                   <Selector
                     kind={referenceForModel(MachineModel)}
                     selector={_.get(obj, 'spec.selector')}
@@ -150,18 +146,14 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
+                <DetailsItem label={t('public~Max unhealthy')} obj={obj} path="spec.maxUnhealthy" />
                 <DetailsItem
-                  label={t('machine-health-checks~Max unhealthy')}
-                  obj={obj}
-                  path="spec.maxUnhealthy"
-                />
-                <DetailsItem
-                  label={t('machine-health-checks~Expected machines')}
+                  label={t('public~Expected machines')}
                   obj={obj}
                   path="status.expectedMachines"
                 />
                 <DetailsItem
-                  label={t('machine-health-checks~Current healthy')}
+                  label={t('public~Current healthy')}
                   obj={obj}
                   path="status.currentHealthy"
                 />
@@ -171,7 +163,7 @@ const MachineHealthCheckDetails: React.FC<MachineHealthCheckDetailsProps> = ({ o
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('machine-health-checks~Unhealthy conditions')} />
+        <SectionHeading text={t('public~Unhealthy conditions')} />
         <UnhealthyConditionsTable obj={obj} />
       </div>
     </>
