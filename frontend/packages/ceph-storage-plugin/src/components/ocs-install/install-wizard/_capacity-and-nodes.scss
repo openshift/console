@@ -1,0 +1,6 @@
+.ocs-enable-arbiter-label {
+    display: inline-block;
+    &__title--padding {
+      padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0;
+    }
+}
