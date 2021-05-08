@@ -52,7 +52,7 @@ Feature: Create Pipeline from Add Options
 
         @smoke
         Scenario Outline: Pipeline in topology page : P-02-TC02
-            Given workload "<name>" is created from add page with pipeline
+            Given user created workload "<name>" from add page with pipeline
               And user is at the Topology page
               And workload "<name>" is added to namespace
              When user searches for "<name>" in topology page
@@ -66,7 +66,7 @@ Feature: Create Pipeline from Add Options
 
         @smoke
         Scenario Outline: Search the created pipeline from Add options in pipelines page : P-02-TC03
-            Given workload "<name>" is created from add page with pipeline
+            Given user created workload "<name>" from add page with pipeline
               And user is at pipelines page
              When user searches for pipeline "<name>" in pipelines page
              Then pipeline "<name>" is displayed in pipelines page
@@ -79,7 +79,8 @@ Feature: Create Pipeline from Add Options
         @regression
         Scenario Outline: Create a workload with pipeline from Docker file : P-02-TC04
             Given user is on Import from Docker file page
-             When user enters Git Repo url as "<docker_git_url>"
+             When user enters Git Repo url in docker file as "<docker_git_url>"
+              And user enters Name as "<pipeline_name>" in General section
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
@@ -95,7 +96,7 @@ Feature: Create Pipeline from Add Options
             Given user is at Developer Catalog form with builder images
              When user searches builder image "node" in developer catalog
               And user creates the application with the selected builder image
-              And user enters Git Repo url as "<git_url>"
+              And user enters Git Repo url in builder image as "<git_url>"
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Create Source-to-Image application
              Then user will be redirected to Topology page
@@ -127,7 +128,8 @@ Feature: Create Pipeline from Add Options
 
         @regression
         Scenario Outline: Pipelines section in topology page: P-02-TC09
-            Given user is at the Topology page
+            Given user created workload "<node_name>" from add page with pipeline
+              And user is at the Topology page
              When user searches for "<node_name>" in topology page
               And user clicks on workload "<node_name>"
              Then user can see sidebar opens with Resources tab selected by default

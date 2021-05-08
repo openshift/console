@@ -193,25 +193,32 @@ export const startPipelineInPipelinesPage = {
       .should('be.enabled')
       .type(gitUrl);
   },
+  verifyGitRepoUrlAndEnterGitUrl: (gitUrl: string) => {
+    cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
+      if ($btn.attr('disabled')) {
+        startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+      } else {
+        cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+        startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+      }
+    });
+  },
+
   enterRevision: (revision: string) => {
     cy.get(pipelinesPO.startPipeline.revision)
       .should('be.visible')
       .type(revision);
   },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
-    cy.get('.modal-body-content').should('be.visible');
+    modal.shouldBeOpened();
     cy.get('form').within(() => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000);
       cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
-        // if ($btn.attr('aria-haspopup', 'listbox')) {
         if ($btn.attr('disabled')) {
           cy.log('Pipeline resource is not available, so adding a new git resource');
         } else {
-          cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
-          cy.get('[role="option"]')
-            .first()
-            .click();
+          cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
         }
         startPipelineInPipelinesPage.enterGitUrl(gitUrl);
         startPipelineInPipelinesPage.enterRevision(revision);
@@ -243,7 +250,7 @@ export const startPipelineInPipelinesPage = {
   },
   verifyCreateSourceSecretSection: () => {
     cy.get(pipelinesPO.startPipeline.advancedOptions.secretFormTitle).should('be.visible');
-    cy.testA11y('Secret source creation in Start Pipeline Modal');
+    // cy.testA11y('Secret source creation in Start Pipeline Modal');
   },
   verifyFields: () => {
     cy.get(pipelinesPO.startPipeline.secretForm).within(() => {

@@ -12,6 +12,7 @@ import {
   topologyPage,
   topologySidePane,
   navigateTo,
+  app,
 } from '@console/dev-console/integration-tests/support/pages';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
@@ -31,15 +32,9 @@ When('user fills the details in Start Pipeline popup', () => {
 });
 
 When('user enters git url as {string} in start pipeline modal', (gitUrl: string) => {
-  cy.get('.modal-body-content').then(($modal) => {
-    if ($modal.find(pipelinesPO.startPipeline.gitResourceDropdown).length) {
-      cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
-      cy.get('[role="option"]')
-        .first()
-        .click();
-    }
-  });
-  startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+  modal.shouldBeOpened();
+  app.waitForLoad();
+  startPipelineInPipelinesPage.verifyGitRepoUrlAndEnterGitUrl(gitUrl);
 });
 
 When('user enters revision as {string} in start pipeline modal', (revision: string) => {

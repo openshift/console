@@ -22,19 +22,6 @@ declare global {
   }
 }
 
-before(() => {
-  cy.login();
-  cy.visit('');
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
-});
-
-after(() => {
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
-  cy.logout();
-});
-
 Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
   cy.byLegacyTestID('modal-title').should('contain.text', alertTitle);
 });

@@ -29,7 +29,7 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: '.odc-task-sidebar__resource [data-test-id="dropdown-button"]',
+      inputResource: 'select[id*="tasks-0-resources-inputs-0-resource-field"]',
       workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
       imageName: '#IMAGE',
       script: '#SCRIPT',
@@ -60,24 +60,16 @@ export const pipelineBuilderPO = {
     cancel: '[data-test-id="reset-button"]',
     yamlEditor: '[data-mode-id="yaml"]',
     samples: {
-      s2iPipelineWithWorkspace:
-        'div.osc-yaml-editor__sidebar ol li:nth-child(3) > button:nth-child(3)',
-      dockerPipelineWithResource:
-        'div.osc-yaml-editor__sidebar ol li:nth-child(2) > button:nth-child(3)',
-      dockerBuildAndDeployPipeline:
-        'div.osc-yaml-editor__sidebar ol li:nth-child(1) > button:nth-child(3)',
-      simplePipeline: 'div.osc-yaml-editor__sidebar ol li:nth-child(4) > button:nth-child(3)',
-      s2iPipelineWithResource:
-        'div.osc-yaml-editor__sidebar ol li:nth-child(5) > button:nth-child(3)',
+      sidebar: '[data-test="resource-sidebar"]',
     },
   },
 };
 
 export const pipelineDetailsPO = {
   title: '[data-test-section-heading="Pipeline details"]',
-  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
+  detailsTab: '[data-test-id$="Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
-  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
+  yamlTab: '[data-test-id$="YAML"]',
   pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
@@ -162,10 +154,10 @@ export const clusterTriggerBindingDetailsPO = {
 
 export const pipelineRunDetailsPO = {
   logsTab: '[data-test-id="horizontal-link-Logs"]',
-  yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
-  detailsTab: '[data-test-id="horizontal-link-public~Details"]',
+  yamlTab: '[data-test-id$="YAML"]',
+  detailsTab: '[data-test-id$="Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-Task Runs"]',
-  eventsTab: '[data-test-id="horizontal-link-public~Events"]',
+  eventsTab: '[data-test-id$="Events"]',
   pipelineRunStatus: 'h1 [data-test="status-text"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
@@ -229,7 +221,7 @@ export const pipelinesPO = {
   },
   startPipeline: {
     sectionTitle: 'h2.odc-form-section__heading',
-    gitResourceDropdown: '.odc-pipeline-resource-dropdown button',
+    gitResourceDropdown: '[id*="dropdown-resources-0"]',
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',

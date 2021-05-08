@@ -15,8 +15,7 @@ Add below content in settings.json under .vscode folder
 ```json
 {
   "cucumberautocomplete.steps": [
-    "./frontend/packages/dev-console/integration-tests/support/step-definitions/*/*.ts",
-    "./frontend/packages/dev-console/integration-tests/support/step-definitions/*.ts"
+    "./frontend/packages/*/integration-tests/support/step-definitions/*/*.ts",
   ],
   "cucumberautocomplete.strictGherkinCompletion": true,
   "editor.quickSuggestions": true,

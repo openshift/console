@@ -2,6 +2,7 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   devNavigationMenu,
   addOptions,
+  messages,
 } from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
@@ -15,6 +16,7 @@ import {
 import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
+import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -47,7 +49,22 @@ Then('pipeline section is displayed with message {string}', (message: string) =>
 
 When('user enters Git Repo url in docker file as {string}', (gitRepoUrl: string) => {
   gitPage.enterGitUrl(gitRepoUrl);
-  gitPage.verifyValidatedMessage();
+  cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
+  cy.get('body').then(($body) => {
+    if (
+      $body
+        .find(gitPO.gitSection.validatedMessage)
+        .text()
+        .includes(messages.addFlow.privateGitRepoMessage) ||
+      $body
+        .find(gitPO.gitSection.validatedMessage)
+        .text()
+        .includes(messages.addFlow.rateLimitExceeded) ||
+      $body.find('[aria-label="Warning Alert"]').length
+    ) {
+      gitPage.enterGitUrl(gitRepoUrl);
+    }
+  });
 });
 
 When('user enters Git Repo url in builder image as {string}', (gitRepoUrl: string) => {
@@ -126,7 +143,7 @@ Then('pipeline {string} is displayed in pipelines page', (pipelineName: string) 
   pipelinesPage.verifyNameInPipelinesTable(pipelineName);
 });
 
-Given('workload {string} is created from add page with pipeline', (pipelineName: string) => {
+Given('user created workload {string} from add page with pipeline', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
@@ -189,4 +206,8 @@ Then('user will be redirected to Import from Git form', () => {
 
 When('user selects resource type as {string}', (resourceType: string) => {
   gitPage.selectResource(resourceType);
+});
+
+Then('user can see sidebar opens with Resources tab selected by default', () => {
+  topologySidePane.verifySelectedTab('Resources');
 });
