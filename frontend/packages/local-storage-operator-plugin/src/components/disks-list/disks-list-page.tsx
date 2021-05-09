@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
-import { Link } from 'react-router-dom';
 import { Button, EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import {
@@ -13,20 +12,19 @@ import {
   RowFunction,
   MultiListPage,
 } from '@console/internal/components/factory';
-import {
-  FirehoseResult,
-  humanizeBinaryBytes,
-  Kebab,
-  LoadingInline,
-} from '@console/internal/components/utils';
+import { FirehoseResult, humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SubscriptionKind, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { getNamespace, getNodeRole } from '@console/shared/';
-import { LocalVolumeDiscovery, LocalVolumeDiscoveryResult } from '../../models';
+import { LocalVolumeDiscoveryResult } from '../../models';
 import { LABEL_SELECTOR } from '../../constants/disks-list';
 import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './types';
+import {
+  updateLocalVolumeDiscovery,
+  createLocalVolumeDiscovery,
+} from '../local-volume-discovery/request';
 
 export const tableColumnClasses = [
   '',
@@ -96,6 +94,9 @@ const DisksList: React.FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
+      loadError={props.customData.error || props.loadError}
+      loaded={props.customData.loaded && props.loaded}
+      label={t('lso-plugin~Disks')}
       aria-label={t('lso-plugin~Disks List')}
       Header={diskHeader}
       Row={diskRow}
@@ -111,7 +112,11 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [subscription, subscriptionLoaded] = useK8sWatchResource<SubscriptionKind[]>({
+  const [lvdRequestError, setError] = React.useState('');
+  const [lvdRequestInProgress, setProgress] = React.useState(false);
+  const [subscription, subscriptionLoaded, subscriptionLoadError] = useK8sWatchResource<
+    SubscriptionKind[]
+  >({
     kind: referenceForModel(SubscriptionModel),
     fieldSelector: 'metadata.name=local-storage-operator',
     isList: true,
@@ -123,26 +128,41 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
   const nodeRole = getNodeRole(obj);
   const propName = `lvdr-${nodeName}`;
 
+  const makeLocalVolumeDiscoverRequest = async (ns: string) => {
+    const nodeNameByHostnameLabel = obj.metadata?.labels?.['kubernetes.io/hostname'];
+    setProgress(true);
+    try {
+      await updateLocalVolumeDiscovery([nodeNameByHostnameLabel], ns, setError);
+    } catch (error) {
+      if (error?.response?.status === 404) {
+        try {
+          await createLocalVolumeDiscovery([nodeNameByHostnameLabel], ns, setError);
+        } catch (createError) {
+          setError(createError.message);
+          setProgress(false);
+        }
+      } else {
+        setError(error.message);
+        setProgress(false);
+      }
+    }
+  };
+
   const EmptyMsg = () => (
     <EmptyState variant={EmptyStateVariant.large}>
-      {!subscriptionLoaded ? (
-        <LoadingInline />
-      ) : (
-        <>
-          <p>{t('lso-plugin~Disks Not Found')}</p>
-          {csvName && operatorNs && nodeRole !== 'master' && (
-            <Link
-              className="co-m-primary-action"
-              to={`/k8s/ns/${operatorNs}/clusterserviceversions/${csvName}/${referenceForModel(
-                LocalVolumeDiscovery,
-              )}/~new`}
-            >
-              <Button variant="primary" id="yaml-create" data-test="yaml-create">
-                {t('lso-plugin~Discover Disks')}
-              </Button>
-            </Link>
-          )}
-        </>
+      <p>{t('lso-plugin~Disks Not Found')}</p>
+      {csvName && operatorNs && nodeRole !== 'master' && (
+        <Button
+          isDisabled={lvdRequestInProgress}
+          isLoading={lvdRequestInProgress}
+          className="pf-u-mt-0"
+          onClick={() => makeLocalVolumeDiscoverRequest(operatorNs)}
+          variant="primary"
+          id="yaml-create"
+          data-test="yaml-create"
+        >
+          {t('lso-plugin~Discover Disks')}
+        </Button>
       )}
     </EmptyState>
   );
@@ -190,7 +210,12 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
           selector: { [LABEL_SELECTOR]: nodeName },
         },
       ]}
-      customData={{ node: nodeName, EmptyMsg }}
+      customData={{
+        node: nodeName,
+        EmptyMsg,
+        error: lvdRequestError || subscriptionLoadError,
+        loaded: subscriptionLoaded,
+      }}
     />
   );
 };
