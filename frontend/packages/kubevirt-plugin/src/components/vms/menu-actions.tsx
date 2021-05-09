@@ -397,13 +397,13 @@ export const menuActionCopySSHCommand = (
             position="left"
             trigger="manual"
             isVisible={showTooltip}
-            content={t('kubevirt-plugin~SSH Service can be managed in the VMs details page')}
+            content={t('kubevirt-plugin~Manage SSH access in the virtual machine Details page')}
           />
         )}
         <div className="kubevirt-menu-actions__secondary-title">
           {isDisabled
             ? t('kubevirt-plugin~Requires SSH Service')
-            : t('kubevirt-plugin~will copy to clipboard')}
+            : t('kubevirt-plugin~copy to clipboard')}
         </div>
       </div>
     );
@@ -425,9 +425,9 @@ export const vmMenuActions = [
   menuActionCancelMigration,
   menuActionClone,
   menuActionOpenConsole,
+  menuActionCopySSHCommand,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  menuActionCopySSHCommand,
   menuActionDeleteVMorCancelImport,
 ];
 

@@ -44,12 +44,12 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
               )}
             </>
           ) : (
-            <div className="text-secondary">{t('kubevirt-plugin~VM not running')}</div>
+            <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
           )}
         </StackItem>
         <StackItem>
           <div>
-            <b>{t('kubevirt-plugin~SSH Service ')}</b>
+            <b>{t('kubevirt-plugin~SSH Access ')}</b>
             <EditButton
               id="SSHDetailsPage-service-modal"
               canEdit={isVMReady}
@@ -60,10 +60,10 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
             <Text component={TextVariants.p} data-test="SSHDetailsPage-port">
               {sshServices?.running
                 ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
-                : t('kubevirt-plugin~SSH Service unavailable')}
+                : t('kubevirt-plugin~SSH Service disabled')}
             </Text>
           ) : (
-            <div className="text-secondary">{t('kubevirt-plugin~VM not running')}</div>
+            <div className="text-secondary">{t('kubevirt-plugin~Virtual machine not running')}</div>
           )}
         </StackItem>
       </Stack>
