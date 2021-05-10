@@ -43,6 +43,7 @@ import {
   getTemplateName,
   getTemplateProvider,
   getTemplateProviderType,
+  isLabeledTemplate,
   templateProviders,
 } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
@@ -92,8 +93,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
       })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
       badges={[
+        isLabeledTemplate(t, template) && (
+          <VMTemplateLabel template={template} className="kv-select-template__support-label" />
+        ),
         isPinned && <PinnedIcon />,
-        <VMTemplateLabel template={template} className="kv-select-template__support-label" />,
       ]}
       title={
         <Stack>
@@ -219,10 +222,18 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
             fuzzy(textFilterLowerCase, os.id.toLowerCase()),
         )
       : true;
-    const providerFilter =
-      filters.provider?.length > 0
-        ? filters.provider.includes(getTemplateProviderType(item.template))
-        : true;
+
+    const type = item?.template ? getTemplateProviderType(item.template) : undefined;
+    let providerFilter = true;
+    // checking if any template provider has clicked
+    if (filters.provider?.length > 0) {
+      if (type) {
+        providerFilter = filters.provider.includes(type);
+      }
+      if (templateProviders(t).length === filters.provider.length) {
+        providerFilter = true;
+      }
+    }
 
     let bootSourceFilter = true;
     if (filters.bootSource?.length > 0) {

@@ -33,9 +33,10 @@ export const virtualization = {
       getRow(templateName, () => cy.byTestID('template-details').click());
       if (support) {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-support').should('have.text', support);
+        cy.byTestID('template-provider').should('include.text', support);
       } else {
-        cy.byTestID('template-support').should('not.exist');
+        cy.byTestID('template-support').should('exist');
+        cy.byTestID('template-provider').should('include.text', 'Community');
       }
       if (parentSupport) {
         cy.byTestID('template-support-parent').should('exist');

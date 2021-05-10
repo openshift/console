@@ -24,19 +24,34 @@ import { VirtualMachineTemplateBundle } from './table/types';
 import VMTemplateTable from './table/VMTemplateTable';
 import { filterTemplates } from './utils';
 
+import './vm-template.scss';
+
 // TODO
 const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
   {
-    filterGroupName: t('kubevirt-plugin~Provider'),
+    filterGroupName: t('kubevirt-plugin~Template Provider'),
     type: 'template-provider',
-    reducer: (obj) => (obj.template ? getTemplateProviderType(obj.template) : 'user'),
-    items: templateProviders(t),
-    filter: (types, obj: VirtualMachineTemplateBundle) => {
+    reducer: (obj) => {
       if (obj.template) {
         const type = getTemplateProviderType(obj.template);
-        return types.selected.size === 0 || types.selected.has(type);
+        return type;
       }
-      return types.selected.size === 0 || types.selected.has('user');
+      return 'user';
+    },
+    items: templateProviders(t),
+    filter: (types, obj: VirtualMachineTemplateBundle) => {
+      let providerFilter = true;
+      if (types.selected.size > 0) {
+        if (templateProviders(t).length === types.selected.size) {
+          providerFilter = true;
+        } else if (obj.template) {
+          const type = getTemplateProviderType(obj.template);
+          providerFilter = types.selected.has(type);
+        } else {
+          providerFilter = types.selected.has('user');
+        }
+      }
+      return providerFilter;
     },
   },
 ];
@@ -134,18 +149,20 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
 
   return (
-    <MultiListPage
-      {...modifiedProps}
-      createAccessReview={createAccessReview}
-      createButtonText={t('kubevirt-plugin~Create')}
-      title={t('kubevirt-plugin~Virtual Machine Templates')}
-      showTitle={showTitle}
-      ListComponent={VMTemplateTable}
-      resources={resources}
-      flatten={flatten}
-      label={t('kubevirt-plugin~Virtual Machine Templates')}
-      rowFilters={filters(t)}
-    />
+    <div className="kv-template--list">
+      <MultiListPage
+        {...modifiedProps}
+        createAccessReview={createAccessReview}
+        createButtonText={t('kubevirt-plugin~Create')}
+        title={t('kubevirt-plugin~Virtual Machine Templates')}
+        showTitle={showTitle}
+        ListComponent={VMTemplateTable}
+        resources={resources}
+        flatten={flatten}
+        label={t('kubevirt-plugin~Virtual Machine Templates')}
+        rowFilters={filters(t)}
+      />
+    </div>
   );
 };
 
