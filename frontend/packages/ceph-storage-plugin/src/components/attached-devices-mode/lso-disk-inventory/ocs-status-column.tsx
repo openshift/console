@@ -71,15 +71,24 @@ const getOCSStatusBody = (
 export const OCSStatus: React.FC<{
   ocsState: OCSColumnState;
   diskName: string;
+  diskID: string;
+  diskSerial: string;
   className: string;
-}> = React.memo(({ ocsState, className, diskName }) => {
+}> = React.memo(({ ocsState, className, diskName, diskID, diskSerial }) => {
   const { t } = useTranslation();
 
   const { replacementMap, alertsMap, metricsMap } = ocsState;
+  const { id, serial } = replacementMap?.[diskName]?.disk || {};
   let status: OCSDiskStatus;
-  if (replacementMap[diskName]) status = replacementMap[diskName].status;
+
+  // If device is already replaced then show the replacement status
+  if (replacementMap[diskName] && id === diskID && serial === diskSerial)
+    status = replacementMap[diskName].status;
+  // If device is failed then show the failure status
   else if (alertsMap[diskName]) status = alertsMap[diskName].status;
+  // If device is neither failed nor replaced then show underlying osd status
   else if (metricsMap[diskName]) status = metricsMap[diskName].status;
+
   return (
     <TableData className={className}>
       {status ? getOCSStatusBody(status, diskName, t) : '-'}

@@ -87,7 +87,16 @@ export type OCSColumnState = {
   metricsMap: OCSDiskList;
   alertsMap: OCSDiskList;
   isRebalancing: boolean;
-  replacementMap: OCSDiskList;
+  replacementMap: ReplacementMap;
+};
+
+export type ReplacementMap = OCSDiskList & {
+  [diskName: string]: OCSDiskMetadata & {
+    disk: {
+      id: string;
+      serial: string;
+    };
+  };
 };
 
 export type OCSDiskList = {
