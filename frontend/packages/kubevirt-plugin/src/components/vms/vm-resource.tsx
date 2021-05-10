@@ -20,7 +20,7 @@ import { getDescription } from '../../selectors/selectors';
 import { getOperatingSystem, getOperatingSystemName, getVMLikeModel } from '../../selectors/vm';
 import { isBootOrderChanged, isFlavorChanged } from '../../selectors/vm-like/next-run-changes';
 import { getFlavorData } from '../../selectors/vm/flavor-data';
-import { isVMReady, isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { isVMIReady, isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { getVMINodeName, isVMIPaused } from '../../selectors/vmi';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { VMStatusBundle } from '../../statuses/vm/types';
@@ -217,7 +217,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         title={t('kubevirt-plugin~User credentials')}
         idValue={prefixedID(id, 'authorized-ssh-key')}
       >
-        <SSHDetailsPage vm={vmiLike} isVMReady={isVMReady(vm)} />
+        <SSHDetailsPage vm={vmiLike} isVMIReady={isVMIReady(vmi)} />
       </VMDetailsItem>
     </dl>
   );

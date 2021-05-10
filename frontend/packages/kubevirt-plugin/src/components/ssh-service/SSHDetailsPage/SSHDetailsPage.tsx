@@ -13,10 +13,10 @@ import './ssh-details-page.scss';
 
 type SSHDetailsPageProps = {
   vm: VMKind | VMIKind;
-  isVMReady: boolean;
+  isVMIReady: boolean;
 };
 
-const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
+const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMIReady }) => {
   const { sshServices } = useSSHService(vm);
   const { command, user } = useSSHCommand(vm);
 
@@ -25,7 +25,7 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
     <>
       <Stack hasGutter>
         <StackItem>
-          {isVMReady ? (
+          {isVMIReady ? (
             <>
               <Text component={TextVariants.p} data-test="SSHDetailsPage-user">
                 {t('kubevirt-plugin~user: {{user}}', { user })}
@@ -52,11 +52,11 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm, isVMReady }) => {
             <b>{t('kubevirt-plugin~SSH Access ')}</b>
             <EditButton
               id="SSHDetailsPage-service-modal"
-              canEdit={isVMReady}
+              canEdit={isVMIReady}
               onClick={() => SSHModal({ vm })}
             />
           </div>
-          {isVMReady ? (
+          {isVMIReady ? (
             <Text component={TextVariants.p} data-test="SSHDetailsPage-port">
               {sshServices?.running
                 ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
