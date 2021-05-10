@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RadioInput } from '@console/internal/components/radio';
 
-export const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
+const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> = ({
   autofocus,
   enabled,
   onChange: setEnabled,
@@ -18,7 +18,7 @@ export const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> =
         onChange={onChange}
         value="enabled"
         checked={enabled}
-        title={t('olm~Enable')}
+        title={t('console-shared~Enable')}
         autoFocus={autofocus && enabled}
       />
       <RadioInput
@@ -26,7 +26,7 @@ export const ConsolePluginRadioInputs: React.FC<ConsolePluginRadioInputsProps> =
         onChange={onChange}
         value="disabled"
         checked={!enabled}
-        title={t('olm~Disable')}
+        title={t('console-shared~Disable')}
         autoFocus={autofocus && !enabled}
       />
     </>
@@ -39,3 +39,5 @@ type ConsolePluginRadioInputsProps = {
   onChange: (enabled: boolean) => void;
   name: string;
 };
+
+export default ConsolePluginRadioInputs;

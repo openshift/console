@@ -123,6 +123,10 @@ export default (state: K8sState, action: K8sAction): K8sState => {
           .setIn(['RESOURCES', 'safeResources'], action.payload.resources.safeResources)
           .setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources)
           .setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources)
+          .setIn(
+            ['RESOURCES', 'clusterOperatorConfigResources'],
+            action.payload.resources.clusterOperatorConfigResources,
+          )
           .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
           .setIn(['RESOURCES', 'groupToVersionMap'], action.payload.resources.groupVersionMap)
           .setIn(['RESOURCES', 'inFlight'], false)

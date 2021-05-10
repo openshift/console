@@ -996,7 +996,7 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
     },
     {
       href: 'globalconfig',
-      name: t('public~Global configuration'),
+      name: t('public~Configuration'),
       component: GlobalConfigPage,
     },
   ];

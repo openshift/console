@@ -1085,3 +1085,15 @@ export type NetworkPolicyPort = {
   port?: string;
   protocol?: string;
 };
+
+export type ConsolePluginKind = K8sResourceCommon & {
+  spec: {
+    displayName: string;
+    service: {
+      basePath: string;
+      name: string;
+      namespace: string;
+      port: number;
+    };
+  };
+};
