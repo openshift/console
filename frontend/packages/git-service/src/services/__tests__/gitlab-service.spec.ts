@@ -26,7 +26,6 @@ describe('Gitlab Service', () => {
       repoName: 'devconsole-git',
       owner: 'jpratik999',
       host: 'https://gitlab.com',
-      defaultBranch: 'master',
       fullName: 'jpratik999/devconsole-git',
       contextDir: '',
     });
@@ -49,7 +48,6 @@ describe('Gitlab Service', () => {
       repoName: 'devconsole-git',
       owner: 'jpratik99',
       host: 'https://gitlab.com',
-      defaultBranch: 'master',
       fullName: 'jpratik99/devconsole-git',
       contextDir: '',
     });
@@ -72,7 +70,6 @@ describe('Gitlab Service', () => {
       repoName: 'public-project',
       owner: 'random-user',
       host: 'https://version.helsinki.fi',
-      defaultBranch: 'master',
       fullName: 'random-user/public-project',
       contextDir: '',
     });
@@ -139,6 +136,17 @@ describe('Gitlab Service', () => {
       context.assertScopesFinished();
       nockDone();
     });
+  });
+
+  it('should remove leading slash from context directory', () => {
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/rottencandy/s2i-dotnetcore-ex',
+      contextDir: '/app',
+    };
+    const gitService = new GitlabService(gitSource);
+
+    const metaData = gitService.getRepoMetadata();
+    expect(metaData.contextDir).toEqual('app');
   });
 
   it('should detect Golang language', () => {

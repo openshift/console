@@ -35,13 +35,13 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoMetadata = (): RepoMetadata => {
-    const { name, owner, host, branch } = ParseBitbucketUrl(this.gitsource.url);
+    const { name, owner, host } = ParseBitbucketUrl(this.gitsource.url);
     const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     return {
       repoName: name,
       owner,
       host,
-      defaultBranch: this.gitsource.ref || branch,
+      defaultBranch: this.gitsource.ref || 'HEAD',
       contextDir,
     };
   };

@@ -17,6 +17,8 @@ type GitlabRepo = {
   path_with_namespace: string;
 };
 
+const removeLeadingSlash = (str: string) => str?.replace(/^\//, '') || '';
+
 export class GitlabService extends BaseService {
   private readonly client: any;
 
@@ -59,13 +61,13 @@ export class GitlabService extends BaseService {
     const { name, owner, protocol, resource, full_name: fullName } = GitUrlParse(
       this.gitsource.url,
     );
-    const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
+    const contextDir = removeLeadingSlash(this.gitsource.contextDir);
     const host = `${protocol}://${resource}`;
     return {
       repoName: name,
       owner,
       host,
-      defaultBranch: this.gitsource.ref || 'master',
+      defaultBranch: this.gitsource.ref,
       fullName,
       contextDir,
     };

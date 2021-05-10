@@ -2,7 +2,7 @@ export interface RepoMetadata {
   repoName: string;
   owner: string;
   host: string;
-  defaultBranch: string;
+  defaultBranch?: string;
   fullName?: string;
   contextDir?: string;
 }
