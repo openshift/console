@@ -17,16 +17,13 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
   const { t } = useTranslation();
   const [textFilter, setTextFilter] = React.useState('');
 
-  const visibleItems = appGroups.filter(({ name }) => {
-    return (
-      fuzzyCaseInsensitive(textFilter, name) ||
-      name.toLowerCase().indexOf(textFilter.toLowerCase()) !== -1
-    );
+  const visibleItems = appGroups?.filter(({ name }) => {
+    return fuzzyCaseInsensitive(textFilter, name);
   });
 
   return (
     <div className="odc-gitops-list">
-      {!emptyStateMsg ? (
+      {!emptyStateMsg && appGroups ? (
         <>
           <div className="co-m-pane__filter-row">
             <TextFilter

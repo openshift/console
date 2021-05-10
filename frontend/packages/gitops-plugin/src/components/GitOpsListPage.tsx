@@ -52,7 +52,7 @@ const GitOpsListPage: React.FC = () => {
       ) : (
         <>
           <PageHeading className="co-catalog-page__description">
-            Select an application to view the environment it&apos;s deployed in.
+            {t("gitops-plugin~Select an application to view the environment it's deployed in.")}
           </PageHeading>
           <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
         </>

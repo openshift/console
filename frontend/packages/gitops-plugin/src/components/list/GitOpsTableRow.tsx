@@ -14,7 +14,7 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-m-width-20'), // Last deployment
 ];
 
-const handleClick = (appGroup) => {
+const handleClick = (appGroup: GitOpsAppGroupData) => {
   history.push(`/environments/${appGroup.name}?url=${appGroup.repo_url}`);
 };
 
@@ -28,7 +28,7 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
           onClick={() => handleClick(appGroup)}
           aria-label={appGroup.name}
           variant="link"
-          style={{ padding: '0px' }}
+          isInline
         >
           {appGroup.name}
         </Button>
@@ -41,12 +41,9 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
           <span style={{ marginRight: 'var(--pf-global--spacer--xs)' }}>{appGroup.repo_url}</span>
         </ExternalLink>
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <span>{appGroup.environments.join(', ')}</span>
-      </TableData>
+      <TableData className={tableColumnClasses[2]}>{appGroup.environments.join(', ')}</TableData>
       <TableData className={tableColumnClasses[3]}>
-        {/* this is just a placeholder until backend changes can go in to get this data */}
-        <span>-</span>
+        {/* this is just a placeholder until backend changes can go in to get this data */}-
       </TableData>
     </TableRow>
   );
