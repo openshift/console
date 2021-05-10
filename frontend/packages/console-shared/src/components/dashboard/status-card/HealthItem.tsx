@@ -1,9 +1,10 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+
+import { SecondaryStatus } from '../../status';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
-import { SecondaryStatus } from '../../status';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
   <div data-test={dataTest} className="co-dashboard-icon">
@@ -12,7 +13,7 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
 );
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
-  ({ className, state, title, details, popupTitle, noIcon = false, children }) => {
+  ({ className, state, title, details, popupTitle, noIcon = false, icon, children }) => {
     const { t } = useTranslation();
 
     const detailMessage = details || healthStateMessage(state, t);
@@ -29,7 +30,8 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
             </span>
           </div>
         ) : (
-          !noIcon && <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />
+          !noIcon &&
+          (icon || <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />)
         )}
         <div>
           <span className="co-dashboard-text--small co-status-card__health-item-text">
@@ -63,6 +65,7 @@ type HealthItemProps = {
   state?: HealthState;
   popupTitle?: string;
   noIcon?: boolean;
+  icon?: React.ReactNode;
 };
 
 type HealthItemIconProps = {
