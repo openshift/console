@@ -157,6 +157,12 @@ export enum NetworkType {
   DEFAULT = 'DEFAULT',
   MULTUS = 'MULTUS',
 }
+
+export enum NADSelectorType {
+  CLUSTER = 'CLUSTER',
+  PUBLIC = 'PUBLIC',
+}
+
 export type KMSConfigMap = {
   KMS_PROVIDER: string;
   KMS_SERVICE_NAME: string;

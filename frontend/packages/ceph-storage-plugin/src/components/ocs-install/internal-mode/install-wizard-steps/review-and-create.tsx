@@ -37,6 +37,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
     storageClass,
     networkType,
     publicNetwork,
+    clusterNetwork,
   } = state;
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
@@ -121,7 +122,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
         {isMultusSupported && (
           <ReviewListBody
             validation={
-              networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+              networkType === NetworkType.MULTUS &&
+              !publicNetwork &&
+              !clusterNetwork &&
+              ValidationType.NETWORK
             }
           >
             <p>
