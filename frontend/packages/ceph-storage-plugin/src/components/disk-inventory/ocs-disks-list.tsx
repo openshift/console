@@ -48,6 +48,7 @@ import {
   OCSColumnStateAction,
   Status,
   OCSDiskStatus,
+  ReplacementMap,
 } from './state-reducer';
 import { CEPH_STORAGE_NAMESPACE, OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from '../../constants';
 
@@ -99,12 +100,17 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
   customData,
 }) => {
   const { ocsState, nodeName, dispatch } = customData;
-  const diskName = obj.path;
   return (
     <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
       <TableData className={tableColumnClasses[1]}>{obj.status.state}</TableData>
-      <OCSStatus ocsState={ocsState} diskName={diskName} className={tableColumnClasses[1]} />
+      <OCSStatus
+        ocsState={ocsState}
+        diskName={obj.path}
+        diskID={obj.deviceID}
+        diskSerial={obj.serial}
+        className={tableColumnClasses[1]}
+      />
       <TableData className={tableColumnClasses[2]}>{obj.type || '-'}</TableData>
       <TableData className={cx(tableColumnClasses[3], 'co-break-word')}>
         {obj.model || '-'}
@@ -114,8 +120,8 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       </TableData>
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions
+        disk={obj}
         nodeName={nodeName}
-        diskName={diskName}
         alertsMap={ocsState.alertsMap}
         replacementMap={ocsState.replacementMap}
         isRebalancing={ocsState.isRebalancing}
@@ -183,11 +189,16 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     }
 
     if (tiLoaded && !tiLoadError && tiData.length) {
-      const newData: OCSDiskList = tiData.reduce((data, ti) => {
-        const { disk, node, osd } = getAnnotations(ti) || {};
-        if (osd && disk && node === nodeName && ocsState.metricsMap?.[disk]?.osd === osd) {
-          data[disk] = {
-            osd,
+      const newData: ReplacementMap = tiData.reduce((data: ReplacementMap, ti) => {
+        const { devicePath, deviceID, deviceOsd, deviceNode, deviceSerial } =
+          getAnnotations(ti) || {};
+        if (devicePath && deviceOsd && deviceNode === nodeName) {
+          data[devicePath] = {
+            osd: deviceOsd,
+            disk: {
+              id: deviceID,
+              serial: deviceSerial,
+            },
             status: getTiBasedStatus(ti.status.conditions?.[0].type),
           };
         }
