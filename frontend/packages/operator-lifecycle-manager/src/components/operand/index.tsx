@@ -66,6 +66,7 @@ import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 import { useTranslation } from 'react-i18next';
 import { isMainStatusDescriptor } from '../descriptors/utils';
+import { DescriptorConditions } from '../descriptors/status/conditions';
 
 export const getOperandActions = (
   ref: K8sResourceKindReference,
@@ -491,9 +492,12 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
     (definitionFor(kindObj) as JSONSchema6);
 
-  const { podStatuses, mainStatusDescriptor, otherStatusDescriptors } = (
-    statusDescriptors ?? []
-  ).reduce((acc, descriptor) => {
+  const {
+    podStatuses,
+    mainStatusDescriptor,
+    conditionsStatusDescriptors,
+    otherStatusDescriptors,
+  } = (statusDescriptors ?? []).reduce((acc, descriptor) => {
     // exclude Conditions since they are included in their own section
     if (descriptor.path === 'conditions') {
       return acc;
@@ -510,6 +514,13 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       return {
         ...acc,
         mainStatusDescriptor: descriptor,
+      };
+    }
+
+    if (descriptor['x-descriptors']?.includes(StatusCapability.conditions)) {
+      return {
+        ...acc,
+        conditionsStatusDescriptors: [...(acc.conditionsStatusDescriptors ?? []), descriptor],
       };
     }
 
@@ -577,11 +588,15 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
         </div>
       )}
       {_.isArray(status?.conditions) && (
-        <div className="co-m-pane__body">
-          <SectionHeading text="Conditions" />
+        <div className="co-m-pane__body" data-test="status.conditions">
+          <SectionHeading data-test="operand-conditions-heading" text={t('public~Conditions')} />
           <Conditions conditions={status.conditions} />
         </div>
       )}
+      {conditionsStatusDescriptors?.length > 0 &&
+        conditionsStatusDescriptors.map((descriptor) => (
+          <DescriptorConditions descriptor={descriptor} schema={schema} obj={obj} />
+        ))}
     </div>
   );
 });

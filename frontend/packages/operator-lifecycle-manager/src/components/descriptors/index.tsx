@@ -8,19 +8,21 @@ import { JSONSchema6 } from 'json-schema';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { DescriptorGroup, groupDescriptorDetails } from './utils';
+import {
+  DescriptorGroup,
+  groupDescriptorDetails,
+  useCalculatedDescriptorProperties,
+} from './utils';
 import { useTranslation } from 'react-i18next';
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   ({ descriptor, model, obj, onError, schema, type }) => {
-    const propertySchema = getSchemaAtPath(schema, `${type}.${descriptor.path}`);
-    const fullPath = [type, ..._.toPath(descriptor.path)];
-    const label =
-      descriptor.displayName ||
-      propertySchema?.title ||
-      _.startCase(_.last(descriptor.path.split('.')));
-    const description = descriptor?.description || propertySchema?.description;
-    const value = _.get(obj, fullPath, descriptor.value);
+    const { displayName: label, description, value, fullPath } = useCalculatedDescriptorProperties(
+      type,
+      descriptor,
+      schema,
+      obj,
+    );
     const descriptorProps = {
       description,
       descriptor,

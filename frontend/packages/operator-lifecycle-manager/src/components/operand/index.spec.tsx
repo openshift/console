@@ -15,6 +15,7 @@ import {
   testClusterServiceVersion,
   testOwnedResourceInstance,
   testModel,
+  testConditionsDescriptor,
 } from '../../../mocks';
 import { ClusterServiceVersionModel } from '../../models';
 import {
@@ -196,7 +197,10 @@ describe(OperandDetails.displayName, () => {
   });
 
   it('renders description title', () => {
-    const title = wrapper.find('SectionHeading').prop('text');
+    const title = wrapper
+      .find('SectionHeading')
+      .first()
+      .prop('text');
     expect(title).toEqual('olm~{{kind}} overview');
   });
 
@@ -253,6 +257,27 @@ describe(OperandDetails.displayName, () => {
         .shallow()
         .find(DescriptorDetailsItem).length,
     ).toEqual(csv.spec.customresourcedefinitions.required[0].specDescriptors.length);
+  });
+
+  it('renders a Condtions table', () => {
+    expect(
+      wrapper
+        .find('SectionHeading')
+        .at(1)
+        .prop('text'),
+    ).toEqual('public~Conditions');
+
+    expect(wrapper.find('Conditions').prop('conditions')).toEqual(
+      testResourceInstance.status.conditions,
+    );
+  });
+
+  it('renders a DescriptorConditions component for conditions descriptor', () => {
+    expect(wrapper.find('DescriptorConditions').prop('descriptor')).toEqual(
+      testConditionsDescriptor,
+    );
+    expect(wrapper.find('DescriptorConditions').prop('obj')).toEqual(testResourceInstance);
+    expect(wrapper.find('DescriptorConditions').prop('schema')).toEqual({});
   });
 });
 

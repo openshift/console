@@ -26,6 +26,13 @@ const prefixedCapabilities = new Set([
   StatusCapability.k8sResourcePrefix,
 ]);
 
+export const testConditionsDescriptor = {
+  path: 'testCondtions',
+  displayName: 'Test Condtions',
+  description: '',
+  'x-descriptors': [StatusCapability.conditions],
+};
+
 export const testClusterServiceVersion: ClusterServiceVersionKind = {
   apiVersion: 'operators.coreos.com/v1alpha1',
   kind: 'ClusterServiceVersion',
@@ -98,6 +105,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
               'x-descriptors': [SpecCapability[capability]],
             })),
           statusDescriptors: [
+            testConditionsDescriptor,
             {
               path: 'podStatusus',
               displayName: 'Member Status',
@@ -202,6 +210,31 @@ export const testResourceInstance: K8sResourceKind = {
   },
   status: {
     'some-filled-path': 'this is filled!',
+    conditions: [
+      {
+        lastTransitionTime: '2017-10-16 12:00:00',
+        message: 'Condition message',
+        reason: 'CondtionReason',
+        status: 'True',
+        type: 'ConditionType',
+      },
+    ],
+    testConditions: [
+      {
+        lastTransitionTime: '2017-10-16 12:00:00',
+        message: 'Foo message',
+        reason: 'FooReason',
+        status: 'True',
+        type: 'FooType',
+      },
+      {
+        lastTransitionTime: '2017-10-16 12:01:00',
+        message: 'Bar message',
+        reason: 'BarReason',
+        status: 'True',
+        type: 'BarType',
+      },
+    ],
   },
 };
 

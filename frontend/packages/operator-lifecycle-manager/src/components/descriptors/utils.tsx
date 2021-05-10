@@ -11,6 +11,23 @@ import {
   REGEXP_NESTED_ARRAY_PATH,
 } from './const';
 import { Descriptor, SpecCapability, StatusCapability } from './types';
+import { getSchemaAtPath } from '@console/shared';
+
+export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
+  const propertySchema = getSchemaAtPath(schema, `${descriptorType}.${descriptor.path}`);
+  const fullPath = [descriptorType, ..._.toPath(descriptor.path)];
+  const displayName =
+    descriptor.displayName || propertySchema?.title || _.startCase(_.last(fullPath));
+  const description = descriptor?.description || propertySchema?.description || '';
+  const value = _.get(obj, fullPath, descriptor.value);
+  return {
+    description,
+    displayName,
+    fullPath,
+    propertySchema,
+    value,
+  };
+};
 
 // Creates a structure for rendering grouped descriptors on the operand details page.
 export const groupDescriptorDetails = (

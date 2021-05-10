@@ -119,7 +119,6 @@
   "Storage": "Storage",
   "Define the resource {{type}} for this {{kind}} instance.": "Define the resource {{type}} for this {{kind}} instance.",
   "No members": "No members",
-  "No conditions present": "No conditions present",
   "operator": "operator",
   "operator_plural": "operators",
   "Installation namespace <1>{{namespace}}</1> contains <4></4> installed with manual approval, and all operators installed in the same namespace will function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.": "Installation namespace <1>{{namespace}}</1> contains <4></4> installed with manual approval, and all operators installed in the same namespace will function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.",
