@@ -113,6 +113,7 @@
   "Last completed version": "Last completed version",
   "Learn more about OpenShift update channels": "Learn more about OpenShift update channels",
   "Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.": "Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.",
+  "{{name}} Nodes": "{{name}} Nodes",
   "{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.": "{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.",
   "{{updatedMCPNodes}} of {{totalMCPNodes}}": "{{updatedMCPNodes}} of {{totalMCPNodes}}",
   "+ More": "+ More",

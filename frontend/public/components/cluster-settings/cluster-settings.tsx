@@ -528,7 +528,7 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
     <UpdatesGroup divided={divided}>
       <UpdatesType>
         <Link to={`/k8s/cluster/nodes?rowFilter-node-role=${machineConfigPool.metadata.name}`}>
-          {name} {NodeModel.labelPlural}
+          {t('public~{{name}} Nodes', { name })}
         </Link>
         {name !== 'Master' && (
           <FieldLevelHelp>
@@ -676,7 +676,9 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
     <UpdatesProgress>
       <UpdatesGroup>
         <UpdatesType>
-          <Link to="/settings/cluster/clusteroperators">{ClusterOperatorModel.labelPlural}</Link>
+          <Link to="/settings/cluster/clusteroperators">
+            {t(ClusterOperatorModel.labelPluralKey)}
+          </Link>
         </UpdatesType>
         <UpdatesBar>
           <Progress
@@ -989,7 +991,7 @@ export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match 
     },
     {
       href: 'clusteroperators',
-      name: ClusterOperatorModel.labelPlural,
+      name: t(ClusterOperatorModel.labelPluralKey),
       component: ClusterOperatorTabPage,
     },
     {

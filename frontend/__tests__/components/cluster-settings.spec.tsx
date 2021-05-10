@@ -115,7 +115,7 @@ describe('Cluster Settings page', () => {
         .find(HorizontalNav)
         .at(0)
         .props().pages[1].name,
-    ).toBe('ClusterOperators');
+    ).toBe(`${i18nNS}~ClusterOperators`);
     expect(
       wrapper
         .find(HorizontalNav)
@@ -407,7 +407,7 @@ describe('Update In Progress while updating', () => {
         .find(Link)
         .at(0)
         .text(),
-    ).toBe('ClusterOperators');
+    ).toBe(`${i18nNS}~ClusterOperators`);
     expect(
       wrapper
         .find(NodesUpdatesGroup)
