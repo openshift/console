@@ -166,6 +166,7 @@
   "Output resources": "Output resources",
   "Display Name": "Display Name",
   "Name is already in use": "Name is already in use",
+  "No {{resourceType}} resource": "No {{resourceType}} resource",
   "Select {{resourceType}} resource...": "Select {{resourceType}} resource...",
   "Only showing resources for this type ({{resourceType}}).": "Only showing resources for this type ({{resourceType}}).",
   "View shortcuts": "View shortcuts",

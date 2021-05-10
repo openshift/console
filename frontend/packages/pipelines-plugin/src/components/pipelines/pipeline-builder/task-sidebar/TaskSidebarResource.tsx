@@ -12,9 +12,14 @@ type TaskSidebarResourceProps = {
   resource: TektonResource;
 };
 
+interface ResourceLink {
+  name: string;
+  resource: string;
+}
+
 const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   const { t } = useTranslation();
-  const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
+  const { getFieldMeta, setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
   const {
     availableResources,
     hasResource,
@@ -25,14 +30,32 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   const dropdownResources = availableResources.filter(
     (resource) => resourceType === resource.type && !!resource.name?.trim(),
   );
+
+  const currentLinkedResourceName = getFieldMeta<ResourceLink>(name).value?.resource;
+  const currentLinkedResourceSelectable =
+    currentLinkedResourceName &&
+    dropdownResources.some((resource) => resource.name === currentLinkedResourceName);
+
   const options: FormSelectFieldOption[] = [
     {
-      label: t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType }),
+      label: optional
+        ? t('pipelines-plugin~No {{resourceType}} resource', { resourceType })
+        : t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType }),
       value: '',
       isPlaceholder: true,
+      isDisabled: !optional,
     },
-    ...dropdownResources.map((resource) => ({ label: resource.name, value: resource.name })),
   ];
+  if (currentLinkedResourceName && !currentLinkedResourceSelectable) {
+    options.push({
+      label: currentLinkedResourceName,
+      value: currentLinkedResourceName,
+      isDisabled: true,
+    });
+  }
+  options.push(
+    ...dropdownResources.map((resource) => ({ label: resource.name, value: resource.name })),
+  );
 
   return (
     <FormSelectField
@@ -42,7 +65,7 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
         resourceType,
       })}
       options={options}
-      isDisabled={dropdownResources.length === 0}
+      isDisabled={options.length === 1}
       onChange={(selectedResource: string) => {
         if (!hasResource) {
           setFieldValue(name, { name: resourceName, resource: selectedResource });
