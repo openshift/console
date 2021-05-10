@@ -239,6 +239,7 @@
   "Available versus Used Capacity": "Available versus Used Capacity",
   "Used of {{capacity}}": "Used of {{capacity}}",
   "Not Available": "Not Available",
+  "StorageCluster": "StorageCluster",
   "Progressing": "Progressing",
   "The Compression Ratio represents the compressible data effectiveness metric inclusive of all compression-enabled pools.": "The Compression Ratio represents the compressible data effectiveness metric inclusive of all compression-enabled pools.",
   "The Savings metric represents the actual disk capacity saved inclusive of all compression-enabled pools and associated replicas.": "The Savings metric represents the actual disk capacity saved inclusive of all compression-enabled pools and associated replicas.",
