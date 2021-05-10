@@ -3,7 +3,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { COMMON_TEMPLATES_NAMESPACE, COMMON_TEMPLATES_REVISION } from '../constants/common';
 
 export const getFakeWindowsVM = ({ name, networkName, vmIP }) => `
-apiVersion: kubevirt.io/v1alpha3
+apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   annotations:

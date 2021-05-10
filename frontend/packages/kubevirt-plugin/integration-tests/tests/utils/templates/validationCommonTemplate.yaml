@@ -64,7 +64,7 @@ metadata:
   name: validationtest-desktop-medium-v0.7.0
   namespace: openshift
 objects:
-- apiVersion: kubevirt.io/v1alpha3
+- apiVersion: kubevirt.io/v1
   kind: VirtualMachine
   metadata:
     labels:

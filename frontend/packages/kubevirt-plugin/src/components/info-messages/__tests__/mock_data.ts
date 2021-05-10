@@ -3,12 +3,12 @@ import { VMIKind } from '@console/kubevirt-plugin/src/types';
 export const mockData: { [key: string]: [VMIKind, boolean] } = {
   testWithoutVMOwner: [
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachineInstance',
       metadata: {
         ownerReferences: [
           {
-            apiVersion: 'kubevirt.io/v1alpha3',
+            apiVersion: 'kubevirt.io/v1',
             blockOwnerDeletion: true,
             controller: true,
             kind: 'some-kind',
@@ -43,12 +43,12 @@ export const mockData: { [key: string]: [VMIKind, boolean] } = {
   ],
   testWithVMOwner: [
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachineInstance',
       metadata: {
         ownerReferences: [
           {
-            apiVersion: 'kubevirt.io/v1alpha3',
+            apiVersion: 'kubevirt.io/v1',
             blockOwnerDeletion: true,
             controller: true,
             kind: 'VirtualMachine',

@@ -587,7 +587,7 @@ const pods = {
         namespace: 'demo',
         ownerReferences: [
           {
-            apiVersion: 'kubevirt.io/v1alpha3',
+            apiVersion: 'kubevirt.io/v1',
             kind: 'VirtualMachineInstance',
             name: 'rhel-8-vm',
             uid: 'e2ec8a25-ef0c-47a0-8afe-5b58570f97b0',
@@ -2064,13 +2064,13 @@ const clusterServiceVersions = {
 const virtualmachines = {
   data: [
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachine',
       metadata: {
         annotations: {
           description: 'VM example',
-          'kubevirt.io/latest-observed-api-version': 'v1alpha3',
-          'kubevirt.io/storage-observed-api-version': 'v1alpha3',
+          'kubevirt.io/latest-observed-api-version': 'v1',
+          'kubevirt.io/storage-observed-api-version': 'v1',
           'name.os.template.kubevirt.io/fedora31': 'Fedora 31',
         },
         resourceVersion: '19721276',
@@ -2177,14 +2177,14 @@ const virtualmachines = {
       },
     },
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachine',
       metadata: {
         annotations: {
           'app.openshift.io/connects-to': 'cakephp-mysql-example',
           description: 'VM example',
-          'kubevirt.io/latest-observed-api-version': 'v1alpha3',
-          'kubevirt.io/storage-observed-api-version': 'v1alpha3',
+          'kubevirt.io/latest-observed-api-version': 'v1',
+          'kubevirt.io/storage-observed-api-version': 'v1',
           'name.os.template.kubevirt.io/fedora31': 'Fedora 31',
         },
         resourceVersion: '32488379',
@@ -2301,14 +2301,14 @@ const virtualmachines = {
 const virtualmachineinstances = {
   data: [
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachineInstance',
       metadata: {
         generateName: 'rhel-8-vm',
         annotations: {
           description: 'VM example',
-          'kubevirt.io/latest-observed-api-version': 'v1alpha3',
-          'kubevirt.io/storage-observed-api-version': 'v1alpha3',
+          'kubevirt.io/latest-observed-api-version': 'v1',
+          'kubevirt.io/storage-observed-api-version': 'v1',
         },
         resourceVersion: '13068442',
         name: 'rhel-8-vm',
@@ -2318,7 +2318,7 @@ const virtualmachineinstances = {
         namespace: 'demo',
         ownerReferences: [
           {
-            apiVersion: 'kubevirt.io/v1alpha3',
+            apiVersion: 'kubevirt.io/v1',
             blockOwnerDeletion: true,
             controller: true,
             kind: 'VirtualMachine',

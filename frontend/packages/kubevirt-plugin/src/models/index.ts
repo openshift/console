@@ -3,7 +3,7 @@ import { K8sKind } from '@console/internal/module/k8s/types';
 export const VirtualMachineModel: K8sKind = {
   label: 'Virtual Machine',
   labelPlural: 'Virtual Machines',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachines',
   abbr: 'VM',
@@ -15,7 +15,7 @@ export const VirtualMachineModel: K8sKind = {
 export const VirtualMachineInstanceModel: K8sKind = {
   label: 'Virtual Machine Instance',
   labelPlural: 'Virtual Machine Instances',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstances',
   abbr: 'VMI',
@@ -28,7 +28,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
 export const VirtualMachineInstancePresetModel: K8sKind = {
   label: 'Virtual Machine Instance Preset',
   labelPlural: 'Virtual Machine Instance Presets',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancepresets',
   abbr: 'VMIP',
@@ -40,7 +40,7 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
 export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   label: 'Virtual Machine Instance Replica Set',
   labelPlural: 'Virtual Machine Instance Replica Sets',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancereplicasets',
   abbr: 'VMIR',
@@ -52,7 +52,7 @@ export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
 export const VirtualMachineInstanceMigrationModel: K8sKind = {
   label: 'Virtual Machine Instance Migration',
   labelPlural: 'Virtual Machine Instance Migrations',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancemigrations',
   abbr: 'VMIM',

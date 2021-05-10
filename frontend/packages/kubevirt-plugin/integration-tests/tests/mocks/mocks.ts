@@ -408,7 +408,7 @@ export function getVMIManifest(
   const { metadata, vmiSpec } = getMetadata(provisionSource, namespace, name, cloudinit);
 
   const vmiResource = {
-    apiVersion: 'kubevirt.io/v1alpha3',
+    apiVersion: 'kubevirt.io/v1',
     kind: 'VirtualMachineInstance',
     metadata,
     spec: vmiSpec,
@@ -431,7 +431,7 @@ export function getVMManifest(
   );
 
   const vmResource = {
-    apiVersion: 'kubevirt.io/v1alpha3',
+    apiVersion: 'kubevirt.io/v1',
     kind: 'VirtualMachine',
     metadata,
     spec: {

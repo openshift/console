@@ -18,7 +18,7 @@ export const containerTemplate = {
   },
   objects: [
     {
-      apiVersion: 'kubevirt.io/v1alpha3',
+      apiVersion: 'kubevirt.io/v1',
       kind: 'VirtualMachine',
       metadata: {
         // eslint-disable-next-line no-template-curly-in-string
