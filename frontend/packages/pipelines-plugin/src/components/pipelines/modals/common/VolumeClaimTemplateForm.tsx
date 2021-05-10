@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
-  accessModeRadios,
-  volumeModeRadios,
+  getAccessModeRadios,
+  getVolumeModeRadios,
   initialAccessModes,
   provisionerAccessModeMapping,
   dropdownUnits,
@@ -148,7 +148,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
             {t('pipelines-plugin~Access Mode')}
           </label>
           <FormGroup fieldId="accessMode" data-test-id="accessModeRadio">
-            {accessModeRadios.map((radio) => {
+            {getAccessModeRadios().map((radio) => {
               const disabled = !allowedAccessModes.includes(radio.value);
               return (
                 <RadioInput
@@ -193,7 +193,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
             {t('pipelines-plugin~Volume Mode')}
           </label>
           <FormGroup fieldId="volumeMode" data-test-id="volumeModeRadio">
-            {volumeModeRadios.map((radio) => (
+            {getVolumeModeRadios().map((radio) => (
               <RadioInput
                 {...radio}
                 key={radio.value}

@@ -118,13 +118,13 @@ const Details = ({ obj: pv }) => {
               </>
             )}
             <dt>{t('public~Volume mode')}</dt>
-            <dd>{volumeMode || 'Filesystem'}</dd>
+            <dd>{volumeMode || t('public~Filesystem')}</dd>
             <dt>{t('public~StorageClass')}</dt>
             <dd>
               {storageClassName ? (
                 <ResourceLink kind="StorageClass" name={storageClassName} />
               ) : (
-                'None'
+                t('public~None')
               )}
             </dd>
             {pvcName && (

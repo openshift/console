@@ -12,10 +12,7 @@ import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/comp
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
-import {
-  ConfigureUpdateStrategy,
-  UPDATE_STRATEGY_DESCRIPTION,
-} from '@console/internal/components/modals/configure-update-strategy-modal';
+import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import {
   NodeAffinity,
   PodAffinity,
@@ -167,7 +164,11 @@ export const UpdateStrategyField: React.FC<FieldProps> = ({
   uiSchema,
 }) => {
   const { t } = useTranslation();
-  const description = useSchemaDescription(schema, uiSchema, UPDATE_STRATEGY_DESCRIPTION);
+  const description = useSchemaDescription(
+    schema,
+    uiSchema,
+    t('public~How should the pods be replaced when a new revision is created?'),
+  );
   return (
     <FormField
       defaultLabel={name || t('console-shared~Update strategy')}

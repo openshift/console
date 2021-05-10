@@ -1,15 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { k8sPatch, Patch, DeploymentUpdateStrategy, K8sResourceKind } from '../../module/k8s';
 import { DeploymentModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { pluralize, withHandlePromise, HandlePromiseProps } from '../utils';
+import { withHandlePromise, HandlePromiseProps } from '../utils';
 import { RadioInput } from '../radio';
-
-export const UPDATE_STRATEGY_DESCRIPTION =
-  'How should the pods be replaced when a new revision is created?';
 
 export const getNumberOrPercent = (value) => {
   if (typeof value === 'undefined') {
@@ -24,11 +22,12 @@ export const getNumberOrPercent = (value) => {
 
 export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (props) => {
   const { showDescription = true } = props;
+  const { t } = useTranslation();
   return (
     <>
       {showDescription && (
         <div className="co-m-form-row">
-          <p>{UPDATE_STRATEGY_DESCRIPTION}</p>
+          <p>{t('public~How should the pods be replaced when a new revision is created?')}</p>
         </div>
       )}
       <div className="row co-m-form-row">
@@ -40,19 +39,21 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
             }}
             value="RollingUpdate"
             checked={props.strategyType === 'RollingUpdate'}
-            title="RollingUpdate"
-            subTitle="(default)"
+            title={t('public~RollingUpdate')}
+            subTitle={t('public~(default)')}
             autoFocus={props.strategyType === 'RollingUpdate'}
           >
             <div className="co-m-radio-desc">
               <p className="text-muted">
-                Execute a smooth roll out of the new revision, based on the settings below
+                {t(
+                  'public~Execute a smooth roll out of the new revision, based on the settings below',
+                )}
               </p>
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-unavailable" className="control-label">
-                    Max Unavailable
+                  <label htmlFor="input-max-unavailable" className="control-label co-break-word">
+                    {t('public~Max unavailable')}
                   </label>
                 </div>
                 <div className="co-m-form-col col-sm-9">
@@ -71,23 +72,25 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                       />
                       {props.replicas && (
                         <span className="pf-c-input-group__text">
-                          <Tooltip content="Current desired pod count">
-                            <span>of {pluralize(props.replicas, 'pod')}</span>
+                          <Tooltip content={t('public~Current desired pod count')}>
+                            <span>{t('public~of pod', { count: props.replicas })}</span>
                           </Tooltip>
                         </span>
                       )}
                     </div>
                   </div>
                   <p className="help-block text-muted" id="input-max-unavailable-help">
-                    Number or percentage of total pods at the start of the update (optional)
+                    {t(
+                      'public~Number or percentage of total pods at the start of the update (optional)',
+                    )}
                   </p>
                 </div>
               </div>
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-surge" className="control-label">
-                    Max Surge
+                  <label htmlFor="input-max-surge" className="control-label co-break-word">
+                    {t('public~Max surge')}
                   </label>
                 </div>
                 <div className="co-m-form-col col-sm-9">
@@ -105,14 +108,16 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
                         aria-describedby="input-max-surge-help"
                       />
                       <span className="pf-c-input-group__text">
-                        <Tooltip content="Current desired pod count">
-                          <span>greater than {pluralize(props.replicas, 'pod')}</span>
+                        <Tooltip content={t('public~Current desired pod count')}>
+                          <span>{t('public~greater than pod', { count: props.replicas })}</span>
                         </Tooltip>
                       </span>
                     </div>
                   </div>
                   <p className="help-block text-muted" id="input-max-surge-help">
-                    Number or percentage of total pods at the start of the update (optional)
+                    {t(
+                      'public~Number or percentage of total pods at the start of the update (optional)',
+                    )}
                   </p>
                 </div>
               </div>
@@ -128,8 +133,8 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
             }}
             value="Recreate"
             checked={props.strategyType === 'Recreate'}
-            title="Recreate"
-            desc="Shut down all existing pods before creating new ones"
+            title={t('public~Recreate')}
+            desc={t('public~Shut down all existing pods before creating new ones')}
             autoFocus={props.strategyType === 'Recreate'}
           />
         </div>
@@ -149,6 +154,8 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
     const [maxSurge, setMaxSurge] = React.useState(
       _.get(props.deployment.spec, 'strategy.rollingUpdate.maxSurge', '25%'),
     );
+
+    const { t } = useTranslation();
 
     const submit = (event) => {
       event.preventDefault();
@@ -170,7 +177,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
 
     return (
       <form onSubmit={submit} name="form" className="modal-content">
-        <ModalTitle>Edit Update Strategy</ModalTitle>
+        <ModalTitle>{t('public~Edit update strategy')}</ModalTitle>
         <ModalBody>
           <ConfigureUpdateStrategy
             strategyType={strategyType}
@@ -184,7 +191,7 @@ export const ConfigureUpdateStrategyModal = withHandlePromise(
         <ModalSubmitFooter
           errorMessage={props.errorMessage}
           inProgress={props.inProgress}
-          submitText="Save"
+          submitText={t('public~Save')}
           cancel={props.cancel}
         />
       </form>

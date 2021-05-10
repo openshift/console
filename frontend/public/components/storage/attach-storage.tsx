@@ -2,6 +2,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { match as Match } from 'react-router';
 import { Radio } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -29,6 +30,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
   const [activeProvider, setActiveProvider] = React.useState('0');
   const memoizedStorageProviders = useDeepCompareMemoize(storageProviders, true);
   const { kindObj, match, kindsInFlight } = props;
+  const { t } = useTranslation();
 
   const storageProvidersMap: StorageProviderMap = React.useMemo(() => {
     const providers = {
@@ -51,7 +53,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
     setActiveProvider(id as string);
   };
 
-  const title = 'Add Storage';
+  const title = t('public~Add Storage');
   return !kindObj && kindsInFlight ? (
     <LoadingBox />
   ) : (
@@ -73,7 +75,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
       </div>
       {Object.keys(storageProvidersMap).length > 1 && (
         <>
-          <label className="co-required">Storage Type</label>
+          <label className="co-required">{t('public~Storage type')}</label>
           <div className="co-storage__selection">
             {Object.entries(storageProvidersMap).map(([k, v]) => (
               <Radio

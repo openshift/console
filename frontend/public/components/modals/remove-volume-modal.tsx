@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 import {
@@ -70,26 +71,26 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
       });
   };
 
+  const { t } = useTranslation();
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Remove Volume?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('public~Remove volume?')}
       </ModalTitle>
       <ModalBody className="modal-body">
         <div>
-          Are you sure you want to remove volume{' '}
-          <strong className="co-break-word">{volume.name}</strong>
-          <span>
-            {' '}
-            from <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
-          </span>
+          <Trans t={t} ns="public">
+            Are you sure you want to remove volume{' '}
+            <strong className="co-break-word">{volume.name}</strong> from{' '}
+            <strong>{kind.label}</strong>: <strong>{resource.metadata.name}</strong>?
+          </Trans>
         </div>
         {type && (
           <div>
             <label className="control-label">
-              Note: This will not remove the underlying {type}.
+              {t('public~Note: This will not remove the underlying {{type}}.', { type })}
             </label>
           </div>
         )}
@@ -98,7 +99,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger
-        submitText="Remove Volume"
+        submitText={t('public~Remove volume')}
         cancel={props.cancel}
       />
     </form>

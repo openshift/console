@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
 import { useFormikValidationFix, getFieldId } from '@console/shared';
@@ -24,6 +25,8 @@ const PortInputField: React.FC<RouteInputFieldProps> = ({
   const fieldId = getFieldId(name, 'select-input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
+
+  const { t } = useTranslation();
 
   useFormikValidationFix(field.value);
 
@@ -59,6 +62,7 @@ const PortInputField: React.FC<RouteInputFieldProps> = ({
         selections={field.value}
         placeholderText={placeholderText}
         isCreatable
+        noResultsFoundText={t('devconsole~No results found')}
       >
         {options.map((val) => (
           <SelectOption value={val} key={val} />

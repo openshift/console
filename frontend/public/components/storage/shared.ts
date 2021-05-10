@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { isCephProvisioner } from '@console/shared/src/utils';
 
 export const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
@@ -29,30 +30,33 @@ export const provisionerAccessModeMapping = {
   'pd.csi.storage.gke.io': ['ReadWriteOnce'],
 };
 export const initialAccessModes = ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
-export const accessModeRadios = [
+
+export const getAccessModeRadios = () => [
   {
     value: 'ReadWriteOnce',
-    title: 'Single User (RWO)',
+    title: i18next.t('public~Single user (RWO)'),
   },
   {
     value: 'ReadWriteMany',
-    title: 'Shared Access (RWX)',
+    title: i18next.t('public~Shared access (RWX)'),
   },
   {
     value: 'ReadOnlyMany',
-    title: 'Read Only (ROX)',
+    title: i18next.t('public~Read only (ROX)'),
   },
 ];
-export const volumeModeRadios = [
+
+export const getVolumeModeRadios = () => [
   {
     value: 'Filesystem',
-    title: 'Filesystem',
+    title: i18next.t('public~Filesystem'),
   },
   {
     value: 'Block',
-    title: 'Block',
+    title: i18next.t('public~Block'),
   },
 ];
+
 export const dropdownUnits = {
   Mi: 'MiB',
   Gi: 'GiB',

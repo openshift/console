@@ -33,7 +33,7 @@ import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { OperandForm } from './operand-form';
 import { OperandYAML } from './operand-yaml';
 import { exampleForModel, providedAPIForModel } from '..';
-import { FORM_HELP_TEXT, YAML_HELP_TEXT, DEFAULT_K8S_SCHEMA } from './const';
+import { DEFAULT_K8S_SCHEMA } from './const';
 import {
   getSchemaErrors,
   hasNoFields,
@@ -56,10 +56,15 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   model,
 }) => {
   const { t } = useTranslation();
+
+  const formHelpText = t(
+    'olm~Create by completing the form. Default values may be provided by the Operator authors.',
+  );
+
   const { data: csv } = clusterServiceVersion;
   const { data: crd } = customResourceDefinition;
   const [activePerspective] = useActivePerspective();
-  const [helpText, setHelpText] = React.useState(FORM_HELP_TEXT);
+  const [helpText, setHelpText] = React.useState(formHelpText);
   const next =
     activePerspective === 'dev'
       ? '/topology'
@@ -103,9 +108,18 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
   const pruneFunc = React.useCallback((data) => prune(data, sample), [sample]);
 
-  const onChangeEditorType = React.useCallback((newMethod) => {
-    setHelpText(newMethod === EditorType.Form ? FORM_HELP_TEXT : YAML_HELP_TEXT);
-  }, []);
+  const onChangeEditorType = React.useCallback(
+    (newMethod) => {
+      setHelpText(
+        newMethod === EditorType.Form
+          ? formHelpText
+          : t(
+              'olm~Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.',
+            ),
+      );
+    },
+    [formHelpText, t],
+  );
 
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={clusterServiceVersion}>
