@@ -5,6 +5,7 @@ import {
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
+  history,
 } from '@console/internal/components/utils';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
@@ -93,11 +94,15 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
 
   const onEnter = React.useCallback(
     (e) => {
-      if (selectedItem) {
+      const { id } = document.activeElement;
+      const activeViewAllLink = viewAll?.find((link) => link.catalogType === id);
+      if (activeViewAllLink) {
+        history.push(activeViewAllLink.to);
+      } else if (selectedItem) {
         handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
       }
     },
-    [closeModal, fireTelemetryEvent, selectedItem],
+    [closeModal, fireTelemetryEvent, selectedItem, viewAll],
   );
 
   const selectPrevious = React.useCallback(() => {

@@ -117,6 +117,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
       <div className="odc-quick-search-list__all-items-link">
         {viewAll?.map((catalogLink) => (
           <Link
+            id={catalogLink.catalogType}
             to={catalogLink.to}
             key={catalogLink.catalogType}
             style={{ fontSize: 'var(--pf-global--FontSize--sm)' }}
