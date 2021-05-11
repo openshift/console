@@ -19,6 +19,12 @@ export const topologyPO = {
     node: '[data-test-id="base-node-handler"]',
     workload: '[data-type="workload"]',
     eventSourceWorkload: '[data-type="event-source"]',
+    applicationGroupingTitle: '.odc-topology-list-view__application-label',
+    filterByResource: {
+      filterByResourceDropDown: '.pf-c-select__toggle-text',
+      deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
+      deploymentConfigResource: '.co-m-resource-icon.co-m-resource-deploymentconfig',
+    },
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',
     },
@@ -26,6 +32,7 @@ export const topologyPO = {
   list: {
     appName: '#HelmRelease ul li div',
     nodeName: '#HelmRelease ul li div',
+    resourceTitle: 'pf-c-data-list__cell.odc-topology-list-view__kind-label',
   },
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',

@@ -46,6 +46,8 @@
     "test-cypress-knative": "cd packages/knative-plugin/integration-tests && yarn run test-cypress",
     "test-cypress-knative-headless": "cd packages/knative-plugin/integration-tests && yarn run test-cypress-headless",
     "test-cypress-helm": "cd packages/helm-plugin/integration-tests && yarn run test-cypress",
+    "test-cypress-topology": "cd packages/topology/integration-tests && yarn run test-cypress",
+    "test-cypress-topology-headless": "cd packages/topology/integration-tests && yarn run test-cypress-headless",
     "test-cypress-helm-headless": "cd packages/helm-plugin/integration-tests && yarn run test-cypress-headless",
     "cypress-merge": "mochawesome-merge ./gui_test_screenshots/cypress_report*.json > ./gui_test_screenshots/cypress.json",
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",

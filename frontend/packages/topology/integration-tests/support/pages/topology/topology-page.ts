@@ -20,6 +20,9 @@ export const topologyPage = {
     app.waitForDocumentLoad();
     cy.url().should('include', 'topology');
   },
+  verifyTopologyGraphView: () => {
+    return cy.get(topologyPO.graph.emptyGraph);
+  },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
     cy.get('h3.pf-c-title.pf-m-lg').should('contain.text', text),
