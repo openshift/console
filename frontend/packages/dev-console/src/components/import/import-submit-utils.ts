@@ -409,6 +409,8 @@ export const managePipelineResources = async (
   formData: GitImportFormData,
   pipelineData: PipelineKind,
 ) => {
+  if (!formData) return;
+
   const { name, git, pipeline, project, docker, image } = formData;
   let managedPipeline: PipelineKind;
   const pipelineName = pipelineData?.metadata?.name;

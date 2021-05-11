@@ -110,8 +110,14 @@ describe('getPipelineName', () => {
 
 describe('PipelineAction testing getPipelineRunData', () => {
   it('expect null to be returned when no arguments are passed', () => {
+    // Suppress the error log when we don't have pipeline or pipeline run
+    jest.spyOn(console, 'error').mockImplementation(jest.fn());
+
     const runData = getPipelineRunData();
     expect(runData).toBeNull();
+
+    // eslint-disable-next-line no-console
+    (console.error as any).mockRestore();
   });
 
   it('expect pipeline run data to be returned when only Pipeline argument is passed', () => {

@@ -9,6 +9,7 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
+import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { Resources } from '../import-types';
@@ -154,13 +155,11 @@ describe('Import Submit Utils', () => {
   });
 
   describe('createPipelineResource tests', () => {
-    beforeAll(() => {
-      jest
-        .spyOn(k8s, 'k8sCreate')
-        .mockImplementation((model, data, dryRun) => Promise.resolve({ model, data, dryRun }));
+    beforeEach(() => {
+      jest.spyOn(k8s, 'k8sCreate').mockImplementation((model, data) => Promise.resolve(data));
     });
 
-    afterAll(() => {
+    afterEach(() => {
       jest.restoreAllMocks();
     });
 
@@ -184,10 +183,9 @@ describe('Import Submit Utils', () => {
             },
           };
         });
-      const createPipelineRunResourceSpy = jest.spyOn(
-        pipelineUtils,
-        'createPipelineRunForImportFlow',
-      );
+      const createPipelineRunResourceSpy = jest
+        .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
+        .mockImplementation(jest.fn()); // can't handle a no-arg spyOn invoke, stub
 
       await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
       expect(createPipelineResourceSpy).toHaveBeenCalledWith(
@@ -201,7 +199,6 @@ describe('Import Submit Utils', () => {
         mockData.image.tag,
       );
       expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
-      expect(createPipelineRunResourceSpy).not.toThrowError();
       done();
     });
 
@@ -230,19 +227,28 @@ describe('Import Submit Utils', () => {
         mockData.docker.dockerfilePath,
         mockData.image.tag,
       );
-      const pipelineRunResource = returnValue[1].data;
+      const pipelineRunResource = returnValue[1];
       expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);
       done();
     });
+
     it('should suppress the error if the pipelinerun creation fails with the error', async (done) => {
       const mockData = _.cloneDeep(defaultData);
       mockData.resources = Resources.Kubernetes;
       mockData.pipeline.enabled = true;
-      const createPipelineResourceSpy = jest.spyOn(pipelineUtils, 'createPipelineForImportFlow');
 
-      const createPipelineRunSpy = jest
+      // Suppress the console log for a cleaner test
+      jest.spyOn(console, 'log').mockImplementation(jest.fn());
+
+      // Force an exception
+      jest
         .spyOn(pipelineUtils, 'createPipelineRunForImportFlow')
-        .mockImplementation(() => Promise.reject(new Error('PipelineRun error')));
+        .mockImplementation(() =>
+          Promise.reject(new Error('PipelineRun errored out and was not caught')),
+        );
+
+      // Make sure the fallback is called
+      const setPipelineNotStartedSpy = jest.spyOn(pipelineOverviewUtils, 'setPipelineNotStarted');
 
       const returnValue = await createOrUpdateResources(
         t,
@@ -252,11 +258,13 @@ describe('Import Submit Utils', () => {
         false,
         'create',
       );
-      const models = returnValue.map((r) => r['model.kind']);
-      expect(createPipelineResourceSpy).not.toThrow();
-      expect(createPipelineRunSpy).not.toThrow();
-      expect(returnValue).toBeDefined();
-      expect(models).toHaveLength(6);
+      expect(setPipelineNotStartedSpy).toHaveBeenCalled();
+      expect(returnValue).toHaveLength(6);
+
+      // re-enable logs for future tests
+      // eslint-disable-next-line no-console
+      (console.log as any).mockRestore();
+
       done();
     });
 
