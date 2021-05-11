@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import {
   PipelineKind,
   PipelineRunKind,
@@ -26,7 +26,7 @@ type PipelineTaskLinks = {
   finallyTaskLinks: ResourceModelLink[];
 };
 
-export const getPipelineTaskLinks = (pipeline: PipelineKind, t: TFunction): PipelineTaskLinks => {
+export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks => {
   const toResourceLinkData = (tasks: PipelineTask[]): ResourceModelLink[] => {
     if (!tasks) return [];
     return tasks?.map((task) =>
@@ -38,7 +38,7 @@ export const getPipelineTaskLinks = (pipeline: PipelineKind, t: TFunction): Pipe
           }
         : {
             resourceKind: 'EmbeddedTask',
-            name: t('pipelines-plugin~Embedded Task'),
+            name: i18next.t('pipelines-plugin~Embedded Task'),
             qualifier: task.name,
           },
     );
@@ -55,7 +55,6 @@ const isResourceRef = (resource: PipelineRunResource): resource is PipelineRunRe
 export const getPipelineResourceLinks = (
   definitionResources: TektonResource[] = [],
   runResources: PipelineRunResource[],
-  t: TFunction,
 ): ResourceModelLink[] => {
   return runResources?.map(
     (resource): ResourceModelLink => {
@@ -72,7 +71,7 @@ export const getPipelineResourceLinks = (
 
       return {
         resourceKind: 'EmbeddedPipelineResource',
-        name: t('pipelines-plugin~Embedded PipelineResource'),
+        name: i18next.t('pipelines-plugin~Embedded PipelineResource'),
         qualifier,
       };
     },
@@ -81,7 +80,6 @@ export const getPipelineResourceLinks = (
 
 export const convertBackingPipelineToPipelineResourceRefProps = (
   pipelineRun: PipelineRunKind,
-  t: TFunction,
 ): React.ComponentProps<typeof PipelineResourceRef> => {
   if (pipelineRun.spec.pipelineRef) {
     return {
@@ -93,6 +91,6 @@ export const convertBackingPipelineToPipelineResourceRefProps = (
 
   return {
     resourceKind: 'EmbeddedPipeLine', // intentional capitalization for EPL
-    resourceName: t('pipelines-plugin~Embedded Pipeline'),
+    resourceName: i18next.t('pipelines-plugin~Embedded Pipeline'),
   };
 };

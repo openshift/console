@@ -10,14 +10,6 @@ const { pipeline } = mockData;
 
 type PipelineAugmentRunsWrapperProps = React.ComponentProps<typeof PipelineAugmentRunsWrapper>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('Pipeline Augment Run Wrapper', () => {
   let pipelineAugmentRunsWrapperProps: PipelineAugmentRunsWrapperProps;
   let wrapper: ShallowWrapper;

@@ -6,11 +6,11 @@ import TriggerLastRunButton from './TriggerLastRunButton';
 import { setPipelineNotStarted } from './pipeline-overview-utils';
 import PipelineOverviewAlert from './PipelineOverviewAlert';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
+jest.mock('@console/internal/module/k8s/k8s-models', () => {
+  const dependency = require.requireActual('@console/internal/module/k8s/k8s-models');
   return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
+    ...dependency,
+    modelFor: () => ({}),
   };
 });
 
@@ -29,16 +29,16 @@ describe('Pipeline sidebar overview', () => {
 
   it('should show view all link if there are more than MAX_VISIBLE pipelineruns', () => {
     props.item.pipelineRuns = ['pr0', 'pr1', 'pr2', 'pr3'].map((pr) => ({
-      metadata: { name: pr, namespace: 'test' },
+      metadata: { name: pr, namespace: 'test', uid: pr },
       spec: {},
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
-    expect(wrapper.find('Link').text()).toBe('pipelines-plugin~View all {{pipelineRunsLength}}');
+    expect(wrapper.find('Link').text()).toBe('View all {{pipelineRunsLength}}');
   });
 
   it('should show not view all link if there exactly MAX_VISIBLE pipelineruns', () => {
     props.item.pipelineRuns = ['pr0', 'pr1', 'pr2'].map((pr) => ({
-      metadata: { name: pr, namespace: 'test' },
+      metadata: { name: pr, namespace: 'test', uid: pr },
       spec: {},
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
@@ -51,7 +51,9 @@ describe('Pipeline sidebar overview', () => {
   });
 
   it('should show Start last run button when pipelineruns are available', () => {
-    props.item.pipelineRuns = [{ metadata: { name: 'pipelinerun', namespace: 'test' }, spec: {} }];
+    props.item.pipelineRuns = [
+      { metadata: { name: 'pipelinerun', namespace: 'test', uid: 'test' }, spec: {} },
+    ];
     const wrapper = shallow(<PipelineOverview {...props} />);
     expect(wrapper.find(TriggerLastRunButton)).toHaveLength(1);
   });

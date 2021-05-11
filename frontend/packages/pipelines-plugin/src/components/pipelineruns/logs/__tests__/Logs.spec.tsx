@@ -5,14 +5,6 @@ import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import { podData, sampleContainer } from './logs-test-data';
 import Logs from '../Logs';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('logs component', () => {
   let props: React.ComponentProps<typeof Logs>;
 

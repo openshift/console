@@ -1,22 +1,21 @@
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import { Condition, TaskRunStatus } from '../../../types';
 import { CombinedErrorDetails } from './log-snippet-types';
 
-const joinConditions = (conditions: Condition[], t: TFunction) =>
+const joinConditions = (conditions: Condition[]) =>
   conditions.map((condition) => condition.message).join('\n') ||
-  t('pipelines-plugin~Unknown failure condition');
+  i18next.t('pipelines-plugin~Unknown failure condition');
 
 export const taskRunSnippetMessage = (
   taskName: string,
   taskRunStatus: TaskRunStatus,
   containerName: string,
-  t: TFunction,
 ): CombinedErrorDetails => {
   if (!taskRunStatus?.podName || !containerName) {
     // Not enough to go to the logs, print all the conditions messages together
     return {
-      staticMessage: joinConditions(taskRunStatus.conditions, t),
-      title: t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
+      staticMessage: joinConditions(taskRunStatus.conditions),
+      title: i18next.t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
         taskName,
       }),
     };
@@ -25,7 +24,7 @@ export const taskRunSnippetMessage = (
   return {
     containerName,
     podName: taskRunStatus.podName,
-    title: t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
+    title: i18next.t('pipelines-plugin~Failure on task {{taskName}} - check logs for details.', {
       taskName,
     }),
   };

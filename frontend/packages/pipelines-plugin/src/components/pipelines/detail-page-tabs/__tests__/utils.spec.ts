@@ -4,8 +4,6 @@ import { TektonParam } from '../../../../types';
 import { getPipelineTaskLinks, removeEmptyDefaultFromPipelineParams } from '../utils';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 
-const t = jest.fn((v) => v);
-
 describe('removeEmptyDefaultFromPipelineParams omits empty default values', () => {
   it('should return pipline parameters by only omitting empty default values', () => {
     const result = removeEmptyDefaultFromPipelineParams(pipelineParameters);
@@ -71,7 +69,7 @@ describe('getPipelineTaskLinks', () => {
     ],
   };
   it('should return links for only regular tasks if there are regular tasks with taskRef but no finally tasks', () => {
-    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(simplePipeline, t);
+    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(simplePipeline);
     expect(taskLinks).toHaveLength(2);
     expect(finallyTaskLinks).toHaveLength(0);
   });
@@ -80,12 +78,12 @@ describe('getPipelineTaskLinks', () => {
       ...pipelineWithFinally,
       spec: { ...pipelineWithFinally.spec, tasks: taskWithoutTaskRef.tasks },
     };
-    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipelineWithoutTaskRef, t);
+    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipelineWithoutTaskRef);
     expect(taskLinks).toHaveLength(1);
     expect(finallyTaskLinks).toHaveLength(1);
   });
   it('should return links for both regular tasks and finally tasks if both are present', () => {
-    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipelineWithFinally, t);
+    const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipelineWithFinally);
     expect(taskLinks).toHaveLength(2);
     expect(finallyTaskLinks).toHaveLength(1);
   });

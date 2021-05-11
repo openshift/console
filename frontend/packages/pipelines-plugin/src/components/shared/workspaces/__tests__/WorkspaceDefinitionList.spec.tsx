@@ -3,14 +3,6 @@ import { shallow } from 'enzyme';
 import WorkspaceDefinitionList from '../WorkspaceDefinitionList';
 import { TektonWorkspace } from '../../../../types';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('WorkspaceDefinitionList', () => {
   it('should handle nulls', () => {
     expect(shallow(<WorkspaceDefinitionList workspaces={null} />).isEmptyRender()).toBe(true);

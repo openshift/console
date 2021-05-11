@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
@@ -22,6 +23,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
   namespace,
   impersonate,
 }) => {
+  const { t } = useTranslation();
   const latestRun = usePipelineRunWithUserAnnotation(
     getLatestRun({ data: pipelineRuns }, 'startTimestamp'),
   );
@@ -44,7 +46,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
         onClick={callback}
         isDisabled={pipelineRuns.length === 0 && !callback}
       >
-        {labelKey}
+        {t(labelKey)}
       </Button>
     )
   );

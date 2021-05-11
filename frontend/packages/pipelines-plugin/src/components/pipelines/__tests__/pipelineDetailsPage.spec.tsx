@@ -27,14 +27,6 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
 const pipelineRuns: PipelineRunKind[] = Object.values(mockData.pipelineRuns);

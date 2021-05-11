@@ -72,7 +72,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
             <PipelineForm
               PipelineFormComponent={PipelineParametersForm}
               formName="parameters"
-              validationSchema={parametersValidationSchema(t)}
+              validationSchema={parametersValidationSchema()}
               obj={pageProps.obj}
               {...pageProps}
             />
@@ -85,7 +85,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
             <PipelineForm
               PipelineFormComponent={PipelineResourcesForm}
               formName="resources"
-              validationSchema={resourcesValidationSchema(t)}
+              validationSchema={resourcesValidationSchema()}
               obj={pageProps.obj}
               {...pageProps}
             />

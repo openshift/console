@@ -7,14 +7,6 @@ import { pipelineTestData, PipelineExampleNames } from '../../../../test-data/pi
 type PipelineBuilderPageProps = React.ComponentProps<typeof PipelineBuilderPage>;
 type BuilderProps = React.ComponentProps<typeof Formik>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const { pipeline } = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
 describe('PipelineBuilderPage Form', () => {
   let formProps: PipelineBuilderPageProps;

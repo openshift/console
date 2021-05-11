@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import i18n from '@console/internal/i18n';
+import i18n from 'i18next';
 import {
   history,
   resourcePathFromModel,
@@ -119,11 +119,12 @@ const rerunPipeline: KebabAction = (
   kind: K8sKind,
   pipelineRun: PipelineRunKind,
   resources: any,
-  customData: RerunPipelineData = { labelKey: 'Start Last Run' },
+  customData: RerunPipelineData = {},
 ) => {
-  const { onComplete } = customData;
+  // t('pipelines-plugin~Start last run')
+  const { labelKey = 'pipelines-plugin~Start last run', onComplete } = customData;
 
-  const sharedProps = { labelKey: customData.labelKey, accessReview: {} };
+  const sharedProps = { labelKey, accessReview: {} };
 
   if (
     !pipelineRun ||

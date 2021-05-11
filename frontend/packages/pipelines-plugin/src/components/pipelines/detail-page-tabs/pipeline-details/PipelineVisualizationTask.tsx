@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
@@ -148,7 +147,6 @@ const TaskComponent: React.FC<TaskProps> = ({
   isFinallyTask,
   pipelineTask,
 }) => {
-  const { t } = useTranslation();
   const stepList = task?.data?.spec?.steps || [];
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
@@ -164,8 +162,8 @@ const TaskComponent: React.FC<TaskProps> = ({
   const hasWhenExpression = pipelineTask?.when?.length > 0;
   const hasRunAfter = pipelineTask?.runAfter?.length > 0;
   const taskStatusColor = status
-    ? getRunStatusColor(status.reason, t).pftoken.value
-    : getRunStatusColor(runStatus.Cancelled, t).pftoken.value;
+    ? getRunStatusColor(status.reason).pftoken.value
+    : getRunStatusColor(runStatus.Cancelled).pftoken.value;
 
   const [hover, hoverRef] = useHover();
   const truncatedVisualName = React.useMemo(
@@ -284,7 +282,6 @@ interface SvgTaskStatusProps {
 }
 
 const SvgTaskStatus: React.FC<SvgTaskStatusProps> = ({ steps, x, y, width }) => {
-  const { t } = useTranslation();
   if (steps.length === 0) {
     return null;
   }
@@ -300,7 +297,7 @@ const SvgTaskStatus: React.FC<SvgTaskStatusProps> = ({ steps, x, y, width }) => 
             y={y}
             width={stepWidth - gap}
             height={2}
-            fill={getRunStatusColor(step.runStatus, t).pftoken.value}
+            fill={getRunStatusColor(step.runStatus).pftoken.value}
           />
         );
       })}

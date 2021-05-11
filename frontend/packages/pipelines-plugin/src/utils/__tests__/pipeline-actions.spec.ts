@@ -8,14 +8,6 @@ import {
   getPipelineKebabActions,
 } from '../pipeline-actions';
 
-jest.mock('@console/internal/i18n', () => {
-  const reactI18next = require.requireActual('@console/internal/i18n');
-  return {
-    ...reactI18next,
-    t: (key) => key,
-  };
-});
-
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
 const samplePipelineRun =
   pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];

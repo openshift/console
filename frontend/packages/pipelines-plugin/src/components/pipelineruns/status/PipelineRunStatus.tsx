@@ -19,7 +19,7 @@ const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineR
   return pipelineRun ? (
     <PipelineResourceStatus status={status} title={title}>
       <StatusPopoverContent
-        logDetails={getPLRLogSnippet(pipelineRun, t)}
+        logDetails={getPLRLogSnippet(pipelineRun)}
         namespace={pipelineRun.metadata.namespace}
         link={
           <Link

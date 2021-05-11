@@ -7,14 +7,6 @@ import {
 } from '../../../../test-data/event-listener-data';
 import EventListenerTriggers from '../EventListenerTriggers';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 type EventListenerDetailsProps = React.ComponentProps<typeof EventListenerDetails>;
 
 describe('EventListener Details', () => {

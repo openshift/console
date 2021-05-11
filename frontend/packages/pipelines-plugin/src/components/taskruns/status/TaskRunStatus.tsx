@@ -16,9 +16,9 @@ type TaskRunStatusProps = {
 const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
   const { t } = useTranslation();
   return (
-    <PipelineResourceStatus status={status} title={taskRunFilterReducer(taskRun, t)}>
+    <PipelineResourceStatus status={status} title={taskRunFilterReducer(taskRun)}>
       <StatusPopoverContent
-        logDetails={getTRLogSnippet(taskRun, t)}
+        logDetails={getTRLogSnippet(taskRun)}
         namespace={taskRun.metadata.namespace}
         link={
           <Link

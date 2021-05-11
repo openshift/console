@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
+import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { nameValidationSchema } from '@console/shared';
@@ -46,7 +47,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
           }
 
           setValidating(true);
-          nameValidationSchema(t, 63)
+          nameValidationSchema((tKey) => i18n.t(tKey), 63)
             .validate(value)
             .then(() => {
               setError(null);

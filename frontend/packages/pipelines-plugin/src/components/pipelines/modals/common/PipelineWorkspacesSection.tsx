@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -14,16 +14,16 @@ import MultipleResourceKeySelector from './MultipleResourceKeySelector';
 import { PipelineModalFormWorkspace } from './types';
 import './PipelineWorkspacesSection.scss';
 
-const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunction) => {
+const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {
   switch (volumeType) {
     case VolumeTypes.Secret: {
       return (
         <MultipleResourceKeySelector
           resourceNameField={`workspaces.${index}.data.secret.secretName`}
           resourceKeysField={`workspaces.${index}.data.secret.items`}
-          label={t('pipelines-plugin~Secret')}
+          label={i18next.t('pipelines-plugin~Secret')}
           resourceModel={SecretModel}
-          addString={t('pipelines-plugin~Add item')}
+          addString={i18next.t('pipelines-plugin~Add item')}
           required
         />
       );
@@ -33,9 +33,9 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunctio
         <MultipleResourceKeySelector
           resourceNameField={`workspaces.${index}.data.configMap.name`}
           resourceKeysField={`workspaces.${index}.data.configMap.items`}
-          label={t('pipelines-plugin~Config Map')}
+          label={i18next.t('pipelines-plugin~Config Map')}
           resourceModel={ConfigMapModel}
-          addString={t('pipelines-plugin~Add item')}
+          addString={i18next.t('pipelines-plugin~Add item')}
           required
         />
       );
@@ -46,7 +46,9 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunctio
           <Alert
             isInline
             variant="info"
-            title={t("pipelines-plugin~Empty Directory doesn't support shared data between tasks.")}
+            title={i18next.t(
+              "pipelines-plugin~Empty Directory doesn't support shared data between tasks.",
+            )}
           />
         </div>
       );
@@ -107,7 +109,7 @@ const PipelineWorkspacesSection: React.FC = () => {
                 fullWidth
                 required={!workspace.optional}
               />
-              {getVolumeTypeFields(workspace.type, index, t)}
+              {getVolumeTypeFields(workspace.type, index)}
             </div>
           );
         })}

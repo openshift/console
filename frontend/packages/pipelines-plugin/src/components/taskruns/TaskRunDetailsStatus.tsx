@@ -21,11 +21,11 @@ const TaskRunDetailsStatus = ({ taskRun }) => {
       <dl>
         <dt>{t('pipelines-plugin~Status')}</dt>
         <dd>
-          <Status status={taskRunFilterReducer(taskRun)} title={taskRunFilterReducer(taskRun, t)} />
+          <Status status={taskRunFilterReducer(taskRun)} title={taskRunFilterReducer(taskRun)} />
         </dd>
       </dl>
       <RunDetailsErrorLog
-        logDetails={getTRLogSnippet(taskRun, t)}
+        logDetails={getTRLogSnippet(taskRun)}
         namespace={taskRun.metadata?.namespace}
       />
       {taskRun?.status?.podName && (

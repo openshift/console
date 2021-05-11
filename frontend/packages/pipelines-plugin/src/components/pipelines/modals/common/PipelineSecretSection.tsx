@@ -85,7 +85,7 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
             <div className="odc-pipeline-secret-section__secret-form">
               <Formik
                 initialValues={initialValues}
-                validationSchema={advancedSectionValidationSchema(t)}
+                validationSchema={advancedSectionValidationSchema()}
                 onSubmit={handleSubmit}
                 onReset={handleReset}
               >

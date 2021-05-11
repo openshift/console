@@ -57,7 +57,7 @@ const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) =>
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      validationSchema={addTriggerSchema(t)}
+      validationSchema={addTriggerSchema()}
     >
       {(formikProps) => (
         <ModalStructure
