@@ -63,7 +63,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
       </ModalBody>
       <ModalSubmitFooter
         submitText={submitLabel}
-        submitDisabled={(status && !!status.submitError) || !isValid}
+        submitDisabled={(status && !!status.submitError) || !isValid || isSubmitting}
         cancel={cancel}
         inProgress={isSubmitting}
         submitDanger
@@ -78,19 +78,18 @@ class DeleteResourceModal extends PromiseComponent<
   DeleteResourceModalState
 > {
   private handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
     const { onSubmit, close, redirect } = this.props;
-    onSubmit &&
+    return (
+      onSubmit &&
       this.handlePromise(onSubmit(values))
         .then(() => {
-          actions.setSubmitting(false);
           close();
           redirect && history.push(redirect);
         })
         .catch((errorMessage) => {
-          actions.setSubmitting(false);
           actions.setStatus({ submitError: errorMessage });
-        });
+        })
+    );
   };
 
   render() {
