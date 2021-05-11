@@ -14,7 +14,8 @@ export const useUserSettingsLocalStorage = <T>(
   const [data, setData] = React.useState(() => {
     const valueInStorage =
       storage.getItem(storageKey) !== null && deseralizeData(storage.getItem(storageKey));
-    return valueInStorage?.hasOwnProperty(keyRef.current) && valueInStorage[keyRef.current]
+    return valueInStorage?.hasOwnProperty(keyRef.current) &&
+      valueInStorage[keyRef.current] !== undefined
       ? valueInStorage[keyRef.current]
       : defaultValueRef.current;
   });
@@ -27,7 +28,7 @@ export const useUserSettingsLocalStorage = <T>(
         const configMapData = deseralizeData(event.newValue);
         const newData = configMapData?.[keyRef.current];
 
-        if (newData && seralizeData(newData) !== seralizeData(dataRef.current)) {
+        if (newData !== undefined && seralizeData(newData) !== seralizeData(dataRef.current)) {
           setData(newData);
         }
       }
