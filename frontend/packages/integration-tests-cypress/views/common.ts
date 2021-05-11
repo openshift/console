@@ -19,7 +19,11 @@ export const projectDropdown = {
       .contains(projectName)
       .click();
   },
-  shouldContain: (name: string) => cy.byLegacyTestID('namespace-bar-dropdown').contains(name),
+  shouldContain: (name: string) =>
+    cy
+      .byLegacyTestID('namespace-bar-dropdown')
+      .contains(name)
+      .should('exist'),
   shouldNotContain: (name: string) =>
     cy.byLegacyTestID('namespace-bar-dropdown').should('not.contain', name),
   shouldNotExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
