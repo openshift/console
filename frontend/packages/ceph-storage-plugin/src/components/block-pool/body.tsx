@@ -275,7 +275,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
           )}
         </>
       ) : (
-        <BlockPoolStatus status={POOL_PROGRESS.NOTREADY} />
+        <BlockPoolStatus status={POOL_PROGRESS.CLUSTERNOTREADY} />
       )}
     </>
   );

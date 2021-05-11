@@ -69,8 +69,12 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
         setIsSubmit(false);
         clearTimeout(timer);
         onPoolCreation(state.poolName);
-      } else if (newPoolLoaded && newPool?.status?.phase === POOL_STATE.FAILED) {
-        dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.FAILED });
+      } else if (
+        newPoolLoaded &&
+        (newPool?.status?.phase === POOL_STATE.RECONCILE_FAILED ||
+          newPool?.status?.phase === POOL_STATE.FAILURE)
+      ) {
+        dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.NOTREADY });
         setIsSubmit(false);
         clearTimeout(timer);
       } else if (newPoolLoaded && newPoolLoadError && newPoolLoadError?.response?.status !== 404) {
