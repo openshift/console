@@ -18,7 +18,6 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
     onChange,
     onFocus,
     readonly = false,
-    required = false,
     schema = {},
     value = '',
   } = props;
@@ -35,7 +34,6 @@ export const TextWidget: React.FC<WidgetProps> = (props) => {
       onChange={({ currentTarget }) => onChange(currentTarget.value)}
       onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
       readOnly={readonly}
-      required={required}
       type="text"
       value={value}
     />
@@ -71,20 +69,13 @@ export const PasswordWidget: React.FC<WidgetProps> = ({ value = '', id, onChange
   );
 };
 
-export const CheckboxWidget: React.FC<WidgetProps> = ({
-  value = false,
-  id,
-  label,
-  onChange,
-  required,
-}) => {
+export const CheckboxWidget: React.FC<WidgetProps> = ({ value = false, id, label, onChange }) => {
   return (
     <Checkbox
       id={id}
       key={id}
       isChecked={value}
       label={label}
-      required={required}
       onChange={(checked) => onChange(checked)}
     />
   );
