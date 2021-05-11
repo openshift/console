@@ -225,7 +225,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
         </ModalBody>
         <ModalSubmitFooter
           inProgress={inProgress}
-          submitDisabled={!validSize}
+          submitDisabled={!validSize || !resource.spec?.storageClassName}
           errorMessage={errorMessage}
           submitText={t('console-app~Clone')}
           cancel={cancel}
