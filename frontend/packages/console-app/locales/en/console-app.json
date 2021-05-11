@@ -7,6 +7,7 @@
   "Edit HorizontalPodAutoscaler": "Edit HorizontalPodAutoscaler",
   "Remove HorizontalPodAutoscaler": "Remove HorizontalPodAutoscaler",
   "Access Mode": "Access Mode",
+  "Updating cluster to {{version}}": "Updating cluster to {{version}}",
   "API Servers": "API Servers",
   "Controller Managers": "Controller Managers",
   "Schedulers": "Schedulers",
