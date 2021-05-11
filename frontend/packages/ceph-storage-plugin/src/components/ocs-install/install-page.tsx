@@ -23,7 +23,14 @@ import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
 import './install-page.scss';
 
-const INDEP_MODE_SUPPORTED_PLATFORMS = ['BareMetal', 'None', 'VSphere', 'OpenStack', 'oVirt'];
+const INDEP_MODE_SUPPORTED_PLATFORMS = [
+  'BareMetal',
+  'None',
+  'VSphere',
+  'OpenStack',
+  'oVirt',
+  'IBMCloud',
+];
 
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const {
