@@ -502,7 +502,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     if (descriptor['x-descriptors']?.includes(StatusCapability.podStatuses)) {
       return {
         ...acc,
-        podStatuses: [...(acc.PodStatuses ?? []), descriptor],
+        podStatuses: [...(acc.podStatuses ?? []), descriptor],
       };
     }
 
