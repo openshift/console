@@ -759,7 +759,6 @@ export const DEPRECATED_CreateOperandForm: React.FC<OperandFormProps> = ({
       return (
         <NumberSpinner
           id={id}
-          className="pf-c-form-control"
           value={currentValue}
           onChange={({ currentTarget: { value } }) =>
             handleFormDataUpdate(path, _.toInteger(value))
