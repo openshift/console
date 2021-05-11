@@ -188,3 +188,26 @@ Feature: Operators
               And user installs the Argo CD Operator with default values
              Then user will see a modal with title "Argo CD Operator"
               And user will see a View Operator button
+
+
+        #Run RHOAS-catalog-source.yaml from dev-console/integration-tests/testData/yamls/operator-installation folder to get redhat version of RHOAS operator
+        @smoke
+        Scenario: RHOAS operator
+            Given user is at Operator Hub page
+             When user searches for "RHOAS"
+              And user clicks on RHOAS operator card on Operator Hub page
+              And user clicks install button present on the right sidebar
+              And user installs the RHOAS operator with default values
+             Then user will see a RHOAS installing modal
+              And user will see a View Operator button
+
+
+        @smoke
+        Scenario: Red Hat Integration - AMQ Streams operator
+            Given user is at Operator Hub page
+             When user searches for "Red Hat Integration - AMQ Streams"
+              And user clicks on Red Hat Integration - AMQ Streams operator card on Operator Hub page
+              And user clicks install button present on the right sidebar
+              And user installs the Red Hat Integration - AMQ Streams operator with default values
+             Then user will see a Red Hat Integration - AMQ Streams installing modal
+              And user will see a View Operator button
