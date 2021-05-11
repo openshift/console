@@ -201,11 +201,11 @@ export const getPoolKindObj = (state: BlockPoolState): StoragePoolKind => ({
     namespace: CEPH_STORAGE_NAMESPACE,
   },
   spec: {
-    compressionMode: state.isCompressed ? COMPRESSION_ON : '',
+    compressionMode: state.isCompressed ? COMPRESSION_ON : 'none',
     deviceClass: state.volumeType || '',
     failureDomain: state.failureDomain,
     parameters: {
-      compression_mode: state.isCompressed ? COMPRESSION_ON : '', // eslint-disable-line @typescript-eslint/camelcase
+      compression_mode: state.isCompressed ? COMPRESSION_ON : 'none', // eslint-disable-line @typescript-eslint/camelcase
     },
     replicated: {
       size: Number(state.replicaSize),

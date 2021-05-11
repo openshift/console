@@ -87,12 +87,12 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
       {
         op: 'replace',
         path: '/spec/compressionMode',
-        value: state.isCompressed ? COMPRESSION_ON : '',
+        value: state.isCompressed ? COMPRESSION_ON : 'none',
       },
       {
         op: 'replace',
         path: '/spec/parameters/compression_mode',
-        value: state.isCompressed ? COMPRESSION_ON : '',
+        value: state.isCompressed ? COMPRESSION_ON : 'none',
       },
     ];
 
