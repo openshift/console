@@ -5,6 +5,7 @@ import { match } from 'react-router';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { MultiListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { ImageManifestVulnModel } from '../models';
 import { Priority, priorityFor } from '../const';
 import { Feature, ImageManifestVuln, Vulnerability } from '../types';
@@ -65,7 +66,9 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
         },
       ]}
       title={t('container-security~Vulnerabilities')}
-      flatten={(resources) => {
+      flatten={(
+        resources: FirehoseResourcesResult<{ imageVulnerabilities: ImageManifestVuln }>,
+      ) => {
         return _.sortBy(
           _.flatten(
             resources?.imageVulnerabilities?.data?.spec.features.map((feature) =>

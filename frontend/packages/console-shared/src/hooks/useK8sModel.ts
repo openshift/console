@@ -7,10 +7,11 @@ import { RootState } from '@console/internal/redux';
 // Hook that retrieves the k8s model for provided groupVersionKind reference. Hook version of
 // `connectToModel`.
 export const useK8sModel = (groupVersionKind: GroupVersionKind): [K8sKind, boolean] => [
-  useSelector<RootState, K8sKind>(
-    ({ k8s }) =>
-      k8s.getIn(['RESOURCES', 'models', groupVersionKind]) ??
-      k8s.getIn(['RESOURCES', 'models', kindForReference(groupVersionKind)]),
+  useSelector<RootState, K8sKind>(({ k8s }) =>
+    groupVersionKind
+      ? k8s.getIn(['RESOURCES', 'models', groupVersionKind]) ??
+        k8s.getIn(['RESOURCES', 'models', kindForReference(groupVersionKind)])
+      : undefined,
   ),
   useSelector<RootState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
 ];

@@ -38,7 +38,7 @@ const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => (
     kind={referenceForModel(PipelineRunModel)}
     namespace={obj.metadata.namespace}
     selector={{
-      'tekton.dev/pipeline': obj.metadata.name,
+      matchLabels: { 'tekton.dev/pipeline': obj.metadata.name },
     }}
     ListComponent={PipelineRunsList}
     rowFilters={runFilters}

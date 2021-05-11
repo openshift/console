@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
 import {
   Badge,
   Button,
@@ -26,11 +28,11 @@ import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { ColumnLayout } from './modals/column-management-modal';
+import { OnFilterChange } from './factory/ListPage/filter-hook';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
  */
-
 enum FilterType {
   NAME = 'Name',
   LABEL = 'Label',
@@ -49,12 +51,11 @@ type FilterKeys = {
   [key: string]: string;
 };
 
-const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =>
+const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data) =>
   rowFilters.map((grp) => {
-    const items = grp.itemsGenerator ? grp.itemsGenerator(props, props.kind) : grp.items;
     return (
       <SelectGroup key={grp.filterGroupName} label={grp.filterGroupName}>
-        {_.map(items, (item) => {
+        {_.map(grp.items, (item) => {
           return (
             <SelectOption
               data-test-row-filter={item.id}
@@ -75,23 +76,25 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
     );
   });
 
-const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
-  const {
-    rowFilters,
-    data,
-    hideColumnManagement,
-    hideLabelFilter,
-    hideNameLabelFilters,
-    columnLayout,
-    nameFilterPlaceholder,
-    labelFilterPlaceholder,
-    location,
-    textFilter = filterTypeMap[FilterType.NAME],
-    labelFilter = filterTypeMap[FilterType.LABEL],
-    uniqueFilterName,
-  } = props;
-
+export const FilterToolbar: React.FC<FilterToolbarProps> = ({
+  rowFilters,
+  data,
+  hideColumnManagement,
+  hideLabelFilter,
+  hideNameLabelFilters,
+  columnLayout,
+  nameFilterPlaceholder,
+  labelFilterPlaceholder,
+  textFilter = filterTypeMap[FilterType.NAME],
+  labelFilter = filterTypeMap[FilterType.LABEL],
+  uniqueFilterName,
+  reduxIDs,
+  labelPath,
+  onFilterChange,
+}) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const location = useLocation();
   const translateFilterType = (value: string) => {
     switch (value) {
       case 'Name':
@@ -120,16 +123,14 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
   const filters: Filter = (rowFilters ?? [])?.reduce((acc, curr) => {
-    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
-    const items = _.map(rowItems, 'id');
+    const items = _.map(curr.items, 'id');
     acc[curr.filterGroupName] = items;
     return acc;
   }, {});
 
   // {id: 'a' , title: 'A'} => filterNameMap['a'] = A
   const filtersNameMap: FilterKeys = (rowFilters ?? []).reduce((acc, curr) => {
-    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
-    const items = rowItems.reduce((itemAcc, itemCurr) => {
+    const items = curr.items.reduce((itemAcc, itemCurr) => {
       itemAcc[itemCurr.id] = itemCurr.title;
       return itemAcc;
     }, {});
@@ -163,8 +164,11 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const applyFilter = (input: string | string[], type: FilterType) => {
     const filter = type === FilterType.NAME ? textFilter : labelFilter;
-    const value = type === FilterType.NAME ? input : { all: input };
-    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
+    if (onFilterChange) {
+      onFilterChange(filter, input);
+    } else {
+      reduxIDs.forEach((id) => dispatch(filterList(id, filter, input)));
+    }
   };
 
   const updateLabelFilter = (filterValues: string[]) => {
@@ -204,14 +208,15 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   const applyRowFilter = (selected: string[]) => {
     rowFilters?.forEach((filter) => {
-      const rowItems = filter.itemsGenerator
-        ? filter.itemsGenerator(props, props?.kinds)
-        : filter.items;
-      const all = _.map(rowItems, 'id');
+      const all = _.map(filter.items, 'id');
       const recognized = _.intersection(selected, all);
-      (props.reduxIDs || []).forEach((id) =>
-        props.filterList(id, filter.type, { selected: new Set(recognized), all }),
-      );
+      if (onFilterChange) {
+        onFilterChange(filter.type, recognized);
+      } else {
+        (reduxIDs || []).forEach((id) =>
+          dispatch(filterList(id, filter.type, { selected: new Set(recognized), all })),
+        );
+      }
     });
   };
 
@@ -284,7 +289,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
   };
 
-  const dropdownItems = getDropdownItems(rowFilters ?? [], selectedRowFilters, data, props);
+  const dropdownItems = getDropdownItems(rowFilters ?? [], selectedRowFilters, data);
   return (
     <Toolbar
       data-test="filter-toolbar"
@@ -368,7 +373,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     setTextValue={updateSearchFilter}
                     placeholder={placeholder}
                     data={data}
-                    labelPath={props.labelPath}
+                    labelPath={labelPath}
                   />
                 </div>
               </ToolbarFilter>
@@ -415,20 +420,19 @@ type FilterToolbarProps = {
   labelFilterPlaceholder?: string;
   // Used when multiple tables are in the same page
   uniqueFilterName?: string;
+  onFilterChange?: OnFilterChange;
 };
 
 export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
-  isMatch?: (param: R, id: string) => boolean;
   type: string;
-  items?: {
+  items: {
     [key: string]: string;
   }[];
-  itemsGenerator?: (...args) => { [key: string]: string }[];
+  isMatch?: (param: R, id: string) => boolean;
   reducer?: (param: R) => React.ReactText;
-  filter?: any;
+  filter?: (filter: { selected: Set<string>; all: string[] }, object: R) => boolean;
 };
 
-export const FilterToolbar = withRouter(connect(null, { filterList })(FilterToolbar_));
 FilterToolbar.displayName = 'FilterToolbar';

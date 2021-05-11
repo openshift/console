@@ -15,8 +15,12 @@ export type FirehoseResult<
   kind?: string;
 };
 
-export type FirehoseResourcesResult = {
-  [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
+export type FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
+
+export type FirehoseResourcesResult<
+  R extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] }
+> = {
+  [k in keyof R]: FirehoseResult<R[k]>;
 };
 
 /*

@@ -16,6 +16,7 @@ import {
   TableRow,
   TableData,
   RowFunction,
+  Flatten,
 } from '@console/internal/components/factory';
 import {
   K8sResourceKind,
@@ -23,6 +24,7 @@ import {
   kindForReference,
   modelFor,
   referenceForGroupVersionKind,
+  K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { providedAPIForReference } from './index';
@@ -120,9 +122,9 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
   );
 };
 
-export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
-  [kind: string]: { data: K8sResourceKind[] };
-}): K8sResourceKind[] => {
+export const flattenCsvResources = (
+  parentObj: K8sResourceCommon,
+): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) => {
   return _.flatMap(resources, (resource, kind: string) =>
     _.map(resource.data, (item) => ({ ...item, kind })),
   ).reduce((owned, resource) => {
@@ -133,7 +135,7 @@ export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
     )
       ? owned.concat([resource])
       : owned;
-  }, [] as K8sResourceKind[]);
+  }, []);
 };
 
 // NOTE: This is us building the `ownerReferences` graph client-side

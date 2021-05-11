@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { match as RMatch } from 'react-router-dom';
 
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '@console/shared';
@@ -654,10 +655,10 @@ export type DataTableRowsProps = {
 export type ReportsPageProps = {
   filterLabel: string;
   flags: { [_: string]: boolean };
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportsDetailsPageProps = {
@@ -674,10 +675,10 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string;
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {

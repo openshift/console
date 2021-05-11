@@ -29,6 +29,7 @@ import {
   TableData,
   MultiListPage,
   RowFunctionArgs,
+  Flatten,
 } from '@console/internal/components/factory';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -114,7 +115,8 @@ import { getClusterServiceVersionPlugins, isPluginEnabled } from '../utils';
 import { consolePluginModal } from './modals/console-plugin-modal';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
-const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
+const isCSV = (obj): obj is ClusterServiceVersionKind =>
+  referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const isPackageServer = (obj) =>
   obj.metadata.name === 'packageserver' &&
   obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
@@ -749,7 +751,10 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
     </Trans>
   );
 
-  const flatten = ({ clusterServiceVersions, subscriptions }) =>
+  const flatten: Flatten<{
+    clusterServiceVersions: ClusterServiceVersionKind[];
+    subscriptions: SubscriptionKind[];
+  }> = ({ clusterServiceVersions, subscriptions }) =>
     [
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(

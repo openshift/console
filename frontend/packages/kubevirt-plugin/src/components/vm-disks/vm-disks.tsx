@@ -2,11 +2,15 @@ import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
+import { Flatten, MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  TemplateKind,
+} from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getNamespace } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
@@ -179,7 +183,10 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
     }),
   ];
 
-  const flatten = ({ datavolumes, pvcs }) =>
+  const flatten: Flatten<{
+    datavolumes: V1alpha1DataVolume[];
+    pvcs: PersistentVolumeClaimKind[];
+  }> = ({ datavolumes, pvcs }) =>
     getStoragesData({
       vmLikeEntity,
       datavolumes,

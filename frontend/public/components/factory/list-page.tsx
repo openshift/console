@@ -1,21 +1,25 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Button, TextInput } from '@patternfly/react-core';
+import { Link, match as RMatch } from 'react-router-dom';
+import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
+
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
-import { referenceForModel } from '../../module/k8s';
+import { K8sKind, K8sResourceCommon, referenceForModel, Selector } from '../../module/k8s';
 import {
   Dropdown,
   Firehose,
+  FirehoseResource,
+  FirehoseResourcesResult,
+  FirehoseResultObject,
+  FirehoseResult,
   history,
   inject,
   kindObj,
@@ -24,10 +28,27 @@ import {
   PageHeading,
   RequireCreatePermission,
 } from '../utils';
-import { FilterToolbar } from '../filter-toolbar';
+import { FilterToolbar, RowFilter } from '../filter-toolbar';
+import { ColumnLayout } from '../modals/column-management-modal';
 
-/** @type {React.SFC<{disabled?: boolean, label?: string, onChange: (value: string) => void;, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean, onFocus?:any, name?:string, id?: string, onKeyDown?: any, parentClassName?: string }}>} */
-export const TextFilter = (props) => {
+type CreateProps = {
+  action?: string;
+  createLink?: (item: string) => string;
+  to?: string;
+  items?: {
+    [key: string]: string;
+  };
+  onClick?: () => void;
+  isDisabled?: boolean;
+  id?: string;
+};
+
+type TextFilterProps = Omit<TextInputProps, 'type' | 'tabIndex'> & {
+  label?: string;
+  parentClassName?: string;
+};
+
+export const TextFilter: React.FC<TextFilterProps> = (props) => {
   const {
     label,
     className,
@@ -36,7 +57,7 @@ export const TextFilter = (props) => {
     parentClassName,
     ...otherInputProps
   } = props;
-  const { ref } = useDocumentListener();
+  const { ref } = useDocumentListener<HTMLInputElement>();
   const { t } = useTranslation();
   const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
@@ -62,67 +83,105 @@ export const TextFilter = (props) => {
 TextFilter.displayName = 'TextFilter';
 
 // TODO (jon) make this into "withListPageFilters" HOC
-/** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, name?:string }>} */
-export class ListPageWrapper_ extends React.PureComponent {
-  render() {
-    const {
-      flatten,
-      ListComponent,
-      reduxIDs,
-      rowFilters,
-      textFilter,
-      nameFilterPlaceholder,
-      labelFilterPlaceholder,
-      hideNameLabelFilters,
-      hideLabelFilter,
-      columnLayout,
-      name,
-    } = this.props;
-    const data = flatten ? flatten(this.props.resources) : [];
-    const Filter = (
-      <FilterToolbar
-        rowFilters={rowFilters}
-        data={data}
-        nameFilterPlaceholder={nameFilterPlaceholder}
-        labelFilterPlaceholder={labelFilterPlaceholder}
-        reduxIDs={reduxIDs}
-        textFilter={textFilter}
-        hideNameLabelFilters={hideNameLabelFilters}
-        hideLabelFilter={hideLabelFilter}
-        columnLayout={columnLayout}
-        uniqueFilterName={name}
-        {...this.props}
-      />
-    );
 
-    return (
-      <div>
-        {!_.isEmpty(data) && Filter}
-        <div className="row">
-          <div className="col-xs-12">
-            <ListComponent {...this.props} data={data} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-ListPageWrapper_.displayName = 'ListPageWrapper_';
-ListPageWrapper_.propTypes = {
-  data: PropTypes.array,
-  kinds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
-  ListComponent: PropTypes.elementType.isRequired,
-  rowFilters: PropTypes.array,
-  staticFilters: PropTypes.array,
-  customData: PropTypes.any,
-  hideNameLabelFilters: PropTypes.bool,
-  hideLabelFilter: PropTypes.bool,
+type ListPageWrapperProps<L = any, C = any> = {
+  ListComponent: React.ComponentType<L>;
+  kinds: string[];
+  filters?: any;
+  flatten?: Flatten;
+  rowFilters?: RowFilter[];
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  columnLayout?: ColumnLayout;
+  name?: string;
+  resources?: FirehoseResourcesResult;
+  reduxIDs?: string[];
+  textFilter?: string;
+  nameFilterPlaceholder?: string;
+  labelFilterPlaceholder?: string;
+  label?: string;
+  staticFilters?: { key: string; value: string }[];
+  customData?: C;
+  hideColumnManagement?: boolean;
 };
 
-/** @type {React.FC<<WrappedComponent>, {canCreate?: Boolean, textFilter:string, createAccessReview?: Object, createButtonText?: String, createProps?: Object, fieldSelector?: String, filterLabel?: String, resources: any, badge?: React.ReactNode}>*/
-export const FireMan_ = connect(null, { filterList })(
-  class ConnectedFireMan extends React.PureComponent {
+export const ListPageWrapper: React.FC<ListPageWrapperProps> = (props) => {
+  const {
+    flatten,
+    ListComponent,
+    reduxIDs,
+    rowFilters,
+    textFilter,
+    nameFilterPlaceholder,
+    labelFilterPlaceholder,
+    hideNameLabelFilters,
+    hideLabelFilter,
+    columnLayout,
+    name,
+    resources,
+  } = props;
+  const data = flatten ? flatten(resources) : [];
+  const Filter = (
+    <FilterToolbar
+      rowFilters={rowFilters}
+      data={data}
+      nameFilterPlaceholder={nameFilterPlaceholder}
+      labelFilterPlaceholder={labelFilterPlaceholder}
+      reduxIDs={reduxIDs}
+      textFilter={textFilter}
+      hideNameLabelFilters={hideNameLabelFilters}
+      hideLabelFilter={hideLabelFilter}
+      columnLayout={columnLayout}
+      uniqueFilterName={name}
+      {...props}
+    />
+  );
+
+  return (
+    <div>
+      {!_.isEmpty(data) && Filter}
+      <div className="row">
+        <div className="col-xs-12">
+          <ListComponent {...props} data={data} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ListPageWrapper.displayName = 'ListPageWrapper_';
+
+export type FireManProps = {
+  canCreate?: boolean;
+  textFilter: string;
+  createAccessReview?: {
+    model: K8sKind;
+    namespace?: string;
+  };
+  createButtonText?: string;
+  createProps?: CreateProps;
+  fieldSelector?: string;
+  filterLabel?: string;
+  resources: FirehoseResource[];
+  badge?: React.ReactNode;
+  helpText?: React.ReactNode;
+  title: string;
+  autoFocus?: boolean;
+};
+
+type FireManState = {
+  reduxIDs: string[];
+  expand?: boolean;
+};
+
+export const FireMan = connect<{}, { filterList: typeof filterList }, FireManProps, FireManState>(
+  null,
+  { filterList },
+)(
+  class ConnectedFireMan extends React.PureComponent<
+    FireManProps & { filterList: typeof filterList },
+    FireManState
+  > {
     constructor(props) {
       super(props);
       this.onExpandChange = this.onExpandChange.bind(this);
@@ -162,7 +221,7 @@ export const FireMan_ = connect(null, { filterList })(
       } else {
         params.delete(filterName);
       }
-      const url = new URL(window.location);
+      const url = new URL(window.location.href);
       history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
     }
 
@@ -180,7 +239,6 @@ export const FireMan_ = connect(null, { filterList })(
 
     UNSAFE_componentWillMount() {
       const params = new URLSearchParams(window.location.search);
-      this.defaultValue = params.get(this.props.textFilter);
       params.forEach((v, k) => this.applyFilter(k, v));
     }
 
@@ -210,7 +268,7 @@ export const FireMan_ = connect(null, { filterList })(
       if (canCreate) {
         if (createProps.to) {
           createLink = (
-            <Link className="co-m-primary-action" {...createProps}>
+            <Link className="co-m-primary-action" to={createProps.to}>
               <Button variant="primary" id="yaml-create" data-test="item-create">
                 {createButtonText}
               </Button>
@@ -281,40 +339,28 @@ export const FireMan_ = connect(null, { filterList })(
     }
   },
 );
-FireMan_.displayName = 'FireMan';
-FireMan_.defaultProps = {
-  textFilter: 'name',
-};
-FireMan_.propTypes = {
-  canCreate: PropTypes.bool,
-  createAccessReview: PropTypes.object,
-  createButtonText: PropTypes.string,
-  createProps: PropTypes.object,
-  fieldSelector: PropTypes.string,
-  filterLabel: PropTypes.string,
-  helpText: PropTypes.any,
-  resources: PropTypes.arrayOf(
-    PropTypes.shape({
-      fieldSelector: PropTypes.string,
-      filters: PropTypes.object,
-      isList: PropTypes.bool,
-      kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-      name: PropTypes.string,
-      namespace: PropTypes.string,
-      namespaced: PropTypes.bool,
-      selector: PropTypes.shape({
-        matchLabels: PropTypes.objectOf(PropTypes.string),
-        matchExpressions: PropTypes.arrayOf(PropTypes.object),
-      }),
-    }),
-  ).isRequired,
-  selectorFilterLabel: PropTypes.string,
-  textFilter: PropTypes.string,
-  title: PropTypes.string,
+FireMan.displayName = 'FireMan';
+
+export type Flatten<
+  F extends FirehoseResultObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] },
+  R = any
+> = (resources: FirehoseResourcesResult<F>) => R;
+
+type ListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+  kind: string;
+  helpText?: React.ReactNode;
+  selector?: Selector;
+  fieldSelector?: string;
+  createHandler?: () => void;
+  name?: string;
+  filters?: any;
+  limit?: number;
+  nameFilter?: string;
+  match?: RMatch<any>;
+  skipAccessReview?: boolean;
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean, labelFilterPlaceholder?: string, nameFilterPlaceholder?: string, flatten?: any, name?: string } >} */
-export const ListPage = withFallback((props) => {
+export const ListPage = withFallback<ListPageProps>((props) => {
   const {
     autoFocus,
     canCreate,
@@ -344,7 +390,7 @@ export const ListPage = withFallback((props) => {
     hideNameLabelFilters,
     hideColumnManagement,
     columnLayout,
-    flatten = (_resources) => _.get(_resources, name || kind, {}).data,
+    flatten = (_resources) => _.get(_resources, name || kind, {} as FirehoseResult).data,
   } = props;
   const { t } = useTranslation();
   let { createProps } = props;
@@ -378,6 +424,7 @@ export const ListPage = withFallback((props) => {
       name: name || nameFilter,
       namespaced,
       selector,
+      prop: kind,
     },
   ];
 
@@ -409,7 +456,6 @@ export const ListPage = withFallback((props) => {
       namespace={usedNamespace}
       resources={resources}
       rowFilters={rowFilters}
-      selectorFilterLabel={t('public~Filter by selector (app=nginx) ...')}
       showTitle={showTitle}
       textFilter={textFilter}
       title={title}
@@ -424,8 +470,43 @@ export const ListPage = withFallback((props) => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, hideColumnManagement?: boolean, nameFilterPlaceholder?: string >} */
-export const MultiListPage = (props) => {
+type PageCommonProps<L = any, C = any> = {
+  canCreate?: boolean;
+  createButtonText?: string;
+  createProps?: CreateProps;
+  flatten?: Flatten;
+  title?: string;
+  showTitle?: boolean;
+  filterLabel?: string;
+  textFilter?: string;
+  rowFilters?: RowFilter[];
+  ListComponent: React.ComponentType<L>;
+  namespace?: string;
+  customData?: C;
+  badge?: React.ReactNode;
+  hideNameLabelFilters?: boolean;
+  hideLabelFilter?: boolean;
+  columnLayout?: ColumnLayout;
+  hideColumnManagement?: boolean;
+  labelFilterPlaceholder?: string;
+  nameFilterPlaceholder?: string;
+  autoFocus?: boolean;
+  mock?: boolean;
+};
+
+type MultiListPageProps<L = any, C = any> = PageCommonProps<L, C> & {
+  createAccessReview?: {
+    model: K8sKind;
+    namespace?: string;
+  };
+  label?: string;
+  hideTextFilter?: boolean;
+  helpText?: React.ReactNode;
+  resources: (Omit<FirehoseResource, 'prop'> & { prop?: FirehoseResource['prop'] })[];
+  staticFilters?: { key: string; value: string }[];
+};
+
+export const MultiListPage: React.FC<MultiListPageProps> = (props) => {
   const {
     autoFocus,
     canCreate,
@@ -463,7 +544,7 @@ export const MultiListPage = (props) => {
   }));
 
   return (
-    <FireMan_
+    <FireMan
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
@@ -472,13 +553,12 @@ export const MultiListPage = (props) => {
       filterLabel={filterLabel || t('public~by name')}
       helpText={helpText}
       resources={mock ? [] : resources}
-      selectorFilterLabel={t('public~Filter by selector (app=nginx) ...')}
       textFilter={textFilter}
       title={showTitle ? title : undefined}
       badge={badge}
     >
       <Firehose resources={mock ? [] : resources}>
-        <ListPageWrapper_
+        <ListPageWrapper
           flatten={flatten}
           kinds={_.map(resources, 'kind')}
           label={label}
@@ -493,10 +573,9 @@ export const MultiListPage = (props) => {
           columnLayout={columnLayout}
           nameFilterPlaceholder={nameFilterPlaceholder}
           labelFilterPlaceholder={labelFilterPlaceholder}
-          name={name}
         />
       </Firehose>
-    </FireMan_>
+    </FireMan>
   );
 };
 

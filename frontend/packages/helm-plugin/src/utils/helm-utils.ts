@@ -6,6 +6,7 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { toTitleCase } from '@console/shared';
+import { Flatten } from '@console/internal/components/factory/list-page';
 import {
   HelmRelease,
   HelmChart,
@@ -240,7 +241,7 @@ export const getHelmActionConfig = (
   }
 };
 
-export const flattenReleaseResources = (resources: { [kind: string]: { data: K8sResourceKind } }) =>
+export const flattenReleaseResources: Flatten = (resources) =>
   Object.keys(resources).reduce((acc, kind) => {
     if (!_.isEmpty(resources[kind].data)) {
       acc.push(resources[kind].data);

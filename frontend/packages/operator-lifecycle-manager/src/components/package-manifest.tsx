@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Link, match } from 'react-router-dom';
 import * as classNames from 'classnames';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
 import {
   MsgBox,
   Timestamp,
@@ -15,6 +15,7 @@ import {
   TableRow,
   TableData,
   RowFunction,
+  Flatten,
 } from '@console/internal/components/factory';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
@@ -141,7 +142,6 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
   const { catalogSource } = props;
   const namespace = _.get(props.match, 'params.ns');
 
-  type Flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
   const helpText = (
@@ -170,7 +170,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
           prop: 'packageManifest',
           selector: {
             matchExpressions: [
-              ...(catalogSource
+              ...((catalogSource
                 ? [
                     {
                       key: 'catalog',
@@ -183,7 +183,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
                       values: [catalogSource?.metadata.namespace],
                     },
                   ]
-                : []),
+                : []) as MatchExpression[]),
               { key: visibilityLabel, operator: 'DoesNotExist' },
               { key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist' },
             ],

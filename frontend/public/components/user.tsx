@@ -161,7 +161,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
 const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
-    staticFilters={[{ 'role-binding-user': obj.metadata.name }]}
+    staticFilters={{ 'role-binding-user': obj.metadata.name }}
     name={obj.metadata.name}
     kind={obj.kind}
   />

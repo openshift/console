@@ -8,12 +8,7 @@ import { ListPageProps } from '@console/internal/components/monitoring/types';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import {
-  K8sResourceKind,
-  referenceForModel,
-  K8sKind,
-  k8sPatch,
-} from '@console/internal/module/k8s';
+import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
 import {
   Firehose,
   Kebab,
@@ -27,6 +22,7 @@ import {
   KebabOption,
   ResourceSummary,
   DetailsItem,
+  FirehoseResult,
 } from '@console/internal/components/utils';
 import {
   DetailsPage,
@@ -628,8 +624,8 @@ type DisabledPopoverProps = {
 };
 
 type FlattenArgType = {
-  catalogSources: { data: CatalogSourceKind[] };
-  packageManifests: { data: PackageManifestKind[] };
+  catalogSources?: FirehoseResult<CatalogSourceKind[]>;
+  packageManifests?: FirehoseResult<PackageManifestKind[]>;
   operatorHub: OperatorHubKind;
 };
 
@@ -643,7 +639,7 @@ export type CatalogSourceDetailsPageProps = {
 };
 
 export type CatalogSourceListPageProps = {
-  obj: K8sResourceKind;
+  obj: OperatorHubKind;
 } & ListPageProps;
 
 export type CreateSubscriptionYAMLProps = {

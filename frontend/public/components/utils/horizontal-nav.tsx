@@ -43,7 +43,8 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
         namespace={namespace}
         selector={selector}
         canCreate={false}
-        customData={customData}
+        showNamespaceOverride={customData?.showNamespaceOverride}
+        showNodes={customData?.showNodes}
       />
     );
   }

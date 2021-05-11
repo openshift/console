@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, Selector } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
-import { FireMan_ as FireMan } from '@console/internal/components/factory';
+import { FireMan, FireManProps } from '@console/internal/components/factory';
 import { PipelineModel } from '../../models';
 import PipelineAugmentRunsWrapper from './list-page/PipelineAugmentRunsWrapper';
 import { filters } from './list-page/PipelineAugmentRuns';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
-interface PipelinesResourceListProps extends React.ComponentProps<typeof FireMan> {
+type PipelinesResourceListProps = {
   namespace: string;
-}
+  showTitle?: boolean;
+  selector?: Selector;
+  name?: string;
+  nameFilter?: string;
+  hideNameLabelFilters?: boolean;
+  badge: FireManProps['badge'];
+  title: FireManProps['title'];
+};
 
 const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
   const { t } = useTranslation();

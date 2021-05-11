@@ -71,8 +71,11 @@ export const getResources = () => (dispatch: Dispatch) => {
     });
 };
 
-export const filterList = (id: string, name: string, value: string) =>
-  action(ActionType.FilterList, { id, name, value });
+export const filterList = (
+  id: string,
+  name: string,
+  value: string | string[] | { selected: Set<string>; all: string[] },
+) => action(ActionType.FilterList, { id, name, value });
 
 export const startWatchK8sObject = (id: string) => action(ActionType.StartWatchK8sObject, { id });
 

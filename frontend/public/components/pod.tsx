@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover } from '@patternfly/react-core';
@@ -32,7 +31,11 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, TableRow, TableData } from './factory';
+import ListPageBody from './factory/ListPage/ListPageBody';
+import ListPageHeader from './factory/ListPage/ListPageHeader';
+import ListPageFilter from './factory/ListPage/ListPageFilter';
+import ListPageCreate from './factory/ListPage/ListPageCreate';
 import {
   AsyncComponent,
   DetailsItem,
@@ -68,6 +71,11 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
+import { useK8sWatchResource } from './utils/k8s-watch-hook';
+import { useListPageFilter } from './factory/ListPage/filter-hook';
+import VirtualizedTable, { RowProps, TableColumn } from './factory/Table/VirtualizedTable';
+import { TFunction } from 'i18next';
+import { sortResourceByValue } from './factory/Table/sort';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -193,109 +201,181 @@ const podRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'pod']),
 });
 
-const getHeader = (showNodes) => {
-  return () => {
-    return [
-      {
-        title: i18next.t(podColumnInfo.name.title),
-        id: podColumnInfo.name.id,
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: podColumnInfo.name.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.namespace.title),
-        id: podColumnInfo.namespace.id,
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: podColumnInfo.namespace.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.status.title),
-        id: podColumnInfo.status.id,
-        sortFunc: 'podPhase',
-        transforms: [sortable],
-        props: { className: podColumnInfo.status.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.ready.title),
-        id: podColumnInfo.ready.id,
-        sortFunc: 'podReadiness',
-        transforms: [sortable],
-        props: { className: podColumnInfo.ready.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.restarts.title),
-        id: podColumnInfo.restarts.id,
-        sortFunc: 'podRestarts',
-        transforms: [sortable],
-        props: { className: podColumnInfo.restarts.classes },
-      },
-      {
-        title: showNodes
-          ? i18next.t(podColumnInfo.node.title)
-          : i18next.t(podColumnInfo.owner.title),
-        id: podColumnInfo.owner.id,
-        sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
-        transforms: [sortable],
-        props: { className: podColumnInfo.owner.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.memory.title),
-        id: podColumnInfo.memory.id,
-        sortFunc: 'podMemory',
-        transforms: [sortable],
-        props: { className: podColumnInfo.memory.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.cpu.title),
-        id: podColumnInfo.cpu.id,
-        sortFunc: 'podCPU',
-        transforms: [sortable],
-        props: { className: podColumnInfo.cpu.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.created.title),
-        id: podColumnInfo.created.id,
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: podColumnInfo.created.classes },
-      },
-      {
-        title: i18next.t(podColumnInfo.node.title),
-        id: podColumnInfo.node.id,
-        sortField: 'spec.nodeName',
-        transforms: [sortable],
-        props: { className: podColumnInfo.node.classes },
-        additional: true,
-      },
-      {
-        title: i18next.t(podColumnInfo.labels.title),
-        id: podColumnInfo.labels.id,
-        sortField: 'metadata.labels',
-        transforms: [sortable],
-        props: { className: podColumnInfo.labels.classes },
-        additional: true,
-      },
-      {
-        title: i18next.t(podColumnInfo.ipaddress.title),
-        id: podColumnInfo.ipaddress.id,
-        sortField: 'status.hostIP',
-        transforms: [sortable],
-        props: { className: podColumnInfo.ipaddress.classes },
-        additional: true,
-      },
-      {
-        title: '',
-        props: { className: Kebab.columnClass },
-      },
-    ];
-  };
-};
+const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] => [
+  {
+    title: t(podColumnInfo.name.title),
+    id: podColumnInfo.name.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, a.metadata.name, b.metadata.name);
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.name.classes },
+  },
+  {
+    title: t(podColumnInfo.namespace.title),
+    id: podColumnInfo.namespace.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, a.metadata.namespace, b.metadata.namespace);
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.namespace.classes },
+  },
+  {
+    title: t(podColumnInfo.status.title),
+    id: podColumnInfo.status.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, podPhase(a), podPhase(b));
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.status.classes },
+  },
+  {
+    title: t(podColumnInfo.ready.title),
+    id: podColumnInfo.ready.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(
+          a,
+          b,
+          direction,
+          podReadiness(a).readyCount,
+          podReadiness(b).readyCount,
+        );
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.ready.classes },
+  },
+  {
+    title: t(podColumnInfo.restarts.title),
+    id: podColumnInfo.restarts.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, podRestarts(a), podRestarts(b));
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.restarts.classes },
+  },
+  {
+    title: showNodes ? t(podColumnInfo.node.title) : t(podColumnInfo.owner.title),
+    id: podColumnInfo.owner.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(
+          a,
+          b,
+          direction,
+          showNodes ? a.spec.nodeName : a.metadata.ownerReferences?.[0]?.name,
+          showNodes ? b.spec.nodeName : b.metadata.ownerReferences?.[0]?.name,
+        );
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.owner.classes },
+  },
+  {
+    title: t(podColumnInfo.memory.title),
+    id: podColumnInfo.memory.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(
+          a,
+          b,
+          direction,
+          UIActions.getPodMetric(a, 'memory'),
+          UIActions.getPodMetric(b, 'memory'),
+        );
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.memory.classes },
+  },
+  {
+    title: t(podColumnInfo.cpu.title),
+    id: podColumnInfo.cpu.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(
+          a,
+          b,
+          direction,
+          UIActions.getPodMetric(a, 'cpu'),
+          UIActions.getPodMetric(b, 'cpu'),
+        );
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.cpu.classes },
+  },
+  {
+    title: t(podColumnInfo.created.title),
+    id: podColumnInfo.created.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(
+          a,
+          b,
+          direction,
+          a.metadata.creationTimestamp,
+          b.metadata.creationTimestamp,
+        );
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.created.classes },
+  },
+  {
+    title: t(podColumnInfo.node.title),
+    id: podColumnInfo.node.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, a.spec.nodeName, b.spec.nodeName);
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.node.classes },
+    additional: true,
+  },
+  {
+    title: t(podColumnInfo.labels.title),
+    id: podColumnInfo.labels.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, a.metadata.labels, b.metadata.labels);
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.labels.classes },
+    additional: true,
+  },
+  {
+    title: t(podColumnInfo.ipaddress.title),
+    id: podColumnInfo.ipaddress.id,
+    sort: (data, direction) => {
+      const sortFunc = (a: PodKind, b: PodKind) =>
+        sortResourceByValue(a, b, direction, a.status?.hostIP, b.status?.hostIP);
+      return data.sort(sortFunc);
+    },
+    transforms: [sortable],
+    props: { className: podColumnInfo.ipaddress.classes },
+    additional: true,
+  },
+  {
+    title: '',
+    props: { className: Kebab.columnClass },
+  },
+];
 
-const getSelectedColumns = (showNodes: boolean) => {
+const getSelectedColumns = (showNodes: boolean, t: TFunction) => {
   return new Set(
-    getHeader(showNodes)().reduce((acc, column) => {
+    getColumns(showNodes, t).reduce((acc, column) => {
       if (column.id && !column.additional) {
         acc.push(column.id);
       }
@@ -308,12 +388,12 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
   ({
     obj: pod,
     index,
-    rowKey,
     style,
     metrics,
     showNodes,
     showNamespaceOverride,
   }: PodTableRowProps & PodTableRowPropsFromState) => {
+    const { t } = useTranslation();
     const [tableColumns, , loaded] = useUserSettingsCompatibility(
       COLUMN_MANAGEMENT_CONFIGMAP_KEY,
       COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
@@ -329,10 +409,9 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const columns: Set<string> =
       loaded && tableColumns?.[columnManagementID]?.length > 0
         ? new Set(tableColumns[columnManagementID])
-        : getSelectedColumns(showNodes);
-    const { t } = useTranslation();
+        : getSelectedColumns(showNodes, t);
     return (
-      <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
+      <TableRow id={pod.metadata.uid} index={index} trKey={pod.metadata.uid} style={style}>
         <TableData className={podColumnInfo.name.classes}>
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </TableData>
@@ -796,19 +875,6 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
 };
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-const getRow = (showNodes, showNamespaceOverride) => {
-  return (rowArgs: RowFunctionArgs<PodKind>) => (
-    <PodTableRow
-      obj={rowArgs.obj}
-      index={rowArgs.index}
-      rowKey={rowArgs.key}
-      style={rowArgs.style}
-      showNodes={showNodes}
-      showNamespaceOverride={showNamespaceOverride}
-    />
-  );
-};
-
 export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
   PodListProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
   TableColumnsType
@@ -817,32 +883,56 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   undefined,
   true,
-)(({ userSettingState: tableColumns, ...props }) => {
-  const showNodes = props?.customData?.showNodes;
-  const showNamespaceOverride = props?.customData?.showNamespaceOverride;
-  const { t } = useTranslation();
-  const selectedColumns: Set<string> =
-    tableColumns?.[columnManagementID]?.length > 0
-      ? new Set(tableColumns[columnManagementID])
-      : null;
-  return (
-    <Table
-      {...props}
-      activeColumns={selectedColumns}
-      columnManagementID={columnManagementID}
-      showNamespaceOverride={showNamespaceOverride}
-      aria-label={t('public~Pods')}
-      Header={getHeader(showNodes)}
-      Row={getRow(showNodes, showNamespaceOverride)}
-      virtualize
-    />
-  );
-});
+)(
+  ({
+    userSettingState: tableColumns,
+    data,
+    loaded,
+    showNodes,
+    showNamespaceOverride,
+    loadError,
+  }) => {
+    const { t } = useTranslation();
+    const selectedColumns = React.useMemo<Set<string>>(
+      () =>
+        tableColumns?.[columnManagementID]?.length > 0
+          ? new Set(tableColumns[columnManagementID])
+          : null,
+      [tableColumns],
+    );
+
+    const Row = React.useCallback<React.FC<RowProps<PodKind>>>(
+      (rowProps) => (
+        <PodTableRow
+          {...rowProps}
+          showNodes={showNodes}
+          showNamespaceOverride={showNamespaceOverride}
+        />
+      ),
+      [showNamespaceOverride, showNodes],
+    );
+
+    const columns = React.useMemo(() => getColumns(showNodes, t), [showNodes, t]);
+    return (
+      <VirtualizedTable
+        data={data}
+        loaded={loaded}
+        loadError={loadError}
+        activeColumns={selectedColumns}
+        columnManagementID={columnManagementID}
+        showNamespaceOverride={showNamespaceOverride}
+        aria-label={t('public~Pods')}
+        columns={columns}
+        Row={Row}
+      />
+    );
+  },
+);
 PodList.displayName = 'PodList';
 
-export const getFilters = () => [
+export const getFilters = (t: TFunction) => [
   {
-    filterGroupName: i18next.t('public~Status'),
+    filterGroupName: t('public~Status'),
     type: 'pod-status',
     reducer: podPhaseFilterReducer,
     items: [
@@ -885,9 +975,12 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         canCreate = true,
         namespace,
         setPodMetrics,
-        customData,
         userSettingState: tableColumns,
-        ...listProps
+        showTitle = true,
+        selector,
+        fieldSelector,
+        showNodes,
+        showNamespaceOverride,
       } = props;
       const { t } = useTranslation();
 
@@ -911,28 +1004,55 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         }
       }, [namespace]);
       /* eslint-enable react-hooks/exhaustive-deps */
+
+      const [pods, loaded, loadError] = useK8sWatchResource<PodKind[]>({
+        kind,
+        isList: true,
+        namespaced: true,
+        namespace,
+        selector,
+        fieldSelector,
+      });
+
+      const [data, filteredData, onFilterChange] = useListPageFilter(pods);
+
+      const filters = React.useMemo(() => getFilters(t), [t]);
+
       return (
-        <ListPage
-          {...listProps}
-          canCreate={canCreate}
-          kind={kind}
-          ListComponent={PodList}
-          rowFilters={getFilters()}
-          namespace={namespace}
-          customData={customData}
-          columnLayout={{
-            columns: getHeader(props?.customData?.showNodes)().map((column) =>
-              _.pick(column, ['title', 'additional', 'id']),
-            ),
-            id: columnManagementID,
-            selectedColumns:
-              tableColumns?.[columnManagementID]?.length > 0
-                ? new Set(tableColumns[columnManagementID])
-                : null,
-            showNamespaceOverride: props?.customData?.showNamespaceOverride,
-            type: t('public~Pod'),
-          }}
-        />
+        <>
+          <ListPageHeader title={showTitle ? t('public~Pods') : undefined}>
+            {canCreate && (
+              <ListPageCreate groupVersionKind={referenceForModel(PodModel)}>
+                {t('public~Create Pod')}
+              </ListPageCreate>
+            )}
+          </ListPageHeader>
+          <ListPageBody>
+            <ListPageFilter
+              data={data}
+              loaded={loaded}
+              rowFilters={filters}
+              onFilterChange={onFilterChange}
+              columnLayout={{
+                columns: getColumns(showNodes, t),
+                id: columnManagementID,
+                selectedColumns:
+                  tableColumns?.[columnManagementID]?.length > 0
+                    ? new Set(tableColumns[columnManagementID])
+                    : null,
+                showNamespaceOverride,
+                type: t('public~Pod'),
+              }}
+            />
+            <PodList
+              data={filteredData}
+              loaded={loaded}
+              loadError={loadError}
+              showNamespaceOverride={showNamespaceOverride}
+              showNodes={showNodes}
+            />
+          </ListPageBody>
+        </>
       );
     },
   ),
@@ -981,11 +1101,7 @@ type PodDetailsProps = {
   obj: PodKind;
 };
 
-type PodTableRowProps = {
-  obj: PodKind;
-  index: number;
-  rowKey: string;
-  style: object;
+type PodTableRowProps = RowProps<PodKind> & {
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
 };
@@ -995,7 +1111,11 @@ type PodTableRowPropsFromState = {
 };
 
 type PodListProps = {
-  customData?: any;
+  data: PodKind[];
+  loaded: boolean;
+  loadError: any;
+  showNamespaceOverride?: boolean;
+  showNodes?: boolean;
 };
 
 type PodPageProps = {
@@ -1004,7 +1124,8 @@ type PodPageProps = {
   namespace?: string;
   selector?: any;
   showTitle?: boolean;
-  customData?: any;
+  showNamespaceOverride?: boolean;
+  showNodes?: boolean;
 };
 
 type PodPagePropsFromDispatch = {

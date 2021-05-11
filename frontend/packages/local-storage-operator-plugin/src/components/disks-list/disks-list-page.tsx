@@ -14,7 +14,7 @@ import {
   MultiListPage,
 } from '@console/internal/components/factory';
 import {
-  FirehoseResult,
+  FirehoseResourcesResult,
   humanizeBinaryBytes,
   Kebab,
   LoadingInline,
@@ -179,15 +179,15 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
       hideLabelFilter
       textFilter="node-disk-name"
       rowFilters={diskFilters}
-      flatten={(resource: FirehoseResult<LocalVolumeDiscoveryResultKind>) =>
-        resource[propName]?.data[0]?.status?.discoveredDevices ?? []
-      }
+      flatten={(
+        resource: FirehoseResourcesResult<{ [key: string]: LocalVolumeDiscoveryResultKind }>,
+      ) => resource[propName]?.data[0]?.status?.discoveredDevices ?? []}
       ListComponent={ListComponent ?? DisksList}
       resources={[
         {
           kind: referenceForModel(LocalVolumeDiscoveryResult),
           prop: propName,
-          selector: { [LABEL_SELECTOR]: nodeName },
+          selector: { matchLabels: { [LABEL_SELECTOR]: nodeName } },
         },
       ]}
       customData={{ node: nodeName, EmptyMsg }}

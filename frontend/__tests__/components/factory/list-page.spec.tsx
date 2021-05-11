@@ -3,8 +3,8 @@ import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import { TextInput } from '@patternfly/react-core';
 import {
   TextFilter,
-  ListPageWrapper_,
-  FireMan_,
+  ListPageWrapper,
+  FireMan,
   MultiListPage,
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
@@ -23,7 +23,7 @@ describe(TextFilter.displayName, () => {
   let wrapper: ReactWrapper;
   let label: string;
   let placeholder: string;
-  let onChange: React.ChangeEventHandler<any>;
+  let onChange: (value: string, event: React.FormEvent<HTMLInputElement>) => void;
   let defaultValue: string;
 
   it('renders text input', () => {
@@ -56,12 +56,12 @@ describe(TextFilter.displayName, () => {
   });
 });
 
-describe(FireMan_.displayName, () => {
+describe(FireMan.displayName, () => {
   let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
     const resources = [{ kind: 'Node' }];
-    wrapper = shallow(<FireMan_.WrappedComponent resources={resources} />);
+    wrapper = shallow(<FireMan.WrappedComponent resources={resources} />);
   });
 
   it('renders `title` if given `title`', () => {
@@ -99,12 +99,12 @@ describe(FireMan_.displayName, () => {
   });
 });
 
-describe(ListPageWrapper_.displayName, () => {
+describe(ListPageWrapper.displayName, () => {
   const data: any[] = [{ kind: 'Pod' }, { kind: 'Pod' }, { kind: 'Node' }];
   const flatten = () => data;
   const ListComponent = () => <div />;
   const wrapper: ShallowWrapper = shallow(
-    <ListPageWrapper_
+    <ListPageWrapper
       flatten={flatten}
       ListComponent={ListComponent}
       kinds={['pods']}
@@ -141,9 +141,9 @@ describe(MultiListPage.displayName, () => {
       resources={[
         {
           kind: 'Pod',
-          filterLabel: 'by name',
         },
       ]}
+      filterLabel="by name"
     />,
   );
 

@@ -10,7 +10,12 @@ import { useActiveNamespace } from '@console/shared';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
-import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { Table, TableRow, TableData } from '../factory';
+import ListPageFilter from '../factory/ListPage/ListPageFilter';
+import ListPageHeader from '../factory/ListPage/ListPageHeader';
+import ListPageBody from '../factory/ListPage/ListPageBody';
+import { useListPageFilter } from '../factory/ListPage/filter-hook';
+import { ListPageCreateLink } from '../factory/ListPage/ListPageCreate';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import {
@@ -33,6 +38,7 @@ import {
 import { connectToFlags, flagPending } from '../../reducers/features';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import { useK8sWatchResources } from '../utils/k8s-watch-hook';
 
 const bindingKind = (binding) =>
   binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
@@ -273,16 +279,11 @@ export const bindingType = (binding) => {
   return binding.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-const roleResources = [
-  { kind: 'RoleBinding', namespaced: true },
-  { kind: 'ClusterRoleBinding', namespaced: false, optional: true },
-];
-
 export const RoleBindingsPage = ({
   namespace = undefined,
   showTitle = true,
   mock = false,
-  staticFilters = undefined,
+  staticFilters,
   name,
   kind,
   createPath = `/k8s/cluster/rolebindings/~new${
@@ -290,46 +291,82 @@ export const RoleBindingsPage = ({
   }`,
 }) => {
   const { t } = useTranslation();
-  const rowFilters = [
-    {
-      filterGroupName: t('public~Kind'),
-      type: 'role-binding-kind',
-      reducer: bindingType,
-      itemsGenerator: ({ ClusterRoleBinding: data }) => {
-        const items = [
-          { id: 'namespace', title: t('public~Namespace RoleBindings') },
-          { id: 'system', title: t('public~System RoleBindings') },
-        ];
-        if (data && data.loaded && !data.loadError) {
-          items.unshift({
-            id: 'cluster',
-            title: t('public~Cluster-wide RoleBindings'),
-          });
-        }
-        return items;
-      },
+  const resources = useK8sWatchResources({
+    RoleBinding: {
+      kind: 'RoleBinding',
+      namespaced: true,
+      namespace,
+      isList: true,
     },
-  ];
+    ClusterRoleBinding: {
+      kind: 'ClusterRoleBinding',
+      namespaced: false,
+      isList: true,
+    },
+  });
+
+  const data = React.useMemo(() => flatten(resources), [resources]);
+
+  const loaded = Object.values(resources).every((r) => r.loaded);
+
+  const hasCRBindings =
+    resources.ClusterRoleBinding.data?.length > 0 &&
+    resources.ClusterRoleBinding.loaded &&
+    !resources.ClusterRoleBinding.loadError;
+
+  const rowFilters = React.useMemo(
+    () => [
+      {
+        filterGroupName: t('bindings~Kind'),
+        type: 'role-binding-kind',
+        reducer: bindingType,
+        filter: (filter, binding) => filter.includes(bindingType(binding)) || filter.size === 0,
+        items: hasCRBindings
+          ? [
+              {
+                id: 'cluster',
+                title: t('bindings~Cluster-wide RoleBindings'),
+              },
+              { id: 'namespace', title: t('bindings~Namespace RoleBindings') },
+              { id: 'system', title: t('bindings~System RoleBindings') },
+            ]
+          : [
+              { id: 'namespace', title: t('bindings~Namespace RoleBindings') },
+              { id: 'system', title: t('bindings~System RoleBindings') },
+            ],
+      },
+    ],
+    [hasCRBindings, t],
+  );
+
+  const [staticData, filteredData, onFilterChange] = useListPageFilter(
+    data,
+    rowFilters,
+    staticFilters,
+  );
+
   return (
-    <MultiListPage
-      canCreate={!mock}
-      createButtonText={t('public~Create binding')}
-      createProps={{
-        to: createPath,
-      }}
-      mock={mock}
-      filterLabel={t('public~by role or subject')}
-      flatten={flatten}
-      label={t('public~RoleBindings')}
-      ListComponent={BindingsList}
-      namespace={namespace}
-      resources={roleResources}
-      rowFilters={staticFilters ? [] : rowFilters}
-      staticFilters={staticFilters}
-      showTitle={showTitle}
-      textFilter="role-binding"
-      title={t('public~RoleBindings')}
-    />
+    <>
+      <ListPageHeader title={showTitle ? t('bindings~RoleBindings') : undefined}>
+        {!mock && (
+          <ListPageCreateLink to={createPath}>{t('bindings~Create binding')}</ListPageCreateLink>
+        )}
+      </ListPageHeader>
+      <ListPageBody>
+        <ListPageFilter
+          data={staticData}
+          loaded={loaded}
+          rowFilters={rowFilters}
+          onFilterChange={onFilterChange}
+        />
+        <BindingsList
+          data={filteredData}
+          loaded={loaded}
+          loadError={resources.RoleBinding.loadError}
+          mock={mock}
+        />
+      </ListPageBody>
+    </>
   );
 };
 

@@ -81,7 +81,7 @@ const rowFiltersToFilterFuncs = (rowFilters) => {
     .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
 };
 
-const getAllTableFilters = (rowFilters) => ({
+export const getAllTableFilters = (rowFilters) => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
