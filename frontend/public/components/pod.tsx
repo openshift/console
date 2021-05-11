@@ -69,6 +69,15 @@ import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
 
+// Key translations for oauth login templates
+// t('public~Log in to your account')
+// t('public~Log in')
+// t('public~Welcome to {{platformTitle}}')
+// t('public~Log in with {{providerName}}')
+// t('public~Login is required. Please try again.')
+// t('public~Could not check CSRF token. Please try again.')
+// t('public~Invalid login or password. Please try again.')
+
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
 const showMetrics =
