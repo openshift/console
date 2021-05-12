@@ -53,6 +53,7 @@ const (
 	helmChartRepoProxyEndpoint       = "/api/helm/charts/"
 	gitopsEndpoint                   = "/api/gitops/"
 	devfileEndpoint                  = "/api/devfile/"
+	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginsEndpoint                  = "/api/plugins/"
 
 	sha256Prefix = "sha256~"
@@ -262,6 +263,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	)
 
 	handleFunc(devfileEndpoint, s.devfileHandler)
+	handleFunc(devfileSamplesEndpoint, s.devfileSamplesHandler)
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,

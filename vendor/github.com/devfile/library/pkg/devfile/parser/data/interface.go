@@ -1,8 +1,8 @@
 package data
 
 import (
-	v1 "github.com/devfile/api/pkg/apis/workspaces/v1alpha2"
-	devfilepkg "github.com/devfile/api/pkg/devfile"
+	v1 "github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2"
+	devfilepkg "github.com/devfile/api/v2/pkg/devfile"
 	"github.com/devfile/library/pkg/devfile/parser/data/v2/common"
 )
 
@@ -46,6 +46,10 @@ type DevfileData interface {
 	AddVolume(volume v1.Component, path string) error
 	DeleteVolume(name string) error
 	GetVolumeMountPath(name string) (string, error)
+
+	// workspace related methods
+	GetDevfileWorkspace() *v1.DevWorkspaceTemplateSpecContent
+	SetDevfileWorkspace(content v1.DevWorkspaceTemplateSpecContent)
 
 	//utils
 	GetDevfileContainerComponents(common.DevfileOptions) ([]v1.Component, error)

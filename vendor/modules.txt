@@ -82,11 +82,14 @@ github.com/deislabs/oras/pkg/auth/docker
 github.com/deislabs/oras/pkg/content
 github.com/deislabs/oras/pkg/context
 github.com/deislabs/oras/pkg/oras
-# github.com/devfile/api v0.0.0-20201126204309-ec222215253e
-github.com/devfile/api/pkg/apis/workspaces/v1alpha2
-github.com/devfile/api/pkg/attributes
-github.com/devfile/api/pkg/devfile
-# github.com/devfile/library v0.0.0-20201203185121-a216646cf21d
+# github.com/devfile/api/v2 v2.0.0-20210211160219-33a78aec06af
+github.com/devfile/api/v2/pkg/apis/workspaces/v1alpha2
+github.com/devfile/api/v2/pkg/attributes
+github.com/devfile/api/v2/pkg/devfile
+github.com/devfile/api/v2/pkg/utils/overriding
+github.com/devfile/api/v2/pkg/utils/unions
+github.com/devfile/api/v2/pkg/validation
+# github.com/devfile/library v1.0.0-alpha.2
 github.com/devfile/library/pkg/devfile
 github.com/devfile/library/pkg/devfile/generator
 github.com/devfile/library/pkg/devfile/parser
@@ -94,9 +97,13 @@ github.com/devfile/library/pkg/devfile/parser/context
 github.com/devfile/library/pkg/devfile/parser/data
 github.com/devfile/library/pkg/devfile/parser/data/v2
 github.com/devfile/library/pkg/devfile/parser/data/v2/2.0.0
+github.com/devfile/library/pkg/devfile/parser/data/v2/2.1.0
 github.com/devfile/library/pkg/devfile/parser/data/v2/common
+github.com/devfile/library/pkg/devfile/validate
 github.com/devfile/library/pkg/testingutil/filesystem
 github.com/devfile/library/pkg/util
+# github.com/devfile/registry-support/index/generator v0.0.0-20210505173027-d06fe2bb3ee8
+github.com/devfile/registry-support/index/generator/schema
 # github.com/docker/cli v0.0.0-20200130152716-5d0cf8839492
 github.com/docker/cli/cli/config
 github.com/docker/cli/cli/config/configfile
@@ -241,6 +248,10 @@ github.com/graph-gophers/graphql-go/trace
 # github.com/gregjones/httpcache v0.0.0-20180305231024-9cad4c3443a7
 github.com/gregjones/httpcache
 github.com/gregjones/httpcache/diskcache
+# github.com/hashicorp/errwrap v1.0.0
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v1.1.0
+github.com/hashicorp/go-multierror
 # github.com/hashicorp/golang-lru v0.5.4
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru

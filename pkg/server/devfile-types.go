@@ -15,6 +15,11 @@ type devfileForm struct {
 	Devfile devfileData `json:"devfile"`
 }
 
+// devfileSamplesForm is the needed data to query the devfile registry for samples
+type devfileSamplesForm struct {
+	Registry string `json:"registry"`
+}
+
 // devfileResources is the constructed response from the devfile library data
 type devfileResources struct {
 	ImageStream imagev1.ImageStream `json:"imageStream"`
