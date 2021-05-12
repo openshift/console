@@ -120,7 +120,7 @@ export const VMNics: React.FC<VMTabProps> = ({
   const { t } = useTranslation();
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
-  const vmi = vmisProp[0];
+  const vmi = vmisProp?.[0];
   const isVMRunning = isVM(vmLikeEntity) && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
   const pendingChangesNICs: Set<string> =
     isVMRunning && vmisProp?.length > 0 && isVMI(vmi)
