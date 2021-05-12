@@ -112,8 +112,12 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         setPoolStatus(POOL_PROGRESS.CREATED);
         setIsSubmit(false);
         clearTimeout(timer);
-      } else if (newPoolLoaded && newPool?.status?.phase === POOL_STATE.FAILED) {
-        setPoolStatus(POOL_PROGRESS.FAILED);
+      } else if (
+        newPoolLoaded &&
+        (newPool?.status?.phase === POOL_STATE.RECONCILE_FAILED ||
+          newPool?.status?.phase === POOL_STATE.FAILURE)
+      ) {
+        setPoolStatus(POOL_PROGRESS.NOTREADY);
         setIsSubmit(false);
         clearTimeout(timer);
       } else if (newPoolLoaded && newPoolLoadError && newPoolLoadError?.response?.status !== 404) {
@@ -369,7 +373,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
             )} */}
           </>
         ) : (
-          <PoolStatusComponent status={POOL_PROGRESS.NOTREADY} />
+          <PoolStatusComponent status={POOL_PROGRESS.CLUSTERNOTREADY} />
         )}
       </ModalBody>
       <ModalSubmitFooter

@@ -297,5 +297,6 @@
   "Pool {name} was successfully created": "Pool {name} was successfully created",
   "An error occurred Pool {name} was not created": "An error occurred Pool {name} was not created",
   "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running": "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running",
-  "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.": "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use."
+  "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.": "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.",
+  "Pool {name} got created with errors.": "Pool {name} got created with errors."
 }

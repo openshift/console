@@ -1,6 +1,7 @@
 export enum POOL_STATE {
   READY = 'Ready',
-  FAILED = 'ReconcileFailed',
+  RECONCILE_FAILED = 'ReconcileFailed',
+  FAILURE = 'Failure',
 }
 
 export enum POOL_PROGRESS {
@@ -9,6 +10,7 @@ export enum POOL_PROGRESS {
   PROGRESS = 'progress',
   TIMEOUT = 'timeout',
   NOTREADY = 'notReady',
+  CLUSTERNOTREADY = 'clusterNotReady',
 }
 
 export const COMPRESSION_ON = 'aggressive';
