@@ -12,6 +12,8 @@
   "Provider": "공급자",
   "OpenShift version": "OpenShift 버전",
   "Update channel": "업데이트 채널",
+  "Control plane high availability": "컨트롤 플레인 고가용성",
+  "No (single master)": "아니요 (단일 master)",
   "Kubernetes version": "Kubernetes 버전",
   "Operators create, configure, and manage applications by extending the Kubernetes API.": "Operator는 Kubernetes API를 확장하여 애플리케이션을 생성, 구성 및 관리합니다.",
   "Operators": "Operator",
@@ -36,9 +38,6 @@
   "Recent events": "최근 이벤트",
   "There are no ongoing activities.": "진행중인 활동이 없습니다.",
   "Ongoing": "진행 중",
-  "1 Hour": "1 시간",
-  "6 Hours": "6 시간",
-  "24 Hours": "24 시간",
   "No resource quotas": "리소스 할당량이 없음",
   "View details": "세부 정보보기",
   "Alerts could not be loaded.": "경고를 로드할 수 없습니다.",
@@ -64,5 +63,8 @@
   "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 사용 가능 (총 한도 {{humanLimit}})",
   "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 사용 가능 (총 {{humanMax}})",
   "{{humanAvailable}} available": "{{humanAvailable}} 사용 가능",
-  "View metrics for {{title}}": "{{title}}의 메트릭 보기"
+  "View metrics for {{title}}": "{{title}}의 메트릭 보기",
+  "1 Hour": "1 시간",
+  "6 Hours": "6 시간",
+  "24 Hours": "24 시간"
 }

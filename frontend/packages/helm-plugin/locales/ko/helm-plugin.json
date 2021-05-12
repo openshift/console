@@ -73,6 +73,5 @@
   "Upgrade by selecting a new chart version or manually changing YAML.": "새 차트 버전을 선택하거나 YAML을 수동으로 변경하여 업그레이드합니다.",
   "Rollback Helm Release": "Helm 릴리스 롤백",
   "Install": "설치",
-  "Required": "필수 항목",
-  "Select a Project to view the list of Helm Releases": "Helm 릴리스 목록을 보려면 프로젝트를 선택합니다."
+  "Required": "필수 항목"
 }

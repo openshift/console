@@ -32,7 +32,7 @@
   "This resource is managed by <2></2> and any modifications may be overwritten. Edit the managing resource to preserve changes.": "이 리소스는<2></2> 모든 수정 사항을 덮어쓸 수 있습니다. 관리 리소스를 편집하여 변경 사항을 보존하십시오.",
   "Delete": "삭제",
   "Expand {{kind}}": "{{kind}} 확장",
-  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "클레임된 용량<2>{{resourceName}}을/를 늘리십시오.</2>은/는 시간이 많이 걸리는 프로세스일 수 있습니다.",
+  "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "PVC <2>{{resourceName}}의 용량을 늘리십시오.</2> 용량은 현재 PVC 크기보다 작을 수 없습니다. 이는 시간이 많이 걸리는 프로세스일 수 있습니다.",
   "Size": "크기",
   "requestSize": "requestSize",
   "Expand": "펼치기",
@@ -42,6 +42,14 @@
   "Labels for": "레이블 대상",
   "Pod selector": "Pod 선택기",
   "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "{{kind: props.kind.label.toLowerCase()}}의 대상이되는 pod 세트를 확인합니다.",
+  "You cannot rollback a paused {{ deployType }}. You must resume it first.": "일시 중지된 {{ deployType }}은 롤백할 수 없습니다. 먼저 재개해야 합니다.",
+  "Use the following settings from <2>{{resourceName}}</2> when rolling back:": "롤백 할 때 <2>{{resourceName}}</2>에서 다음 설정을 사용하십시오.",
+  "Replica count and selector": "복제본 수 및 선택기",
+  "Deployment strategy": "배포 전략",
+  "Deployment trigger": "배포 트리거",
+  "Are you sure you want to rollback to <2>{{resourceName}}</2>?": "<2>{{resourceName}}</2>을/를 롤백하시겠습니까?",
+  "Rollback": "롤백",
+  "Unable to Rollback": "롤백할 수 없음",
   "Duplicate keys found.": "중복 키가 발견되었습니다.",
   "Edit annotations": "주석 편집",
   "Edit taints": "테인트 편집",
@@ -53,5 +61,7 @@
   "Add more": "더 추가",
   "Edit tolerations": "허용 오차 편집",
   "Tolerations": "허용 오차",
-  "Operator": "Operator"
+  "Operator": "Operator",
+  "Edit resource limits": "리소스 제한 편집",
+  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "클레임된 용량<2>{{resourceName}}을/를 늘리십시오.</2>은/는 시간이 많이 걸리는 프로세스일 수 있습니다."
 }

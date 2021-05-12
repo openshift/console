@@ -1,11 +1,12 @@
 {
+  "Not configured": "설정되지 않음",
   "Invalid cluster version": "잘못된 클러스터 버전",
   "Cancel update": "업데이트 취소",
   "Available updates": "사용 가능한 업데이트",
   "Failing": "실패",
   "View conditions": "상태 표시",
   "Update to {{version}} in progress": "{{version}} 업데이트 진행 중",
-  "No update channel selected": "업데이트 채널이 선택되어 있지 않습니다.",
+  "Not configured to request update recommedations.": "업데이트 권장 사항을 요청하도록 구성되지 않았습니다.",
   "Version not found": "버전을 찾을 수 없습니다.",
   "Error retrieving": "검색 오류",
   "Up to date": "최신 정보",
@@ -24,6 +25,8 @@
   "{{currentChannel}} channel": "{{currentChannel}} 채널",
   "{{newerChannel}} channel": "{{newerChannel}} 채널",
   "{{updatedOperatorsCount}} of {{totalOperatorsCount}}": "{{updatedOperatorsCount}} / {{totalOperatorsCount}}",
+  "This cluster is not currently requesting update notifications. To request update recommendations, configure a channel.": "이 클러스터는 현재 업데이트 알림을 요청하지 않습니다. 업데이트 권장 사항을 요청하려면 채널을 구성하십시오.",
+  "Version {{version}} not found in channel {{channel}}.  To request update recommendations, configure a channel that supports your version.": "{{channel}} 채널에서 버전 {{version}}을 찾을 수 없습니다. 업데이트 권장 사항을 요청하려면 버전을 지원하는 채널을 구성하십시오.",
   "Update status": "업데이트 상태",
   "Subscription": "서브스크립션",
   "OpenShift Cluster Manager": "OpenShift Cluster Manager",
@@ -40,5 +43,6 @@
   "Release notes": "릴리스 노트",
   "Cluster Settings": "클러스터 설정",
   "Details": "세부 정보",
-  "Global configuration": "글로벌 구성"
+  "Global configuration": "글로벌 구성",
+  "No update channel selected": "업데이트 채널이 선택되어 있지 않습니다."
 }

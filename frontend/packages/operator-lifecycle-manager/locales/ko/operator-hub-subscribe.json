@@ -1,5 +1,0 @@
-{
-  "Will function as manual approval strategy": "수동 승인 전략으로 작동합니다.",
-  "Manual approval applies to all operators in a namespace": "수동 승인은 네임 스페이스의 모든 operator에게 적용됩니다.",
-  "Installing an operator with manual approval causes all operators installed in namespace <1>{{selectedTargetNamespace}}</1> to function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.": "수동 승인으로 operator를 설치하면 네임 스페이스 <1>{{selectedTargetNamespace}}</1>에 설치된 모든 operator가 수동 승인 전략으로 작동합니다. 자동 승인을 허용하려면 네임 스페이스에 설치된 모든 operator가 자동 승인 전략을 사용해야합니다."
-}

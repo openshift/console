@@ -32,7 +32,7 @@
   "This resource is managed by <2></2> and any modifications may be overwritten. Edit the managing resource to preserve changes.": "このリソースは <2></2> によって管理され、変更は上書きされる可能性があります。管理リソースを編集して、変更を保持します。",
   "Delete": "削除",
   "Expand {{kind}}": "{{kind}} の展開",
-  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "要求 <2>{{resourceName}} の容量を拡張します。</2> このプロセスには時間がかかる可能性があります。",
+  "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "PVC <2>{{resourceName}} を増やします。</2> 容量は、現在の PVC サイズよりも小さくすることはできないことに注意してください。このプロセスには時間がかかる場合があります。",
   "Size": "サイズ",
   "requestSize": "requestSize",
   "Expand": "展開",
@@ -42,6 +42,14 @@
   "Labels for": "ラベル:",
   "Pod selector": "pod セレクター",
   "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "この {{kind: props.kind.label.toLowerCase()}}がターゲットとする Pod のセットを判別します。",
+  "You cannot rollback a paused {{ deployType }}. You must resume it first.": "一時停止した {{ deployType }} をロールバックすることはできません。まず、これを再開する必要があります。",
+  "Use the following settings from <2>{{resourceName}}</2> when rolling back:": "ロールバック時には、<2>{{resourceName}}</2> から以下の設定を使用します。",
+  "Replica count and selector": "レプリカ数およびセレクター",
+  "Deployment strategy": "デプロイメントストラテジー",
+  "Deployment trigger": "デプロイメントトリガー",
+  "Are you sure you want to rollback to <2>{{resourceName}}</2>?": "<2>{{resourceName}}</2> にロールバックしてもよいですか?",
+  "Rollback": "ロールバック",
+  "Unable to Rollback": "ロールバックできません",
   "Duplicate keys found.": "重複するキーが見つかりました。",
   "Edit annotations": "アノテーションの編集",
   "Edit taints": "テイントの編集",
@@ -53,5 +61,7 @@
   "Add more": "さらに追加する",
   "Edit tolerations": "容認の編集",
   "Tolerations": "容認",
-  "Operator": "Operator"
+  "Operator": "Operator",
+  "Edit resource limits": "リソース制限の編集",
+  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "要求 <2>{{resourceName}} の容量を拡張します。</2> このプロセスには時間がかかる可能性があります。"
 }

@@ -1,5 +1,0 @@
-{
-  "Will function as manual approval strategy": "将作为手动批准策略使用",
-  "Manual approval applies to all operators in a namespace": "手动批准适用于命名空间中的所有 operator",
-  "Installing an operator with manual approval causes all operators installed in namespace <1>{{selectedTargetNamespace}}</1> to function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.": "安装带有手动批准的 Operator 会导致在命名空间 <1>{{selectedTargetNamespace}}</1>中安装的所有 Operator 都可作为手动批准策略使用。若要进行自动批准，命名空间中安装的所有 operator 都必须使用自动批准策略。"
-}

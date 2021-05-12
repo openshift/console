@@ -3,6 +3,6 @@
   "Status": "ステータス",
   "Size": "サイズ",
   "Source": "ソース",
-  "VolumeSnapshotContent": "VolumeSnapshotContent",
-  "VolumeSnapshotClass": "VolumeSnapshotClass"
+  "VolumeSnapshotContent": "ボリュームスナップショットコンテンツ",
+  "VolumeSnapshotClass": "ボリュームスナップショットクラス"
 }

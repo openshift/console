@@ -5,7 +5,7 @@
   "Capacity": "용량",
   "Access modes": "액세스 모드",
   "Volume mode": "볼륨 모드",
-  "StorageClass": "StorageClass",
+  "StorageClass": "스토리지 클래스",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
   "Name": "이름",
   "Claim": "클레임",

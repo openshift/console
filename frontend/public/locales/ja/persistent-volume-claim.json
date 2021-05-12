@@ -12,5 +12,5 @@
   "Conditions": "状態",
   "Name": "名前",
   "Namespace": "namespace",
-  "PersistentVolumeClaims": "PersistentVolumeClaims"
+  "PersistentVolumeClaims": "永続ボリューム要求"
 }

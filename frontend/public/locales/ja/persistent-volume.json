@@ -6,7 +6,7 @@
   "Access modes": "アクセスモード",
   "Volume mode": "ボリュームモード",
   "StorageClass": "StorageClass",
-  "PersistentVolumeClaim": "PersistentVolumeClaim",
+  "PersistentVolumeClaim": "永続ボリューム要求",
   "Name": "名前",
   "Claim": "要求",
   "Labels": "ラベル",
