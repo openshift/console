@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 
-import { VMStatus } from '../constants/vm/vm-status';
+import { VMStatus, VMStatusSimpleLabel } from '../constants/vm/vm-status';
 
 export const getNumLoggedInUsersMessage = (t: TFunction, numLoggedInUsers: number | null) => {
   if (numLoggedInUsers == null) {
@@ -19,7 +19,7 @@ export const getGuestAgentFieldNotAvailMsg = (
   isGuestAgentInstalled: boolean,
   vmStatus: VMStatus,
 ): string => {
-  if (vmStatus !== VMStatus.RUNNING) {
+  if (vmStatus.getSimpleLabel() !== VMStatusSimpleLabel.Running) {
     return t('kubevirt-plugin~Virtual machine not running');
   }
 
