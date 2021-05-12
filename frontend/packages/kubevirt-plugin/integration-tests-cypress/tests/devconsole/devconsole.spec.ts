@@ -14,11 +14,21 @@ import {
   TEMPLATE_NAME,
   TEMPLATE_BASE_IMAGE,
 } from '../../const/index';
-import { detailViewAction, modalTitle, selectDropdownItem } from '../../view/actions';
-import { waitForStatus, detailsTab } from '../../view/vm';
+import {
+  detailViewAction,
+  detailViewDropdown,
+  modalTitle,
+  selectItemFromDropdown,
+} from '../../view/actions';
+import { waitForStatus } from '../../view/vm';
 import { alertTitle, confirmCloneButton } from '../../view/clone';
+import { VirtualMachineData } from '../../types/vm';
+import { detailsTab } from '../../view/selector';
 
-const vmName = `test-devconsole-${testName}`;
+const vm: VirtualMachineData = {
+  name: `smoke-test-vm-${testName}`,
+  namespace: testName,
+};
 
 describe('test dev console', () => {
   before(() => {
@@ -41,14 +51,14 @@ describe('test dev console', () => {
     cy.deleteResource({
       kind: 'VirtualMachine',
       metadata: {
-        name: vmName,
-        namespace: testName,
+        name: vm.name,
+        namespace: vm.namespace,
       },
     });
     cy.deleteResource({
       kind: 'VirtualMachine',
       metadata: {
-        name: `${vmName}-clone`,
+        name: `${vm.name}-clone`,
         namespace: testName,
       },
     });
@@ -77,7 +87,7 @@ describe('test dev console', () => {
       cy.viewport(1536, 960);
       cy.get('input[id="vm-name"]')
         .clear()
-        .type(vmName);
+        .type(vm.name);
       cy.get('#ssh-service-checkbox').click();
       cy.get('button[type="submit"]').click();
       cy.get('button[type="submit"]').should('not.exist');
@@ -86,11 +96,17 @@ describe('test dev console', () => {
   });
 
   describe('review vm tabs', () => {
+    after(() => {
+      cy.get('button[type="button"]')
+        .contains('Details')
+        .click();
+    });
+
     it('ID(CNV-5700) review details tab', () => {
       cy.byLegacyTestID('base-node-handler').click();
       cy.get('.odc-resource-icon-virtualmachine').click();
 
-      waitForStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
 
       cy.get(detailsTab.vmPod).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
       cy.get(detailsTab.vmIP).should('not.contain', DEFAULTS_VALUES.NOT_AVAILABLE);
@@ -116,33 +132,33 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) restart vm', () => {
-      waitForStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
 
       detailViewAction(VM_ACTION.Restart);
-      waitForStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-      waitForStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Starting, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
     });
 
     it('ID(CNV-5702) stop vm', () => {
       detailViewAction(VM_ACTION.Stop);
-      waitForStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Off, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
     });
 
     it('ID(CNV-5702) start vm', () => {
       detailViewAction(VM_ACTION.Start);
-      waitForStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
     });
 
     it('ID(CNV-5702) migrate vm', () => {
       if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
         detailViewAction(VM_ACTION.Migrate);
-        waitForStatus(VM_STATUS.Migrating, VM_ACTION_TIMEOUT.VM_BOOTUP);
-        waitForStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+        waitForStatus(VM_STATUS.Migrating, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+        waitForStatus(VM_STATUS.Running, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
       }
     });
 
     it('ID(CNV-5702) clone vm', () => {
-      selectDropdownItem(VM_ACTION.Clone);
+      selectItemFromDropdown(VM_ACTION.Clone, detailViewDropdown);
       cy.get(modalTitle)
         .contains('Clone Virtual Machine')
         .should('exist');
@@ -150,7 +166,7 @@ describe('test dev console', () => {
       cy.get(confirmCloneButton).click();
 
       // delete origin VM
-      waitForStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Off, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
       detailViewAction(VM_ACTION.Delete);
 
       cy.byLegacyTestID('base-node-handler').should('have.length', 1);

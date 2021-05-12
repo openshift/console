@@ -1,34 +1,78 @@
-import { testName } from '../support';
-import { VM_STATUS } from '../const/index';
+import { VM_ACTION, VMI_ACTION, VM_STATUS, VM_ACTION_TIMEOUT } from '../const/index';
+import { VirtualMachineData } from '../types/vm';
+import { detailViewAction, listViewAction } from './actions';
+import { detailsTab } from './selector';
+import { virtualization } from './virtualization';
+import { wizard } from './wizard';
 
-export enum detailsTab {
-  // general fields
-  vmName = '[data-test-selector="details-item-value__Name"]',
-  vmNS = '[data-test-selector="details-item-label__Namespace"]',
-  vmLabels = '[data-test="label-list"]',
-  vmDesc = '[data-test-id="details-Description"]',
-  vmOS = '[data-test-id="details-Operating System"]',
-  vmTemplate = '[data-test-id="details-Template"]',
-  vmOwner = '[data-test-selector="details-item-value__Owner"]',
-  vmStatus = '[data-test="status-text"]',
-  vmPod = '[data-test-id="details-Pod"]',
-  vmBootOrder = '[data-test-id="details-Boot Order"]',
-  vmIP = '[data-test-id="details-IP Address"]',
-  vmHostname = '[data-test-id="details-Hostname"]',
-  vmTimezone = '[data-test-id="details-Time Zone"]',
-  vmNode = '[data-test-id="details-Node"]',
-  vmWorkProfile = '[data-test-id="details-Workload Profile"]',
-}
-
-export const waitForStatus = (status: string, timeout: number) => {
-  cy.get('.co-m-horizontal-nav__menu-item')
-    .contains('Details')
-    .click();
+export const waitForStatus = (status: string, vmData?: VirtualMachineData, timeout?: number) => {
   cy.get(detailsTab.vmStatus, { timeout }).should('contain', status);
   if (status === VM_STATUS.Running) {
-    cy.get(detailsTab.vmName).then(($vmName) => {
-      const name = $vmName.text();
-      cy.waitForLoginPrompt(name, testName);
-    });
+    const { name, namespace } = vmData;
+    cy.waitForLoginPrompt(name, namespace);
   }
+};
+
+export const action = (selector: string) => {
+  cy.get('body').then(($body) => {
+    if ($body.text().includes('Filter')) {
+      listViewAction(selector);
+    }
+    if ($body.text().includes('Actions')) {
+      cy.byLegacyTestID('horizontal-link-Details').click();
+      detailViewAction(selector);
+    }
+  });
+};
+
+export const vm = {
+  create: (vmData: VirtualMachineData) => {
+    const {
+      cdrom,
+      flavor,
+      name,
+      namespace,
+      provisionSource,
+      pvcSize,
+      sshEnable,
+      startOnCreation,
+      template,
+    } = vmData;
+    virtualization.vms.visit();
+    wizard.vm.open();
+    wizard.vm.processSelectTemplate(template);
+    wizard.vm.processBootSource(provisionSource, cdrom, pvcSize);
+    wizard.vm.processReview(namespace, name, flavor, sshEnable, startOnCreation);
+  },
+  start: (vmData: VirtualMachineData) => {
+    waitForStatus(VM_STATUS.Off);
+    action(VM_ACTION.Start);
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  },
+  restart: (vmData: VirtualMachineData) => {
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    action(VM_ACTION.Restart);
+    waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+  },
+  stop: (vmData: VirtualMachineData) => {
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    action(VM_ACTION.Stop);
+    waitForStatus(VM_STATUS.Off);
+  },
+  delete: () => {
+    cy.get('body').then(($body) => {
+      if ($body.text().includes('Instance')) {
+        action(VMI_ACTION.Delete);
+      } else {
+        action(VM_ACTION.Delete);
+      }
+    });
+    cy.byTestID('create-vm-empty').should('be.visible');
+  },
+  unpause: (vmData: VirtualMachineData) => {
+    waitForStatus(VM_STATUS.Paused);
+    action(VM_ACTION.Unpause);
+    waitForStatus(VM_STATUS.Running, vmData);
+  },
 };
