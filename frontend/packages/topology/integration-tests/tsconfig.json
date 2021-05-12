@@ -1,4 +1,5 @@
 {
+  "extends": "../../dev-console/integration-tests/tsconfig.json",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
