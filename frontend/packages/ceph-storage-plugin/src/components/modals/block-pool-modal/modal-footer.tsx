@@ -33,7 +33,9 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         label: t('ceph-storage-plugin~Try Again'),
         type: ButtonType.button,
         variant: ButtonVariant.secondary,
-        onClick: () => dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: '' }),
+        onClick: () => {
+          dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: '' });
+        },
       },
       {
         id: 'modal-finish-action',
@@ -81,7 +83,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         disable: state.poolStatus === POOL_PROGRESS.PROGRESS,
       },
     ],
-    [POOL_PROGRESS.NOTREADY]: [
+    [POOL_PROGRESS.CLUSTERNOTREADY]: [
       {
         id: 'modal-finish-action',
         label: t('ceph-storage-plugin~Finish'),
@@ -109,6 +111,15 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         variant: ButtonVariant.primary,
         onClick: handleFinishButton,
         disable: state.poolStatus === POOL_PROGRESS.PROGRESS,
+      },
+    ],
+    [POOL_PROGRESS.NOTREADY]: [
+      {
+        id: 'modal-finish-action',
+        label: t('ceph-storage-plugin~Finish'),
+        type: ButtonType.submit,
+        variant: ButtonVariant.primary,
+        onClick: handleFinishButton,
       },
     ],
     default: [
