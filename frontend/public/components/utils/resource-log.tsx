@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { Base64 } from 'js-base64';
-import { Alert, AlertActionLink, Button, Checkbox } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertActionLink,
+  Button,
+  Checkbox,
+  Select,
+  SelectOption,
+  SelectVariant,
+  Tooltip,
+} from '@patternfly/react-core';
+
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -31,6 +41,9 @@ export const LOG_SOURCE_RESTARTING = 'restarting';
 export const LOG_SOURCE_RUNNING = 'running';
 export const LOG_SOURCE_TERMINATED = 'terminated';
 export const LOG_SOURCE_WAITING = 'waiting';
+
+const LOG_TYPE_CURRENT = 'current';
+const LOG_TYPE_PREVIOUS = 'previous';
 
 const DEFAULT_BUFFER_SIZE = 1000;
 
@@ -65,7 +78,9 @@ const getResourceLogURL = (
   containerName?: string,
   tailLines?: number,
   follow?: boolean,
+  logType?: LogTypeStatus,
 ): string => {
+  const previous = logType === LOG_TYPE_PREVIOUS;
   return resourceURL(modelFor(resource.kind), {
     name: resource.metadata.name,
     ns: resource.metadata.namespace,
@@ -74,6 +89,7 @@ const getResourceLogURL = (
       container: containerName || '',
       ...(tailLines && { tailLines: `${tailLines}` }),
       ...(follow && { follow: `${follow}` }),
+      ...(previous && { previous: `${previous}` }),
     },
   });
 };
@@ -92,12 +108,31 @@ export const LogControls: React.FC<LogControlsProps> = ({
   namespaceUID,
   toggleWrapLines,
   isWrapLines,
+  changeLogType,
+  hasPreviousLog,
+  logType,
+  showLogTypeSelect,
 }) => {
   const { t } = useTranslation();
-  return (
-    <div className="co-toolbar">
-      <div className="co-toolbar__group co-toolbar__group--left">
-        <div className="co-toolbar__item">
+  const [isLogTypeOpen, setLogTypeOpen] = React.useState(false);
+
+  const logTypes: Array<LogType> = [
+    { type: LOG_TYPE_CURRENT, text: t('public~Current log') },
+    { type: LOG_TYPE_PREVIOUS, text: t('public~Previous log') },
+  ];
+
+  const logOption = (log: LogType) => {
+    return (
+      <SelectOption key={log.type} value={log.type}>
+        {log.text}
+      </SelectOption>
+    );
+  };
+
+  const showStatus = () => {
+    if (logType !== LOG_TYPE_PREVIOUS) {
+      return (
+        <>
           {status === STREAM_LOADING && (
             <>
               <LoadingInline />
@@ -108,8 +143,56 @@ export const LogControls: React.FC<LogControlsProps> = ({
             <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming} />
           )}
           {t(streamStatusMessages[status])}
-        </div>
+        </>
+      );
+    }
+    return <>{t(streamStatusMessages[STREAM_EOF])} </>;
+  };
+
+  const logTypeSelect = (isDisabled: boolean) => {
+    if (!showLogTypeSelect) {
+      return null;
+    }
+
+    const select = (
+      <span>
+        <span id="logTypeSelect" hidden>
+          Log type
+        </span>
+        <Select
+          variant={SelectVariant.single}
+          onToggle={(isOpen: boolean) => {
+            setLogTypeOpen(isOpen);
+          }}
+          onSelect={(event: React.MouseEvent | React.ChangeEvent, value: LogTypeStatus) => {
+            changeLogType(value);
+            setLogTypeOpen(false);
+          }}
+          selections={logType}
+          isOpen={isLogTypeOpen}
+          isDisabled={isDisabled}
+          aria-labelledby="logTypeSelect"
+        >
+          {logTypes.map((log) => logOption(log))}
+        </Select>
+      </span>
+    );
+    return hasPreviousLog ? (
+      select
+    ) : (
+      <Tooltip content={t('public~Only the current log is available for this container.')}>
+        {select}
+      </Tooltip>
+    );
+  };
+
+  return (
+    <div className="co-toolbar">
+      <div className="co-toolbar__group co-toolbar__group--left">
+        <div className="co-toolbar__item">{showStatus()}</div>
         {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
+
+        <div className="co-toolbar__item">{logTypeSelect(!hasPreviousLog)}</div>
       </div>
       <div className="co-toolbar__group co-toolbar__group--right">
         {!_.isEmpty(podLogLinks) &&
@@ -215,11 +298,15 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [namespaceUID, setNamespaceUID] = React.useState('');
   const [podLogLinks, setPodLogLinks] = React.useState();
+
+  const [logType, setLogType] = React.useState<LogTypeStatus>(LOG_TYPE_CURRENT);
+  const [hasPreviousLogs, setPreviousLogs] = React.useState(false);
+
   const previousResourceStatus = usePrevious(resourceStatus);
   const previousTotalLineCount = usePrevious(totalLineCount);
   const bufferFull = lines.length === bufferSize;
   const linkURL = getResourceLogURL(resource, containerName);
-  const watchURL = getResourceLogURL(resource, containerName, bufferSize, true);
+  const watchURL = getResourceLogURL(resource, containerName, bufferSize, true, logType);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
     `${USERSETTINGS_PREFIX}.log.wrapLines`,
     false,
@@ -238,6 +325,23 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       );
     }
   }, [status, totalLineCount, previousTotalLineCount, bufferSize]);
+
+  // Set back to viewing current log when switching containers
+  React.useEffect(() => {
+    if (resource.kind === 'Pod') {
+      setLogType(LOG_TYPE_CURRENT);
+    }
+  }, [resource.kind, containerName]);
+
+  //Check to see if previous log exists
+  React.useEffect(() => {
+    if (resource.kind === 'Pod') {
+      const container = resource.status?.containerStatuses?.find(
+        (pod) => pod.name === containerName,
+      );
+      setPreviousLogs(container?.restartCount > 0); // Assuming previous log is available if the container has been restarted at least once
+    }
+  }, [containerName, resource.kind, resource.status]);
 
   const startWebSocket = React.useCallback(() => {
     // Handler for websocket onopen event
@@ -280,7 +384,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
       .onmessage(onMessage)
       .onopen(onOpen);
   }, [watchURL]);
-
   // Restart websocket if startWebSocket function changes
   React.useEffect(() => {
     if (
@@ -412,6 +515,10 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           namespaceUID={namespaceUID}
           toggleWrapLines={setWrapLines}
           isWrapLines={wrapLines}
+          hasPreviousLog={hasPreviousLogs}
+          changeLogType={setLogType}
+          logType={logType}
+          showLogTypeSelect={resource.kind === 'Pod'}
         />
         <LogWindow
           bufferFull={bufferFull}
@@ -440,6 +547,10 @@ type LogControlsProps = {
   toggleFullscreen: () => void;
   toggleWrapLines: (wrapLines: boolean) => void;
   isWrapLines: boolean;
+  changeLogType: (type: LogTypeStatus) => void;
+  hasPreviousLog?: boolean;
+  logType: LogTypeStatus;
+  showLogTypeSelect: boolean;
 };
 
 type ResourceLogProps = {
@@ -449,3 +560,6 @@ type ResourceLogProps = {
   resource: any;
   resourceStatus: string;
 };
+
+type LogTypeStatus = typeof LOG_TYPE_CURRENT | typeof LOG_TYPE_PREVIOUS;
+type LogType = { type: LogTypeStatus; text: string };
