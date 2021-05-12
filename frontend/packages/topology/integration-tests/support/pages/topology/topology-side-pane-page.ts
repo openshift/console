@@ -81,7 +81,7 @@ export const topologySidePane = {
   },
   verifyLabel: (labelName: string) => {
     cy.get(topologyPO.sidePane.detailsTab.labels).should('be.visible');
-    cy.byButtonText('Edit').click();
+    cy.get(topologyPO.sidePane.detailsTab.labelsEdit).click();
     modal.shouldBeOpened();
     cy.get('span.tag-item__content')
       .contains(labelName)

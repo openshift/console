@@ -11,6 +11,7 @@ export enum addOptions {
   EventSource = 'Event Source',
   DevFile = 'Import from Devfile',
   Channel = 'Channel',
+  UploadJARFile = 'Upload JAR file',
 }
 
 export enum buildConfigOptions {
@@ -44,6 +45,7 @@ export enum catalogCards {
   apacheHTTPServer = 'Apache HTTP Server',
   nginxHTTPServer = 'Nginx HTTP server and a reverse proxy',
   jenkins = 'Jenkins',
+  knativeKafka = 'Knative Kafka',
 }
 
 export enum catalogTypes {
@@ -53,6 +55,7 @@ export enum catalogTypes {
   Template = 'Template',
   ServiceClass = 'Service Class',
   ManagedServices = 'Managed Services',
+  EventSources = 'Event Sources',
 }
 
 export enum builderImages {

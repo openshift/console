@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { catalogPage, addPage, topologyPage } from '../../pages';
-import { catalogTypes, addOptions, pageTitle } from '../../constants';
+import { catalogTypes, addOptions, pageTitle, catalogCards } from '../../constants';
 import { catalogPO } from '../../pageObjects';
 
 const d = new Date();
@@ -48,4 +48,8 @@ Then(
 
 Then('user will be redirected to Developer Catalog page', () => {
   detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
+});
+
+When('user selects knative Kafka card', () => {
+  catalogPage.selectCardInCatalog(catalogCards.knativeKafka);
 });

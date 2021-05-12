@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addPage, gitPage, topologyPage, devFilePage } from '../../pages';
-import { addOptions, messages } from '../../constants';
-import { devFilePO, gitPO, topologyPO } from '../../pageObjects';
+import { addOptions } from '../../constants';
+import { gitPO, topologyPO } from '../../pageObjects';
 
 Given('user is at Import from Devfile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);
@@ -18,9 +18,9 @@ When('user selects {string} option from Add to Project context menu', (option: s
   cy.byTestActionID(option).click({ force: true });
 });
 
-When('user enters Git Repo url {string}', (gitUrl: string) => {
+When('user enters Git Repo url {string} in Devfile page', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage();
 });
 
 Then('user is able to see workload {string} in topology page', (workloadName: string) => {
@@ -29,9 +29,9 @@ Then('user is able to see workload {string} in topology page', (workloadName: st
 
 When('user selects Try sample link', () => {
   devFilePage.clickTrySample();
-  gitPage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage();
   gitPage.enterAppName('devfile-sample-app');
-  gitPage.enterComponentName('devfile-sample');
+  gitPage.enterWorkloadName('devfile-sample');
   cy.get(gitPO.gitRepoUrl).should(
     'have.value',
     'https://github.com/redhat-developer/devfile-sample',
@@ -42,10 +42,11 @@ When('user clicks Create button on Devfile page', () => {
   gitPage.clickCreate();
 });
 
-When('user enters Git Repo url {string}', (privateGitRepoUrl: string) => {
+When('user enters Git Repo url {string} in Devfile Page', (privateGitRepoUrl: string) => {
   gitPage.enterGitUrl(privateGitRepoUrl);
-  cy.get(devFilePO.formFields.validatedMessage).should(
-    'have.text',
-    messages.addFlow.privateGitRepoMessage,
-  );
+  devFilePage.verifyValidatedMessage();
+});
+
+When('user enters Name as {string} in DevFile page', (name: string) => {
+  gitPage.enterWorkloadName(name);
 });

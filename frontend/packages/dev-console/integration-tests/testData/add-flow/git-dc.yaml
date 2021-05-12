@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shell-app
+  namespace: aut-addflow-yaml
+spec:
+  selector:
+    matchLabels:
+      app: shell-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: shell-app
+    spec:
+      containers:
+        - name: shell-app
+          image: image-registry.openshift-image-registry.svc:5000/service-binding-demo/shell-app
+          imagePullPolicy: Always

@@ -9,7 +9,7 @@ Feature: Create Application from git form
 
 
         @smoke
-        Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
+        Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>": A-06-TC01
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
               And user enters Application name as "dancer-ex-git-app"
@@ -26,21 +26,21 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Add new git workload to the existing application : A-04-TC03
-            Given user has created workload "nodejs-ex-git" with resource type "Deployment"
+        Scenario: Add new git workload to the existing application: A-06-TC02
+            Given user has created workload "exist-git" with resource type "Deployment"
               And user is at Add page
               And user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
               And user enters Application name as "nodejs-ex-git-app"
-              And user enters Name as "dancer-ex.git"
+              And user enters Name as "dancer-ex-git-2"
               And user selects resource type as "Deployment Config"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And user can see the created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
+              And user can see the created workload "dancer-ex-git-2" is linked to existing application "nodejs-ex-git-app"
 
 
         @regression
-        Scenario: Cancel the git workload creation : A-04-TC04
+        Scenario: Cancel the git workload creation: A-06-TC03
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
               And user clicks Cancel button on Add page
@@ -48,7 +48,7 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create workload without application route : A-04-TC05
+        Scenario: Create workload without application route: A-06-TC04
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
               And user enters Application name as "app-no-route"
@@ -60,25 +60,25 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
+        Scenario: Create a git workload with advanced option "Routing": A-06-TC05
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
+              And user enters name as "git-route" in General section
               And user clicks "Routing" link in Advanced Options section
               And user enters Hostname as "home"
               And user enters Path as "/home"
               And user selects default Target Port
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And the route of application "nodejs-ex-git" contains "home" in the Routes section of the workload sidebar
+              And the route of application "git-route" contains "home" in the Routes section of the workload sidebar
 
 
         @regression
-        Scenario: Create the workload by unselecting options in "Build Configuration" section: A-04-TC07
+        Scenario: Create the workload by unselecting options in "Build Configuration" section:: A-06-TC06
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
-              And user clicks "Build Configuration" link in Advanced Options section
+              And user enters name as "git-build" in General section
+              And user clicks "Build configuration" link in Advanced Options section
               And user unselects Configure a webhook build trigger checkbox in build configuration section
               And user unselects Automatically build a new image when the builder image changes checkbox in build configuration section
               And user unselects Launch the first build when the build configuration is created checkbox in build configuration section
@@ -86,14 +86,14 @@ Feature: Create Application from git form
               And user enters Value as "value" in Environment Variables section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And build does not get started for "nodejs-ex-git"
+              And build does not get started for "git-build"
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
+        Scenario: Create a git workload with advanced option "Deployment": A-06-TC07
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-5-git" in General section
+              And user enters name as "git-deploy" in General section
               And user clicks "Deployment" link in Advanced Options section
               And user verify the Auto deploy when new image is available checkbox is selected
               And user enters Name as "home" in Environment Variables Runtime only section
@@ -103,11 +103,11 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
+        Scenario: Create a git workload with advanced option "Resource Limits": A-06-TC08
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
-              And user clicks "Resource Limits" link in Advanced Options section
+              And user enters name as "git-resource" in General section
+              And user clicks "Resource limits" link in Advanced Options section
               And user enters CPU Request as "10" in CPU section
               And user enters CPU Limits as "12" in CPU section
               And user enters Memory Request as "200" in Memory section
@@ -117,10 +117,10 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
+        Scenario: Create a git workload with advanced option "Scaling": A-06-TC09
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
+              And user enters name as "git-scaling" in General section
               And user clicks "Scaling" link in Advanced Options section
               And user enters number of replicas as "5" in Replicas section
               And user clicks Create button on Add page
@@ -128,23 +128,23 @@ Feature: Create Application from git form
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
+        Scenario: Create a git workload with advanced option "Labels": A-06-TC10
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
+              And user enters name as "git-labels" in General section
               And user clicks "Labels" link in Advanced Options section
               And user enters label as "app=frontend"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
-              And verify the label "app=frontend" in side bar of application node "nodejs-ex-git"
+              And verify the label "app=frontend" in side bar of application node "git-labels"
 
 
         @regression
-        Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
+        Scenario: Create a git workload with advanced option "Health Checks": A-06-TC11
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
-              And user enters name as "nodejs-ex-git" in General section
-              And user clicks "Health Checks" link in Advanced Options section
+              And user enters name as "git-healthchecks" in General section
+              And user clicks "Health checks" link in Advanced Options section
               And user fills the Readiness Probe details
               And user fills the Liveness Probe details
               And user fills the Startup Probe details
@@ -152,8 +152,9 @@ Feature: Create Application from git form
              Then user will be redirected to Topology page
 
 
-        @addFlow-git
-        Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
+        # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
+        @manual
+        Scenario Outline: Builder iamge detected for git url "<git_url>": A-06-TC12
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
              Then git url gets Validated

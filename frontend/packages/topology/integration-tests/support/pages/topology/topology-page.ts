@@ -233,4 +233,10 @@ export const topologyPage = {
       clickOnSave: () => cy.get(topologyPO.revisionDetails.yaml.save).click(),
     },
   },
+  verifyRunTimeIconForContainerImage: (runTimeIcon: string) => {
+    cy.get('[data-type="workload"] .is-filtered [data-test-id="base-node-handler"]')
+      .find('image')
+      .should('have.attr', 'xlink:href')
+      .and('include', runTimeIcon);
+  },
 };

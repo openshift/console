@@ -4,12 +4,23 @@ Feature: Upload JAR file
 
         Background:
             Given user is at developer perspective
+              And user is at Add page
               And user has created or selected namespace "aut-upload-jar-file"
 
 
-        @regression @manual
-        Scenario Outline: Upload JAR file from Add options
-            Given user is at the Add page
+        @smoke
+        Scenario: Upload Jar file page details: A-10-TC01
+            Given user is at Add page
+             When user clicks on the Upload JAR file card
+             Then user is able to see Upload jar file, Optional java commands, Run time Icon and Builder Image version fields displayed in JAR section
+              And Application Name, Name fields displayed in General section
+              And Resources section, Advanced options sections are displayed
+              And Create button is in disabled state
+
+
+        @regression @to-do
+        Scenario Outline: Upload JAR file from Add options: A-10-TC02
+            Given user is at Add page
              When user clicks on the Upload JAR file card
               And user clicks on Browse in JAR file section
               And user selects file to upload
@@ -26,9 +37,10 @@ Feature: Upload JAR file
                   | sample-yaml-upload-1 | Deployment        |
                   | sample-yaml-upload-2 | Deployment Config |
 
-        @regression @manual
-        Scenario Outline: Upload JAR file through drag and drop from Add options
-            Given user is at the Add page
+
+        @regression @to-do
+        Scenario Outline: Upload JAR file through drag and drop from Add options: A-10-TC03
+            Given user is at Add page
              When user clicks on the Upload JAR file card
               And user drag and drop the file in JAR file section
               And user selects appropriate Build image version
@@ -45,10 +57,10 @@ Feature: Upload JAR file
                   | sample-yaml-upload-b | Deployment Config |
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Health Checks" : A-04-TC12
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Health Checks": A-10-TC04
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Health Checks" link in Advanced Options section
@@ -59,10 +71,10 @@ Feature: Upload JAR file
              Then user will be redirected to Topology page
 
 
-        @regression
-        Scenario: Upload JAR file without application route : A-04-TC05
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file without application route: A-10-TC05
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user unselects the advanced option Create a route to the application
@@ -71,10 +83,10 @@ Feature: Upload JAR file
               And public url is not created for node "sample-yaml-upload" in the workload sidebar
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Routing" : A-04-TC06
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Routing": A-10-TC06
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Routing" link in Advanced Options section
@@ -86,10 +98,10 @@ Feature: Upload JAR file
               And the route of application "sample-yaml-upload" contains "home" in the Routes section of the workload sidebar
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Deployment" : A-04-TC08
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Deployment": A-10-TC07
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Deployment" link in Advanced Options section
@@ -100,10 +112,10 @@ Feature: Upload JAR file
              Then user will be redirected to Topology page
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Resource Limits" : A-04-TC09
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Resource Limits": A-10-TC08
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Resource Limits" link in Advanced Options section
@@ -115,10 +127,10 @@ Feature: Upload JAR file
              Then user will be redirected to Topology page
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Scaling" : A-04-TC10
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Scaling": A-10-TC09
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Scaling" link in Advanced Options section
@@ -127,10 +139,10 @@ Feature: Upload JAR file
              Then user will be redirected to Topology page
 
 
-        @regression
-        Scenario: Upload JAR file with advanced option "Labels" : A-04-TC11
-             When user is on the Upload JAR file form
-              And user clicks on Browse in JAR file section
+        @regression @to-do
+        Scenario: Upload JAR file with advanced option "Labels": A-10-TC10
+            Given user is at Upload JAR file form
+             When user clicks on Browse in JAR file section
               And user selects file to upload
               And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
               And user clicks "Labels" link in Advanced Options section

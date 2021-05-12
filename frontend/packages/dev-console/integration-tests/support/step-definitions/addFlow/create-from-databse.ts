@@ -11,6 +11,6 @@ When('user selects {string} database on Developer Catalog', (database: string) =
   catalogPage.selectCardInCatalog(database);
 });
 
-When('user clicks create button on Instantiate Template page with default values', () => {
+When('user clicks create button on Instantiate Template page', () => {
   gitPage.clickCreate();
 });
