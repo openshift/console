@@ -22,10 +22,10 @@ const queries = {
     `sum(kubevirt_vmi_storage_traffic_bytes_total{name='<%= vmName %>'})`,
   ),
   [VMQueries.NETWORK_IN_USAGE]: _.template(
-    `sum(kubevirt_vmi_network_traffic_bytes_total{type='rx',name='<%= vmName %>'})`,
+    `sum(kubevirt_vmi_network_receive_bytes_total{name='<%= vmName %>'})`,
   ),
   [VMQueries.NETWORK_OUT_USAGE]: _.template(
-    `sum(kubevirt_vmi_network_traffic_bytes_total{type='tx', name='<%= vmName %>'})`,
+    `sum(kubevirt_vmi_network_transmit_bytes_total{name='<%= vmName %>'})`,
   ),
 };
 
