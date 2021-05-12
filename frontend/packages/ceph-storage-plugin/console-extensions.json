@@ -13,7 +13,7 @@
   {
     "type": "console.alert-action",
     "properties": {
-      "alert": "CephOSDDiskUnavailable",
+      "alert": "CephOSDDiskNotResponding",
       "text": "%ceph-storage-plugin~Troubleshoot%",
       "action": { "$codeRef": "alert.getAlertActionPath" }
     },
