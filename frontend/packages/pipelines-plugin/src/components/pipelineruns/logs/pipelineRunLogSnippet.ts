@@ -29,10 +29,15 @@ export const getPLRLogSnippet = (pipelineRun: PipelineRunKind): CombinedErrorDet
       (condition) => condition.type === 'Succeeded' && condition.status === 'False',
     ),
   );
+  const isKnownReason = (reason: string): boolean => {
+    // known reasons https://tekton.dev/vault/pipelines-v0.21.0/pipelineruns/#monitoring-execution-status
+    return ['PipelineRunCancelled', 'PipelineRunTimeout'].includes(reason);
+  };
+
   // We're intentionally looking at the first failure because we have to start somewhere - they have the YAML still
   const failedTaskRun = failedTaskRuns[0];
 
-  if (!failedTaskRun) {
+  if (!failedTaskRun || isKnownReason(succeededCondition?.reason)) {
     // No specific task run failure information, just print pipeline run status
     return {
       staticMessage:
