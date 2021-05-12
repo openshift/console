@@ -176,6 +176,7 @@ export interface DockerData {
 type DevfileData = {
   devfilePath?: string;
   devfileContent?: string;
+  devfileSourceUrl?: string;
   devfileHasError: boolean;
   devfileSuggestedResources?: DevfileSuggestedResources;
 };

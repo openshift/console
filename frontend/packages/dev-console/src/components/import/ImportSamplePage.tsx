@@ -19,6 +19,7 @@ import {
   getSampleRef,
   getSampleContextDir,
 } from '../../utils/imagestream-utils';
+import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import { createOrUpdateResources } from './import-submit-utils';
@@ -31,7 +32,6 @@ type ImportSamplePageProps = RouteComponentProps<{ ns?: string; is?: string; isN
 const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
   const { t } = useTranslation();
   const { ns: namespace, is: imageStreamName, isNs: imageStreamNamespace } = match.params;
-  const defaultApplicationGroup = 'sample-app';
 
   const imageStreamResource: FirehoseResource = React.useMemo(
     () => ({
@@ -59,14 +59,14 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
   const gitDir = getSampleContextDir(tag);
   const gitType = detectGitType(gitUrl);
 
-  const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, defaultApplicationGroup);
+  const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, SAMPLE_APPLICATION_GROUP);
   const initialValues: GitImportFormData = {
     ...initialBaseValues,
     name: `${imageName}-sample`,
     application: {
-      initial: defaultApplicationGroup,
-      name: defaultApplicationGroup,
-      selectedKey: defaultApplicationGroup,
+      initial: SAMPLE_APPLICATION_GROUP,
+      name: SAMPLE_APPLICATION_GROUP,
+      selectedKey: SAMPLE_APPLICATION_GROUP,
     },
     git: {
       url: gitUrl,
