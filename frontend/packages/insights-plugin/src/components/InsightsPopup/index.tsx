@@ -34,14 +34,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const isError = _isError(metrics);
 
   const riskKeys = {
-    // t('insights-plugin~low')
-    low: 'insights-plugin~low',
-    // t('insights-plugin~moderate')
-    moderate: 'insights-plugin~moderate',
-    // t('insights-plugin~important')
-    important: 'insights-plugin~important',
-    // t('insights-plugin~critical')
-    critical: 'insights-plugin~critical',
+    // t('insights-plugin~Critical')
+    critical: 'insights-plugin~Critical',
+    // t('insights-plugin~Important')
+    important: 'insights-plugin~Important',
+    // t('insights-plugin~Moderate')
+    moderate: 'insights-plugin~Moderate',
+    // t('insights-plugin~Low')
+    low: 'insights-plugin~Low',
   };
 
   return (
