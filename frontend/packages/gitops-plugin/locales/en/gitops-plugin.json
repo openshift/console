@@ -11,11 +11,12 @@
   "Info not available": "Info not available",
   "Environment details were not found. Try reloading the page or contacting an administrator.": "Environment details were not found. Try reloading the page or contacting an administrator.",
   "{{appName}} · Details": "{{appName}} · Details",
-  "Argo CD": "Argo CD",
-  "{{count, number}} item": "{{count, number}} item",
-  "{{count, number}} item_plural": "{{count, number}} items",
-  "{{count, number}} Environment": "{{count, number}} Environment",
-  "{{count, number}} Environment_plural": "{{count, number}} Environments",
+  "Select an application to view the environment it's deployed in.": "Select an application to view the environment it's deployed in.",
+  "by name": "by name",
+  "Environments table": "Environments table",
+  "Application name": "Application name",
+  "Git repository": "Git repository",
+  "Last deployment": "Last deployment",
   "No GitOps manifest URLs found": "No GitOps manifest URLs found",
   "No Application groups found": "No Application groups found"
 }

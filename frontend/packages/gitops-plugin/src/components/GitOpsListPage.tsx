@@ -1,16 +1,14 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { PageHeading, LoadingBox, ExternalLink } from '@console/internal/components/utils';
-import { ProjectModel, ConsoleLinkModel } from '@console/internal/models';
+import { PageHeading, LoadingBox } from '@console/internal/components/utils';
+import { ProjectModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
-import { Split, SplitItem } from '@patternfly/react-core';
 import './GitOpsListPage.scss';
 
 const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
@@ -43,41 +41,21 @@ const GitOpsListPage: React.FC = () => {
     };
   }, [baseURL, namespaces, nsError, nsLoaded, t]);
 
-  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
-    isList: true,
-    kind: referenceForModel(ConsoleLinkModel),
-    optional: true,
-  });
-  const argocdLink = _.find(
-    consoleLinks,
-    (link: K8sResourceKind) =>
-      link.metadata?.name === 'argocd' && link.spec?.location === 'ApplicationMenu',
-  );
-
   return (
     <>
       <Helmet>
         <title>{t('gitops-plugin~Environments')}</title>
       </Helmet>
-      <PageHeading
-        title={t('gitops-plugin~Environments')}
-        badge={
-          <Split className="odc-gitops-list-page-heading" hasGutter>
-            <SplitItem>
-              {argocdLink && (
-                <ExternalLink href={argocdLink.spec.href} text={t('gitops-plugin~Argo CD')} />
-              )}
-            </SplitItem>
-            <SplitItem>
-              <DevPreviewBadge />
-            </SplitItem>
-          </Split>
-        }
-      />
+      <PageHeading title={t('gitops-plugin~Environments')} badge={<DevPreviewBadge />} />
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
-        <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} argocdLink={argocdLink} />
+        <>
+          <PageHeading className="co-catalog-page__description">
+            {t("gitops-plugin~Select an application to view the environment it's deployed in.")}
+          </PageHeading>
+          <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
+        </>
       )}
     </>
   );
