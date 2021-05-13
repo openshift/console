@@ -10,13 +10,12 @@ function save(target) {
 }
 
 function processFile(fileName, language) {
+  if (fileName.includes('.DS_Store')) {
+    return;
+  }
   let newFilePath;
-  const packageDir =
-    fileName.includes('_package=') && path.basename(fileName, '.po').split('_package=')[1];
-  const newFileName = packageDir
-    ? path.basename(fileName, '.po').split('_package=')[0]
-    : path.basename(fileName, '.po');
-  if (packageDir) {
+  const [packageDir, newFileName] = path.basename(fileName, '.po').split('__');
+  if (packageDir !== 'public') {
     if (!fs.existsSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`))) {
       fs.mkdirSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`), {
         recursive: true,
