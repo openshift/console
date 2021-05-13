@@ -1,3 +1,5 @@
+import * as yamlEditor from './yaml-editor';
+
 export const listPage = {
   titleShouldHaveText: (title: string) =>
     cy.byLegacyTestID('resource-title').should('have.text', title),
@@ -13,6 +15,13 @@ export const listPage = {
   },
   clickCreateYAMLbutton: () => {
     cy.byTestID('item-create').click({ force: true });
+  },
+  createNamespacedResourceWithDefaultYAML: (resourceType: string, testName: string) => {
+    cy.visit(`/k8s/ns/${testName}/${resourceType}`);
+    listPage.clickCreateYAMLbutton();
+    cy.byTestID('resource-sidebar').should('exist');
+    yamlEditor.isLoaded();
+    yamlEditor.clickSaveCreateButton();
   },
   filter: {
     byName: (name: string) => {
