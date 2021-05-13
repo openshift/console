@@ -30,13 +30,19 @@ const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   );
 
   React.useEffect(() => {
+    let mounted = true;
     coFetch('/api/helm/charts/index.yaml')
       .then(async (res) => {
-        const yaml = await res.text();
-        const json = safeLoad(yaml);
-        setHelmCharts(json.entries);
+        if (mounted) {
+          const yaml = await res.text();
+          const json = safeLoad(yaml);
+          setHelmCharts(json.entries);
+        }
       })
-      .catch(setLoadedError);
+      .catch((err) => {
+        if (mounted) setLoadedError(err);
+      });
+    return () => (mounted = false);
   }, []);
 
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(
