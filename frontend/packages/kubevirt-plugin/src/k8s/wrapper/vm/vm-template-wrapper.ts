@@ -12,6 +12,7 @@ import { selectVM } from '../../../selectors/vm-template/basic';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { VMWrapper } from './vm-wrapper';
+import { VirtualMachineModel } from '../../../models';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
   constructor(template?: TemplateKind | VMTemplateWrapper | any, copy = false) {
@@ -37,7 +38,14 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
 
   getParameters = (defaultValue = []) => (this.data && this.data.parameters) || defaultValue;
 
-  getVM = (copy = false) => new VMWrapper(selectVM(this.data), copy);
+  getVM = (copy = false) => {
+    const vm = selectVM(this.data);
+    if (vm && vm.apiVersion) {
+      vm.apiVersion = `${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}`; // Override template api version
+    }
+
+    return new VMWrapper(vm, copy);
+  };
 
   setParameter = (name, value) => {
     const parameter = this.getParameters().find((param) => param.name === name);
