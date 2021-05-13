@@ -10,7 +10,7 @@ import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover } from '@patternfly/react-core';
-import { Status, TableColumnsType, useUserSettingsCompatibility } from '@console/shared';
+import { Status, TableColumnsType } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   withUserSettingsCompatibility,
@@ -322,13 +322,8 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     metrics,
     showNodes,
     showNamespaceOverride,
+    tableColumns,
   }: PodTableRowProps & PodTableRowPropsFromState) => {
-    const [tableColumns, , loaded] = useUserSettingsCompatibility(
-      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-      undefined,
-      true,
-    );
     const { name, namespace, creationTimestamp, labels } = pod.metadata;
     const { readyCount, totalContainers } = podReadiness(pod);
     const phase = podPhase(pod);
@@ -336,9 +331,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const bytes: number = _.get(metrics, ['memory', namespace, name]);
     const cores: number = _.get(metrics, ['cpu', namespace, name]);
     const columns: Set<string> =
-      loaded && tableColumns?.[columnManagementID]?.length > 0
-        ? new Set(tableColumns[columnManagementID])
-        : getSelectedColumns(showNodes);
+      tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns(showNodes);
     const { t } = useTranslation();
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
@@ -814,6 +807,7 @@ const getRow = (showNodes, showNamespaceOverride) => {
       style={rowArgs.style}
       showNodes={showNodes}
       showNamespaceOverride={showNamespaceOverride}
+      tableColumns={rowArgs.customData?.tableColumns}
     />
   );
 };
@@ -843,6 +837,7 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
       aria-label={t('public~Pods')}
       Header={getHeader(showNodes)}
       Row={getRow(showNodes, showNamespaceOverride)}
+      customData={{ tableColumns: tableColumns?.[columnManagementID] }}
       virtualize
     />
   );
@@ -995,6 +990,7 @@ type PodTableRowProps = {
   index: number;
   rowKey: string;
   style: object;
+  tableColumns: string[];
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
 };

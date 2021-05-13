@@ -29,7 +29,6 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   useActiveNamespace,
   withLastNamespace,
-  useUserSettingsCompatibility,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -274,13 +273,7 @@ const namespacesRowStateToProps = ({ UI }) => ({
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  withTranslation()(({ obj: ns, index, key, style, metrics, t }) => {
-    const [tableColumns, , loaded] = useUserSettingsCompatibility(
-      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-      undefined,
-      true,
-    );
+  withTranslation()(({ obj: ns, index, key, style, metrics, tableColumns, t }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = metrics?.memory?.[name];
@@ -288,9 +281,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
     const description = getDescription(ns);
     const labels = ns.metadata.labels;
     const columns =
-      loaded && tableColumns?.[NamespacesColumnManagementID]?.length > 0
-        ? new Set(tableColumns[NamespacesColumnManagementID])
-        : getNamespacesSelectedColumns();
+      tableColumns?.length > 0 ? new Set(tableColumns) : getNamespacesSelectedColumns();
     return (
       <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
@@ -372,6 +363,7 @@ const NamespacesRow = (rowArgs) => (
     index={rowArgs.index}
     rowKey={rowArgs.key}
     style={rowArgs.style}
+    tableColumns={rowArgs.customData?.tableColumns}
   />
 );
 
@@ -409,6 +401,7 @@ export const NamespacesList = connect(
         aria-label={t('public~Namespaces')}
         Header={NamespacesTableHeader}
         Row={NamespacesRow}
+        customData={{ tableColumns: tableColumns?.[NamespacesColumnManagementID] }}
         virtualize
       />
     );
@@ -568,12 +561,6 @@ const projectRowStateToProps = ({ UI }) => ({
 
 const ProjectTableRow = connect(projectRowStateToProps)(
   withTranslation()(({ obj: project, index, rowKey, style, customData = {}, metrics, t }) => {
-    const [tableColumns, , loaded] = useUserSettingsCompatibility(
-      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-      undefined,
-      true,
-    );
     const name = getName(project);
     const requester = getRequester(project);
     const {
@@ -582,14 +569,15 @@ const ProjectTableRow = connect(projectRowStateToProps)(
       showMetrics,
       showActions,
       isColumnManagementEnabled = true,
+      tableColumns,
     } = customData;
     const bytes = metrics?.memory?.[name];
     const cores = metrics?.cpu?.[name];
     const description = getDescription(project);
     const labels = project.metadata.labels;
     const columns = isColumnManagementEnabled
-      ? loaded && tableColumns?.[projectColumnManagementID]?.length > 0
-        ? new Set(tableColumns[projectColumnManagementID])
+      ? tableColumns?.length > 0
+        ? new Set(tableColumns)
         : getProjectSelectedColumns({ showMetrics, showActions })
       : null;
     return (
@@ -769,7 +757,7 @@ const ProjectList_ = connectToFlags(
         Header={showMetrics ? headerWithMetrics : headerNoMetrics}
         Row={ProjectRow}
         EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
-        customData={{ showMetrics }}
+        customData={{ showMetrics, tableColumns: tableColumns?.[projectColumnManagementID] }}
         virtualize
       />
     );
