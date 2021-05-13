@@ -401,7 +401,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     );
   }
 
-  if (!['grafana-piechart-panel', 'graph', 'singlestat', 'table'].includes(panel.type)) {
+  if (!['gauge', 'grafana-piechart-panel', 'graph', 'singlestat', 'table'].includes(panel.type)) {
     return null;
   }
 
@@ -442,7 +442,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
                   queries={queries}
                 />
               )}
-              {panel.type === 'singlestat' && (
+              {(panel.type === 'singlestat' || panel.type === 'gauge') && (
                 <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
               )}
               {panel.type === 'table' && (

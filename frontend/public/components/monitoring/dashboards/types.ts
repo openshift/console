@@ -28,6 +28,14 @@ export type Panel = {
   legend?: {
     show: boolean;
   };
+  options?: {
+    fieldOptions: {
+      thresholds: {
+        color?: string;
+        value: number;
+      }[];
+    };
+  };
   panels: Panel[];
   postfix?: string;
   postfixFontSize?: string;
