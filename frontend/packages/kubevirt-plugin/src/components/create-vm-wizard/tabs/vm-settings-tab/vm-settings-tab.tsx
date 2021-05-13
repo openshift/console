@@ -180,6 +180,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         field={getField(VMSettingsField.IMAGE_URL)}
         onProvisionSourceStorageChange={updateStorage}
         provisionSourceStorage={provisionSourceStorage}
+        baseImageName={commonTemplateName}
       />
       <ClonePVCSource
         nsField={getField(VMSettingsField.CLONE_PVC_NS)}

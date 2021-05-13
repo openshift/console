@@ -244,12 +244,14 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
 
 type BootSourceFormProps = AdvancedSectionProps & {
   withUpload?: boolean;
+  baseImageName?: string;
 };
 
 export const BootSourceForm: React.FC<BootSourceFormProps> = ({
   state,
   dispatch,
   withUpload,
+  baseImageName,
   disabled,
   storageClasses,
   storageClassesLoaded,
@@ -319,7 +321,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             isDisabled={disabled}
             id={getFieldId(VMSettingsField.IMAGE_URL)}
           />
-          <URLSourceHelp />
+          <URLSourceHelp baseImageName={baseImageName} />
         </FormRow>
       )}
       {state.dataSource?.value === ProvisionSource.CONTAINER.getValue() && (

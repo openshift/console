@@ -110,6 +110,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     editConfig,
     isVMRunning,
     importProvider,
+    baseImageName,
   } = props;
   const { t } = useTranslation();
   const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
@@ -448,7 +449,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 value={url}
                 onChange={setURL}
               />
-              <URLSourceHelp />
+              <URLSourceHelp baseImageName={baseImageName} />
             </FormRow>
           )}
           {source.requiresContainerImage() && (
@@ -785,6 +786,7 @@ export type DiskModalProps = {
   usedDiskNames: Set<string>;
   usedPVCNames: Set<string>;
   editConfig?: UIStorageEditConfig;
+  baseImageName?: string;
   isVMRunning?: boolean;
   importProvider?: VMImportProvider;
 } & ModalComponentProps &

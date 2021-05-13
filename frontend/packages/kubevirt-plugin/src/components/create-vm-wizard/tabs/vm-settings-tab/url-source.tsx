@@ -12,7 +12,7 @@ import { FormFieldRow } from '../../form/form-field-row';
 import { VMWizardStorage } from '../../types';
 
 export const URLSource: React.FC<URLSourceProps> = React.memo(
-  ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {
+  ({ field, provisionSourceStorage, onProvisionSourceStorageChange, baseImageName }) => {
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
     const dataVolumeWrapper = new DataVolumeWrapper(storage?.dataVolume);
 
@@ -37,7 +37,7 @@ export const URLSource: React.FC<URLSourceProps> = React.memo(
             }
           />
         </FormField>
-        <URLSourceHelp />
+        <URLSourceHelp baseImageName={baseImageName} />
       </FormFieldRow>
     );
   },
@@ -47,4 +47,5 @@ type URLSourceProps = {
   field: any;
   provisionSourceStorage: any;
   onProvisionSourceStorageChange: (provisionSourceStorage: any) => void;
+  baseImageName: string;
 };

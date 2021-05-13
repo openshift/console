@@ -247,6 +247,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                   storageClassesLoaded={scLoaded}
                   scAllowed={scAllowed}
                   scAllowedLoading={scAllowedLoading}
+                  baseImageName={baseImageName}
                 />
               </StackItem>
               {!isSCAvailable && scLoaded && (
