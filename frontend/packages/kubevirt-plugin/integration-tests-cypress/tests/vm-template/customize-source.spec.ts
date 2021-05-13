@@ -30,7 +30,7 @@ describe('test vm template source image', () => {
     });
   });
 
-  it('customize common template source', () => {
+  xit('customize common template source', () => {
     const vmtName = 'tmp-customized';
     virtualization.templates.visit();
     virtualization.templates.addSource(TEMPLATE_NAME);
@@ -50,7 +50,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(vmtName, PROVIDER);
   });
 
-  it('customize user template source', () => {
+  xit('customize user template source', () => {
     const vmtName = 'tmp-user-customized';
     cy.createUserTemplate(testName);
     virtualization.templates.visit();

@@ -137,7 +137,7 @@ export type Status = VM_STATUS | POD_STATUS;
 export const VirtualMachineTemplateModel: K8sKind = {
   label: 'Virtual Machine Template',
   labelPlural: 'Templates',
-  apiVersion: 'v1alpha3',
+  apiVersion: 'v1',
   apiGroup: 'kubevirt.io',
   plural: 'templates',
   abbr: '',
