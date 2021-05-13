@@ -234,7 +234,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({ obj: 
             ))}
           />
         )}
-        <SectionHeading text={t('public~Image Stream details')} />
+        <SectionHeading text={t('public~ImageStream details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={imageStream}>
@@ -380,7 +380,7 @@ export const ImageStreamsList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('public~Image Streams')}
+      aria-label={t('public~ImageStreams')}
       Header={ImageStreamsTableHeader}
       Row={ImageStreamsTableRow}
       virtualize
@@ -397,7 +397,7 @@ export const ImageStreamsPage: React.SFC<ImageStreamsPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('public~Image Streams')}
+      title={t('public~ImageStreams')}
       kind={ImageStreamsReference}
       ListComponent={ImageStreamsList}
       canCreate={true}
