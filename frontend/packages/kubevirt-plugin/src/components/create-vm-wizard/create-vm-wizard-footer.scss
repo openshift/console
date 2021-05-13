@@ -3,8 +3,6 @@
   margin-bottom: var(--pf-global--spacer--md);
 }
 
-.kv-create-vm-modal__footer {
-  // --pf-global--ZIndex--xs == 100
-  z-index: calc(var(--pf-global--ZIndex--xs) - 4) !important; // Fixing Regression for Bug https://bugzilla.redhat.com/show_bug.cgi?id=1930015
-  display: block;
+footer.kv-create-vm-modal__footer {
+  z-index: var(--pf-c-wizard__footer--ZIndex) - 1; // Fixing Regression for Bug https://bugzilla.redhat.com/show_bug.cgi?id=1930015
 }
