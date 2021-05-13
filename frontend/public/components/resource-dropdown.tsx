@@ -3,10 +3,9 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import * as classNames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 
-import { Dropdown, ResourceIcon } from './utils';
+import { ResourceIcon } from './utils';
 import {
   K8sKind,
   K8sResourceKindReference,
@@ -14,7 +13,7 @@ import {
   referenceForModel,
   DiscoveryResources,
 } from '../module/k8s';
-import { Badge, Checkbox } from '@patternfly/react-core';
+import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -27,40 +26,14 @@ const blacklistResources = ImmutableSet([
   'events.k8s.io/v1beta1.Event',
 ]);
 
-const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <span className={'co-resource-item'}>
-        <Checkbox
-          tabIndex={-1}
-          id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
-          isChecked={checked}
-        />
-        <span className="co-resource-icon--fixed-width">
-          <ResourceIcon kind={referenceForModel(model)} />
-        </span>
-        <span className="co-resource-item__resource-name">
-          <span>
-            {model.labelKey ? t(model.labelKey) : model.kind}
-            {model.badge && model.badge === 'Tech Preview' && (
-              <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
-            )}
-          </span>
-          {showGroup && (
-            <span className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
-              {model.apiGroup || 'core'}/{model.apiVersion}
-            </span>
-          )}
-        </span>
-      </span>
-    </>
-  );
-};
-
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, className, groupToVersionMap } = props;
+  const { selected, onChange, allModels, groupToVersionMap, className } = props;
   const { t } = useTranslation();
+
+  const [isOpen, setOpen] = React.useState(false);
+  const [selectedOptions, setSelectedOptions] = React.useState(selected);
+  const [filterText, setFilterText] = React.useState<string>(null);
+
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
@@ -92,51 +65,78 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const kinds = resources.groupBy((m) => m.kind);
   const isDup = (kind) => kinds.get(kind).size > 1;
 
-  const isKindSelected = (kind: string) => {
-    return _.includes(selected, kind);
-  };
-  // Create dropdown items for each resource.
+  React.useEffect(() => {
+    setSelectedOptions(selected);
+  }, [selected]);
+
   const items = resources
-    .map((model) => (
-      <DropdownItem
+    .map((model: K8sKind) => (
+      <SelectOption
         key={referenceForModel(model)}
-        model={model}
-        showGroup={isDup(model.kind)}
-        checked={isKindSelected(referenceForModel(model))}
-      />
+        value={referenceForModel(model)}
+        data-filter-text={`${model.abbr}${model.labelKey ? t(model.labelKey) : model.kind}`}
+      >
+        <span className="co-resource-item">
+          <span className="co-resource-icon--fixed-width">
+            <ResourceIcon kind={referenceForModel(model)} />
+          </span>
+          <span className="co-resource-item__resource-name">
+            <span>
+              {model.labelKey ? t(model.labelKey) : model.kind}
+              {model.badge && model.badge === 'Tech Preview' && (
+                <span className="co-resource-item__tech-dev-preview">
+                  {t('public~Tech Preview')}
+                </span>
+              )}
+            </span>
+            {isDup(model.kind) && (
+              <span className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
+                {model.apiGroup || 'core'}/{model.apiVersion}
+              </span>
+            )}
+          </span>
+        </span>
+      </SelectOption>
     ))
-    .toJS();
+    .toArray();
 
-  const autocompleteFilter = (text, item) => {
-    const { model } = item.props;
-    if (!model) {
-      return false;
+  const onCustomFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event) {
+      setFilterText(event.target.value.toLowerCase());
     }
-
-    return fuzzy(
-      _.toLower(text),
-      model.labelKey ? _.toLower(t(model.labelKey)) : _.toLower(model.kind),
-    );
+    if (filterText === null || filterText === '') {
+      return items;
+    }
+    return items.filter((item) => {
+      return item.props['data-filter-text'].toLowerCase().includes(filterText);
+    });
   };
 
-  const handleSelected = (value: string) => {
+  const handleSelected = (event: React.MouseEvent | React.ChangeEvent, value: string) => {
     onChange(referenceForModel(modelFor(value)));
   };
 
+  const onToggle = (newOpenState: boolean) => {
+    setFilterText(null);
+    setOpen(newOpenState);
+  };
+
   return (
-    <Dropdown
-      menuClassName="dropdown-menu--text-wrap"
+    <Select
+      variant={SelectVariant.checkbox}
+      onToggle={onToggle}
+      onSelect={handleSelected}
+      selections={selectedOptions}
+      isOpen={isOpen}
+      placeholderText={t('public~Resources')}
+      inlineFilterPlaceholderText={t('public~Select Resource')}
+      onFilter={onCustomFilter}
+      hasInlineFilter
+      customBadgeText={selected.length}
       className={classNames('co-type-selector', className)}
-      items={items}
-      title={
-        <div key="title-resource">
-          {t('public~Resources')} <Badge isRead>{selected.length}</Badge>
-        </div>
-      }
-      onChange={handleSelected}
-      autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder={t('public~Select Resource')}
-    />
+    >
+      {items}
+    </Select>
   );
 };
 
@@ -154,12 +154,6 @@ export type ResourceListDropdownProps = ResourceListDropdownStateToProps & {
   onChange: (value: string) => void;
   className?: string;
   id?: string;
-};
-
-type DropdownItemProps = {
-  model: K8sKind;
-  showGroup?: boolean;
-  checked?: boolean;
 };
 
 type ResourceListDropdownStateToProps = {
