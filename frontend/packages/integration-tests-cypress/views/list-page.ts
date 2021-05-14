@@ -27,10 +27,11 @@ export const listPage = {
       });
     },
     by: (rowFilter: string) => {
+      cy.byLegacyTestID('filter-dropdown-toggle')
+        .find('button')
+        .as('filterDropdownBtn');
       cy.get('.pf-c-toolbar__content-section').within(() => {
-        cy.byLegacyTestID('filter-dropdown-toggle')
-          .find('button')
-          .click();
+        cy.get('@filterDropdownBtn').click(); // open filter dropdown
         /* PF Filter dropdown menu items are:
            <li id="cluster">
              <a data-test-row-filter="cluster">
@@ -39,6 +40,7 @@ export const listPage = {
            '?rowFilter=...'.
          */
         cy.get(`#${rowFilter}`).click(); // clicking on the <li /> works!
+        cy.get('@filterDropdownBtn').click(); // close filter dropdown
         cy.url().should('include', '?rowFilter');
       });
     },
