@@ -1,13 +1,17 @@
 .odc-gitops-commit {
-    padding-top: 3px;
-    padding-right: 0px;
-
-    &__item {
-        font-size: 12px;
-        width: 100%;
-        .pf-c-label__text {
-            max-width: 22ch;
-            min-width: 22ch;    
-        }
-    }
+  &__commit-author-sha {
+    margin-bottom: 'var(--pf-global--spacer--sm)';
+    margin-right: 'var(--pf-global--spacer--sm)';
+    display: flex;
+    align-items: flex-end;
+    color: var(--pf-global--palette--black-600);
+  }
+  &__commit-label {
+    left: -6px;
+    font-size: 12px;
+    background-color: inherit;
+    color: var(--pf-global--link--Color);
+    width: 25ch;
+    border-color: var(--pf-c-label--m-blue__content--before--BorderColor)
+  }
 }

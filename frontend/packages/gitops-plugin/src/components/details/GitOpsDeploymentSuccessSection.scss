@@ -1,0 +1,20 @@
+.odc-gitops-deployment-success {
+  &__header {
+    padding: 1.5rem 1.5rem 0rem;
+    margin: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &__title {
+    font-weight: 400;
+    font-size: 16px;
+    margin: 0px;
+  }
+  &__timespan {
+    color: var(--pf-global--palette--black-600);
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0px;
+  }
+}

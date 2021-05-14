@@ -21,6 +21,7 @@ const GitOpsListPage: React.FC = () => {
   const baseURL = getPipelinesBaseURI(secretNS, secretName);
   const { t } = useTranslation();
 
+  // fix T in this useEffect
   React.useEffect(() => {
     let ignore = false;
 
