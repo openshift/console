@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 import {
   ContainerSpec,
   k8sCreate,
@@ -37,6 +38,9 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const [selectedPVC, setSelectedPVC] = React.useState<PersistentVolumeClaimKind>(null);
 
   const { kindObj, resourceName, namespace } = props;
+
+  const { t } = useTranslation();
+
   const supportedKinds = [
     'Deployment',
     'DeploymentConfig',
@@ -134,7 +138,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
   const validateDevicePath = (path: string) => {
     const existingDevicePaths = getDevicePaths(obj.spec.template);
     if (existingDevicePaths.includes(path)) {
-      setError('Device path is already in use.');
+      setError(t('public~Device path is already in use.'));
     }
   };
 
@@ -263,10 +267,10 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
   return (
     <form className="co-m-pane__body-group co-m-pane__form" onSubmit={save}>
-      <label className="control-label co-required">Persistent Volume Claim</label>
+      <label className="control-label co-required">{t('public~PersistentVolumeClaim')}</label>
       <div className="form-group">
         <RadioInput
-          title="Use existing claim"
+          title={t('public~Use existing claim')}
           value="existing"
           key="existing"
           onChange={handleShowCreatePVCChange}
@@ -287,7 +291,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       )}
       <div className="form-group">
         <RadioInput
-          title="Create new claim"
+          title={t('public~Create new claim')}
           value="new"
           key="new"
           onChange={handleShowCreatePVCChange}
@@ -305,7 +309,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
       {claimVolumeMode === 'Block' ? (
         <div className="form-group">
           <label className="control-label co-required" htmlFor="device-path">
-            Device Path
+            {t('public~Device path')}
           </label>
           <div>
             <input
@@ -319,14 +323,14 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
               required
             />
             <p className="help-block" id="volume-device-help">
-              Device path for the block volume inside the container.
+              {t('public~Device path for the block volume inside the container.')}
             </p>
           </div>
         </div>
       ) : (
         <div className="form-group">
           <label className="control-label co-required" htmlFor="mount-path">
-            Mount Path
+            {t('public~Mount path')}
           </label>
           <div>
             <input
@@ -340,18 +344,18 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
               required
             />
             <p className="help-block" id="mount-path-help">
-              Mount path for the volume inside the container.
+              {t('public~Mount path for the volume inside the container.')}
             </p>
           </div>
           <Checkbox
-            label="Mount as read-only"
+            label={t('public~Mount as read-only')}
             onChange={onMountAsReadOnlyChanged}
             checked={mountAsReadOnly}
             name="mountAsReadOnly"
           />
           <div className="form-group">
             <label className="control-label" htmlFor="subpath">
-              Subpath
+              {t('public~Subpath')}
             </label>
             <div>
               <input
@@ -364,8 +368,9 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
                 value={subPath}
               />
               <p className="help-block" id="subpath-help">
-                Optional path within the volume from which it will be mounted into the container.
-                Defaults to the root of volume.
+                {t(
+                  'public~Optional path within the volume from which it will be mounted into the container. Defaults to the root of the volume.',
+                )}
               </p>
             </div>
           </div>
@@ -374,18 +379,20 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
 
       {!useContainerSelector && (
         <p>
-          The volume will be mounted into all containers. You can{' '}
-          <Button type="button" onClick={handleSelectContainers} variant="link" isInline>
-            select specific containers
-          </Button>{' '}
-          instead.
+          <Trans t={t} ns="public">
+            The volume will be mounted into all containers. You can{' '}
+            <Button type="button" onClick={handleSelectContainers} variant="link" isInline>
+              select specific containers
+            </Button>{' '}
+            instead.
+          </Trans>
         </p>
       )}
       {useContainerSelector && (
         <div className="form-group co-break-word">
-          <label className="control-label">Containers</label>
+          <label className="control-label">{t('public~Containers')}</label>
           <Button type="button" onClick={handleSelectContainers} variant="link">
-            (use all containers)
+            {t('public~(use all containers)')}
           </Button>
           <ContainerSelector
             containers={obj.spec.template.spec.containers}
@@ -393,17 +400,17 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             onChange={handleContainerSelectionChange}
           />
           <p className="help-block" id="subpath-help">
-            Select which containers to mount volume into.
+            {t('public~Select which containers to mount volume into.')}
           </p>
         </div>
       )}
       <ButtonBar errorMessage={error} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
           <Button type="submit" variant="primary" id="save-changes">
-            Save
+            {t('public~Save')}
           </Button>
           <Button type="button" variant="secondary" onClick={history.goBack}>
-            Cancel
+            {t('public~Cancel')}
           </Button>
         </ActionGroup>
       </ButtonBar>
