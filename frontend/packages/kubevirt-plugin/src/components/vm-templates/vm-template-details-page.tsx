@@ -117,6 +117,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
         withCreate: true,
         withCustomizeModal,
         isCommonTemplate: isCommon,
+        namespace,
       }}
     />
   );
