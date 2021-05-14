@@ -31,7 +31,7 @@ import {
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { ExternalLink, history, LoadingInline, useSafeFetch } from '../../utils';
+import { history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
@@ -498,13 +498,6 @@ const Board: React.FC<BoardProps> = ({ rows }) => (
   </>
 );
 
-const GrafanaLink = () =>
-  _.isEmpty(window.SERVER_FLAGS.grafanaPublicURL) ? null : (
-    <span className="monitoring-header-link">
-      <ExternalLink href={window.SERVER_FLAGS.grafanaPublicURL} text="Grafana UI" />
-    </span>
-  );
-
 const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ match }) => {
   const { t } = useTranslation();
 
@@ -627,9 +620,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__header">
           <h1 className="co-m-pane__heading">
-            <span>
-              {t('public~Dashboards')} <GrafanaLink />
-            </span>
+            <span>{t('public~Dashboards')}</span>
           </h1>
           <div className="monitoring-dashboards__options">
             <TimespanDropdown />
