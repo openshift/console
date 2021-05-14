@@ -91,7 +91,7 @@ export const getWorkloadProfile = (vm: VMGenericLikeEntityKind) =>
 export const getFlavor = (vmLike: VMGenericLikeEntityKind) =>
   findKeySuffixValue(getLabels(vmLike), TEMPLATE_FLAVOR_LABEL);
 
-export const isVMReady = (vm: VMKind) => !!vm?.status?.ready;
+export const isVMIReady = (vmi: VMIKind) => getStatusPhase(vmi) === VMIPhase.Running;
 
 export const isVMCreated = (vm: VMKind) => !!vm?.status?.created;
 
