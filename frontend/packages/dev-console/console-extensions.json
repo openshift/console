@@ -291,7 +291,7 @@
       "perspective": "dev",
       "section": "top",
       "name": "%devconsole~Monitoring%",
-      "href": "/monitoring",
+      "href": "/dev-monitoring",
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-monitoring",
         "data-tour-id": "tour-monitoring-nav",
