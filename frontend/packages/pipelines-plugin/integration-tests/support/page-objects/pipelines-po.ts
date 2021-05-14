@@ -31,10 +31,19 @@ export const pipelineBuilderPO = {
       displayName: '#task-name',
       inputResource: 'select[id*="tasks-0-resources-inputs-0-resource-field"]',
       workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
+      parameterUrl: '[id$="tasks-0-params-0-value-field"]',
+      parameterUrlHelper: '[id$="tasks-0-params-0-value-field-helper"]',
+      parameterRevision: '[id$="tasks-0-params-1-value-field"]',
+      parameterRevisionHelper: '[id$="tasks-0-params-1-value-field-helper"]',
       imageName: '#IMAGE',
       script: '#SCRIPT',
       args: '#ARGS-0',
       actions: '[data-test-id="actions-menu-button"]',
+      workspaces: '#form-dropdown-formData-tasks-0-workspaces-0-workspace-field',
+    },
+    addWorkspaces: {
+      name: '[id$="workspaces-0-name-field"]',
+      optionalWorkspace: '#form-checkbox-formData-workspaces-0-optional-field',
     },
   },
   yamlView: {
@@ -93,6 +102,7 @@ export const pipelineDetailsPO = {
       annotations: '[data-test-selector="details-item-value__Annotations"]',
       createdAt: '[data-test-selector="details-item-value__Created at"]',
       owner: '[data-test-selector="details-item-value__Owner"]',
+      workspace: '[data-test-id^="workspace-definition"] dd',
     },
     sections: {
       triggerTemplates: '.odc-trigger-template-list',
@@ -161,8 +171,13 @@ export const pipelineRunDetailsPO = {
   pipelineRunStatus: 'h1 [data-test="status-text"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
-    sectionTitle: '[data-test-section-heading="Pipeline Run details"]',
+    sectionTitle: '[data-test-section-heading="PipelineRun details"]',
     pipelineRunDetails: 'div dl',
+    workspacesSection: '[data-test-id="workspace-resources-section"]',
+    workspacesResources: {
+      volumeClaimTemplateResources: '[data-test-id="volumeClaimTemplate-resources-section"]',
+      emptyDirectory: '[data-test-id="empty-directory-workspace"]',
+    },
   },
   yaml: {
     yamlPage: '[data-mode-id="yaml"]',
@@ -194,6 +209,7 @@ export const pipelineRunsPO = {
 export const pipelinesPO = {
   createPipeline: '#yaml-create',
   search: 'input[data-test-id="item-filter"]',
+  emptyMessage: '[data-test="empty-message"]',
   pipelinesTable: {
     table: 'div[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',
@@ -225,7 +241,15 @@ export const pipelinesPO = {
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',
+    emptyDirectoryInfo: '[aria-label="Info Alert"]',
     start: '#confirm-action',
+    workspaces: {
+      workspaceType: '[id$="workspaces-0-type-field"]',
+      emptyDirectoryInfo: '.pf-u-screen-reader',
+      configMap: '.odc-multiple-key-selector button',
+      secret: '.odc-multiple-key-selector button',
+      pvc: '[id$=persistentVolumeClaim-claimName-field]',
+    },
     secretForm: '.odc-secret-form',
     advancedOptions: {
       secretFormTitle: 'h1.odc-secret-form__title',

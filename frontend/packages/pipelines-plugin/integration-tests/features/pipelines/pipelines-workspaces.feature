@@ -11,7 +11,6 @@ Feature: Workspaces
         Scenario: Create the pipeline with workspace from yaml view : P-12-TC01
             Given user is at Edit Yaml page
              When user fills the yaml editor with sample "s2i-build-and-deploy-pipeline-using-workspace"
-        # When user enters yaml content "pipeline-with-workspace.yaml" in editor
               And user clicks on create button in Edit Yaml file
              Then user will be redirected to Pipeline Details page with header name "s2i-build-and-deploy"
 
@@ -21,59 +20,51 @@ Feature: Workspaces
             Given user created pipeline with workspace
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
-              And user selects shared workspaces drop down
+              And user selects shared workspaces dropdown
              Then user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC
 
 
-        @regression, @to-do
-        Scenario Outline: Start the pipeline with "<volume_type>" : P-12-TC03
-            Given user created pipeline with workspace
-             When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
-              And user fills the Parameters in Start Pipeline modal
-              And user selects volume type "<volume_type>" from workspaces drop down
-              And user selects Start button
+        @regression @odc-3991
+        Scenario: Start the pipeline with "Empty Directory" : P-12-TC03
+            Given pipeline "test-wp-pipeline" is created with workspace
+             When user selects "Start" option from kebab menu for pipeline "test-wp-pipeline"
+              And user selects volume type "Empty Directory" from workspaces dropdown
+              And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
-              And user will see volume_type mentioned in the Workspace Resources section of Pipeline Run Details page
-
-        Examples:
-                  | volume_type     |
-                  | Empty Directory |
+              And user will see "Empty Directory" in the Workspace Resources section of Pipeline Run Details page
 
 
-        @to-do
+        @odc-3991
         Scenario: Start the pipeline with ConfigMap : P-12-TC04
-            Given user created pipeline with workspace
+            Given user created pipeline "test-configmap-pipeline" with workspace
               And user created Config Map using yaml "pipeline-configMap.yaml"
-             When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
-              And user enters first param as "param-1"
-              And user selects volume type "Config Map" from workspaces dorpdown
-              And user selects "sensitive-recipe-storage" from Config Map drop down
+             When user selects "Start" option from kebab menu for pipeline "test-configmap-pipeline"
+              And user selects volume type "Config Map" from workspaces dropdown
+              And user selects "sensitive-recipe-storage" from Config Map dropdown
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
               And user will see Config Map Workspace "sensitive-recipe-storage" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
-        @to-do
+        @odc-3991
         Scenario: Start the pipeline with Secret : P-12-TC05
-            Given user created pipeline with workspace
+            Given user created pipeline "test-secret-pipeline" with workspace
               And user created Secret using yaml "pipeline-secret.yaml"
-             When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
-              And user enters first param as "param-1"
-              And user selects volume type "Secret" from shared workspaces dorpdown
-              And user selects "secret-password" from Secret drop down
+             When user selects "Start" option from kebab menu for pipeline "test-secret-pipeline"
+              And user selects volume type "Secret" from workspaces dropdown
+              And user selects "secret-password" from Secret dropdown
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
               And user will see Secret Workspace "secret-password" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
-        @to-do
+        @odc-3991
         Scenario: Start the pipeline with PVC : P-12-TC06
-            Given user created pipeline with workspace
-              And user created Secret using yaml "pipeline-secret.yaml"
-             When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
-              And user enters first param as "param-1"
-              And user selects volume type "PVC" from shared workspaces dorpdown
-              And user selects "shared-task-storage" from PVC drop down
+            Given user created pipeline "test-pvc-pipeline" with workspace
+              And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"
+             When user selects "Start" option from kebab menu for pipeline "test-pvc-pipeline"
+              And user selects volume type "PersistentVolumeClaim" from workspaces dropdown
+              And user selects "shared-task-storage" from PVC dropdown
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
               And user will see PVC Workspace "shared-task-storage" mentioned in the Workspace Resources section of Pipeline Run Details page

@@ -12,6 +12,7 @@ export const pipelineDetailsPage = {
 
   verifyTriggerTemplateSection: () =>
     cy.get(pipelineDetailsPO.details.triggerTemplateSection).should('be.visible'),
+
   verifyPage: () =>
     cy.get(pipelineDetailsPO.title).should('contain.text', pageTitle.PipelineDetails),
 

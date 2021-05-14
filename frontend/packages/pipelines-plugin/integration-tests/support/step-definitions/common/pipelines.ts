@@ -39,6 +39,45 @@ Given('pipeline run is displayed for {string} with resource', (pipelineName: str
   cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
 });
 
+Given(
+  'pipeline run is displayed for {string} with workspace {string} of type {string}',
+  (pipelineName: string, workspaceName: string, workspaceType: string) => {
+    pipelinesPage.clickOnCreatePipeline();
+    pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, workspaceName);
+    cy.byLegacyTestID('breadcrumb-link-0').click();
+    pipelinesPage.search(pipelineName);
+    pipelinesPage.selectKebabMenu(pipelineName);
+    cy.byTestActionID('Start').click();
+    modal.modalTitleShouldContain('Start Pipeline');
+    startPipelineInPipelinesPage.selectWorkSpace(workspaceType);
+    startPipelineInPipelinesPage.clickStart();
+    pipelineRunDetailsPage.verifyTitle();
+    navigateTo(devNavigationMenu.Pipelines);
+    pipelinesPage.search(pipelineName);
+    cy.get(pipelinesPO.pipelinesTable.pipelineRunIcon).should('be.visible');
+  },
+);
+
+Given(
+  'pipeline {string} is created with {string} workspace',
+  (pipelineName: string, workspaceName: string) => {
+    pipelinesPage.clickOnCreatePipeline();
+    pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, 'git-clone', workspaceName);
+    cy.byLegacyTestID('breadcrumb-link-0').click();
+    pipelinesPage.search(pipelineName);
+  },
+);
+
+Given(
+  'pipeline {string} with at least one workspace and no previous Pipeline Runs',
+  (pipelineName: string) => {
+    pipelinesPage.clickOnCreatePipeline();
+    pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName);
+    cy.byLegacyTestID('breadcrumb-link-0').click();
+    pipelinesPage.search(pipelineName);
+  },
+);
+
 When('user adds another task {string} in parallel', (taskName: string) => {
   pipelineBuilderPage.selectParallelTask(taskName);
   pipelineBuilderPage.addResource('git resource');

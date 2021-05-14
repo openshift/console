@@ -86,11 +86,15 @@ export const pipelinesPage = {
     }
   },
 
-  search: (pipelineName: string) => {
+  searchPipelineInPipelinesPage: (pipelineName: string) => {
     cy.get(pipelinesPO.search)
       .should('be.visible')
       .clear()
       .type(pipelineName);
+  },
+
+  search: (pipelineName: string) => {
+    pipelinesPage.searchPipelineInPipelinesPage(pipelineName);
     cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
   },
 
@@ -203,6 +207,20 @@ export const startPipelineInPipelinesPage = {
       }
     });
   },
+  selectConfigMap: (configMapValue: string) => {
+    cy.selectByAutoCompleteDropDownText(
+      pipelinesPO.startPipeline.workspaces.configMap,
+      configMapValue,
+    );
+  },
+
+  selectSecret: (secret: string) => {
+    cy.selectByDropDownText(pipelinesPO.startPipeline.workspaces.secret, secret);
+  },
+
+  selectPVC: (pvc: string) => {
+    cy.selectByAutoCompleteDropDownText(pipelinesPO.startPipeline.workspaces.pvc, pvc);
+  },
 
   enterRevision: (revision: string) => {
     cy.get(pipelinesPO.startPipeline.revision)
@@ -272,20 +290,24 @@ export const startPipelineInPipelinesPage = {
     cy.get(pipelinesPO.startPipeline.sharedWorkspace).click();
     switch (option) {
       case 'Empty Directory':
-        cy.byTestDropDownMenu('EmptyDirectory').click();
+        cy.byTestDropDownMenu('emptyDirectory').click();
         break;
       case 'Config Map':
-        cy.byTestDropDownMenu('ConfigMap').click();
+        cy.byTestDropDownMenu('configMap').click();
         break;
       case 'Secret':
-        cy.byTestDropDownMenu('Secret').click();
+        cy.byTestDropDownMenu('secret').click();
         break;
-      case 'PVC':
-        cy.byTestDropDownMenu('PVC').click();
+      case 'PersistentVolumeClaim' || 'PVC':
+        cy.byTestDropDownMenu('pvc').click();
+        break;
+      case 'VolumeClaimTemplate':
+        cy.byTestDropDownMenu('volumeClaimTemplate').click();
         break;
       default:
         break;
     }
+    cy.log(`user selected ${option} as workspace`);
   },
 
   selectView: (option: string) => {

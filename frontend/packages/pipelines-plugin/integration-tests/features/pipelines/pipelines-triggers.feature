@@ -135,3 +135,18 @@ Feature: Triggers
               And update the content in ReadMe file
               And user navigates to pipelines page
              Then user is able to see new pipeline run for "trigger-seven" in pipelines page
+
+
+        @smoke @odc-3991
+        Scenario Outline: Add the trigger to the pipeline with workspace from pipelines page : P-09-TC03
+            Given user created pipeline "<pipeline_name>" with workspace
+              And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"
+             When user selects "Add Trigger" from the kebab menu for "<pipeline_name>"
+              And user selects the "github-pullreq" from Git Provider Type field
+              And user selects volume type "PersistentVolumeClaim" from workspaces dropdown
+              And user clicks on Add button present in Add Trigger modal
+             Then pipelines page is displayed
+
+        Examples:
+                  | pipeline_name  |
+                  | pipe-trigger-1 |

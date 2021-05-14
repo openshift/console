@@ -12,7 +12,7 @@ Feature: Create the pipeline from builder page
              Then user redirects to Pipeline Builder page
 
 
-        @regression @to-do
+        @regression @odc-3991
         Scenario: Pipeline Builder page : P-03-TC02
             Given user is at pipelines page
              When user clicks Create Pipeline button on Pipelines page
@@ -99,7 +99,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "new-pipeline"
 
 
-        @regression @to-do
+        @regression @odc-3991
         Scenario: Create pipeline with Workspaces
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
@@ -115,10 +115,10 @@ Feature: Create the pipeline from builder page
               And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
 
 
-        @regression @to-do
+        @regression @odc-3991
         Scenario: Create pipeline with optional Workspaces
             Given user is at Pipeline Builder page
-             When user enters pipeline name as "pipeline-workspace"
+             When user enters pipeline name as "pipe-opt-workspace"
               And user selects "git-clone" from Task drop down
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
@@ -126,9 +126,9 @@ Feature: Create the pipeline from builder page
               And user adds the Workspace name as "git-opt"
               And user clicks on Optional Workspace checkbox
               And user selects the "git-clone" node
-              And user selects the "git" workspace in the Output of Workspaces in cluster task sidebar
+              And user selects the "git-opt" workspace in the Output of Workspaces in cluster task sidebar
               And user clicks Create button on Pipeline Builder page
-             Then user will be redirected to Pipeline Details page with header name "pipeline-workspace"
+             Then user will be redirected to Pipeline Details page with header name "pipe-opt-workspace"
               And user will see workspace mentioned as "git-opt (optional)" in the Workspaces section of Pipeline Details page
 
 
