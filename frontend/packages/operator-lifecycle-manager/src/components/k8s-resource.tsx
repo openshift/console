@@ -49,10 +49,10 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
 ];
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'hidden-xs'),
+  classNames(''),
+  classNames('', 'pf-u-w-16-on-md'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
 ];
 
 export const ResourceTableRow: RowFunction<
