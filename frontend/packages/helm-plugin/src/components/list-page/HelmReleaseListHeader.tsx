@@ -9,7 +9,7 @@ export const tableColumnClasses = {
   status: 'pf-m-hidden pf-m-visible-on-lg',
   chartName: 'pf-m-hidden pf-m-visible-on-xl',
   chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
-  appVersion: 'pf-m-hidden pf-m-visible-on-xl',
+  appVersion: 'pf-m-hidden pf-m-visible-on-xl pf-u-w-8-on-xl',
   kebab: Kebab.columnClass,
 };
 

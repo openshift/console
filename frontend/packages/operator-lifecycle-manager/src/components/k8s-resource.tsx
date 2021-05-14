@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { match } from 'react-router';
 import { Status } from '@console/shared';
@@ -49,10 +48,10 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
 ];
 
 const tableColumnClasses = [
-  classNames(''),
-  classNames('', 'pf-u-w-16-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  '',
+  'pf-u-w-16-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  'pf-m-hidden pf-m-visible-on-sm',
 ];
 
 export const ResourceTableRow: RowFunction<

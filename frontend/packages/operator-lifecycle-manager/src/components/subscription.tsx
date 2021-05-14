@@ -113,11 +113,11 @@ export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean
   ).length > 0;
 
 const tableColumnClasses = [
-  classNames(''),
-  classNames(''),
-  classNames('pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,
 ];
 
