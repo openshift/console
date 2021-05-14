@@ -19,7 +19,6 @@ jest.mock('react-i18next', () => {
 describe('Project Access', () => {
   beforeEach(() => {
     projectAccessProps = {
-      formName: 'project access',
       namespace: 'abc',
       roleBindings: {
         data: [],

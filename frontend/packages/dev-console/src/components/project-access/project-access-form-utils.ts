@@ -42,3 +42,8 @@ export const getUserRoleBindings = (roleBindings: RoleBinding[]): UserRoleBindin
 export const defaultProjectAccessRoles: ProjectAccessRoles = {
   availableClusterRoles: ['admin', 'edit', 'view'],
 };
+
+export const ignoreRoleBindingName = (roleBinding: UserRoleBinding[]) => {
+  const res = roleBinding.map((obj) => ({ user: obj.user, role: obj.role }));
+  return _.sortBy(res, ['user']);
+};
