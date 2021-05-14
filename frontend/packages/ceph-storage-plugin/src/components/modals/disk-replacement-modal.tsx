@@ -18,6 +18,7 @@ import {
   SecretKind,
 } from '@console/internal/module/k8s';
 import { TemplateModel, TemplateInstanceModel, SecretModel } from '@console/internal/models';
+import { DiskMetadata } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE, DASHBOARD_LINK } from '../../constants';
 import {
   OCSDiskList,
@@ -45,19 +46,23 @@ const createTemplateInstance = async (
   parametersSecret: SecretKind,
   template: TemplateKind,
   osd: string,
-  disk: string,
   nodeName: string,
+  disk: DiskMetadata,
 ) => {
+  const { path, deviceID, serial } = disk;
   const templateInstance: TemplateInstanceKind = {
     apiVersion: apiVersionForModel(TemplateInstanceModel),
     kind: TemplateInstanceModel.kind,
     metadata: {
       generateName: `${OSD_REMOVAL_TEMPLATE}-${osd}-`,
       namespace: CEPH_STORAGE_NAMESPACE,
+      /* Adding annotations to uniquely identify a disk after replacement. */
       annotations: {
-        disk,
-        osd,
-        nodeName,
+        devicePath: path,
+        deviceOsd: osd,
+        deviceNode: nodeName,
+        deviceID,
+        deviceSerial: serial,
       },
     },
     spec: {
@@ -70,21 +75,21 @@ const createTemplateInstance = async (
   return k8sCreate(TemplateInstanceModel, templateInstance);
 };
 
-const instantiateTemplate = async (osdId: string, diskName: string, nodeName: string) => {
+const instantiateTemplate = async (osdId: string, nodeName: string, disk: DiskMetadata) => {
   const osdRemovalTemplate = await k8sGet(
     TemplateModel,
     OSD_REMOVAL_TEMPLATE,
     CEPH_STORAGE_NAMESPACE,
   );
   const templateSecret = await createTemplateSecret(osdRemovalTemplate, osdId);
-  await createTemplateInstance(templateSecret, osdRemovalTemplate, osdId, diskName, nodeName);
+  await createTemplateInstance(templateSecret, osdRemovalTemplate, osdId, nodeName, disk);
 };
 
 const DiskReplacementAction = (props: DiskReplacementActionProps) => {
   const { t } = useTranslation();
 
   const {
-    diskName,
+    disk,
     alertsMap,
     nodeName,
     replacementMap,
@@ -93,6 +98,8 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
     cancel,
     close,
   } = props;
+
+  const { path: diskName } = disk;
 
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -114,7 +121,7 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
           ),
         );
       else {
-        instantiateTemplate(osd, diskName, nodeName);
+        instantiateTemplate(osd, nodeName, disk);
         dispatch({
           type: ActionType.SET_REPLACEMENT_MAP,
           payload: { [diskName]: { osd, status: Status.PreparingToReplace } },
@@ -164,7 +171,7 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
 export const diskReplacementModal = createModalLauncher(DiskReplacementAction);
 
 export type DiskReplacementActionProps = {
-  diskName: string;
+  disk: DiskMetadata;
   isRebalancing: boolean;
   alertsMap: OCSDiskList;
   replacementMap: OCSDiskList;
