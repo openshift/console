@@ -16,7 +16,12 @@
   "Environments table": "Environments table",
   "Application name": "Application name",
   "Git repository": "Git repository",
+  "Environment status": "Environment status",
+  "Environment": "Environment",
   "Last deployment": "Last deployment",
+  "Synced": "Synced",
+  "OutOfSync": "OutOfSync",
+  "Unknown": "Unknown",
   "No GitOps manifest URLs found": "No GitOps manifest URLs found",
   "No Application groups found": "No Application groups found"
 }

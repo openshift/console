@@ -11,6 +11,8 @@ export interface GitOpsAppGroupData {
   name: string;
   environments: string[];
   repo_url?: string;
+  sync_status?: string[];
+  last_deployed?: string[];
 }
 
 export interface GitOpsManifestData {
