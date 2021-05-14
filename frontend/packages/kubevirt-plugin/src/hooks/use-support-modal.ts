@@ -6,6 +6,7 @@ import { createSupportModal } from '../components/modals/support-modal/support-m
 import { TEMPLATE_WARN_SUPPORT } from '../constants';
 import { getTemplateSupport, isCommonTemplate } from '../selectors/vm-template/basic';
 import { useLocalStorage } from './use-local-storage';
+import { isUpstream } from '../utils/common';
 
 export type SupportModalFunction = (template: TemplateKind, onConfirm: VoidFunction) => void;
 
@@ -13,11 +14,10 @@ export const useSupportModal = (): SupportModalFunction => {
   const [warnSupport, setWarnSupport] = useLocalStorage(TEMPLATE_WARN_SUPPORT);
   return React.useCallback<SupportModalFunction>(
     (template, onConfirm) => {
-      const isUpstream = window.SERVER_FLAGS.branding === 'okd';
       const templateSupport = getTemplateSupport(template);
       const commonTemplat = isCommonTemplate(template);
       const showSupportModal =
-        !isUpstream &&
+        !isUpstream() &&
         template &&
         templateSupport.provider !== 'Full' &&
         templateSupport.parent !== 'Full';

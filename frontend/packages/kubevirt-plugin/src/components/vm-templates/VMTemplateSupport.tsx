@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/internal/components/utils';
 
 import { SUPPORT_URL } from '../../constants/vm-templates';
+import { isUpstream } from '../../utils/common';
 
 const VMTemplateSupport: React.FC<VMTemplateSupportProps> = ({ details }) => {
   const { t } = useTranslation();
-  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   return (
-    !isUpstream && (
+    !isUpstream() && (
       <div>
         {details
           ? t('kubevirt-plugin~See template details for support.')
