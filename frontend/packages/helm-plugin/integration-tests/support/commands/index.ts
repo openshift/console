@@ -7,3 +7,4 @@ import '../../../../integration-tests-cypress/support/index';
 import '../../../../dev-console/integration-tests/support/commands/app';
 import '../../../../dev-console/integration-tests/support/pageObjects/helm-po';
 import './app';
+import './hooks';
