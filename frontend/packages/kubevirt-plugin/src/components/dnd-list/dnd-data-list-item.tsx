@@ -8,7 +8,7 @@ import {
   DataListItemProps,
   DataListItemRow,
 } from '@patternfly/react-core';
-import { MinusCircleIcon, PficonDragdropIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, GripVerticalIcon } from '@patternfly/react-icons';
 
 const DNDDataListItemTypeName = 'dnd-row';
 const DNDDataListCellMoveStyle = { cursor: 'move' };
@@ -75,7 +75,7 @@ export const DNDDataListItem: React.FC<DNDDataListItemProps> = ({
   const dataListCell = [
     <DataListCell isFilled={false} key={cellKey('drag')}>
       <div ref={drag} style={DNDDataListCellMoveStyle}>
-        <PficonDragdropIcon />
+        <GripVerticalIcon />
       </div>
     </DataListCell>,
     ...React.Children.map(children, (cell, i) => (
