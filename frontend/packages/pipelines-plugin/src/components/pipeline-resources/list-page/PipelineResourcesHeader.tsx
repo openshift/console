@@ -1,30 +1,30 @@
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { tableColumnClasses } from './pipeline-resources-table';
 
-const PipelineResourcesHeader = (t: TFunction) => () => {
+const PipelineResourcesHeader = () => () => {
   return [
     {
-      title: t('pipelines-plugin~Name'),
+      title: i18next.t('pipelines-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('pipelines-plugin~Namespace'),
+      title: i18next.t('pipelines-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('pipelines-plugin~Type'),
+      title: i18next.t('pipelines-plugin~Type'),
       sortField: 'spec.type',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('pipelines-plugin~Created'),
+      title: i18next.t('pipelines-plugin~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },

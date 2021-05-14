@@ -20,13 +20,7 @@ import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
 }));
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
+
 const latestPipelineRunSpy = jest.spyOn(hookUtils, 'useLatestPipelineRun');
 
 const mockData = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];

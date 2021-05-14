@@ -4,14 +4,6 @@ import { ResourceLink } from '@console/internal/components/utils';
 import WorkspaceResourcesSection from '../WorkspaceResourcesSection';
 import { PipelineRunWorkspace } from '../../../../types';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('WorkspaceResourcesSection', () => {
   it('should handle nulls', () => {
     expect(

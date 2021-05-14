@@ -6,14 +6,6 @@ import ResultsList, { ResultsListProps } from '../ResultsList';
 import { runStatus } from '../../../../utils/pipeline-augment';
 import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ResultsList', () => {
   let resultsListWrapper: ShallowWrapper<ResultsListProps>;
   let resultsListProps: ResultsListProps;

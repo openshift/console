@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
@@ -21,14 +21,13 @@ const getAlertText = (
   isDockerStrategy: boolean,
   builderImage: string,
   resourceType: string,
-  t: TFunction,
 ): string => {
-  const MISSING_DOCKERFILE_LABEL_TEXT = t(
+  const MISSING_DOCKERFILE_LABEL_TEXT = i18next.t(
     'pipelines-plugin~The pipeline template for Dockerfiles is not available at this time.',
   );
   if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
 
-  return t(
+  return i18next.t(
     'pipelines-plugin~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
     { builderImage, resourceType },
   );
@@ -107,7 +106,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       <Alert
         isInline
         variant="info"
-        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName, t)}
+        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName)}
       />
     );
   }

@@ -16,8 +16,6 @@ import {
 } from '../utils';
 import { externalTask, externalTaskWithVarietyParams } from './validation-utils-data';
 
-const t = jest.fn((v) => v);
-
 describe('taskParamIsRequired properly detects what is required', () => {
   const structure: TektonParam = {
     name: 'test-param',
@@ -65,23 +63,22 @@ describe('findTaskFromFormikData / findTask', () => {
 
   it('should decompose formik state & handle nulls', () => {
     const formValues = createFormValues();
-    expect(findTaskFromFormikData(formValues, null, t)).toBe(null);
-    expect(findTaskFromFormikData(formValues, { name: 'test' }, t)).toBe(null);
-    expect(findTaskFromFormikData(formValues, { name: 'test', taskRef: { name: 'test' } }, t)).toBe(
+    expect(findTaskFromFormikData(formValues, null)).toBe(null);
+    expect(findTaskFromFormikData(formValues, { name: 'test' })).toBe(null);
+    expect(findTaskFromFormikData(formValues, { name: 'test', taskRef: { name: 'test' } })).toBe(
       null,
     );
   });
 
   it('should handle fail states', () => {
-    expect(findTask(null, null, t)).toBe(null);
+    expect(findTask(null, null)).toBe(null);
     expect(
-      findTask({ tasksLoaded: true, clusterTasks: [externalTask], namespacedTasks: [] }, null, t),
+      findTask({ tasksLoaded: true, clusterTasks: [externalTask], namespacedTasks: [] }, null),
     ).toBe(null);
     expect(
       findTask(
         { tasksLoaded: true, clusterTasks: [externalTask], namespacedTasks: [] },
         { name: 'test', taskRef: { name: 'unavailable-task' } },
-        t,
       ),
     ).toBe(undefined);
   });
@@ -89,17 +86,13 @@ describe('findTaskFromFormikData / findTask', () => {
   it('should be able to find a clusterTask', () => {
     const formValues = createFormValues([externalTask]);
     expect(
-      findTask(
-        formValues.taskResources,
-        {
-          name: 'test',
-          taskRef: {
-            name: externalTask.metadata.name,
-            kind: externalTask.kind,
-          },
+      findTask(formValues.taskResources, {
+        name: 'test',
+        taskRef: {
+          name: externalTask.metadata.name,
+          kind: externalTask.kind,
         },
-        t,
-      ),
+      }),
     ).toBe(externalTask);
   });
 
@@ -107,17 +100,13 @@ describe('findTaskFromFormikData / findTask', () => {
     const namespacedTask = { ...externalTask, kind: 'Task' };
     const formValues = createFormValues([], [namespacedTask]);
     expect(
-      findTask(
-        formValues.taskResources,
-        {
-          name: 'test',
-          taskRef: {
-            name: namespacedTask.metadata.name,
-            kind: namespacedTask.kind,
-          },
+      findTask(formValues.taskResources, {
+        name: 'test',
+        taskRef: {
+          name: namespacedTask.metadata.name,
+          kind: namespacedTask.kind,
         },
-        t,
-      ),
+      }),
     ).toBe(namespacedTask);
   });
 });

@@ -94,7 +94,6 @@ class PipelineRunLogsWithTranslation extends React.Component<
             taskRunFromYaml,
             obj.metadata?.namespace,
             obj.metadata?.name,
-            t,
           )
         : undefined;
     const podName = taskRunFromYaml[activeItem]?.status?.podName;

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as yup from 'yup';
-import { TFunction } from 'i18next';
+import i18n from 'i18next';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { nameValidationSchema } from '@console/shared';
 import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
@@ -26,9 +26,8 @@ const areRequiredParamsAdded = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
   params: PipelineTaskParam[] = [],
-  t: TFunction,
 ): boolean => {
-  const task = findTaskFromFormikData(formValues, pipelineTask, t);
+  const task = findTaskFromFormikData(formValues, pipelineTask);
   if (!task) {
     // No task, means we don't know if the param is nullable, so pass the test
     return true;
@@ -65,7 +64,6 @@ const findResource = (
   path: string,
   resourceName: string,
   taskType: TaskType,
-  t: TFunction,
 ): TektonResource | false => {
   // Since we do not have easy access to the taskRef, walk the path back ot the root
   // eg. path === formData.tasks[0].resources.inputs[0].resource
@@ -75,7 +73,7 @@ const findResource = (
   const pipelineTask: PipelineTask = _.get(formValues, `${taskPath.join('.')}`);
 
   // Find the task based on the ref
-  const task = findTaskFromFormikData(formValues, pipelineTask, t);
+  const task = findTaskFromFormikData(formValues, pipelineTask);
   if (!task) {
     // No task, can't find resources
     return false;
@@ -99,9 +97,8 @@ const isResourceTheCorrectType = (
   resourceValue: string,
   resourceName: string,
   taskType: TaskType,
-  t: TFunction,
 ): boolean => {
-  const resource = findResource(formValues, path, resourceName, taskType, t);
+  const resource = findResource(formValues, path, resourceName, taskType);
   if (resource === false) {
     // Failed to find the resource, nothing we can do here
     return true;
@@ -119,9 +116,8 @@ const hasResourcesOfTheSameType = (
   path: string,
   resourceName: string,
   taskType: TaskType,
-  t: TFunction,
 ): boolean => {
-  const resource = findResource(formValues, path, resourceName, taskType, t);
+  const resource = findResource(formValues, path, resourceName, taskType);
   if (resource === false) {
     // Failed to find the resource, nothing we can do here
     return true;
@@ -137,9 +133,8 @@ const hasRequiredResources = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
   taskResources: PipelineTaskResource[],
-  t: TFunction,
 ): boolean => {
-  const task = findTaskFromFormikData(formValues, pipelineTask, t);
+  const task = findTaskFromFormikData(formValues, pipelineTask);
   if (!task) {
     // No matching task, can't verify if resources are needed
     return true;
@@ -160,9 +155,8 @@ const hasRequiredWorkspaces = (
   formValues: PipelineBuilderFormYamlValues,
   pipelineTask: PipelineTask,
   taskWorkspaces: PipelineTaskWorkspace[],
-  t: TFunction,
 ) => {
-  const task = findTaskFromFormikData(formValues, pipelineTask, t);
+  const task = findTaskFromFormikData(formValues, pipelineTask);
   if (!task) {
     // No matching task, can't verify if workspaces are needed
     return true;
@@ -208,11 +202,11 @@ const runAfterMatches = (
  *
  * Note: Expects to be in an object of { name: string(), runAfter: thisFunction(...), ... }
  */
-const validRunAfter = (formValues: PipelineBuilderFormYamlValues, t: TFunction) => {
+const validRunAfter = (formValues: PipelineBuilderFormYamlValues) => {
   return yup
     .array()
     .of(yup.string())
-    .test('tasks-matches-runAfters', t('pipelines-plugin~Invalid runAfter'), function(
+    .test('tasks-matches-runAfters', i18n.t('pipelines-plugin~Invalid runAfter'), function(
       runAfter: string[],
     ) {
       return runAfterMatches(formValues, runAfter, this.parent.name);
@@ -222,41 +216,37 @@ const validRunAfter = (formValues: PipelineBuilderFormYamlValues, t: TFunction) 
 /**
  * Validates task resources are defined correctly.
  */
-const resourceDefinition = (
-  formValues: PipelineBuilderFormYamlValues,
-  taskType: TaskType,
-  t: TFunction,
-) => {
+const resourceDefinition = (formValues: PipelineBuilderFormYamlValues, taskType: TaskType) => {
   const {
     formData: { resources },
   } = formValues;
 
   return yup.array().of(
     yup.object({
-      name: yup.string().required(t('pipelines-plugin~Required')),
+      name: yup.string().required(i18n.t('pipelines-plugin~Required')),
       resource: yup
         .string()
         .test(
           'are-resources-available',
-          t('pipelines-plugin~No resources available. Add pipeline resources.'),
+          i18n.t('pipelines-plugin~No resources available. Add pipeline resources.'),
           () => resources?.length > 0,
         )
         .test(
           'is-resources-of-type-available',
-          t('pipelines-plugin~No resources available. Add pipeline resources.'),
+          i18n.t('pipelines-plugin~No resources available. Add pipeline resources.'),
           function() {
-            return hasResourcesOfTheSameType(formValues, this.path, this.parent.name, taskType, t);
+            return hasResourcesOfTheSameType(formValues, this.path, this.parent.name, taskType);
           },
         )
         .test(
           'is-resource-link-broken',
-          t('pipelines-plugin~Resource name has changed, reselect'),
+          i18n.t('pipelines-plugin~Resource name has changed, reselect'),
           (resourceValue?: string) =>
             !!resourceValue && !!resources.find(({ name }) => name === resourceValue),
         )
         .test(
           'is-resource-type-valid',
-          t('pipelines-plugin~Resource type has changed, reselect'),
+          i18n.t('pipelines-plugin~Resource type has changed, reselect'),
           function(resourceValue?: string) {
             return isResourceTheCorrectType(
               formValues,
@@ -264,11 +254,10 @@ const resourceDefinition = (
               resourceValue,
               this.parent.name,
               taskType,
-              t,
             );
           },
         )
-        .required(t('pipelines-plugin~Required')),
+        .required(i18n.t('pipelines-plugin~Required')),
     }),
   );
 };
@@ -276,11 +265,7 @@ const resourceDefinition = (
 /**
  * Validates Tasks or Finally Tasks for valid structure
  */
-const taskValidation = (
-  formValues: PipelineBuilderFormYamlValues,
-  taskType: TaskType,
-  t: TFunction,
-) => {
+const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: TaskType) => {
   const {
     formData: { workspaces },
   } = formValues;
@@ -289,23 +274,23 @@ const taskValidation = (
     yup
       .object({
         // `name` is properly validated in TaskSidebarName
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
         taskRef: yup
           .object({
-            name: yup.string().required(t('pipelines-plugin~Required')),
+            name: yup.string().required(i18n.t('pipelines-plugin~Required')),
             kind: yup.string(),
           })
           .default(undefined),
         taskSpec: yup.object(),
-        runAfter: validRunAfter(formValues, t),
+        runAfter: validRunAfter(formValues),
         params: yup
           .array()
           .of(
             yup.object({
-              name: yup.string().required(t('pipelines-plugin~Required')),
+              name: yup.string().required(i18n.t('pipelines-plugin~Required')),
               value: yup.lazy((value) => {
                 if (Array.isArray(value)) {
-                  return yup.array().of(yup.string().required(t('pipelines-plugin~Required')));
+                  return yup.array().of(yup.string().required(i18n.t('pipelines-plugin~Required')));
                 }
                 return yup.string();
               }),
@@ -315,33 +300,31 @@ const taskValidation = (
             'is-param-optional',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
             function(params?: PipelineTaskParam[]) {
-              return areRequiredParamsAdded(formValues, this.parent, params, t);
+              return areRequiredParamsAdded(formValues, this.parent, params);
             },
           ),
         resources: yup
           .object({
-            inputs: resourceDefinition(formValues, taskType, t),
-            outputs: resourceDefinition(formValues, taskType, t),
+            inputs: resourceDefinition(formValues, taskType),
+            outputs: resourceDefinition(formValues, taskType),
           })
           .test(
             'is-resources-required',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
             function(resourceValue?: TektonResourceGroup<PipelineTaskResource>) {
-              return hasRequiredResources(
-                formValues,
-                this.parent,
-                [...(resourceValue?.inputs || []), ...(resourceValue?.outputs || [])],
-                t,
-              );
+              return hasRequiredResources(formValues, this.parent, [
+                ...(resourceValue?.inputs || []),
+                ...(resourceValue?.outputs || []),
+              ]);
             },
           ),
         when: yup
           .array()
           .of(
             yup.object({
-              input: yup.string().required(t('pipelines-plugin~Required')),
-              operator: yup.string().required(t('pipelines-plugin~Required')),
-              values: yup.array().of(yup.string().required(t('pipelines-plugin~Required'))),
+              input: yup.string().required(i18n.t('pipelines-plugin~Required')),
+              operator: yup.string().required(i18n.t('pipelines-plugin~Required')),
+              values: yup.array().of(yup.string().required(i18n.t('pipelines-plugin~Required'))),
             }),
           )
           .test(
@@ -356,34 +339,34 @@ const taskValidation = (
           .array()
           .of(
             yup.object({
-              name: yup.string().required(t('pipelines-plugin~Required')),
+              name: yup.string().required(i18n.t('pipelines-plugin~Required')),
               workspace: yup
                 .string()
                 .test(
                   'are-workspaces-available',
-                  t('pipelines-plugin~No workspaces available. Add pipeline workspaces.'),
+                  i18n.t('pipelines-plugin~No workspaces available. Add pipeline workspaces.'),
                   () => workspaces?.length > 0,
                 )
                 .test(
                   'is-workspace-link-broken',
-                  t('pipelines-plugin~Workspace name has changed, reselect'),
+                  i18n.t('pipelines-plugin~Workspace name has changed, reselect'),
                   (workspaceValue?: string) =>
                     !!workspaceValue && !!workspaces.find(({ name }) => name === workspaceValue),
                 )
-                .required(t('pipelines-plugin~Required')),
+                .required(i18n.t('pipelines-plugin~Required')),
             }),
           )
           .test(
             'is-workspaces-required',
             TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
             function(workspaceList?: PipelineTaskWorkspace[]) {
-              return hasRequiredWorkspaces(formValues, this.parent, workspaceList, t);
+              return hasRequiredWorkspaces(formValues, this.parent, workspaceList);
             },
           ),
       })
       .test(
         'taskRef-or-taskSpec',
-        t('pipelines-plugin~TaskSpec or TaskRef must be provided'),
+        i18n.t('pipelines-plugin~TaskSpec or TaskRef must be provided'),
         function(task: PipelineTask) {
           return !!task.taskRef || !!task.taskSpec;
         },
@@ -394,12 +377,14 @@ const taskValidation = (
 /**
  * Validates the Form side of the Form/YAML switcher
  */
-const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues, t: TFunction) => {
+const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) => {
   return yup.object({
-    name: nameValidationSchema(t).required(t('pipelines-plugin~Required')),
+    name: nameValidationSchema((tKey) => i18n.t(tKey)).required(
+      i18n.t('pipelines-plugin~Required'),
+    ),
     params: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
         description: yup.string(),
         default: yup.string(), // TODO: should include string[]
         // TODO: should have type (string | string[])
@@ -407,39 +392,39 @@ const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues, t:
     ),
     resources: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
         type: yup
           .string()
           .oneOf(Object.values(PipelineResourceType))
-          .required(t('pipelines-plugin~Required')),
+          .required(i18n.t('pipelines-plugin~Required')),
         // TODO: should include optional flag
       }),
     ),
     workspaces: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
         // TODO: should include optional flag
       }),
     ),
-    tasks: taskValidation(formValues, 'tasks', t)
-      .min(1, t('pipelines-plugin~Must define at least one Task'))
-      .required(t('pipelines-plugin~Required')),
-    finallyTasks: taskValidation(formValues, 'finallyTasks', t),
+    tasks: taskValidation(formValues, 'tasks')
+      .min(1, i18n.t('pipelines-plugin~Must define at least one Task'))
+      .required(i18n.t('pipelines-plugin~Required')),
+    finallyTasks: taskValidation(formValues, 'finallyTasks'),
     listTasks: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
-        runAfter: validRunAfter(formValues, t),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
+        runAfter: validRunAfter(formValues),
       }),
     ),
     finallyListTasks: yup.array().of(
       yup.object({
-        name: yup.string().required(t('pipelines-plugin~Required')),
+        name: yup.string().required(i18n.t('pipelines-plugin~Required')),
       }),
     ),
   });
 };
 
-export const validationSchema = (t: TFunction) =>
+export const validationSchema = () =>
   yup.mixed().test({
     test(formValues: PipelineBuilderFormYamlValues) {
       const formYamlDefinition = yup.object({
@@ -447,7 +432,7 @@ export const validationSchema = (t: TFunction) =>
         yamlData: yup.string(),
         formData: yup.mixed().when('editorType', {
           is: EditorType.Form,
-          then: pipelineBuilderFormSchema(formValues, t),
+          then: pipelineBuilderFormSchema(formValues),
         }),
       });
 

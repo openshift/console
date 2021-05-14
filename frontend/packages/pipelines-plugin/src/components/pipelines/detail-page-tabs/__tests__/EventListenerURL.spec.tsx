@@ -8,14 +8,6 @@ import {
   EventlistenerTypes,
 } from '../../../../test-data/event-listener-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('../../utils/triggers', () => ({ useEventListenerURL: jest.fn<string | null>() }));
 
 type EventListenerURLProps = React.ComponentProps<typeof EventListenerURL>;

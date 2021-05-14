@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import { humanizeNumberSI } from '@console/internal/components/utils';
 import {
   dateFormatterNoYear,
@@ -123,11 +123,11 @@ export const getYaxisValues = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   return `${minutes}m`;
 };
-export const PipelineMetricsTimeRangeOptions = (t: TFunction) => ({
-  '1d': t('pipelines-plugin~1 day'),
-  '3d': t('pipelines-plugin~3 days'),
-  '1w': t('pipelines-plugin~1 week'),
-  '2w': t('pipelines-plugin~2 weeks'),
-  '3w': t('pipelines-plugin~3 weeks'),
-  '4w': t('pipelines-plugin~4 weeks'),
+export const PipelineMetricsTimeRangeOptions = () => ({
+  '1d': i18next.t('pipelines-plugin~1 day'),
+  '3d': i18next.t('pipelines-plugin~3 days'),
+  '1w': i18next.t('pipelines-plugin~1 week'),
+  '2w': i18next.t('pipelines-plugin~2 weeks'),
+  '3w': i18next.t('pipelines-plugin~3 weeks'),
+  '4w': i18next.t('pipelines-plugin~4 weeks'),
 });

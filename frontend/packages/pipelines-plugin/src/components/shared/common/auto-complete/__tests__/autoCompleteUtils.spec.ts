@@ -9,21 +9,6 @@ import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data
 import { PipelineBuilderTaskResources } from '../../../../pipelines/pipeline-builder/types';
 import { resultTask } from '../../../../../test-data/task-data';
 
-jest.mock('i18next', () => {
-  const dependency = require.requireActual('i18next');
-  return {
-    ...dependency,
-    default: {
-      ...dependency.default,
-      use() {
-        return this;
-      },
-      init: () => Promise.resolve(),
-      t: (key) => key,
-    },
-  };
-});
-
 describe('autoCompleteUtils', () => {
   describe('paramToAutoComplete', () => {
     it('should return a valid param variable reference path', () => {

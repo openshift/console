@@ -136,9 +136,8 @@ export const hasError = (yupPath: string, errorMessage: string) => (error) => {
 };
 export const shouldHavePassed = (err) => expect(err).toBe('should not have this error'); // failure for .catch
 
-const t = jest.fn((f) => f);
 export const withFormData = (formData, taskResources?) =>
-  validationSchema(t).validate({
+  validationSchema().validate({
     editorType: EditorType.Form,
     yamlData: '',
     formData,

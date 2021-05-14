@@ -3,14 +3,6 @@ import { shallow } from 'enzyme';
 import EmptyDirectoriesSection from '../EmptyDirectoriesSection';
 import { PipelineRunWorkspace } from '../../../../types';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EmptyDirectoriesSection', () => {
   it('should handle nulls', () => {
     expect(shallow(<EmptyDirectoriesSection workspaces={null} />).isEmptyRender()).toBe(true);

@@ -63,7 +63,7 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      validationSchema={startPipelineSchema(t)}
+      validationSchema={startPipelineSchema()}
     >
       {(formikProps) => (
         <ModalStructure

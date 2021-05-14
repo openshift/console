@@ -23,7 +23,6 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
   const pipelineResourceLinks = getPipelineResourceLinks(
     pipelineRun.status?.pipelineSpec?.resources,
     pipelineRun.spec.resources,
-    t,
   );
 
   return (
@@ -33,20 +32,18 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         <dd>
           <Status
             status={pipelineRunFilterReducer(pipelineRun)}
-            title={pipelineRunFilterReducer(pipelineRun, t)}
+            title={pipelineRunFilterReducer(pipelineRun)}
           />
         </dd>
       </dl>
       <RunDetailsErrorLog
-        logDetails={getPLRLogSnippet(pipelineRun, t)}
+        logDetails={getPLRLogSnippet(pipelineRun)}
         namespace={pipelineRun.metadata.namespace}
       />
       <dl>
         <dt>{t('pipelines-plugin~Pipeline')}</dt>
         <dd>
-          <PipelineResourceRef
-            {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun, t)}
-          />
+          <PipelineResourceRef {...convertBackingPipelineToPipelineResourceRefProps(pipelineRun)} />
         </dd>
       </dl>
       <TriggeredBySection pipelineRun={pipelineRun} />

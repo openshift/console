@@ -24,7 +24,7 @@ const PipelineMetricsTimeRangeDropdown: React.FC<PipelineMetricsTimeRangeDropdow
     setTimespan,
   ]);
   const { t } = useTranslation();
-  const timeRangeOptions = PipelineMetricsTimeRangeOptions(t);
+  const timeRangeOptions = PipelineMetricsTimeRangeOptions();
   return (
     <div className="form-group">
       <label>{t('pipelines-plugin~Time Range')}</label>

@@ -5,14 +5,6 @@ import { mockPipelinesJSON } from '../../../../../utils/__tests__/pipeline-test-
 import PipelineTopologyGraph from '../../../pipeline-topology/PipelineTopologyGraph';
 import PipelineVisualization from '../PipelineVisualization';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('Pipeline Visualization', () => {
   type PipelineVisualizationProps = React.ComponentProps<typeof PipelineVisualization>;
   let wrapper: ShallowWrapper<PipelineVisualizationProps>;
@@ -29,7 +21,7 @@ describe('Pipeline Visualization', () => {
     wrapper.setProps({ pipeline: { ...mockPipelinesJSON[2], spec: { tasks: [] } } });
     const alert = wrapper.find(Alert);
     expect(alert).toHaveLength(1);
-    expect(alert.props().title).toBe('pipelines-plugin~This Pipeline has no tasks to visualize.');
+    expect(alert.props().title).toBe('This Pipeline has no tasks to visualize.');
   });
 
   it('Should render a pipeline Visualization component', () => {

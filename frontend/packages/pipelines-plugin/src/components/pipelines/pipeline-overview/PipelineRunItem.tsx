@@ -27,7 +27,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
   const lastUpdated = status
     ? status.completionTime || status.startTime || creationTimestamp
     : creationTimestamp;
-  const logDetails = getPLRLogSnippet(pipelineRun, t);
+  const logDetails = getPLRLogSnippet(pipelineRun);
 
   return (
     <li className="odc-pipeline-run-item list-group-item">

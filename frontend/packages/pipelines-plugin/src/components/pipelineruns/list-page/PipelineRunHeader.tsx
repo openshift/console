@@ -1,4 +1,4 @@
-import i18n from '@console/internal/i18n';
+import i18n from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { tableColumnClasses } from './pipelinerun-table';
 

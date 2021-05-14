@@ -18,13 +18,12 @@ import {
   workspaceTask,
 } from './validation-utils-data';
 
-const t = jest.fn((f) => f);
-const requiredMessage = 'pipelines-plugin~Required';
+const requiredMessage = 'Required';
 
 describe('Pipeline Build validation schema', () => {
   describe('Form/YAML switcher validation', () => {
     it('should fail when provided an unknown editor type', async () => {
-      await validationSchema(t)
+      await validationSchema()
         .validate({
           editorType: 'not a real value',
           yamlData: '',
@@ -37,14 +36,14 @@ describe('Pipeline Build validation schema', () => {
     });
 
     it('should fail initial values because there are no tasks', async () => {
-      await validationSchema(t)
+      await validationSchema()
         .validate({
           editorType: EditorType.Form,
           yamlData: '',
           formData: initialPipelineFormData,
         })
         .then(shouldHaveFailed)
-        .catch(hasError('formData.tasks', 'pipelines-plugin~Must define at least one Task'));
+        .catch(hasError('formData.tasks', 'Must define at least one Task'));
     });
   });
 
@@ -65,7 +64,7 @@ describe('Pipeline Build validation schema', () => {
         .catch(
           hasError(
             'formData.name',
-            'console-shared~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
           ),
         );
     });
@@ -151,9 +150,7 @@ describe('Pipeline Build validation schema', () => {
         tasks: [{ name: 'test' }],
       })
         .then(shouldHaveFailed)
-        .catch(
-          hasError('formData.tasks[0]', 'pipelines-plugin~TaskSpec or TaskRef must be provided'),
-        );
+        .catch(hasError('formData.tasks[0]', 'TaskSpec or TaskRef must be provided'));
     });
 
     it('should pass if provided a taskSpec and name', async () => {
@@ -206,7 +203,7 @@ describe('Pipeline Build validation schema', () => {
           ],
         })
           .then(shouldHaveFailed)
-          .catch(hasError('formData.tasks[0].runAfter', 'pipelines-plugin~Invalid runAfter'));
+          .catch(hasError('formData.tasks[0].runAfter', 'Invalid runAfter'));
       });
 
       it('should pass if runAfter is an array of strings that match other task names', async () => {
@@ -235,7 +232,7 @@ describe('Pipeline Build validation schema', () => {
           ],
         })
           .then(shouldHaveFailed)
-          .catch(hasError('formData.listTasks[1].runAfter', 'pipelines-plugin~Invalid runAfter'));
+          .catch(hasError('formData.listTasks[1].runAfter', 'Invalid runAfter'));
       });
 
       it('should fail if runAfter is itself', async () => {
@@ -246,7 +243,7 @@ describe('Pipeline Build validation schema', () => {
           ],
         })
           .then(shouldHaveFailed)
-          .catch(hasError('formData.tasks[0].runAfter', 'pipelines-plugin~Invalid runAfter'));
+          .catch(hasError('formData.tasks[0].runAfter', 'Invalid runAfter'));
       });
 
       it('should pass if runAfter is an array of strings that match listTasks or tasks names', async () => {
@@ -598,7 +595,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.outputs[0].resource',
-              'pipelines-plugin~Resource type has changed, reselect',
+              'Resource type has changed, reselect',
             ),
           );
       });
@@ -630,7 +627,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.inputs[0].resource',
-              'pipelines-plugin~Resource name has changed, reselect',
+              'Resource name has changed, reselect',
             ),
           );
       });
@@ -792,7 +789,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces[0].workspace',
-              'pipelines-plugin~Workspace name has changed, reselect',
+              'Workspace name has changed, reselect',
             ),
           );
       });

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -20,11 +19,10 @@ type PLRStatusProps = {
 };
 
 const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
-  const { t } = useTranslation();
   return (
     <PipelineRunStatus
       status={pipelineRunFilterReducer(obj)}
-      title={pipelineRunFilterReducer(obj, t)}
+      title={pipelineRunFilterReducer(obj)}
       pipelineRun={obj}
     />
   );

@@ -8,8 +8,6 @@ import {
   CopyToClipboardProps,
 } from '../../../public/components/utils/copy-to-clipboard';
 
-const i18nNS = 'public';
-
 describe(CopyToClipboard.displayName, () => {
   let wrapper: ShallowWrapper<CopyToClipboardProps>;
 
@@ -23,7 +21,7 @@ describe(CopyToClipboard.displayName, () => {
     // re-render component created via React.memo
     wrapper.setProps({ value: 'FuzzBizz' });
 
-    expect(wrapper.find(Tooltip).props().content[0].props.children).toEqual(`${i18nNS}~Copied`);
+    expect(wrapper.find(Tooltip).props().content[0].props.children).toEqual(`Copied`);
   });
 
   it('dismisses "Copied" message when mouse moves over button', () => {
@@ -35,8 +33,6 @@ describe(CopyToClipboard.displayName, () => {
 
     wrapper.find('.co-copy-to-clipboard__btn').simulate('mouseenter');
 
-    expect(wrapper.find(Tooltip).props().content[0].props.children).toEqual(
-      `${i18nNS}~Copy to clipboard`,
-    );
+    expect(wrapper.find(Tooltip).props().content[0].props.children).toEqual(`Copy to clipboard`);
   });
 });
