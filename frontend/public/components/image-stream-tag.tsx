@@ -55,9 +55,9 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-md-6 col-sm-12">
-            <SectionHeading text="Image Details" />
+            <SectionHeading text="ImageStreamTag details" />
             <ResourceSummary resource={imageStreamTag}>
-              {labels.name && <dt>Image Name</dt>}
+              {labels.name && <dt>Image name</dt>}
               {labels.name && <dd>{labels.name}</dd>}
               {labels.summary && <dt>Summary</dt>}
               {labels.summary && <dd>{labels.summary}</dd>}
@@ -73,9 +73,9 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
               {entrypoint && <dd className="co-break-word">{entrypoint}</dd>}
               {cmd && <dt>Command</dt>}
               {cmd && <dd className="co-break-word">{cmd}</dd>}
-              {config.WorkingDir && <dt>Working Dir</dt>}
+              {config.WorkingDir && <dt>Working dir</dt>}
               {config.WorkingDir && <dd className="co-break-all">{config.WorkingDir}</dd>}
-              {exposedPorts && <dt>Exposed Ports</dt>}
+              {exposedPorts && <dt>Exposed ports</dt>}
               {exposedPorts && <dd className="co-break-word">{exposedPorts}</dd>}
               {config.User && <dt>User</dt>}
               {config.User && <dd>{config.User}</dd>}
@@ -86,7 +86,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
         </div>
       </div>
       <div className="co-m-pane__body-group">
-        <SectionHeading text="Image Labels" />
+        <SectionHeading text="Image labels" />
         {_.isEmpty(sortedLabels) ? (
           <span className="text-muted">No labels</span>
         ) : (
@@ -111,7 +111,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
         )}
       </div>
       <div className="co-m-pane__body-group">
-        <SectionHeading text="Environment Variables" />
+        <SectionHeading text="Environment variables" />
         {_.isEmpty(config.Env) ? (
           <span className="text-muted">No environment variables</span>
         ) : (
@@ -179,13 +179,13 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     breadcrumbsFor={(obj) => {
       const { imageStreamName } = getImageStreamNameAndTag(obj);
       return [
-        { name: 'Image Streams', path: getBreadcrumbPath(props.match, 'imagestreams') },
+        { name: 'ImageStreams', path: getBreadcrumbPath(props.match, 'imagestreams') },
         {
           name: imageStreamName,
           path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
         },
         {
-          name: 'Image Stream Tag Details',
+          name: 'ImageStreamTag details',
           path: props.match.url,
         },
       ];
