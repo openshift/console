@@ -2,7 +2,7 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { match as Match } from 'react-router';
 import { Radio } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk';
 import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -30,6 +30,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
   const [activeProvider, setActiveProvider] = React.useState('0');
   const memoizedStorageProviders = useDeepCompareMemoize(storageProviders, true);
   const { kindObj, match, kindsInFlight } = props;
+
   const { t } = useTranslation();
 
   const storageProvidersMap: StorageProviderMap = React.useMemo(() => {
@@ -53,25 +54,27 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
     setActiveProvider(id as string);
   };
 
-  const title = t('public~Add Storage');
   return !kindObj && kindsInFlight ? (
     <LoadingBox />
   ) : (
     <div className="co-m-pane__body">
       <Helmet>
-        <title>{title}</title>
+        <title>{t('public~Add Storage')}</title>
       </Helmet>
       <div className="co-storage-heading__wrapper">
-        <h1 className="co-m-pane__heading">{title} </h1>
-        <div className="co-m-pane__explanation co-storage-heading__subtitle">
-          to{' '}
-          <ResourceLink
-            inline
-            kind={props?.kindObj?.kind}
-            name={match.params.name}
-            namespace={match.params.ns}
-          />
-        </div>
+        <Trans t={t} ns="public">
+          <h1 className="co-m-pane__heading">Add Storage</h1>
+          <div className="co-m-pane__explanation co-storage-heading__subtitle">
+            {' '}
+            to{' '}
+            <ResourceLink
+              inline
+              kind={props?.kindObj?.kind}
+              name={match.params.name}
+              namespace={match.params.ns}
+            />
+          </div>
+        </Trans>
       </div>
       {Object.keys(storageProvidersMap).length > 1 && (
         <>
