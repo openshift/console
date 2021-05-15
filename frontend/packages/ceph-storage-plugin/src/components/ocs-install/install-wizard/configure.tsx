@@ -207,8 +207,8 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const clusterNetworkName = React.useMemo(() => clusterNetwork.split('/')?.[1], [clusterNetwork]);
-  const publicNetworkName = React.useMemo(() => publicNetwork.split('/')?.[1], [publicNetwork]);
+  const clusterNetworkName = React.useMemo(() => clusterNetwork?.split('/')?.[1], [clusterNetwork]);
+  const publicNetworkName = React.useMemo(() => publicNetwork?.split('/')?.[1], [publicNetwork]);
 
   const filterForPublicDevices = React.useCallback(
     (device: NetworkAttachmentDefinitionKind) => clusterNetworkName !== getName(device),
