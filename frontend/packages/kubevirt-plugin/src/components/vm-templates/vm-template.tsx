@@ -79,7 +79,7 @@ const flatten = ({ vmTemplates, vmCommonTemplates, vms }): VirtualMachineTemplat
       template,
       metadata: template.variants[0].metadata,
     })),
-  ];
+  ].filter((template) => template);
 };
 
 const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
