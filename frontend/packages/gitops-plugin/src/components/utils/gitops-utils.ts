@@ -17,14 +17,23 @@ export const getManifestURLs = (namespaces: K8sResourceKind[]): string[] => {
   );
 };
 
+export const getApplicationsListBaseURI = () => {
+  return `/api/gitops/applications`;
+};
+
 export const fetchAppGroups = async (
   baseURL: string,
   manifestURL: string,
 ): Promise<GitOpsAppGroupData[]> => {
   let data: GitOpsManifestData;
   try {
-    data = await coFetchJSON(`${baseURL}&url=${manifestURL}`);
-  } catch {} // eslint-disable-line no-empty
+    const newListApi = getApplicationsListBaseURI();
+    data = await coFetchJSON(`${newListApi}?url=${manifestURL}`);
+  } catch (err) {
+    try {
+      data = await coFetchJSON(`${baseURL}&url=${manifestURL}`);
+    } catch {} // eslint-disable-line no-empty
+  }
   return data?.applications ?? [];
 };
 

@@ -21,6 +21,10 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
     return fuzzyCaseInsensitive(textFilter, name);
   });
 
+  const hasSyncStatus: boolean =
+    appGroups?.some(
+      ({ sync_status }) => sync_status /* eslint-disable-line @typescript-eslint/camelcase */,
+    ) || false;
   return (
     <div className="odc-gitops-list">
       {!emptyStateMsg && appGroups ? (
@@ -35,7 +39,7 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
           <Table
             data={visibleItems}
             aria-label={t('gitops-plugin~Environments table')}
-            Header={GitOpsTableHeader}
+            Header={GitOpsTableHeader(hasSyncStatus)}
             Row={GitOpsTableRow}
             loaded={!emptyStateMsg}
             virtualize
