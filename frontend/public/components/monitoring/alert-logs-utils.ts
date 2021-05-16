@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import { RootState } from '../../redux';
 import { getURLSearchParams } from '../utils/link';
 import { alertsToProps } from './utils';
-import { Alert, Rule } from './types';
 
 import {
   LOG_SOURCE_RESTARTING,
@@ -10,6 +9,8 @@ import {
   LOG_SOURCE_TERMINATED,
   LOG_SOURCE_WAITING,
 } from '../utils';
+
+import { AlertDetailProps } from './alert-logs';
 
 export const containersToStatuses = ({ status }, containers) => {
   return _.reduce(
@@ -67,11 +68,4 @@ export const alertStateToProps = (state: RootState, props): AlertDetailProps => 
     loadError,
     rule,
   };
-};
-
-export type AlertDetailProps = {
-  alert: Alert;
-  loaded: boolean;
-  loadError?: string;
-  rule: Rule;
 };
