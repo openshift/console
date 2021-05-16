@@ -102,7 +102,9 @@ import { Timestamp } from '../utils/timestamp';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 
-const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
+import { Details } from './alert-details';
+
+export const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -146,7 +148,10 @@ const silenceMenuActions = (silence: Silence) =>
 
 const SilenceKebab = ({ silence }) => <Kebab options={silenceMenuActions(silence)} />;
 
-const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
+export const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({
+  className,
+  resource,
+}) => (
   <span
     className={classNames(
       `co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`,
@@ -224,8 +229,7 @@ export const StateTimestamp = ({ text, timestamp }) => (
   </div>
 );
 
-const AlertStateDescription: React.FC<{ alert }> = ({ alert }) => {
-  const { t } = useTranslation();
+export const AlertStateDescription = ({ alert }) => {
   if (alert && !_.isEmpty(alert.silencedBy)) {
     return (
       <StateTimestamp
@@ -329,7 +333,10 @@ export const StateCounts: React.FC<{ alerts: PrometheusAlert[] }> = ({ alerts })
   );
 };
 
-const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body, label }) => (
+export const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({
+  body,
+  label,
+}) => (
   <Popover headerContent={label} bodyContent={body}>
     <Button variant="plain" className="details-item__popover-button">
       {label}
@@ -337,99 +344,85 @@ const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body
   </Popover>
 );
 
-const AlertStateHelp: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <dl className="co-inline">
-      <dt>
-        <AlertStateIcon state={AlertStates.Pending} /> <strong>{t('public~Pending: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~The alert is active but is waiting for the duration that is specified in the alerting rule before it fires.',
-        )}
-      </dd>
-      <dt>
-        <AlertStateIcon state={AlertStates.Firing} /> <strong>{t('public~Firing: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~The alert is firing because the alert condition is true and the optional `for` duration has passed. The alert will continue to fire as long as the condition remains true.',
-        )}
-      </dd>
-      <dt>
-        <AlertStateIcon state={AlertStates.Silenced} /> <strong>{t('public~Silenced: ')}</strong>
-      </dt>
-      <dt></dt>
-      <dd>
-        {t(
-          'public~The alert is now silenced for a defined time period. Silences temporarily mute alerts based on a set of label selectors that you define. Notifications will not be sent for alerts that match all the listed values or regular expressions.',
-        )}
-      </dd>
-    </dl>
-  );
-};
+export const alertStateHelp = (
+  <dl className="co-inline">
+    <dt>
+      <AlertStateIcon state={AlertStates.Pending} /> <strong>Pending: </strong>
+    </dt>
+    <dd>
+      The alert is active but is waiting for the duration that is specified in the alerting rule
+      before it fires.
+    </dd>
+    <dt>
+      <AlertStateIcon state={AlertStates.Firing} /> <strong>Firing: </strong>
+    </dt>
+    <dd>
+      The alert is firing because the alert condition is true and the optional `for` duration has
+      passed. The alert will continue to fire as long as the condition remains true.
+    </dd>
+    <dt>
+      <AlertStateIcon state={AlertStates.Silenced} /> <strong>Silenced: </strong>
+    </dt>
+    <dt></dt>
+    <dd>
+      The alert is now silenced for a defined time period. Silences temporarily mute alerts based on
+      a set of label selectors that you define. Notifications will not be sent for alerts that match
+      all the listed values or regular expressions.
+    </dd>
+  </dl>
+);
 
-const SeverityHelp: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <dl className="co-inline">
-      <dt>
-        <SeverityIcon severity={AlertSeverity.Critical} /> <strong>{t('public~Critical: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~The condition that triggered the alert could have a critical impact. The alert requires immediate attention when fired and is typically paged to an individual or to a critical response team.',
-        )}
-      </dd>
-      <dt>
-        <SeverityIcon severity={AlertSeverity.Warning} /> <strong>{t('public~Warning: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~The alert provides a warning notification about something that might require attention in order to prevent a problem from occurring. Warnings are typically routed to a ticketing system for non-immediate review.',
-        )}
-      </dd>
-      <dt>
-        <SeverityIcon severity={AlertSeverity.Info} /> <strong>{t('public~Info: ')}</strong>
-      </dt>
-      <dd>{t('public~The alert is provided for informational purposes only.')}</dd>
-      <dt>
-        <SeverityIcon severity={AlertSeverity.None} /> <strong>{t('public~None: ')}</strong>
-      </dt>
-      <dd>{t('public~The alert has no defined severity.')}</dd>
-      <dd>
-        {t('public~You can also create custom severity definitions for user workload alerts.')}
-      </dd>
-    </dl>
-  );
-};
+export const severityHelp = (
+  <dl className="co-inline">
+    <dt>
+      <SeverityIcon severity={AlertSeverity.Critical} /> <strong>Critical: </strong>
+    </dt>
+    <dd>
+      The condition that triggered the alert could have a critical impact. The alert requires
+      immediate attention when fired and is typically paged to an individual or to a critical
+      response team.
+    </dd>
+    <dt>
+      <SeverityIcon severity={AlertSeverity.Warning} /> <strong>Warning: </strong>
+    </dt>
+    <dd>
+      The alert provides a warning notification about something that might require attention in
+      order to prevent a problem from occurring. Warnings are typically routed to a ticketing system
+      for non-immediate review.
+    </dd>
+    <dt>
+      <SeverityIcon severity={AlertSeverity.Info} /> <strong>Info: </strong>
+    </dt>
+    <dd>The alert is provided for informational purposes only.</dd>
+    <dt>
+      <SeverityIcon severity={AlertSeverity.None} /> <strong>None: </strong>
+    </dt>
+    <dd>The alert has no defined severity.</dd>
+    <dd>You can also create custom severity definitions for user workload alerts.</dd>
+  </dl>
+);
 
-const SourceHelp: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <dl className="co-inline">
-      <dt>
-        <strong>{t('public~Platform: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~Platform-level alerts relate only to OpenShift namespaces. OpenShift namespaces provide core OpenShift functionality.',
-        )}
-      </dd>
-      <dt>
-        <strong>{t('public~User: ')}</strong>
-      </dt>
-      <dd>
-        {t(
-          'public~User workload alerts relate to user-defined namespaces. These alerts are user-created and are customizable. User workload monitoring can be enabled post-installation to provide observability into your own services.',
-        )}
-      </dd>
-    </dl>
-  );
-};
+export const sourceHelp = (
+  <dl className="co-inline">
+    <dt>
+      <strong>Platform: </strong>
+    </dt>
+    <dd>
+      Platform-level alerts relate only to OpenShift namespaces. OpenShift namespaces provide core
+      OpenShift functionality.
+    </dd>
+    <dt>
+      <strong>User: </strong>
+    </dt>
+    <dd>
+      User workload alerts relate to user-defined namespaces. These alerts are user-created and are
+      customizable. User workload monitoring can be enabled post-installation to provide
+      observability into your own services.
+    </dd>
+  </dl>
+);
 
-const Annotation = ({ children, title }) =>
+export const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
     <>
       <dt>{title}</dt>
@@ -437,7 +430,7 @@ const Annotation = ({ children, title }) =>
     </>
   );
 
-const Label = ({ k, v }) => (
+export const Label = ({ k, v }) => (
   <div className="co-m-label co-m-label--expand" key={k}>
     <span className="co-m-label__key">{k}</span>
     <span className="co-m-label__eq">=</span>
@@ -450,7 +443,7 @@ const queryBrowserURL = (query: string, namespace: string) =>
     ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
     : `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
-const Graph: React.FC<GraphProps> = ({
+export const Graph: React.FC<GraphProps> = ({
   filterLabels = undefined,
   formatSeriesTitle,
   namespace,
@@ -498,7 +491,7 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
+export const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
   const state = silenceState(obj);
 
@@ -557,7 +550,7 @@ export const alertMessageResources: { [labelName: string]: K8sKind } = {
 const matchCount = (haystack: string, regExpString: string) =>
   _.size(haystack.match(new RegExp(regExpString, 'g')));
 
-const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template }) => {
+export const AlertMessage: React.FC<AlertMessageProps> = ({ alertText, labels, template }) => {
   if (_.isEmpty(alertText)) {
     return null;
   }
@@ -611,7 +604,7 @@ const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rul
   );
 };
 
-const getSilenceTableHeader = (t) => [
+export const getSilenceTableHeader = (t) => [
   {
     title: t('public~Name'),
     sortField: 'name',
@@ -661,159 +654,6 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
     silencesLoaded,
     location,
   };
-};
-
-const getSourceKey = (source) => {
-  switch (source) {
-    case 'Platform':
-      return i18next.t('public~Platform');
-    case 'User':
-      return i18next.t('public~User');
-    default:
-      return source;
-  }
-}
-
-const Details: React.FC = (props) => {
-const Details = (props) => {
-  const { alert, namespace, rule, silencesLoaded } = props;
-  const state = alertState(alert);
-  const { t } = useTranslation();
-
-  const silencesTableHeader = () =>
-    getSilenceTableHeader(t).map((h) => _.pick(h, ['title', 'props']));
-
-  const labelsMemoKey = JSON.stringify(alert?.labels);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
-  //console.log(props);
-  return (
-    <>
-      <div className="co-m-pane__body">
-        <ToggleGraph />
-        <SectionHeading text={t('public~Alert details')} />
-        <div className="co-m-pane__body-group">
-          <div className="row">
-            <div className="col-sm-12">
-              <Graph
-                filterLabels={labels}
-                namespace={namespace}
-                query={rule?.query}
-                ruleDuration={rule?.duration}
-              />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Name')}</dt>
-                <dd>{labels?.alertname}</dd>
-                <dt>
-                  <PopoverField label={t('public~Severity')} body={severityHelp} />
-                </dt>
-                <dd>
-                  <Severity severity={labels?.severity} />
-                </dd>
-                {alert?.annotations?.description && (
-                  <Annotation title={t('public~Description')}>
-                    <AlertMessage
-                      alertText={alert.annotations.description}
-                      labels={labels}
-                      template={rule?.annotations.description}
-                    />
-                  </Annotation>
-                )}
-                <Annotation title={t('public~Summary')}>{alert?.annotations?.summary}</Annotation>
-                {alert?.annotations?.message && (
-                  <Annotation title={t('public~Message')}>
-                    <AlertMessage
-                      alertText={alert.annotations.message}
-                      labels={labels}
-                      template={rule?.annotations.message}
-                    />
-                  </Annotation>
-                )}
-              </dl>
-            </div>
-            <div className="col-sm-6">
-              <dl className="co-m-pane__details">
-                <dt>
-                  <PopoverField label={t('public~Source')} body={sourceHelp} />
-                </dt>
-                <dd>{alert && _.startCase(alertSource(alert))}</dd>
-                <dt>
-                  <PopoverField label={t('public~State')} body={alertStateHelp} />
-                </dt>
-                <dd>
-                  <AlertState state={state} />
-                  <AlertStateDescription alert={alert} />
-                </dd>
-              </dl>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-xs-12">
-              <dl className="co-m-pane__details" data-test="label-list">
-                <dt>{t('public~Labels')}</dt>
-                <dd>
-                  {_.isEmpty(labels) ? (
-                    <div className="text-muted">No labels</div>
-                  ) : (
-                    <div className={`co-text-${AlertResource.kind.toLowerCase()}`}>
-                      {_.map(labels, (v, k) => (
-                        <Label key={k} k={k} v={v} />
-                      ))}
-                    </div>
-                  )}
-                </dd>
-              </dl>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-xs-12">
-              <dl className="co-m-pane__details">
-                <dt>{t('public~Alerting rule')}</dt>
-                <dd>
-                  <div className="co-resource-item">
-                    <MonitoringResourceIcon resource={RuleResource} />
-                    <Link
-                      to={
-                        namespace
-                          ? `/dev-monitoring/ns/${namespace}/rules/${rule?.id}`
-                          : ruleURL(rule)
-                      }
-                      data-test="alert-rules-detail-resource-link"
-                      className="co-resource-item__resource-name"
-                    >
-                      {_.get(rule, 'name')}
-                    </Link>
-                  </div>
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
-      {silencesLoaded && !_.isEmpty(alert?.silencedBy) && (
-        <div className="co-m-pane__body">
-          <div className="co-m-pane__body-group">
-            <SectionHeading text="Silenced By" />
-            <div className="row">
-              <div className="col-xs-12">
-                <Table
-                  aria-label="Silenced By"
-                  data={alert?.silencedBy}
-                  Header={silencesTableHeader}
-                  loaded={true}
-                  Row={SilenceTableRow}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
 };
 
 export const AlertsDetailsPage = withFallback(

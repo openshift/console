@@ -59,20 +59,18 @@ const AlertLogs = (props: AlertLogsProps) => {
   );
 
   return (
-    <>
-      <div className="co-m-pane__body">
-        {props.alert?.labels?.namespace ? (
-          <ResourceLog
-            containerName={currentContainer ? currentContainer.name : ''}
-            dropdown={containerDropdown}
-            resource={props.obj}
-            resourceStatus={currentContainerStatus}
-          />
-        ) : (
-          <div>No logs for this Alert</div>
-        )}
-      </div>
-    </>
+    <div className="co-m-pane__body">
+      {props.alert?.labels?.namespace ? (
+        <ResourceLog
+          containerName={currentContainer ? currentContainer.name : ''}
+          dropdown={containerDropdown}
+          resource={props.obj}
+          resourceStatus={currentContainerStatus}
+        />
+      ) : (
+        <div>No logs for this Alert</div>
+      )}
+    </div>
   );
 };
 
@@ -97,4 +95,11 @@ export type ResourceKindAlert = K8sResourceCommon & {
   };
   status: { [key: string]: any };
   data?: { [key: string]: any };
+};
+
+export type AlertDetailProps = {
+  alert: Alert;
+  loaded: boolean;
+  loadError?: string;
+  rule: Rule;
 };
