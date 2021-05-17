@@ -7,7 +7,7 @@ import {
   AdvisorChartLegendIcon,
   chartColorScale,
   riskLabels,
-} from './chartHelpers';
+} from '@console/insights-plugin/src/components/AdvisorChart/chartHelpers';
 
 const AdvisorChart = ({ metrics, clusterId }) => {
   const { t } = useTranslation();
