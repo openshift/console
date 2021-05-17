@@ -4,7 +4,7 @@ import i18next from 'i18next';
 
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { mapMetrics, isError, isWaitingOrDisabled } from './mappers';
+import { mapMetrics, isError, isWaitingOrDisabled } from '../../mappers';
 
 export const getClusterInsightsComponentStatus = (
   response: PrometheusResponse,
