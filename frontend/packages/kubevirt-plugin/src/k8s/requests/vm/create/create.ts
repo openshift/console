@@ -1,3 +1,4 @@
+import { TemplateKind } from '@console/internal/module/k8s';
 import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
 import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
 import {
@@ -13,6 +14,7 @@ import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../..
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { selectVM } from '../../../../selectors/vm-template/basic';
+import { VMKind } from '../../../../types';
 import { toShallowJS } from '../../../../utils/immutable';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
@@ -136,7 +138,7 @@ export const createVM = async (params: CreateVMParams) => {
         ),
       );
 
-    const processedTemplate = await k8sCreate(
+    const processedTemplate = await k8sCreate<TemplateKind>(
       ProcessedTemplatesModel,
       template.asResource(),
       null,
@@ -156,7 +158,7 @@ export const createVM = async (params: CreateVMParams) => {
   }
   initializeCommonVMMetadata(combinedSimpleSettings, vmWrapper);
 
-  const virtualMachine = await k8sWrapperCreate(vmWrapper);
+  const virtualMachine = await k8sWrapperCreate<VMKind, VMWrapper>(vmWrapper);
 
   if (onVMCreate) {
     await onVMCreate(virtualMachine);

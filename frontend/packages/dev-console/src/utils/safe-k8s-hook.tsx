@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
+import { K8sResourceKind, k8sGet, K8sKind } from '@console/internal/module/k8s';
 
 export const useSafeK8s = () => {
   const controller = useRef<AbortController>();
@@ -13,12 +13,7 @@ export const useSafeK8s = () => {
     };
   }, []);
 
-  return (
-    kind: K8sResourceKind,
-    name: string,
-    ns: string,
-    opts: object = {},
-  ): Promise<K8sResourceKind> => {
+  return (kind: K8sKind, name: string, ns: string, opts: object = {}): Promise<K8sResourceKind> => {
     return new Promise((resolve, reject) => {
       k8sGet(
         kind,
