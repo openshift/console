@@ -52,7 +52,6 @@ const suite = (tests: string[]): string[] =>
 const testSuites = {
   environment: suite(['tests/environment.scenario.ts']),
   secrets: suite(['tests/secrets.scenario.ts']),
-  storage: suite(['tests/storage.scenario.ts']),
   crud: suite(['tests/secrets.scenario.ts', 'tests/environment.scenario.ts']),
   event: suite(['tests/event.scenario.ts']),
   monitoring: suite(['tests/monitoring.scenario.ts']),
@@ -62,7 +61,6 @@ const testSuites = {
   oauth: suite(['tests/oauth.scenario.ts']),
   e2e: suite([
     'tests/secrets.scenario.ts',
-    'tests/storage.scenario.ts',
     'tests/environment.scenario.ts',
     'tests/overview/overview.scenario.ts',
     'tests/deploy-image.scenario.ts',
@@ -90,7 +88,6 @@ const testSuites = {
   all: suite([
     'tests/overview/overview.scenario.ts',
     'tests/secrets.scenario.ts',
-    'tests/storage.scenario.ts',
     'tests/service-catalog/**/*.scenario.ts',
     'tests/deploy-image.scenario.ts',
     'tests/developer-catalog.scenario.ts',

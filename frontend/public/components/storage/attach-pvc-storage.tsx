@@ -285,6 +285,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
             namespace={namespace}
             onChange={handlePVCChange}
             id="claimName"
+            dataTest="claim-name"
             selectedKey={claimName}
           />
         </div>
@@ -340,6 +341,7 @@ export const AttachStorageForm: React.FC<AttachStorageFormProps> = (props) => {
               aria-describedby="mount-path-help"
               name="mountPath"
               id="mount-path"
+              data-test="mount-path"
               value={mountPath}
               required
             />
