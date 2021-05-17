@@ -50,6 +50,13 @@ export const topologyActions = {
           .click();
         break;
       }
+      case 'Delete DeploymentConfig':
+      case nodeActions.DeleteDeploymentConfig: {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
       case 'Delete SinkBinding':
       case nodeActions.DeleteSinkBinding: {
         cy.byTestActionID(action)

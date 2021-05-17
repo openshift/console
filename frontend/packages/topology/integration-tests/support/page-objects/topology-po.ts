@@ -18,6 +18,7 @@ export const topologyPO = {
     workloads: 'g[data-surface="true"]',
     node: '[data-test-id="base-node-handler"]',
     workload: '[data-type="workload"]',
+    deleteWorkload: '[data-test="confirm-action"]',
     eventSourceWorkload: '[data-type="event-source"]',
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
     filterByResource: {
