@@ -70,6 +70,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
     setStatus({ submitSuccess: '', submitError: '' });
     setErrors({});
     if (editorType === EditorType.YAML) {
+      setFieldValue('formData.resourceVersion', resource.metadata.resourceVersion);
       setFieldValue('yamlData', safeJSToYAML(resource, 'yamlData', { skipInvalid: true }));
     } else {
       setFieldValue('formData', convertDeploymentToEditForm(resource));
