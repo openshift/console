@@ -72,7 +72,7 @@ export const CreateOBCForm: React.FC<CreateOBCFormProps> = (props) => {
     <div>
       <div className="form-group">
         <label className="control-label" htmlFor="obc-name">
-          {t('ceph-storage-plugin~ ObjectBucketClaim Name')}
+          {t('ceph-storage-plugin~ObjectBucketClaim Name')}
         </label>
         <div className="form-group">
           <input

@@ -15,7 +15,7 @@ export const ConsolePluginWarning: React.FC<ConsolePluginWarningProps> = ({
       <Alert variant="warning" isInline title={t('olm~Enabling console plugin')}>
         <p>
           {t(
-            'olm~This console plugin will be able to provide a custom interface and run any kubernetes command as the logged in user. Make sure you trust it before enabling.',
+            'olm~This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
           )}
         </p>
       </Alert>

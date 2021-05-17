@@ -1,7 +1,7 @@
 {
   "View instances": "인스턴스 보기",
-  "true": "True",
-  "false": "False",
+  "true": "true",
+  "false": "false",
   "CRD versions": "CRD 버전",
   "Name": "이름",
   "Served": "제공됨",

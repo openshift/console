@@ -22,7 +22,7 @@
   "Service address": "서비스 주소",
   "Service port mapping": "서비스 포트 매핑",
   "Namespace": "네임 스페이스",
-  "Labels": "레이블",
+  "Labels": "라벨",
   "Pod selector": "Pod 선택기",
   "Services": "서비스"
 }

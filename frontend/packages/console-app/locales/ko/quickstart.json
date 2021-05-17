@@ -10,6 +10,7 @@
   "Select filter": "필터 선택",
   "Status": "상태",
   "{{count, number}} item_0": "{{count, number}} 항목",
+  "{{count, number}} item_1": "{{count, number}} 항목",
   "Prerequisites ({{totalPrereqs}})": "전제 조건 ({{totalPrereqs}})",
   "Prerequisites": "전제 조건",
   "Start the tour": "둘러보기 시작",
@@ -27,6 +28,7 @@
   "Back": "이전",
   "View all tours": "모든 기능보기",
   "In this quick start, you will complete {{count, number}} task_0": "이 퀵스타트에서는 {{count, number}} 작업을 완료합니다",
+  "In this quick start, you will complete {{count, number}} task_1": "이 퀵스타트에서는 {{count, number}} 작업을 완료합니다",
   "{{taskIndex, number}}": "{{taskIndex, number}}",
   "Check your work": "작업 확인",
   "Yes": "예",
@@ -36,5 +38,6 @@
   "Leave quick start?": "퀵스타트를 종료하시겠습니까?",
   "Cancel": "취소",
   "Leave": "종료",
-  "Your progress will be saved.": "진행 상황이 저장됩니다."
+  "Your progress will be saved.": "진행 상황이 저장됩니다.",
+  "Start {{nextQuickStart}} quick start": "{{nextQuickStart}} 퀵스타트 시작"
 }

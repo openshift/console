@@ -53,7 +53,7 @@ export const LocalVolumeDiscoveryBody: React.FC<LocalVolumeDiscoveryBodyProps> =
             value="selectedNodes"
             onChange={setShowSelectNodes}
             description={t(
-              'lso-plugin~Selecting nodes allow you to limit the discovery for available disks to specific nodes.',
+              'lso-plugin~Selecting nodes allows you to limit the discovery for available disks to specific nodes.',
             )}
             checked={showSelectNodes}
           />

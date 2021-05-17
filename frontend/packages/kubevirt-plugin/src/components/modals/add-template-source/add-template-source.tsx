@@ -269,7 +269,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                   )}
                 >
                   {t(
-                    "kubevirt-plugin~For customizing boot source, select 'Customize boot source' from the template actions menu.",
+                    'kubevirt-plugin~For customizing boot source, select "Customize boot source" from the template actions menu.',
                   )}
                 </Alert>
               </StackItem>

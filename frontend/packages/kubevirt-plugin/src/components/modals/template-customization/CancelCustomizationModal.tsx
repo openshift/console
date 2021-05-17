@@ -37,11 +37,11 @@ const CancelCustomizationModal = withHandlePromise<CancelCustomizationModalProps
       <form onSubmit={submit} className="modal-content" ref={ref}>
         <ModalTitle>
           <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-          {t('kubevirt-plugin~Cancel customization ?')}
+          {t('kubevirt-plugin~Cancel customization?')}
         </ModalTitle>
         <ModalBody>
           {t(
-            'kubevirt-plugin~This action will delete the boot source copy as well as all other temporary resources such as  the virtual machine that is running the console.',
+            'kubevirt-plugin~This action will delete the boot source copy as well as all other temporary resources such as the virtual machine that is running the console.',
           )}
         </ModalBody>
         <ModalSubmitFooter

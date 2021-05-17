@@ -13,5 +13,6 @@
   "The list of claims whose values should be used as the display name.": "표시 이름으로 사용해야하는 값의 클레임 목록입니다.",
   "Email": "이메일",
   "The list of claims whose values should be used as the email address.": "이메일 주소로 사용해야 하는 값의 클레임 목록입니다.",
+  "More options": "기타 옵션",
   "Extra scopes": "추가 범위"
 }

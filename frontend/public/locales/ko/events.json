@@ -25,6 +25,7 @@
   "Streaming events...": "이벤트 스트리밍 중...",
   "Event stream is paused.": "이벤트 스트림이 일시 중지되었습니다.",
   "Showing {{count}} event_0": "{{count}} 이벤트 보기",
+  "Showing {{count}} event_1": "{{count}} 이벤트 보기",
   "Showing {{messageCount}} of {{allCount}}+ events": "{{messageCount}} / {{allCount}} + 이벤트 보기",
   "Older events are not stored.": "이전 이벤트는 저장되지 않습니다."
 }

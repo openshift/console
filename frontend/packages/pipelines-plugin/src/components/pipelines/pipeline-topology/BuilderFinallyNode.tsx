@@ -96,7 +96,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             }
           />
           <g
-            transform={`translate(${leftPadding}, 
+            transform={`translate(${leftPadding},
               ${NODE_HEIGHT * (i + finallyTasks.length) +
                 FINALLY_NODE_VERTICAL_SPACING * (i + finallyTasks.length) +
                 FINALLY_NODE_PADDING})`}
@@ -125,10 +125,10 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             <PlusNodeDecorator
               x={0}
               y={FINALLY_ADD_LINK_TEXT_HEIGHT - FINALLY_ADD_LINK_SIZE}
-              tooltip={t('pipelines-plugin~Add finally task')}
+              tooltip={t('pipelines-plugin~Add final task')}
             />
             <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE}>
-              {t('pipelines-plugin~Add finally task')}
+              {t('pipelines-plugin~Add final task')}
             </text>
           </g>
         </g>

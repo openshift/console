@@ -20,7 +20,7 @@
   "{{nodes, number}} node_plural": "{{nodes, number}} nodes",
   "Selecting all nodes will discover for available disks storage on all nodes.": "Selecting all nodes will discover for available disks storage on all nodes.",
   "Select nodes": "Select nodes",
-  "Selecting nodes allow you to limit the discovery for available disks to specific nodes.": "Selecting nodes allow you to limit the discovery for available disks to specific nodes.",
+  "Selecting nodes allows you to limit the discovery for available disks to specific nodes.": "Selecting nodes allows you to limit the discovery for available disks to specific nodes.",
   "Local Storage": "Local Storage",
   "Create Local Volume Discovery": "Create Local Volume Discovery",
   "Local Volume Discovery": "Local Volume Discovery",

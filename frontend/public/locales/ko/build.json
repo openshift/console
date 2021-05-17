@@ -2,7 +2,7 @@
   "Rebuild": "다시 빌드",
   "Cancel build": "빌드 취소",
   "Are you sure you want to cancel this build?": "이 빌드를 취소하시겠습니까?",
-  "Yes, cancel": "예. 취소합니다.",
+  "Yes, cancel": "예. 취소합니다",
   "No, don't cancel": "아니요. 취소하지 않습니다.",
   "View logs": "로그보기",
   "Memory usage": "메모리 사용량",

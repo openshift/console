@@ -1,0 +1,14 @@
+{
+  "VolumeSnapshotContent details": "ボリュームスナップショットコンテンツの詳細",
+  "Status": "ステータス",
+  "Size": "サイズ",
+  "VolumeSnapshot": "VolumeSnapshot",
+  "VolumeSnapshotContent": "VolumeSnapshotContent",
+  "Deletion policy": "削除ポリシー",
+  "Driver": "ドライバー",
+  "Volume handle": "ボリュームの処理",
+  "Snapshot handle": "スナップショットの処理",
+  "Name": "名前",
+  "SnapshotClass": "スナップショットクラス",
+  "Created at": "作成:"
+}

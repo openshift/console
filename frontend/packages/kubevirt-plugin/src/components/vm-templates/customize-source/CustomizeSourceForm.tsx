@@ -270,7 +270,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
                     </StackItem>
                     <StackItem className="text-muted">
                       {t(
-                        'kubevirt-plugin~Boot source customization will apply to a boot source copy, saved on a new template. This template will be a clone of the original boot source template {{templateName}}. The customized boot source will be saved to the new template.',
+                        'kubevirt-plugin~Boot source customization will apply to a boot source copy saved on a new template. This template will be a clone of the original boot source template {{templateName}}. The customized boot source will be saved to the new template.',
                         { templateName },
                       )}
                     </StackItem>
@@ -415,7 +415,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
                         >
                           <div className="pf-c-form__helper-text" aria-live="polite">
                             {t(
-                              'kubevirt-plugin~This boot source is marked as CD-ROM, and requires allocated resources (disk) to customize it. Please allocate Persistent Volume Claim for customization process.',
+                              'kubevirt-plugin~This boot source is marked as CD-ROM, and requires allocated resources (disk) to customize it. Please allocate a PersistentVolumeClaim for the customization process.',
                             )}
                           </div>
                         </RequestSizeInput>

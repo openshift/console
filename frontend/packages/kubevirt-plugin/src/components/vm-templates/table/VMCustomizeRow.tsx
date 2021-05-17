@@ -62,7 +62,7 @@ const VMCustomizeStatus: React.FC<VMCustomizeStatusProps> = ({
           )}
           <br />{' '}
           {t(
-            'kubevirt-plugin~While customizing this template will not be available for virtual machine creation.',
+            'kubevirt-plugin~While customizing, this template will not be available for virtual machine creation.',
           )}
         </StackItem>
         <StackItem>

@@ -22,14 +22,14 @@
   "Namespace roles (Role)": "네임 스페이스 역할 (Role)",
   "Select role name": "역할 이름 선택",
   "Cluster-wide roles (ClusterRole)": "클러스터 전체 역할 (ClusterRole)",
-  "Namespace RoleBinding (RoleBinding)": "네임 스페이스 역할 바인딩 (RoleBinding)",
+  "Please complete all fields.": "모든 필드를 작성하십시오.",
+  "Namespace role binding (RoleBinding)": "네임 스페이스 역할 바인딩 (RoleBinding)",
   "Grant the permissions to a user or set of users within the selected namespace.": "선택한 네임 스페이스 내의 사용자 또는 사용자 집합에 권한을 부여합니다.",
-  "Cluster-wide RoleBinding (ClusterRoleBinding)": "클러스터 전체 역할 바인딩 (ClusterRoleBinding)",
+  "Cluster-wide role binding (ClusterRoleBinding)": "클러스터 전체 역할 바인딩 (ClusterRoleBinding)",
   "Grant the permissions to a user or set of users at the cluster level and in all namespaces.": "클러스터 수준 및 모든 네임 스페이스에서 사용자 또는 사용자 집합에 권한을 부여합니다.",
   "User": "사용자",
   "Group": "그룹",
   "ServiceAccount": "서비스 계정",
-  "Please complete all fields.": "모든 필드를 작성하십시오.",
   "Associate a user/group to the selected role to define the type of access and resources that are allowed.": "사용자/그룹을 선택한 역할에 연결하여 허용되는 액세스 유형 및 리소스를 정의합니다.",
   "Binding type": "바인딩 유형",
   "RoleBinding": "역할 바인딩",
@@ -42,5 +42,7 @@
   "Cancel": "취소",
   "Edit": "편집",
   "Save": "저장",
-  "Duplicate": "중복"
+  "Duplicate": "중복",
+  "Namespace RoleBinding (RoleBinding)": "네임 스페이스 역할 바인딩 (RoleBinding)",
+  "Cluster-wide RoleBinding (ClusterRoleBinding)": "클러스터 전체 역할 바인딩 (ClusterRoleBinding)"
 }
