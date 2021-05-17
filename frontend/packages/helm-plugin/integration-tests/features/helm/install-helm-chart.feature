@@ -82,3 +82,65 @@ Feature: Install the Helm Release
              When user selects the Chart Version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
              When user selects "Proceed" button from Change Chart version confirmation dialog
              Then user will see that the README is also updated with new chart version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
+
+
+        @regression @odc-5450 @to-do
+        Scenario: Certification filter in Helm Catalog Page
+            Given user is at Add page
+              And user has added multiple helm charts repositories with providerType annotations in index.yaml
+             When user selects "Helm Chart" card from Add page
+             Then user will see Sources the helm chart is coming
+              And user will see Partner, Community and Redhat option in Sources section
+
+            # Add a new helm chart repo that contains providerType annotations in index.yaml: 
+            # Need to update the example repo when default is available with appropriate annotation
+            # apiVersion: helm.openshift.io/v1beta1
+            # kind: HelmChartRepository
+            # metadata:
+            # name: redhat-certified
+            # spec:
+            # connectionConfig:
+            #     url: >-
+            #     https://raw.githubusercontent.com/rohitkrai03/redhat-helm-charts/certification
+            # name: Red Hat Certification Charts
+
+
+        @regression @odc-5450 @to-do
+        Scenario: Applying Redhat Certification filter in Helm Catalog Page
+            Given user is at Add page
+              And user has added multiple helm charts repositories with providerType annotations in index.yaml
+             When user selects "Helm Chart" card from Add page
+              And user clicks on Partner Source filter
+             Then user will see Certified helm repositories present in the Helm Catalog Page
+
+            # Add a new helm chart repo that contains providerType annotations in index.yaml: 
+            # Need to update the example repo when default is available with appropriate annotation
+            # apiVersion: helm.openshift.io/v1beta1
+            # kind: HelmChartRepository
+            # metadata:
+            # name: redhat-certified
+            # spec:
+            # connectionConfig:
+            #     url: >-
+            #     https://raw.githubusercontent.com/rohitkrai03/redhat-helm-charts/certification
+            # name: Red Hat Certification Charts
+
+
+        @regression @odc-5450 @manual
+        Scenario: Certified badge in Helm Catalog Page
+            Given user is at Add page
+              And user has added multiple helm charts repositories with providerType annotations in index.yaml
+              And user has disabled the default Red Hat helm chart repo
+              # Scenario can be found in /helm-plugin/integration-tests/features/helm/helm-feature-flag.feature
+             When user selects "Helm Chart" card from Add page
+             Then user will see Blue certified badge associated with charts that are from certified partners
+
+
+        @regression @odc-5450 @manual
+        Scenario: Certified badge in Helm install side panel
+            Given user is at Add page
+              And user has added multiple helm charts repositories with providerType annotations in index.yaml
+              And user has disabled the default Red Hat helm chart repo
+             When user selects "Helm Chart" card from Add page
+              And user clicks on helm chart with blue tick
+             Then user will see Blue certified badge associated with heading of the helm chart
