@@ -15,6 +15,9 @@ const TierCountMap = Object.freeze({
 export const cleanup = () => {
   cy.exec(
     'oc delete backingstore test-store1 test-store2 test-store3 test-store4 -n openshift-storage',
+    {
+      timeout: 60000,
+    },
   );
 };
 
