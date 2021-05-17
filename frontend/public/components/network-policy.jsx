@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
@@ -198,14 +198,16 @@ const Details_ = ({ obj: np, flags }) => {
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Ingress rules')} />
         <p className="co-m-pane__explanation">
-          {t(
-            'public~Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:',
-          )}
-          <ExternalLink
-            href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-            text={t('public~NetworkPolicies documentation')}
-          />
-          .
+          <Trans ns="public">
+            Pods accept all traffic by default. They can be isolated via NetworkPolicies which
+            specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will
+            reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:{' '}
+            <ExternalLink
+              href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+              text={t('public~NetworkPolicies documentation')}
+            />
+            .
+          </Trans>
         </p>
         {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
           t('public~All traffic is allowed to Pods in {{namespace}}', {
