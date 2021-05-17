@@ -82,8 +82,6 @@ import {
   silenceState,
   silencesToProps,
 } from './utils';
-import { PodLogs } from '../pod-logs';
-import { podPhase } from '../../module/k8s/pods';
 import { DetailsPage } from '../factory/details';
 import AlertLogs from './alert-logs';
 import { refreshNotificationPollers } from '../notification-drawer';
@@ -230,6 +228,8 @@ export const StateTimestamp = ({ text, timestamp }) => (
 );
 
 export const AlertStateDescription = ({ alert }) => {
+  const { t } = useTranslation();
+
   if (alert && !_.isEmpty(alert.silencedBy)) {
     return (
       <StateTimestamp
@@ -656,6 +656,17 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
   };
 };
 
+const getSourceKey = (source) => {
+  switch (source) {
+    case 'Platform':
+      return i18next.t('public~Platform');
+    case 'User':
+      return i18next.t('public~User');
+    default:
+      return source;
+  }
+};
+
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
     const { alert, loaded, loadError, namespace, rule, silencesLoaded, match, location } = props;
@@ -726,7 +737,7 @@ export const AlertsDetailsPage = withFallback(
             href: '',
             queryParams,
             // t('details-page~Details')
-            nameKey: 'details-page~Details',
+            nameKey: 'public~Details',
             component: Details,
             pageData: {
               alert,
@@ -739,7 +750,7 @@ export const AlertsDetailsPage = withFallback(
             href: 'logs',
             queryParams,
             // t('details-page~Logs')
-            nameKey: 'details-page~Logs',
+            nameKey: 'public~Logs',
             component: AlertLogs,
           },
         ]}
@@ -873,7 +884,7 @@ export const AlertRulesDetailsPage = withFallback(
                     <dt>{t('public~Name')}</dt>
                     <dd>{name}</dd>
                     <dt>
-                      <PopoverField label={t('public~Severity')} body={SeverityHelp} />
+                      <PopoverField label={t('public~Severity')} body={severityHelp} />
                     </dt>
                     <dd>
                       <Severity severity={severity} />
@@ -890,7 +901,7 @@ export const AlertRulesDetailsPage = withFallback(
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     <dt>
-                      <PopoverField label={t('public~Source')} body={SourceHelp} />
+                      <PopoverField label={t('public~Source')} body={sourceHelp} />
                     </dt>
                     <dd>{rule && getSourceKey(_.startCase(alertingRuleSource(rule)))}</dd>
                     {_.isInteger(duration) && (
