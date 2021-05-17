@@ -86,14 +86,6 @@ const defaultSamples = (t: TFunction) =>
           targetResource: getTargetResource(BuildConfigModel),
         },
         {
-          title: t('console-shared~Build from Devfile'),
-          description: t(
-            'console-shared~A Devfile build performs an image build using a devfile in the source repository or specified in build configuration.',
-          ),
-          id: 'devfile-build',
-          targetResource: getTargetResource(BuildConfigModel),
-        },
-        {
           title: t('console-shared~Source-to-Image (S2I) build'),
           description: t(
             'console-shared~S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.',

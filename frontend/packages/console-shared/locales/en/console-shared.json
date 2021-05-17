@@ -85,8 +85,6 @@
   "This \"ClusterRole\" is allowed to \"GET\" and \"POST\" requests to the non-resource endpoint \"/healthz\" and all subpaths (must be in the \"ClusterRole\" bound with a \"ClusterRoleBinding\" to be effective).": "This \"ClusterRole\" is allowed to \"GET\" and \"POST\" requests to the non-resource endpoint \"/healthz\" and all subpaths (must be in the \"ClusterRole\" bound with a \"ClusterRoleBinding\" to be effective).",
   "Build from Dockerfile": "Build from Dockerfile",
   "A Dockerfile build performs an image build using a Dockerfile in the source repository or specified in build configuration.": "A Dockerfile build performs an image build using a Dockerfile in the source repository or specified in build configuration.",
-  "Build from Devfile": "Build from Devfile",
-  "A Devfile build performs an image build using a devfile in the source repository or specified in build configuration.": "A Devfile build performs an image build using a devfile in the source repository or specified in build configuration.",
   "Source-to-Image (S2I) build": "Source-to-Image (S2I) build",
   "S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.": "S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.",
   "Limit": "Limit",
