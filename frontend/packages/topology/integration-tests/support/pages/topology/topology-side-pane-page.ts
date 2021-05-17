@@ -18,6 +18,7 @@ export const topologySidePane = {
       .contains(tabName)
       .should('be.visible'),
   verifyActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).should('be.visible'),
+  clickActionsDropDown: () => cy.get(topologyPO.sidePane.actionsDropDown).click(),
   selectTab: (tabName: string) =>
     cy
       .get(topologyPO.sidePane.tabName)

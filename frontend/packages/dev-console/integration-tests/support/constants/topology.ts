@@ -19,6 +19,7 @@ export enum nodeActions {
   EditLabels = 'Edit labels',
   EditDeployment = 'Edit Deployment',
   DeleteDeployment = 'Delete Deployment',
+  DeleteDeploymentConfig = 'Delete DeploymentConfig',
   EditAnnotations = 'Edit annotations',
   MoveSink = 'Move sink',
   EditSinkBinding = 'Edit SinkBinding',

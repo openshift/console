@@ -12,4 +12,7 @@ export const topologyHelper = {
     cy.get(topologyPO.highlightNode).should('be.visible');
     app.waitForDocumentLoad();
   },
+  verifyWorkloadDeleted: (workloadName: string) => {
+    topologyHelper.search(workloadName).should('not.be.visible');
+  },
 };
