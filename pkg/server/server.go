@@ -56,6 +56,7 @@ const (
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginAssetsEndpoint             = "/api/plugins/"
 	localesEndpoint                  = "/locales/resource.json"
+	operandsListEndpoint             = "/api/list-operands/"
 
 	sha256Prefix = "sha256~"
 )
@@ -406,6 +407,17 @@ func (s *Server) HTTPHandler() http.Handler {
 			})),
 		)
 	}
+
+	// List operator operands endpoint
+	operandsListHandler := &OperandsListHandler{
+		APIServerURL: s.KubeAPIServerURL,
+	}
+	handle(operandsListEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
+		authHandler(func(w http.ResponseWriter, r *http.Request) {
+			operandsListHandler.OperandsListHandler(w, r)
+		}),
+	))
 
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
