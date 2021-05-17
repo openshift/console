@@ -1,13 +1,13 @@
 import * as _ from 'lodash-es';
+import { K8sResourceCommon, Selector } from '@console/dynamic-plugin-sdk/src';
+
 import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
-// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-import { K8sKind, K8sResourceKind } from './types';
+import { K8sKind, Patch } from './types';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 
-/** @type {(model: K8sKind) => string} */
-const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
+const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }: K8sKind): string => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
   let p = isLegacy ? '/api/' : '/apis/';
 
@@ -19,9 +19,22 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   return p;
 };
 
-/** @type {(model: K8sKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
-export const getK8sResourcePath = (model, options) => {
-  let q = '';
+type QueryParams = {
+  watch?: string;
+  labelSelector?: string;
+  fieldSelector?: string;
+  resourceVersion?: string;
+  [key: string]: string;
+};
+
+export type Options = {
+  ns?: string;
+  name?: string;
+  path?: string;
+  queryParams?: QueryParams;
+};
+
+export const getK8sResourcePath = (model: K8sKind, options: Options): string => {
   let u = getK8sAPIPath(model);
 
   if (options.ns) {
@@ -36,7 +49,7 @@ export const getK8sResourcePath = (model, options) => {
     u += `/${options.path}`;
   }
   if (!_.isEmpty(options.queryParams)) {
-    q = _.map(options.queryParams, function(v, k) {
+    const q = _.map(options.queryParams, function(v, k) {
       return `${k}=${v}`;
     });
     u += `?${q.join('&')}`;
@@ -45,33 +58,43 @@ export const getK8sResourcePath = (model, options) => {
   return u;
 };
 
-/** @type {(model: K8sKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
-export const resourceURL = (model, options) =>
+export const resourceURL = (model: K8sKind, options: Options): string =>
   `${k8sBasePath}${getK8sResourcePath(model, options)}`;
 
-export const watchURL = (kind, options) => {
+export const watchURL = (kind: K8sKind, options: Options): string => {
   const opts = options || {};
 
   opts.queryParams = opts.queryParams || {};
-  opts.queryParams.watch = true;
+  opts.queryParams.watch = 'true';
   return resourceURL(kind, opts);
 };
 
-export const k8sGet = (kind, name, ns, opts) =>
-  coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
+export const k8sGet = (
+  kind: K8sKind,
+  name: string,
+  ns?: string,
+  opts?: Options,
+  requestInit?: RequestInit,
+) => coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)), 'GET', requestInit);
 
-export const k8sCreate = (kind, data, opts = {}) => {
+export const k8sCreate = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  data: R,
+  opts: Options = {},
+) => {
   return coFetchJSON.post(
     resourceURL(kind, Object.assign({ ns: data?.metadata?.namespace }, opts)),
     data,
   );
 };
 
-export const parseDevfile = async (devfileData) => {
-  return await coFetchJSON.post('/api/devfile/', devfileData);
-};
-
-export const k8sUpdate = (kind, data, ns, name, opts) =>
+export const k8sUpdate = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  data: R,
+  ns?: string,
+  name?: string,
+  opts?: Options,
+): Promise<R> =>
   coFetchJSON.put(
     resourceURL(kind, {
       ns: ns || data.metadata.namespace,
@@ -81,7 +104,12 @@ export const k8sUpdate = (kind, data, ns, name, opts) =>
     data,
   );
 
-export const k8sPatch = (kind, resource, data, opts = {}) => {
+export const k8sPatch = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  resource: R,
+  data: Patch[],
+  opts: Options = {},
+) => {
   const patches = _.compact(data);
 
   if (_.isEmpty(patches)) {
@@ -103,23 +131,44 @@ export const k8sPatch = (kind, resource, data, opts = {}) => {
   );
 };
 
-export const k8sPatchByName = (kind, name, namespace, data, opts = {}) =>
-  k8sPatch(kind, { metadata: { name, namespace } }, data, opts);
+export const k8sPatchByName = (
+  kind: K8sKind,
+  name: string,
+  namespace: string,
+  data: Patch[],
+  opts: Options = {},
+) => k8sPatch(kind, { metadata: { name, namespace } }, data, opts);
 
-export const k8sKill = (kind, resource, opts = {}, json = null) =>
+export const k8sKill = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  resource: R,
+  opts: Options = {},
+  requestInit: RequestInit = {},
+  json: Object = null,
+) =>
   coFetchJSON.delete(
     resourceURL(
       kind,
       Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
     ),
-    opts,
+    requestInit,
     json,
   );
 
-export const k8sKillByName = (kind, name, namespace, opts = {}) =>
-  k8sKill(kind, { metadata: { name, namespace } }, opts);
+export const k8sKillByName = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  name: string,
+  namespace?: string,
+  opts: Options = {},
+  requestInit: RequestInit = {},
+): Promise<R> => k8sKill(kind, { metadata: { name, namespace } }, opts, requestInit);
 
-export const k8sList = (kind, params = {}, raw = false, options = {}) => {
+export const k8sList = (
+  kind: K8sKind,
+  params: { [key: string]: any } = {},
+  raw = false,
+  requestInit: RequestInit = {},
+) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {
       v = selectorToString(v);
@@ -128,7 +177,7 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   }).join('&');
 
   const listURL = resourceURL(kind, { ns: params.ns });
-  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then((result) => {
+  return coFetchJSON(`${listURL}?${query}`, 'GET', requestInit).then((result) => {
     const typedItems = result.items?.map((i) => ({
       kind: kind.kind,
       apiVersion: result.apiVersion,
@@ -138,7 +187,11 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   });
 };
 
-export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
+export const k8sListPartialMetadata = (
+  kind: K8sKind,
+  params: { [key: string]: any } = {},
+  raw = false,
+) => {
   return k8sList(kind, params, raw, {
     headers: {
       Accept:
@@ -147,9 +200,23 @@ export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
   });
 };
 
-export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
-  const queryParams = { watch: true };
-  const opts = { queryParams };
+export const k8sWatch = (
+  kind: K8sKind,
+  query: {
+    labelSelector?: Selector;
+    resourceVersion?: string;
+    ns?: string;
+    fieldSelector?: string;
+  } = {},
+  wsOptions: {
+    [key: string]: any;
+  } = {},
+) => {
+  const queryParams: QueryParams = { watch: 'true' };
+  const opts: {
+    queryParams: QueryParams;
+    ns?: string;
+  } = { queryParams };
   wsOptions = Object.assign(
     {
       host: 'auto',
@@ -161,7 +228,7 @@ export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
     wsOptions,
   );
 
-  const labelSelector = query.labelSelector || kind.labelSelector;
+  const labelSelector = query.labelSelector;
   if (labelSelector) {
     const encodedSelector = encodeURIComponent(selectorToString(labelSelector));
     if (encodedSelector) {
@@ -190,13 +257,13 @@ export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
  * Use k8sWatch to wait for a resource to get into an expected condition.
  * Watches for resource by kind, namespace and optional name.
  * Promise resolves to a new resource version or rejects with a timeout.
- * @param {K8sKind} kind
- * @param {K8sResourceKind} resource
- * @param {(kind: K8sResourceKind) => boolean} checkCondition
- * @param {number} timeoutInMs
- * @returns {Promise<K8sResourceKind>}
  */
-export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) => {
+export const k8sWaitForUpdate = <R extends K8sResourceCommon>(
+  kind: K8sKind,
+  resource: R,
+  checkCondition: (kind: R) => boolean,
+  timeoutInMs: number,
+) => {
   if (!resource || !resource.metadata) {
     return Promise.reject(new Error('Provided resource is undefined'));
   }

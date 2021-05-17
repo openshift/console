@@ -41,7 +41,7 @@ export const removeTrigger = async (values: RemoveTriggerFormValues, pipeline: P
     updatableEventListeners.map((eventListener) =>
       k8sPatch(EventListenerModel, eventListener, [
         {
-          opt: 'replace',
+          op: 'replace',
           path: '/spec/triggers',
           value: eventListener.spec.triggers.filter(triggerMatchesTriggerTemplate),
         },
