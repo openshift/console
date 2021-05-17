@@ -1,7 +1,7 @@
 // Annotation for human readable chart name, ready to be displayed in UI
-export const CHART_NAME_ANNOTATION = 'helm-chart.openshift.io/name';
+export const CHART_NAME_ANNOTATION = 'charts.openshift.io/name';
 // Annotation for chart category, e.g. redhat, partner, community
-export const PROVIDER_TYPE_ANNOTATION = 'helm-chart.openshift.io/providerType';
+export const PROVIDER_TYPE_ANNOTATION = 'charts.openshift.io/providerType';
 
 export enum PROVIDER_TYPE {
   redhat = 'redhat',
