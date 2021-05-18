@@ -1,20 +1,16 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { Popover, PopoverPosition, Text, TextVariants } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { Text, TextVariants } from '@patternfly/react-core';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 
 import './ssh-popover.scss';
 
 const SSHPopover: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <Popover
-      data-test="SSHPopover"
-      className="SSHPopover-main"
-      maxWidth="20%"
-      position={PopoverPosition.right}
-      bodyContent={
+    <FieldLevelHelp testId="ssh-popover-button">
+      <div data-test="ssh-popover">
         <Trans t={t} ns="kubevirt-plugin">
           <Text component={TextVariants.h6}>Remember authorized SSH key</Text>
           <Text component={TextVariants.p}>
@@ -25,20 +21,8 @@ const SSHPopover: React.FC = () => {
             The key will be stored after the machine is created
           </Text>
         </Trans>
-      }
-    >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-        }}
-        className="pf-c-form__group-label-help SSHPopover-button"
-      >
-        {' '}
-        <HelpIcon noVerticalAlign />
-      </button>
-    </Popover>
+      </div>
+    </FieldLevelHelp>
   );
 };
 
