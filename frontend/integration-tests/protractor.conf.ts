@@ -55,14 +55,12 @@ const testSuites = {
   crud: suite(['tests/secrets.scenario.ts', 'tests/environment.scenario.ts']),
   event: suite(['tests/event.scenario.ts']),
   monitoring: suite(['tests/monitoring.scenario.ts']),
-  newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
-  overview: suite(['tests/overview/overview.scenario.ts']),
+  newApp: suite(['tests/deploy-image.scenario.ts']),
   crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
   oauth: suite(['tests/oauth.scenario.ts']),
   e2e: suite([
     'tests/secrets.scenario.ts',
     'tests/environment.scenario.ts',
-    'tests/overview/overview.scenario.ts',
     'tests/deploy-image.scenario.ts',
     'tests/monitoring.scenario.ts',
     'tests/alertmanager.scenario.ts',
@@ -77,7 +75,6 @@ const testSuites = {
   release: suite([
     'tests/secrets.scenario.ts',
     'tests/environment.scenario.ts',
-    'tests/overview/overview.scenario.ts',
     'tests/deploy-image.scenario.ts',
     'tests/monitoring.scenario.ts',
     'tests/crd-extensions.scenario.ts',
@@ -86,7 +83,6 @@ const testSuites = {
     'tests/event.scenario.ts',
   ]),
   all: suite([
-    'tests/overview/overview.scenario.ts',
     'tests/secrets.scenario.ts',
     'tests/service-catalog/**/*.scenario.ts',
     'tests/deploy-image.scenario.ts',
