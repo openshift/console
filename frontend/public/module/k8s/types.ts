@@ -407,6 +407,9 @@ export type HorizontalPodAutoscalerKind = K8sResourceCommon & {
 export type StorageClassResourceKind = {
   provisioner: string;
   reclaimPolicy: string;
+  parameters?: {
+    [key: string]: string;
+  };
 } & K8sResourceCommon;
 
 export type NodeCondition = {

@@ -1,5 +1,6 @@
 import { ExtensionSCProvisionerProp } from '@console/plugin-sdk';
 import {
+  CephFsNameComponent,
   PoolResourceComponent,
   StorageClassEncryption,
   StorageClassEncryptionKMSID,
@@ -111,8 +112,8 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
         fsName: {
           name: 'Filesystem Name',
           hintText: 'CephFS filesystem name into which the volume shall be created',
-          value: 'ocs-storagecluster-cephfilesystem',
-          visible: () => false,
+          required: true,
+          Component: CephFsNameComponent,
         },
         'csi.storage.k8s.io/provisioner-secret-name': {
           name: 'Provisioner Secret Name',
