@@ -130,9 +130,9 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 <dt>{t('ceph-storage-plugin~Object Bucket')}</dt>
                 <dd>
                   <ResourceLink
-                    dataTest="obc-link"
+                    dataTest="ob-link"
                     kind={referenceForModel(NooBaaObjectBucketModel)}
-                    name={obj.spec.ObjectBucketName}
+                    name={obj.spec.objectBucketName}
                   />
                 </dd>
               </>

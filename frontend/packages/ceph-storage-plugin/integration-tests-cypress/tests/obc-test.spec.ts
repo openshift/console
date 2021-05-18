@@ -109,7 +109,7 @@ describe('Test Object Bucket Claim resource', () => {
     cy.byLegacyTestID('openshift-storage.noobaa.io').contains(OBC_STORAGE_CLASS_EXACT);
 
     cy.log('Test if Object Bucket is created');
-    cy.byTestID('obc-link').click();
+    cy.byTestID('ob-link').click();
     detailsPage.isLoaded();
     cy.byLegacyTestID('resource-title').should('be.visible');
     cy.byTestID('resource-status').contains(BOUND);
