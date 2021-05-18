@@ -1,14 +1,30 @@
 import * as _ from 'lodash';
 import { Store } from 'redux';
 import { RootState } from '@console/internal/redux';
-import { isExtensionInUse, PluginStore } from '../store';
+import { isExtensionInUse, PluginStore, DynamicPluginInfo } from '../store';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 
 let subscriptionServiceInitialized = false;
 
-let onSubscriptionAdded: (sub: ExtensionSubscription<Extension>) => void;
+const extensionSubscriptions: ExtensionSubscription[] = [];
+const dynamicPluginListeners: DynamicPluginListener[] = [];
 
-const subscriptions: ExtensionSubscription<Extension>[] = [];
+let onExtensionSubscriptionAdded: (sub: ExtensionSubscription) => void = _.noop;
+let onDynamicPluginListenerAdded: (listener: DynamicPluginListener) => void = _.noop;
+
+const subscribe = <T>(sub: T, subList: T[], invokeListener: VoidFunction): VoidFunction => {
+  let isSubscribed = true;
+
+  subList.push(sub);
+  invokeListener();
+
+  return () => {
+    if (isSubscribed) {
+      isSubscribed = false;
+      subList.splice(subList.indexOf(sub), 1);
+    }
+  };
+};
 
 export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
   if (subscriptionServiceInitialized) {
@@ -22,8 +38,8 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 
   type FeatureFlags = ReturnType<typeof getAllFlags>;
 
-  const invokeListener = (
-    sub: ExtensionSubscription<Extension>,
+  const invokeExtensionListener = (
+    sub: ExtensionSubscription,
     currentExtensions: Extension[],
     currentFlags: FeatureFlags,
   ) => {
@@ -42,14 +58,22 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
     }
   };
 
-  onSubscriptionAdded = (sub) => {
-    invokeListener(sub, getAllExtensions(), getAllFlags());
+  onExtensionSubscriptionAdded = (sub) => {
+    invokeExtensionListener(sub, getAllExtensions(), getAllFlags());
+  };
+
+  onDynamicPluginListenerAdded = (listener) => {
+    listener(pluginStore.getDynamicPluginInfo());
   };
 
   let lastExtensions: Extension[] = null;
   let lastFlags: FeatureFlags = null;
 
-  const invokeAllListeners = () => {
+  const invokeAllExtensionListeners = () => {
+    if (extensionSubscriptions.length === 0) {
+      return;
+    }
+
     const nextExtensions = getAllExtensions();
     const nextFlags = getAllFlags();
 
@@ -60,13 +84,39 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
     lastExtensions = nextExtensions;
     lastFlags = nextFlags;
 
-    subscriptions.forEach((sub) => {
-      invokeListener(sub, nextExtensions, nextFlags);
+    extensionSubscriptions.forEach((sub) => {
+      invokeExtensionListener(sub, nextExtensions, nextFlags);
     });
   };
 
-  pluginStore.subscribe(invokeAllListeners);
-  reduxStore.subscribe(invokeAllListeners);
+  let lastPluginEntries: DynamicPluginInfo[] = null;
+
+  const invokeAllDynamicPluginListeners = () => {
+    if (dynamicPluginListeners.length === 0) {
+      return;
+    }
+
+    const nextPluginEntries = pluginStore.getDynamicPluginInfo();
+
+    if (_.isEqual(nextPluginEntries, lastPluginEntries)) {
+      return;
+    }
+
+    lastPluginEntries = nextPluginEntries;
+
+    dynamicPluginListeners.forEach((listener) => {
+      listener(nextPluginEntries);
+    });
+  };
+
+  // Subscribe to changes in Console plugins and Redux
+  pluginStore.subscribe(invokeAllExtensionListeners);
+  pluginStore.subscribe(invokeAllDynamicPluginListeners);
+  reduxStore.subscribe(invokeAllExtensionListeners);
+
+  // Invoke listeners registered prior to initializing subscription service
+  invokeAllExtensionListeners();
+  invokeAllDynamicPluginListeners();
 };
 
 /**
@@ -92,28 +142,29 @@ export const initSubscriptionService = (pluginStore: PluginStore, reduxStore: St
 export const subscribeToExtensions = <E extends Extension>(
   listener: ExtensionListener<LoadedExtension<E>>,
   ...typeGuards: ExtensionTypeGuard<E>[]
-): VoidFunction => {
+) => {
   if (typeGuards.length === 0) {
     throw new Error('You must pass at least one type guard to subscribeToExtensions');
   }
 
   const sub: ExtensionSubscription<E> = { listener, typeGuards };
 
-  let isSubscribed = true;
-  subscriptions.push(sub);
+  return subscribe<ExtensionSubscription>(sub, extensionSubscriptions, () => {
+    onExtensionSubscriptionAdded(sub);
+  });
+};
 
-  if (subscriptionServiceInitialized) {
-    onSubscriptionAdded(sub);
-  } else {
-    setTimeout(() => onSubscriptionAdded(sub));
-  }
-
-  return () => {
-    if (isSubscribed) {
-      isSubscribed = false;
-      subscriptions.splice(subscriptions.indexOf(sub), 1);
-    }
-  };
+/**
+ * Subscribe to changes related to processing Console dynamic plugins.
+ *
+ * @param listener Listener invoked when the runtime status of a dynamic plugin changes.
+ *
+ * @returns Function that unsubscribes the listener.
+ */
+export const subscribeToDynamicPlugins = (listener: DynamicPluginListener) => {
+  return subscribe<DynamicPluginListener>(listener, dynamicPluginListeners, () => {
+    onDynamicPluginListenerAdded(listener);
+  });
 };
 
 /**
@@ -136,8 +187,10 @@ export const extensionDiffListener = <E extends Extension>(
 
 type ExtensionListener<E extends Extension> = (extensions: E[]) => void;
 
-type ExtensionSubscription<E extends Extension> = {
+type ExtensionSubscription<E extends Extension = Extension> = {
   listener: ExtensionListener<E>;
   typeGuards: ExtensionTypeGuard<E>[];
   listenerLastArgs?: E[];
 };
+
+type DynamicPluginListener = (pluginEntries: DynamicPluginInfo[]) => void;
