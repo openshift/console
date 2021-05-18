@@ -1584,7 +1584,190 @@ export const pipelineTestData: PipelineTestData = {
           },
         },
       },
+      [DataState.FAILED2]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'broken-app-pipeline-failed',
+          labels: {
+            'pipeline.openshift.io/started-by': 'kubeadmin',
+            'tekton.dev/pipeline': 'broken-app-pipeline',
+          },
+          uid: '27a7fcad-8711-48df-8135-8e856f997e60',
+        },
+        spec: {
+          pipelineRef: {
+            name: 'fetch-and-print-recipe',
+          },
+          serviceAccountName: 'pipeline',
+          timeout: '5s',
+          workspaces: [
+            {
+              name: 'password-vault',
+              secret: {
+                secretName: 'secret-password',
+              },
+            },
+            {
+              configMap: {
+                items: [
+                  {
+                    key: 'brownies',
+                    path: 'recipe.txt',
+                  },
+                ],
+                name: 'sensitive-recipe-storage',
+              },
+              name: 'recipe-store',
+            },
+            {
+              name: 'shared-data',
+              persistentVolumeClaim: {
+                claimName: 'shared-task-storage',
+              },
+            },
+          ],
+        },
+        status: {
+          completionTime: '2021-05-12T11:37:31Z',
+          conditions: [
+            {
+              lastTransitionTime: '2021-05-12T11:37:31Z',
+              message: 'PipelineRun "fetch-and-print-recipe-test" failed to finish within "5s"',
+              reason: 'PipelineRunTimeout',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          pipelineSpec: pipelineSpec[PipelineExampleNames.BROKEN_MOCK_APP],
+          startTime: '2021-05-12T11:37:26Z',
+          taskRuns: {
+            'fetch-and-print-recipe-test-fetch-the-recipe-5pb9p': {
+              pipelineTaskName: 'fetch-the-recipe',
+              status: {
+                completionTime: '2021-05-12T11:37:32Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-05-12T11:37:32Z',
+                    message:
+                      'TaskRun "fetch-and-print-recipe-test-fetch-the-recipe-5pb9p" failed to finish within "5s"',
+                    reason: 'TaskRunTimeout',
+                    status: 'False',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'fetch-and-print-recipe-test-fetch-the-recipe-5pb9p-pod-ksbnx',
+                startTime: '2021-05-12T11:37:27Z',
+                steps: [
+                  {
+                    container: 'step-fetch-and-write',
+                    name: 'fetch-and-write',
+                  },
+                ],
+                taskSpec: {
+                  steps: [
+                    {
+                      image: 'ubuntu',
+                      name: 'fetch-and-write',
+                      resources: {},
+                    },
+                  ],
+                  workspaces: [
+                    {
+                      name: 'super-secret-password',
+                    },
+                    {
+                      name: 'secure-store',
+                    },
+                    {
+                      name: 'filedrop',
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
     },
+    taskRuns: [
+      {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'TaskRun',
+        metadata: {
+          annotations: {
+            'pipeline.tekton.dev/release': 'v0.22.0',
+          },
+          name: 'recipe-time-hwtzt-fetch-the-recipe-x2b4n',
+          ownerReferences: [
+            {
+              apiVersion: 'tekton.dev/v1beta1',
+              blockOwnerDeletion: true,
+              controller: true,
+              kind: 'PipelineRun',
+              name: 'recipe-time-hwtzt',
+              uid: '6308f220-4da5-4d1a-9240-9a032fa1e56a',
+            },
+          ],
+          labels: {
+            'app.kubernetes.io/managed-by': 'tekton-pipelines',
+            'tekton.dev/pipeline': 'fetch-and-print-recipe',
+            'tekton.dev/pipelineRun': 'recipe-time-hwtzt',
+            'tekton.dev/pipelineTask': 'fetch-the-recipe',
+            'tekton.dev/task': 'fetch-secure-data',
+          },
+        },
+        spec: {
+          serviceAccountName: 'pipeline',
+          taskRef: {
+            kind: 'Task',
+            name: 'fetch-secure-data',
+          },
+          timeout: '5s',
+          workspaces: [
+            {
+              name: 'super-secret-password',
+              secret: {
+                secretName: 'secret-password',
+              },
+            },
+            {
+              configMap: {
+                items: [
+                  {
+                    key: 'brownies',
+                    path: 'recipe.txt',
+                  },
+                ],
+                name: 'sensitive-recipe-storage',
+              },
+              name: 'secure-store',
+            },
+            {
+              name: 'filedrop',
+              persistentVolumeClaim: {
+                claimName: 'shared-task-storage',
+              },
+            },
+          ],
+        },
+        status: {
+          completionTime: '2021-05-12T13:23:59Z',
+          conditions: [
+            {
+              lastTransitionTime: '2021-05-12T13:23:59Z',
+              message:
+                'TaskRun "recipe-time-hwtzt-fetch-the-recipe-x2b4n" failed to finish within "5s"',
+              reason: 'TaskRunTimeout',
+              status: 'False',
+              type: 'Succeeded',
+            },
+          ],
+          podName: 'recipe-time-hwtzt-fetch-the-recipe-x2b4n-pod-v4wzv',
+          startTime: '2021-05-12T13:23:53Z',
+        },
+      },
+    ],
   },
   [PipelineExampleNames.INVALID_PIPELINE_MISSING_TASK]: {
     dataSource: 'missing-task-reference',
