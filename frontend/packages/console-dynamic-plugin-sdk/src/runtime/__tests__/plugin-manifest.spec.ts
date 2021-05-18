@@ -3,14 +3,14 @@ import { getPluginManifest } from '../../utils/test-utils';
 import { SchemaValidator } from '../../validation/SchemaValidator';
 import * as pluginManifestModule from '../plugin-manifest';
 
+const { fetchPluginManifest } = pluginManifestModule;
+
 const coFetch = jest.spyOn(coFetchModule, 'coFetch');
 
 const validatePluginManifestSchema = jest.spyOn(
   pluginManifestModule,
   'validatePluginManifestSchema',
 );
-
-const { fetchPluginManifest } = pluginManifestModule;
 
 beforeEach(() => {
   [coFetch, validatePluginManifestSchema].forEach((mock) => mock.mockReset());
