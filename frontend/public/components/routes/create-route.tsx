@@ -447,7 +447,9 @@ class CreateRouteWithTranslation extends React.Component<CreateRouteProps, Creat
               {loaded && !_.isEmpty(serviceOptions) && (
                 <Dropdown
                   items={availableServiceOptions}
-                  title={service ? serviceOptions[service.metadata.name] : 'Select a service'}
+                  title={
+                    service ? serviceOptions[service.metadata.name] : t('public~Select a service')
+                  }
                   dropDownClassName="dropdown--full-width"
                   id="service"
                   onChange={this.changeService}
@@ -503,7 +505,7 @@ class CreateRouteWithTranslation extends React.Component<CreateRouteProps, Creat
               {!_.isEmpty(portOptions) && (
                 <Dropdown
                   items={portOptions}
-                  title={portOptions[targetPort] || 'Select target port'}
+                  title={portOptions[targetPort] || t('public~Select target port')}
                   dropDownClassName="dropdown--full-width"
                   id="target-port"
                   onChange={this.changeTargetPort}
@@ -544,7 +546,7 @@ class CreateRouteWithTranslation extends React.Component<CreateRouteProps, Creat
                     </label>
                     <Dropdown
                       items={terminationTypes}
-                      title="Select termination type"
+                      title={t('public~Select termination type')}
                       dropDownClassName="dropdown--full-width"
                       id="tls-termination"
                       onChange={this.changeTermination}
@@ -558,7 +560,7 @@ class CreateRouteWithTranslation extends React.Component<CreateRouteProps, Creat
                           ? passthroughInsecureTrafficTypes
                           : insecureTrafficTypes
                       }
-                      title="Select insecure traffic type"
+                      title={t('public~Select insecure traffic type')}
                       dropDownClassName="dropdown--full-width"
                       id="insecure-traffic"
                       onChange={this.changeInsecureTraffic}
@@ -680,7 +682,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
         <label htmlFor={`${index}-alt-service`}>{t('public~Alternate Service target')}</label>
         <Dropdown
           items={availableServiceOptions}
-          title={name ? serviceOptions[name] : 'Select a service'}
+          title={name ? serviceOptions[name] : t('public~Select a service')}
           dropDownClassName="dropdown--full-width"
           id={`${index}-alt-service`}
           onChange={onServiceChange}
