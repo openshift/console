@@ -19,6 +19,9 @@ describe('Auth test', () => {
       const passwd = Cypress.env('BRIDGE_HTPASSWD_PASSWORD') || 'test';
       cy.login(idp, username, passwd);
       cy.url().should('include', Cypress.config('baseUrl'));
+      // test Developer perspective is default for test user and guided tour is displayed
+      nav.sidenav.switcher.shouldHaveText('Developer');
+      guidedTour.isOpen();
       guidedTour.close();
       masthead.username.shouldHaveText(username);
 
@@ -56,6 +59,18 @@ describe('Auth test', () => {
       'You are logged in as a temporary administrative user. Update the cluster OAuth configuration to allow others to log in.',
     );
 
+    // test Administrator perspective is default for kubeadmin
+    nav.sidenav.switcher.shouldHaveText('Administrator');
+    // test guided tour is displayed first time switching to 'Developer' perspective
+    // skip if running localhost
+    if (!Cypress.config('baseUrl').includes('localhost')) {
+      nav.sidenav.switcher.changePerspectiveTo('Developer');
+      nav.sidenav.switcher.shouldHaveText('Developer');
+      guidedTour.isOpen();
+      guidedTour.close();
+      nav.sidenav.switcher.changePerspectiveTo('Administrator');
+      nav.sidenav.switcher.shouldHaveText('Administrator');
+    }
     cy.log('verify sidenav menus and Administration menu access for cluster admin user');
     nav.sidenav.shouldHaveNavSection(['Compute']);
     nav.sidenav.shouldHaveNavSection(['Operators']);

@@ -87,3 +87,4 @@ export enum FLAGS {
 
 export const CONFIG_STORAGE_CONSOLE = 'console';
 export const COLUMN_MANAGEMENT_CONFIGMAP_KEY = `${CONFIG_STORAGE_CONSOLE}.tableColumns`;
+export const ACM_LINK_ID = 'acm-console-link';

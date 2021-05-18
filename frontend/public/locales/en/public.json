@@ -1008,6 +1008,7 @@
   "LimitRanges": "LimitRanges",
   "Chargeback": "Chargeback",
   "CustomResourceDefinitions": "CustomResourceDefinitions",
+  "Advanced Cluster Management": "Advanced Cluster Management",
   "Target pods": "Target pods",
   "To ports": "To ports",
   "NS selector": "NS selector",

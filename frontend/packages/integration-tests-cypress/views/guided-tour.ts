@@ -8,4 +8,5 @@ export const guidedTour = {
       }
     });
   },
+  isOpen: () => cy.byTestID('guided-tour-modal').should('be.visible'),
 };
