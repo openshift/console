@@ -4,7 +4,6 @@ import { Button } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Status, SuccessStatus } from '@console/shared';
 import { DetailsItem } from '@console/internal/components/utils';
-import { Conditions } from '@console/internal/components/conditions';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { CapabilityProps, StatusCapability } from '../types';
 import { Phase } from './phase';
@@ -37,30 +36,6 @@ const PodStatuses: React.FC<StatusCapabilityProps> = ({
         {detail}
       </DetailsItem>
     </div>
-  );
-};
-
-const StatusConditions: React.FC<StatusCapabilityProps> = ({
-  description,
-  descriptor,
-  fullPath,
-  label,
-  obj,
-  value,
-}) => {
-  const { t } = useTranslation();
-  const detail = React.useMemo(() => {
-    return (
-      (!_.isArray(value) && <Invalid path={descriptor.path} />) ||
-      (value.length === 0 && (
-        <span className="text-muted">{t('olm~No conditions present')}</span>
-      )) || <Conditions conditions={value} />
-    );
-  }, [descriptor.path, t, value]);
-  return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-      {detail}
-    </DetailsItem>
   );
 };
 
@@ -163,8 +138,6 @@ export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (pro
   switch (capability) {
     case StatusCapability.podStatuses:
       return <PodStatuses {...props} />;
-    case StatusCapability.conditions:
-      return <StatusConditions {...props} />;
     case StatusCapability.w3Link:
       return <Link {...props} />;
     case StatusCapability.k8sPhase:
@@ -196,7 +169,6 @@ type StatusCapabilityProps = CapabilityProps<StatusCapability>;
 Phase.displayName = 'Phase';
 Invalid.displayName = 'Invalid';
 PodStatuses.displayName = 'PodStatuses';
-StatusConditions.displayName = 'StatusConditions';
 Link.displayName = 'Link';
 K8sPhase.displayName = 'K8sPhase';
 K8sPhaseReason.displayName = 'K8sPhaseReason';

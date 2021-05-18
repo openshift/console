@@ -6,7 +6,6 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
 import { testModel, testResourceInstance } from '../../../../mocks';
 import { ResourceLink, history } from '@console/internal/components/utils';
-import { Conditions } from '@console/internal/components/conditions';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
 jest.mock('react-i18next', () => {
@@ -22,12 +21,6 @@ const OBJ = {
   status: {
     link: 'https://example.com',
     service: 'someservice',
-    conditions: [
-      {
-        lastUpdateTime: '2017-10-16 12:00:00',
-        type: 'SomeType',
-      },
-    ],
   },
 };
 
@@ -39,7 +32,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-describe('Status descriptors', () => {
+describe('Status descriptor details items', () => {
   let wrapper: ReactWrapper<DescriptorDetailsItemProps>;
   let descriptor: Descriptor;
 
@@ -71,14 +64,6 @@ describe('Status descriptors', () => {
   it('renders status value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
     expect(wrapper.find('dd .text-muted').text()).toEqual('public~None');
-  });
-
-  it('renders a conditions status', () => {
-    descriptor['x-descriptors'] = [StatusCapability.conditions];
-    descriptor.path = 'conditions';
-    wrapper.setProps({ descriptor });
-
-    expect(wrapper.find(Conditions).exists()).toBe(true);
   });
 
   it('renders a link status', () => {
