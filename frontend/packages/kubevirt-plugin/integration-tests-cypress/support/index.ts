@@ -22,6 +22,7 @@ declare global {
       cdiCloner(namespace: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
       Login(): void;
+      deleteTestProject(namespace: string): void;
     }
   }
 }
@@ -31,11 +32,11 @@ Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   cy.exec(
     `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`,
   );
-  // VMI maybe still there while deleting VM
-  // wait for VMI is deleted before move on
-  if (kind === 'VirtualMachine') {
+
+  // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
+  if (['VirtualMachine', 'DataVolume', 'PersistentVolumeClaim'].includes(kind)) {
     cy.exec(
-      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} vmi ${resource.metadata.name} --wait=true`,
+      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} ${kind} ${resource.metadata.name} --wait=true`,
     );
   }
 });
@@ -153,4 +154,8 @@ Cypress.Commands.add('Login', () => {
   } else {
     cy.login();
   }
+});
+
+Cypress.Commands.add('deleteTestProject', (namespace: string) => {
+  cy.exec(`oc delete project ${namespace}`);
 });

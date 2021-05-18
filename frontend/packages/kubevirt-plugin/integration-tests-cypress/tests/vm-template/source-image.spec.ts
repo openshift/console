@@ -2,7 +2,14 @@ import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { addSource } from '../../view/add-source';
 import { virtualization } from '../../view/virtualization';
-import { TEMPLATE_BASE_IMAGE, TEMPLATE_NAME, OS_IMAGES_NS } from '../../const/index';
+import {
+  ADD_SOURCE,
+  IMPORTING,
+  OS_IMAGES_NS,
+  TEMPLATE_BASE_IMAGE,
+  TEMPLATE_NAME,
+  TEST_PROVIDER,
+} from '../../const/index';
 
 describe('test vm template source image', () => {
   before(() => {
@@ -28,19 +35,19 @@ describe('test vm template source image', () => {
   it('ID(CNV-5652) add Container image and delete', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
+    virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
+    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+    virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
   xit('ID(CNV-5650) add URL image and delete', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.URL);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
+    virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
+    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+    virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
   it('ID(CNV-5651) add PVC clone image and delete', () => {
@@ -51,9 +58,9 @@ describe('test vm template source image', () => {
       pvcNamespace: 'default',
     });
     virtualization.templates.testSource(TEMPLATE_NAME, 'Cloning');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
+    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+    virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
   xit('ID(CNV-5649) upload image and delete', () => {
@@ -66,9 +73,9 @@ describe('test vm template source image', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.UPLOAD);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Uploading');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
+    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+    virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 });
 
@@ -76,9 +83,9 @@ describe('test vm template source image provider', () => {
   it('Vm Template list shows source provider', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY, undefined, 'fooProvider');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
+    virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
     virtualization.templates.testSource(TEMPLATE_NAME, 'fooProvider');
     virtualization.templates.deleteSource(TEMPLATE_NAME);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Add source');
+    virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 });
