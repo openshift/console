@@ -1451,7 +1451,7 @@
   "Select a key": "Select a key",
   "ConfigMap or Secret": "ConfigMap or Secret",
   "Select a resource": "Select a resource",
-  "Secret referenced in the {{triggerProperty}} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference": "Secret referenced in the {{triggerProperty}} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference",
+  "Secret referenced in the {{triggerProperty}} webhook trigger does not contain \"WebHookSecretKey\" key. Webhook trigger won’t work due to the invalid secret reference": "Secret referenced in the {{triggerProperty}} webhook trigger does not contain \"WebHookSecretKey\" key. Webhook trigger won’t work due to the invalid secret reference",
   "Copy URL with Secret": "Copy URL with Secret",
   "Webhooks": "Webhooks",
   "Webhook URL": "Webhook URL",
