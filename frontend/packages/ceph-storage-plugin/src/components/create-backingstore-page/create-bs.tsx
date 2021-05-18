@@ -208,7 +208,12 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       )}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
-          <Button type="submit" data-test="backingstore-create-button" variant="primary">
+          <Button
+            isDisabled={provider === BC_PROVIDERS.PVC && providerDataState.numVolumes < 1}
+            type="submit"
+            data-test="backingstore-create-button"
+            variant="primary"
+          >
             {t('ceph-storage-plugin~Create BackingStore')}
           </Button>
           <Button onClick={cancel} variant="secondary">
