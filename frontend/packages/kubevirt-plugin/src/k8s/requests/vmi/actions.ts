@@ -9,6 +9,7 @@ import { freeOwnedResources } from '../free-owned-resources';
 
 export enum VMIActionType {
   Unpause = 'unpause',
+  Pause = 'pause',
 }
 
 const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
@@ -33,6 +34,7 @@ const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
 };
 
 export const unpauseVMI = async (vmi: VMIKind) => VMIActionRequest(vmi, VMIActionType.Unpause);
+export const pauseVMI = async (vmi: VMIKind) => VMIActionRequest(vmi, VMIActionType.Pause);
 
 export const deleteVMI = async (
   vmi: VMIKind,

@@ -15,7 +15,7 @@ import {
   getIsSerialConsoleAttached,
   isWindows,
 } from '../../../selectors/vm';
-import { isVMIRunning } from '../../../selectors/vmi';
+import { isVMIPaused, isVMIRunning } from '../../../selectors/vmi';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types/vm';
 import { CLOUD_INIT_MISSING_USERNAME } from '../../../utils/strings';
@@ -102,6 +102,8 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 
   const consoleType = typeNotSupported || type == null ? getAvailableType() : type;
 
+  const isPaused = isVMIPaused(((vm as any) as VMIKind) || vmi);
+
   return (
     <Stack hasGutter>
       {showOpenInNewWindow && consoleType && (
@@ -168,6 +170,17 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             isInline
             variant="danger"
             title={t('kubevirt-plugin~Console is open on another tab/window')}
+          />
+        </StackItem>
+      )}
+      {isPaused && (
+        <StackItem>
+          <Alert
+            isInline
+            variant="warning"
+            title={t(
+              'kubevirt-plugin~Virtual machine is paused. Console will be active after unpause',
+            )}
           />
         </StackItem>
       )}

@@ -21,7 +21,7 @@ import useSSHCommand from '../../hooks/use-ssh-command';
 import useSSHService from '../../hooks/use-ssh-service';
 import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
-import { unpauseVMI } from '../../k8s/requests/vmi/actions';
+import { pauseVMI, unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
@@ -226,6 +226,24 @@ const menuActionUnpause = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): K
   };
 };
 
+const menuActionPause = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): KebabOption => {
+  return {
+    hidden: isVMIPaused(vmi),
+    // t('kubevirt-plugin~Pause Virtual Machine')
+    labelKey: 'kubevirt-plugin~Pause Virtual Machine',
+    callback: () =>
+      confirmModal({
+        // t('kubevirt-plugin~Pause Virtual Machine')
+        titleKey: 'kubevirt-plugin~Pause Virtual Machine',
+        // t('kubevirt-plugin~pause')
+        message: <ActionMessage obj={vmi} actionKey="kubevirt-plugin~pause" />,
+        // t('kubevirt-plugin~Pause')
+        btnTextKey: 'kubevirt-plugin~Pause',
+        executeFn: () => pauseVMI(vmi),
+      }),
+  };
+};
+
 const menuActionMigrate = (
   kindObj: K8sKind,
   vm: VMKind,
@@ -421,6 +439,7 @@ export const vmMenuActions = [
   menuActionStop,
   menuActionRestart,
   menuActionUnpause,
+  menuActionPause,
   menuActionMigrate,
   menuActionCancelMigration,
   menuActionClone,
