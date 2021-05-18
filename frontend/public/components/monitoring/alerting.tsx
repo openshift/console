@@ -88,7 +88,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { ExternalLink, getURLSearchParams } from '../utils/link';
+import { getURLSearchParams } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -1665,16 +1665,6 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
   const { url } = match;
   const isAlertmanager = url === configPath || url === YAMLPath;
 
-  const HeaderAlertmanagerLink = ({ path }) =>
-    _.isEmpty(window.SERVER_FLAGS.alertManagerPublicURL) ? null : (
-      <span className="monitoring-header-link">
-        <ExternalLink
-          href={`${window.SERVER_FLAGS.alertManagerPublicURL}${path || ''}`}
-          text={t('public~Alertmanager UI')}
-        />
-      </span>
-    );
-
   return (
     <>
       <div
@@ -1699,7 +1689,6 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
               {isAlertmanager ? t('public~Alertmanager') : t('public~Alerting')}
             </span>
-            <HeaderAlertmanagerLink path="/#/alerts" />
           </div>
         </h1>
       </div>
