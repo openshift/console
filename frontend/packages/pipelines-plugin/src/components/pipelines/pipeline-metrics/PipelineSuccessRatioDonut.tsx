@@ -39,17 +39,19 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   });
   const pipelineSuccessData = runData?.data?.result ?? [];
 
-  if (runDataLoading) {
-    return <LoadingInline />;
-  }
-
-  if (!loaded) {
-    onInitialLoad &&
+  React.useEffect(() => {
+    if (!loaded && onInitialLoad) {
       onInitialLoad({
         chartName: 'pipelineSuccessRatio',
         hasData: !!pipelineSuccessData.length,
       });
+    }
+  }, [loaded, onInitialLoad, pipelineSuccessData]);
+
+  if (runDataLoading) {
+    return <LoadingInline />;
   }
+
   if ((!loaded && pipelineSuccessData.length) || runDataError || pipelineSuccessData.length === 0) {
     return <GraphEmpty height={DEFAULT_CHART_HEIGHT} />;
   }

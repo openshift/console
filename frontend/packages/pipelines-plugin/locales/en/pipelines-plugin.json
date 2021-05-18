@@ -198,6 +198,7 @@
   "Refresh Interval": "Refresh Interval",
   "Time Range": "Time Range",
   "Pipeline run count chart": "Pipeline run count chart",
+  "Pipeline Runs": "Pipeline Runs",
   "Average PipelineRun duration": "Average PipelineRun duration",
   "Pipeline run duration chart": "Pipeline run duration chart",
   "Pipeline task run duration chart": "Pipeline task run duration chart",
