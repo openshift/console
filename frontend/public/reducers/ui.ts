@@ -8,7 +8,10 @@ import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
 import { isSilenced } from '../components/monitoring/utils';
-import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN } from '../components/monitoring/dashboards/types';
+import {
+  MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+  MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
+} from '../components/monitoring/dashboards/types';
 
 export type UIState = ImmutableMap<string, any>;
 
@@ -158,7 +161,10 @@ export default (state: UIState, action: UIAction): UIState => {
         : {
             isLoading: false,
             options: newOptions,
-            value: newOptions.includes(value) ? value : newOptions[0],
+            value:
+              value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY || newOptions.includes(value)
+                ? value
+                : newOptions[0],
           };
       return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
     }

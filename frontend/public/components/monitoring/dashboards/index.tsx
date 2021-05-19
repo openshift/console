@@ -38,11 +38,13 @@ import BarChart from './bar-chart';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
-import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN, Panel } from './types';
+import {
+  MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+  MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
+  Panel,
+} from './types';
 
 const NUM_SAMPLES = 30;
-
-const VARIABLE_ALL_OPTION_KEY = 'VARIABLE_ALL_OPTION_KEY';
 
 const evaluateTemplate = (
   template: string,
@@ -79,7 +81,7 @@ const evaluateTemplate = (
         return false;
       }
       const replacement =
-        v.value === VARIABLE_ALL_OPTION_KEY
+        v.value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY
           ? // Build a regex that tests for all options. After escaping regex characters, we also
             // escape '\' characters so that they are seen as literal '\'s by the PromQL parser.
             `(${v.options.map((s) => _.escapeRegExp(s).replace(/\\/g, '\\\\')).join('|')})`
@@ -216,7 +218,7 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
     return null;
   }
 
-  const items = includeAll ? { [VARIABLE_ALL_OPTION_KEY]: 'All' } : {};
+  const items = includeAll ? { [MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY]: 'All' } : {};
   _.each(options, (option) => {
     items[option] = option;
   });
@@ -559,13 +561,26 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         const allVariables = {};
         _.each(data?.templating?.list, (v) => {
           if (v.type === 'query' || v.type === 'interval') {
+            // Look for an option that should be selected by default
+            let value = _.find(v.options, { selected: true })?.value;
+
+            // If no default option was found, see if the "All" option should be the by default
+            if (
+              value === undefined &&
+              v.includeAll &&
+              v.current.selected === true &&
+              v.current.value === '$__all'
+            ) {
+              value = MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY;
+            }
+
             allVariables[v.name] = ImmutableMap({
               includeAll: !!v.includeAll,
               isHidden: v.hide !== 0,
               isLoading: v.type === 'query',
               options: _.map(v.options, 'value'),
               query: v.type === 'query' ? v.query : undefined,
-              value: _.find(v.options, { selected: true })?.value || v.options?.[0]?.value,
+              value: value || v.options?.[0]?.value,
             });
           }
         });
@@ -646,6 +661,10 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 };
 
 type TemplateVariable = {
+  current: {
+    selected?: boolean;
+    value?: string;
+  };
   hide: number;
   includeAll: boolean;
   name: string;
