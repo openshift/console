@@ -191,7 +191,14 @@ export const fold = (editor, model, resetMouseLocation: boolean): void => {
   }
 };
 
-export const enableYAMLValidation = (editor, monaco, p2m, monacoURI, yamlService) => {
+export const enableYAMLValidation = (
+  editor,
+  monaco,
+  p2m,
+  monacoURI,
+  yamlService,
+  alreadyInUse: boolean = false,
+) => {
   const pendingValidationRequests = new Map();
 
   const getModel = () => monaco.editor.getModels()[0];
@@ -222,15 +229,21 @@ export const enableYAMLValidation = (editor, monaco, p2m, monacoURI, yamlService
   };
 
   let initialFoldingTriggered = false;
-
-  getModel().onDidChangeContent(() => {
+  const tryFolding = () => {
     const document = createDocument(getModel());
-
     if (!initialFoldingTriggered && document.getText() !== '') {
       fold(editor, getModel(), true);
       initialFoldingTriggered = true;
     }
+  };
+  if (alreadyInUse) {
+    tryFolding();
+  }
 
+  getModel().onDidChangeContent(() => {
+    tryFolding();
+
+    const document = createDocument(getModel());
     cleanPendingValidation(document);
     pendingValidationRequests.set(
       document.uri,
@@ -242,7 +255,7 @@ export const enableYAMLValidation = (editor, monaco, p2m, monacoURI, yamlService
   });
 };
 
-export const registerYAMLinMonaco = (editor, monaco) => {
+export const registerYAMLinMonaco = (editor, monaco, alreadyInUse: boolean = false) => {
   const LANGUAGE_ID = 'yaml';
 
   const m2p = new MonacoToProtocolConverter();
@@ -252,7 +265,7 @@ export const registerYAMLinMonaco = (editor, monaco) => {
 
   // validation is not a 'registered' feature like the others, it relies on calling the yamlService
   // directly for validation results when content in the editor has changed
-  enableYAMLValidation(editor, monaco, p2m, MONACO_URI, yamlService);
+  enableYAMLValidation(editor, monaco, p2m, MONACO_URI, yamlService, alreadyInUse);
 
   /**
    * This exists because react-monaco-editor passes the same monaco
