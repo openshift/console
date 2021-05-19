@@ -89,10 +89,11 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispa
 
   return (
     <Checkbox
+      data-test="enable-taint"
       label={t('ceph-storage-plugin~Enable taint nodes')}
       description={t('ceph-storage-plugin~Selected nodes will be dedicated to OCS use only')}
       className="ocs-enable-taint"
-      id="taint-nodes"
+      id="enable-taint"
       isChecked={state.enableTaint}
       onChange={() =>
         mode === MODES.INTERNAL

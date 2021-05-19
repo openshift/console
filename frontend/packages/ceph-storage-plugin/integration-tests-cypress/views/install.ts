@@ -63,6 +63,20 @@ export const verifyNodeLabels = () => {
   });
 };
 
+export const verifyOCSTaint = () => {
+  cy.log('verify OCS taint is applied to worker nodes');
+  cy.exec('oc get nodes -l "node-role.kubernetes.io/worker" -o json').then((res) => {
+    const { items } = JSON.parse(res.stdout);
+    items.forEach((item) =>
+      expect(
+        item.spec.taints.some(
+          (taint) => taint.key === 'node.ocs.openshift.io/storage' && taint.value === 'true',
+        ),
+      ).toBeTruthy(),
+    );
+  });
+};
+
 export const verifyClusterReadiness = () => {
   // Wait for the storage cluster to reach Ready
   // Storage Cluster CR flickers so wait for 10 seconds
@@ -105,6 +119,11 @@ export const createInternalStorageCluster = (encrypted: boolean) => {
     .first()
     .click();
   cy.byTestDropDownMenu('512Gi').click();
+  // check taint nodes
+  cy.log('Enabling Taint');
+  cy.byTestID('enable-taint')
+    .scrollIntoView()
+    .click();
   wizard.next();
 
   // Step 2
