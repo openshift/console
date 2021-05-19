@@ -26,9 +26,8 @@ const SinkUri: React.FC<SinkUriProps> = ({ source, eventSourceList, cancel, clos
       };
       requests.push(k8sUpdate(modelFor(referenceFor(evSrc)), updatePayload));
     });
-    Promise.race(requests)
+    return Promise.race(requests)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ error: '' });
         close();
       })

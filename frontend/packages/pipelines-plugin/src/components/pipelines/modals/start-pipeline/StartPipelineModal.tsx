@@ -42,17 +42,13 @@ const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps
     secretOpen: false,
   };
 
-  const handleSubmit = (values: StartPipelineFormValues, actions): void => {
-    actions.setSubmitting(true);
-
-    submitStartPipeline(values, pipeline, null, userStartedAnnotation)
+  const handleSubmit = (values: StartPipelineFormValues, actions) => {
+    return submitStartPipeline(values, pipeline, null, userStartedAnnotation)
       .then((res) => {
-        actions.setSubmitting(false);
         onSubmit && onSubmit(res);
         close();
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
         errorModal({ error: err.message });
         close();

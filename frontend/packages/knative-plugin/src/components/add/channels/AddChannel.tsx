@@ -60,13 +60,11 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication })
   };
 
   const handleSubmit = (values, actions) => {
-    createResources(values)
+    return createResources(values)
       .then(() => {
-        actions.setSubmitting(false);
         handleRedirect(values.namespace, perspective, perspectiveExtension);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

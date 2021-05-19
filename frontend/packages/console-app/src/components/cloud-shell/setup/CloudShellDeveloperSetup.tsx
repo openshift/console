@@ -37,7 +37,6 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   const { t } = useTranslation();
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
-    actions.setSubmitting(true);
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
     const namespace = createNamespace ? values.newNamespace : values.namespace;
 
@@ -57,7 +56,6 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
     } catch (err) {
       actions.setStatus({ submitError: err.message });
     }
-    actions.setSubmitting(false);
   };
 
   return (

@@ -48,7 +48,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
 
   const isSubmitDisabled =
     (helmAction === HelmActionType.Upgrade && !dirty) ||
-    status?.isSubmitting ||
+    isSubmitting ||
     !_.isEmpty(errors) ||
     !!chartError;
 
@@ -144,8 +144,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       </FormBody>
       <FormFooter
         handleReset={handleReset}
-        errorMessage={status && status.submitError}
-        isSubmitting={status?.isSubmitting || isSubmitting}
+        errorMessage={status?.submitError}
+        isSubmitting={isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitDisabled}
         resetLabel={t('helm-plugin~Cancel')}

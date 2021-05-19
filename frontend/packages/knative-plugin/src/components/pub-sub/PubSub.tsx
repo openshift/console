@@ -65,9 +65,8 @@ const PubSub: React.FC<PubSubProps> = ({
     },
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    k8sCreate(getResourceModel(), values)
+    return k8sCreate(getResourceModel(), values)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ subscriberAvailable: true, error: '' });
         close();
       })

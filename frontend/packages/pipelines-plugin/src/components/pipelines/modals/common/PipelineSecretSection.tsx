@@ -35,7 +35,6 @@ const PipelineSecretSection: React.FC = () => {
   } = useFormikContext<CommonPipelineModalFormikValues>();
 
   const handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
     const newSecret = {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
@@ -47,9 +46,8 @@ const PipelineSecretSection: React.FC = () => {
       type: values.type,
       stringData: values.formData,
     };
-    k8sCreate(SecretModel, newSecret)
+    return k8sCreate(SecretModel, newSecret)
       .then((resp) => {
-        actions.setSubmitting(false);
         setFieldValue(secretOpenField.name, false);
         associateServiceAccountToSecret(
           resp,
@@ -58,7 +56,6 @@ const PipelineSecretSection: React.FC = () => {
         );
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

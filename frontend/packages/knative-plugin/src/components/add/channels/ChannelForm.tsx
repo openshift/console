@@ -99,7 +99,7 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
         submitLabel={t('knative-plugin~Create')}
-        disableSubmit={!dirty || !_.isEmpty(errors)}
+        disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('knative-plugin~Cancel')}
         sticky
       />

@@ -169,13 +169,11 @@ const AddBareMetalHost: React.FC<AddBareMetalHostProps> = ({
         )
       : createBareMetalHost(opts);
 
-    promise
+    return promise
       .then(() => {
-        actions.setSubmitting(false);
         history.push(resourcePathFromModel(BareMetalHostModel, values.name, namespace));
       })
       .catch((error) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: error.message });
       });
   };

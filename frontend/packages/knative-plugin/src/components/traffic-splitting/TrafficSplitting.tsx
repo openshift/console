@@ -47,9 +47,8 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const obj = constructObjForUpdate(values.trafficSplitting, service);
-    k8sUpdate(ServiceModel, obj)
+    return k8sUpdate(ServiceModel, obj)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ error: '' });
         close();
       })

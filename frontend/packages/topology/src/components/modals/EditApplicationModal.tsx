@@ -58,7 +58,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('topology~Save')}
-        submitDisabled={!dirty}
+        submitDisabled={!dirty || isSubmitting}
         cancel={cancel}
         inProgress={isSubmitting}
         errorMessage={status && status.submitError}
@@ -76,13 +76,11 @@ class EditApplicationModal extends PromiseComponent<
     const applicationKey = values.application.selectedKey;
     const application = applicationKey === UNASSIGNED_KEY ? undefined : values.application.name;
 
-    this.handlePromise(updateResourceApplication(resourceKind, resource, application))
+    return this.handlePromise(updateResourceApplication(resourceKind, resource, application))
       .then(() => {
-        actions.setSubmitting(false);
         this.props.close();
       })
       .catch((errorMessage) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: errorMessage });
       });
   };

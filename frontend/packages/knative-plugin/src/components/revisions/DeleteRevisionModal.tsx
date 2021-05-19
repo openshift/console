@@ -61,6 +61,7 @@ const DeleteRevisionModal: React.FC<Props> = (props) => {
         cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}
         errorMessage={status.error}
+        submitDisabled={isSubmitting}
         submitDanger
       />
     </form>

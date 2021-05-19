@@ -79,7 +79,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       return true;
     });
 
-    actions.setSubmitting(true);
     if (!_.isEmpty(updateRoles)) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding));
     }
@@ -90,9 +89,8 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding));
     }
 
-    Promise.all(roleBindingRequests)
+    return Promise.all(roleBindingRequests)
       .then(() => {
-        actions.setSubmitting(false);
         actions.resetForm({
           values: {
             projectAccess: values.projectAccess,
@@ -101,7 +99,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
         });
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

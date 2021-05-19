@@ -122,7 +122,7 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   }
 
   const deleteRevision = (action: FormikHelpers<FormikValues>) => {
-    k8sKill(RevisionModel, revision)
+    return k8sKill(RevisionModel, revision)
       .then(() => {
         close();
         // If we are currently on the deleted revision's page, redirect to the list page
@@ -140,11 +140,10 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const obj = constructObjForUpdate(values.trafficSplitting, service);
     if (!deleteTraffic || deleteTraffic.percent === 0) {
-      deleteRevision(action);
-      return;
+      return deleteRevision(action);
     }
 
-    k8sUpdate(ServiceModel, obj)
+    return k8sUpdate(ServiceModel, obj)
       .then(() => {
         deleteRevision(action);
       })
