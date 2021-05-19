@@ -487,9 +487,6 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.default,
         ),
     },
-    flags: {
-      required: [MCG_FLAG],
-    },
   },
   {
     type: 'Page/Route',
@@ -506,9 +503,6 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/create-backingstore-page/create-bs-page' /* webpackChunkName: "create-bs" */
         ).then((m) => m.default),
     },
-    flags: {
-      required: [MCG_FLAG],
-    },
   },
   {
     type: 'Page/Route',
@@ -524,9 +518,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/namespace-store/create-namespace-store' /* webpackChunkName: "create-namespace-store" */
         ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
     },
   },
   {
@@ -765,9 +756,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/block-pool/create-block-pool' /* webpackChunkName: "create-block-pool" */
         ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
     },
   },
   {
