@@ -80,7 +80,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         .filter(
           (p) =>
             referenceForModel(p.properties.model) ===
-            (props.kindObj ? referenceFor(props.kindObj) : props.kind),
+            (kindObj ? referenceFor(kindObj) : props.kind),
         )
         .map((p) => ({
           href: p.properties.href,
@@ -91,7 +91,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         .filter(
           (p) =>
             referenceForExtensionModel(p.properties.model) ===
-            (props.kindObj ? referenceFor(props.kindObj) : props.kind),
+            (kindObj ? referenceFor(kindObj) : props.kind),
         )
         .map(({ properties: { href, name, component: Component } }) => ({
           href,
@@ -99,7 +99,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           component: (cProps) => <Component {...cProps} />,
         })),
     ],
-    [resourcePageExtensions, dynamicResourcePageExtensions, props],
+    [resourcePageExtensions, dynamicResourcePageExtensions, kindObj, props.kind],
   );
   const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
   const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {
@@ -122,7 +122,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         resources={[
           {
             kind: props.kind,
-            kindObj: props.kindObj,
+            kindObj,
             name: props.name,
             namespace: props.namespace,
             isList: false,
@@ -140,12 +140,12 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
             props.breadcrumbsFor ??
-            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(props.kindObj, props.match) : undefined)
+            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(kindObj, props.match) : undefined)
           }
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}
           customData={props.customData}
-          badge={props.badge || getBadgeFromType(props.kindObj && props.kindObj.badge)}
+          badge={props.badge || getBadgeFromType(kindObj?.badge)}
           icon={props.icon}
         >
           {props.children}
