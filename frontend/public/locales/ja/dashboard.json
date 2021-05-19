@@ -12,6 +12,8 @@
   "Provider": "プロバイダー",
   "OpenShift version": "OpenShift バージョン",
   "Update channel": "更新チャネル",
+  "Control plane high availability": "コントロールプレーンの高可用性",
+  "No (single master)": "なし (単一マスター)",
   "Kubernetes version": "Kubernetes バージョン",
   "Operators create, configure, and manage applications by extending the Kubernetes API.": "Operator は、Kubernetes API を拡張してアプリケーションを作成し、設定し、管理します。",
   "Operators": "Operator",
@@ -36,9 +38,6 @@
   "Recent events": "最近のイベント",
   "There are no ongoing activities.": "進行中のアクティビティーはありません。",
   "Ongoing": "進行中",
-  "1 Hour": "1 時間",
-  "6 Hours": "6 時間",
-  "24 Hours": "24 時間",
   "No resource quotas": "リソースクォータはありません",
   "View details": "詳細の表示",
   "Alerts could not be loaded.": "アラートを読み込めませんでした。",
@@ -65,5 +64,8 @@
   "{{humanAvailable}} available of {{humanMax}}": "利用可能な {{humanAvailable}}/{{humanMax}}",
   "{{humanAvailable}} available": "利用可能な {{humanAvailable}}",
   "View metrics for {{title}}": "{{title}} のメトリクスの表示",
+  "1 Hour": "1 時間",
+  "6 Hours": "6 時間",
+  "24 Hours": "24 時間",
   "Quick start available": "クイックスタートが利用可能"
 }

@@ -6,6 +6,7 @@
   "Temporary unavailable.": "일시적으로 사용할 수 없습니다.",
   "Disabled or waiting for results.": "비활성화되었거나 결과를 기다리고 있습니다.",
   "Total issue_0": "총 문제 수",
+  "Total issue_1": "총 문제 수",
   "Total Risk": "총 위험 수",
   "Fixable issues": "해결 가능한 문제",
   "View all in OpenShift Cluster Manager": "OpenShift Cluster Manager에서 모두 보기",

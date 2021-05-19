@@ -20,6 +20,5 @@
   "Role": "역할",
   "Cluster-wide Roles": "클러스터 전체 역할",
   "Namespace Roles": "네임 스페이스 역할",
-  "System Roles": "시스템 역할",
-  "Rules by action or resource": "작업 또는 리소스 별 규칙"
+  "System Roles": "시스템 역할"
 }

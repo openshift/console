@@ -4,5 +4,5 @@
   "Size": "크기",
   "Source": "소스",
   "VolumeSnapshotContent": "VolumeSnapshotContent",
-  "VolumeSnapshotClass": "VolumeSnapshotClass"
+  "VolumeSnapshotClass": "볼륨 스냅샷 클래스"
 }

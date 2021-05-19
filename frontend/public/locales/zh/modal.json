@@ -32,7 +32,7 @@
   "This resource is managed by <2></2> and any modifications may be overwritten. Edit the managing resource to preserve changes.": "该资源由<2></2>管理，任何修改都可能会被覆盖。编辑管理资源以保留更改。",
   "Delete": "删除",
   "Expand {{kind}}": "扩展 {{kind}}",
-  "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "增加声明的容量<2>{{resourceName}}。</2>这可能是一个耗时的过程。",
+  "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "增加 PVC <2>{{resourceName}}的容量。</2>请注意容量不能小于当前的 PVC 大小。这可能是一个耗时的过程。",
   "Size": "大小",
   "requestSize": "requestSize",
   "Expand": "扩展",
@@ -42,6 +42,14 @@
   "Labels for": "标签用于",
   "Pod selector": "Pod 选择器",
   "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "确定 pod 集是这个{{kind: props.kind.label.toLowerCase()}}的目标。",
+  "You cannot rollback a paused {{ deployType }}. You must resume it first.": "您无法回滚一个暂停的 {{ deployType }}。您必须首先恢复它。",
+  "Use the following settings from <2>{{resourceName}}</2> when rolling back:": "在回滚时使用 <2>{{resourceName}}</2> 中的以下设置：",
+  "Replica count and selector": "副本数和选择器",
+  "Deployment strategy": "部署策略",
+  "Deployment trigger": "部署触发器",
+  "Are you sure you want to rollback to <2>{{resourceName}}</2>?": "您确定要回滚到 <2>{{resourceName}}</2>吗？",
+  "Rollback": "回滚",
+  "Unable to Rollback": "无法回滚",
   "Duplicate keys found.": "找到重复的键。",
   "Edit annotations": "编辑注解",
   "Edit taints": "编辑污点",
@@ -53,5 +61,6 @@
   "Add more": "添加更多",
   "Edit tolerations": "编辑容限",
   "Tolerations": "容限（Tolerations）",
-  "Operator": "Operator"
+  "Operator": "Operator",
+  "Edit resource limits": "编辑资源限制"
 }

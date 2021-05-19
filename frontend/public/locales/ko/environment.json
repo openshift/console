@@ -29,7 +29,7 @@
   "Remove": "삭제",
   "ConfigMaps": "ConfigMaps",
   "Secrets": "시크릿",
-  "ServiceAccounts": "ServiceAccounts",
+  "ServiceAccounts": "서비스 계정",
   "Select a key": "키 선택",
   "ConfigMap or Secret": "구성 맵 또는 시크릿",
   "Select a resource": "리소스 선택"

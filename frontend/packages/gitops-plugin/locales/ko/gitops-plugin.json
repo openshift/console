@@ -17,6 +17,5 @@
   "{{count, number}} Environment_0": " 환경",
   "{{count, number}} Environment_1": " 환경",
   "No GitOps manifest URLs found": "GitOps 매니페스트 URL을 찾을 수 없습니다",
-  "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다",
-  "{{id}} by {{author}}": "{{id}} ({{author}} 별)"
+  "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다"
 }
