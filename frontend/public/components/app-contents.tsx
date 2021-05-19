@@ -449,7 +449,7 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path={`/k8s/ns/:ns/:plural/:name/${VolumeSnapshotModel.plural}/~new/form`}
+              path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/pvc/:pvcName/~new/form`}
               exact
               loader={() =>
                 import(
@@ -459,7 +459,7 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path="/k8s/ns/:ns/:plural/~new/form"
+              path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/~new/form`}
               exact
               loader={() =>
                 import(
@@ -469,7 +469,7 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path="/k8s/all-namespaces/:plural/~new/form"
+              path={`/k8s/all-namespaces/${VolumeSnapshotModel.plural}/~new/form`}
               exact
               loader={() =>
                 import(

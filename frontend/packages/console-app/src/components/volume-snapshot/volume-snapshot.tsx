@@ -196,7 +196,7 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
   const namespace = props.namespace || props.match?.params?.ns || 'all-namespaces';
   const createProps = {
     to: `/k8s/${namespace === 'all-namespaces' ? namespace : `ns/${namespace}`}/${
-      props.match?.params?.plural
+      VolumeSnapshotModel.plural
     }/~new/form`,
   };
   return (
