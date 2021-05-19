@@ -99,7 +99,6 @@ import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
-
 import { Details } from './alert-details';
 
 export const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
@@ -652,7 +651,6 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
     namespace,
     rule,
     silencesLoaded,
-    location,
   };
 };
 

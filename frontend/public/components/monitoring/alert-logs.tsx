@@ -2,23 +2,35 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { EmptyBox } from '@console/internal/components/utils';
 import { ContainerDropdown, getQueryArgument, ResourceLog, setQueryArgument } from '../utils';
-
 import { Alert, Rule } from './types';
+import { K8sResourceKind } from '../../module/k8s';
+import { containerToLogSourceStatus, containersToStatuses } from './alert-logs-utils';
+import { RootState } from '../../redux';
+import { getURLSearchParams } from '../utils/link';
+import { alertsToProps } from './utils';
 
-import {
-  K8sResourceCommon,
-  Selector,
-  MatchLabels,
-} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+type AlertLogsProps = {
+  alert: Alert;
+  obj: K8sResourceKind;
+  params?: any;
+  rule: Rule;
+  match?: any;
+  customData?: any;
+  filters?: any;
+  loadError?: string;
+  loaded: boolean;
+};
 
-import {
-  alertStateToProps,
-  containerToLogSourceStatus,
-  containersToStatuses,
-} from './alert-logs-utils';
+type AlertDetailProps = {
+  alert: Alert;
+  loaded: boolean;
+  loadError?: string;
+  rule: Rule;
+};
 
-const AlertLogs = (props: AlertLogsProps) => {
+const AlertLogs: React.FC<AlertLogsProps> = (props) => {
   const [containers, setContainers] = React.useState({});
   const [currentKey, setCurrentKey] = React.useState(getQueryArgument('container') || '');
   const [initContainers, setInitContainers] = React.useState({});
@@ -31,7 +43,9 @@ const AlertLogs = (props: AlertLogsProps) => {
       const currentContainers = build?.spec?.containers ?? [];
       const currentInitContainers = build?.spec?.initContainers ?? [];
       if (!currentKey) {
-        const firstContainer = _.find(containersToStatuses(build, currentContainers), { order: 0 });
+        const firstContainer: any = _.find(containersToStatuses(build, currentContainers), {
+          order: 0,
+        } as any);
         setCurrentKey(firstContainer ? firstContainer.name : '');
       }
       setContainers(containersToStatuses(build, currentContainers));
@@ -68,38 +82,27 @@ const AlertLogs = (props: AlertLogsProps) => {
           resourceStatus={currentContainerStatus}
         />
       ) : (
-        <div>No logs for this Alert</div>
+        <EmptyBox label="alert logs" />
       )}
     </div>
   );
 };
 
-export default connect(alertStateToProps)(AlertLogs);
-
-export type AlertLogsProps = {
-  alert: Alert;
-  obj: ResourceKindAlert;
-  params?: any;
-  rule: Rule;
-  match?: any;
-  customData?: any;
-  filters?: any;
-  loadError?: string;
-  loaded: boolean;
-};
-
-export type ResourceKindAlert = K8sResourceCommon & {
-  spec?: {
-    selector?: Selector | MatchLabels;
-    [key: string]: any;
+const alertStateToProps = (state: RootState, props): AlertDetailProps => {
+  const { match } = props;
+  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
+  const { data, loaded, loadError } = alertsToProps(state, perspective);
+  const ruleID = match?.params?.ruleID;
+  const labels = getURLSearchParams();
+  const alerts = _.filter(data, (a) => a.rule.id === ruleID);
+  const rule = alerts?.[0]?.rule;
+  const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
+  return {
+    alert,
+    loaded,
+    loadError,
+    rule,
   };
-  status: { [key: string]: any };
-  data?: { [key: string]: any };
 };
 
-export type AlertDetailProps = {
-  alert: Alert;
-  loaded: boolean;
-  loadError?: string;
-  rule: Rule;
-};
+export default connect(alertStateToProps)(AlertLogs);
