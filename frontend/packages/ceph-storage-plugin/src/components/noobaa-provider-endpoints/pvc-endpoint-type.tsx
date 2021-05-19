@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import * as React from 'react';
-import { FormGroup, InputGroupText, TextInput, InputGroup } from '@patternfly/react-core';
-import { MinusIcon, PlusIcon } from '@patternfly/react-icons';
+import { FormGroup, NumberInput } from '@patternfly/react-core';
 import { RequestSizeInput } from '@console/internal/components/utils';
 import { getName, isObjectSC } from '@console/shared';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
@@ -47,13 +46,9 @@ export const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
     dispatch({ type: 'setVolumeSize', value: input });
   };
 
-  const substract = () => {
-    if (state.numVolumes > 1) {
-      dispatch({ type: 'setVolumes', value: state.numVolumes - 1 });
-    }
-  };
-
   const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
+  const onVolumeChange = (event) =>
+    dispatch({ type: 'setVolumes', value: Number(event.target.value) });
 
   return (
     <>
@@ -63,20 +58,17 @@ export const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
         className="nb-endpoints-form-entry nb-endpoints-form-entry--short"
         isRequired
       >
-        <InputGroup>
-          <InputGroupText>
-            <MinusIcon onClick={substract} />{' '}
-          </InputGroupText>
-          <TextInput
-            value={state.numVolumes}
-            aria-label={t('ceph-storage-plugin~Number of Volumes')}
-          />
-          <InputGroupText>
-            <PlusIcon
-              onClick={() => dispatch({ type: 'setVolumes', value: state.numVolumes + 1 })}
-            />{' '}
-          </InputGroupText>
-        </InputGroup>
+        <NumberInput
+          value={state.numVolumes}
+          onChange={onVolumeChange}
+          onMinus={() => dispatch({ type: 'setVolumes', value: state.numVolumes - 1 })}
+          onPlus={() => dispatch({ type: 'setVolumes', value: state.numVolumes + 1 })}
+          inputName="volume-input"
+          inputAriaLabel="volumes-input"
+          minusBtnAriaLabel="minus"
+          plusBtnAriaLabel="plus"
+          min={1}
+        />
       </FormGroup>
       <FormGroup
         label={t('ceph-storage-plugin~Volume Size')}
