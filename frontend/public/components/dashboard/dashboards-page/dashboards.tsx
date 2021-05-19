@@ -12,6 +12,7 @@ import DashboardGrid, {
   GridPosition,
   GridDashboardCard,
 } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
 import {
   useExtensions,
   DashboardsCard,
@@ -20,6 +21,7 @@ import {
   isDashboardsTab,
 } from '@console/plugin-sdk';
 import { RootState } from '../../../redux';
+import { USER_SETTINGS_KEY } from './cluster-dashboard/getting-started/constants';
 
 export const getCardsOnPosition = (
   cards: DashboardsCard[],
@@ -68,16 +70,22 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     [tabExtensions, cardExtensions],
   );
 
-  const allPages = React.useMemo(
+  const allPages: Page[] = React.useMemo(
     () => [
       {
         href: '',
         name: t('public~Cluster'),
         component: ClusterDashboard,
+        badge: <RestoreGettingStartedButton userSettingsKey={USER_SETTINGS_KEY} />,
       },
       ...pluginPages,
     ],
     [pluginPages, t],
+  );
+
+  const badge = React.useMemo(
+    () => allPages.find((page) => `/dashboards${page.href}` === match.path)?.badge,
+    [allPages, match],
   );
 
   return kindsInFlight && k8sModels.size === 0 ? (
@@ -87,7 +95,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} detail={true} />
+      <PageHeading title={title} detail={true} badge={badge} />
       <HorizontalNav match={match} pages={allPages} noStatusBox />
     </>
   );

@@ -55,6 +55,7 @@ export type Page = {
   name?: string;
   nameKey?: string;
   component?: React.ComponentType<PageComponentProps>;
+  badge?: React.ReactNode;
   pageData?: any;
 };
 

@@ -18,10 +18,8 @@ const EditAlertmanagerYAML = (props) => (
   />
 );
 
-const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) => {
-  const secret: K8sResourceKind = obj;
+const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: secret }) => {
   const [errorMsg, setErrorMsg] = React.useState<string>();
-  const [loadErrorMsg, setloadErrorMsg] = React.useState<string>();
   const [successMsg, setSuccessMsg] = React.useState<string>();
   const { t } = useTranslation();
 
@@ -52,6 +50,8 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
     );
   };
 
+  const { yaml: alertmanagerYAML, errorMessage: loadErrorMsg } = getAlertmanagerYAML(secret);
+
   if (loadErrorMsg) {
     return (
       <Alert
@@ -64,8 +64,6 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
       </Alert>
     );
   }
-
-  const alertmanagerYAML = getAlertmanagerYAML(secret, setloadErrorMsg);
 
   return (
     <>
