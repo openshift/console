@@ -1,5 +1,7 @@
 export const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
 
+export const MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY = 'VARIABLE_ALL_OPTION_KEY';
+
 export type ColumnStyle = {
   alias?: string;
   decimals?: number;
