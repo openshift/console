@@ -2,14 +2,14 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { SectionHeading } from '../utils/headings';
 import { AlertResource, alertSource, alertState, RuleResource } from './utils';
 import { ToggleGraph } from './metrics';
-
 import { Table } from '../factory';
-
 import { PrometheusLabels } from '../graphs';
-
+import { Alert, Rule } from './types';
+import { K8sResourceKind } from '../../module/k8s';
 import {
   getSilenceTableHeader,
   Annotation,
@@ -28,7 +28,22 @@ import {
   Label,
 } from './alerting';
 
-export const Details = (props) => {
+type DetailsPageProps = {
+  alert: Alert;
+  loaded: boolean;
+  loadError?: string;
+  namespace: string;
+  rule: Rule;
+  silencesLoaded: boolean;
+  match?: any;
+  filters?: any;
+  selected?: any;
+  obj: K8sResourceKind;
+  params?: any;
+  customData?: any;
+};
+
+export const Details: React.FC<DetailsPageProps> = (props) => {
   const { alert, namespace, rule, silencesLoaded } = props;
   const state = alertState(alert);
   const { t } = useTranslation();

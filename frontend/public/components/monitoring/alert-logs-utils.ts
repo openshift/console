@@ -1,7 +1,4 @@
 import * as _ from 'lodash-es';
-import { RootState } from '../../redux';
-import { getURLSearchParams } from '../utils/link';
-import { alertsToProps } from './utils';
 
 import {
   LOG_SOURCE_RESTARTING,
@@ -10,9 +7,8 @@ import {
   LOG_SOURCE_WAITING,
 } from '../utils';
 
-import { AlertDetailProps } from './alert-logs';
-
-export const containersToStatuses = ({ status }, containers) => {
+export const containersToStatuses = (build, containers) => {
+  const { status } = build;
   return _.reduce(
     containers,
     (accumulator, { name }, order) => {
@@ -51,21 +47,4 @@ export const containerToLogSourceStatus = (container) => {
   }
 
   return LOG_SOURCE_RUNNING;
-};
-
-export const alertStateToProps = (state: RootState, props): AlertDetailProps => {
-  const { match } = props;
-  const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
-  const { data, loaded, loadError } = alertsToProps(state, perspective);
-  const ruleID = match?.params?.ruleID;
-  const labels = getURLSearchParams();
-  const alerts = _.filter(data, (a) => a.rule.id === ruleID);
-  const rule = alerts?.[0]?.rule;
-  const alert = _.find(alerts, (a) => _.isEqual(a.labels, labels));
-  return {
-    alert,
-    loaded,
-    loadError,
-    rule,
-  };
 };
