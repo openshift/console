@@ -6,7 +6,7 @@ export const useShowAddCardItemDetails = (): [
   React.Dispatch<React.SetStateAction<boolean>>,
 ] => {
   const [showDetails, setShowDetails, showDetailsLoaded] = useUserSettings(
-    'console.addPage.showDetails',
+    'devconsole.addPage.showDetails',
     true,
     true,
   );

@@ -1,0 +1,47 @@
+.ocs-getting-started-grid {
+  --min-column-width: 220px;
+
+  // Increase css specificity to override a generic [class*="pf-c-"] rule.
+  &__header.pf-c-card__header {
+    // Use padding sm instead of lg to fix alignment of the KebabToggle action button.
+    padding-right: var(--pf-global--spacer--sm);
+  }
+  &__tooltip {
+    white-space: pre-line;
+  }
+  &__tooltip-icon {
+    padding-left: var(--pf-global--spacer--sm);
+  }
+
+  &__action-dropdown {
+    .pf-c-dropdown__menu {
+      width: 280px;
+    }
+    .pf-c-dropdown__menu-item-description {
+      white-space: pre-wrap;
+    }
+  }
+
+  // Increase css specificity to override a generic [class*="pf-c-"] rule.
+  &__content.pf-c-card__body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--min-column-width), 1fr));
+
+    // Keep only additional spacing at the bottom. Horizontal spacing is added to the child elements.
+    padding: 0 0 calc(var(--pf-c-card--child--PaddingBottom) / 2) 0;
+    // Hide the border on the right side of the content. Works together wie negative margin below.
+    overflow: hidden;
+
+    // Increase css specificity to override a generic [class*="pf-c-"] rule.
+    > .pf-l-flex.pf-m-grow.pf-m-column {
+      // Show a divider on the right side and hide them in the latest column.
+      border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
+      margin-right: calc(-1 * var(--pf-global--BorderWidth--sm));
+      // Padding around the card. Vertical spacing is splitted on the card and the grid.
+      padding-top: calc(var(--pf-c-card--first-child--PaddingTop) / 2);
+      padding-bottom: calc(var(--pf-c-card--child--PaddingBottom) / 2);
+      padding-left: var(--pf-c-card--child--PaddingLeft);
+      padding-right: var(--pf-c-card--child--PaddingRight);
+    }
+  }
+}

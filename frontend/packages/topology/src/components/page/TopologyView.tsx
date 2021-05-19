@@ -101,7 +101,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const applicationRef = React.useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
-    !!getQueryArgument('catalogSearch'),
+    typeof getQueryArgument('catalogSearch') === 'string',
   );
   const setIsQuickSearchOpenAndFireEvent = React.useCallback(
     (open: boolean) => {
