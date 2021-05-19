@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+import { Location } from 'history';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
@@ -23,6 +24,7 @@ interface MonitoringAlertsDetailsPageProps {
     ns?: string;
     name?: string;
   }>;
+  location?: Location<any>;
 }
 
 const ALERT_DETAILS_PATH = '/dev-monitoring/ns/:ns/alerts/:ruleID';
@@ -36,7 +38,10 @@ const handleNamespaceChange = (newNamespace: string): void => {
   }
 };
 
-const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = ({ match }) => {
+const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = ({
+  match,
+  location,
+}) => {
   const namespace = match.params.ns;
   const { path } = match;
   const dispatch = useDispatch();
@@ -66,7 +71,7 @@ const MonitoringAlertsDetailsPage: React.FC<MonitoringAlertsDetailsPageProps> = 
       hideApplications
       onNamespaceChange={handleNamespaceChange}
     >
-      {path === ALERT_DETAILS_PATH && <AlertsDetailsPage match={match} />}
+      {path === ALERT_DETAILS_PATH && <AlertsDetailsPage match={match} location={location} />}
       {path === RULE_DETAILS_PATH && <AlertRulesDetailsPage match={match} />}
     </NamespacedPage>
   );
