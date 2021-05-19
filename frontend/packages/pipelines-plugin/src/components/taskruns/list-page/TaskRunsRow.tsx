@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { ResourceLink, Timestamp, Kebab, ResourceKebab } from '@console/internal/components/utils';
+import { ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunKind, getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
+import { getTaskRunKebabActions } from '../../../utils/pipeline-actions';
 import { TaskRunModel, PipelineModel } from '../../../models';
 import { tableColumnClasses } from './taskruns-table';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
@@ -65,7 +66,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
       <Timestamp timestamp={obj?.status?.startTime} />
     </TableData>
     <TableData className={tableColumnClasses[7]}>
-      <ResourceKebab actions={Kebab.factory.common} kind={taskRunsReference} resource={obj} />
+      <ResourceKebab actions={getTaskRunKebabActions()} kind={taskRunsReference} resource={obj} />
     </TableData>
   </TableRow>
 );

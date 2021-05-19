@@ -258,3 +258,5 @@ export const getPipelineRunKebabActions = (redirectReRun?: boolean): KebabAction
   (model, pipelineRun) => stopPipelineRun(model, pipelineRun),
   Kebab.factory.Delete,
 ];
+
+export const getTaskRunKebabActions = (): KebabAction[] => [Kebab.factory.Delete];
