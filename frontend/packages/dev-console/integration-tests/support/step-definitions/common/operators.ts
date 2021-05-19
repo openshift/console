@@ -1,6 +1,11 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { operators, switchPerspective } from '../../constants';
-import { perspective, operatorsPage, installOperator } from '../../pages';
+import {
+  perspective,
+  operatorsPage,
+  installOperator,
+  verifyAndInstallKnativeOperator,
+} from '../../pages';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user has installed Web Terminal operator', () => {
@@ -19,4 +24,8 @@ Given('user has installed Web Terminal operator', () => {
       cy.log('Serverless operator is installed in cluster');
     }
   });
+});
+
+Given('user has installed OpenShift Serverless Operator', () => {
+  verifyAndInstallKnativeOperator();
 });

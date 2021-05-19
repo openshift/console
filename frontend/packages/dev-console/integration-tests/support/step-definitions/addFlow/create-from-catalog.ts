@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { addPage, catalogPage } from '../../pages';
+import { addPage, catalogPage, gitPage } from '../../pages';
 import { addOptions, pageTitle } from '../../constants';
 import { catalogPO } from '../../pageObjects';
 
@@ -24,7 +24,10 @@ When('user searches and selects {string} card from catalog page', (cardName: str
 
 When('user searches and selects Template card {string} from catalog page', (cardName: string) => {
   catalogPage.search(cardName);
-  detailsPage.titleShouldContain(pageTitle.Templates).should('be.visible');
+  detailsPage
+    .titleShouldContain(pageTitle.Templates)
+    .scrollIntoView()
+    .should('be.visible');
   catalogPage.selectCardInCatalog(cardName);
 });
 
@@ -37,6 +40,10 @@ When(
   },
 );
 
+When('user enters workload name as {string}', (name: string) => {
+  gitPage.enterWorkloadName(name);
+});
+
 When('user clicks Create Application button on side bar', () => {
   cy.get(catalogPO.sidePane.createApplication)
     .scrollIntoView()
@@ -47,7 +54,7 @@ When('user enters Git Repo url in s2i builder image page as {string}', (gitRepoU
   cy.get(catalogPO.s2I.gitRepoUrl).type(gitRepoUrl);
 });
 
-When('user clicks create button on Instantiate Template page with default values', () => {
+When('user clicks create button on Instantiate Template page', () => {
   cy.get(catalogPO.create)
     .scrollIntoView()
     .click();

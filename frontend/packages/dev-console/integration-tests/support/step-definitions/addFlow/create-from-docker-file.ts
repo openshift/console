@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage, addPage } from '../../pages';
+import { gitPage, addPage, devFilePage } from '../../pages';
 import { addOptions } from '../../constants';
 
 Given('user is on Import from Docker file page', () => {
@@ -8,7 +8,7 @@ Given('user is on Import from Docker file page', () => {
 
 When('user enters docker git url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage();
 });
 
 When('user selects {string} radio button in Resource type section', (resourceType: string) => {
@@ -30,3 +30,7 @@ Then(
     gitPage.clickCancel();
   },
 );
+
+When('user enters Name as {string} in Docker file page', (name: string) => {
+  gitPage.enterComponentName(name);
+});

@@ -51,6 +51,7 @@ export const topologyPO = {
     detailsTab: {
       labels: 'dt[data-test-selector$="Labels"]',
       annotations: '[data-test-selector="details-item-label__Annotations"]',
+      labelsEdit: '[data-test="Labels-details-item__edit-button"]',
     },
     resourcesTab: {
       startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',

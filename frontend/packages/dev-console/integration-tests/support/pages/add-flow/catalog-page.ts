@@ -57,7 +57,12 @@ export const catalogPage = {
       }
       case catalogTypes.ManagedServices:
       case 'Managed Services': {
-        cy.get(catalogPO.catalogTypes.managedServices).check();
+        cy.get(catalogPO.catalogTypes.managedServices).click();
+        break;
+      }
+      case catalogTypes.EventSources:
+      case 'Event Sources': {
+        cy.get(catalogPO.catalogTypes.eventSources).click();
         break;
       }
       default: {
@@ -66,41 +71,11 @@ export const catalogPage = {
     }
   },
   selectTemplateTypes: (type: string | catalogTypes) => {
-    switch (type) {
-      case 'CI/CD': {
-        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
-          .contains('CI/CD')
-          .click();
-        break;
-      }
-      case 'Databases': {
-        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
-          .contains('Databases')
-          .click();
-        break;
-      }
-      case 'Languages': {
-        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
-          .contains('Languages')
-          .click();
-        break;
-      }
-      case 'Middleware': {
-        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
-          .contains('Middleware')
-          .click();
-        break;
-      }
-      case 'Other': {
-        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
-          .contains('Other')
-          .click();
-        break;
-      }
-      default: {
-        throw new Error("Couldn't find that type");
-      }
-    }
+    cy.get(catalogPO.catalogTypeLink)
+      .contains(type)
+      .scrollIntoView()
+      .click();
+    cy.log(`Select ${type} from Types section`);
   },
   selectKnativeServingCard: () =>
     cy
@@ -146,6 +121,10 @@ export const catalogPage = {
       }
       case catalogCards.nginxHTTPServer: {
         cy.get(catalogPO.cards.nginxHTTPServer).click();
+        break;
+      }
+      case catalogCards.knativeKafka: {
+        cy.get(catalogPO.cards.knativeKafka).click();
         break;
       }
       case catalogCards.jenkins: {
@@ -207,6 +186,35 @@ export const catalogPage = {
     catalogPage.clickOnInstallButton();
     app.waitForDocumentLoad();
     topologyHelper.verifyWorkloadInTopologyPage(releaseName);
+  },
+  verifyCategories: () => {
+    const categories = ['All items', 'CI/CD', 'Databases', 'Languages', 'Middleware', 'Other'];
+    cy.get(
+      'ul.vertical-tabs-pf.restrict-tabs li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty >a',
+    ).each(($el) => {
+      expect(categories).toContain($el.text());
+    });
+  },
+  verifyTypes: () => {
+    const categories = [
+      'Builder Images',
+      'Devfiles',
+      'Event Sources',
+      'Helm Charts',
+      'Operator Backed',
+      'Templates',
+    ];
+    cy.get('ul.vertical-tabs-pf.restrict-tabs')
+      .eq(6)
+      .find('li a')
+      .each(($el) => {
+        expect(categories).toContain($el.text());
+      });
+  },
+  verifyCardTypeOfAllCards: (cardType: string) => {
+    cy.get(catalogPO.card).each(($card) => {
+      expect($card.find(catalogPO.cardBadge).text()).toContain(cardType);
+    });
   },
 };
 

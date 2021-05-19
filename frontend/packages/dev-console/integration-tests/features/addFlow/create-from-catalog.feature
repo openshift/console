@@ -8,60 +8,28 @@ Feature: Create Application from Catalog file
               And user is at Add page
 
 
-        Scenario: Developer Catalog page details: A-12-TC04
-             When user selects From Catalog card from add page
-             Then user will be redirected to Developer Catalog page
-        # Check boxes are removed in 4.7 release, due to that below step is not applcable
-        # And user is able to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
-              And search option is displayed in Developer Catalog page
-              And GroupBy filter is selected with default option A-Z
-
-
-        Scenario Outline: Filter the cards with type
-            Given user is at Developer Catalog page
-             When user selects "<type>" option from Type section
-             Then user is able to see cards related to "<type>"
-
-        Examples:
-                  | type           |
-                  | Helm Charts    |
-                  | Builder Images |
-                  | Template       |
-
-
-        Scenario: Filter the catalog using GroupBy option
-            Given user is at Developer Catalog page
-             When user searches "node" card from catalog page
-             Then user is able to see cards with name containing "node"
-
-
         @regression
-        Scenario: Create the workload using Builder Image: A-12-TC02
+        Scenario: Create the workload using Builder Image: A-01-TC01
             Given user is at Developer Catalog page
              When user selects "Builder Images" option from Type section
               And user searches and selects Builder Image card "Node.js" from catalog page
               And user clicks Create Application button on side bar
               And user enters Git Repo url in s2i builder image page as "https://github.com/sclorg/nodejs-ex.git"
+              And user enters Application name as "builder-app"
+              And user enters workload name as "builder"
               And user clicks create button
              Then user will be redirected to Topology page
-              And user is able to see workload "nodejs-ex-git" in topology page
-
-
-        @manual
-        Scenario: Create the workload using Service Class : A-12-TC03
-            Given user is at Developer Catalog page
-             When user selects "Service Class" option from Type section
-             Then user is able to see cards with name containing "node"
+              And user is able to see workload "builder" in topology page
 
 
         @smoke
-        Scenario Outline: Deploy Application using Catalog Template "<template_type>"
+        Scenario Outline: Deploy Application using Catalog Template "<template_type>": A-01-TC02
             Given user is at Developer Catalog page
               And user is at Templates page
              When user selects "<template_type>" from Templates type
               And user searches and selects Template card "<card_name>" from catalog page
               And user clicks Instantiate Template button on side bar
-              And user clicks create button
+              And user clicks create button on Instantiate Template page
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
 

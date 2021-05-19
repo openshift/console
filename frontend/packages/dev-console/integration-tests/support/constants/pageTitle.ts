@@ -42,4 +42,5 @@ export const pageTitle = {
   RedHatOpenShiftServerless: 'Red Hat OpenShift Serverless',
   CreateKnativeServing: 'Create Knative Serving',
   CreateKnativeEventing: 'Create Knative Eventing',
+  UploadJarFile: 'Upload JAR file',
 };

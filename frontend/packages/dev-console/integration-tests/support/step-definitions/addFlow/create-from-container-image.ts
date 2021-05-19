@@ -1,7 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addPage, containerImagePage, topologyPage, gitPage } from '../../pages';
-import { addOptions } from '../../constants';
+import { addOptions, pageTitle } from '../../constants';
 import { gitPO } from '../../pageObjects';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 Given('user is at Deploy Image page', () => {
   addPage.selectCardFromOptions(addOptions.ContainerImage);
@@ -66,3 +67,55 @@ When('user selects tag as {string} from internal registry', (tag: string) => {
 When('user clicks Cancel button on Deploy Image page', () => {
   gitPage.clickCancel();
 });
+
+When('user selects the {string} from Runtime Icon dropdown', (runTimeIcon: string) => {
+  containerImagePage.selectRunTimeIcon(runTimeIcon);
+});
+
+When('user selects the application {string} from Application dropdown', (appName: string) => {
+  containerImagePage.selectOrCreateApplication(appName);
+});
+
+Then(
+  'user will see the deployed image {string} with {string} icon',
+  (imageName: string, runTimeIcon: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(imageName);
+    topologyPage.verifyRunTimeIconForContainerImage(runTimeIcon);
+  },
+);
+
+Given(
+  'user has deployed container Image {string} from external registry',
+  (externalRegistryName: string) => {
+    containerImagePage.createContainerImageFromExternalRegistry(externalRegistryName);
+  },
+);
+
+Given(
+  'topology page has a deployed image {string} with Runtime Icon {string}',
+  (imageName: string, runTimeIcon: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(imageName);
+    topologyPage.verifyRunTimeIconForContainerImage(runTimeIcon);
+  },
+);
+
+When('user right clicks on the node {string} to open context menu', (nodeName: string) => {
+  topologyPage.rightClickOnNode(nodeName);
+});
+
+When('user selects Edit imagename {string} option', (imageName: string) => {
+  cy.byTestActionID(`Edit ${imageName}`).click();
+});
+
+When('user updates the Runtime icon to {string}', (runTimeIcon: string) => {
+  detailsPage.titleShouldContain(pageTitle.ContainerImage);
+  containerImagePage.selectRunTimeIcon(runTimeIcon);
+});
+
+Then(
+  'user will see the deployment image {string} icon updated to {string} Icon',
+  (imageName: string, runTimeIcon: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(imageName);
+    topologyPage.verifyRunTimeIconForContainerImage(runTimeIcon);
+  },
+);
