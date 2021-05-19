@@ -107,7 +107,7 @@ export const normalizeHelmCharts = (
         ];
 
         const helmChart = {
-          uid: digest,
+          uid: `${chartRepoName}--${digest}`,
           type: 'HelmChart',
           name: displayName,
           title,
