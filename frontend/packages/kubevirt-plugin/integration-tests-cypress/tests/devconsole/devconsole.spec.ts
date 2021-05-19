@@ -66,7 +66,6 @@ describe('test dev console', () => {
   describe('create vm in dev console', () => {
     it('ID(CNV-5699) create virtual machine', () => {
       cy.byLegacyTestID(addHeader).click();
-      cy.contains('Quick Starts').should('be.visible');
       cy.get('.odc-namespaced-page__content').scrollTo('bottom');
       cy.contains('Virtual Machines')
         .should('be.visible')
