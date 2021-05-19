@@ -3,7 +3,7 @@ Feature: Navigations on Helm Chart
               As a user, I want to navigate to different pages related to Helm Charts
 
         Background:
-            Given user has created or selected namespace "aut-helm"
+            Given user has created or selected namespace "aut-helm-navigation"
 
 
         @smoke
@@ -35,8 +35,7 @@ Feature: Navigations on Helm Chart
         Scenario: Install Helm Chart: HR-02-TC01, HR-02-TC03, HR-02-TC06
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches "Nodejs Ex K v0.2.1" card from catalog page
-              And user selects "Nodejs Ex K v0.2.1" helm chart from catalog page
+              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the Install button
              Then user will be redirected to Topology page
@@ -45,7 +44,8 @@ Feature: Navigations on Helm Chart
 
         @smoke
         Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-11-TC01
-            Given helm chart is installed
+            Given user has installed helm chart
+              And user is at the Helm page
              When user clicks on the Helm tab
              Then user will be redirected to Helm releases page
               And user will see the helm charts listed
@@ -60,7 +60,6 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Deployed" are listed
 
 
-        @regression
         Scenario: Filter out failed Helm Charts: HR-11-TC03
             Given user is at the Helm page
              When user clicks on the filter drop down
@@ -69,7 +68,6 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Failed" are listed
 
 
-        @regression
         Scenario: Filter out other Helm charts : HR-11-TC04
             Given user is at the Helm page
              When user clicks on the filter drop down
@@ -82,15 +80,17 @@ Feature: Navigations on Helm Chart
         Scenario: Select all filters: HR-11-TC05
             Given user is at the Helm page
              When user clicks on the filter drop down
-              And user selects checkbox for the "all" Helm charts
-             Then the checkbox for the "all" Helm chart is checked
+              And user selects checkbox for the "All" Helm charts
+             Then the checkbox for the "All" Helm chart is checked
 
 
         @regression
         Scenario: Clear all filters: HR-11-TC06
-             When user selects checkbox for the "all" Helm charts
-             When user clicks on the clear all filters button
-             Then "all" filters selected will get removed
+            Given user is at the Helm page
+             When user clicks on the filter drop down
+              And user selects checkbox for the "All" Helm charts
+              And user clicks on the clear all filters button
+             Then "All" filters selected will get removed
 
 
         @regression
@@ -115,12 +115,4 @@ Feature: Navigations on Helm Chart
               And user will see the Resources tab
               And user will see the Revision History tab
               And user will see the Release Notes tab
-              And user will see the Actions drop down menu
-
-
-        @smoke
-        Scenario: Actions menu of Helm Details page : P-03-TC10
-            Given user is at the Helm page
-             When user clicks on the helm release name "nodejs-ex-k"
-             When user clicks Actions menu in Helm Details page
-             Then Actions menu display with options Upgrade, Rollback, and Uninstall Helm Release
+              And user will see the Actions drop down menu with options Upgrade, Rollback, and Uninstall Helm Release

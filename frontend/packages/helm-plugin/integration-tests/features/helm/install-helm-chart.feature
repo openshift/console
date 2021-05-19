@@ -3,7 +3,7 @@ Feature: Install the Helm Release
               As a user, I want to install the helm release
 
         Background:
-            Given user has created or selected namespace "aut-helm"
+            Given user has created or selected namespace "aut-helm-chart"
 
 
         @smoke
@@ -27,10 +27,8 @@ Feature: Install the Helm Release
         @regression
         Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-03
             Given user is at Add page
-             When user selects "From Catalog" card from add page
-              And user selects "Helm Charts" option from Type section
-              And user searches "Nodejs Ex K v0.2.1" card from catalog page
-              And user selects "Nodejs Ex K v0.2.1" helm chart from catalog page
+             When user selects "Helm Chart" card from add page
+              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user selects YAML view
               And user selects the Chart Version "0.2.1 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
@@ -42,25 +40,24 @@ Feature: Install the Helm Release
 
         @smoke
         Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
-            Given user has created or selected namespace "aut-helm-installation"
-              And user is at Add page
+            Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs v0.0.1" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
-              And user enters Release Name as "nodejs-example"
+              And user enters Release Name as "nodejs-example-1"
               And user clicks on the Install button
              Then user will be redirected to Topology page
-              And Topology page have the helm chart workload "nodejs-example"
+              And Topology page have the helm chart workload "nodejs-example-1"
 
 
         @regression
         Scenario: Chart versions drop down menu
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
-              And user will see the information of all the chart versions together
+              And user searches and selects "Quarkus v0.0.3" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
-             Then user will see the chart version dropdown
+              And user clicks on the chart versions dropdown menu
+             Then user will see the information of all the chart versions
 
 
         @regression @manual

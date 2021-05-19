@@ -4,19 +4,21 @@ import { addPage } from './add-page';
 import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { helmPO } from '../../pageObjects/helm-po';
-import { app } from '../app';
+import { app, navigateTo } from '../app';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { devNavigationMenu } from '../../constants';
 
 export const catalogPage = {
   verifyTitle: () => detailsPage.titleShouldContain('Developer Catalog'),
   verifyPageTitle: (page: string) => detailsPage.titleShouldContain(page),
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
   isCardsDisplayed: () => cy.get(catalogPO.card).should('be.visible'),
-  search: (keyword: string) =>
-    cy
-      .get(catalogPO.search)
+  search: (keyword: string) => {
+    cy.get('.skeleton-catalog--grid').should('not.exist');
+    cy.get(catalogPO.search)
       .clear()
-      .type(keyword),
+      .type(keyword);
+  },
   verifyDialog: () => cy.get(catalogPO.sidePane.dialog).should('be.visible'),
   verifyInstallHelmChartPage: () =>
     cy
@@ -97,6 +99,7 @@ export const catalogPage = {
       .clear()
       .type(releaseName),
   selectCardInCatalog: (card: catalogCards | string) => {
+    cy.get('.skeleton-catalog--grid').should('not.exist');
     cy.byLegacyTestID('perspective-switcher-toggle').click();
     switch (card) {
       case catalogCards.mariaDB || 'MariaDB': {
@@ -132,6 +135,10 @@ export const catalogPage = {
           .contains('Jenkins')
           .first()
           .click();
+        break;
+      }
+      case 'Nodejs Ex K v0.2.1': {
+        cy.get(catalogPO.cards.helmNodejs).click();
         break;
       }
       default: {
@@ -173,6 +180,7 @@ export const catalogPage = {
     releaseName: string = 'nodejs-ex-k',
     helmChartName: string = 'Nodejs Ex K v0.2.1',
   ) => {
+    navigateTo(devNavigationMenu.Add);
     app.waitForDocumentLoad();
     addPage.selectCardFromOptions(addOptions.HelmChart);
     catalogPage.verifyPageTitle('Helm Charts');

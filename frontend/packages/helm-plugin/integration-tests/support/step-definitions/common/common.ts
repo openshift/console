@@ -15,7 +15,7 @@ import {
   addOptions,
   catalogCards,
 } from '@console/dev-console/integration-tests/support/constants';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -91,7 +91,7 @@ When('user switches to the {string} tab', (tab: string) => {
 });
 
 When('user clicks on the link for the {string} of helm release', (resource: string) => {
-  topologySidePane.selectResource(resource);
+  topologySidePane.selectResource(resource, Cypress.env('NAMESPACE'));
 });
 
 Given('user is at Add page', () => {

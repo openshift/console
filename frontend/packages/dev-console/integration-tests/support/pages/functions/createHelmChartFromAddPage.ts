@@ -1,8 +1,6 @@
-import { catalogPage } from '../add-flow/catalog-page';
-import { addPage } from '../add-flow/add-page';
-import { addOptions } from '../../constants/add';
-import { pageTitle } from '../../constants/pageTitle';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { catalogPage, addPage } from '../add-flow';
+import { addOptions, pageTitle } from '../../constants';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 export const createHelmChartFromAddPage = (
   releaseName: string = 'nodejs-ex-k',
@@ -10,7 +8,7 @@ export const createHelmChartFromAddPage = (
 ) => {
   addPage.verifyCard('Helm Chart');
   addPage.selectCardFromOptions(addOptions.HelmChart);
-  detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
+  detailsPage.titleShouldContain(pageTitle.HelmCharts);
   catalogPage.isCardsDisplayed();
   catalogPage.search(helmChartName);
   catalogPage.selectHelmChartCard(helmChartName);

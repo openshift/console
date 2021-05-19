@@ -1,23 +1,19 @@
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { pageTitle as helmPageTitle } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const helmDetailsPage = {
-  verifyTitle: () => detailsPage.titleShouldContain(helmPageTitle.HelmReleaseDetails),
+  verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),
   verifyResourcesTab: () => cy.get(helmPO.resourcesTab).should('be.visible'),
-  verifyReleaseNotesTab: () =>
-    cy.byLegacyTestID('horizontal-link-Release Notes').should('be.visible'),
+  verifyReleaseNotesTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
   verifyActionsDropdown: () => cy.byLegacyTestID('actions-menu-button').should('be.visible'),
   verifyRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
   clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
   verifyActionsInActionMenu: () => {
+    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
     cy.byLegacyTestID('action-items')
-      .find('li')
+      .children()
       .each(($el) => {
-        expect($el.text()).toEqual('Upgrade');
-        expect($el.text()).toEqual('Rollback');
-        expect($el.text()).toEqual('Uninstall Helm Release');
+        expect(actions).toContain($el.text());
       });
   },
   verifyFieldValue: (fieldName: string, fieldValue: string) => {
