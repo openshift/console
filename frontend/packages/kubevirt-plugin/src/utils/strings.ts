@@ -26,6 +26,7 @@ export const EXAMPLE_CONTAINER = 'registry.redhat.io/rhel8/rhel-guest-image';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =
   'https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.2/x86_64/product-software';
+export const WINDOWS_IMAGE_LINK = 'https://www.microsoft.com/en-us/software-download/windows10ISO';
 export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';

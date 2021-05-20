@@ -13,6 +13,8 @@ import { BootSourceForm } from '../forms/boot-source-form';
 import { BootSourceAction, BootSourceState } from '../forms/boot-source-form-reducer';
 
 import './tab.scss';
+import { getParameterValue } from '../../../selectors/selectors';
+import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../../../constants/vm/constants';
 
 type BootSourceProps = {
   template: TemplateItem;
@@ -23,6 +25,10 @@ type BootSourceProps = {
 export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatch }) => {
   const { t } = useTranslation();
   const name = getTemplateName(template?.variants[0]);
+  const baseImageName = getParameterValue(
+    template?.variants[0],
+    TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  );
 
   const [scAllowed, scAllowedLoading] = useAccessReview2({
     group: StorageClassModel.apiGroup,
@@ -61,6 +67,7 @@ export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatc
               storageClassesLoaded={scLoaded}
               scAllowed={scAllowed}
               scAllowedLoading={scAllowedLoading}
+              baseImageName={baseImageName}
             />
           </GridItem>
         </Grid>
