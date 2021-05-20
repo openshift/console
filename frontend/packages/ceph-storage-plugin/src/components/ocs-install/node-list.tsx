@@ -16,7 +16,7 @@ import { Table } from '@console/internal/components/factory';
 import { IRow, sortable } from '@patternfly/react-table';
 import { getConvertedUnits, nodesWithoutTaints, getZone } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
-import { GetRows, NodeTableProps } from '../../types';
+import { GetNodeRows, NodeTableProps } from '../../types';
 import './ocs-install.scss';
 
 const tableColumnClasses = [
@@ -29,7 +29,7 @@ const tableColumnClasses = [
 
 // Same columns are used for attached devices mode tables
 
-const getRows: GetRows = (
+const getRows: GetNodeRows = (
   { componentProps },
   visibleRows,
   setVisibleRows,

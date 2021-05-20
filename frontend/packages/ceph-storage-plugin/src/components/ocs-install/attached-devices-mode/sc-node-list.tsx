@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { IRow, sortable } from '@patternfly/react-table';
+import { IRow, sortable, Table as PfTable, TableHeader, TableBody } from '@patternfly/react-table';
+import { Spinner, Bullseye, EmptyState, Title, Button } from '@patternfly/react-core';
 import {
   getName,
   getNodeRoles,
@@ -11,9 +11,8 @@ import {
 } from '@console/shared';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
-import { NodeKind } from '@console/internal/module/k8s';
 import { getConvertedUnits, getZone } from '../../../utils/install';
-import { GetRows, NodeTableProps } from '../../../types';
+import { GetNodeRows, NodeTableProps, NodeKindWithLoading } from '../../../types';
 import '../ocs-install.scss';
 
 const tableColumnClasses = [
@@ -24,30 +23,114 @@ const tableColumnClasses = [
   classNames('pf-u-w-inherit'),
 ];
 
-const getRows: GetRows = ({ componentProps }) => {
+const EmptyMessage: React.FC = () => {
+  const { t } = useTranslation();
+  const [retry, setRetry] = React.useState(false);
+
+  React.useEffect(() => {
+    let timer = null;
+    if (!retry) {
+      timer = setTimeout(() => {
+        setRetry(true);
+      }, 180000);
+    }
+    return () => timer && clearTimeout(timer);
+  }, [retry]);
+
+  const cells = [
+    t('ceph-storage-plugin~Name'),
+    t('ceph-storage-plugin~Role'),
+    t('ceph-storage-plugin~CPU'),
+    t('ceph-storage-plugin~Memory'),
+    t('ceph-storage-plugin~Zone'),
+  ];
+  const rows = [
+    {
+      heightAuto: true,
+      cells: [
+        {
+          props: { colSpan: 6 },
+          title: (
+            <Bullseye>
+              <EmptyState>
+                {retry ? (
+                  <>
+                    {t('ceph-storage-plugin~Timed out fetching node list.')}
+                    <Button type="button" onClick={() => setRetry(false)} variant="link" isInline>
+                      {t('ceph-storage-plugin~Try again')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Spinner size="md" />
+                    <Title size="md" headingLevel="h4">
+                      {t(
+                        'ceph-storage-plugin~PVs are being provisioned on the selected nodes. Node list will be loaded in a few moments.',
+                      )}
+                    </Title>
+                  </>
+                )}
+              </EmptyState>
+            </Bullseye>
+          ),
+        },
+      ],
+    },
+  ];
+  return (
+    <PfTable cells={cells} rows={rows}>
+      <TableHeader />
+      <TableBody />
+    </PfTable>
+  );
+};
+
+const LoadingItem: React.FC = () => <div className="skeleton-text" />;
+
+const loadingCells: IRow['cells'] = [
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+];
+
+const getRows: GetNodeRows<NodeKindWithLoading> = ({ componentProps }) => {
   const { data } = componentProps;
 
   const rows = data.map((node) => {
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
-    const cells: IRow['cells'] = [
-      {
-        title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
-      },
-      {
-        title: roles.join(', ') || '-',
-      },
-      {
-        title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
-      },
-      {
-        title: `${getConvertedUnits(memSpec)}`,
-      },
-      {
-        title: getZone(node) || '-',
-      },
-    ];
+    const cells: IRow['cells'] = !node?.loading
+      ? [
+          {
+            title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
+          },
+          {
+            title: roles.join(', ') || '-',
+          },
+          {
+            title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
+          },
+          {
+            title: `${getConvertedUnits(memSpec)}`,
+          },
+          {
+            title: getZone(node) || '-',
+          },
+        ]
+      : loadingCells;
     return {
       cells,
       props: {
@@ -59,22 +142,13 @@ const getRows: GetRows = ({ componentProps }) => {
   return rows;
 };
 
-const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
+type AttachedDevicesNodeTableProps = NodeTableProps<NodeKindWithLoading> & {
+  disableCustomLoading?: boolean;
+};
+
+const AttachedDevicesNodeTable: React.FC<AttachedDevicesNodeTableProps> = (props) => {
   const { t } = useTranslation();
-
-  const { data, customData } = props;
-  const { filteredNodes, nodes = [], setNodes } = customData;
-  const tableData: NodeKind[] = data.filter(
-    (node: NodeKind) =>
-      filteredNodes.includes(getName(node)) ||
-      filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
-  );
-
-  React.useEffect(() => {
-    if (setNodes && !_.isEqual(tableData, nodes)) {
-      setNodes(tableData);
-    }
-  }, [tableData, setNodes, nodes, filteredNodes]);
+  const { disableCustomLoading = false } = props;
 
   const getColumns = () => [
     {
@@ -107,10 +181,10 @@ const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
         {...props}
         aria-label={t('ceph-storage-plugin~Node Table')}
         data-test-id="attached-devices-nodes-table"
-        data={tableData}
         Rows={getRows}
         Header={getColumns}
         virtualize={false}
+        NoDataEmptyMsg={!disableCustomLoading ? EmptyMessage : null}
       />
     </div>
   );
