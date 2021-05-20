@@ -42,6 +42,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   const { t } = useTranslation();
   const isValid = values.resourceName === resourceName;
   const submitLabel = t(actionLabelKey);
+  const cancelLabel = t('console-shared~Close');
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>
@@ -63,6 +64,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
       </ModalBody>
       <ModalSubmitFooter
         submitText={submitLabel}
+        cancelText={cancelLabel}
         submitDisabled={(status && !!status.submitError) || !isValid || isSubmitting}
         cancel={cancel}
         inProgress={isSubmitting}
