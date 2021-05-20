@@ -82,18 +82,21 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     enableMinimal,
     stretchClusterChecked,
     enableFlexibleScaling,
-    lvsSelectNodes,
-    lvsAllNodes,
+    lvsSelectNodes = [],
+    lvsAllNodes = [],
   } = state;
 
   const memoizedPvData = useDeepCompareMemoize(pvData, true);
   const memoizedNodesData = useDeepCompareMemoize(nodesData, true);
   const selectedNodes = [...lvsSelectNodes, ...lvsAllNodes].map(getName);
 
-  const pvs: K8sResourceKind[] = getSCAvailablePVs(memoizedPvData, scName);
-  const associatedNodes = getAssociatedNodes(memoizedPvData);
+  const pvs: K8sResourceKind[] = React.useMemo(() => getSCAvailablePVs(memoizedPvData, scName), [
+    memoizedPvData,
+    scName,
+  ]);
+  const associatedNodes = getAssociatedNodes(pvs);
   const tableData: NodeKindWithLoading[] =
-    associatedNodes?.length > 0 || !pvLoaded || !nodesLoaded
+    associatedNodes?.length > 0 && pvLoaded && nodesLoaded
       ? memoizedNodesData
           ?.filter((node) => selectedNodes.includes(getName(node)))
           .map((node) =>
@@ -104,8 +107,8 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           )
           .sort((a: NodeKindWithLoading, b: NodeKindWithLoading) => {
             if (a?.loading && b?.loading) return 0;
-            if (a?.loading && !b?.loading) return -1;
-            if (!a?.loading && b?.loading) return 1;
+            if (a?.loading && !b?.loading) return 1;
+            if (!a?.loading && b?.loading) return -1;
             return 0;
           })
       : [];
@@ -125,7 +128,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   );
 
   React.useEffect(() => {
-    if (pvs) {
+    if (pvs?.length) {
       dispatch({ type: 'setAvailablePvsCount', value: pvs.length });
     }
   }, [pvs, dispatch]);
