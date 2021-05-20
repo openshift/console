@@ -422,6 +422,7 @@
   "CPU": "CPU",
   "Memory": "Memory",
   "Zone": "Zone",
+  "PVs are being provisioned on the selected nodes. Node list will be loaded in a few moments.": "PVs are being provisioned on the selected nodes. Node list will be loaded in a few moments.",
   "Node Table": "Node Table",
   "StorageCluster exists": "StorageCluster exists",
   "Back to operator page": "Back to operator page",

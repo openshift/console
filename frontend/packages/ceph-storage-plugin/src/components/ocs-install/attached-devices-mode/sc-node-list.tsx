@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { IRow, sortable, Table as PfTable, TableHeader, TableBody } from '@patternfly/react-table';
-import { Spinner, Bullseye, EmptyState, EmptyStateIcon, Title } from '@patternfly/react-core';
+import { Spinner, Bullseye, EmptyState, Title } from '@patternfly/react-core';
 import {
   getName,
   getNodeRoles,
@@ -23,22 +23,30 @@ const tableColumnClasses = [
   classNames('pf-u-w-inherit'),
 ];
 
-// Todo: Add translation
 const EmptyMessage: React.FC = () => {
-  const cells = ['Name', 'Role', 'CPU', 'Memory', 'Zone'];
+  const { t } = useTranslation();
+
+  const cells = [
+    t('ceph-storage-plugin~Name'),
+    t('ceph-storage-plugin~Role'),
+    t('ceph-storage-plugin~CPU'),
+    t('ceph-storage-plugin~Memory'),
+    t('ceph-storage-plugin~Zone'),
+  ];
   const rows = [
     {
       heightAuto: true,
       cells: [
         {
-          props: { colSpan: 8 },
+          props: { colSpan: 6 },
           title: (
             <Bullseye>
               <EmptyState>
-                <EmptyStateIcon variant="container" component={Spinner} />
+                <Spinner size="md" />
                 <Title size="md" headingLevel="h4">
-                  PVs are being provisioned on selected nodes. Nodes list will be loaded in a few
-                  moments.
+                  {t(
+                    'ceph-storage-plugin~PVs are being provisioned on the selected nodes. Node list will be loaded in a few moments.',
+                  )}
                 </Title>
               </EmptyState>
             </Bullseye>
