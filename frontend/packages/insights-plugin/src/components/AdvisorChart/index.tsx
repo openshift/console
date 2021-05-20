@@ -19,7 +19,7 @@ const AdvisorChart = ({ metrics, clusterId }) => {
   return (
     <ChartDonut
       data={issues.map(([k, v]) => ({
-        label: `${v} ${k}`,
+        label: `${v} ${t(riskLabels[k])}`,
         x: k,
         y: v,
       }))}
