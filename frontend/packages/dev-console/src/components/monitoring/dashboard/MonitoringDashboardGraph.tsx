@@ -59,7 +59,8 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
             isStack={graphType === GraphTypes.area}
             timespan={timespan}
             pollInterval={pollInterval}
-            formatLegendLabel={(labels) => labels.pod}
+            formatSeriesTitle={(labels) => labels.pod}
+            showLegend
           />
         </PrometheusGraphLink>
       </DashboardCardBody>

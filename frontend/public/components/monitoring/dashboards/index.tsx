@@ -378,7 +378,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     UI.getIn(['monitoringDashboards', 'variables']),
   );
 
-  const formatLegendLabel = React.useCallback(
+  const formatSeriesTitle = React.useCallback(
     (labels, i) => {
       const legendFormat = panel.targets?.[i]?.legendFormat;
       const compiled = _.template(legendFormat, legendTemplateOptions);
@@ -438,10 +438,11 @@ const Card: React.FC<CardProps> = ({ panel }) => {
               )}
               {panel.type === 'graph' && (
                 <Graph
-                  formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
+                  formatSeriesTitle={formatSeriesTitle}
                   isStack={panel.stack}
                   pollInterval={pollInterval}
                   queries={queries}
+                  showLegend={panel.legend?.show}
                 />
               )}
               {(panel.type === 'singlestat' || panel.type === 'gauge') && (
@@ -564,7 +565,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
             // Look for an option that should be selected by default
             let value = _.find(v.options, { selected: true })?.value;
 
-            // If no default option was found, see if the "All" option should be the by default
+            // If no default option was found, see if the "All" option should be the default
             if (
               value === undefined &&
               v.includeAll &&
