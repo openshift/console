@@ -1,3 +1,15 @@
 .co-insights__no-rules {
-	color: var(--pf-global--Color--200);
+  color: var(--pf-global--Color--200);
+}
+
+.insights-advisor--enabled-link {
+  tspan {
+    fill: var(
+      --pf-global--link--Color
+    ) !important; // use !important to override inline style applied by Victory charts
+
+    &:hover {
+      fill: var(--pf-global--link--Color--hover) !important;
+    }
+  }
 }
