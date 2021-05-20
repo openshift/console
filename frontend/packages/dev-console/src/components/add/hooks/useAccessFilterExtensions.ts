@@ -8,18 +8,21 @@ import {
 export const useAccessFilterExtensions = (
   namespace: string,
   addActionExtensions: ResolvedExtension<AddAction>[],
-): ResolvedExtension<AddAction>[] => {
+): [ResolvedExtension<AddAction>[], boolean] => {
   const accessReviewResults: AddAccessReviewResults = useAddActionsAccessReviews(
     namespace,
     addActionExtensions,
   );
-  const isLoading: boolean = Object.values(accessReviewResults).some(
+  const loaded: boolean = !Object.values(accessReviewResults).some(
     (reviewStatus) => reviewStatus === AccessReviewStatus.LOADING,
   );
 
-  return isLoading
-    ? []
-    : addActionExtensions.filter(
-        ({ properties: { id } }) => accessReviewResults[id] === AccessReviewStatus.ALLOWED,
-      );
+  return loaded
+    ? [
+        addActionExtensions.filter(
+          ({ properties: { id } }) => accessReviewResults[id] === AccessReviewStatus.ALLOWED,
+        ),
+        loaded,
+      ]
+    : [[], loaded];
 };

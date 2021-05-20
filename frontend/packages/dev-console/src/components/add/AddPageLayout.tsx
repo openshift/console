@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, Tooltip } from '@patternfly/react-core';
-import { useExtensions } from '@console/plugin-sdk/src';
-import { LoadingBox } from '@console/internal/components/utils';
+import * as cx from 'classnames';
 import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
+import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
+import { useExtensions } from '@console/plugin-sdk/src';
+
 import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
 
 import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
-import { useShowAddCardItemDetails } from '../../hooks/useShowAddCardItemDetails';
+import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 
 import AddCardSection from './AddCardSection';
 import { GettingStartedSection } from './GettingStartedSection';
 import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
 
+import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
+import { useAccessFilterExtensions } from './hooks/useAccessFilterExtensions';
 import './AddPageLayout.scss';
 
 type AddPageLayoutProps = {
@@ -24,59 +27,86 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const addActionGroupExtensions = useExtensions<AddActionGroup>(isAddActionGroup);
-  const [addActionExtensions, resolved] = useAddActionExtensions();
-
+  const [addActionExtensions, addActionExtensionsResolved] = useAddActionExtensions();
+  const [
+    filteredAddActionExtensions,
+    filteredAddActionExtensionsLoaded,
+  ] = useAccessFilterExtensions(
+    activeNamespace,
+    filterNamespaceScopedUrl(activeNamespace, addActionExtensions),
+  );
   const [showDetails, setShowDetails] = useShowAddCardItemDetails();
 
-  if (!resolved) {
-    return <LoadingBox />;
-  }
+  const extensionsLoaded: boolean =
+    addActionExtensionsResolved && filteredAddActionExtensionsLoaded;
+  const addActionLoadingFailed: boolean =
+    addActionExtensionsResolved && addActionExtensions?.length === 0;
+  const addActionAccessCheckFailed: boolean =
+    extensionsLoaded && filteredAddActionExtensions?.length === 0;
 
-  const hintText = t(
-    'devconsole~Select a way to create an Application, component or service from one of the options.',
-  );
-
-  const hint: React.ReactNode = (
-    <>
-      <div className="odc-add-page-layout__hint-block">
-        <div className="odc-add-page-layout__hint-block__text">{hintText}</div>
-        <div className="odc-add-page-layout__hint-block__actions">
-          <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
-          <div className="odc-add-page-layout__hint-block__details-switch">
-            <Tooltip content={t('devconsole~Show or hide details about each item')} position="top">
-              <Switch
-                aria-label={
-                  showDetails
-                    ? t('devconsole~Show add card details')
-                    : t('devconsole~Hide add card details')
-                }
-                isChecked={showDetails}
-                onChange={(checked) => {
-                  setShowDetails(checked);
-                }}
-                data-test-id="odc-add-page-details-switch"
-              />
-            </Tooltip>
-            <span className="odc-add-page-layout__hint-block__details-switch__text">
-              {showDetails ? t('devconsole~Details on') : t('devconsole~Details off')}
-            </span>
+  const getHint = (): React.ReactNode => {
+    const hintText: string = t(
+      'devconsole~Select a way to create an Application, component or service from one of the options.',
+    );
+    const switchText: string = showDetails
+      ? t('devconsole~Details on')
+      : t('devconsole~Details off');
+    return (
+      <>
+        <div className="odc-add-page-layout__hint-block">
+          <div className="odc-add-page-layout__hint-block__text">{hintText}</div>
+          <div className="odc-add-page-layout__hint-block__actions">
+            <RestoreGettingStartedButton userSettingsKey={GETTING_STARTED_USER_SETTINGS_KEY} />
+            <div
+              className={cx('odc-add-page-layout__hint-block__details-switch', {
+                'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
+              })}
+            >
+              {extensionsLoaded ? (
+                <Tooltip
+                  content={t('devconsole~Show or hide details about each item')}
+                  position="top"
+                >
+                  <Switch
+                    aria-label={
+                      showDetails
+                        ? t('devconsole~Show add card details')
+                        : t('devconsole~Hide add card details')
+                    }
+                    isChecked={showDetails}
+                    onChange={(checked) => {
+                      setShowDetails(checked);
+                    }}
+                    data-test-id="odc-add-page-details-switch"
+                  />
+                </Tooltip>
+              ) : (
+                <Skeleton shape="circle" width="24px" />
+              )}
+              <span className="odc-add-page-layout__hint-block__details-switch__text">
+                {extensionsLoaded ? switchText : <Skeleton height="100%" width="64px" />}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-      {additionalHint && (
-        <div className="odc-add-page-layout__additional-hint-block">{additionalHint}</div>
-      )}
-    </>
-  );
+        {additionalHint && (
+          <div className="odc-add-page-layout__additional-hint-block">{additionalHint}</div>
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="odc-add-page-layout">
-      <PageLayout title={title} hint={hint} isDark>
+      <PageLayout title={title} hint={getHint()}>
         <GettingStartedSection />
         <AddCardSection
-          addActionExtensions={addActionExtensions}
+          addActionExtensions={filteredAddActionExtensions}
           addActionGroupExtensions={addActionGroupExtensions}
           namespace={activeNamespace}
+          extensionsLoaded={extensionsLoaded}
+          loadingFailed={addActionLoadingFailed}
+          accessCheckFailed={addActionAccessCheckFailed}
         />
       </PageLayout>
     </div>

@@ -3,7 +3,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import { Text } from '@patternfly/react-core';
 import { CatalogIcon } from '@patternfly/react-icons';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { useShowAddCardItemDetails } from '../../../hooks/useShowAddCardItemDetails';
+import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import AddCardItem from '../AddCardItem';
 import { addActionExtensions } from './add-page-test-data';
 
@@ -11,7 +11,7 @@ jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 
-jest.mock('../../../hooks/useShowAddCardItemDetails', () => ({
+jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: jest.fn(),
 }));
 

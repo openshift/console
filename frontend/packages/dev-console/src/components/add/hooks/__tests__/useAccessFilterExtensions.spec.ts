@@ -1,4 +1,4 @@
-import { addActionExtensions } from '../../components/add/__tests__/add-page-test-data';
+import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAccessFilterExtensions } from '../useAccessFilterExtensions';
 import * as hook from '../useAddActionsAccessReviews';
 
@@ -11,7 +11,7 @@ describe('useAccessFilterExtensions', () => {
     jest.resetAllMocks();
   });
 
-  it('should return empty array if all results from useAddActionsAccessReviews have not loaded', () => {
+  it('should return empty array and loaded with value false if all results from useAddActionsAccessReviews have not loaded', () => {
     const mockAddAccessReviewResults: hook.AddAccessReviewResults = {
       'dev-catalog': AccessReviewStatus.LOADING,
       'import-from-git': AccessReviewStatus.ALLOWED,
@@ -19,10 +19,15 @@ describe('useAccessFilterExtensions', () => {
       'deploy-image': AccessReviewStatus.ALLOWED,
     };
     useAddActionsAccessReviewsSpy.mockReturnValue(mockAddAccessReviewResults);
-    expect(useAccessFilterExtensions(namespace, addActionExtensions).length).toEqual(0);
+    const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
+      namespace,
+      addActionExtensions,
+    );
+    expect(filteredAddActionExtensions.length).toEqual(0);
+    expect(loaded).toBe(false);
   });
 
-  it('should return filtered array of add actions which access review status is allowed', () => {
+  it('should return filtered array of add actions for which access review status is allowed and loaded with value true', () => {
     const mockAccessReviewResults = {
       'dev-catalog': AccessReviewStatus.ALLOWED,
       'import-from-git': AccessReviewStatus.DENIED,
@@ -33,8 +38,11 @@ describe('useAccessFilterExtensions', () => {
       (result) => result === AccessReviewStatus.ALLOWED,
     );
     useAddActionsAccessReviewsSpy.mockReturnValue(mockAccessReviewResults);
-    expect(useAccessFilterExtensions(namespace, addActionExtensions).length).toEqual(
-      accessAllowedResults.length,
+    const [filteredAddActionExtensions, loaded] = useAccessFilterExtensions(
+      namespace,
+      addActionExtensions,
     );
+    expect(filteredAddActionExtensions.length).toEqual(accessAllowedResults.length);
+    expect(loaded).toBe(true);
   });
 });

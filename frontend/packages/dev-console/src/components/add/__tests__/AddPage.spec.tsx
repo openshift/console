@@ -26,7 +26,7 @@ describe('AddPage', () => {
     },
   };
 
-  it('should render ODCAddCardsLoader if namespace exists', () => {
+  it('should render AddCardsLoader if namespace exists', () => {
     wrapper = shallow(<AddPage {...props} />);
     expect(wrapper.find(AddCardsLoader).exists()).toBe(true);
   });

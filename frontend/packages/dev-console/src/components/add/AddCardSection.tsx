@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import {
-  filterNamespaceScopedUrl,
-  getAddGroups,
-  getSortedExtensionItems,
-} from '../../utils/add-page-utils';
-import { useAccessFilterExtensions } from '../../hooks/useAccessFilterExtensions';
+import { getAddGroups, getSortedExtensionItems } from '../../utils/add-page-utils';
 import { AddGroup } from '../types';
 import AddCard from './AddCard';
+import AddCardSectionSkeleton from './AddCardSectionSkeleton';
+import AddCardSectionEmptyState from './AddCardSectionEmptyState';
 import { MasonryLayout } from './layout/MasonryLayout';
 
 type AddCardsSectionProps = {
   namespace: string;
   addActionExtensions: ResolvedExtension<AddAction>[];
   addActionGroupExtensions: LoadedExtension<AddActionGroup>[];
+  extensionsLoaded?: boolean;
+  loadingFailed?: boolean;
+  accessCheckFailed?: boolean;
 };
 
 const COLUMN_WIDTH = 300;
@@ -23,22 +23,42 @@ const AddCardsSection: React.FC<AddCardsSectionProps> = ({
   namespace,
   addActionExtensions,
   addActionGroupExtensions,
+  extensionsLoaded,
+  loadingFailed,
+  accessCheckFailed,
 }) => {
-  const filteredAddActionExtensions: ResolvedExtension<AddAction>[] = filterNamespaceScopedUrl(
-    namespace,
-    useAccessFilterExtensions(namespace, addActionExtensions),
+  if (loadingFailed || accessCheckFailed) {
+    return <AddCardSectionEmptyState accessCheckFailed={!loadingFailed && accessCheckFailed} />;
+  }
+  const getAddCards = (): React.ReactElement[] => {
+    if (!extensionsLoaded) {
+      return [];
+    }
+    const sortedActionGroup: LoadedExtension<AddActionGroup>[] = getSortedExtensionItems<
+      LoadedExtension<AddActionGroup>
+    >(addActionGroupExtensions);
+
+    const addGroups: AddGroup[] = getAddGroups(addActionExtensions, sortedActionGroup);
+
+    return addGroups.map(({ id, name, items }) => (
+      <AddCard
+        key={id}
+        title={name}
+        items={items}
+        namespace={namespace}
+        data-test-id={`odc-add-card-${id}`}
+      />
+    ));
+  };
+
+  return (
+    <MasonryLayout
+      columnWidth={COLUMN_WIDTH}
+      loading={!extensionsLoaded}
+      LoadingComponent={AddCardSectionSkeleton}
+    >
+      {getAddCards()}
+    </MasonryLayout>
   );
-
-  const sortedActionGroup: LoadedExtension<AddActionGroup>[] = getSortedExtensionItems<
-    LoadedExtension<AddActionGroup>
-  >(addActionGroupExtensions);
-
-  const addGroups: AddGroup[] = getAddGroups(filteredAddActionExtensions, sortedActionGroup);
-
-  const addCards: React.ReactElement[] = addGroups.map(({ id, name, items }) => (
-    <AddCard key={id} title={name} items={items} namespace={namespace} />
-  ));
-
-  return <MasonryLayout columnWidth={COLUMN_WIDTH}>{addCards}</MasonryLayout>;
 };
 export default AddCardsSection;
