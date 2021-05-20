@@ -46,13 +46,17 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
 
   return (
     <div className="co-insights__box">
+      <p>
+        Insights Advisor identifies and prioritizes risks to security, performance, availability,
+        and stability of your clusters.
+      </p>
       {isError && (
-        <div className="co-status-popup__section">
+        <div className="co-status-popup__section text-secondary">
           {t('insights-plugin~Temporary unavailable.')}
         </div>
       )}
       {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">
+        <div className="co-status-popup__section text-secondary">
           {t('insights-plugin~Disabled or waiting for results.')}
         </div>
       )}
