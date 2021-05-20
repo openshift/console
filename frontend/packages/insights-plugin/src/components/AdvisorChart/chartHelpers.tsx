@@ -41,7 +41,7 @@ const riskLabels = {
 const AdvisorChartTitle = (props) => {
   const { clusterId } = props;
 
-  return !clusterId ? (
+  return clusterId ? (
     <ExternalLink href={`https://cloud.redhat.com/openshift/details/${clusterId}#insights`}>
       <ChartLabel
         {...props}

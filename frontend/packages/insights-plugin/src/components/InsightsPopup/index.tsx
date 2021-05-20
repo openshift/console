@@ -4,7 +4,7 @@ import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
 
-import AdvisorChart from '../AdvisorChart/index';
+import AdvisorChart from '../AdvisorChart';
 import {
   mapMetrics,
   isWaitingOrDisabled as _isWaitingOrDisabled,
@@ -36,8 +36,8 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         </div>
       )}
       {!isWaitingOrDisabled && !isError && <AdvisorChart metrics={metrics} clusterId={clusterId} />}
-      <div className="co-status-popup__section">
-        {!isWaitingOrDisabled && !isError && (
+      <div>
+        {!isWaitingOrDisabled && !isError && clusterId && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
             <div>
@@ -47,6 +47,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               />
             </div>
           </>
+        )}
+        {!isWaitingOrDisabled && !isError && !clusterId && (
+          <div>
+            <ExternalLink
+              href={`https://cloud.redhat.com/openshift/`}
+              text={t('insights-plugin~Go to OpenShift Cluster Manager')}
+            />
+          </div>
         )}
         {(isWaitingOrDisabled || isError) && (
           <ExternalLink
