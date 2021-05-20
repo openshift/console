@@ -6,6 +6,7 @@ import {
   OS_IMAGES_NS,
 } from '../const';
 import { V1alpha1DataVolume } from '../../src/types/api';
+import { VirtualMachineData } from '../types/vm';
 
 export * from '../../../integration-tests-cypress/support';
 
@@ -23,6 +24,7 @@ declare global {
       waitForLoginPrompt(vmName: string, namespace: string): void;
       Login(): void;
       deleteTestProject(namespace: string): void;
+      pauseVM(vmData: VirtualMachineData): void;
     }
   }
 }
@@ -36,7 +38,7 @@ Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
   if (['VirtualMachine', 'DataVolume', 'PersistentVolumeClaim'].includes(kind)) {
     cy.exec(
-      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} ${kind} ${resource.metadata.name} --wait=true`,
+      `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} vmi ${resource.metadata.name} --wait=true --timeout=120s`,
     );
   }
 });
@@ -158,4 +160,12 @@ Cypress.Commands.add('Login', () => {
 
 Cypress.Commands.add('deleteTestProject', (namespace: string) => {
   cy.exec(`oc delete project ${namespace}`);
+});
+
+Cypress.Commands.add('pauseVM', (vmData: VirtualMachineData) => {
+  const { name, namespace } = vmData;
+  cy.exec(`virtctl pause vm ${name} -n ${namespace}`, {
+    failOnNonZeroExit: false,
+    timeout: 180000,
+  });
 });

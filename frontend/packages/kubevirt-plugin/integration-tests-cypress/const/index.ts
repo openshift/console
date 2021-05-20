@@ -36,9 +36,14 @@ export enum VM_ACTION {
   Unpause = 'Unpause Virtual Machine',
 }
 
+export enum VMI_ACTION {
+  Delete = 'Delete Virtual Machine Instance',
+}
+
 // VM Status
 export enum VM_STATUS {
   Pending = 'Pending',
+  Importing = 'Importing',
   Starting = 'Starting',
   Paused = 'Paused',
   Migrating = 'Migration',
@@ -51,4 +56,32 @@ export enum VM_ACTION_TIMEOUT {
   VM_BOOTUP = 180000,
   VM_IMPORT = 360000,
   VM_IMPORT_AND_BOOTUP = 540000,
+}
+
+export enum Flavor {
+  TINY = 'Tiny',
+  SMALL = 'Small',
+  MEDIUM = 'Medium',
+  LARGE = 'Large',
+  CUSTOM = 'Custom',
+}
+
+export enum DISK_SOURCE {
+  AttachDisk = 'Use an existing PVC',
+  AttachClonedDisk = 'Clone existing PVC',
+  Blank = 'Blank',
+  Container = 'Import via Registry (creates PVC)',
+  EphemeralContainer = 'Container (ephemeral)',
+  Url = 'Import via URL',
+}
+
+export enum DISK_INTERFACE {
+  VirtIO = 'virtio',
+  sata = 'sata',
+  scsi = 'scsi',
+}
+
+export enum DISK_DRIVE {
+  Disk = 'Disk',
+  CDROM = 'CD-ROM',
 }
