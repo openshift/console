@@ -38,6 +38,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   builderImages,
 }) => {
   const { t } = useTranslation();
+  const inputRef = React.useRef<HTMLInputElement>();
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
     FormikValues
   >();
@@ -267,9 +268,15 @@ const GitSection: React.FC<GitSectionProps> = ({
   };
 
   useFormikValidationFix(values.git.url);
+
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <FormSection title={t('devconsole~Git')}>
       <InputField
+        ref={inputRef}
         type={TextInputTypes.text}
         name="git.url"
         label={t('devconsole~Git Repo URL')}
