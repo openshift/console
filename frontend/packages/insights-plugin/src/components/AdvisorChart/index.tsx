@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut, ChartLabel, ChartLegend } from '@patternfly/react-charts';
+import { global_Color_dark_200 as globalColorDark200 } from '@patternfly/react-tokens';
 
 import {
   AdvisorChartTitle,
@@ -24,6 +25,7 @@ const AdvisorChart = ({ metrics, clusterId }) => {
       }))}
       title={`${issuesCount}`}
       subTitle={`Total ${issuesCount === 1 ? 'issue' : 'issues'}`}
+      subTitleComponent={<ChartLabel style={{ marginTop: 5, fill: globalColorDark200.value }} />}
       legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
       width={300}
       height={150}
