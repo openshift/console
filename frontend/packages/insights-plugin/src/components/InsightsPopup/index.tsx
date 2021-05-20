@@ -26,35 +26,31 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         stability of your clusters.
       </p>
       {isError && (
-        <div className="co-status-popup__section">
+        <div className="co-status-popup__section text-secondary">
           {t('insights-plugin~Temporary unavailable.')}
         </div>
       )}
       {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">
+        <div className="co-status-popup__section text-secondary">
           {t('insights-plugin~Disabled or waiting for results.')}
         </div>
       )}
       {!isWaitingOrDisabled && !isError && <AdvisorChart metrics={metrics} clusterId={clusterId} />}
-      <div>
+      <div className="co-status-popup__section">
         {!isWaitingOrDisabled && !isError && clusterId && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
-            <div>
-              <ExternalLink
-                href={`https://cloud.redhat.com/openshift/details/${clusterId}#insights`}
-                text={t('insights-plugin~View all in OpenShift Cluster Manager')}
-              />
-            </div>
+            <ExternalLink
+              href={`https://cloud.redhat.com/openshift/details/${clusterId}#insights`}
+              text={t('insights-plugin~View all in OpenShift Cluster Manager')}
+            />
           </>
         )}
         {!isWaitingOrDisabled && !isError && !clusterId && (
-          <div>
-            <ExternalLink
-              href={`https://cloud.redhat.com/openshift/`}
-              text={t('insights-plugin~Go to OpenShift Cluster Manager')}
-            />
-          </div>
+          <ExternalLink
+            href={`https://cloud.redhat.com/openshift/`}
+            text={t('insights-plugin~Go to OpenShift Cluster Manager')}
+          />
         )}
         {(isWaitingOrDisabled || isError) && (
           <ExternalLink
