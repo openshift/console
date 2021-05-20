@@ -87,6 +87,21 @@ describe('Github Service', () => {
     });
   });
 
+  it('should not detect golang build type', () => {
+    const gitSource: GitSource = {
+      url: 'https://github.com/jboss-openshift/openshift-quickstarts',
+    };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('files-not-golang.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBe(0);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should detect modern-webapp build type', () => {
     const gitSource: GitSource = { url: 'https://github.com/nodeshift-starters/react-web-app' };
 
