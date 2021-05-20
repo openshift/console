@@ -11,7 +11,7 @@ import { global_palette_red_200 as red200 } from '@patternfly/react-tokens/dist/
 import CriticalIcon from '../CriticalIcon';
 import { ExternalLink } from '@console/internal/components/utils';
 
-const chartColorScale = [blue50.value, gold400.value, orange300.value, red200.value];
+const chartColorScale = [red200.value, orange300.value, blue50.value, gold400.value];
 
 const legendColorScale = {
   low: blue300.value,
