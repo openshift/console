@@ -449,16 +449,6 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/pvc/:pvcName/~new/form`}
-              exact
-              loader={() =>
-                import(
-                  '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
-                ).then((m) => m.VolumeSnapshot)
-              }
-            />
-
-            <LazyRoute
               path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/~new/form`}
               exact
               loader={() =>
