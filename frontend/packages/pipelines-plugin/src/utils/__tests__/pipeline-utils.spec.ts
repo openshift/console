@@ -232,6 +232,24 @@ describe('pipeline-utils ', () => {
     expect(taskList.filter((t) => t.status.reason === runStatus.Running)).toHaveLength(2);
   });
 
+  it('should append pipelineRun pending status for all the tasks if taskruns are not present and pipelinerun status is PipelineRunPending', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = pipelineRuns[DataState.PIPELINE_RUN_PENDING];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
+    expect(taskList.filter((t) => t.status.reason === runStatus.Idle)).toHaveLength(
+      pipeline.spec.tasks.length,
+    );
+  });
+
+  it('should append pipelineRun cancelled status for all the tasks if taskruns are not present and pipelinerun status is PipelineRunCancelled', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = pipelineRuns[DataState.PIPELINE_RUN_CANCELLED];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
+    expect(taskList.filter((t) => t.status.reason === runStatus.Cancelled)).toHaveLength(
+      pipeline.spec.tasks.length,
+    );
+  });
+
   it('should append status to only pipeline tasks if isFinallyTasks is false', () => {
     const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
     const pipelineRun = pipelineRuns[DataState.SUCCESS];

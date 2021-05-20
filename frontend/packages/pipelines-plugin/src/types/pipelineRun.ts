@@ -135,7 +135,7 @@ export type PipelineRunKind = K8sResourceCommon & {
     serviceAccountName?: string;
     timeout?: string;
     // Only used in a single case - cancelling a pipeline; should not be copied between PLRs
-    status?: 'PipelineRunCancelled';
+    status?: 'PipelineRunCancelled' | 'PipelineRunPending';
   };
   status?: {
     succeededCondition?: string;
