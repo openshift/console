@@ -29,7 +29,6 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
     ([k1], [k2]) => riskSorting[k1] - riskSorting[k2],
   );
   const numberOfIssues = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
-  const hasIssues = riskEntries.length > 0 && numberOfIssues > 0;
 
   const isWaitingOrDisabled = _isWaitingOrDisabled(metrics);
   const isError = _isError(metrics);
@@ -58,7 +57,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         </div>
       )}
       <div className="co-status-popup__section">
-        {hasIssues && !isWaitingOrDisabled && !isError && (
+        {!isWaitingOrDisabled && !isError && (
           <div>
             <ChartDonut
               data={riskEntries.map(([k, v]) => ({
@@ -99,7 +98,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         )}
       </div>
       <div className="co-status-popup__section">
-        {hasIssues && !isWaitingOrDisabled && !isError && (
+        {!isWaitingOrDisabled && !isError && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
             <div>
@@ -110,7 +109,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
             </div>
           </>
         )}
-        {!hasIssues && (isWaitingOrDisabled || isError) && (
+        {(isWaitingOrDisabled || isError) && (
           <ExternalLink
             href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
             text={t('insights-plugin~More about Insights')}
