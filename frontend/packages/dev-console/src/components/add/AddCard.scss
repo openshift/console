@@ -1,0 +1,15 @@
+.odc-add-card {
+  margin-bottom: var(--pf-global--spacer--lg);
+  padding: 0px var(--pf-global--spacer--lg) var(--pf-global--spacer--lg) 0px;
+  max-width: 100%;
+
+  &__title {
+    margin: var(--pf-global--spacer--lg) 0px 0px var(--pf-global--spacer--lg);
+  }
+}
+
+.pf-c-simple-list ul {
+  list-style-type: none;
+  padding-left: 0px;
+  margin: 0px;
+}

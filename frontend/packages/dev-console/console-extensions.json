@@ -1,8 +1,52 @@
 [
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "developer-catalog",
+      "name": "%devconsole~Developer Catalog%",
+      "insertBefore": "git-repository"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "git-repository",
+      "name": "%devconsole~Git Repository%",
+      "insertBefore": "container-images",
+      "insertAfter": "developer-catalog"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "container-images",
+      "name": "%devconsole~Container images%",
+      "insertBefore": "serverless",
+      "insertAfter": "git-repository"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "local-machine",
+      "name": "%devconsole~From Local Machine%",
+      "insertBefore": "pipelines",
+      "insertAfter": "serverless"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "samples",
+      "name": "%devconsole~Samples%",
+      "insertAfter": "pipelines"
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-samples",
+      "groupId": "samples",
       "href": "/samples",
       "label": "%devconsole~Samples%",
       "description": "%devconsole~Create an Application from a code sample%",
@@ -21,6 +65,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-git",
+      "groupId": "git-repository",
       "href": "/import",
       "label": "%devconsole~From Git%",
       "description": "%devconsole~Import code from your Git repository to be built and deployed%",
@@ -39,6 +84,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-devfile",
+      "groupId": "git-repository",
       "href": "/import?importType=devfile",
       "label": "%devconsole~From Devfile%",
       "description": "%devconsole~Import your Devfile from your Git repository to be built and deployed%",
@@ -57,8 +103,9 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "deploy-image",
+      "groupId": "container-images",
       "href": "/deploy-image",
-      "label": "%devconsole~Container Image%",
+      "label": "%devconsole~Container images%",
       "description": "%devconsole~Deploy an existing Image from an Image registry or Image stream tag%",
       "icon": { "$codeRef": "icons.deployIconElement" },
       "accessReview": [
@@ -76,6 +123,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-from-dockerfile",
+      "groupId": "git-repository",
       "href": "/import?importType=docker",
       "label": "%devconsole~From Dockerfile%",
       "description": "%devconsole~Import your Dockerfile from your Git repository to be built and deployed%",
@@ -94,8 +142,9 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "import-yaml",
+      "groupId": "local-machine",
       "href": "/k8s/ns/:namespace/import",
-      "label": "%devconsole~YAML%",
+      "label": "%devconsole~Import YAML%",
       "description": "%devconsole~Create resources from their YAML or JSON definitions%",
       "icon": { "$codeRef": "icons.yamlIconSVG" }
     }
@@ -104,8 +153,9 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "dev-catalog",
+      "groupId": "developer-catalog",
       "href": "/catalog",
-      "label": "%devconsole~From Catalog%",
+      "label": "%devconsole~All services%",
       "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
       "icon": { "$codeRef": "icons.devCatalogIconElement" }
     }
@@ -114,6 +164,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "dev-catalog-databases",
+      "groupId": "developer-catalog",
       "href": "/catalog?category=databases",
       "label": "%devconsole~Database%",
       "description": "%devconsole~Browse the catalog to discover database services to add to your Application%",
@@ -124,6 +175,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "operator-backed",
+      "groupId": "developer-catalog",
       "href": "/catalog?catalogType=OperatorBackedService",
       "label": "%devconsole~Operator Backed%",
       "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
@@ -134,6 +186,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "upload-jar",
+      "groupId": "local-machine",
       "href": "/upload-jar",
       "label": "%devconsole~Upload JAR file%",
       "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",

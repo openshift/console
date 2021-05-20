@@ -4,10 +4,10 @@ import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { Button } from '@patternfly/react-core';
 import { Firehose } from '@console/internal/components/utils';
-import ODCEmptyState from './EmptyState';
-import NamespacedPage from './NamespacedPage';
-import ProjectsExistWrapper from './ProjectsExistWrapper';
-import CreateProjectListPage from './projects/CreateProjectListPage';
+import AddPageLayout from './AddPageLayout';
+import NamespacedPage from '../NamespacedPage';
+import ProjectsExistWrapper from '../ProjectsExistWrapper';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 
 export interface AddPageProps {
   match: RMatch<{
@@ -22,13 +22,13 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
   return (
     <>
       <Helmet>
-        <title>{`+${t('devconsole~Add')}`}</title>
+        <title data-test-id="page-title">{`+${t('devconsole~Add')}`}</title>
       </Helmet>
       <NamespacedPage>
         <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
           <ProjectsExistWrapper title={t('devconsole~Add')}>
             {namespace ? (
-              <ODCEmptyState title={t('devconsole~Add')} />
+              <AddPageLayout title={t('devconsole~Add')} />
             ) : (
               <CreateProjectListPage title={t('devconsole~Add')}>
                 {(openProjectModal) => (

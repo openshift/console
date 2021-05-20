@@ -1,0 +1,19 @@
+.odc-add-page-layout-hint-block {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    &__text {
+      margin-right: var(--pf-global--spacer--sm);
+    }
+    &__details-switch {
+      display: flex;
+      margin-left: auto;
+      align-items: center;
+      &__text {
+        display: inline;
+        vertical-align: middle;
+        margin-left: var(--pf-global--spacer--xs);
+      }
+    }
+  }

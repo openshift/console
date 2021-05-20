@@ -9,7 +9,7 @@ import {
   ResourceTabPage,
 } from '../extensions/pages';
 import { YAMLTemplate } from '../extensions/yaml-templates';
-import { AddAction } from '../extensions/add-actions';
+import { AddAction, AddActionGroup } from '../extensions/add-actions';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import {
   HrefNavItem,
@@ -51,6 +51,7 @@ export type SupportedExtension =
   | PVCDelete
   | YAMLTemplate
   | AddAction
+  | AddActionGroup
   | ClusterGlobalConfig
   | HrefNavItem
   | ResourceNSNavItem

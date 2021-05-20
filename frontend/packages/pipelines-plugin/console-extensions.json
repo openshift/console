@@ -1,13 +1,23 @@
 [
   {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "pipelines",
+      "name": "%pipelines-plugin~Pipelines%",
+      "insertBefore": "samples",
+      "insertAfter": "local-machine"
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
     },
     "properties": {
       "id": "pipeline",
+      "groupId": "pipelines",
       "href": "/k8s/ns/:namespace/tekton.dev~v1beta1~Pipeline/~new/builder",
-      "label": "%pipelines-plugin~Pipeline%",
+      "label": "%pipelines-plugin~Pipelines%",
       "description": "%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application%",
       "icon": { "$codeRef": "icons.pipelineIconSVG" },
       "accessReview": [

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { HintBlock, LoadingBox, FirehoseResult } from '@console/internal/components/utils';
-import ODCEmptyState from './EmptyState';
+import AddPageLayout from './add/AddPageLayout';
 
 export interface ProjectsExistWrapperProps {
   title: string;
@@ -22,7 +22,7 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
 
   if (_.isEmpty(projects.data)) {
     return (
-      <ODCEmptyState
+      <AddPageLayout
         title={title}
         hintBlock={
           <HintBlock title={t('devconsole~No Projects exist')}>

@@ -25,6 +25,7 @@
     "type": "dev-console.add/action",
     "properties": {
       "id": "dev-catalog-virtualization",
+      "groupId": "developer-catalog",
       "href": "/catalog?catalogType=VmTemplate",
       "label": "%kubevirt-plugin~Virtual Machines%",
       "description": "%kubevirt-plugin~Create a Virtual Machine from a template%",

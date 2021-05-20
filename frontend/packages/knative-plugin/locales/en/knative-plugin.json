@@ -1,4 +1,5 @@
 {
+  "Serverless": "Serverless",
   "Event Source": "Event Source",
   "Create an Event source to register interest in a class of events from a particular system": "Create an Event source to register interest in a class of events from a particular system",
   "Channel": "Channel",
@@ -7,7 +8,6 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "**Event sources** are objects that link to an event producer and an event sink or consumer.",
   "Provider": "Provider",
-  "Serverless": "Serverless",
   "Serving": "Serving",
   "Eventing": "Eventing",
   "Add Subscription": "Add Subscription",
