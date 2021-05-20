@@ -87,17 +87,19 @@ type NodeTableRow = {
   selected?: boolean;
 };
 
-export type GetRows = (
+export type NodeKindWithLoading = NodeKind & { loading?: boolean };
+
+export type GetNodeRows<T = NodeKind> = (
   {
     componentProps,
     customData,
   }: {
-    componentProps: { data: NodeKind[] };
+    componentProps: { data: T[] };
     customData?: {
-      onRowSelected?: (nodes: NodeKind[]) => void;
-      nodes?: NodeKind[];
-      filteredNodes?: string[];
-      setNodes?: (nodes: NodeKind[]) => void;
+      onRowSelected?: (nodes: T[]) => void;
+      nodes?: T[];
+      filteredNodes?: T[];
+      setNodes?: (nodes: T[]) => void;
     };
   },
   visibleRows?: Set<string>,
@@ -106,15 +108,15 @@ export type GetRows = (
   setSelectedNodes?: (nodes: NodeKind[]) => void,
 ) => NodeTableRow[];
 
-export type NodeTableProps = TableProps & {
-  data: NodeKind[];
+export type NodeTableProps<T = NodeKind> = Partial<TableProps> & {
+  data: T[];
   customData?: {
-    onRowSelected?: (nodes: NodeKind[]) => void;
-    nodes?: NodeKind[];
+    onRowSelected?: (nodes: T[]) => void;
+    nodes?: T[];
     filteredNodes?: string[];
-    setNodes?: (nodes: NodeKind[]) => void;
+    setNodes?: (nodes: T[]) => void;
   };
-  filters: { name: string; label: { all: string[] } };
+  filters?: { name: string; label: { all: string[] } };
 };
 
 export type EncryptionType = {

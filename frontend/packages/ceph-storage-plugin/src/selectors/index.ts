@@ -76,4 +76,4 @@ export const calcPVsCapacity = (pvs: K8sResourceKind[]): number =>
   }, 0);
 
 export const getSCAvailablePVs = (pvsData: K8sResourceKind[], sc: string): K8sResourceKind[] =>
-  pvsData.filter((pv) => getPVStorageClass(pv) === sc && pv.status.phase === status.AVAILABLE);
+  pvsData?.filter((pv) => getPVStorageClass(pv) === sc && pv.status.phase === status.AVAILABLE);

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { IRow, sortable } from '@patternfly/react-table';
+import { IRow, sortable, Table as PfTable, TableHeader, TableBody } from '@patternfly/react-table';
+import { Spinner, Bullseye, EmptyState, EmptyStateIcon, Title } from '@patternfly/react-core';
 import {
   getName,
   getNodeRoles,
@@ -11,9 +11,8 @@ import {
 } from '@console/shared';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
-import { NodeKind } from '@console/internal/module/k8s';
 import { getConvertedUnits, getZone } from '../../../utils/install';
-import { GetRows, NodeTableProps } from '../../../types';
+import { GetNodeRows, NodeTableProps, NodeKindWithLoading } from '../../../types';
 import '../ocs-install.scss';
 
 const tableColumnClasses = [
@@ -24,30 +23,84 @@ const tableColumnClasses = [
   classNames('pf-u-w-inherit'),
 ];
 
-const getRows: GetRows = ({ componentProps }) => {
+// Todo: Add translation
+const EmptyMessage: React.FC = () => {
+  const cells = ['Name', 'Role', 'CPU', 'Memory', 'Zone'];
+  const rows = [
+    {
+      heightAuto: true,
+      cells: [
+        {
+          props: { colSpan: 8 },
+          title: (
+            <Bullseye>
+              <EmptyState>
+                <EmptyStateIcon variant="container" component={Spinner} />
+                <Title size="md" headingLevel="h4">
+                  PVs are being provisioned on selected nodes. Nodes list will be loaded in a few
+                  moments.
+                </Title>
+              </EmptyState>
+            </Bullseye>
+          ),
+        },
+      ],
+    },
+  ];
+  return (
+    <PfTable cells={cells} rows={rows}>
+      <TableHeader />
+      <TableBody />
+    </PfTable>
+  );
+};
+
+const LoadingItem: React.FC = () => <div className="loading-skeleton--table-row" />;
+
+const loadingCells: IRow['cells'] = [
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+  {
+    title: <LoadingItem />,
+  },
+];
+
+const getRows: GetNodeRows<NodeKindWithLoading> = ({ componentProps }) => {
   const { data } = componentProps;
 
   const rows = data.map((node) => {
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
-    const cells: IRow['cells'] = [
-      {
-        title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
-      },
-      {
-        title: roles.join(', ') || '-',
-      },
-      {
-        title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
-      },
-      {
-        title: `${getConvertedUnits(memSpec)}`,
-      },
-      {
-        title: getZone(node) || '-',
-      },
-    ];
+    const cells: IRow['cells'] = !node?.loading
+      ? [
+          {
+            title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
+          },
+          {
+            title: roles.join(', ') || '-',
+          },
+          {
+            title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
+          },
+          {
+            title: `${getConvertedUnits(memSpec)}`,
+          },
+          {
+            title: getZone(node) || '-',
+          },
+        ]
+      : loadingCells;
     return {
       cells,
       props: {
@@ -59,22 +112,8 @@ const getRows: GetRows = ({ componentProps }) => {
   return rows;
 };
 
-const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
+const AttachedDevicesNodeTable: React.FC<NodeTableProps<NodeKindWithLoading>> = (props) => {
   const { t } = useTranslation();
-
-  const { data, customData } = props;
-  const { filteredNodes, nodes = [], setNodes } = customData;
-  const tableData: NodeKind[] = data.filter(
-    (node: NodeKind) =>
-      filteredNodes.includes(getName(node)) ||
-      filteredNodes.includes(node.metadata.labels?.['kubernetes.io/hostname']),
-  );
-
-  React.useEffect(() => {
-    if (setNodes && !_.isEqual(tableData, nodes)) {
-      setNodes(tableData);
-    }
-  }, [tableData, setNodes, nodes, filteredNodes]);
 
   const getColumns = () => [
     {
@@ -107,10 +146,10 @@ const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
         {...props}
         aria-label={t('ceph-storage-plugin~Node Table')}
         data-test-id="attached-devices-nodes-table"
-        data={tableData}
         Rows={getRows}
         Header={getColumns}
         virtualize={false}
+        NoDataEmptyMsg={EmptyMessage}
       />
     </div>
   );

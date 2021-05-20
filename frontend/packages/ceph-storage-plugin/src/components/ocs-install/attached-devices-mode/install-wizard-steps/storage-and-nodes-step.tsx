@@ -12,10 +12,8 @@ import {
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { ListPage } from '@console/internal/components/factory';
-import { NodeModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName, useFlag } from '@console/shared';
+import { getName, useFlag, useDeepCompareMemoize } from '@console/shared';
 import {
   attachedDevicesStorageClassTooltip,
   OCS_DEVICE_SET_REPLICA,
@@ -45,6 +43,7 @@ import { PVsAvailableCapacity } from '../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../selectors';
 import { nodeResource, pvResource } from '../../../../resources';
 import { GUARDED_FEATURES } from '../../../../features';
+import { NodeKindWithLoading } from '../../../../types';
 
 const validate = (
   scName: string,
@@ -81,15 +80,38 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     storageClass,
     storageClassName: scName,
     enableMinimal,
-    nodes,
     stretchClusterChecked,
     enableFlexibleScaling,
+    lvsSelectNodes,
+    lvsAllNodes,
   } = state;
 
-  const scNodeNames: React.MutableRefObject<string[]> = React.useRef([]); // names of the nodes, backing the storage of selected storage class
+  const memoizedPvData = useDeepCompareMemoize(pvData, true);
+  const memoizedNodesData = useDeepCompareMemoize(nodesData, true);
+  const selectedNodes = [...lvsSelectNodes, ...lvsAllNodes].map(getName);
 
-  const { cpu, memory, zones } = getNodeInfo(nodes);
-  const nodesCount: number = nodes.length;
+  const pvs: K8sResourceKind[] = getSCAvailablePVs(memoizedPvData, scName);
+  const associatedNodes = getAssociatedNodes(memoizedPvData);
+  const tableData: NodeKindWithLoading[] =
+    associatedNodes?.length > 0 || !pvLoaded || !nodesLoaded
+      ? memoizedNodesData
+          ?.filter((node) => selectedNodes.includes(getName(node)))
+          .map((node) =>
+            associatedNodes?.includes(getName(node)) ||
+            associatedNodes?.includes(node.metadata.labels?.['kubernetes.io/hostname'])
+              ? node
+              : Object.assign({}, node, { loading: true }),
+          )
+          .sort((a: NodeKindWithLoading, b: NodeKindWithLoading) => {
+            if (a?.loading && b?.loading) return 0;
+            if (a?.loading && !b?.loading) return -1;
+            if (!a?.loading && b?.loading) return 1;
+            return 0;
+          })
+      : [];
+
+  const { cpu, memory, zones } = getNodeInfo(tableData);
+  const nodesCount: number = tableData.length;
   const zonesCount: number = zones.size;
 
   const hasStretchClusterChecked = isArbiterSupported && stretchClusterChecked;
@@ -97,18 +119,16 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const validations: ValidationType[] = validate(
     scName,
     enableMinimal,
-    nodes,
+    tableData,
     hasStretchClusterChecked,
     isFlexibleScalingSupported && enableFlexibleScaling,
   );
 
   React.useEffect(() => {
-    if (!pvLoadError && pvData.length && pvLoaded) {
-      const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, scName);
-      scNodeNames.current = getAssociatedNodes(pvs);
+    if (pvs) {
       dispatch({ type: 'setAvailablePvsCount', value: pvs.length });
     }
-  }, [dispatch, pvData, pvLoaded, pvLoadError, scName]);
+  }, [pvs, dispatch]);
 
   React.useEffect(() => {
     const isMinimal: boolean = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -128,9 +148,6 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     dispatch({ type: 'setStorageClass', value: sc });
     dispatch({ type: 'setStorageClassName', name: getName(sc) });
   };
-
-  const setNodes = (filteredData: NodeKind[]) =>
-    dispatch({ type: 'setNodes', value: filteredData });
 
   const filterSC = ({ resource }): boolean => {
     const noProvSC = filterSCWithNoProv(resource);
@@ -200,14 +217,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
-          <ListPage
-            kind={NodeModel.kind}
-            showTitle={false}
-            ListComponent={AttachedDevicesNodeTable}
-            hideLabelFilter
-            hideNameLabelFilters
-            customData={{ filteredNodes: scNodeNames.current, setNodes, nodes }}
-          />
+          <AttachedDevicesNodeTable data={tableData} loaded />
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}

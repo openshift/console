@@ -1,3 +1,5 @@
+@import '~@console/shared/src/styles/skeleton-screen';
+
 .ceph-node-list__max-height {
   max-height: 400px;
   overflow: auto;
@@ -89,4 +91,16 @@
       }
     }
   }
+}
+
+.loading-skeleton--table-row {
+  animation: $skeleton-animation;
+  content: '';
+  display: block;
+  opacity: 0;
+  background-image: linear-gradient(#eee 1px, transparent 0px),
+    linear-gradient($skeleton-color 6px, transparent 6px);
+  background-size: 100% 4px, 50% 4px;
+  background-position: 5px 0%, 0px 10px;
+  min-height: 10px;
 }
