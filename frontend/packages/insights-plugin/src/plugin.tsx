@@ -28,7 +28,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           (m) => m.InsightsPopup,
         ),
       // t('insights-plugin~Insights status')
-      popupTitle: '%insights-plugin~Insights status%',
+      popupTitle: '%insights-plugin~Insights Advisor status%',
     },
   },
 ];
