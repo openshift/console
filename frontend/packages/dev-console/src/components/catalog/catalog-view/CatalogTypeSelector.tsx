@@ -21,7 +21,12 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
 
   const typeDescriptions = React.useMemo(
     () =>
-      catalogTypes.map((type) => <SyncMarkdownView key={type.value} content={type.description} />),
+      catalogTypes.map(
+        (type) =>
+          type.description && (
+            <SyncMarkdownView key={type.value} content={type.description} inline />
+          ),
+      ),
     [catalogTypes],
   );
 
@@ -29,7 +34,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
     <>
       <Title headingLevel="h4" style={{ marginLeft: '14px' }}>
         {t('devconsole~Type')}
-        <FieldLevelHelp popoverHasAutoWidth>{typeDescriptions}</FieldLevelHelp>
+        <FieldLevelHelp>{typeDescriptions}</FieldLevelHelp>
       </Title>
       <VerticalTabs>
         {catalogTypes.map((type) => {
