@@ -754,7 +754,7 @@ const pods = {
               },
             ],
             terminationMessagePolicy: 'File',
-            image: 'kubevirt/fedora-cloud-container-disk-demo:latest',
+            image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
             args: [
               '--copy-path',
               '/var/run/kubevirt-ephemeral-disks/container-disk-data/e2ec8a25-ef0c-47a0-8afe-5b58570f97b0/disk_0',
@@ -2157,7 +2157,7 @@ const virtualmachines = {
             volumes: [
               {
                 containerDisk: {
-                  image: 'kubevirt/fedora-cloud-container-disk-demo:latest',
+                  image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
                 },
                 name: 'containerdisk',
               },
@@ -2272,7 +2272,7 @@ const virtualmachines = {
             volumes: [
               {
                 containerDisk: {
-                  image: 'kubevirt/fedora-cloud-container-disk-demo:latest',
+                  image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
                 },
                 name: 'containerdisk',
               },
@@ -2399,7 +2399,7 @@ const virtualmachineinstances = {
         volumes: [
           {
             containerDisk: {
-              image: 'kubevirt/fedora-cloud-container-disk-demo:latest',
+              image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
               imagePullPolicy: 'Always',
             },
             name: 'containerdisk',
