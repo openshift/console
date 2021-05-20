@@ -17,6 +17,7 @@ import {
   topologyHelper,
 } from '@console/dev-console/integration-tests/support/pages';
 import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
+import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -126,4 +127,8 @@ When(
 
 Then('user will see workload disappeared from topology', () => {
   cy.get(topologyPO.emptyStateIcon).should('be.visible');
+});
+
+Given('user has installed OpenShift Serverless Operator', () => {
+  verifyAndInstallKnativeOperator();
 });

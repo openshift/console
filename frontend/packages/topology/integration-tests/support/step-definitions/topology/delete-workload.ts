@@ -2,12 +2,14 @@ import { When } from 'cypress-cucumber-preprocessor/steps';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
 import { topologyActions } from '@console/topology/integration-tests/support/pages/topology/topology-actions-page';
 import { topologyPO } from '../../page-objects/topology-po';
+import { app } from '@console/dev-console/integration-tests/support/pages';
 
 When('user clicks on Action menu', () => {
   topologySidePane.clickActionsDropDown();
 });
 
 When('user clicks {string} from action menu', (actionItem: string) => {
+  app.waitForLoad();
   topologyActions.selectAction(actionItem);
 });
 

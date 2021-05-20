@@ -7,6 +7,8 @@ export const gitPO = {
   builderImageCard: '.odc-selector-card',
   nodeName: '[data-test-id="application-form-app-name"]',
   appName: '[id$=application-name-field]',
+  createNewApp: '[data-test-id="dropdown-menu"]',
+  newAppName: '[data-test-id="application-form-app-input"]',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
   gitSection: {

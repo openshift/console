@@ -44,6 +44,7 @@ export const perspective = {
 export const navigateTo = (opt: devNavigationMenu) => {
   switch (opt) {
     case devNavigationMenu.Add: {
+      perspective.switchTo(switchPerspective.Developer);
       cy.get(devNavigationMenuPO.add)
         .click()
         .then(() => {
