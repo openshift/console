@@ -184,7 +184,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/samples/ns/:ns/:is/:isNs'],
+      path: ['/samples/all-namespaces/:is/:isNs', '/samples/ns/:ns/:is/:isNs'],
       loader: async () =>
         (
           await import(

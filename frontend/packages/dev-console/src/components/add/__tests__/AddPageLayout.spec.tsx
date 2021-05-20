@@ -87,7 +87,7 @@ describe('AddPageLayout', () => {
       ).toBe(true);
     });
 
-    it('should show hintBlock from props and not default hintBlock if a hintBlock is provided in props', () => {
+    it('should show default and additional provided hintBlock from props', () => {
       wrapper = shallow(<AddPageLayout {...props} hintBlock="hintBlock" />);
 
       expect(
@@ -96,7 +96,7 @@ describe('AddPageLayout', () => {
           .dive()
           .find(Switch)
           .exists(),
-      ).toBe(false);
+      ).toBe(true);
 
       expect(
         wrapper
@@ -104,7 +104,7 @@ describe('AddPageLayout', () => {
           .dive()
           .find(Tooltip)
           .exists(),
-      ).toBe(false);
+      ).toBe(true);
 
       expect(
         wrapper

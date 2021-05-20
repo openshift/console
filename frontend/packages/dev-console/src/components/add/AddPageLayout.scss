@@ -1,19 +1,46 @@
-.odc-add-page-layout-hint-block {
+.odc-add-page-layout {
+  // Fix missing white background color above the header.
+  .ocs-page-layout__title {
+    margin-top: 0;
+    padding-top: var(--pf-global--spacer--lg);
+  }
+
+  // Drop padding below the hint to add this gap between hint and actions below.
+  .ocs-page-layout__hint {
+    padding-bottom: 0; /* override var(--pf-global--spacer--md) */
+  }
+
+  &__hint-block {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    white-space: nowrap;
+
     &__text {
-      margin-right: var(--pf-global--spacer--sm);
+      margin-bottom: var(--pf-global--spacer--md);
     }
-    &__details-switch {
+
+    &__actions {
+      flex: 1;
       display: flex;
-      margin-left: auto;
       align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+  
+      > * {
+        margin-left: var(--pf-global--spacer--md);
+        margin-bottom: var(--pf-global--spacer--md);
+      }
+    }
+
+    &__details-switch {
       &__text {
-        display: inline;
-        vertical-align: middle;
         margin-left: var(--pf-global--spacer--xs);
+        vertical-align: middle;
       }
     }
   }
+
+  &__additional-hint-block {
+    padding-bottom: var(--pf-global--spacer--md);
+  }
+}

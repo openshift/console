@@ -14,7 +14,7 @@ import { useExtensions } from '@console/plugin-sdk';
 
 const useCatalogExtensions = (
   catalogId: string,
-  catalogType: string,
+  catalogType?: string,
 ): [
   ResolvedExtension<CatalogItemType>[],
   ResolvedExtension<CatalogItemProvider>[],

@@ -1,0 +1,45 @@
+.ocs-getting-started-card {
+  &__title-icon {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
+  small {
+    color: var(--pf-global--Color--200);
+  }
+
+  &__list {
+    // Remove default list styles which are globally resetted in the PatternFly samples
+    // but not in the SimpleList. https://www.patternfly.org/v4/components/simple-list
+    > ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      > li {
+        // Add spacing to the skeleton similar to the SimpleListItem
+        .pf-c-skeleton {
+          margin:
+              var(--pf-c-simple-list__item-link--PaddingTop)
+              var(--pf-c-simple-list__item-link--PaddingRight)
+              var(--pf-c-simple-list__item-link--PaddingBottom)
+              var(--pf-c-simple-list__item-link--PaddingLeft);
+        }
+
+        // Override default style for a:hover, a:focus from scaffolding.scss
+        a.pf-c-simple-list__item-link:hover {
+          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--hover--Color);
+        }
+        a.pf-c-simple-list__item-link:focus {
+          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--focus--Color);
+        }
+        a.pf-c-simple-list__item-link:active {
+          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--active--Color);
+        }
+      }
+    }
+  }
+
+  a > svg, button > svg {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+}
