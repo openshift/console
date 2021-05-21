@@ -1,4 +1,5 @@
 {
+  "Bare Metal Hosts": "裸机主机",
   "resources": "资源",
   "Name \"${value}\" is already taken.": "名字 \"${value}\" 已被使用。",
   "Value provided is not a valid BMC address": "提供的值不是有效的 BMC 地址",
@@ -59,7 +60,6 @@
   "New with Dialog": "使用对话框新建",
   "New from YAML": "通过 YAML 新建",
   "Add Host": "添加主机",
-  "Bare Metal Hosts": "裸机主机",
   "Management Address": "管理地址",
   "Add credentials": "添加凭证",
   "View all": "查看所有",

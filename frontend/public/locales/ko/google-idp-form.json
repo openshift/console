@@ -1,8 +1,0 @@
-{
-  "Add Identity Provider: Google": "아이덴티티 공급자 추가: Google",
-  "You can use Google integration for users authenticating with Google credentials.": "Google 인증 정보로 인증하는 사용자는 Google 통합을 사용할 수 있습니다.",
-  "Client ID": "클라이언트 ID",
-  "Client secret": "클라이언트 시크릿",
-  "Hosted domain": "호스트 도메인",
-  "Restrict users to a Google App domain.": "사용자를 Google App 도메인으로 제한합니다."
-}

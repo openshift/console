@@ -7,6 +7,9 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "이벤트 소스는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다. 클러스터 관리자는 카탈로그에서 사용 가능한 콘텐츠를 사용자 지정할 수 있습니다.",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "** 이벤트 소스 **는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다.",
   "Provider": "공급자",
+  "Serverless": "서버리스",
+  "Serving": "제공",
+  "Eventing": "이벤트",
   "Add Subscription": "서브스크립션 추가",
   "Add Trigger": "트리거 추가",
   "Delete Revision": "개정 버전 삭제",
@@ -112,7 +115,6 @@
   "Broker": "브로커",
   "Triggers": "트리거",
   "Subscriptions": "서브스크립션",
-  "Eventing": "이벤트",
   "Subscriber": "구독자",
   "Filters": "필터",
   "There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name": "네임스페이스 {{namespace}}에 이름{{name}}의 기존 자리 표시자 서비스가 있습니다. 다른 이름을 입력하십시오",
@@ -151,7 +153,6 @@
   "Function": "함수",
   "Service": "서비스",
   "Services": "서비스",
-  "Serving": "제공",
   "Subscription details": "서브스크립션 세부 정보",
   "Trigger details": "트리거 세부 정보",
   "No Subscriber available": "사용 가능한 구독자가 없습니다.",
@@ -184,7 +185,6 @@
   "Revision": "개정 버전",
   "Select a Revision": "개정 버전 선택",
   "Set traffic distribution for the Revisions of the Knative Service": "Knative 서비스 개정에 대한 트래픽 분산 설정",
-  "Serverless": "서버리스",
   "Open URL": "URL 열기",
   "No Revisions": "개정 버전 없음",
   "Move sink to service": "싱크를 서비스로 이동",
@@ -195,5 +195,6 @@
   "Move sink to URI": "싱크 URI로 이동",
   "Open URI": "URL 열기",
   "Knative Services": "Knative 서비스",
-  "Create Knative service": "Knative 서비스 만들기"
+  "Create Knative service": "Knative 서비스 만들기",
+  "namespace": "네임 스페이스"
 }

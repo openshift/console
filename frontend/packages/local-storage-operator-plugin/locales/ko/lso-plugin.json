@@ -20,7 +20,7 @@
   "{{nodes, number}} node_1": "{{nodes, number}} 노드",
   "Selecting all nodes will discover for available disks storage on all nodes.": "모든 노드를 선택하면 모든 노드에서 사용 가능한 디스크 스토리지가 검색됩니다.",
   "Select nodes": "노드 선택",
-  "Selecting nodes allow you to limit the discovery for available disks to specific nodes.": "노드를 선택하면 사용 가능한 디스크 검색을 특정 노드로 제한할 수 있습니다.",
+  "Selecting nodes allows you to limit the discovery for available disks to specific nodes.": "노드를 선택하면 사용 가능한 디스크 검색을 특정 노드로 제한할 수 있습니다.",
   "Local Storage": "로컬 스토리지",
   "Create Local Volume Discovery": "로컬 볼륨 검색 만들기",
   "Local Volume Discovery": "로컬 볼륨 검색",
@@ -51,5 +51,6 @@
   "selected": "선택",
   "SSD / NVMe": "SSD / NVMe",
   "HDD": "HDD",
-  "Auto Detect Volume": "볼륨 자동 감지"
+  "Auto Detect Volume": "볼륨 자동 감지",
+  "Disk Mode": "디스크 모드"
 }

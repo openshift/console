@@ -1,8 +1,0 @@
-{
-  "Rules": "规则",
-  "Actions": "操作",
-  "API groups": "API 组",
-  "Resources": "资源",
-  "Delete rule": "删除规则",
-  "Are you sure you want to delete rule #{{ruleNumber}}?": "您确定要删除规则 #{{ruleNumber}}吗？"
-}

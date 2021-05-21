@@ -67,7 +67,7 @@
   "Kube-Proxy version": "Kube-Proxy バージョン",
   "Overview": "概要",
   "Terminal": "ターミナル",
-  "Pods": "pod",
+  "Pods": "Pod",
   "Labels": "ラベル",
   "Nodes": "ノード",
   "Ready": "準備状態",

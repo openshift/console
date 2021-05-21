@@ -1,4 +1,5 @@
 {
+  "VolumeSnapshotContents": "ボリュームスナップショットコンテンツ",
   "Edit resource limits": "リソース制限の編集",
   "Add Health Checks": "ヘルスチェックの追加",
   "Edit Health Checks": "ヘルスチェックの編集",
@@ -28,6 +29,7 @@
   "Used capacity": "使用された容量",
   "Access mode": "アクセスモード",
   "Volume mode": "ボリュームモード",
+  "Save": "保存",
   "Restore as new PVC": "新規 PVC として復元",
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "スナップショット <1>{{snapshotName}}</1> の復元アクションが終了すると、クラッシュコンシスタント (crash-consistent) の新規の PVC コピーが作成されます。",
   "Volume Mode": "ボリュームモード",
@@ -39,7 +41,7 @@
   "Restore": "復元",
   "VolumeSnapshotClass with same provisioner as claim": "要求と同じプロビジョナーを持つボリュームスナップショットクラス",
   "PersistentVolumeClaim details": "永続ボリューム要求の詳細",
-  "StorageClass": "StorageClass",
+  "StorageClass": "ストレージクラス",
   "Create VolumeSnapshot": "ボリュームスナップショットの作成",
   "Creating snapshot for claim <1>{resourceName}</1>": "要求 <1>{resourceName}</1> のスナップショットの作成",
   "PersistentVolumeClaim": "永続ボリューム要求",
@@ -65,6 +67,5 @@
   "Cluster": "クラスター",
   "Control Plane": "コントロールプレーン",
   "Control Plane status": "コントロールプレーンのステータス",
-  "Cluster operators": "クラスター Operator ",
-  "VolumeSnapshotContents": "ボリュームスナップショットコンテンツ"
+  "Cluster operators": "クラスター Operator "
 }

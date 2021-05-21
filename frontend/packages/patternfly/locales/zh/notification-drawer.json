@@ -1,0 +1,10 @@
+{
+  "Notifications": "通知",
+  "{{count}} unread_0": "{{count}} 未读",
+  "Close": "关闭",
+  "Warning notification:": "警告通知：",
+  "Critical notification:": "关键通知：",
+  "Success notification:": "成功通知：",
+  "Update notification:": "更新通知：",
+  "Info notification:": "信息通知："
+}
