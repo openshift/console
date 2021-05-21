@@ -8,16 +8,23 @@ import {
   monitoringDashboardsSetTimespan,
 } from '../../../actions/ui';
 import { RootState } from '../../../redux';
-import { FormatLegendLabel, QueryBrowser } from '../query-browser';
+import { FormatSeriesTitle, QueryBrowser } from '../query-browser';
 
 type Props = {
-  formatLegendLabel?: FormatLegendLabel;
+  formatSeriesTitle?: FormatSeriesTitle;
   isStack: boolean;
   pollInterval: number;
   queries: string[];
+  showLegend?: boolean;
 };
 
-const Graph: React.FC<Props> = ({ formatLegendLabel, isStack, pollInterval, queries }) => {
+const Graph: React.FC<Props> = ({
+  formatSeriesTitle,
+  isStack,
+  pollInterval,
+  queries,
+  showLegend,
+}) => {
   const dispatch = useDispatch();
   const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
   const timespan = useSelector(({ UI }: RootState) =>
@@ -36,12 +43,13 @@ const Graph: React.FC<Props> = ({ formatLegendLabel, isStack, pollInterval, quer
     <QueryBrowser
       defaultSamples={30}
       fixedEndTime={endTime}
-      formatLegendLabel={formatLegendLabel}
+      formatSeriesTitle={formatSeriesTitle}
       hideControls
       isStack={isStack}
       onZoom={onZoom}
       pollInterval={pollInterval}
       queries={queries}
+      showLegend={showLegend}
       timespan={timespan}
     />
   );
