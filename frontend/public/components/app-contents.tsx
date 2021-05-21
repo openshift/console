@@ -449,7 +449,7 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path={`/k8s/ns/:ns/:plural/:name/${VolumeSnapshotModel.plural}/~new/form`}
+              path={`/k8s/ns/:ns/${VolumeSnapshotModel.plural}/~new/form`}
               exact
               loader={() =>
                 import(
@@ -459,17 +459,7 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path="/k8s/ns/:ns/:plural/~new/form"
-              exact
-              loader={() =>
-                import(
-                  '@console/app/src/components/volume-snapshot/create-volume-snapshot/create-volume-snapshot' /* webpackChunkName: "create-volume-snapshot" */
-                ).then((m) => m.VolumeSnapshot)
-              }
-            />
-
-            <LazyRoute
-              path="/k8s/all-namespaces/:plural/~new/form"
+              path={`/k8s/all-namespaces/${VolumeSnapshotModel.plural}/~new/form`}
               exact
               loader={() =>
                 import(

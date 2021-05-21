@@ -362,9 +362,7 @@ const kebabFactory: KebabFactory = {
     labelKey: 'public~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
-      VolumeSnapshotModel.plural
-    }/~new/form`,
+    href: `/k8s/ns/${obj.metadata.namespace}/${VolumeSnapshotModel.plural}/~new/form?pvc=${obj.metadata.name}`,
     accessReview: asAccessReview(kind, obj, 'create'),
   }),
   ClonePVC: (kind, obj) => ({
