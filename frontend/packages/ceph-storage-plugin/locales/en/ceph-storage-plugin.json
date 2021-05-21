@@ -188,7 +188,7 @@
   "Storage Cluster exists": "Storage Cluster exists",
   "Back to operator page": "Back to operator page",
   "Go to cluster page": "Go to cluster page",
-  "clusterExistText": "A storage cluster <1>{{clusterName}}</1> is already created.<3></3>You cannot create another storage cluster.",
+  "clusterExistText": "A storage cluster <1>{{clusterName}}</1> already exists.<3></3>You cannot create another storage cluster.",
   "Create Storage Cluster": "Create Storage Cluster",
   "OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.": "OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.",
   "The selected nodes will be labeled with <1>{{label}}</1> (unless they are already labeled). {{replica}} of the selected nodes will be used for initial deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.": "The selected nodes will be labeled with <1>{{label}}</1> (unless they are already labeled). {{replica}} of the selected nodes will be used for initial deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.",

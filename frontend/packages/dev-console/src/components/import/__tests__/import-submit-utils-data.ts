@@ -498,3 +498,366 @@ export const nodeJsBuilderImage = {
   },
   imageStreamNamespace: 'openshift',
 };
+
+export const defaultDevfileFormData: GitImportFormData = {
+  name: '',
+  project: {
+    name: 'gijohn',
+    displayName: '',
+    description: '',
+  },
+  application: {
+    initial: '',
+    name: '',
+    selectedKey: '',
+    isInContext: false,
+  },
+  image: {
+    selected: '',
+    recommended: '',
+    tag: '',
+    tagObj: {},
+    ports: [],
+    isRecommending: false,
+    couldNotRecommend: false,
+  },
+  serverless: {
+    scaling: {
+      minpods: 0,
+      maxpods: '',
+      concurrencytarget: '',
+      concurrencylimit: '',
+    },
+  },
+  route: {
+    disable: false,
+    create: true,
+    targetPort: '',
+    unknownTargetPort: '',
+    defaultUnknownPort: 8080,
+    path: '',
+    hostname: '',
+    secure: false,
+    tls: {
+      termination: '',
+      insecureEdgeTerminationPolicy: '',
+      caCertificate: '',
+      certificate: '',
+      destinationCACertificate: '',
+      privateKey: '',
+    },
+  },
+  resources: Resources.Kubernetes,
+  build: {
+    env: [],
+    triggers: {
+      webhook: true,
+      image: true,
+      config: true,
+    },
+    strategy: 'Devfile',
+  },
+  deployment: {
+    env: [],
+    triggers: {
+      image: true,
+      config: true,
+    },
+    replicas: 1,
+  },
+  labels: {},
+  limits: {
+    cpu: {
+      request: '',
+      requestUnit: 'm',
+      defaultRequestUnit: 'm',
+      limit: '',
+      limitUnit: 'm',
+      defaultLimitUnit: 'm',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '',
+      limitUnit: 'Mi',
+      defaultLimitUnit: 'Mi',
+    },
+  },
+  healthChecks: {
+    readinessProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: 3,
+        requestType: 'httpGet',
+        httpGet: {
+          scheme: 'HTTP',
+          path: '/',
+          port: 8080,
+          httpHeaders: [],
+        },
+        tcpSocket: {
+          port: 8080,
+        },
+        exec: {
+          command: [''],
+        },
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+      },
+    },
+    livenessProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: 3,
+        requestType: 'httpGet',
+        httpGet: {
+          scheme: 'HTTP',
+          path: '/',
+          port: 8080,
+          httpHeaders: [],
+        },
+        tcpSocket: {
+          port: 8080,
+        },
+        exec: {
+          command: [''],
+        },
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+      },
+    },
+    startupProbe: {
+      showForm: false,
+      enabled: false,
+      modified: false,
+      data: {
+        failureThreshold: 3,
+        requestType: 'httpGet',
+        httpGet: {
+          scheme: 'HTTP',
+          path: '/',
+          port: 8080,
+          httpHeaders: [],
+        },
+        tcpSocket: {
+          port: 8080,
+        },
+        exec: {
+          command: [''],
+        },
+        initialDelaySeconds: 0,
+        periodSeconds: 10,
+        timeoutSeconds: 1,
+        successThreshold: 1,
+      },
+    },
+  },
+  resourceTypesNotValid: [],
+  pipeline: {
+    enabled: false,
+  },
+  git: {
+    url: '',
+    type: '',
+    ref: '',
+    dir: '',
+    showGitType: false,
+    secret: '',
+    isUrlValidating: false,
+  },
+  docker: {
+    dockerfilePath: './Dockerfile',
+  },
+  devfile: {
+    devfileHasError: false,
+    devfilePath: './devfile.yaml',
+  },
+};
+
+export const sampleDevfileFormData: GitImportFormData = {
+  ...defaultDevfileFormData,
+  name: 'devfile-sample',
+  application: {
+    initial: '',
+    name: 'devfile-sample-app',
+    selectedKey: 'devfile-sample-app',
+  },
+  git: {
+    url: 'https://github.com/redhat-developer/devfile-sample',
+    type: 'github',
+    ref: 'master',
+    dir: './',
+    showGitType: false,
+    secret: '',
+    isUrlValidating: false,
+  },
+  image: {
+    ...defaultDevfileFormData.image,
+    ports: [
+      {
+        protocol: 'TCP',
+        name: 'http-3001',
+        containerPort: 3001,
+      },
+    ],
+  },
+  deployment: {
+    ...defaultDevfileFormData.deployment,
+    env: [
+      {
+        name: 'PROJECTS_ROOT',
+        value: '/projects',
+      },
+      {
+        name: 'PROJECT_SOURCE',
+        value: '/projects',
+      },
+    ],
+  },
+  limits: {
+    cpu: {
+      request: '',
+      requestUnit: '',
+      defaultRequestUnit: '',
+      limit: '',
+      limitUnit: '',
+      defaultLimitUnit: '',
+    },
+    memory: {
+      request: '',
+      requestUnit: 'Mi',
+      defaultRequestUnit: 'Mi',
+      limit: '1',
+      limitUnit: 'Gi',
+      defaultLimitUnit: 'Gi',
+    },
+  },
+  devfile: {
+    devfileHasError: false,
+    devfilePath: './devfile.yaml',
+    devfileContent: 'SKIPPED',
+    devfileSuggestedResources: {
+      imageStream: {
+        kind: 'ImageStream',
+        apiVersion: 'image.openshift.io/v1',
+        metadata: {
+          creationTimestamp: null,
+        },
+        spec: {
+          lookupPolicy: {
+            local: false,
+          },
+        },
+        status: {
+          dockerImageRepository: '',
+        },
+      },
+      buildResource: {
+        kind: 'BuildConfig',
+        apiVersion: 'build.openshift.io/v1',
+        metadata: {
+          creationTimestamp: null,
+        },
+        spec: {
+          source: {
+            type: 'Git',
+            git: {
+              uri: 'https://github.com/redhat-developer/devfile-sample',
+              ref: 'master',
+            },
+            contextDir: 'src',
+          },
+          strategy: {
+            type: 'Docker',
+            dockerStrategy: {
+              dockerfilePath: 'Dockerfile',
+            },
+          },
+          output: {
+            to: {
+              kind: 'ImageStreamTag',
+              name: 'devfile-sample:latest:latest',
+            },
+          },
+          resources: {},
+          postCommit: {},
+          nodeSelector: null,
+        },
+        status: {
+          lastVersion: 0,
+        },
+      },
+      deployResource: {
+        kind: 'Deployment',
+        apiVersion: 'apps/v1',
+        metadata: {
+          creationTimestamp: null,
+        },
+        spec: {
+          selector: {
+            matchLabels: {
+              app: 'devfile-sample',
+            },
+          },
+          template: {
+            metadata: {
+              creationTimestamp: null,
+            },
+            spec: {},
+          },
+          strategy: {
+            type: 'Recreate',
+          },
+        },
+        status: {},
+      },
+      service: {
+        kind: 'Service',
+        apiVersion: 'v1',
+        metadata: {
+          creationTimestamp: null,
+        },
+        spec: {
+          ports: [
+            {
+              name: 'port-3001',
+              port: 3001,
+              targetPort: 3001,
+            },
+          ],
+        },
+        status: {
+          loadBalancer: {},
+        },
+      },
+      route: {
+        kind: 'Route',
+        apiVersion: 'route.openshift.io/v1',
+        metadata: {
+          creationTimestamp: null,
+        },
+        spec: {
+          path: '/',
+          to: {
+            kind: 'Service',
+            name: 'devfile-sample',
+            weight: null,
+          },
+          port: {
+            targetPort: 3001,
+          },
+        },
+        status: {},
+      },
+    },
+  },
+};

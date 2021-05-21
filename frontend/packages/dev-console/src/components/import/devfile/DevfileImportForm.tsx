@@ -7,7 +7,7 @@ import { FormFooter } from '@console/shared/src/components/form-utils';
 import { DevfileImportFormProps } from '../import-types';
 import GitSection from '../git/GitSection';
 import AppSection from '../app/AppSection';
-import { useDefileServer, useDevfileDirectoryWatcher } from './devfileHooks';
+import { useDevfileServer, useDevfileDirectoryWatcher } from './devfileHooks';
 
 const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormProps> = ({
   values,
@@ -23,7 +23,7 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
 }) => {
   const { t } = useTranslation();
 
-  const [, devfileParseError] = useDefileServer(values, setFieldValue);
+  const [, devfileParseError] = useDevfileServer(values, setFieldValue);
   useDevfileDirectoryWatcher(values, setFieldValue);
 
   return (
