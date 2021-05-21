@@ -59,7 +59,7 @@ objects:
           volumes:
             - name: containerdisk
               containerDisk:
-                image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
+                image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest'
             - cloudInitNoCloud:
                 userData: |-
                   #cloud-config

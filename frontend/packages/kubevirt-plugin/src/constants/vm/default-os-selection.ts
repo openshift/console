@@ -1,14 +1,17 @@
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared/src';
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { isUpstream } from '../../utils/common';
 
 export class OSSelection extends ObjectEnum<string> {
   static readonly FEDORA = new OSSelection(
     'fedora',
-    'kubevirt/fedora-cloud-container-disk-demo:latest',
+    'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
   );
 
   static readonly CENTOS = new OSSelection('centos', 'centos:latest');
+
+  static readonly RHEL8 = new OSSelection('rhel8', 'registry.redhat.io/rhel8/rhel-guest-image');
 
   private readonly image: string;
 
@@ -19,7 +22,10 @@ export class OSSelection extends ObjectEnum<string> {
 
   public getContainerImage = () => this.image;
 
-  static getAll = () => [OSSelection.FEDORA, OSSelection.CENTOS];
+  static getAll = () =>
+    isUpstream()
+      ? [OSSelection.FEDORA, OSSelection.RHEL8, OSSelection.CENTOS]
+      : [OSSelection.RHEL8, OSSelection.FEDORA, OSSelection.CENTOS];
 
   static findSuitableOSAndTemplate = (templates: TemplateKind[]) => {
     const sortedTemplates = [...templates].sort((a, b) => getName(b).localeCompare(getName(a)));
