@@ -60,12 +60,12 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
         <Title headingLevel="h5" size="md" className="odc-add-card-item__header__title">
           {label}
         </Title>
+        {showDetails && (
+          <Text className="odc-add-card-item__description" data-test-id="odc-add-card-item-desc">
+            {description}
+          </Text>
+        )}
       </SimpleListItem>
-      {showDetails && (
-        <Text className="odc-add-card-item__description" data-test-id="odc-add-card-item-desc">
-          {description}
-        </Text>
-      )}
     </div>
   );
 };

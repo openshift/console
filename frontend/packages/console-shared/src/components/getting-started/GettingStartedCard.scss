@@ -1,4 +1,10 @@
 .ocs-getting-started-card {
+  .pf-c-simple-list__item-link {
+    --pf-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-c-simple-list__item-link--hover--FontWeight: normal;
+  }
+
   &__title-icon {
     margin-right: var(--pf-global--spacer--sm);
   }
@@ -18,11 +24,14 @@
       > li {
         // Add spacing to the skeleton similar to the SimpleListItem
         .pf-c-skeleton {
-          margin:
-              var(--pf-c-simple-list__item-link--PaddingTop)
-              var(--pf-c-simple-list__item-link--PaddingRight)
-              var(--pf-c-simple-list__item-link--PaddingBottom)
-              var(--pf-c-simple-list__item-link--PaddingLeft);
+          margin: var(--pf-c-simple-list__item-link--PaddingTop)
+            var(--pf-c-simple-list__item-link--PaddingRight)
+            var(--pf-c-simple-list__item-link--PaddingBottom)
+            var(--pf-c-simple-list__item-link--PaddingLeft);
+        }
+
+        a {
+          text-decoration: none;
         }
 
         // Override default style for a:hover, a:focus from scaffolding.scss
@@ -39,7 +48,8 @@
     }
   }
 
-  a > svg, button > svg {
+  a > svg,
+  button > svg {
     margin-left: var(--pf-global--spacer--sm);
   }
 }
