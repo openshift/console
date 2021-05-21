@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ImageStreamTagModel } from '../models';
@@ -50,52 +51,54 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
   const tagName = _.get(imageStreamTag, 'tag.name');
 
+  const { t } = useTranslation();
+
   return (
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-md-6 col-sm-12">
-            <SectionHeading text="ImageStreamTag details" />
+            <SectionHeading text={t('public~ImageStreamTag details')} />
             <ResourceSummary resource={imageStreamTag}>
-              {labels.name && <dt>Image name</dt>}
+              {labels.name && <dt>{t('public~Image name')}</dt>}
               {labels.name && <dd>{labels.name}</dd>}
-              {labels.summary && <dt>Summary</dt>}
+              {labels.summary && <dt>{t('public~Summary')}</dt>}
               {labels.summary && <dd>{labels.summary}</dd>}
-              {humanizedSize && <dt>Size</dt>}
+              {humanizedSize && <dt>{t('public~Size')}</dt>}
               {humanizedSize && <dd>{humanizedSize}</dd>}
             </ResourceSummary>
             <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
           </div>
           <div className="col-md-6 col-sm-12">
-            <SectionHeading text="Configuration" />
+            <SectionHeading text={t('public~Configuration')} />
             <dl className="co-m-pane__details">
-              {entrypoint && <dt>Entrypoint</dt>}
+              {entrypoint && <dt>{t('public~Entrypoint')}</dt>}
               {entrypoint && <dd className="co-break-word">{entrypoint}</dd>}
-              {cmd && <dt>Command</dt>}
+              {cmd && <dt>{t('public~Command')}</dt>}
               {cmd && <dd className="co-break-word">{cmd}</dd>}
-              {config.WorkingDir && <dt>Working dir</dt>}
+              {config.WorkingDir && <dt>{t('public~Working dir')}</dt>}
               {config.WorkingDir && <dd className="co-break-all">{config.WorkingDir}</dd>}
-              {exposedPorts && <dt>Exposed ports</dt>}
+              {exposedPorts && <dt>{t('public~Exposed ports')}</dt>}
               {exposedPorts && <dd className="co-break-word">{exposedPorts}</dd>}
-              {config.User && <dt>User</dt>}
+              {config.User && <dt>{t('public~User')}</dt>}
               {config.User && <dd>{config.User}</dd>}
-              {architecture && <dt>Architecture</dt>}
+              {architecture && <dt>{t('public~Architecture')}</dt>}
               {architecture && <dd>{architecture}</dd>}
             </dl>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body-group">
-        <SectionHeading text="Image labels" />
+        <SectionHeading text={t('public~Image labels')} />
         {_.isEmpty(sortedLabels) ? (
-          <span className="text-muted">No labels</span>
+          <span className="text-muted">{t('public~No labels')}</span>
         ) : (
           <div className="co-table-container">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Value</th>
+                  <th>{t('public~Name')}</th>
+                  <th>{t('public~Value')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,16 +114,16 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
         )}
       </div>
       <div className="co-m-pane__body-group">
-        <SectionHeading text="Environment variables" />
+        <SectionHeading text={t('public~Environment variables')} />
         {_.isEmpty(config.Env) ? (
-          <span className="text-muted">No environment variables</span>
+          <span className="text-muted">{t('public~No environment variables')}</span>
         ) : (
           <div className="co-table-container">
             <table className="table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Value</th>
+                  <th>{t('public~Name')}</th>
+                  <th>{t('public~Value')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,37 +176,40 @@ const pages = [
   navFactory.editYaml(),
   navFactory.history(ImageStreamTagHistory),
 ];
-export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    breadcrumbsFor={(obj) => {
-      const { imageStreamName } = getImageStreamNameAndTag(obj);
-      return [
-        { name: 'ImageStreams', path: getBreadcrumbPath(props.match, 'imagestreams') },
+export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsPage
+      {...props}
+      breadcrumbsFor={(obj) => {
+        const { imageStreamName } = getImageStreamNameAndTag(obj);
+        return [
+          { name: t('public~ImageStreams'), path: getBreadcrumbPath(props.match, 'imagestreams') },
+          {
+            name: imageStreamName,
+            path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
+          },
+          {
+            name: t('public~ImageStreamTag details'),
+            path: props.match.url,
+          },
+        ];
+      }}
+      kind={ImageStreamTagsReference}
+      menuActions={menuActions}
+      resources={[
         {
-          name: imageStreamName,
-          path: `${getBreadcrumbPath(props.match, 'imagestreams')}/${imageStreamName}`,
+          kind: ImageStreamsReference,
+          name: parseName(props.name),
+          namespace: props.namespace,
+          isList: false,
+          prop: 'imageStream',
         },
-        {
-          name: 'ImageStreamTag details',
-          path: props.match.url,
-        },
-      ];
-    }}
-    kind={ImageStreamTagsReference}
-    menuActions={menuActions}
-    resources={[
-      {
-        kind: ImageStreamsReference,
-        name: parseName(props.name),
-        namespace: props.namespace,
-        isList: false,
-        prop: 'imageStream',
-      },
-    ]}
-    pages={pages}
-  />
-);
+      ]}
+      pages={pages}
+    />
+  );
+};
 ImageStreamTagsDetailsPage.displayName = 'ImageStreamTagsDetailsPage';
 
 type ImageStreamTagHistoryProps = {
