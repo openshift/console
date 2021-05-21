@@ -80,8 +80,8 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
               );
             },
           );
-          const filteredInfraFeatures = _.compact(
-            _.map(parsedInfraFeatures, (key) => InfraFeatures[key]),
+          const filteredInfraFeatures = _.uniq(
+            _.compact(_.map(parsedInfraFeatures, (key) => InfraFeatures[key])),
           );
 
           const {
