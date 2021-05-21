@@ -217,7 +217,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 value={catalogSourceDisplayName || notAvailable}
               />
               <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
-              {infraFeatures && (
+              {!_.isEmpty(infraFeatures) && (
                 <PropertyItem
                   label={t('olm~Infrastructure features')}
                   value={mappedInfraFeatures}
