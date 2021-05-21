@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash';
 import {
   Grid,
   GridItem,
@@ -113,6 +114,12 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           })
       : [];
 
+  const memoizedData = useDeepCompareMemoize(tableData, true);
+  React.useEffect(() => {
+    const plainNodeData = memoizedData.map((n) => _.omit(n, ['loading']));
+    dispatch({ type: 'setNodes', value: plainNodeData });
+  }, [memoizedData, dispatch]);
+
   const { cpu, memory, zones } = getNodeInfo(tableData);
   const nodesCount: number = tableData.length;
   const zonesCount: number = zones.size;
@@ -128,10 +135,10 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   );
 
   React.useEffect(() => {
-    if (pvs?.length) {
+    if (pvs.length) {
       dispatch({ type: 'setAvailablePvsCount', value: pvs.length });
     }
-  }, [pvs, dispatch]);
+  }, [pvs.length, dispatch]);
 
   React.useEffect(() => {
     const isMinimal: boolean = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -220,7 +227,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
-          <AttachedDevicesNodeTable data={tableData} loaded />
+          <AttachedDevicesNodeTable data={tableData} disableCustomLoading={!scName} loaded />
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}

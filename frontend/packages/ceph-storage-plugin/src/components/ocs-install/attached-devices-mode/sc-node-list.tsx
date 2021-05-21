@@ -120,8 +120,13 @@ const getRows: GetNodeRows<NodeKindWithLoading> = ({ componentProps }) => {
   return rows;
 };
 
-const AttachedDevicesNodeTable: React.FC<NodeTableProps<NodeKindWithLoading>> = (props) => {
+type AttachedDevicesNodeTableProps = NodeTableProps<NodeKindWithLoading> & {
+  disableCustomLoading?: boolean;
+};
+
+const AttachedDevicesNodeTable: React.FC<AttachedDevicesNodeTableProps> = (props) => {
   const { t } = useTranslation();
+  const { disableCustomLoading = false } = props;
 
   const getColumns = () => [
     {
@@ -157,7 +162,7 @@ const AttachedDevicesNodeTable: React.FC<NodeTableProps<NodeKindWithLoading>> = 
         Rows={getRows}
         Header={getColumns}
         virtualize={false}
-        NoDataEmptyMsg={EmptyMessage}
+        NoDataEmptyMsg={!disableCustomLoading ? EmptyMessage : null}
       />
     </div>
   );
