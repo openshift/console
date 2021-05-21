@@ -46,4 +46,8 @@ export BRIDGE_K8S_AUTH_BEARER_TOKEN
 BRIDGE_USER_SETTINGS_LOCATION="localstorage"
 export BRIDGE_USER_SETTINGS_LOCATION
 
+# This is a workaround for local setup where Helm CLI has been setup with helm repositories
+HELM_REPOSITORY_CONFIG="/tmp/repositories.yaml"
+export HELM_REPOSITORY_CONFIG
+
 echo "Using $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"
