@@ -103,4 +103,114 @@ export const topologyPO = {
     },
   },
   highlightNode: '.is-filtered',
+  createSecret: {
+    advancedOptions: '.pf-c-expandable-section__toggle-text',
+    secretForm: '.co-create-secret-form.modal-content',
+    createSecretButton: 'button.pf-c-button.pf-m-link.pf-m-link--align-left',
+    secretDropDown: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
+    secretDropDownItem: '[data-test="dropdown-menu-item-link"]',
+    formInputs: {
+      secretFormTitle: '[data-test-id="modal-title"]',
+      secretName: '[id="secret-name"]',
+      authenticationType: '[data-test-id="dropdown-button"]',
+      imageRegistryCredentials: '[data-test-dropdown-menu="credentials"]',
+      uploadConfigurationFile: '[data-test-dropdown-menu="config-file"]',
+      registryServerAddress: 'input[name="address"]',
+      userName: 'input[name="username"]',
+      password: 'input[name="password"]',
+      email: 'input[name="email"]',
+      saveSecret: '[data-test="confirm-action"]',
+      reloadForm: '[data-test-id="reset-button"]',
+      cancelAction: '[data-test-id="cancel-button"]',
+    },
+  },
+  resourceLimits: {
+    requestCPU: 'input[name="limits.cpu.requestValue"]',
+    limitCPU: 'input[name="limits.cpu.limitValue"]',
+    requestMemory: 'input[name="limits.memory.requestValue"]',
+    limitMemory: 'input[name="limits.memory.limitValue"]',
+  },
+  deploymentStrategy: {
+    strategyTypeDropDown: 'button[id="form-dropdown-formData-deploymentStrategy-type-field"]',
+    recreateStrategy: 'button[id="Recreate-link"]',
+    rollingUpdate: 'button[id="RollingUpdate-link"]',
+    customUpdate: 'button[id="Custom-link"]',
+    maxUnavailablePods: 'input[name="formData.deploymentStrategy.rollingUpdate.maxUnavailable"]',
+    maxSurgePods: 'input[name="formData.deploymentStrategy.rollingUpdate.maxSurge"]',
+    projectDropDown: '[id="form-ns-dropdown-formData-imageStream-namespace-field"]',
+    imageStream: '[id="form-ns-dropdown-formData-imageStream-image-field"]',
+    tag: '[id="form-dropdown-formData-imageStream-tag-field"]',
+    envName: '[data-test="pairs-list-name"]',
+    envValue: '[data-test="pairs-list-value"]',
+    advancedOptions: 'button.pf-c-button.pf-m-link.pf-m-inline',
+    pauseRolloutsCheckbox: '[id="form-checkbox-formData-paused-field"]',
+    enterReplica: 'input[id="form-number-spinner-formData-replicas-field"]',
+    saveEdit: '[data-test-id="submit-button"]',
+    selectSecret: '[id="form-ns-dropdown-formData-imagePullSecret-field"]',
+    timeout:
+      'input[id="form-input-formData-deploymentStrategy-recreateParams-timeoutSeconds-field"]',
+    deployImageCheckbox: 'input[name="formData.fromImageStreamTag"]',
+    imageName: 'input[name="formData.imageName"]',
+    preLifecycleHook: {
+      preExecNewPod:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-pre-action-execNewPod-field"]',
+      preExecNewPodContainerDD:
+        '[id="form-dropdown-formData-deploymentStrategy-recreateParams-pre-lch-execNewPod-containerName-field"]',
+      runCommand:
+        '[id="form-input-formData-deploymentStrategy-recreateParams-pre-lch-execNewPod-command-0-field"]',
+      preTagImagesField:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-pre-action-tagImages-field"]',
+      preTagImagesFieldContainerDD:
+        '[id="form-dropdown-formData-deploymentStrategy-imageStreamData-pre-containerName-field"]',
+      projectDropDown:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-pre-imageStream-namespace-field"]',
+      imageStream:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-pre-imageStream-image-field"]',
+      imageStreamTag:
+        'button[id="form-dropdown-formData-deploymentStrategy-imageStreamData-pre-imageStream-tag-field"]',
+      failurePolicy:
+        'button[id="form-dropdown-formData-deploymentStrategy-recreateParams-pre-lch-failurePolicy-field"]',
+    },
+    postLifecycleHook: {
+      postExecNewPod:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-post-action-execNewPod-field"]',
+      postExecNewPodContainerNameDD:
+        '[id="form-dropdown-formData-deploymentStrategy-recreateParams-post-lch-execNewPod-containerName-field"]',
+      runCommand:
+        'input[id="form-input-formData-deploymentStrategy-recreateParams-post-lch-execNewPod-command-0-field"]',
+      postTagImagesField:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-post-action-tagImages-field"]',
+      postTagImagesFieldContainerDD:
+        'button[id="form-dropdown-formData-deploymentStrategy-imageStreamData-post-containerName-field"]',
+      projectDropDown:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-post-imageStream-namespace-field"]',
+      imageStream:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-post-imageStream-image-field"]',
+      imageStreamTag:
+        'button[id="form-dropdown-formData-deploymentStrategy-imageStreamData-post-imageStream-tag-field"]',
+      failurePolicy:
+        'button[id="form-dropdown-formData-deploymentStrategy-recreateParams-post-lch-failurePolicy-field"]',
+    },
+    midLifecycleHook: {
+      midExecNewPod:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-mid-action-execNewPod-field"]',
+      midContainerNameDropDown:
+        'button[id="form-dropdown-formData-deploymentStrategy-recreateParams-mid-lch-execNewPod-containerName-field"]',
+      runCommand:
+        'id="form-input-formData-deploymentStrategy-recreateParams-mid-lch-execNewPod-command-0-field"',
+      midTagImagesField:
+        'input[id="form-radiobutton-formData-deploymentStrategy-recreateParams-mid-action-tagImages-field"]',
+      midTagImagesFieldContainerDD:
+        'button[id="form-dropdown-formData-deploymentStrategy-imageStreamData-mid-containerName-field"]',
+      projectDropDown:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-mid-imageStream-namespace-field"]',
+      imageStream:
+        'button[id="form-ns-dropdown-formData-deploymentStrategy-imageStreamData-mid-imageStream-image-field"]',
+      imageStreamTag:
+        'button[id="form-dropdown-formData-deploymentStrategy-imageStreamData-mid-imageStream-tag-field"]',
+      failurePolicy:
+        'button[id="form-dropdown-formData-deploymentStrategy-recreateParams-mid-lch-failurePolicy-field"]',
+    },
+    tickButton: '[data-test-id="check-icon"]',
+  },
 };

@@ -62,6 +62,15 @@ export const gitPage = {
     });
     // cy.get(gitPO.appName).should('have.value', nodeName)
   },
+  editAppName: (newAppName: string) => {
+    cy.get(gitPO.appName).click();
+    cy.get(gitPO.createNewApp)
+      .first()
+      .click();
+    cy.get(gitPO.newAppName)
+      .clear()
+      .type(newAppName);
+  },
   enterComponentName: (name: string) => {
     cy.get(gitPO.nodeName)
       .scrollIntoView()

@@ -11,6 +11,20 @@ export const topologyActions = {
           .click();
         break;
       }
+      case 'Edit Deployment':
+      case nodeActions.EditDeployment: {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case 'Edit DeploymentConfig':
+      case nodeActions.EditDeploymentConfig: {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
       case 'Edit Pod Count':
       case nodeActions.EditPodCount: {
         cy.byTestActionID(action)
@@ -66,6 +80,13 @@ export const topologyActions = {
       }
       case 'Edit SinkBinding':
       case nodeActions.EditSinkBinding: {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case 'Edit resource limits':
+      case nodeActions.EditResourceLimits: {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
