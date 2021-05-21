@@ -8,9 +8,10 @@ import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserS
 import { setActiveNamespace } from '@console/internal/actions/ui';
 import {
   ALL_NAMESPACES_KEY,
-  USERSETTINGS_PREFIX,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
+  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { k8sGet, K8sKind } from '@console/internal/module/k8s';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
@@ -25,9 +26,6 @@ type NamespaceContextType = {
 
 const FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY = `${NAMESPACE_USERSETTINGS_PREFIX}.favorite`;
 const FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY = NAMESPACE_LOCAL_STORAGE_KEY;
-
-const LAST_NAMESPACE_NAME_USER_SETTINGS_KEY = `${USERSETTINGS_PREFIX}.lastNamespace`;
-const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `bridge/last-namespace-name`;
 
 export const NamespaceContext = React.createContext<NamespaceContextType>({});
 
