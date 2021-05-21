@@ -271,7 +271,7 @@ const CaptureTelemetry = React.memo(() => {
     fireUrlChangeEvent('page', history.location);
 
     let { pathname, search } = history.location;
-    history.listen((location) => {
+    const unlisten = history.listen((location) => {
       const { pathname: nextPathname, search: nextSearch } = history.location;
       if (pathname !== nextPathname || search !== nextSearch) {
         pathname = nextPathname;
@@ -279,6 +279,7 @@ const CaptureTelemetry = React.memo(() => {
         fireUrlChangeEvent('page', location);
       }
     });
+    return () => unlisten();
   }, [fireUrlChangeEvent]);
 
   return null;
