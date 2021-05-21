@@ -11,7 +11,7 @@ sleep 3
 
 send "\n"
 
-set timeout 300
+set timeout 600
 
 expect {
     -re $login_prompt {}

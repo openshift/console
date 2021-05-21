@@ -6,14 +6,14 @@ export const confirmButton = '[data-test="confirm-action"]';
 export const confirmCloneButton = 'button[id="confirm-action"]';
 export const kebabButton = 'kebab-button';
 
-export const selectItemFromDropdown = (action: string, selector: string) => {
+export const selectActionFromDropdown = (action: string, selector: string) => {
   cy.byLegacyTestID(selector).click();
   cy.byLegacyTestID(selector).should('be.visible');
   cy.byTestActionID(action).click();
 };
 
 export const detailViewAction = (action) => {
-  selectItemFromDropdown(action, detailViewDropdown);
+  selectActionFromDropdown(action, detailViewDropdown);
   cy.get('body').then(($body) => {
     if ($body.find(modalTitle).length) {
       cy.get(confirmButton).click();
@@ -22,7 +22,7 @@ export const detailViewAction = (action) => {
 };
 
 export const listViewAction = (action) => {
-  selectItemFromDropdown(action, kebabButton);
+  selectActionFromDropdown(action, kebabButton);
   cy.get('body').then(($body) => {
     if ($body.find(modalTitle).length) {
       cy.get(confirmButton).click();

@@ -18,7 +18,7 @@ import {
   detailViewAction,
   detailViewDropdown,
   modalTitle,
-  selectItemFromDropdown,
+  selectActionFromDropdown,
 } from '../../view/actions';
 import { waitForStatus } from '../../view/vm';
 import { alertTitle, confirmCloneButton } from '../../view/clone';
@@ -155,7 +155,7 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) clone vm', () => {
-      selectItemFromDropdown(VM_ACTION.Clone, detailViewDropdown);
+      selectActionFromDropdown(VM_ACTION.Clone, detailViewDropdown);
       cy.get(modalTitle)
         .contains('Clone Virtual Machine')
         .should('exist');

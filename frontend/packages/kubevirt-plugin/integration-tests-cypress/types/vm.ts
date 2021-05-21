@@ -40,6 +40,7 @@ export type VirtualMachineData = {
   flavor?: Flavor;
   os?: string;
   pvcName?: string;
+  pvcNS?: string;
   pvcSize?: string;
   provisionSource?: ProvisionSource;
   networks?: Network[];
