@@ -1,6 +1,9 @@
 .co-quick-start-tile {
   &-description {
-    margin: 0 0 var(--pf-global--spacer--md) 0;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
   &-prerequisites {

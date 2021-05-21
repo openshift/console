@@ -40,10 +40,9 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
       featured={isActive}
       title={<QuickStartTileHeader name={displayName} status={status} duration={durationMinutes} />}
       onClick={onClick}
-      description={
-        <QuickStartTileDescription description={description} prerequisites={prerequisites} />
-      }
-    />
+    >
+      <QuickStartTileDescription description={description} prerequisites={prerequisites} />
+    </CatalogTile>
   );
 };
 
