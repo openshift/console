@@ -20,6 +20,7 @@ import './ImageSearch.scss';
 
 const ImageSearch: React.FC = () => {
   const { t } = useTranslation();
+  const inputRef = React.useRef<HTMLInputElement>();
   const { values, setFieldValue, dirty, initialValues, touched } = useFormikContext<FormikValues>();
   const [newImageSecret, setNewImageSecret] = React.useState('');
   const [alertVisible, shouldHideAlert] = React.useState(true);
@@ -163,9 +164,14 @@ const ImageSearch: React.FC = () => {
     values.searchTerm,
   ]);
 
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <>
       <InputField
+        ref={inputRef}
         type={TextInputTypes.text}
         name="searchTerm"
         placeholder={t('devconsole~Enter an Image name')}
