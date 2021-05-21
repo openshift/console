@@ -4,7 +4,7 @@ Feature: Helm Chart
 
 
         Background:
-            Given user has created or selected namespace "aut-helm"
+            Given user has created or selected namespace "aut-helm-compatibility"
 
         @smoke
         Scenario: Compatible helm charts

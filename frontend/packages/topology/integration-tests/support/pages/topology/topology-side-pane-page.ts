@@ -120,8 +120,7 @@ export const topologySidePane = {
   verifyPipelineRuns: () => {
     cy.get(topologyPO.sidePane.resourcesTab.pipelineRuns).should('be.visible');
   },
-  selectResource: (opt: resources | string) => {
-    const namespace = Cypress.env('namespace');
+  selectResource: (opt: resources | string, namespace: string) => {
     switch (opt) {
       case 'Deployment Configs':
       case resources.DeploymentConfigs: {

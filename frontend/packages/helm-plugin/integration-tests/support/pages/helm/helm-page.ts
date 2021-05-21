@@ -16,37 +16,34 @@ export const helmPage = {
   },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),
-  selectFilterCheckbox: (checkbox: string, option: string) => {
-    // eslint-disable-next-line promise/catch-or-return
-    cy.get('body').then((body) => {
-      if (body.find('checked').length) {
-        cy.get(option).click();
-      }
-    });
-  },
   selectAllHelmFilter: () => {
-    helmPage.selectFilterCheckbox(helmPO.deployedCheckbox, '#deployed');
-    helmPage.selectFilterCheckbox(helmPO.failedCheckbox, '#failed');
-    helmPage.selectFilterCheckbox(helmPO.otherCheckbox, '#other');
+    cy.get(helmPO.deployedCheckbox).check();
+    cy.get(helmPO.failedCheckbox).check();
+    cy.get(helmPO.otherCheckbox).check();
   },
   selectHelmFilter: (filterName: string) => {
     switch (filterName) {
       case 'Deployed': {
-        helmPage.selectFilterCheckbox(helmPO.deployedCheckbox, '#deployed');
+        cy.get(helmPO.deployedCheckbox).check();
         break;
       }
       case 'Failed': {
-        helmPage.selectFilterCheckbox(helmPO.failedCheckbox, '#failed');
+        cy.get(helmPO.failedCheckbox).check();
         break;
       }
       case 'Other': {
-        helmPage.selectFilterCheckbox(helmPO.otherCheckbox, '#other');
+        cy.get(helmPO.otherCheckbox).check();
+        break;
+      }
+      case 'All': {
+        helmPage.selectAllHelmFilter();
         break;
       }
       default: {
         throw new Error(`${filterName} filter is not available in filter drop down`);
       }
     }
+    helmPage.selectHelmFilterDropDown();
   },
   verifyStatusInHelmReleasesTable: (helmReleaseName: string = 'Nodejs Ex K v0.2.1') => {
     cy.get(helmPO.table).should('exist');
@@ -93,31 +90,31 @@ export const helmPage = {
     helmPage.selectHelmFilterDropDown();
     switch (filterName) {
       case 'Deployed': {
-        cy.get('#deployed-checkbox')
+        cy.get(helmPO.deployedCheckbox)
           .uncheck()
           .should('not.be.checked');
         break;
       }
       case 'Failed': {
-        cy.get('#failed-checkbox')
+        cy.get(helmPO.failedCheckbox)
           .uncheck()
           .should('not.be.checked');
         break;
       }
       case 'Other': {
-        cy.get('#other-checkbox')
+        cy.get(helmPO.failedCheckbox)
           .uncheck()
           .should('not.be.checked');
         break;
       }
-      case 'all': {
-        cy.get('#deployed-checkbox')
+      case 'All': {
+        cy.get(helmPO.deployedCheckbox)
           .uncheck()
           .should('not.be.checked');
-        cy.get('#failed-checkbox')
+        cy.get(helmPO.failedCheckbox)
           .uncheck()
           .should('not.be.checked');
-        cy.get('#other-checkbox')
+        cy.get(helmPO.otherCheckbox)
           .uncheck()
           .should('not.be.checked');
         break;
@@ -131,28 +128,28 @@ export const helmPage = {
     helmPage.selectHelmFilterDropDown();
     switch (filterName) {
       case 'Deployed': {
-        cy.get('#deployed-checkbox').should('be.checked');
+        cy.get(helmPO.deployedCheckbox).should('be.checked');
         break;
       }
       case 'Failed': {
-        cy.get('#failed-checkbox').should('be.checked');
+        cy.get(helmPO.failedCheckbox).should('be.checked');
         break;
       }
       case 'Other': {
-        cy.get('#other-checkbox').should('be.checked');
+        cy.get(helmPO.otherCheckbox).should('be.checked');
         break;
       }
-      case 'all': {
-        cy.get('#deployed-checkbox').should('be.checked');
-        cy.get('#failed-checkbox').should('be.checked');
-        cy.get('#other-checkbox').should('be.checked');
+      case 'All': {
+        cy.get(helmPO.deployedCheckbox).should('be.checked');
+        cy.get(helmPO.failedCheckbox).should('be.checked');
+        cy.get(helmPO.otherCheckbox).should('be.checked');
         break;
       }
       default: {
         throw new Error(`${filterName} filter is not available in filter drop down`);
       }
     }
-    helmPage.clearAllFilter();
+    helmPage.selectHelmFilterDropDown();
   },
   clearAllFilter: () => {
     // eslint-disable-next-line promise/catch-or-return

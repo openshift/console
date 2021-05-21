@@ -46,9 +46,12 @@ When('user clicks on the Actions drop down menu', () => {
 Then(
   'user is able to see the actions dropdown menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    cy.byTestActionID('Upgrade').should('be.visible');
-    cy.byTestActionID('Rollback').should('be.visible');
-    cy.byTestActionID('Uninstall Helm Release').should('be.visible');
+    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
+    cy.byLegacyTestID('action-items')
+      .children()
+      .each(($ele) => {
+        expect(actions).toContain($ele.text());
+      });
   },
 );
 
@@ -64,9 +67,12 @@ When('user clicks on the Kebab menu', () => {
 Then(
   'user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    cy.byTestActionID('Upgrade').should('be.visible');
-    cy.byTestActionID('Rollback').should('be.visible');
-    cy.byTestActionID('Uninstall Helm Release').should('be.visible');
+    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
+    cy.byLegacyTestID('action-items')
+      .children()
+      .each(($ele) => {
+        expect(actions).toContain($ele.text());
+      });
   },
 );
 
@@ -102,4 +108,31 @@ When('user clicks on the Uninstall button', () => {
 Then('user will be redirected to Topology page with no workloads', () => {
   app.waitForDocumentLoad();
   topologyPage.verifyNoWorkLoadsText('No resources found');
+});
+When('user clicks on the helm release {string}', (helmReleaseName: string) => {
+  topologyPage.clickOnNode(helmReleaseName);
+});
+
+Then('user will see the sidebar for the helm release', () => {
+  topologySidePane.verify();
+});
+
+Then('user will see the Details, Resources, Release notes tabs', () => {
+  topologyPage.verifyHelmReleaseSidePaneTabs();
+});
+
+Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
+  topologyPage.clickOnNode(helmReleaseName);
+  topologySidePane.verify();
+});
+
+Then('user will see the {string} action item', (actionItem: string) => {
+  cy.byTestActionID(actionItem).should('be.visible');
+});
+
+Then('user is redirected to the {string} Details page for the helm release', (resource: string) => {
+  cy.get(`[data-test-section-heading="${resource} details"] span`).should(
+    'contain.text',
+    `${resource} details`,
+  );
 });

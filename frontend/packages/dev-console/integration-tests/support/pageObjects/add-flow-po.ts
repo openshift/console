@@ -116,6 +116,7 @@ export const catalogPO = {
     nginxHTTPServer:
       'a[data-test="Template-Nginx HTTP server and a reverse proxy"] .catalog-tile-pf-title',
     knativeKafka: '[data-test="OperatorBackedService-Knative Kafka"]',
+    helmNodejs: '[data-test="HelmChart-Nodejs Ex K v0.2.1"]',
   },
   sidePane: {
     dialog: '[role="dialog"]',
@@ -145,6 +146,20 @@ export const catalogPO = {
     formView: '#form-radiobutton-editorType-form-field',
     cancel: '[data-test-id="reset-button"]',
     chartVersion: '#form-dropdown-chartVersion-field',
+    replicaCount: '#root_replicaCount',
+    ingressLink: '#root_ingress_accordion-toggle',
+    ingress: {
+      enabled: '#root_ingress_enabled',
+      hostsLink: '#root_ingress_hosts_accordion-toggle',
+      tlsLink: '#root_ingress_tls_accordion-toggle',
+      hostDetails: {
+        hostName: '#root_ingress_hosts_0_host',
+        removeHost: '[id$="remove-btn"]',
+      },
+      pathsLink: '#root_ingress_hosts_0_paths_accordion-toggle',
+      AddPathButton: '#root_ingress_hosts_0_paths_add-btn',
+      AddHostButton: '#root_ingress_hosts_add-btn',
+    },
   },
   s2I: {
     gitRepoUrl: '[data-test-id="git-form-input-url"]',

@@ -3,6 +3,7 @@ import { addPage } from '@console/dev-console/integration-tests/support/pages/ad
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
+import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is at the Install Helm Chart page', () => {
   addPage.selectCardFromOptions(addOptions.HelmChart);
@@ -17,5 +18,5 @@ When('user redirects to Helm Charts page', () => {
 });
 
 Then('user is able to see helm charts', () => {
-  cy.get('.pf-c-badge').should('be.visible');
+  cy.get(catalogPO.cardType).should('be.visible');
 });

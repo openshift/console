@@ -7,6 +7,7 @@ import {
 import {
   devNavigationMenu,
   addOptions,
+  pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPage, helmDetailsPage } from '../../pages';
 import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
@@ -29,8 +30,13 @@ Then('user will get the link to install helm charts from developer catalog', () 
   helmPage.verifyInstallHelmLink();
 });
 
+When('user searches and selects {string} card from catalog page', (cardName: string) => {
+  catalogPage.search(cardName);
+  catalogPage.selectHelmChartCard(cardName);
+});
+
 Then('Install Helm Chart page is displayed', () => {
-  cy.get('h1.pf-c-title').should('have.text', 'Install Helm Chart');
+  cy.get('h1.pf-c-title').should('have.text', pageTitle.InstallHelmCharts);
 });
 
 Then('release name displays as {string}', (name: string) => {
@@ -55,7 +61,7 @@ Then('Topology page have the helm chart workload {string}', (nodeName: string) =
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
 });
 
-Given('helm chart is installed', () => {
+Given('user has installed helm chart', () => {
   navigateTo(devNavigationMenu.Topology);
   topologyPage.verifyWorkloadInTopologyPage('nodejs-example');
 });
@@ -64,8 +70,8 @@ Given('user is at the Helm page', () => {
   navigateTo(devNavigationMenu.Helm);
 });
 
-When('user selects checkbox for the Deployed Helm charts', (workloadname: string) => {
-  topologyPage.verifyWorkloadInTopologyPage(workloadname);
+When('user selects checkbox for the Deployed Helm charts', (workloadName: string) => {
+  topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });
 
 When('user searches for a helm chart {string}', (helmChartName: string) => {
@@ -97,16 +103,17 @@ Then('user will see the Release Notes tab', () => {
   helmDetailsPage.verifyReleaseNotesTab();
 });
 
-Then('user will see the Actions drop down menu', () => {
-  helmDetailsPage.verifyActionsDropdown();
-});
+Then(
+  'user will see the Actions drop down menu with options Upgrade, Rollback, and Uninstall Helm Release',
+  () => {
+    helmDetailsPage.verifyActionsDropdown();
+    helmDetailsPage.clickActionMenu();
+    helmDetailsPage.verifyActionsInActionMenu();
+  },
+);
 
 When('user clicks Actions menu in Helm Details page', () => {
   helmDetailsPage.clickActionMenu();
-});
-
-Then('Actions menu display with options Upgrade, Rollback, and Uninstall Helm Release', () => {
-  helmDetailsPage.verifyActionsInActionMenu();
 });
 
 When('user clicks on the filter drop down', () => {
@@ -139,4 +146,12 @@ Then('user is able to see message on the Helm page as {string}', (message: strin
 
 Then('user will see the helm charts listed', () => {
   helmPage.verifyHelmChartsListed();
+});
+
+When('user selects {string} option from Type section', (catalogType: string) => {
+  catalogPage.selectCatalogType(catalogType);
+});
+
+Then('user can see {string} card on the Add page', (cardName: string) => {
+  addPage.verifyCard(cardName);
 });
