@@ -1,7 +1,15 @@
 .odc-add-card-item {
+  .pf-c-simple-list__item-link {
+    --pf-c-simple-list__item-link--focus--FontWeight: normal;
+    --pf-c-simple-list__item-link--active--FontWeight: normal;
+    --pf-c-simple-list__item-link--hover--FontWeight: normal;
+  }
+
   margin-top: var(--pf-global--spacer--lg);
+
   &__header {
     margin-left: calc(var(--pf-global--spacer--lg) - var(--pf-global--spacer--sm));
+
     &__icon {
       display: inline;
       vertical-align: middle;
@@ -13,6 +21,7 @@
       font-size: var(--pf-global--FontSize--md);
       margin-left: var(--pf-global--spacer--sm);
     }
+
     &__title {
       display: inline;
       vertical-align: middle;
@@ -20,21 +29,29 @@
       // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
       font-size: var(--pf-global--spacer--md) !important;
     }
-    &:hover {
-      color: var(--pf-global--link--Color);
-      .odc-add-card-item__header__title {
-        color: var(--pf-global--link--Color);
+
+    a.pf-c-simple-list__item-link {
+      &:hover .odc-add-card-item__header__title {
+        color: var(--pf-c-simple-list__item-link--hover--Color);
+      }
+      &:focus .odc-add-card-item__header__title {
+        color: var(--pf-c-simple-list__item-link--focus--Color);
+      }
+      &:active .odc-add-card-item__header__title {
+        color: var(--pf-c-simple-list__item-link--active--Color);
       }
     }
   }
+
   &__description {
-    margin: var(--pf-global--spacer--sm) 0px 0px var(--pf-global--spacer--lg);
+    margin: var(--pf-global--spacer--sm) 0 0 var(--pf-global--spacer--sm);
     color: var(--pf-global--Color--200);
     // temporary fix since --pf-global--FontSize--sm is being computed to 13px instead of 14px
     font-size: var(--pf-global--FontSize--md);
   }
 
   a {
-    padding-left: 0px;
+    padding-left: 0;
+    text-decoration: none;
   }
 }
