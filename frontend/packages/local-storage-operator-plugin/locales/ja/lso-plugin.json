@@ -20,7 +20,7 @@
   "{{nodes, number}} node_1": "{{nodes, number}} ノード",
   "Selecting all nodes will discover for available disks storage on all nodes.": "すべてのノードを選択すると、すべてのノードで利用可能なディスクストレージが検出されます。",
   "Select nodes": "ノードの選択",
-  "Selecting nodes allow you to limit the discovery for available disks to specific nodes.": "ノードを選択すると、利用可能なディスクの検出を特定のノードに制限できます。",
+  "Selecting nodes allows you to limit the discovery for available disks to specific nodes.": "ノードを選択すると、利用可能なディスクの検出を特定のノードに制限できます。",
   "Local Storage": "ローカルストレージ",
   "Create Local Volume Discovery": "ローカルボリューム検出の作成",
   "Local Volume Discovery": "ローカルボリューム検出",

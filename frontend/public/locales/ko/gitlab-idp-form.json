@@ -1,8 +1,0 @@
-{
-  "Add Identity Provider: GitLab": "아이덴티티 공급자 추가: GitLab",
-  "You can use GitLab integration for users authenticating with GitLab credentials.": "GitLab 인증 정보로 인증하는 사용자는 GitLab 통합을 사용할 수 있습니다.",
-  "URL": "URL",
-  "The OAuth server base URL.": "OAuth 서버 기본 URL입니다.",
-  "Client ID": "클라이언트 ID",
-  "Client secret": "클라이언트 시크릿"
-}

@@ -1,8 +1,8 @@
 {
+  "Environments": "环境",
   "by {{author}}": "由 {{author}}",
   "Commit details not available": "没有提交详情",
   "Cluster URL not available": "没有集群 URL",
-  "Environments": "环境",
   "Application environments": "应用程序环境",
   "Manifest file repo": "清单文件仓库",
   "Image not available": "镜像不可用",

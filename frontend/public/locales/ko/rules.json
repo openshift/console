@@ -1,8 +1,0 @@
-{
-  "Rules": "규칙",
-  "Actions": "동작",
-  "API groups": "API 그룹",
-  "Resources": "리소스",
-  "Delete rule": "규칙 삭제",
-  "Are you sure you want to delete rule #{{ruleNumber}}?": "규칙 #{{ruleNumber}}을/를 삭제하시겠습니까?"
-}

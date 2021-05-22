@@ -1,8 +1,0 @@
-{
-  "Rules": "ルール",
-  "Actions": "アクション",
-  "API groups": "API グループ",
-  "Resources": "リソース",
-  "Delete rule": "ルールの削除",
-  "Are you sure you want to delete rule #{{ruleNumber}}?": "ルール #{{ruleNumber}} を削除してもよいですか?"
-}

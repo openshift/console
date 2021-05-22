@@ -1,4 +1,5 @@
 {
+  "Bare Metal Hosts": "ベアメタルホスト",
   "resources": "リソース",
   "Name \"${value}\" is already taken.": "名前 \"${value}\" はすでに存在します。",
   "Value provided is not a valid BMC address": "提供された値は有効な BMC アドレスではありません",
@@ -59,7 +60,6 @@
   "New with Dialog": "ダイアログ関連の新規内容",
   "New from YAML": "YAML の新規内容",
   "Add Host": "ホストの追加",
-  "Bare Metal Hosts": "ベアメタルホスト",
   "Management Address": "管理アドレス",
   "Add credentials": "認証情報の追加",
   "View all": "すべてを表示",

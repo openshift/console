@@ -1,4 +1,5 @@
 {
+  "VolumeSnapshotContents": "VolumeSnapshotContents",
   "Edit resource limits": "리소스 제한 편집",
   "Add Health Checks": "상태 검사 추가",
   "Edit Health Checks": "상태 검사 편집",
@@ -28,6 +29,7 @@
   "Used capacity": "사용된 용량",
   "Access mode": "액세스 모드",
   "Volume mode": "볼륨 모드",
+  "Save": "저장",
   "Restore as new PVC": "새 PVC로 복원",
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "스냅 샷 <1>{{snapshotName}}</1>의 복원이 완료되면 충돌한 시스템과 일치하는 새 PVC 사본이 생성됩니다.",
   "Volume Mode": "볼륨 모드",
@@ -65,6 +67,5 @@
   "Cluster": "클러스터",
   "Control Plane": "컨트롤 플레인",
   "Control Plane status": "컨트롤 플레인 상태",
-  "Cluster operators": "클러스터 Operator",
-  "VolumeSnapshotContents": "VolumeSnapshotContents"
+  "Cluster operators": "클러스터 Operator"
 }

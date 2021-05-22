@@ -1,8 +1,8 @@
 {
+  "Environments": "환경",
   "by {{author}}": "{{author}} 별",
   "Commit details not available": "커밋 세부 정보를 사용할 수 없습니다.",
   "Cluster URL not available": "클러스터 URL을 사용할 수 없습니다.",
-  "Environments": "환경",
   "Application environments": "애플리케이션 환경",
   "Manifest file repo": "매니페스트 파일 저장소",
   "Image not available": "이미지를 사용할 수 없습니다",
@@ -17,5 +17,6 @@
   "{{count, number}} Environment_0": " 환경",
   "{{count, number}} Environment_1": " 환경",
   "No GitOps manifest URLs found": "GitOps 매니페스트 URL을 찾을 수 없습니다",
-  "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다"
+  "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다",
+  "{{id}} by {{author}}": "{{id}} ({{author}} 별)"
 }

@@ -1,8 +1,8 @@
 {
+  "Environments": "環境",
   "by {{author}}": "{{author}} 別",
   "Commit details not available": "コミットの詳細は利用できません",
   "Cluster URL not available": "クラスター URL は利用できません",
-  "Environments": "環境",
   "Application environments": "アプリケーション環境",
   "Manifest file repo": "マニフェストファイルのリポジトリー",
   "Image not available": "イメージは利用できません",

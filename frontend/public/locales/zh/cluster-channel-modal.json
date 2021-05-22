@@ -1,9 +1,0 @@
-{
-  "Select channel": "选择频道",
-  "Input channel": "输入频道",
-  "The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.": "当前版本包括在下拉菜单中列出的频道中。选择一个代表所需版本的频道。关键安全更新将会被传送到任何存在安全漏洞的频道。",
-  "Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.": "输入代表所需版本的频道。要验证某个频道中是否存在版本，请保存并检查更新状态。关键安全更新将传送到任何存在安全漏洞的频道。",
-  "Channel": "频道",
-  "e.g., {{version}}": "例如，{{version}}",
-  "Potential channels are {{stable}}, {{fast}}, or {{candidate}}.": "潜在的频道为 {{stable}}、{{fast}} 或 {{candidate}}。"
-}

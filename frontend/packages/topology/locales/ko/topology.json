@@ -37,6 +37,7 @@
   "View details in side panel": "측면 패널에서 세부 정보보기",
   "Open quick search modal": "빠른 검색 모드 열기",
   "Upload file ({{fileTypes}}) to project": "프로젝트에 파일 ({{fileTypes}}) 업로드",
+  "Alerts:": "경고:",
   "Builds:": "빌드",
   "CPU": "CPU",
   "No {{metricLabel}} metrics available.": "{{metricLabel}} 사용 가능한 메트릭이 없습니다.",
@@ -45,6 +46,7 @@
   "{{ready, number}} of {{count, number}} Pod_1": "{{ready, number}}/{{count, number}} Pod",
   "{{length}} Pods": "{{length}} Pod",
   "Rollout in progress...": "롤아웃 진행 중...",
+  "{{resourceLabel}} sub-resources": "{{resourceLabel}} 하위 리소스",
   "Select an Application group to add the component <2>{resource.metadata.name}</2> to": "구성 요소 <2>{resource.metadata.name}</2>를 추가할 애플리케이션 그룹을 선택합니다.",
   "Save": "저장",
   "Connect <1>{{sourceLabel}}</1> to": "<1>{{sourceLabel}}</1> 연결",
@@ -60,6 +62,7 @@
   "Drop file ({{fileTypes}}) here": "여기에 파일 ({{fileTypes}}) 드롭",
   "View all developer catalog items ({{itemCount, number}})": "모든 개발자 카탈로그 항목보기 ({{itemCount, number}})",
   "View all quick starts ({{itemCount, number}})": "모든 퀵스타트보기 ({{itemCount, number}})",
+  "View all samples ({{itemCount, number}})": "모든 샘플보기 ({{itemCount, number}})",
   "Quick search bar": "빠른 검색 창",
   "Add to Project": "프로젝트에 추가",
   "No results": "결과 없음",
@@ -113,5 +116,8 @@
   "Delete": "삭제",
   "Unable to update Application, invalid resource type: {{kind}}": "애플리케이션을 업데이트할 수 없습니다. 잘못된 리소스 유형: {{kind}}",
   "Can not create a connection from a node to itself.": "노드 자체에서 연결을 만들 수 없습니다.",
-  "To add content to your Project, create an Application, component or service using one of these options.": "프로젝트에 콘텐츠를 추가하려면 다음 옵션 중 하나를 사용하여 애플리케이션, 구성 요소 또는 서비스를 만듭니다."
+  "To add content to your Project, create an Application, component or service using one of these options.": "프로젝트에 콘텐츠를 추가하려면 다음 옵션 중 하나를 사용하여 애플리케이션, 구성 요소 또는 서비스를 만듭니다.",
+  "Select a Project to view the topology": "토폴로지를 보려면 프로젝트를 선택",
+  "Topology view": "토폴로지 보기",
+  "View all results for \"{{searchTerm}}\" ({{totalItems, number}})": "\"{{searchTerm}}\"의 결과를 모두 표시 ({{totalItems, number}})"
 }

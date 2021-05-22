@@ -1,4 +1,5 @@
 {
+  "VolumeSnapshotContents": "VolumeSnapshotContents",
   "Edit resource limits": "编辑资源限制",
   "Add Health Checks": "添加健康检查",
   "Edit Health Checks": "编辑健康检查",
@@ -28,6 +29,7 @@
   "Used capacity": "使用的容量",
   "Access mode": "访问模式",
   "Volume mode": "卷模式",
+  "Save": "保存",
   "Restore as new PVC": "恢复为新的 PVC",
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "在快照<1>{{snapshotName}}</1>恢复操作完成后，将创建一个新的与崩溃系统一致的 PVC 副本。",
   "Volume Mode": "卷模式",
@@ -65,6 +67,5 @@
   "Cluster": "集群",
   "Control Plane": "Control Plane",
   "Control Plane status": "Control Plane 状态",
-  "Cluster operators": "集群 operator",
-  "VolumeSnapshotContents": "VolumeSnapshotContents"
+  "Cluster operators": "集群 operators"
 }

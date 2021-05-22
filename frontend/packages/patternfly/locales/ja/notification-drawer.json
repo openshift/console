@@ -1,0 +1,10 @@
+{
+  "Notifications": "通知",
+  "{{count}} unread_0": "{{count}} 件の未読",
+  "Close": "閉じる",
+  "Warning notification:": "警告通知:",
+  "Critical notification:": "重大通知:",
+  "Success notification:": "成功の通知:",
+  "Update notification:": "通知の更新:",
+  "Info notification:": "情報の通知:"
+}

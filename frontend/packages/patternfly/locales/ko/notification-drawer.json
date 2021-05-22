@@ -1,0 +1,10 @@
+{
+  "Notifications": "알림",
+  "{{count}} unread_0": "{{count}} 읽지 않음",
+  "Close": "닫기",
+  "Warning notification:": "경고 알림 :",
+  "Critical notification:": "심각한 상태 알림:",
+  "Success notification:": "성공 알림 :",
+  "Update notification:": "업데이트 알림 :",
+  "Info notification:": "정보 알림 :"
+}
