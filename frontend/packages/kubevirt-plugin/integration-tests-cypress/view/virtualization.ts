@@ -78,7 +78,7 @@ export const virtualization = {
     filter: (templateName: string) => cy.byLegacyTestID('item-filter').type(templateName),
     clickCreateNewTemplateFrom: (templateName: string) => {
       getRow(templateName, () => cy.byLegacyTestID('kebab-button').click());
-      cy.byTestActionID('Create new Template from').click();
+      cy.byTestActionID('Create new Template').click();
     },
   },
 };
