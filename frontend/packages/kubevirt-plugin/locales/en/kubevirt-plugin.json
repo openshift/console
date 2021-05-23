@@ -334,8 +334,6 @@
   "Start this virtual machine after creation": "Start this virtual machine after creation",
   "This template does not have a boot source. Provide a custom boot source for this <2>{{name}}</2> virtual machine.": "This template does not have a boot source. Provide a custom boot source for this <2>{{name}}</2> virtual machine.",
   "Project ": "Project ",
-  "Type ": "Type ",
-  "Flavor ": "Flavor ",
   "Storage ": "Storage ",
   "All projects": "All projects",
   "Select a template": "Select a template",
