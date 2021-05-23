@@ -33,9 +33,7 @@ import { SearchIcon } from '@patternfly/react-icons';
 import { createProjectModal } from '@console/internal/components/modals';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
-import { getWorkloadProfile } from '../../../selectors/vm';
 import {
-  getTemplateFlavorData,
   getTemplateOperatingSystems,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
@@ -78,7 +76,6 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
   const [template] = templateItem.variants;
 
   const osName = getTemplateOperatingSystems(templateItem.variants)?.[0]?.name;
-  const workloadProfile = getWorkloadProfile(template) || t('kubevirt-plugin~Not available');
   const provider = getTemplateProvider(t, template, true);
   const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
   const storageLable = storage
@@ -118,17 +115,6 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
             <StackItem>
               <b>{t('kubevirt-plugin~Project ')}</b>
               {template.metadata.namespace}
-            </StackItem>
-            <StackItem>
-              <b>{t('kubevirt-plugin~Type ')}</b>
-              {workloadProfile}
-            </StackItem>
-            <StackItem>
-              <b>{t('kubevirt-plugin~Flavor ')}</b>
-              {t(
-                'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
-                getTemplateFlavorData(template),
-              )}
             </StackItem>
             <StackItem>
               <b>{t('kubevirt-plugin~Storage ')}</b>
