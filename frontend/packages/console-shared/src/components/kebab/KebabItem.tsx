@@ -35,6 +35,7 @@ const KebabItemButton: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       // eslint-disable-next-line jsx-a11y/no-autofocus
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
+      disabled={disabled}
       data-test-action={option.id}
     >
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
