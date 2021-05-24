@@ -28,8 +28,10 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   };
 
   const changeValueBy = (changeBy: number) => {
-    setValue(value + changeBy);
-    onChange({ value: value + changeBy, unit });
+    // When default defaultRequestSizeValue is not set, value becomes NaN and increment decrement buttons of NumberSpinner don't work.
+    const newValue = Number.isFinite(value) ? value + changeBy : 0 + changeBy;
+    setValue(newValue);
+    onChange({ value: newValue, unit });
   };
 
   const onUnitChange = (newUnit) => {
