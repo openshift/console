@@ -39,8 +39,10 @@ type CustomData = {
 type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomData) => KebabOption;
 
 const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => ({
-  // t('kubevirt-plugin~Create new Template from')
-  labelKey: 'kubevirt-plugin~Create new Template from',
+  // t('kubevirt-plugin~Create new Template')
+  labelKey: 'kubevirt-plugin~Create new Template',
+  // t('kubevirt-plugin~Create a new customized template based on this template')
+  tooltipKey: 'kubevirt-plugin~Create a new customized template based on this template',
   href: getVMWizardCreateLink({
     namespace: namespace || vmTemplate.variants[0].metadata.namespace,
     wizardName: VMWizardName.WIZARD,

@@ -205,9 +205,10 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
   } else {
     item = <KebabItem_ {...props} isAllowed />;
   }
+  const tooltip = option.tooltipKey ? i18next.t(option.tooltipKey) : option.tooltip;
 
-  return option.tooltip ? (
-    <Tooltip position="left" content={option.tooltip}>
+  return tooltip ? (
+    <Tooltip position="left" content={tooltip}>
       {item}
     </Tooltip>
   ) : (
@@ -560,6 +561,7 @@ export type KebabOption = {
   accessReview?: AccessReviewResourceAttributes;
   isDisabled?: boolean;
   tooltip?: string;
+  tooltipKey?: string;
   // a `/` separated string where each segment denotes a new sub menu entry
   // Eg. `Menu 1/Menu 2/Menu 3`
   path?: string;
