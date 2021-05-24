@@ -92,6 +92,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
       onClick={(e) => !disabled && onClick(e, option)}
       autoFocus={autoFocus}
       onKeyDown={onEscape && handleEscape}
+      disabled={disabled}
       data-test-action={option.labelKey ? t(option.labelKey, option.labelKind) : option.label}
     >
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
@@ -159,11 +160,17 @@ const KebabSubMenu: React.FC<KebabSubMenuProps> = ({ option, onClick }) => {
         }}
         reference={referenceCb}
       >
-        <FocusTrap focusTrapOptions={{ clickOutsideDeactivates: true }}>
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+            fallbackFocus: () => subMenuRef.current, // fallback to popover content wrapper div if there are no tabbable elements
+          }}
+        >
           <div
             ref={subMenuCbRef}
             role="presentation"
             className="pf-c-dropdown pf-m-expanded"
+            tabIndex={-1}
             onMouseLeave={(e) => {
               // only close the sub menu if the mouse does not enter the item
               if (!nodeRef.current || !nodeRef.current.contains(e.relatedTarget as Node)) {
@@ -445,6 +452,8 @@ export class Kebab extends React.Component<any, { active: boolean }> {
 
   private dropdownElement = React.createRef<HTMLButtonElement>();
 
+  private divElement = React.createRef<HTMLDivElement>();
+
   constructor(props) {
     super(props);
     this.state = {
@@ -497,6 +506,8 @@ export class Kebab extends React.Component<any, { active: boolean }> {
 
   getPopperReference = () => this.dropdownElement.current;
 
+  getDivReference = () => this.divElement.current;
+
   render() {
     const { options, isDisabled } = this.props;
 
@@ -533,9 +544,13 @@ export class Kebab extends React.Component<any, { active: boolean }> {
           reference={this.getPopperReference}
         >
           <FocusTrap
-            focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
+            focusTrapOptions={{
+              clickOutsideDeactivates: true,
+              returnFocusOnDeactivate: false,
+              fallbackFocus: this.getDivReference, // fallback to popover content wrapper div if there are no tabbable elements
+            }}
           >
-            <div className="pf-c-dropdown pf-m-expanded">
+            <div ref={this.divElement} className="pf-c-dropdown pf-m-expanded" tabIndex={-1}>
               <KebabMenuItems
                 options={menuOptions}
                 onClick={this.onClick}
