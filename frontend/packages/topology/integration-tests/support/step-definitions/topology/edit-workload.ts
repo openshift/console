@@ -188,3 +188,20 @@ When('user enters value of Image name as {string}', (imageLink: string) => {
     .clear()
     .type(imageLink);
 });
+
+When('user enters key as {string}', (annotationKey: string) => {
+  cy.get(topologyPO.graph.addNewAnnotations).click();
+  cy.get(topologyPO.deploymentStrategy.envName)
+    .clear()
+    .type(annotationKey);
+});
+
+When('user enters value as {string} to which it will be connected', (annotationValue: string) => {
+  cy.get(topologyPO.deploymentStrategy.envValue)
+    .clear()
+    .type(annotationValue);
+});
+
+Then('user can see that two workloads are connected with arrow', () => {
+  cy.get(topologyPO.graph.connector).should('be.visible');
+});

@@ -21,6 +21,8 @@ export const topologyPO = {
     deleteWorkload: '[data-test="confirm-action"]',
     eventSourceWorkload: '[data-type="event-source"]',
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
+    addNewAnnotations: '[data-test="add-button"]',
+    connector: '[data-test-id="edge-handler"]',
     filterByResource: {
       filterByResourceDropDown: '.pf-c-select__toggle-text',
       deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
