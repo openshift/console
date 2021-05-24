@@ -14,5 +14,17 @@
     "flags": {
       "required": ["NET_ATTACH_DEF", "KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "k8s.cni.cncf.io",
+        "kind": "NetworkAttachmentDefinition",
+        "version": "v1"
+      },
+      "template": { "$codeRef": "yamlTemplates.defaultYamlTemplate" }
+    }
   }
 ]

@@ -344,5 +344,39 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine",
+        "version": "v1alpha3"
+      },
+      "template": {
+        "$codeRef": "yamlTemplates.defaultVMYamlTemplate"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachineTemplate",
+        "version": "v1alpha3"
+      },
+      "template": {
+        "$codeRef": "yamlTemplates.defaultVMTemplateYamlTemplate"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

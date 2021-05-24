@@ -18,6 +18,9 @@
       "network-attachment-definition": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "yamlTemplates": "src/models/templates/index.ts"
     }
   }
 }

@@ -8,19 +8,11 @@ import {
   Perspective,
   RoutePage,
   OverviewResourceTab,
-  YAMLTemplate,
   OverviewTabSection,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FLAG_OPENSHIFT_PIPELINE } from './const';
-import {
-  newPipelineTemplate,
-  newTaskTemplate,
-  newTaskRunTemplate,
-  newPipelineResourceTemplate,
-  newClusterTaskTemplate,
-} from './templates';
 import * as models from './models';
 import {
   pipelinesTopologyPlugin,
@@ -49,7 +41,6 @@ type ConsumedExtensions =
   | Perspective
   | RoutePage
   | OverviewResourceTab
-  | YAMLTemplate
   | OverviewTabSection
   | PipelineTopologyConsumedExtensions;
 
@@ -383,41 +374,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/pipelineruns/PipelineRunsPage' /* webpackChunkName: "pipelinerun-page" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: PipelineModel,
-      template: newPipelineTemplate,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: TaskModel,
-      template: newTaskTemplate,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: TaskRunModel,
-      template: newTaskRunTemplate,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: PipelineResourceModel,
-      template: newPipelineResourceTemplate,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: ClusterTaskModel,
-      template: newClusterTaskTemplate,
     },
   },
   ...pipelinesTopologyPlugin,

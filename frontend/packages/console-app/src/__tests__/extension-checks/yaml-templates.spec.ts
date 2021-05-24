@@ -1,8 +1,11 @@
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-import { referenceForModel, GroupVersionKind } from '@console/internal/module/k8s';
+import { referenceForExtensionModel, GroupVersionKind } from '@console/internal/module/k8s';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
-import { YAMLTemplate, isYAMLTemplate } from '@console/plugin-sdk';
+import {
+  YAMLTemplate,
+  isYAMLTemplate,
+} from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
 import { testedExtensions, getDuplicates } from '../plugin-test-utils';
 
 type TemplateEntry = [GroupVersionKind, ImmutableMap<string, string>];
@@ -21,7 +24,7 @@ const entryToKeys = (entry: TemplateEntry) => {
 };
 
 const extensionToKeys = (e: YAMLTemplate) => {
-  return [`${referenceForModel(e.properties.model)}_${e.properties.templateName || 'default'}`];
+  return [`${referenceForExtensionModel(e.properties.model)}_${e.properties.name || 'default'}`];
 };
 
 describe('YAMLTemplate', () => {

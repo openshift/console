@@ -7,7 +7,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   Perspective,
-  YAMLTemplate,
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
@@ -25,7 +24,6 @@ import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
 import { FooBarModel } from './models';
-import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
@@ -36,7 +34,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
-  | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem
@@ -94,13 +91,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       getLandingPageURL: () => '/test',
       getK8sLandingPageURL: () => '/test',
       getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: FooBarModel,
-      template: yamlTemplates.getIn([FooBarModel, 'default']),
     },
   },
   {

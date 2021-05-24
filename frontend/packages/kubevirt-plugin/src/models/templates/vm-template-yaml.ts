@@ -73,3 +73,5 @@ parameters:
     required: true
 `,
 );
+
+export const defaultVMTemplateYamlTemplate = VMTemplateYAMLTemplates.getIn(['vm-template']);

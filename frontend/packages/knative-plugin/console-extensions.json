@@ -130,5 +130,19 @@
         "FLAG_KNATIVE_EVENTING_BROKER"
       ]
     }
+  },
+  {
+    "type": "console.yaml-template",
+    "properties": {
+      "name": "default",
+      "model": {
+        "group": "serving.knative.dev",
+        "kind": "Service",
+        "version": "v1"
+      },
+      "template": {
+        "$codeRef": "yamlTemplates.defaultYamlTemplate"
+      }
+    }
   }
 ]

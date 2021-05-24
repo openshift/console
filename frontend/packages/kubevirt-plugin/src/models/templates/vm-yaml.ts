@@ -65,3 +65,5 @@ spec:
           name: cloudinitdisk
 `,
 );
+
+export const defaultVMYamlTemplate = VirtualMachineYAMLTemplates.getIn(['default']);

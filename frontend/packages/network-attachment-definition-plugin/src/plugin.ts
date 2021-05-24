@@ -4,19 +4,16 @@ import {
   ResourceDetailsPage,
   ResourceListPage,
   ModelFeatureFlag,
-  YAMLTemplate,
   ModelDefinition,
   RoutePage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
-import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
 type ConsumedExtensions =
   | ResourceDetailsPage
   | ResourceListPage
   | ModelFeatureFlag
-  | YAMLTemplate
   | ModelDefinition
   | RoutePage;
 
@@ -68,13 +65,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_NET_ATTACH_DEF],
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: models.NetworkAttachmentDefinitionModel,
-      template: NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']),
     },
   },
   {

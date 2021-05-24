@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
 import { withTranslation } from 'react-i18next';
-
 import {
   FLAGS,
   ALL_NAMESPACES_KEY,
@@ -18,10 +17,11 @@ import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { isYAMLTemplate, withExtensions } from '@console/plugin-sdk';
+import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { connectToFlags } from '../reducers/features';
 import { errorModal, managedResourceSaveModal } from './modals';
-import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
+import { Firehose, LoadingBox, checkAccess, history, Loading, resourceObjPath } from './utils';
 import {
   referenceForModel,
   k8sCreate,
@@ -50,13 +50,27 @@ const stateToProps = ({ k8s, UI }) => ({
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
+const WithYamlTemplates = (Component) =>
+  function Comp(props) {
+    const kind = props?.obj?.kind;
+    const [templateExtensions, resolvedTemplates] = useResolvedExtensions(
+      React.useCallback((e) => isYAMLTemplate(e) && e.properties.model.kind === kind, [kind]),
+    );
+
+    return !resolvedTemplates ? (
+      <LoadingBox />
+    ) : (
+      <Component templateExtensions={templateExtensions} {...props} />
+    );
+  };
+
 /**
  * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
 /** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}, onChange?: (yaml: string) => void>} */
 export const EditYAML_ = connect(stateToProps)(
-  withExtensions({ templateExtensions: isYAMLTemplate })(
+  WithYamlTemplates(
     withPostFormSubmissionCallback(
       class EditYAML extends React.Component {
         constructor(props) {

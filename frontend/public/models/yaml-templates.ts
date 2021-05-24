@@ -1,9 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { GroupVersionKind, referenceForModel } from '../module/k8s';
+import { GroupVersionKind, referenceForModel, referenceForExtensionModel } from '../module/k8s';
 import * as k8sModels from '../models';
 import * as appModels from '@console/app/src/models/';
-import { YAMLTemplate } from '@console/plugin-sdk';
+import { YAMLTemplate } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
+import { ResolvedExtension } from '@console/dynamic-plugin-sdk';
 
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
@@ -1310,13 +1311,13 @@ spec:
 `,
   );
 
-export const getYAMLTemplates = (extensionTemplates: YAMLTemplate[] = []) =>
+export const getYAMLTemplates = (extensionTemplates: ResolvedExtension<YAMLTemplate>[] = []) =>
   ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
     .merge(baseTemplates)
     .withMutations((map) => {
       extensionTemplates.forEach((yt) => {
-        const modelRef = referenceForModel(yt.properties.model);
-        const templateName = yt.properties.templateName || 'default';
+        const modelRef = referenceForExtensionModel(yt.properties.model);
+        const templateName = yt.properties.name || 'default';
 
         if (!baseTemplates.hasIn([modelRef, templateName])) {
           map.setIn([modelRef, templateName], yt.properties.template);
