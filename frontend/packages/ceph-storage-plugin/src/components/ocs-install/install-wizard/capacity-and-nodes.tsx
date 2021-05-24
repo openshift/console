@@ -55,7 +55,7 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
   );
 });
 
-type SelectNodesTextProps = { text: string };
+type SelectNodesTextProps = { text: JSX.Element };
 
 export const SelectNodesDetails: React.FC<SelectNodesDetailsProps> = React.memo(
   ({ nodes, cpu, zones, memory }) => {

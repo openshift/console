@@ -192,7 +192,11 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       <Grid>
         <GridItem span={11}>
           <SelectNodesText
-            text={hasStretchClusterChecked ? attachDevicesWithArbiter(t) : attachDevices(t)}
+            text={
+              hasStretchClusterChecked
+                ? attachDevicesWithArbiter(t, scName)
+                : attachDevices(t, scName)
+            }
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
