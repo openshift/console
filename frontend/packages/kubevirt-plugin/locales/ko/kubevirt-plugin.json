@@ -178,7 +178,7 @@
   "Form": "양식",
   "Custom script": "사용자 정의 스크립트",
   "Base-64 encoded": "Base-64 인코딩",
-  "Authorized keys must folow the SSH Pulic key format,<1></1>": "인증된 키는 SSH 공개 키 형식을 따라야 합니다.<1></1>",
+  "Authorized keys must follow the SSH Public key format,<1></1>": "인증된 키는 SSH 공개 키 형식을 따라야 합니다.<1></1>",
   "Invalid SSH public key format (use rfc4253 ssh-rsa format).": "SSH 공개 키 형식이 잘못되었습니다 (rfc4253 ssh-rsa 형식 사용).",
   "Hostname": "호스트 이름",
   "Authorized SSH Key": "승인된 SSH 키",

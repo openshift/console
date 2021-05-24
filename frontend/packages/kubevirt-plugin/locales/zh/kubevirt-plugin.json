@@ -178,7 +178,7 @@
   "Form": "表单",
   "Custom script": "自定义脚本",
   "Base-64 encoded": "base-64 编码",
-  "Authorized keys must folow the SSH Pulic key format,<1></1>": "授权密钥必须符合 SSH 公钥格式，<1></1>",
+  "Authorized keys must follow the SSH Public key format,<1></1>": "授权密钥必须符合 SSH 公钥格式，<1></1>",
   "Invalid SSH public key format (use rfc4253 ssh-rsa format).": "无效的 SSH 公钥格式（使用 rfc4253 ssh-rsa 格式）。",
   "Hostname": "主机名",
   "Authorized SSH Key": "授权的 SSH 密钥",
