@@ -8,6 +8,7 @@ import { VMLikeEntityKind } from '../../types/vmLike';
 import { TemplateValidations } from '../../utils/validations/template/template-validations';
 
 export type StorageSimpleData = {
+  disk?: CombinedDisk;
   name?: string;
   content?: string;
   source?: string;
@@ -28,7 +29,6 @@ export type StorageSimpleDataValidation = {
 };
 
 export type StorageBundle = StorageSimpleData & {
-  disk: CombinedDisk;
   templateValidations?: TemplateValidations;
   diskValidations?: UIStorageValidation;
   type?: DiskType;
