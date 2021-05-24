@@ -184,15 +184,19 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
           <Alert
             className="co-alert"
             variant="info"
-            title={t('ceph-storage-plugin~A bucket will be created to provide the OCS Service.')}
-            aria-label={t('ceph-storage-plugin~Bucket created for OCS Service')}
+            title={t(
+              "ceph-storage-plugin~A bucket will be created to provide the OpenShift Container Storage's Service.",
+            )}
+            aria-label={t(
+              "ceph-storage-plugin~Bucket created for OpenShift Container Storage's Service",
+            )}
             isInline
           />
         </div>
         <Form
           className="im-install-page__form"
           onSubmit={onSubmit}
-          aria-label={t('ceph-storage-plugin~Create External Storage Cluster')}
+          aria-label={t('ceph-storage-plugin~Create External StorageCluster')}
         >
           <FormGroup
             label={t('ceph-storage-plugin~External cluster metadata')}

@@ -28,7 +28,7 @@ export const StoragePopover: React.FC<StoragePopoverProps> = ({ ceph }) => {
   return (
     <>
       {t(
-        "ceph-storage-plugin~Storage status represents the health status of the Openshift Container Storage's storage cluster.",
+        "ceph-storage-plugin~Storage status represents the health status of the Openshift Container Storage's StorageCluster.",
       )}
       <StatusPopupSection
         firstColumn={t('ceph-storage-plugin~Provider')}

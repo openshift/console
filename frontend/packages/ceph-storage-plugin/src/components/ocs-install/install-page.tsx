@@ -134,7 +134,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                   path: url.replace('/~new', ''),
                 },
                 {
-                  name: t('ceph-storage-plugin~Create Storage Cluster'),
+                  name: t('ceph-storage-plugin~Create StorageCluster'),
                   path: url,
                 },
               ]}
@@ -142,11 +142,11 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           )}
         </div>
         <h1 className="co-create-operand__header-text">
-          {t('ceph-storage-plugin~Create Storage Cluster')}
+          {t('ceph-storage-plugin~Create StorageCluster')}
         </h1>
         <p className="help-block">
           {t(
-            'ceph-storage-plugin~OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.',
+            'ceph-storage-plugin~OpenShift Container Storage runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.',
           )}
         </p>
       </div>

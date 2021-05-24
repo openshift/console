@@ -13,7 +13,7 @@ export const poolMessage: {
   [POOL_PROGRESS.FAILED]: `Pool "${poolName}" already exists`,
   [POOL_PROGRESS.CREATED]: `Pool ${poolName} was successfully created`,
   [POOL_PROGRESS.NOTALLOWED]:
-    "Pool management tasks are not supported for default pool and Openshift Container Storage's external mode.",
+    "Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.",
 };
 
 const navigateToBlockPool = () => {

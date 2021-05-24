@@ -181,7 +181,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           className="pf-u-pt-md pf-u-pb-sm"
           id="add-cap-sc-dropdown__FormGroup"
           fieldId="add-capacity-dropdown"
-          label={t('ceph-storage-plugin~Storage Class')}
+          label={t('ceph-storage-plugin~StorageClass')}
           labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
           isRequired
         >

@@ -29,7 +29,7 @@ export const StatusCard: React.FC<DashboardItemProps> = () => {
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
               <HealthItem
-                title={t('ceph-storage-plugin~OCS Cluster')}
+                title={t("ceph-storage-plugin~OpenShift Container Storage's Cluster")}
                 state={cephHealth.state}
                 details={cephHealth.message}
               />
