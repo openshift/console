@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { FEDORA_IMAGE_LINK, RHEL_IMAGE_LINK, WINDOWS_IMAGE_LINK } from '../../../utils/strings';
+import {
+  CENTOS_IMAGE_LINK,
+  FEDORA_IMAGE_LINK,
+  RHEL_IMAGE_LINK,
+  WINDOWS_IMAGE_LINK,
+} from '../../../utils/strings';
 
 type URLSourceHelpProps = {
   baseImageName: string;
@@ -26,6 +31,16 @@ export const URLSourceHelp: React.FC<URLSourceHelpProps> = ({ baseImageName }) =
       <strong>
         <a href={WINDOWS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
           Windows 10 cloud image
+        </a>
+      </strong>{' '}
+      and copy the download link URL for the cloud base image
+    </Trans>
+  ) : baseImageName?.includes('centos') ? (
+    <Trans t={t} ns="kubevirt-plugin">
+      Example: For Centos, visit the{' '}
+      <strong>
+        <a href={CENTOS_IMAGE_LINK} rel="noopener noreferrer" target="_blank">
+          Centos cloud image list
         </a>
       </strong>{' '}
       and copy the download link URL for the cloud base image
