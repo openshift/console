@@ -22,7 +22,10 @@ const MinimizeRestoreButton: React.FC<MinimizeRestoreButtonProps> = ({
     onClick(false);
   };
   return (
-    <Tooltip content={minimize ? minimizeText : restoreText}>
+    <Tooltip
+      key={minimize ? 'btn-minmize' : 'btn-restore'}
+      content={minimize ? minimizeText : restoreText}
+    >
       <Button
         variant="plain"
         type="button"
