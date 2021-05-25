@@ -35,6 +35,7 @@ export const NamespacePolicyPage: React.FC<NamespacePolicyPageProps> = ({ dispat
           return (
             <Radio
               {...radio}
+              data-test={`${radio.value.toLowerCase()}-radio`}
               className="nb-create-bc-step-page-form__radio"
               onChange={() => {
                 dispatch({ type: 'setNamespacePolicyType', value: radio.value });

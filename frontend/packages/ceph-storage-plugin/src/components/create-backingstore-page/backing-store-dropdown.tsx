@@ -46,7 +46,7 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
               component="button"
               id={nbs?.metadata?.name}
               onClick={handleDropdownChange}
-              data-test={nbs?.metadata?.name}
+              data-test={`${nbs?.metadata?.name}-dropdown-item`}
               description={t('ceph-storage-plugin~Provider {{provider}}', {
                 provider: nbs?.spec?.type,
               })}
