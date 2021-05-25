@@ -87,12 +87,14 @@ func (p *proxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
 			}
 
 			for key, entry := range idxFile.Entries {
-				if onlyCompatible {
-					for i := len(entry) - 1; i >= 0; i-- {
-						if entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
-							if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
-								entry = append(entry[:i], entry[i+1:]...)
-							}
+				for i := len(entry) - 1; i >= 0; i-- {
+					if entry[i].Type == "library" {
+						entry = append(entry[:i], entry[i+1:]...)
+						continue
+					}
+					if onlyCompatible && entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
+						if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
+							entry = append(entry[:i], entry[i+1:]...)
 						}
 					}
 				}
