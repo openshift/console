@@ -18,19 +18,19 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
 
   const links: GettingStartedLink[] = [
     {
-      key: 'api-explorer',
+      id: 'api-explorer',
       title: t('public~API Explorer'),
       href: '/api-explorer',
     },
     {
-      key: 'console-customizations',
+      id: 'console-customizations',
       title: t('public~Console customizations'),
       href: '/k8s/cluster/customresourcedefinitions?name=console',
     },
   ];
 
   const moreLink: GettingStartedLink = {
-    key: 'whats-new',
+    id: 'whats-new',
     title: t("public~See what's new in OpenShift {{version}}", { version }),
     href: 'https://www.openshift.com/learn/whats-new',
     external: true,
@@ -38,6 +38,7 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
 
   return (
     <GettingStartedCard
+      id="admin-features"
       icon={<FlagIcon color="var(--pf-global--palette--orange-300)" aria-hidden="true" />}
       title={t('public~Explore new admin features')}
       titleColor={'var(--pf-global--palette--gold-700)'}

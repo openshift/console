@@ -86,25 +86,26 @@ export const QuickStartGettingStartedCard: React.FC<QuickStartGettingStartedCard
 
         const links: GettingStartedLink[] = loaded
           ? slicedQuickStarts.map((quickStart: QuickStart) => ({
-              key: quickStart.metadata.name,
+              id: quickStart.metadata.name,
               title: quickStart.spec.displayName,
               onClick: () => {
                 setActiveQuickStart(quickStart.metadata.name, quickStart.spec.tasks.length);
               },
             }))
           : featured?.map((name) => ({
-              key: name,
+              id: name,
               loading: true,
             }));
 
         const moreLink: GettingStartedLink = {
-          key: 'quick-starts',
+          id: 'all-quick-starts',
           title: t('console-shared~View all quick starts'),
           href: '/quickstart',
         };
 
         return (
           <GettingStartedCard
+            id="quick-start"
             icon={<RouteIcon color="var(--pf-global--palette--purple-600)" aria-hidden="true" />}
             title={t('console-shared~Build with guided documentation')}
             titleColor={'var(--pf-global--palette--purple-700)'}

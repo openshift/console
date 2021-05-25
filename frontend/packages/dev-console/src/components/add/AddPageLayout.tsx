@@ -61,6 +61,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
               className={cx('odc-add-page-layout__hint-block__details-switch', {
                 'odc-add-page-layout__hint-block__details-switch__loading-state': !extensionsLoaded,
               })}
+              data-test="details-switch"
             >
               {extensionsLoaded ? (
                 <Tooltip
@@ -77,13 +78,16 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
                     onChange={(checked) => {
                       setShowDetails(checked);
                     }}
-                    data-test-id="odc-add-page-details-switch"
+                    data-test="switch"
                   />
                 </Tooltip>
               ) : (
                 <Skeleton shape="circle" width="24px" />
               )}
-              <span className="odc-add-page-layout__hint-block__details-switch__text">
+              <span
+                className="odc-add-page-layout__hint-block__details-switch__text"
+                data-test="label"
+              >
                 {extensionsLoaded ? switchText : <Skeleton height="100%" width="64px" />}
               </span>
             </div>
@@ -97,7 +101,7 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   };
 
   return (
-    <div className="odc-add-page-layout">
+    <div className="odc-add-page-layout" data-test="add-page">
       <PageLayout title={title} hint={getHint()}>
         <GettingStartedSection />
         <AddCardSection

@@ -11,7 +11,8 @@ describe('AddCard', () => {
 
   beforeEach(() => {
     props = {
-      title: 'title',
+      id: 'id',
+      title: 'Title',
       items: addActionExtensions,
       namespace: 'ns',
     };

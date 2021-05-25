@@ -51,11 +51,11 @@ describe('SampleGettingStartedCard', () => {
       'Create applications using samples',
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      { key: 'code-with-quarkus', loading: true },
-      { key: 'java-springboot-basic', loading: true },
+      { id: 'code-with-quarkus', loading: true },
+      { id: 'java-springboot-basic', loading: true },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });
@@ -74,20 +74,20 @@ describe('SampleGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'code-with-quarkus',
+        id: 'code-with-quarkus',
         title: 'Basic Quarkus',
         href:
           '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/elsony/devfile-sample-code-with-quarkus.git',
       },
       {
-        key: 'java-springboot-basic',
+        id: 'java-springboot-basic',
         title: 'Basic Spring Boot',
         href:
           '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/elsony/devfile-sample-java-springboot-basic.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });
@@ -104,19 +104,19 @@ describe('SampleGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',
+        id: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',
         title: '.NET Core',
         href: '/samples/ns/active-namespace/dotnet/openshift',
       },
       {
-        key: 'nodejs-basic',
+        id: 'nodejs-basic',
         title: 'Basic NodeJS',
         href:
           '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/redhat-developer/devfile-sample.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });

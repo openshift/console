@@ -19,7 +19,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
 
   const links: GettingStartedLink[] = [
     {
-      key: 'helm-charts',
+      id: 'helm-charts',
       title: t('devconsole~Discover certified Helm Charts'),
       href:
         activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
@@ -27,7 +27,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
           : '/catalog/all-namespaces?catalogType=HelmChart',
     },
     {
-      key: 'topology',
+      id: 'topology',
       title: t('devconsole~Start building your application quickly in topology'),
       href:
         activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
@@ -37,7 +37,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   ];
 
   const moreLink: GettingStartedLink = {
-    key: 'whats-new',
+    id: 'whats-new',
     title: t("devconsole~What's new in OpenShift {{version}}", { version }),
     href: 'https://developers.redhat.com/products/openshift/getting-started',
     external: true,
@@ -45,6 +45,7 @@ export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
 
   return (
     <GettingStartedCard
+      id="developer-features"
       icon={<FlagIcon color="var(--pf-global--palette--orange-300)" aria-hidden="true" />}
       title={t('devconsole~Explore new developer features')}
       titleColor={'var(--pf-global--palette--gold-700)'}

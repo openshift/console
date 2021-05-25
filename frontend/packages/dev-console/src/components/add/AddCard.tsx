@@ -4,18 +4,19 @@ import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import AddCardItem from './AddCardItem';
 import './AddCard.scss';
 
-type AddCardProps = { title: string; items: ResolvedExtension<AddAction>[]; namespace: string };
-const AddCard: React.FC<AddCardProps> = ({ title, items, namespace }) => {
+type AddCardProps = {
+  id: string;
+  title: string;
+  items: ResolvedExtension<AddAction>[];
+  namespace: string;
+};
+
+const AddCard: React.FC<AddCardProps> = ({ id, title, items, namespace }) => {
   const isTitleFromItem: boolean = items?.length === 1 && items[0].properties.label === title;
   return items?.length > 0 ? (
-    <Card key={title} className="odc-add-card">
+    <Card key={title} className="odc-add-card" data-test={`card ${id}`}>
       {!isTitleFromItem && (
-        <Title
-          size="lg"
-          headingLevel="h4"
-          className="odc-add-card__title"
-          data-test-id="odc-add-card-title"
-        >
+        <Title size="lg" headingLevel="h2" className="odc-add-card__title" data-test="title">
           {title}
         </Title>
       )}

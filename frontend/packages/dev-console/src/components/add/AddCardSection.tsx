@@ -8,7 +8,7 @@ import AddCardSectionSkeleton from './AddCardSectionSkeleton';
 import AddCardSectionEmptyState from './AddCardSectionEmptyState';
 import { MasonryLayout } from './layout/MasonryLayout';
 
-type AddCardsSectionProps = {
+type AddCardSectionProps = {
   namespace: string;
   addActionExtensions: ResolvedExtension<AddAction>[];
   addActionGroupExtensions: LoadedExtension<AddActionGroup>[];
@@ -19,7 +19,7 @@ type AddCardsSectionProps = {
 
 const COLUMN_WIDTH = 300;
 
-const AddCardsSection: React.FC<AddCardsSectionProps> = ({
+const AddCardSection: React.FC<AddCardSectionProps> = ({
   namespace,
   addActionExtensions,
   addActionGroupExtensions,
@@ -41,24 +41,20 @@ const AddCardsSection: React.FC<AddCardsSectionProps> = ({
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, sortedActionGroup);
 
     return addGroups.map(({ id, name, items }) => (
-      <AddCard
-        key={id}
-        title={name}
-        items={items}
-        namespace={namespace}
-        data-test-id={`odc-add-card-${id}`}
-      />
+      <AddCard key={id} id={id} title={name} items={items} namespace={namespace} />
     ));
   };
 
   return (
-    <MasonryLayout
-      columnWidth={COLUMN_WIDTH}
-      loading={!extensionsLoaded}
-      LoadingComponent={AddCardSectionSkeleton}
-    >
-      {getAddCards()}
-    </MasonryLayout>
+    <div data-test="add-cards">
+      <MasonryLayout
+        columnWidth={COLUMN_WIDTH}
+        loading={!extensionsLoaded}
+        LoadingComponent={AddCardSectionSkeleton}
+      >
+        {getAddCards()}
+      </MasonryLayout>
+    </div>
   );
 };
-export default AddCardsSection;
+export default AddCardSection;

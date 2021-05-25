@@ -172,7 +172,7 @@ describe('useAlertReceiverLink', () => {
     const { result } = testHook(() => useAlertReceiverLink());
 
     expect(result.current).toEqual({
-      key: 'alert-receivers',
+      id: 'alert-receivers',
       title: 'Configure alert receivers',
       href: '/monitoring/alertmanagerconfig',
     });

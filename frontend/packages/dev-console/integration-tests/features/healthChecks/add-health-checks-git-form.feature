@@ -11,7 +11,7 @@ Feature: Health Checks
     # Git URL: https://github.com/openshift-roadshow/nationalparks-py
     # This is already covered as part of A-04-TC12
         @smoke @to-do
-        Scenario: Health Checks option in Advanced Options: HC-01-TC01
+        Scenario Outline: Health Checks option in Advanced Options: HC-01-TC01
             Given user is at Import from Git page
              When user enters Git Repo url as "https://github.com/openshift-roadshow/nationalparks-py"
               And user enters Application name as "national-parks-demo"

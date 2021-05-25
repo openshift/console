@@ -44,12 +44,12 @@ const useAlertReceiverLinkMock = useAlertReceiverLink as jest.Mock;
 describe('ClusterSetupGettingStartedCard', () => {
   it('should render links if hooks provide them', () => {
     useIdentityProviderLinkMock.mockReturnValue({
-      key: 'identity-providers',
+      id: 'identity-providers',
       title: 'Add identity providers',
       href: 'cluster',
     });
     useAlertReceiverLinkMock.mockReturnValue({
-      key: 'alert-receivers',
+      id: 'alert-receivers',
       title: 'Configure alert receivers',
       href: '/monitoring/alertmanagerconfig',
     });
@@ -59,18 +59,18 @@ describe('ClusterSetupGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().title).toEqual('Set up your cluster');
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'identity-providers',
+        id: 'identity-providers',
         title: 'Add identity providers',
         href: 'cluster',
       },
       {
-        key: 'alert-receivers',
+        id: 'alert-receivers',
         title: 'Configure alert receivers',
         href: '/monitoring/alertmanagerconfig',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'quick-starts',
+      id: 'machine-configuration',
       title: 'View all steps in documentation',
       href:
         'https://docs.okd.io/latest/post_installation_configuration/machine-configuration-tasks.html',
