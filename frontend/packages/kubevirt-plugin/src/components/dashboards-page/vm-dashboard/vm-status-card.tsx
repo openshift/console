@@ -11,6 +11,8 @@ import { Gallery } from '@patternfly/react-core';
 
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VMEventsStatusCard } from '../../vms/VMEventsStatusCard';
+import { getVMStatusIcon } from '../../vm-status/vm-status';
+import { VMStatus as VMStatusEnum } from '../../../constants/vm/vm-status';
 import GuestAgentStatusHealth from './status/GuestAgentStatusHealth';
 import VMStatusHealth from './status/VMStatusHealth';
 
@@ -21,6 +23,11 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
   const vmDashboardContext = React.useContext(VMDashboardContext);
   const { vm, vmi, vmStatusBundle } = vmDashboardContext;
 
+  const status = vmStatusBundle?.status;
+  const isPaused = status === VMStatusEnum.PAUSED;
+
+  const StatusIcon = getVMStatusIcon(isPaused, status, false);
+
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
@@ -29,7 +36,7 @@ export const VMStatusCard: React.FC<VMStatusCardProps> = () => {
       <DashboardCardBody className="VMStatusCard-body">
         <HealthBody>
           <Gallery className="VMStatusCard co-overview-status__health" hasGutter>
-            <VMStatusHealth vmStatusBundle={vmStatusBundle} />
+            <VMStatusHealth vmStatusBundle={vmStatusBundle} icon={<StatusIcon />} />
             <GuestAgentStatusHealth vmi={vmi} />
           </Gallery>
         </HealthBody>
