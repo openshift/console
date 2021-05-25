@@ -563,7 +563,7 @@
   "Restore": "Restore",
   "Support for this template is provided through the OS community Red Hat participates in and contributes to.": "Support for this template is provided through the OS community Red Hat participates in and contributes to.",
   "Learn more about the community": "Learn more about the community",
-  "This template is provided by Red Hat, but is not supported ": "This template is provided by Red Hat, but is not supported ",
+  "This template is provided by Red Hat, but is not supported": "This template is provided by Red Hat, but is not supported",
   "The support level is not defined in the template yaml. To mark this template as supported, add these two annotations in the template details:": "The support level is not defined in the template yaml. To mark this template as supported, add these two annotations in the template details:",
   "Do not show this message again": "Do not show this message again",
   "Continue": "Continue",

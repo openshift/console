@@ -57,7 +57,7 @@ const SupportModal: React.FC<SupportModalProps> = ({
           ) : isCommonTemplate ? (
             <>
               <StackItem>
-                {t('kubevirt-plugin~This template is provided by Red Hat, but is not supported ')}
+                {t('kubevirt-plugin~This template is provided by Red Hat, but is not supported')}{' '}
                 <ExternalLink href={SUPPORT_URL} text={t('kubevirt-plugin~Learn more')} />
               </StackItem>
             </>
