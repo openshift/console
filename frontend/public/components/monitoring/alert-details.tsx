@@ -164,11 +164,11 @@ export const Details: React.FC<DetailsPageProps> = (props) => {
       {silencesLoaded && !_.isEmpty(alert?.silencedBy) && (
         <div className="co-m-pane__body">
           <div className="co-m-pane__body-group">
-            <SectionHeading text="Silenced By" />
+            <SectionHeading text={t('public~Silenced by')} />
             <div className="row">
               <div className="col-xs-12">
                 <Table
-                  aria-label="Silenced By"
+                  aria-label={t('public~Silenced by')}
                   data={alert?.silencedBy}
                   Header={silencesTableHeader}
                   loaded={true}
