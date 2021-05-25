@@ -8,26 +8,27 @@
   // Drop padding below the hint to add this gap between hint and actions below.
   .ocs-page-layout__hint {
     padding-bottom: 0; /* override var(--pf-global--spacer--md) */
+    padding-right: 0;
   }
 
   &__hint-block {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
 
     &__text {
+      margin-right: var(--pf-global--spacer--lg);
       margin-bottom: var(--pf-global--spacer--md);
     }
 
     &__actions {
-      flex: 1;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       flex-wrap: wrap;
   
       > * {
-        margin-left: var(--pf-global--spacer--md);
+        margin-right: var(--pf-global--spacer--lg);
         margin-bottom: var(--pf-global--spacer--md);
       }
     }
