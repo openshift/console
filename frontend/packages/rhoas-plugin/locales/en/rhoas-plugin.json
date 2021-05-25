@@ -50,7 +50,6 @@
   "Create a Kafka connector": "Create a Kafka connector",
   "Create a binding connector": "Create a binding connector",
   "No data": "No data",
-  "Kafka Connection": "Kafka Connection",
   "Cloud Service": "Cloud Service",
   "This resource represents service that exist outside your cluster": "This resource represents service that exist outside your cluster",
   "Details": "Details",
