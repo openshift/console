@@ -41,6 +41,7 @@
   "API version": "API version",
   "Restore": "Restore",
   "VolumeSnapshotClass with same provisioner as claim": "VolumeSnapshotClass with same provisioner as claim",
+  "Select volume snapshot class": "Select volume snapshot class",
   "PersistentVolumeClaim details": "PersistentVolumeClaim details",
   "StorageClass": "StorageClass",
   "Create VolumeSnapshot": "Create VolumeSnapshot",

@@ -76,7 +76,7 @@ const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
       dataFilter={filter}
       resources={resources}
       selectedKeyKind={kind}
-      placeholder="Select volume snapshot class"
+      placeholder={t('console-app~Select volume snapshot class')}
       selectedKey={selectedKey}
     />
   );

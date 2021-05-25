@@ -76,7 +76,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders a dropdown for selecting the reclaim policy', () => {
-    expect(wrapper.find({ title: 'Select reclaim policy' }).exists()).toBe(true);
+    expect(wrapper.find({ title: `${i18nNS}~Select reclaim policy` }).exists()).toBe(true);
   });
 
   it('renders a text box for selecting the storage class name', () => {
