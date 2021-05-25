@@ -214,12 +214,12 @@ Feature: Create the pipeline from builder page
         Scenario: Code assistance for referencing workspaces in the Pipeline Builder
             Given user has applied yaml "configMap-test-motd.yaml"
             # user uses yaml content "using-optional-workspaces-in-when-expressions-pipelineRun/configMap-test-motd.yaml" in editor
-              And user is at YAML view of Pipeline Builder page
+              And user is at YAML view
              When user pastes the "pipelineRun-using-optional-workspaces-in-when-expressions.yaml" code
             # user uses yaml content "using-optional-workspaces-in-when-expressions-pipelineRun/pipelineRun-using-optional-workspaces-in-when-expressions.yaml"
               And user clicks on Create
               And user clicks on Logs tab in PipelineRun details page
-             Then user will be able to see the output in print-motd task task
+             Then user will be able to see the output in print-motd task
 
 
 
