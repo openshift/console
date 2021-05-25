@@ -31,7 +31,7 @@ import {
   DashboardsTab,
   DashboardsCard,
   DashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewURLSubsystem,
+  DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
   DashboardsOverviewHealthOperator,
   DashboardsInventoryItemGroup,
@@ -73,7 +73,7 @@ export type SupportedExtension =
   | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewURLSubsystem
+  | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthResourceSubsystem
   | DashboardsOverviewHealthOperator
   | DashboardsInventoryItemGroup

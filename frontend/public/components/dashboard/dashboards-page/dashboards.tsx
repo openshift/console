@@ -19,22 +19,37 @@ import {
   isDashboardsCard,
   isDashboardsTab,
 } from '@console/plugin-sdk';
+import {
+  DashboardsCard as DynamicDashboardsCard,
+  DashboardsTab as DynamicDashboardsTab,
+  isDashboardsCard as isDynamicDashboardsCard,
+  isDashboardsTab as isDynamicDashboardsTab,
+} from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../../redux';
 
 export const getCardsOnPosition = (
   cards: DashboardsCard[],
+  dynamicCards: DynamicDashboardsCard[],
   position: GridPosition,
-): GridDashboardCard[] =>
-  cards
+): GridDashboardCard[] => [
+  ...cards
     .filter((c) => c.properties.position === position)
     .map((c) => ({
       Card: () => <AsyncComponent loader={c.properties.loader} />,
       span: c.properties.span,
-    }));
+    })),
+  ...dynamicCards
+    .filter((c) => c.properties.position === position)
+    .map((c) => ({
+      Card: () => <AsyncComponent loader={c.properties.component} />,
+      span: c.properties.span,
+    })),
+];
 
 export const getPluginTabPages = (
-  tabs: DashboardsTab[],
+  tabs: (DashboardsTab | DynamicDashboardsTab)[],
   cards: DashboardsCard[],
+  dynamicCards: DynamicDashboardsCard[],
   navSection: string,
   firstTabId: string,
 ): Page[] => {
@@ -47,9 +62,9 @@ export const getPluginTabPages = (
       component: () => (
         <Dashboard>
           <DashboardGrid
-            mainCards={getCardsOnPosition(tabCards, GridPosition.MAIN)}
-            leftCards={getCardsOnPosition(tabCards, GridPosition.LEFT)}
-            rightCards={getCardsOnPosition(tabCards, GridPosition.RIGHT)}
+            mainCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.MAIN)}
+            leftCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.LEFT)}
+            rightCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.RIGHT)}
           />
         </Dashboard>
       ),
@@ -62,10 +77,19 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
+  const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
+  const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
   const pluginPages = React.useMemo(
-    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
-    [tabExtensions, cardExtensions],
+    () =>
+      getPluginTabPages(
+        [...tabExtensions, ...dynamicTabExtensions],
+        cardExtensions,
+        dynamicCardExtensions,
+        'home',
+        '',
+      ),
+    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
   );
 
   const allPages = React.useMemo(

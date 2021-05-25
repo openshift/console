@@ -8,6 +8,7 @@ import {
   useExtensions,
   DashboardsOverviewHealthSubsystem,
   DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthOperator,
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthURLSubsystem,
@@ -15,6 +16,21 @@ import {
   isDashboardsOverviewHealthResourceSubsystem,
   isDashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
+import {
+  DashboardsOverviewHealthSubsystem as DynamicDashboardsOverviewHealthSubsystem,
+  DashboardsOverviewHealthPrometheusSubsystem as DynamicDashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthURLSubsystem as DynamicDashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewHealthOperator as DynamicDashboardsOverviewHealthOperator,
+  isDashboardsOverviewHealthSubsystem as isDynamicDashboardsOverviewHealthSubsystem,
+  isDashboardsOverviewHealthURLSubsystem as isDynamicDashboardsOverviewHealthURLSubsystem,
+  isDashboardsOverviewHealthPrometheusSubsystem as isDynamicDashboardsOverviewHealthPrometheusSubsystem,
+  isResolvedDashboardsOverviewHealthURLSubsystem,
+  isResolvedDashboardsOverviewHealthPrometheusSubsystem,
+  isResolvedDashboardsOverviewHealthResourceSubsystem,
+  isResolvedDashboardsOverviewHealthOperator,
+  ResolvedExtension,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -49,17 +65,24 @@ import { ClusterDashboardContext } from './context';
 import { useAccessReview } from '../../../utils';
 
 const filterSubsystems = (
-  subsystems: DashboardsOverviewHealthSubsystem[],
+  subsystems: (
+    | DashboardsOverviewHealthSubsystem
+    | ResolvedExtension<DynamicDashboardsOverviewHealthSubsystem>
+  )[],
   k8sModels: ImmutableMap<string, K8sKind>,
 ) =>
   subsystems.filter((s) => {
     if (
       isDashboardsOverviewHealthURLSubsystem(s) ||
-      isDashboardsOverviewHealthPrometheusSubsystem(s)
+      isDashboardsOverviewHealthPrometheusSubsystem(s) ||
+      isDynamicDashboardsOverviewHealthURLSubsystem(s) ||
+      isDynamicDashboardsOverviewHealthPrometheusSubsystem(s)
     ) {
       const subsystem = s as
         | DashboardsOverviewHealthPrometheusSubsystem
-        | DashboardsOverviewHealthURLSubsystem;
+        | DashboardsOverviewHealthURLSubsystem
+        | ResolvedExtension<DynamicDashboardsOverviewHealthPrometheusSubsystem>
+        | ResolvedExtension<DynamicDashboardsOverviewHealthURLSubsystem>;
       return subsystem.properties.additionalResource &&
         !subsystem.properties.additionalResource.optional
         ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
@@ -128,31 +151,43 @@ const ClusterAlerts = withDashboardResources(
 const mapStateToProps = (state: RootState) => ({
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
-
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
   const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
     isDashboardsOverviewHealthSubsystem,
   );
+  const [dynamicSubsystemExtensions] = useResolvedExtensions<
+    DynamicDashboardsOverviewHealthSubsystem
+  >(isDynamicDashboardsOverviewHealthSubsystem);
 
-  const subsystems = React.useMemo(() => filterSubsystems(subsystemExtensions, k8sModels), [
-    subsystemExtensions,
-    k8sModels,
-  ]);
+  const subsystems = React.useMemo(
+    () => filterSubsystems([...subsystemExtensions, ...dynamicSubsystemExtensions], k8sModels),
+    [subsystemExtensions, dynamicSubsystemExtensions, k8sModels],
+  );
 
   const operatorSubsystemIndex = React.useMemo(
-    () => subsystems.findIndex(isDashboardsOverviewHealthOperator),
+    () =>
+      subsystems.findIndex(
+        (e) =>
+          isDashboardsOverviewHealthOperator(e) || isResolvedDashboardsOverviewHealthOperator(e),
+      ),
     [subsystems],
   );
   const { infrastructure, infrastructureLoaded } = React.useContext(ClusterDashboardContext);
   const { t } = useTranslation();
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
   subsystems.forEach((subsystem) => {
-    if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
+    if (
+      isDashboardsOverviewHealthURLSubsystem(subsystem) ||
+      isResolvedDashboardsOverviewHealthURLSubsystem(subsystem)
+    ) {
       healthItems.push({
         title: subsystem.properties.title,
         Component: <URLHealthItem subsystem={subsystem.properties} models={k8sModels} />,
       });
-    } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
+    } else if (
+      isDashboardsOverviewHealthPrometheusSubsystem(subsystem) ||
+      isResolvedDashboardsOverviewHealthPrometheusSubsystem(subsystem)
+    ) {
       const { disallowedProviders } = subsystem.properties;
       if (
         disallowedProviders?.length &&
@@ -165,18 +200,37 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
         title: subsystem.properties.title,
         Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
       });
-    } else if (isDashboardsOverviewHealthResourceSubsystem(subsystem)) {
+    } else if (
+      isDashboardsOverviewHealthResourceSubsystem(subsystem) ||
+      isResolvedDashboardsOverviewHealthResourceSubsystem(subsystem)
+    ) {
       healthItems.push({
         title: subsystem.properties.title,
         Component: <ResourceHealthItem subsystem={subsystem.properties} />,
       });
     }
   });
+
   if (operatorSubsystemIndex !== -1) {
-    const operatorSubsystems = subsystems.filter(isDashboardsOverviewHealthOperator);
+    const operatorSubsystems: DashboardsOverviewHealthOperator['properties'][] = [];
+    const dynamicOperatorSubsystems: ResolvedExtension<
+      DynamicDashboardsOverviewHealthOperator
+    >['properties'][] = [];
+    subsystems.forEach((e) => {
+      if (isResolvedDashboardsOverviewHealthOperator(e)) {
+        dynamicOperatorSubsystems.push(e.properties);
+      } else if (isDashboardsOverviewHealthOperator(e)) {
+        operatorSubsystems.push(e.properties);
+      }
+    });
     healthItems.splice(operatorSubsystemIndex, 0, {
       title: 'Operators',
-      Component: <OperatorHealthItem operatorExtensions={operatorSubsystems} />,
+      Component: (
+        <OperatorHealthItem
+          operatorExtensions={operatorSubsystems}
+          dynamicOperatorSubsystems={dynamicOperatorSubsystems}
+        />
+      ),
     });
   }
 

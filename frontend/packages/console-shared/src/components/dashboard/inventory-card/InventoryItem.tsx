@@ -16,6 +16,11 @@ import {
   DashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,
+  isDashboardsInventoryItemGroup as isDynamicDashboardsInventoryItemGroup,
+} from '@console/dynamic-plugin-sdk';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
@@ -31,25 +36,28 @@ const defaultStatusGroupIcons = {
   ),
 };
 
-const getStatusGroupIcons = (groups: DashboardsInventoryItemGroup[]) => {
+const getStatusGroupIcons = (groups: DashboardsInventoryItemGroup['properties'][]) => {
   const groupStatusIcons = { ...defaultStatusGroupIcons };
   groups.forEach((group) => {
-    if (!groupStatusIcons[group.properties.id]) {
-      groupStatusIcons[group.properties.id] = group.properties.icon;
+    if (!groupStatusIcons[group.id]) {
+      groupStatusIcons[group.id] = group.icon;
     }
   });
   return groupStatusIcons;
 };
 
-const getTop3Groups = (groups: DashboardsInventoryItemGroup[], groupIDs: string[]) => {
+const getTop3Groups = (
+  groups: DashboardsInventoryItemGroup['properties'][],
+  groupIDs: string[],
+) => {
   const groupStatuses: (InventoryStatusGroup | string)[] = [
     InventoryStatusGroup.ERROR,
     InventoryStatusGroup.WARN,
     InventoryStatusGroup.PROGRESS,
   ];
   groups.forEach((group) => {
-    if (!groupStatuses.includes(group.properties.id)) {
-      groupStatuses.push(group.properties.id);
+    if (!groupStatuses.includes(group.id)) {
+      groupStatuses.push(group.id);
     }
   });
   groupStatuses.push(InventoryStatusGroup.UNKNOWN);
@@ -140,10 +148,16 @@ export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
   const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
+  const [dynamicGroupExtensions] = useResolvedExtensions<DynamicDashboardsInventoryItemGroup>(
+    isDynamicDashboardsInventoryItemGroup,
+  );
 
-  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
-    groupExtensions,
-  ]);
+  const statusGroupIcons = React.useMemo(() => {
+    const mergedExtensions = [...groupExtensions, ...dynamicGroupExtensions].map(
+      (e) => e.properties,
+    );
+    return getStatusGroupIcons(mergedExtensions);
+  }, [dynamicGroupExtensions, groupExtensions]);
 
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -172,9 +186,16 @@ const StatusLink: React.FC<StatusLinkProps> = ({
     isDashboardsInventoryItemGroup,
   );
 
-  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
-    groupExtensions,
-  ]);
+  const [dynamicGroupExtensions] = useResolvedExtensions<DynamicDashboardsInventoryItemGroup>(
+    isDynamicDashboardsInventoryItemGroup,
+  );
+
+  const statusGroupIcons = React.useMemo(() => {
+    const mergedExtensions = [...groupExtensions, ...dynamicGroupExtensions].map(
+      (e) => e.properties,
+    );
+    return getStatusGroupIcons(mergedExtensions);
+  }, [dynamicGroupExtensions, groupExtensions]);
 
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -241,6 +262,9 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
     isDashboardsInventoryItemGroup,
   );
+  const [dynamicGroupExtensions] = useResolvedExtensions<DynamicDashboardsInventoryItemGroup>(
+    isDynamicDashboardsInventoryItemGroup,
+  );
 
   const groups = React.useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
     mapper,
@@ -248,14 +272,15 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
     additionalResources,
   ]);
 
-  const top3Groups = React.useMemo(
-    () =>
-      getTop3Groups(
-        groupExtensions,
-        Object.keys(groups).filter((key) => groups[key].count > 0),
-      ),
-    [groupExtensions, groups],
-  );
+  const top3Groups = React.useMemo(() => {
+    const mergedExtensions = [...groupExtensions, ...dynamicGroupExtensions].map(
+      (e) => e.properties,
+    );
+    return getTop3Groups(
+      mergedExtensions,
+      Object.keys(groups).filter((key) => groups[key].count > 0),
+    );
+  }, [dynamicGroupExtensions, groupExtensions, groups]);
 
   // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
   const totalCount = React.useMemo(

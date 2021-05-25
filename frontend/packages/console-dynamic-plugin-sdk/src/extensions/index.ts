@@ -2,6 +2,7 @@ export * from './add-actions';
 export * from './catalog';
 export * from './cluster-settings';
 export * from './context-providers';
+export * from './dashboards';
 export * from './feature-flags';
 export * from './file-upload';
 export * from './navigation';
