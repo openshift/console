@@ -5,54 +5,59 @@ export enum Providers {
   PVC = 'PVC',
 }
 
-export const testName = 'test-bucket';
-
+// Used to identify data-test ids, values are based on data-test fields
 export enum StoreType {
   BackingStore = 'backingstore',
   NamespaceStore = 'namespacestore',
 }
 
-let storeType = StoreType.BackingStore;
+export const testName = 'test-bucket';
 
-const inputCustomSecrets = () => {
+const inputCustomSecrets = (storeType: StoreType) => {
+  cy.log('Set custom secrets');
   cy.byTestID('switch-to-creds').click();
   cy.byTestID(`${storeType}-access-key`).type('my_dummy_test_key');
   cy.byTestID(`${storeType}-secret-key`).type('my_dummy_sec_key');
   cy.byTestID(`${storeType}-target-bucket`).type('my_dummy_target');
 };
 
-const setupAWS = () => {
+const setupAWS = (storeType: StoreType) => {
+  cy.log('Setting up AWS provider');
   cy.byTestDropDownMenu(Providers.AWS).click();
   cy.byTestID(`${storeType}-aws-region-dropdown`).click();
   cy.byTestDropDownMenu('us-east-1').click();
-  inputCustomSecrets();
+  inputCustomSecrets(storeType);
 };
 
-const setupAzureBlob = () => {
+const setupAzureBlob = (storeType: StoreType) => {
+  cy.log('Setting up Azure provider');
   cy.byTestDropDownMenu(Providers.AZURE).click();
-  inputCustomSecrets();
+  inputCustomSecrets(storeType);
 };
 
-const setupS3Endpoint = () => {
+const setupS3Endpoint = (storeType: StoreType) => {
+  cy.log('Setting up s3 endpoint provider');
   const ENDPOINT = 'http://test-endpoint.com';
   cy.byTestDropDownMenu('S3 Compatible').click();
   cy.byTestID(`${storeType}-s3-endpoint`).type(ENDPOINT);
-  inputCustomSecrets();
+  inputCustomSecrets(storeType);
 };
 
-const setupPVC = () => cy.byTestDropDownMenu('PVC').click();
-
-const setupProvider = (provider: Providers) => {
+const setupPVC = () => {
+  cy.log('Setting up PVC provider');
+  cy.byTestDropDownMenu('PVC').click();
+};
+const setupProvider = (provider: Providers, storeType: StoreType) => {
   cy.byTestID(`${storeType}-provider`).click();
   switch (provider) {
     case Providers.AWS:
-      setupAWS();
+      setupAWS(storeType);
       break;
     case Providers.AZURE:
-      setupAzureBlob();
+      setupAzureBlob(storeType);
       break;
     case Providers.S3:
-      setupS3Endpoint();
+      setupS3Endpoint(storeType);
       break;
     case Providers.PVC:
       setupPVC();
@@ -62,13 +67,9 @@ const setupProvider = (provider: Providers) => {
   }
 };
 
-export const store = {
-  createStore: (provider: Providers) => {
-    cy.byTestID(`${storeType}-name`).type(testName);
-    setupProvider(provider);
-    cy.byTestID(`${storeType}-create-button`).click();
-  },
-  setStoreType: (type: StoreType) => {
-    storeType = type;
-  },
+export const createStore = (provider: Providers, storeType: StoreType = StoreType.BackingStore) => {
+  cy.log(`Creating ${storeType}`);
+  cy.byTestID(`${storeType}-name`).type(testName);
+  setupProvider(provider, storeType);
+  cy.byTestID(`${storeType}-create-button`).click();
 };

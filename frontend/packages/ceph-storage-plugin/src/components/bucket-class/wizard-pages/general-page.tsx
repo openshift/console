@@ -70,6 +70,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
               return (
                 <Radio
                   {...radio}
+                  data-test={`${radio.value.toLowerCase()}-radio`}
                   onChange={() => {
                     dispatch({ type: 'setBucketClassType', value: radio.value });
                   }}

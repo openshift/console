@@ -1,5 +1,5 @@
 import { commonFlows } from '../views/common';
-import { store, Providers, testName, StoreType } from '../views/store';
+import { createStore, Providers, testName, StoreType } from '../views/store';
 import { checkErrors } from '../../../integration-tests-cypress/support';
 
 describe('Tests creation of Namespace Stores', () => {
@@ -7,7 +7,6 @@ describe('Tests creation of Namespace Stores', () => {
     cy.login();
     cy.visit('/');
     cy.install();
-    store.setStoreType(StoreType.NamespaceStore);
   });
 
   after(() => {
@@ -16,8 +15,11 @@ describe('Tests creation of Namespace Stores', () => {
 
   afterEach(() => {
     cy.byLegacyTestID('actions-menu-button').click();
+    cy.log('Deleting namespace store');
     cy.byTestActionID('Delete Namespace Store').click();
     cy.byTestID('confirm-action').click();
+    cy.log('Deleting secrets');
+    cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
     checkErrors();
   });
 
@@ -29,20 +31,17 @@ describe('Tests creation of Namespace Stores', () => {
   });
 
   it('Test creation of AWS namespace store', () => {
-    store.createStore(Providers.AWS);
+    createStore(Providers.AWS, StoreType.NamespaceStore);
     cy.byLegacyTestID('resource-title').contains(testName);
-    cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
   it('Test creation of Azure namespace store', () => {
-    store.createStore(Providers.AZURE);
+    createStore(Providers.AZURE, StoreType.NamespaceStore);
     cy.byLegacyTestID('resource-title').contains(testName);
-    cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
   it('Test creation of S3 Endpoint Type', () => {
-    store.createStore(Providers.S3);
+    createStore(Providers.S3, StoreType.NamespaceStore);
     cy.byLegacyTestID('resource-title').contains(testName);
-    cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 });
