@@ -34,7 +34,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
             ? t('cloudshell~Close command line terminal')
             : t('cloudshell~Open command line terminal')
         }
-        position={TooltipPosition.bottom}
+        position={TooltipPosition.auto}
       >
         <Button
           variant="plain"
