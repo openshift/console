@@ -16,7 +16,7 @@ import {
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
   CustomFeatureFlag,
-  ResourceTabPage,
+  HorizontalNavTab,
 } from '@console/plugin-sdk';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
@@ -43,7 +43,7 @@ type ConsumedExtensions =
   | ModelDefinition
   | CustomFeatureFlag
   | DashboardsOverviewResourceActivity
-  | ResourceTabPage;
+  | HorizontalNavTab;
 
 const METAL3_FLAG = 'METAL3';
 
@@ -292,12 +292,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Tab',
+    type: 'HorizontalNavTab',
     properties: {
-      href: 'nics',
+      page: {
+        href: 'nics',
+        name: '%metal3-plugin~Network Interfaces%',
+      },
       model: NodeModel,
-      // t('metal3-plugin~Network Interfaces')
-      name: '%metal3-plugin~Network Interfaces%',
       loader: () =>
         import('./components/baremetal-nodes/NICsPage').then(
           (m) => m.default,
@@ -308,12 +309,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Tab',
+    type: 'HorizontalNavTab',
     properties: {
-      href: 'disks',
+      page: {
+        href: 'disks',
+        name: '%metal3-plugin~Disks%',
+      },
       model: NodeModel,
-      // t('metal3-plugin~Disks')
-      name: '%metal3-plugin~Disks%',
       loader: () =>
         import('./components/baremetal-nodes/DisksPage').then(
           (m) => m.default,
