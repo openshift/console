@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import * as UIActions from '@console/internal/actions/ui';
-import { navFactory, SimpleTabNav } from '@console/internal/components/utils';
+import {
+  navFactory,
+  ResourceIcon,
+  resourcePath,
+  SimpleTabNav,
+} from '@console/internal/components/utils';
 import { ResourcesComponent } from './ResourceComponent';
 import { DetailsComponent } from './DetailsComponent';
 
@@ -49,12 +56,25 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
     setShowAlert(false);
   };
 
+  const kindRef = referenceFor(akc);
+  const kindObj = modelFor(kindRef);
+
   return (
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            <h3>{t('rhoas-plugin~Kafka Connection')}</h3>
+            <ResourceIcon className="co-m-resource-icon--lg" kind={kindRef} />
+            <Link
+              to={resourcePath(
+                kindObj.crd ? kindRef : akc.kind,
+                akc.metadata.name,
+                akc.metadata.namespace,
+              )}
+              className="co-resource-item__resource-name"
+            >
+              {akc.metadata.name}
+            </Link>
           </div>
         </h1>
         {showAlert && (
