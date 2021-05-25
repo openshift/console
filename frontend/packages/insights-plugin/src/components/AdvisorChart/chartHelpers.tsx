@@ -54,7 +54,9 @@ const AdvisorChartTitle = (props) => {
   );
 };
 
-const AdvisorChartLegendIcon = ({ x, y, datum }) => {
+const AdvisorChartLegendIcon = (props) => {
+  const { x, y, datum } = props;
+
   const Icon = riskIcons[datum.id];
   return <Icon x={x - 3} y={y - 6} fill={legendColorScale[datum.id]} />;
 };
