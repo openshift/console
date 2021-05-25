@@ -124,14 +124,25 @@ const IngressHeader = () => {
   );
 };
 
-const IngressRow = ({ ingress, namespace, podSelector }) => {
+const EgressHeader = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-4">{t('public~From pods')}</div>
+      <div className="col-xs-5">{t('public~To')}</div>
+      <div className="col-xs-3">{t('public~To ports')}</div>
+    </div>
+  );
+};
+
+const RuleRow = ({ peers, ports, namespace, podSelector }) => {
   const { t } = useTranslation();
   const podSelectors = [];
   const nsSelectors = [];
   let i = 0;
 
   const style = { margin: '5px 0' };
-  _.each(ingress.from, ({ namespaceSelector, podSelector: ps }) => {
+  _.each(peers, ({ namespaceSelector, podSelector: ps }) => {
     if (namespaceSelector) {
       nsSelectors.push(
         <div key={i++} style={style}>
@@ -173,7 +184,7 @@ const IngressRow = ({ ingress, namespace, podSelector }) => {
         </div>
       </div>
       <div className="col-xs-3">
-        {_.map(ingress.ports, (port, k) => (
+        {_.map(ports, (port, k) => (
           <p key={k}>
             {port.protocol}/{port.port}
           </p>
@@ -185,6 +196,14 @@ const IngressRow = ({ ingress, namespace, podSelector }) => {
 
 const Details_ = ({ obj: np, flags }) => {
   const { t } = useTranslation();
+  // Note, the logic differs between ingress and egress, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#networkpolicyspec-v1-networking-k8s-io
+  // A policy affects egress if it is explicitely specified in policyTypes, or if policyTypes isn't set and there is an egress section.
+  // A policy affects ingress if it is explicitely specified in policyTypes, or if policyTypes isn't set, regardless the presence of an ingress sections.
+  const explicitPolicyTypes = !!np.spec.policyTypes;
+  const affectsEgress = explicitPolicyTypes
+    ? np.spec.policyTypes.includes('Egress')
+    : !!np.spec.egress;
+  const affectsIngress = explicitPolicyTypes ? np.spec.policyTypes.includes('Ingress') : true;
   return (
     <>
       <div className="co-m-pane__body">
@@ -195,40 +214,82 @@ const Details_ = ({ obj: np, flags }) => {
           </div>
         </div>
       </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('public~Ingress rules')} />
-        <p className="co-m-pane__explanation">
-          <Trans ns="public">
-            Pods accept all traffic by default. They can be isolated via NetworkPolicies which
-            specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will
-            reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:{' '}
-            <ExternalLink
-              href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-              text={t('public~NetworkPolicies documentation')}
-            />
-            .
-          </Trans>
-        </p>
-        {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
-          t('public~All traffic is allowed to Pods in {{namespace}}', {
-            namespace: np.metadata.namespace,
-          })
-        ) : (
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            <IngressHeader />
-            <div className="co-m-table-grid__body">
-              {_.map(np.spec.ingress, (ingress, i) => (
-                <IngressRow
-                  key={i}
-                  ingress={ingress}
-                  podSelector={np.spec.podSelector}
-                  namespace={np.metadata.namespace}
-                />
-              ))}
+      {affectsIngress && (
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('public~Ingress rules')} />
+          <p className="co-m-pane__explanation">
+            <Trans ns="public">
+              Pods accept all traffic by default. They can be isolated via NetworkPolicies which
+              specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it
+              will reject all traffic not explicitly allowed via a NetworkPolicy. See more details
+              in:{' '}
+              <ExternalLink
+                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                text={t('public~NetworkPolicies documentation')}
+              />
+              .
+            </Trans>
+          </p>
+          {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
+            t('public~All incoming traffic is denied to Pods in {{namespace}}', {
+              namespace: np.metadata.namespace,
+            })
+          ) : (
+            <div className="co-m-table-grid co-m-table-grid--bordered">
+              <IngressHeader />
+              <div className="co-m-table-grid__body">
+                {_.map(np.spec.ingress, (rule, i) => (
+                  <RuleRow
+                    key={i}
+                    peers={rule.from}
+                    ports={rule.ports}
+                    podSelector={np.spec.podSelector}
+                    namespace={np.metadata.namespace}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
+      {affectsEgress && (
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('public~Egress rules')} />
+          <p className="co-m-pane__explanation">
+            <Trans ns="public">
+              All outgoing traffic is allowed by default. Egress rules can be used to restrict
+              outgoing traffic if the cluster network provider allows it. When using the OpenShift
+              SDN cluster network provider, egress network policy is not supported. See more details
+              in:{' '}
+              <ExternalLink
+                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                text={t('public~NetworkPolicies documentation')}
+              />
+              .
+            </Trans>
+          </p>
+          {_.isEmpty(_.get(np, 'spec.egress[0]', [])) ? (
+            t('public~All outgoing traffic is denied from Pods in {{namespace}}', {
+              namespace: np.metadata.namespace,
+            })
+          ) : (
+            <div className="co-m-table-grid co-m-table-grid--bordered">
+              <EgressHeader />
+              <div className="co-m-table-grid__body">
+                {_.map(np.spec.egress, (rule, i) => (
+                  <RuleRow
+                    key={i}
+                    peers={rule.to}
+                    ports={rule.ports}
+                    podSelector={np.spec.podSelector}
+                    namespace={np.metadata.namespace}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 };
