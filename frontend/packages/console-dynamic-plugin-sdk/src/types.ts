@@ -84,10 +84,15 @@ export type EncodedCodeRef = { $codeRef: string };
 export type CodeRef<T = any> = () => Promise<T>;
 
 /**
- * Infer resolved `CodeRef` properties from object `O`.
+ * Extract type `T` from `CodeRef<T>`.
+ */
+export type ExtractCodeRefType<R> = R extends CodeRef<infer T> ? T : never;
+
+/**
+ * Infer resolved `CodeRef` properties from object `O` recursively.
  */
 export type ResolvedCodeRefProperties<O extends {}> = {
-  [K in keyof O]: O[K] extends CodeRef<infer T> ? T : O[K];
+  [K in keyof O]: O[K] extends CodeRef ? ExtractCodeRefType<O[K]> : ResolvedCodeRefProperties<O[K]>;
 };
 
 /**
