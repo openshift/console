@@ -3,10 +3,9 @@ import * as _ from 'lodash';
 import { ValidationResult } from './ValidationResult';
 import { ConsolePluginMetadata } from '../schema/plugin-package';
 import { SupportedExtension } from '../schema/console-extensions';
-import {
-  filterEncodedCodeRefProperties,
-  parseEncodedCodeRefValue,
-} from '../coderefs/coderef-resolver';
+import { isEncodedCodeRef, parseEncodedCodeRefValue } from '../coderefs/coderef-resolver';
+import { deepForOwn } from '../utils/object';
+import { EncodedCodeRef } from '../types';
 
 type ExtensionCodeRefData = {
   index: number;
@@ -17,10 +16,16 @@ type ExposedPluginModules = ConsolePluginMetadata['exposedModules'];
 
 export const collectCodeRefData = (extensions: SupportedExtension[]) =>
   extensions.reduce((acc, e, index) => {
-    const refs = filterEncodedCodeRefProperties(e.properties);
-    if (!_.isEmpty(refs)) {
-      acc.push({ index, propToCodeRefValue: _.mapValues(refs, (obj) => obj.$codeRef) });
+    const data: ExtensionCodeRefData = { index, propToCodeRefValue: {} };
+
+    deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key) => {
+      data.propToCodeRefValue[key] = ref.$codeRef;
+    });
+
+    if (!_.isEmpty(data.propToCodeRefValue)) {
+      acc.push(data);
     }
+
     return acc;
   }, [] as ExtensionCodeRefData[]);
 
