@@ -11,12 +11,9 @@ import {
   applyCodeRefSymbol,
   isEncodedCodeRef,
   isExecutableCodeRef,
-  filterEncodedCodeRefProperties,
-  filterExecutableCodeRefProperties,
   parseEncodedCodeRefValue,
   loadReferencedObject,
   resolveEncodedCodeRefs,
-  resolveCodeRefProperties,
   resolveExtension,
 } from '../coderef-resolver';
 
@@ -49,38 +46,6 @@ describe('isExecutableCodeRef', () => {
     expect(isExecutableCodeRef(() => {})).toBe(false);
     expect(isExecutableCodeRef(getExecutableCodeRefMock('qux'))).toBe(true);
     expect(isExecutableCodeRef(applyCodeRefSymbol(() => Promise.resolve('qux')))).toBe(true);
-  });
-});
-
-describe('filterEncodedCodeRefProperties', () => {
-  it('picks properties whose values match isEncodedCodeRef predicate', () => {
-    expect(
-      filterEncodedCodeRefProperties({
-        foo: { $codeRef: 'foo' },
-        bar: ['test'],
-        baz: () => {},
-        qux: getExecutableCodeRefMock('qux'),
-      }),
-    ).toEqual({
-      foo: { $codeRef: 'foo' },
-    });
-  });
-});
-
-describe('filterExecutableCodeRefProperties', () => {
-  it('picks properties whose values match isExecutableCodeRef predicate', () => {
-    const ref = getExecutableCodeRefMock('qux');
-
-    expect(
-      filterExecutableCodeRefProperties({
-        foo: { $codeRef: 'foo' },
-        bar: ['test'],
-        baz: () => {},
-        qux: ref,
-      }),
-    ).toEqual({
-      qux: ref,
-    });
   });
 });
 
@@ -208,20 +173,26 @@ describe('loadReferencedObject', () => {
 });
 
 describe('resolveEncodedCodeRefs', () => {
-  it('replaces encoded code references with CodeRef functions', () => {
+  it('replaces encoded code references with CodeRef functions', async () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
-        properties: { test: true },
+        properties: {
+          test: true,
+          qux: { $codeRef: 'mod.a' },
+        },
       },
       {
         type: 'Bar',
-        properties: { baz: 1, qux: { $codeRef: 'a.b' } },
+        properties: {
+          test: [1],
+          baz: { test: { $codeRef: 'mod.b' } },
+        },
       },
     ];
 
     const errorCallback = jest.fn();
-    const [, entryModule] = getEntryModuleMocks({ b: 'value' });
+    const [, entryModule] = getEntryModuleMocks({ a: 'value1', b: 'value2' });
 
     const resolvedExtensions = resolveEncodedCodeRefs(
       extensions,
@@ -231,62 +202,93 @@ describe('resolveEncodedCodeRefs', () => {
     );
 
     expect(resolvedExtensions.length).toBe(extensions.length);
-    expect(resolvedExtensions[0]).toEqual(extensions[0]);
 
-    expect(_.omit(resolvedExtensions[1], 'properties.qux')).toEqual(
-      _.omit(extensions[1], 'properties.qux'),
-    );
+    expect(resolvedExtensions[0].properties.test).toBe(true);
+    expect(isExecutableCodeRef(resolvedExtensions[0].properties.qux)).toBe(true);
+    expect(await resolvedExtensions[0].properties.qux()).toBe('value1');
 
-    expect(isExecutableCodeRef(resolvedExtensions[1].properties.qux)).toBe(true);
+    expect(resolvedExtensions[1].properties.test).toEqual([1]);
+    expect(isExecutableCodeRef(resolvedExtensions[1].properties.baz.test)).toBe(true);
+    expect(await resolvedExtensions[1].properties.baz.test()).toBe('value2');
   });
-});
 
-describe('resolveCodeRefProperties', () => {
-  it('replaces CodeRef functions with referenced objects', async () => {
+  it('clones the provided extensions array and its elements', () => {
     const extensions: Extension[] = [
-      {
-        type: 'Foo',
-        properties: { test: true },
-      },
-      {
-        type: 'Bar',
-        properties: { baz: 1, qux: getExecutableCodeRefMock('value') },
-      },
+      { type: 'Foo', properties: { test: true } },
+      { type: 'Bar', properties: { test: [1] } },
     ];
 
-    expect(await resolveCodeRefProperties(extensions[0])).toEqual({ test: true });
-    expect(await resolveCodeRefProperties(extensions[1])).toEqual({ baz: 1, qux: 'value' });
+    const errorCallback = jest.fn();
+    const [, entryModule] = getEntryModuleMocks({});
+
+    const resolvedExtensions = resolveEncodedCodeRefs(
+      extensions,
+      entryModule,
+      'Test@1.2.3',
+      errorCallback,
+    );
+
+    expect(resolvedExtensions).not.toBe(extensions);
+    expect(resolvedExtensions).toEqual(extensions);
+
+    resolvedExtensions.forEach((e, index) => {
+      expect(e).not.toBe(extensions[index]);
+      expect(e).toEqual(extensions[index]);
+    });
   });
 });
 
 describe('resolveExtension', () => {
-  it('returns an extension with CodeRef functions replaced with referenced objects', async () => {
+  it('replaces CodeRef functions with referenced objects', async () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
-        properties: { test: true },
+        properties: {
+          test: true,
+          qux: getExecutableCodeRefMock('value1'),
+        },
       },
       {
         type: 'Bar',
-        properties: { baz: 1, qux: getExecutableCodeRefMock('value') },
+        properties: {
+          test: [1],
+          baz: { test: getExecutableCodeRefMock('value2') },
+        },
       },
     ];
 
     expect(await resolveExtension(extensions[0])).toEqual({
       type: 'Foo',
-      properties: { test: true },
+      properties: {
+        test: true,
+        qux: 'value1',
+      },
     });
+
     expect(await resolveExtension(extensions[1])).toEqual({
       type: 'Bar',
-      properties: { baz: 1, qux: 'value' },
+      properties: {
+        test: [1],
+        baz: { test: 'value2' },
+      },
     });
   });
 
-  it('returns a new extension instance', async () => {
-    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
-    const resolvedExtension = await resolveExtension(testExtension);
+  it('returns the same extension instance if it has no CodeRef functions', async () => {
+    const e: Extension = {
+      type: 'Foo',
+      properties: { test: true },
+    };
 
-    expect(resolvedExtension).not.toBe(testExtension);
-    expect(Object.isFrozen(resolvedExtension)).toBe(true);
+    expect(await resolveExtension(e)).toBe(e);
+  });
+
+  it('returns a new extension instance if it has CodeRef functions', async () => {
+    const e: Extension = {
+      type: 'Foo',
+      properties: { test: true, qux: getExecutableCodeRefMock('value1') },
+    };
+
+    expect(await resolveExtension(e)).not.toBe(e);
   });
 });

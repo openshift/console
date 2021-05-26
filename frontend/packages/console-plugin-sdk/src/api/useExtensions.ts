@@ -10,17 +10,20 @@ const translate = (obj: any, t: (str: string) => string): typeof obj => {
   if (typeof obj === 'string') {
     return t(obj);
   }
+
   if (Array.isArray(obj)) {
     return obj.map((a) => translate(a, t));
   }
-  // Check for plain object and ensure it is not a react component.
-  // Simple check for react component is sufficient.
+
+  // Check for plain object and ensure it is not a React component.
+  // Simple check for React component is sufficient.
   if (_.isPlainObject(obj) && !obj.$$typeof) {
     return Object.keys(obj).reduce((acc, key) => {
       acc[key] = translate(obj[key], t);
       return acc;
     }, {});
   }
+
   return obj;
 };
 
