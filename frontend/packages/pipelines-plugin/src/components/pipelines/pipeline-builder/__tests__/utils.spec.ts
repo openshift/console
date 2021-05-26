@@ -1,5 +1,5 @@
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { TaskKind, TektonParam } from '../../../../types';
+import { PipelineTask, TaskKind, TektonParam } from '../../../../types';
 import { initialPipelineFormData } from '../const';
 import { PipelineBuilderFormikValues, PipelineBuilderTaskBase } from '../types';
 import {
@@ -13,6 +13,7 @@ import {
   mapStitchReplaceInOthers,
   safeName,
   taskParamIsRequired,
+  removeEmptyFormFields,
 } from '../utils';
 import { externalTask, externalTaskWithVarietyParams } from './validation-utils-data';
 
@@ -395,6 +396,106 @@ describe('runAfter Manipulation Utils', () => {
         runAfter: expect.arrayContaining(['to-be-found', 'new-value']),
       });
       expect(result.runAfter).toHaveLength(2);
+    });
+  });
+});
+
+describe('removeEmptyFormFields', () => {
+  it('should not fail without any additional data', () => {
+    const task: PipelineTask = {
+      name: 'a-task',
+    };
+    const result = removeEmptyFormFields(task);
+    expect(result).toEqual({
+      name: 'a-task',
+    });
+  });
+
+  it('should drop empty parameter values', () => {
+    const task: PipelineTask = {
+      name: 'a-task',
+      params: [
+        { name: 'required-param', value: 'required-value' },
+        { name: 'optional-param', value: '' },
+      ],
+    };
+    const result = removeEmptyFormFields(task);
+    expect(result).toEqual({
+      name: 'a-task',
+      params: [{ name: 'required-param', value: 'required-value' }],
+    });
+  });
+
+  it('should drop unlinked resources', () => {
+    const task: PipelineTask = {
+      name: 'a-task',
+      resources: {
+        inputs: [
+          { name: 'required-in-resource', resource: 'pipeline-git-resource' },
+          { name: 'optional-in-resource', resource: '' },
+        ],
+        outputs: [
+          { name: 'required-out-resource', resource: 'pipeline-image-resource' },
+          { name: 'optional-out-resource', resource: '' },
+        ],
+      },
+    };
+    const result = removeEmptyFormFields(task);
+    expect(result).toEqual({
+      name: 'a-task',
+      resources: {
+        inputs: [{ name: 'required-in-resource', resource: 'pipeline-git-resource' }],
+        outputs: [{ name: 'required-out-resource', resource: 'pipeline-image-resource' }],
+      },
+    });
+  });
+
+  it('should drop unlinked workspaces', () => {
+    const task: PipelineTask = {
+      name: 'a-task',
+      workspaces: [
+        { name: 'required-workspace', workspace: 'pipeline-workspace' },
+        { name: 'optional-workspace', workspace: '' },
+      ],
+    };
+    const result = removeEmptyFormFields(task);
+    expect(result).toEqual({
+      name: 'a-task',
+      workspaces: [{ name: 'required-workspace', workspace: 'pipeline-workspace' }],
+    });
+  });
+
+  it('should drop all optional or unlinked parameters', () => {
+    const task: PipelineTask = {
+      name: 'a-task',
+      params: [
+        { name: 'required-param', value: 'required-value' },
+        { name: 'optional-param', value: '' },
+      ],
+      resources: {
+        inputs: [
+          { name: 'required-in-resource', resource: 'pipeline-git-resource' },
+          { name: 'optional-in-resource', resource: '' },
+        ],
+        outputs: [
+          { name: 'required-out-resource', resource: 'pipeline-image-resource' },
+          { name: 'optional-out-resource', resource: '' },
+        ],
+      },
+      workspaces: [
+        { name: 'required-workspace', workspace: 'pipeline-workspace' },
+        { name: 'optional-workspace', workspace: '' },
+      ],
+    };
+    const result = removeEmptyFormFields(task);
+    expect(result).toEqual({
+      name: 'a-task',
+      params: [{ name: 'required-param', value: 'required-value' }],
+      resources: {
+        inputs: [{ name: 'required-in-resource', resource: 'pipeline-git-resource' }],
+        outputs: [{ name: 'required-out-resource', resource: 'pipeline-image-resource' }],
+      },
+      workspaces: [{ name: 'required-workspace', workspace: 'pipeline-workspace' }],
     });
   });
 });

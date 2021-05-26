@@ -19,7 +19,7 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
     availableResources,
     hasResource,
     name,
-    resource: { name: resourceName, type: resourceType },
+    resource: { name: resourceName, type: resourceType, optional = false },
   } = props;
 
   const dropdownResources = availableResources.filter(
@@ -30,7 +30,6 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
       label: t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType }),
       value: '',
       isPlaceholder: true,
-      isDisabled: true,
     },
     ...dropdownResources.map((resource) => ({ label: resource.name, value: resource.name })),
   ];
@@ -49,7 +48,7 @@ const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
           setFieldValue(name, { name: resourceName, resource: selectedResource });
         }
       }}
-      required
+      required={!optional}
     />
   );
 };

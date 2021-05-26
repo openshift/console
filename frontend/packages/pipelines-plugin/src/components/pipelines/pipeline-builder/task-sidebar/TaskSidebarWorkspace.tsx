@@ -28,7 +28,6 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
     {
       label: t('pipelines-plugin~Select workspace...'),
       value: '',
-      isDisabled: true,
       isPlaceholder: true,
     },
     ...dropdownWorkspaces.map((workspace) => ({
