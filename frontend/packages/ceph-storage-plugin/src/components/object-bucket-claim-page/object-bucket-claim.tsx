@@ -34,11 +34,11 @@ const kind = referenceForModel(NooBaaObjectBucketClaimModel);
 export const OBCStatus: React.FC<OBCStatusProps> = ({ obc }) => <Status status={getPhase(obc)} />;
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-xl',
   Kebab.columnClass,
 ];
 

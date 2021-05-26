@@ -1,20 +1,19 @@
-import * as classNames from 'classnames';
 import { Kebab } from '@console/internal/components/utils';
 
 export const diskTableColumnClasses = [
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
-  classNames('col-lg-2'),
+  '',
+  '',
+  'pm-m-hidden pf-m-visible-on-sm',
+  'pm-m-hidden pf-m-visible-on-md',
+  'pm-m-hidden pf-m-visible-on-lg',
+  'pm-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
 export const cdTableColumnClasses = [
-  classNames('col-lg-3'),
-  classNames('col-lg-3'),
-  classNames('col-lg-3'),
-  classNames('col-lg-3'),
+  '',
+  '',
+  'pm-m-hidden pf-m-visible-on-md',
+  'pm-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];

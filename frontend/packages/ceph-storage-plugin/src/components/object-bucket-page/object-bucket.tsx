@@ -32,9 +32,9 @@ const menuActions = [...Kebab.factory.common];
 const OBStatus: React.FC<OBStatusProps> = ({ ob }) => <Status status={getPhase(ob)} />;
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  '',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
