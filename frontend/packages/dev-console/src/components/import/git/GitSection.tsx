@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { isEmpty } from 'lodash';
-import { useFormikContext, FormikValues, FormikTouched } from 'formik';
+import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
 import { getGitService, GitProvider, BuildType, RepoStatus } from '@console/git-service';
@@ -12,7 +12,7 @@ import {
 } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { BuildStrategyType } from '@console/internal/components/build';
-import { GitReadableTypes, GitTypes } from '../import-types';
+import { GitData, GitReadableTypes, GitTypes } from '../import-types';
 import { detectGitType, detectGitRepoName, createComponentName } from '../import-validation-utils';
 import {
   getSampleRepo,
@@ -39,9 +39,15 @@ const GitSection: React.FC<GitSectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
-  const { values, setFieldValue, setFieldTouched, touched, dirty, isSubmitting } = useFormikContext<
-    FormikValues
-  >();
+  const {
+    values,
+    errors,
+    setFieldValue,
+    setFieldTouched,
+    touched,
+    dirty,
+    isSubmitting,
+  } = useFormikContext<FormikValues>();
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
     defaultSample || {};
   const defaultSampleTagObj = React.useMemo(
@@ -68,8 +74,18 @@ const GitSection: React.FC<GitSectionProps> = ({
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const [repoStatus, setRepoStatus] = React.useState<RepoStatus>();
 
+  const { git: gitErrors = {} } = errors;
+  const { url: gitUrlError } = gitErrors as FormikErrors<GitData>;
+
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string, dir: string) => {
+      if (gitUrlError) {
+        // Reset git type field when url is not valid or empty so that when new url valid is added, we run git type detection again.
+        // Don't do anything else if URL is not valid.
+        setFieldTouched('git.type', false);
+        return;
+      }
+
       setFieldValue('git.isUrlValidating', true);
       setValidated(ValidatedOptions.default);
 
@@ -79,7 +95,6 @@ const GitSection: React.FC<GitSectionProps> = ({
 
       setFieldValue('git.type', gitType);
       setFieldValue('git.showGitType', showGitType);
-      showGitType && setFieldTouched('git.type', false);
 
       const gitService = getGitService({ url, ref, contextDir: dir }, gitType as GitProvider);
       const repositoryStatus = gitService && (await gitService.isRepoReachable());
@@ -120,17 +135,18 @@ const GitSection: React.FC<GitSectionProps> = ({
     },
     [
       setFieldValue,
+      setFieldTouched,
       gitTypeTouched,
-      values.git.type,
-      values.name,
-      values.formType,
+      buildStrategy,
+      gitUrlError,
+      nameTouched,
+      isSubmitting,
       values.application.name,
       values.application.selectedKey,
+      values.formType,
+      values.git.type,
+      values.name,
       values.devfile,
-      isSubmitting,
-      setFieldTouched,
-      nameTouched,
-      buildStrategy,
     ],
   );
 
