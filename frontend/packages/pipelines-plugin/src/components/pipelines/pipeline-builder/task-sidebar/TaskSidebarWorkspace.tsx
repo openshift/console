@@ -12,6 +12,11 @@ type TaskSidebarWorkspaceProps = {
   resourceWorkspace: TektonWorkspace;
 };
 
+interface WorkspaceLink {
+  name: string;
+  workspace: string;
+}
+
 const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
   const {
     availableWorkspaces,
@@ -20,28 +25,44 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
     resourceWorkspace: { name: workspaceName, optional = false },
   } = props;
   const { t } = useTranslation();
-  const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
+  const { getFieldMeta, setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
 
   const dropdownWorkspaces = availableWorkspaces.filter((workspace) => !!workspace.name?.trim());
 
+  const currentLinkedWorkspaceName = getFieldMeta<WorkspaceLink>(name).value?.workspace;
+  const currentLinkedWorkspaceSelectable =
+    currentLinkedWorkspaceName &&
+    dropdownWorkspaces.some((resource) => resource.name === currentLinkedWorkspaceName);
+
   const options: FormSelectFieldOption[] = [
     {
-      label: t('pipelines-plugin~Select workspace...'),
+      label: optional
+        ? t('pipelines-plugin~No workspace')
+        : t('pipelines-plugin~Select workspace...'),
       value: '',
-      isDisabled: true,
       isPlaceholder: true,
+      isDisabled: !optional,
     },
+  ];
+  if (currentLinkedWorkspaceName && !currentLinkedWorkspaceSelectable) {
+    options.push({
+      label: currentLinkedWorkspaceName,
+      value: currentLinkedWorkspaceName,
+      isDisabled: true,
+    });
+  }
+  options.push(
     ...dropdownWorkspaces.map((workspace) => ({
       value: workspace.name,
       label: workspace.name,
     })),
-  ];
+  );
 
   return (
     <FormSelectField
       name={`${name}.workspace`}
       label={workspaceName}
-      isDisabled={dropdownWorkspaces.length === 0}
+      isDisabled={options.length === 1}
       options={options}
       onChange={(selectedWorkspace: string) => {
         if (!hasWorkspace) {
