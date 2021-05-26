@@ -17,3 +17,4 @@ export * from './console-types';
 export * from './storage-provider';
 export * from './actions';
 export * from './topology-details';
+export * from './topology';
