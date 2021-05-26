@@ -134,6 +134,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       hasInlineFilter
       customBadgeText={selected.length}
       className={classNames('co-type-selector', className)}
+      maxHeight="60vh"
     >
       {items}
     </Select>
