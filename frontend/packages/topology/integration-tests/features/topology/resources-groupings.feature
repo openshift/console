@@ -9,14 +9,14 @@ Feature: Resources Groupings in Topology
 
 
         @regression
-        Scenario: Default state of Resources dropdown
+        Scenario: Default state of Resources dropdown: T-03-TC01
             Given user is at Topology page
              When user clicks on the Resources dropdown
              Then user sees that all the checkboxes are unchecked
 
 
         @regression, @manual
-        Scenario: Ability to show Deployment resource types in Topology graph and list view
+        Scenario: Ability to show Deployment resource types in Topology graph and list view: T-03-TC02
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Deployments checkbox
@@ -25,7 +25,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Deployment resource types in Topology graph and list view
+        Scenario: Ability to hide Deployment resource types in Topology graph and list view: T-03-TC03
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -34,7 +34,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Deployment Config resource types in Topology graph and list view
+        Scenario: Ability to show Deployment Config resource types in Topology graph and list view: T-03-TC04
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Deployment Configs checkbox
@@ -43,7 +43,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Deployment Config resource types in Topology graph and list view
+        Scenario: Ability to hide Deployment Config resource types in Topology graph and list view: T-03-TC05
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -52,7 +52,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Virtual Machines resource types in Topology graph and list view
+        Scenario: Ability to show Virtual Machines resource types in Topology graph and list view: T-03-TC06
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Virtual Machines checkbox
@@ -61,7 +61,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Virtual Machines resource types in Topology graph and list view
+        Scenario: Ability to hide Virtual Machines resource types in Topology graph and list view: T-03-TC07
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -70,7 +70,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Event Sources resource types in Topology graph and list view
+        Scenario: Ability to show Event Sources resource types in Topology graph and list view: T-03-TC08
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Event Sources checkbox
@@ -79,7 +79,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Event Sources resource types in Topology graph and list view
+        Scenario: Ability to hide Event Sources resource types in Topology graph and list view: T-03-TC09
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -88,7 +88,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Helm Releases resource types in Topology graph and list view
+        Scenario: Ability to show Helm Releases resource types in Topology graph and list view: T-03-TC10
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Helm Releases checkbox
@@ -97,7 +97,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Helm Releases resource types in Topology graph and list view
+        Scenario: Ability to hide Helm Releases resource types in Topology graph and list view: T-03-TC11
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -106,7 +106,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Knative Services resource types in Topology graph and list view
+        Scenario: Ability to show Knative Services resource types in Topology graph and list view: T-03-TC12
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Knative Services checkbox
@@ -115,7 +115,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Knative Services resource types in Topology graph and list view
+        Scenario: Ability to hide Knative Services resource types in Topology graph and list view: T-03-TC13
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -124,7 +124,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to show Stateful Set resource types in Topology graph and list view
+        Scenario: Ability to show Stateful Set resource types in Topology graph and list view: T-03-TC14
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks Stateful Set checkbox
@@ -133,7 +133,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to hide Stateful Set resource types in Topology graph and list view
+        Scenario: Ability to hide Stateful Set resource types in Topology graph and list view: T-03-TC15
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user checks all checkboxes
@@ -142,7 +142,7 @@ Feature: Resources Groupings in Topology
 
 
         @regression, @manual
-        Scenario: Ability to selects all resource types in Topology graph and list view
+        Scenario: Ability to selects all resource types in Topology graph and list view: T-03-TC16
             Given user is at Topology page
              When user clicks on the Resources dropdown
               And user clicks on the Select All button

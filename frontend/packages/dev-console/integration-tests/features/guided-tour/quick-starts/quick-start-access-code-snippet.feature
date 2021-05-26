@@ -8,7 +8,7 @@ Feature: Access a code snippet from a quick start
               And Get started with spring CR Quick Start is available
 
 
-        Scenario: Copy to clipboard tooltip with code snippet
+        Scenario: Copy to clipboard tooltip with code snippet: QS-02-TC01
             Given user is in Quick Starts catalog page
              When user clicks on "Get started with spring" Quick Starts card
               And user clicks on Step 1
@@ -16,7 +16,7 @@ Feature: Access a code snippet from a quick start
              Then user can see "Copy to clipboard" tooltip appears
 
 
-        Scenario: Copied to clipboard option with code snippet
+        Scenario: Copied to clipboard option with code snippet: QS-02-TC02
             Given user is in Quick Starts catalog page
              When user clicks on "Get started with spring" Quick Starts card
               And user clicks on Step 1
@@ -24,7 +24,7 @@ Feature: Access a code snippet from a quick start
              Then user can see "Successfully copied to clipboard!" tooltip appears
 
 
-        Scenario: Returning to the Quick start after closing it once code snippet has been copied
+        Scenario: Returning to the Quick start after closing it once code snippet has been copied: QS-02-TC03
             Given user has the "Get started with spring" Quick Starts side panel open
               And user has copied the code snippet
              When user closes the Quick Start
@@ -33,7 +33,7 @@ Feature: Access a code snippet from a quick start
              Then user can see "Copy to clipboard" tooltip appears
 
 
-        Scenario: Run in Web Terminal tooltip with code snippet
+        Scenario: Run in Web Terminal tooltip with code snippet: QS-02-TC04
             Given user is in Quick Starts catalog page
              When user clicks on "Get started with spring" Quick Starts card
               And user clicks on Step 1
@@ -41,7 +41,7 @@ Feature: Access a code snippet from a quick start
              Then user can see "Run in Web Terminal" tooltip appears
 
 
-        Scenario: Running in Web Terminal tooltip with code snippet
+        Scenario: Running in Web Terminal tooltip with code snippet: QS-02-TC05
             Given user is in Quick Starts catalog page
              When user clicks on "Get started with spring" Quick Starts card
               And user clicks on Step 1
@@ -51,13 +51,13 @@ Feature: Access a code snippet from a quick start
               And user can see the code snippet running in the Web Terminal
 
 
-        Scenario: Running in Web Terminal action has run once
+        Scenario: Running in Web Terminal action has run once: QS-02-TC06
             Given user has the "Get started with spring" Quick Starts side panel open
               And user has ran code snippet in web terminal
              Then user can see checkmark icon in place of play icon
 
 
-        Scenario: Returning to the Quick Start after closing it once running in Web Terminal action has been executed
+        Scenario: Returning to the Quick Start after closing it once running in Web Terminal action has been executed: QS-02-TC07
             Given user has the "Get started with spring" Quick Starts side panel open
               And user has ran code snippet in web terminal
              When user closes the Quick Start

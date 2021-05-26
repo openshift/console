@@ -1,3 +1,4 @@
+@knative-admin
 Feature: Eventing page at Administrator perspective
               As a user, I should be able to access event sources, channels, brokers at Administrator perspective
 
@@ -7,7 +8,8 @@ Feature: Eventing page at Administrator perspective
               And user has created or selected namespace "aut-eventing-page"
 
 
-        Scenario: Create new Event Source
+        @regression
+        Scenario: Create new Event Source: KA-01-TC01
             Given user is at eventing page
               And user has created knative service "hello-openshift"
              When user clicks on Create button
@@ -21,7 +23,8 @@ Feature: Eventing page at Administrator perspective
               And user will see ping-source created
 
 
-        Scenario: Create new Channel
+        @regression
+        Scenario: Create new Channel: KA-01-TC02
             Given user is at eventing page
              When user clicks on Create button
               And user selects Channel
@@ -32,7 +35,7 @@ Feature: Eventing page at Administrator perspective
 
 
         @manual
-        Scenario: Broker Details page
+        Scenario: Broker Details page: KA-01-TC03
             Given user is at eventing page
               And user has created Broker "example"
               And user has created trigger subscribing to knative service newly created "hello-openshift"
@@ -44,7 +47,7 @@ Feature: Eventing page at Administrator perspective
 
 
         @manual
-        Scenario: Trigger Details page
+        Scenario: Trigger Details page: KA-01-TC04
             Given user is at eventing page
               And user has created Broker "example"
               And user has created trigger subscribing to knative service newly created "hello-openshift"
@@ -54,7 +57,7 @@ Feature: Eventing page at Administrator perspective
 
 
         @manual
-        Scenario: Channel Details page
+        Scenario: Channel Details page: KA-01-TC05
             Given user is at eventing page
               And user has created channel "example"
               And user has created trigger subscribing to knative service newly created "hello-openshift"
@@ -65,7 +68,7 @@ Feature: Eventing page at Administrator perspective
 
 
         @manual
-        Scenario: Subscription Details page
+        Scenario: Subscription Details page: KA-01-TC06
             Given user is at eventing page
               And user has created channel "example"
               And user has created trigger subscribing to knative service newly created "hello-openshift"

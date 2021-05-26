@@ -7,14 +7,14 @@ Feature: Create Pipeline from Add Options
 
       
         @regression
-        Scenario: Pipelines section on git form: P-01-TC03
+        Scenario: Pipelines section on git form: P-01-TC01
              When user clicks From Git card on the Add page
              Then user will be redirected to Import from Git form
               And pipeline section is displayed with message "Select a Builder Image and resource to see if there is a pipeline template available for this runtime."
 
 
         @smoke
-        Scenario Outline: Create a pipeline from git workload with resource type "<resource>" : P-02-TC01, P-02-TC06
+        Scenario Outline: Create a pipeline from git workload with resource type "<resource>": P-01-TC02
             Given user is at Import from Git form
              When user enters Git Repo url as "<git_url>"
               And user enters Name as "<pipeline_name>" in General section
@@ -31,7 +31,7 @@ Feature: Create Pipeline from Add Options
 
 
         @regression
-        Scenario Outline: Create a pipeline from git workload with knative resource type  : P-02-TC07
+        Scenario Outline: Create a pipeline from git workload with knative resource type: P-01-TC03
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-pipelines"
@@ -51,7 +51,7 @@ Feature: Create Pipeline from Add Options
 
 
         @smoke
-        Scenario Outline: Pipeline in topology page : P-02-TC02
+        Scenario Outline: Pipeline in topology page: P-01-TC04
             Given user created workload "<name>" from add page with pipeline
               And user is at the Topology page
               And workload "<name>" is added to namespace
@@ -65,7 +65,7 @@ Feature: Create Pipeline from Add Options
 
 
         @smoke
-        Scenario Outline: Search the created pipeline from Add options in pipelines page : P-02-TC03
+        Scenario Outline: Search the created pipeline from Add options in pipelines page: P-01-TC05
             Given user created workload "<name>" from add page with pipeline
               And user is at pipelines page
              When user searches for pipeline "<name>" in pipelines page
@@ -77,7 +77,7 @@ Feature: Create Pipeline from Add Options
 
 
         @regression
-        Scenario Outline: Create a workload with pipeline from Docker file : P-02-TC04
+        Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Docker file page
              When user enters Git Repo url in docker file as "<docker_git_url>"
               And user enters Name as "<pipeline_name>" in General section
@@ -92,7 +92,7 @@ Feature: Create Pipeline from Add Options
 
 
         @regression
-        Scenario Outline: Create a pipeline with s2i builder images : P-02-TC05
+        Scenario Outline: Create a pipeline with s2i builder images: P-01-TC07
             Given user is at Developer Catalog form with builder images
              When user searches builder image "node" in developer catalog
               And user creates the application with the selected builder image
@@ -107,7 +107,7 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |
 
 
-        Scenario Outline: Add Pipeline display in git workload for builder image : P-02-TC08
+        Scenario Outline: Add Pipeline display in git workload for builder image: P-01-TC08
             Given user is at Import from Git form
              When user enters Git Repo url as "<git_url>"
              Then Add pipeline checkbox is displayed
@@ -127,7 +127,7 @@ Feature: Create Pipeline from Add Options
 
 
         @regression
-        Scenario Outline: Pipelines section in topology page: P-02-TC09
+        Scenario Outline: Pipelines section in topology page: P-01-TC09
             Given user created workload "<node_name>" from add page with pipeline
               And user is at the Topology page
              When user searches for "<node_name>" in topology page

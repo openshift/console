@@ -1,3 +1,4 @@
+@knative-admin
 Feature: Filters on Serving and Eventing page
               As a user, I should be able to use filters as per the use
 
@@ -7,7 +8,8 @@ Feature: Filters on Serving and Eventing page
               And user has created or selected namespace "aut-serving-eventing"
 
 
-        Scenario: Search by name correctly
+        @regression
+        Scenario: Search by name correctly: KA-02-TC01
             Given user is at Serving page
               And user has created knative service "hello-openshift"
               And user has selected Services tab
@@ -18,7 +20,8 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        Scenario: Search by label correctly
+        @regression
+        Scenario: Search by label correctly: KA-02-TC02
             Given user is at Serving page
               And user has created knative service "hello-openshift"
               And user has selected Routes tab
@@ -29,7 +32,8 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        Scenario: Search by name incorrectly
+        @regression
+        Scenario: Search by name incorrectly: KA-02-TC03
             Given user is at Serving page
               And user has created knative service "hello-openshift"
               And user has selected Revisions tab
@@ -40,7 +44,8 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        Scenario: Filter the Event Sources
+        @regression
+        Scenario: Filter the Event Sources: KA-02-TC04
             Given user has created knative service "hello-openshift"
               And user has created ApiServer Source
               And user has created Ping Source
@@ -55,7 +60,8 @@ Feature: Filters on Serving and Eventing page
               And user will see only Sink source as checked
 
 
-        Scenario: Filter the Channels
+        @regression
+        Scenario: Filter the Channels: KA-02-TC05
             Given user has created knative service "hello-openshift"
               And user has created Default Channel
               And user has created In Memory Channel
@@ -67,7 +73,7 @@ Feature: Filters on Serving and Eventing page
 
 
         @manual
-        Scenario: Filter the Event sources after Camel source creation
+        Scenario: Filter the Event sources after Camel source creation: KA-02-TC06
             Given user has created knative service "hello-openshift"
               And user has created Camel source
               And user has created Ping Binding

@@ -9,7 +9,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Import flows should create pipeline instead of build config
+        Scenario Outline: Import flows should create pipeline instead of build config: T-01-TC01
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
               And pipeline has autostarted
              When user clicks on workload "<workload_name>"
@@ -23,7 +23,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Add flow should finish even if the Pipeline Run cannot be created for the added Pipeline
+        Scenario Outline: Add flow should finish even if the Pipeline Run cannot be created for the added Pipeline: T-01-TC02
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image>" with pipeline
               And pipeline has not autostarted
              When user clicks on workload "<workload_name>"
@@ -37,7 +37,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression, @manual
-        Scenario Outline: Pipeline start modal on clicking pipeline icon of application node in topology page
+        Scenario Outline: Pipeline start modal on clicking pipeline icon of application node in topology page: T-01-TC03
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user hovers on the bottom-left decorator on the workload "<workload_name>"
               And user clicks on the pipeline with not started text
@@ -50,7 +50,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipelines are getting executed successfully
+        Scenario Outline: Pipelines are getting executed successfully: T-01-TC04
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
              Then user can see the "<workload_name>" pipeline is succeeded
@@ -62,7 +62,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: PVC getting created through the add flow pipeline auto start feature
+        Scenario Outline: PVC getting created through the add flow pipeline auto start feature: T-01-TC05
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the Administrator perspective
               And user clicks on the Persistent Volume Claims in Storage tab
@@ -75,7 +75,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: PVC getting auto selected using the pipeline label attached to it
+        Scenario Outline: PVC getting auto selected using the pipeline label attached to it: T-01-TC06
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
               And user clicks on Start on the "<workload_name>" pipeline
@@ -88,7 +88,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: In Add trigger, PVC getting auto selected
+        Scenario Outline: In Add trigger, PVC getting auto selected: T-01-TC07
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
               And user clicks on Add Trigger on the "<workload_name>" pipeline
@@ -101,7 +101,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipeline section in edit flow when pipeline is already present
+        Scenario Outline: Pipeline section in edit flow when pipeline is already present: T-01-TC08
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu
              Then user can see Pipeline checkbox is disabled
@@ -114,7 +114,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipeline section in edit flow when pipeline is not present
+        Scenario Outline: Pipeline section in edit flow when pipeline is not present: T-01-TC09
             Given user created workload "<workload_name>" with resource type "<resource_type>" without pipeline
              When user clicks on Edit "<workload_name>" from action menu
              Then user can see Pipeline section is present
@@ -127,7 +127,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipeline is enabled through edit flow
+        Scenario Outline: Pipeline is enabled through edit flow: T-01-TC10
             Given user created workload "<workload_name>" with resource type "<resource_type>" without pipeline
              When user clicks on Edit "<workload_name>" from action menu
               And user checks the Pipeline checkbox to disable build configuration in Advanced Options
@@ -143,7 +143,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipeline section when builder image is changed to one having pipeline associated
+        Scenario Outline: Pipeline section when builder image is changed to one having pipeline associated: T-01-TC11
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image1>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu
               And user edit the application with  "<builder_image2>"
@@ -156,7 +156,7 @@ Feature: Improve the integration of Pipelines & Builds.
 
 
         @regression
-        Scenario Outline: Pipeline section when builder image is changed to one not having pipeline associated
+        Scenario Outline: Pipeline section when builder image is changed to one not having pipeline associated: T-01-TC12
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image1>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu
               And user edit the application with  "<builder_image2>"

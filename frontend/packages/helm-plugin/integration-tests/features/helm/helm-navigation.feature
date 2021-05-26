@@ -7,7 +7,7 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-11-TC02
+        Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-05-TC01
              When user clicks on the Helm tab
              Then user will be redirected to Helm releases page
               And user is able to see the message as no helm charts present
@@ -15,7 +15,7 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Install Helm Chart page: HR-02-TC04
+        Scenario: Install Helm Chart page: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
@@ -25,14 +25,14 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Yaml view editor for Install Helm Chart page: HR-02-TC05
+        Scenario: Yaml view editor for Install Helm Chart page: HR-05-TC03
             Given user is at Install Helm Chart page
              When user selects YAML view
              Then user is able to see YAML editor
 
 
         @smoke
-        Scenario: Install Helm Chart: HR-02-TC01, HR-02-TC03, HR-02-TC06
+        Scenario: Install Helm Chart: HR-05-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
@@ -43,7 +43,7 @@ Feature: Navigations on Helm Chart
 
 
         @smoke
-        Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-11-TC01
+        Scenario: Open the Helm tab on the navigation bar when helm charts are present: HR-05-TC05
             Given user has installed helm chart
               And user is at the Helm page
              When user clicks on the Helm tab
@@ -52,7 +52,7 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Filter out deployed Helm Charts: HR-11-TC02
+        Scenario: Filter out deployed Helm Charts: HR-05-TC06
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "Deployed" Helm charts
@@ -60,7 +60,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Deployed" are listed
 
 
-        Scenario: Filter out failed Helm Charts: HR-11-TC03
+        Scenario: Filter out failed Helm Charts: HR-05-TC07
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "Failed" Helm charts
@@ -68,7 +68,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Failed" are listed
 
 
-        Scenario: Filter out other Helm charts : HR-11-TC04
+        Scenario: Filter out other Helm charts: HR-05-TC08
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "Other" Helm charts
@@ -77,7 +77,7 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Select all filters: HR-11-TC05
+        Scenario: Select all filters: HR-05-TC09
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "All" Helm charts
@@ -85,7 +85,7 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Clear all filters: HR-11-TC06
+        Scenario: Clear all filters: HR-05-TC10
             Given user is at the Helm page
              When user clicks on the filter drop down
               And user selects checkbox for the "All" Helm charts
@@ -94,21 +94,21 @@ Feature: Navigations on Helm Chart
 
 
         @regression
-        Scenario: Search for the Helm Chart: HR-11-TC07
+        Scenario: Search for the Helm Chart: HR-05-TC11
             Given user is at the Helm page
              When user searches for a helm chart "nodejs-ex-k"
              Then the helm chart "nodejs-ex-k" will be shown
 
 
         @smoke
-        Scenario: Search for the not available Helm Chart
+        Scenario: Search for the not available Helm Chart: HR-05-TC12
             Given user is at the Helm page
              When user searches for a helm chart "Nodejs Ex K v0.10.0"
              Then user is able to see message on the Helm page as "Not found"
 
 
         @smoke
-        Scenario: Helm release details page : HR-11-TC08
+        Scenario: Helm release details page: HR-05-TC13
             Given user is at the Helm page
              When user clicks on the helm release name "nodejs-ex-k"
              Then user will see the Details page opened

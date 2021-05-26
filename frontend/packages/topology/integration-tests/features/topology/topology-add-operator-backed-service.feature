@@ -14,7 +14,7 @@ Feature: Create Operator backed service in topology page
 
 
         @regression @manual
-        Scenario: Create Operator Backed serivce using visual connector from existing workload
+        Scenario: Create Operator Backed serivce using visual connector from existing workload: T-04-TC01
             Given user has created workload "hello-openshift"
              When user drags connector from "hello-openshift" workload
               And user drops visual connector on empty graph
@@ -27,7 +27,7 @@ Feature: Create Operator backed service in topology page
 
 
         @regression @manual
-        Scenario: Create Operator Backed serivce using visual connector from existing knative service
+        Scenario: Create Operator Backed serivce using visual connector from existing knative service: T-04-TC02
             Given user has created knative service "knative demo"
              When user drags connector from "knative-demo" workload
               And user drops visual connector on empty graph
@@ -40,7 +40,7 @@ Feature: Create Operator backed service in topology page
 
 
         @regression @manual
-        Scenario: Create Operator Backed serivce using binding connector from workload
+        Scenario: Create Operator Backed serivce using binding connector from workload: T-04-TC03
             Given user has created "nodejs-app" workload
              When user drags connector from "nodejs-app" workload
               And user drops visual connector on empty graph

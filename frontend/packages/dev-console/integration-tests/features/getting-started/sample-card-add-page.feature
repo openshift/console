@@ -7,7 +7,7 @@ Feature: Create Sample Application
 
 
         @regression
-        Scenario: Sample Card in Add flow
+        Scenario: Sample Card in Add flow: GS-03-TC01
             Given user is at +Add page of Developer perspective
              When user will check for Samples card
               And user clicks on Samples card
@@ -16,7 +16,7 @@ Feature: Create Sample Application
               And sample applications are based on the builder images
 
         @regression
-        Scenario: Create node Sample Appliation
+        Scenario: Create node Sample Appliation: GS-03-TC02
             Given user is in Add flow of dev perspective
              When user clicks on Sample card
               And samples page opens
@@ -30,7 +30,7 @@ Feature: Create Sample Application
               And user will see create and cancel button
 
         @regression
-        Scenario: Create node Sample Appliation
+        Scenario: Create node Sample Appliation: GS-03-TC03
             Given user is in Add flow of dev perspective
              When user clicks on Sample card
               And samples page opens

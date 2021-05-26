@@ -8,7 +8,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario Outline: Start pipeline popup details for pipeline with one resource : P-04-TC02
+        Scenario Outline: Start pipeline popup details for pipeline with one resource: P-07-TC01
             Given pipeline "<pipeline_name>" consists of task "<task_name>" with one git resource
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
@@ -21,7 +21,7 @@ Feature: Pipeline Runs
 
 
         @smoke
-        Scenario Outline: Start the pipeline with one resource : P-04-TC03
+        Scenario Outline: Start the pipeline with one resource: P-07-TC02
             Given pipeline "<pipeline_name>" consists of task "<task_name>" with one git resource
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
@@ -38,7 +38,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario Outline: Last Run Status of pipeline in pipelines page after starting pipeline Run : P-05-TC01
+        Scenario Outline: Last Run Status of pipeline in pipelines page after starting pipeline Run: P-07-TC03
             Given pipeline run is displayed for "<pipeline_name>" with resource
               And user is at pipelines page
              When user navigates to Pipelines page
@@ -50,7 +50,7 @@ Feature: Pipeline Runs
 
 
         @smoke
-        Scenario Outline: Pipeline Run Details page for pipeline without resource : P-06-TC03
+        Scenario Outline: Pipeline Run Details page for pipeline without resource: P-07-TC04
             Given pipeline run is displayed for "<pipeline_name>" without resource
               And user is at pipelines page
              When user clicks Last Run value of "<pipeline_name>"
@@ -65,7 +65,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario: Actions on Pipeline Run Details page : P-06-TC06
+        Scenario: Actions on Pipeline Run Details page: P-07-TC05
             Given pipeline run is displayed for "pipeline-rerun-0" without resource
               And user is at the Pipeline Run Details page of pipeline "pipeline-rerun-0"
              When user clicks Actions menu on the top right corner of the page
@@ -73,7 +73,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario Outline: Rerun the Pipeline Run from pipeline run details page: P-06-TC01
+        Scenario Outline: Rerun the Pipeline Run from pipeline run details page: P-07-TC06
             Given pipeline run is displayed for "<pipeline_name>" without resource
               And user is at the Pipeline Run Details page of pipeline "<pipeline_name>"
              When user selects Rerun option from the Actions menu
@@ -85,7 +85,7 @@ Feature: Pipeline Runs
 
 
         @smoke
-        Scenario Outline: Rerun the Pipeline Run from pipeline runs page : P-06-TC02
+        Scenario Outline: Rerun the Pipeline Run from pipeline runs page: P-07-TC07
             Given pipeline run is displayed for "<pipeline_name>" without resource
               And user is at pipelines page
              When user selects the Pipeline Run for "<pipeline_name>"
@@ -99,7 +99,7 @@ Feature: Pipeline Runs
 
 
         @smoke
-        Scenario Outline: Pipeline Run Details page for a pipeline with resource : P-06-TC04
+        Scenario Outline: Pipeline Run Details page for a pipeline with resource: P-07-TC08
             Given pipeline run is displayed for "<pipeline_name>" with resource
               And user is at pipelines page
              When user clicks Last Run value of the pipeline "<pipeline_name>"
@@ -111,7 +111,7 @@ Feature: Pipeline Runs
                   | pipeline-with-resoruce |
 
 
-        Scenario Outline: Filter the pipeline runs based on status : P-06-TC07
+        Scenario Outline: Filter the pipeline runs based on status: P-07-TC09
             Given pipeline "<pipeline_name>" is executed for 3 times
               And user is at pipelines page
              When user filters the pipeline runs of pipeline "<pipeline_name>" based on the "<status>"
@@ -123,14 +123,14 @@ Feature: Pipeline Runs
 
 
         @smoke
-        Scenario: Start the pipeline from Pipeline Details page : P-04-TC04
+        Scenario: Start the pipeline from Pipeline Details page: P-07-TC10
             Given pipeline "pipeline-zzz" is present on Pipeline Details page
              When user selects "Start" option from pipeline Details Actions menu
              Then user will be redirected to Pipeline Run Details page
 
 
         @regression, @manual
-        Scenario Outline: Download the logs from Pipeline Details page : P-04-TC05
+        Scenario Outline: Download the logs from Pipeline Details page: P-07-TC11
             Given pipeline "pipeline-two" is present on Pipeline Details page
              When user selects "Start" option from kebab menu for pipeline "pipeline-two"
               And user navigates to pipelineRun logs tab
@@ -139,7 +139,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario Outline: Download the logs from Pipeline Details page : P-05-TC06
+        Scenario Outline: Download the logs from Pipeline Details page: P-07-TC12
             Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
              When user navigates to pipelineRun logs tab
               And user clicks on Download button
@@ -148,7 +148,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Expand the logs page: P-04-TC06
+        Scenario: Expand the logs page: P-07-TC13
             Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
              When user navigates to pipelineRun logs tab
               And user clicks on Expand button
@@ -156,7 +156,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario: kebab menu options in pipeline Runs page : P-04-TC07
+        Scenario: kebab menu options in pipeline Runs page: P-07-TC14
             Given pipeline run is displayed for "pipeline-aaa" without resource
              When user selects the Pipeline Run for "pipeline-aaa"
               And user navigates to pipelineRuns page
@@ -165,7 +165,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario: Start LastRun from topology page : P-05-TC04
+        Scenario: Start LastRun from topology page: P-07-TC15
             Given user created workload "nodejs-last-run" from add page with pipeline
               And user started the pipeline "nodejs-last-run" in pipelines page
              When user navigates to Topology page
@@ -174,7 +174,7 @@ Feature: Pipeline Runs
              Then user is able to see pipeline run in topology side bar
 
 
-        Scenario: Maximum pipeline runs display in topology page: P-05-TC05
+        Scenario: Maximum pipeline runs display in topology page: P-07-TC16
             Given user created workload "nodejs-last-run" from add page with pipeline
               And user is at pipelines page
               And pipeline "nodejs-ex-git-1" is executed for 5 times
@@ -184,7 +184,7 @@ Feature: Pipeline Runs
               And View all link is displayed
 
 
-        Scenario: Start the pipeline with cancelled tasks: P-07-TC04
+        Scenario: Start the pipeline with cancelled tasks: P-07-TC17
             Given pipeline "pipeline-three" is present on Pipeline Details page
               And pipeline run is available with cancelled tasks for pipeline "pipeline-three"
              When user selects "Start" option from kebab menu for pipeline "pipeline-three"
@@ -192,7 +192,7 @@ Feature: Pipeline Runs
               And user is able to see the pipelineRuns with status as "Running"
 
 
-        Scenario: Start the pipeline with failed tasks: P-07-TC05
+        Scenario: Start the pipeline with failed tasks: P-07-TC18
             Given pipeline "pipeline-four" is present on Pipeline Details page
               And pipeline run is available with failed tasks for pipeline "pipeline-four"
              When user selects "Start" option from kebab menu for pipeline "pipeline-four"
@@ -200,7 +200,7 @@ Feature: Pipeline Runs
               And user is able to see the pipelineRuns with status as "Running"
 
 
-        Scenario: Start the pipeline with successful tasks: P-07-TC06
+        Scenario: Start the pipeline with successful tasks: P-07-TC19
             Given pipeline "pipeline-five" is present on Pipeline Details page
               And pipeline run is available with failed tasks for pipeline "pipeline-five"
              When user selects "Start" option from kebab menu for pipeline "pipeline-five"
@@ -209,7 +209,7 @@ Feature: Pipeline Runs
 
 
         @regression
-        Scenario Outline: Pipeline status display in topology side bar : P-05-TC02
+        Scenario Outline: Pipeline status display in topology side bar: P-07-TC20
             Given user created workload "<pipeline_name>" from add page with pipeline
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
@@ -223,7 +223,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Editing a pipeline structure should not affect the previously executed pipeline runs
+        Scenario: Editing a pipeline structure should not affect the previously executed pipeline runs: P-07-TC21
             Given user has pipeline with two tasks
               And user is at the Pipeline Details page
               And pipeline run is present
@@ -236,7 +236,7 @@ Feature: Pipeline Runs
 
 
         @regression, @to-do
-        Scenario: Display failure details on pipeline run details
+        Scenario: Display failure details on pipeline run details: P-07-TC22
             Given user is at pipeline page in developer perspective
               And a failed pipeline is present
              When user goes to failed pipeline run
@@ -247,7 +247,7 @@ Feature: Pipeline Runs
 
 
         @regression, @to-do
-        Scenario: Display failure details of pipeline run in topology sidebar
+        Scenario: Display failure details of pipeline run in topology sidebar: P-07-TC23
             Given user is at Topology page
               And a node with an associated pipeline that has failed is present
              When user opens sidebar of the node
@@ -258,7 +258,7 @@ Feature: Pipeline Runs
 
 
         @regression @odc-3991
-        Scenario: Start pipeline modal with different Workspaces
+        Scenario: Start pipeline modal with different Workspaces: P-07-TC24
             Given pipeline "pipeline-workspace" is created with "git-PVC" workspace
              When user selects "Start" option from kebab menu for pipeline "pipeline-workspace"
               And user navigates to Workspaces section
@@ -267,7 +267,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual @odc-3991
-        Scenario: Show VolumeClaimTemplate options
+        Scenario: Show VolumeClaimTemplate options: P-07-TC25
             Given pipeline "pipevc-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipevc-no-workspace"
               And user navigates to Workspaces section
@@ -279,7 +279,7 @@ Feature: Pipeline Runs
 
 
         @regression @odc-3991
-        Scenario: Create PVC workspace in Start pipeline modal
+        Scenario: Create PVC workspace in Start pipeline modal: P-07-TC26
             Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
               And user navigates to Workspaces section
@@ -291,7 +291,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Pipeline Run details page with passed pipeline run having finally task
+        Scenario: Pipeline Run details page with passed pipeline run having finally task: P-07-TC27
             Given user has pipeline "pipeline-one" with finally task having passed pipeline run
               And user is on Pipeline Run details page of passed pipeline run
              When user hovers over each of the finally task arranged in parallel
@@ -299,7 +299,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Pipeline Run details page with failed pipeline run having finally task
+        Scenario: Pipeline Run details page with failed pipeline run having finally task: P-07-TC28
             Given user has pipeline "pipeline-finally-failed" with three tasks in series and a finally task
               And user has failed pipeline run for pipeline "pipeline-finally-failed" with third task as failure
               And user is on Pipeline Run details page of failed pipeline run
@@ -309,7 +309,7 @@ Feature: Pipeline Runs
 
 
         @regression @to-do
-        Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run
+        Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run: P-07-TC29
             Given user has passed pipeline run for pipeline "new-pipeline"
               And user is on Pipeline Run details page
              When user scrolls to the Pipeline Run results section
@@ -317,7 +317,7 @@ Feature: Pipeline Runs
 
 
         @regression @to-do
-        Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run
+        Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run: P-07-TC30
             Given user has failed pipeline run for pipeline "new-pipeline"
               And user is on Pipeline Run details page
              When user scrolls to the Pipeline Run results section
@@ -325,7 +325,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Pipeline Run details page with passed pipeline run having Conditional task
+        Scenario: Pipeline Run details page with passed pipeline run having Conditional task: P-07-TC31
             Given user has passed pipeline run having a succeeded Conditional task for pipeline "new-pipeline1"
               And user is on Pipeline Run details page
              When user hovers over the diamond before the Conditional task
@@ -334,7 +334,7 @@ Feature: Pipeline Runs
 
 
         @regression, @manual
-        Scenario: Pipeline Run details page with passed pipeline run having skipped Conditional task
+        Scenario: Pipeline Run details page with passed pipeline run having skipped Conditional task: P-07-TC32
             Given user has passed pipeline run having a two Conditional task with one of them being skipped for pipeline "new-pipeline2"
               And user is on Pipeline Run details page
              When user hovers over the diamond before the skipped Conditional task

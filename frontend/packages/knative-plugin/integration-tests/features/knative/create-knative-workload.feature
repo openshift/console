@@ -7,7 +7,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: knative resource type in container image add flow : Kn-01-TC04
+        Scenario: knative resource type in container image add flow: KN-05-TC01
             Given user is at Add page
              When user clicks on Container Image card
              Then user will be redirected to page with header name "Deploy Image"
@@ -15,7 +15,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: knative resource type in docker file add flow : Kn-01-TC05
+        Scenario: knative resource type in docker file add flow: KN-05-TC02
             Given user is at Add page
              When user clicks on From Dockerfile card
              Then user will be redirected to page with header name "Import from Dockerfile"
@@ -23,7 +23,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: knative resource type in catalog add flow : Kn-01-TC06
+        Scenario: knative resource type in catalog add flow: KN-05-TC03
             Given user is at Add page
              When user clicks on From Catalog card
               And create the application with s2i builder image
@@ -32,7 +32,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @smoke
-        Scenario Outline: Create knative workload from From Git card on Add page : Kn-02-TC01, Kn-01-TC03
+        Scenario Outline: Create knative workload from From Git card on Add page: KN-05-TC04
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
               And user enters Name as "<workload_name>"
@@ -47,7 +47,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario Outline: Create knative workload using Container image with extrenal registry on Add page : Kn-02-TC02
+        Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
               And user enters workload name as "<workload_name>"
@@ -62,7 +62,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario Outline: Create a workload from Docker file card on Add page :Kn-02-TC03
+        Scenario Outline: Create a workload from Docker file card on Add page: KN-05-TC06
             Given user is on Import from Docker file page
              When user enters Docker url as "<docker_git_url>"
               And user enters workload name as "<workload_name>"
@@ -77,7 +77,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: Create a workload from DevCatalog BuilderImages card on Add page : Kn-02-TC04
+        Scenario: Create a workload from DevCatalog BuilderImages card on Add page: KN-05-TC07
             Given user is at Developer Catalog page
               And builder images are displayed
              When user searches and selects the "node" card
@@ -91,7 +91,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: Create a knative workload with advanced option "Scaling" from From Git card
+        Scenario: Create a knative workload with advanced option "Scaling" from From Git card: KN-05-TC08
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
               And user enters name as "dancer-ex-git" in General section
@@ -110,7 +110,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression @manual
-        Scenario: knative resource type in upload JAR file
+        Scenario: knative resource type in upload JAR file: KN-05-TC09
             Given user is at the Add page
              When user clicks on the Upload JAR file card
               And user drag and drop the file in JAR file section

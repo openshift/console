@@ -9,7 +9,7 @@ Feature: Application groupings in topology
 
 
         @smoke
-        Scenario: Verify Application grouping sidebar: T-04-TC08
+        Scenario: Verify Application grouping sidebar: T-05-TC01
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user clicks on an applicaton grouping "nodejs-ex-git-app"
@@ -19,7 +19,7 @@ Feature: Application groupings in topology
 
 
         @smoke
-        Scenario: Verify Application grouping context menu : T-06-TC04
+        Scenario: Verify Application grouping context menu: T-05-TC02
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user right clicks on Application "nodejs-ex-git-app" to open context menu
@@ -27,7 +27,7 @@ Feature: Application groupings in topology
 
 
         @regression
-        Scenario: Add to Application in Application grouping from Action menu
+        Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user clicks on an applicaton grouping "nodejs-ex-git-app"
@@ -49,7 +49,7 @@ Feature: Application groupings in topology
 
 
         @regression
-        Scenario: Delete Application grouping from Action menu
+        Scenario: Delete Application grouping from Action menu: T-05-TC04
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at Topology page
              When user clicks on applicaton grouping "nodejs-ex-git-app"
@@ -60,7 +60,7 @@ Feature: Application groupings in topology
 
 
         @regression
-        Scenario: Delete Application grouping from context menu
+        Scenario: Delete Application grouping from context menu: T-05-TC05
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
              When user right clicks on applicaton grouping "nodejs-ex-git-app"
               And user clicks on Delete Application

@@ -7,7 +7,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @regression
-        Scenario: Create serverless workload (ksvc) for existing Deployment from Action menu
+        Scenario: Create serverless workload (ksvc) for existing Deployment from Action menu: KN-04-TC01
             Given user has created deployment workload "nodejs-ex-git1"
               And user is at Topology page
              When user clicks on "nodejs-ex-git1" to open sidebar
@@ -17,7 +17,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @regression
-        Scenario: Create serverless workload (ksvc) for existing Deployment Config from context menu
+        Scenario: Create serverless workload (ksvc) for existing Deployment Config from context menu: KN-04-TC02
             Given user has created deployment workload "nodejs-ex-git2"
               And user is at Topology page
              When user right clicks on "nodejs-ex-git1" to open context menu
@@ -27,7 +27,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @regression
-        Scenario: Create serverless workload (ksvc) for existing Deployment from kebab menu of Deployments page
+        Scenario: Create serverless workload (ksvc) for existing Deployment from kebab menu of Deployments page: KN-04-TC03
             Given user has created deployment workload "nodejs-ex-git1"
               And user is at Deployments page
              When user clicks on kebab button "nodejs-ex-git1" to open kebab menu
@@ -37,7 +37,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @regression
-        Scenario: Create serverless workload (ksvc) for existing Deployment from context menu whose Route is not defined
+        Scenario: Create serverless workload (ksvc) for existing Deployment from context menu whose Route is not defined: KN-04-TC04
             Given user has created deployment workload "hello-openshift1" with no Route defined
               And user is at Topology page
              When user right clicks on "hello-openshift1" to open context menu
@@ -48,7 +48,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @smoke
-        Scenario: Edit knative workload created from deployment
+        Scenario: Edit knative workload created from deployment: KN-04-TC05
             Given user has created deployment workload "nodejs-ex-git1" from Import from Git way
               And user has created knative workload "ksvc-nodejs-ex-git1" from deployment "nodejs-ex-git1"
               And user is at Topology page
@@ -63,7 +63,7 @@ Feature: Create Knative service from existing Deployment/Deployment Config workl
 
 
         @regression
-        Scenario: Create serverless workload (ksvc) for existing Deployment having HPA associated with it from context menu
+        Scenario: Create serverless workload (ksvc) for existing Deployment having HPA associated with it from context menu: KN-04-TC06
             Given user has created deployment workload "nodejs-ex-git2"
               And user has added HPA with Min and Max pod value as 3 and 6 respectively
               And user is at Topology page

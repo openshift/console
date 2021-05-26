@@ -9,13 +9,13 @@ Feature: Applications managed by GitOps and Create secret
 
 
         @smoke
-        Scenario: No GitOps Manifest URLs found
+        Scenario: No GitOps Manifest URLs found: GO-01-TC01
              When user navigates to Environments page
              Then user will see the message No GitOps manifest URLs found
 
 
         @regression @manual
-        Scenario: Create Secret
+        Scenario: Create Secret: GO-01-TC02
             Given user has imported gitops repo
              When user creates the namespace in pattern of "pipelines-{username}-github"
               And user creates the secret in pattern of "{username}-github-token"
@@ -24,7 +24,7 @@ Feature: Applications managed by GitOps and Create secret
 
 
         @regression @manual
-        Scenario: Application Details page for Applications
+        Scenario: Application Details page for Applications: GO-01-TC03
             Given user is on the Environments page
               And user can see the Applications on the page
              When user clicks on the application

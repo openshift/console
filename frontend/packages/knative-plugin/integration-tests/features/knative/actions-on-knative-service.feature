@@ -8,14 +8,14 @@ Feature: Perform actions on knative service
 
 
         @smoke
-        Scenario: knative service menu options: Kn-04-TC01
+        Scenario: knative service menu options: KN-02-TC01
             Given user is at the Topology page
              When user right clicks on the knative service "kn-service"
              Then user is able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service, Edit "kn-service"
 
 
         @regression
-        Scenario: Edit labels modal details : Kn-04-TC02
+        Scenario: Edit labels modal details: KN-02-TC02
             Given user is at the Topology page
              When user right clicks on the knative service "kn-service"
               And user selects "Edit labels" from context menu
@@ -24,7 +24,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Add label to the existing labels list : Kn-04-TC03
+        Scenario: Add label to the existing labels list: KN-02-TC03
             Given user is at the Topology page
              When user right clicks on the knative service "kn-service"
               And user selects "Edit labels" from context menu
@@ -34,7 +34,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Remove label from existing labels list : Kn-04-TC04
+        Scenario: Remove label from existing labels list: KN-02-TC04
             Given user is at the Topology page
               And label "app=label" is added to the knative service "kn-service"
              When user selects "Edit labels" context menu option of knative service "kn-service"
@@ -44,7 +44,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Add labels to existing labels list and cancel it : Kn-04-TC05
+        Scenario: Add labels to existing labels list and cancel it: KN-02-TC05
             Given user has created another knative service "kn-service-1"
               And user is at the Topology page
              When user selects "Edit Labels" context menu option of knative service "kn-service"
@@ -54,7 +54,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Edit Annotation modal details : Kn-04-TC11
+        Scenario: Edit Annotation modal details: KN-02-TC05
             Given user is at the Topology page
              When user selects "Edit Annotations" context menu option of knative service "kn-service"
              Then modal with "Edit annotations" appears
@@ -64,7 +64,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Add annotation to the existing annotations list : Kn-04-TC12
+        Scenario: Add annotation to the existing annotations list: KN-02-TC06
             Given user is at the Topology page
               And number of annotations are "5" present in "kn-service" service side bar details tab
              When user selects "Edit Annotations" context menu option of knative service "kn-service"
@@ -75,7 +75,8 @@ Feature: Perform actions on knative service
              Then number of Annotations increased to "6" in "kn-service" service side bar details
 
 
-        Scenario: perform cancel action after Edit Annotations : Kn-04-TC14
+        @regression
+        Scenario: Perform cancel action after Edit Annotations: KN-02-TC07
             Given user is at the Topology page
               And number of annotations are "5" present in "kn-service" service side bar details tab
              When user selects "Edit Annotations" context menu option of knative service "kn-service"
@@ -85,7 +86,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Remove annotation from existing annotations list : Kn-04-TC13
+        Scenario: Remove annotation from existing annotations list: KN-02-TC08
             Given user is at the Topology page
               And number of annotations are "6" present in side bar - details tab
              When user selects "Edit Annotations" context menu option of knative service "kn-service"
@@ -95,7 +96,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Edit the service from yaml editor: Kn-04-TC15
+        Scenario: Edit the service from yaml editor: KN-02-TC09
             Given user is at the Topology page
              When user selects "Edit Service" context menu option of knative service "kn-service"
               And user modifies the Yaml file of the Service details page
@@ -105,7 +106,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Update the service to different application group existing in same project : Kn-04-TC07
+        Scenario: Update the service to different application group existing in same project: KN-02-TC10
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
               And user selects the "openshift-app" option from application drop down present in "Edit Application Grouping" modal
@@ -115,7 +116,8 @@ Feature: Perform actions on knative service
              Then updated service is present in side bar
 
 
-        Scenario: Perform cancel operation while editing application group : Kn-04-TC08
+        @regression
+        Scenario: Perform cancel operation while editing application group: KN-02-TC11
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
               And user selects the "openshift-app" option from application drop down present in "Edit Application Grouping" modal
@@ -126,7 +128,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Update the service to new application group : Kn-04-TC06
+        Scenario: Update the service to new application group: KN-02-TC12
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
               And user selects the "openshift-app" option from application drop down present in "Edit Application Grouping" modal
@@ -138,7 +140,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Set traffic distribution greater than 100% for the Revisions of the knative Service : Kn-04-TC17
+        Scenario: Set traffic distribution greater than 100% for the Revisions of the knative Service: KN-02-TC13
             Given user created another revision "kn-service-1" for knative Service "kn-service"
               And user is at the Topology page
              When user selects "Set traffic distribution" context menu option of knative service "kn-service"
@@ -150,7 +152,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Set traffic distribution less than 100% for the Revisions of the knative Service : Kn-04-TC18
+        Scenario: Set traffic distribution less than 100% for the Revisions of the knative Service: KN-02-TC14
             Given user created another revision "kn-service-1" for knative Service "kn-service"
               And user is at the Topology page
              When user selects "Set traffic distribution" context menu option of knative service "kn-service"
@@ -163,7 +165,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Set traffic distribution equal to 100% for the Revisions of the knative Service : Kn-04-TC19
+        Scenario: Set traffic distribution equal to 100% for the Revisions of the knative Service: KN-02-TC15
             Given user created another revision "kn-service-1" for knative Service "kn-service"
               And user is at the Topology page
              When user selects "Set traffic distribution" context menu option of knative service "kn-service"
@@ -175,7 +177,8 @@ Feature: Perform actions on knative service
              Then number of routes should get increased in side bar - resources tab - routes section
 
 
-        Scenario: Perform cancel opeartion on Edit Health Checks for a service : Kn-04-TC10
+        @regression
+        Scenario: Perform cancel opeartion on Edit Health Checks for a service: KN-02-TC16
             Given user is at the Topology page
              When user selects "Edit Health Checks" context menu option of knative service "kn-service"
               And user clicks cancel button on "Edit Health Checks" page
@@ -183,12 +186,13 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Edit Health Checks for a service: Kn-04-TC09
+        Scenario: Edit Health Checks for a service: KN-02-TC17
             Given user is at the Topology page
              When user selects "Edit Health Checks" context menu option of knative service "kn-service"
 
 
-        Scenario: Perform cancel opeartion on Edit NameOfWorkload for a service : Kn-04-TC21
+        @regression
+        Scenario: Perform cancel opeartion on Edit NameOfWorkload for a service: KN-02-TC18
             Given user is at the Topology page
              When user selects "Edit kn-service" context menu option of knative service "kn-service"
               And user clicks cancel button on "Edit Service" page
@@ -196,7 +200,7 @@ Feature: Perform actions on knative service
 
 
         @regression
-        Scenario: Edit NameOfWorkload for a service [TBD] : Kn-04-TC20
+        Scenario: Edit NameOfWorkload for a service [TBD]: KN-02-TC19
             Given user is at the Topology page
              When user selects "Edit kn-service" context menu option of knative service "kn-service"
               And user selects the "Application -1" option from Application drop down
@@ -204,7 +208,7 @@ Feature: Perform actions on knative service
 
 
         @smoke
-        Scenario: Delete service : Kn-04-TC16
+        Scenario: Delete service: KN-02-TC20
             Given user is at the Topology page
              When user selects "Delete Service" context menu option of knative service "kn-service"
               And user clicks Delete button on Delete Service modal

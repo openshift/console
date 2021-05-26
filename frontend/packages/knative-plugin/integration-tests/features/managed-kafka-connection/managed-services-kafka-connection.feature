@@ -11,7 +11,7 @@ Feature: Support for Managed Services
 
 
         @regression @manual
-        Scenario: Create the Managed Services from Add page
+        Scenario: Create the Managed Services from Add page: KM-02-TC01
             Given user is at Add page
              When user clicks Managed Services card
               And user clicks "Red Hat OpenShift Application Services" card
@@ -30,7 +30,7 @@ Feature: Support for Managed Services
 
 
         @regression @manual
-        Scenario: Create the Managed Services from Developer Catalog
+        Scenario: Create the Managed Services from Developer Catalog: KM-02-TC02
             Given user is at Add page
              When user clicks Developer Catalog card
               And user selects Type as Managed Services
@@ -49,7 +49,7 @@ Feature: Support for Managed Services
 
 
         @regression
-        Scenario: Empty Filter in Select Kafka Instance
+        Scenario: Empty Filter in Select Kafka Instance: KM-02-TC03
             Given user is at Kafka Instance page
              When user types "xys" in Search by name filter
              Then user will see "No Kafka instances found" message
@@ -57,7 +57,7 @@ Feature: Support for Managed Services
 
 
         @regression
-        Scenario: Sidebar of Kafka Connection instance
+        Scenario: Sidebar of Kafka Connection instance: KM-02-TC04
             Given user has kafka instance
               And user has created Kafka Connection "kafka-instance-123" with the given kafka instance
               And user is at Topology page
@@ -68,7 +68,7 @@ Feature: Support for Managed Services
 
 
         @regression
-        Scenario: Editing Kafka instances
+        Scenario: Editing Kafka instances: KM-02-TC05
             Given user has two kafka instance user has added one kafka instances
               And user has created Kafka Connection "kafka-instance-123" with one kafka instance
               And user is at Add page
@@ -82,7 +82,7 @@ Feature: Support for Managed Services
 
 
         @regression @manual
-        Scenario: Empty state of Select Kafka instances page
+        Scenario: Empty state of Select Kafka instances page: KM-02-TC06
             Given user has added all kafka instances
               And user is at Add page
              When user clicks Managed Services card

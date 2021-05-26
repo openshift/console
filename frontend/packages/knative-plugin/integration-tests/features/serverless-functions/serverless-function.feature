@@ -10,7 +10,7 @@ Feature: Visualisation of serverless fuctions
 
 
         @regression @manual
-        Scenario: Visualize serverless function in topology chart view
+        Scenario: Visualize serverless function in topology chart view: SF-01-TC01
             Given user has created serverless function "nodetest"
               And user is at Topology list page
              When user clicks on Topology chart view
@@ -19,7 +19,7 @@ Feature: Visualisation of serverless fuctions
 
 
         @regression @manual
-        Scenario: Visualize serverless function in topology list view
+        Scenario: Visualize serverless function in topology list view: SF-01-TC02
             Given user has created serverless function "nodetest"
               And user is at Topology chart page
              When user clicks on Topology list view
@@ -27,7 +27,7 @@ Feature: Visualisation of serverless fuctions
 
 
         @regression
-        Scenario: Sidebar of serverless function
+        Scenario: Sidebar of serverless function: SF-01-TC03
             Given user has created serverless function "nodetest"
               And user is at Topology chart page
              When user clicks on "nodetest"
@@ -36,7 +36,7 @@ Feature: Visualisation of serverless fuctions
 
 
         @regression
-        Scenario: Service details page of serverless function
+        Scenario: Service details page of serverless function: SF-01-TC04
             Given user has created serverless function "nodetest"
               And user is at Topology chart page
              When user clicks on "nodetest"
