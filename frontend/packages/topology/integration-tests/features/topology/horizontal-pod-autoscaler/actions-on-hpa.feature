@@ -7,7 +7,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression
-        Scenario Outline: Add HorizontalPodAutoscaler to deployment workload
+        Scenario Outline: Add HorizontalPodAutoscaler to deployment workload: TH-02-TC01
             Given user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at Topology page
              When user clicks on workload "nodejs-ex-git"
@@ -30,7 +30,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression
-        Scenario Outline: Edit HorizontalPodAutoscaler
+        Scenario Outline: Edit HorizontalPodAutoscaler: TH-02-TC02
             Given user has a workload "<workload_name>" with HPA assigned to it
               And user is at Topology page
              When user clicks on workload "nodejs-ex-git"
@@ -54,7 +54,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression
-        Scenario: Remove HorizontalPodAutoscaler
+        Scenario: Remove HorizontalPodAutoscaler: TH-02-TC03
             Given user has a deployment workload "nodejs-ex-git-1" with HPA assigned to it
               And user is at Topology page
              When user right clicks on workload "nodejs-ex-git-1"
@@ -66,7 +66,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression, @manual
-        Scenario: Add HPA from YAML view
+        Scenario: Add HPA from YAML view: TH-02-TC04
              When user clicks on workload "nodejs-ex-git"
               And user selects "Add HorizontalPodAutoscaler" option from Actions menu
               And user navigates to YAML view in Horizontal Pod Autoscaler page
@@ -84,7 +84,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression, @manual
-        Scenario: Edit HPA action YAML view
+        Scenario: Edit HPA action YAML view: TH-02-TC05
             Given user has a workload "<workload_name>" with HPA assigned to it
              When user opens sidebar of workload
               And user opens action menu
@@ -109,7 +109,7 @@ Feature: Perform actions on HPA in Topology page
 
 
         @regression, @manual
-        Scenario: Edit HPA YAML view to form view
+        Scenario: Edit HPA YAML view to form view: TH-02-TC06
             Given user has a workload "<workload_name>" with HPA assigned to it
              When user opens sidebar of workload
               And user opens action menu

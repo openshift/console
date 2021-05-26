@@ -8,7 +8,7 @@ Feature: Sidebar in topology
 
 
         @smoke
-        Scenario: Sidebar for workload: T-05-TC01
+        Scenario: Sidebar for workload: T-14-TC01
             Given user has created workload "nodejs-ex-git" with resource type "deployment"
              When user clicks on workload "nodejs-ex-git"
              Then user can see sidebar opens with Resources tab selected by default
@@ -19,7 +19,7 @@ Feature: Sidebar in topology
 
 
         @smoke
-        Scenario: Sidebar for knative service: T-05-TC01
+        Scenario: Sidebar for knative service: T-14-TC02
             Given user has created workload "hello-openshift" with resource type "Knative Service"
              When user clicks on workload "hello-openshift"
              Then user can see sidebar opens with Resources tab selected by default
@@ -29,7 +29,7 @@ Feature: Sidebar in topology
 
 
         @regression
-        Scenario: Pod scale up in sidebar
+        Scenario: Pod scale up in sidebar: T-14-TC03
             Given user has created workload "dancer-ex-git-1" with resource type "deployment"
              When user clicks on workload "dancer-ex-git-1"
               And user goes to Details tab
@@ -38,7 +38,7 @@ Feature: Sidebar in topology
 
 
         @regression
-        Scenario: Pod scale down in sidebar
+        Scenario: Pod scale down in sidebar: T-14-TC04
             Given user has created workload "nodejs-ex-git-1" with resource type "deployment"
               And user has scaled up the pod to 2 for workload "nodejs-ex-git-1"
              When user clicks on workload "nodejs-ex-git-1"

@@ -8,7 +8,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @smoke
-        Scenario: Add Subscription to channel
+        Scenario: Add Subscription to channel: KE-05-TC01
             Given user has created knative service "nodejs-ex-git"
               And user has created channel "channel-test"
               And user is at Topology page
@@ -21,7 +21,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @regression @manual
-        Scenario: Subscribe channel to multiple services
+        Scenario: Subscribe channel to multiple services: KE-05-TC02
             Given user is having Channel subscribed to a service on the Topology page
              When user right clicks on the Channel to open the context menu
               And user clicks on the Add Subscription
@@ -34,7 +34,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @regression
-        Scenario: Delete Subscription
+        Scenario: Delete Subscription: KE-05-TC03
             Given user is having Channel on the Topology page
               And user has already added the subscription
              When user right clicks on the Subscription to open the context menu
@@ -44,7 +44,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @regression
-        Scenario: Move Subscription
+        Scenario: Move Subscription: KE-05-TC04
             Given user is having Channel on the Topology page
               And user has already added the subscription
              When user right clicks on the Subscription to open the context menu
@@ -55,7 +55,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @regression @manual
-        Scenario: Add Subscription using connector
+        Scenario: Add Subscription using connector: KE-05-TC05
             Given user is having Channel on the Topology page
              When user drags the connector and drops it on graph
               And user clicks on Add Subscription
@@ -67,7 +67,7 @@ Feature: Knative Eventing Channel and Subscription
 
 
         @regression
-        Scenario: Sidebar for the Event Source sinked Channel subscribed to Knative Service
+        Scenario: Sidebar for the Event Source sinked Channel subscribed to Knative Service: KE-05-TC06
             Given user is having Channel subscribed to Knative Service on the Topology page
              When user clicks on the Subscription to open the sidebar
              Then user will see the Resources tab

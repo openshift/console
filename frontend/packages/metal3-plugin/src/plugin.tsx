@@ -321,6 +321,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
+      disallowed: ['LSO_DEVICE_DISCOVERY'],
     },
   },
 ];

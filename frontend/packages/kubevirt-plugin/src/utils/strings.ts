@@ -24,6 +24,7 @@ export const SSH = 'ssh';
 
 export const EXAMPLE_CONTAINER = 'registry.redhat.io/rhel8/rhel-guest-image';
 export const FEDORA_EXAMPLE_CONTAINER = 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest';
+export const CENTOS_IMAGE_LINK = 'https://cloud.centos.org/centos/';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =
   'https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.2/x86_64/product-software';

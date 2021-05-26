@@ -12,7 +12,7 @@ Feature: Connection from Kafka Source to Managed Kafka Connection resource
 
 
         @smoke
-        Scenario: Creating Kafka source connecting Kafka Connection and knative service
+        Scenario: Creating Kafka source connecting Kafka Connection and knative service: KM-01-TC01
             Given user has created knative service "hello-openshift1"
               And user has created Kafka Connection "kafka-instance-123"
               And user has created Topic "strimzi-canary"
@@ -37,7 +37,7 @@ Feature: Connection from Kafka Source to Managed Kafka Connection resource
 
 
         @regression
-        Scenario: Sidebar of the Kafka connector
+        Scenario: Sidebar of the Kafka connector: KM-01-TC02
             Given user has created knative service "hello-openshift1"
               And user has created Kafka Connection "kafka-instance-123"
               And user has created connection between Kafka Connection "kafka-instance-123" and kafka source "kafka-source-1" which sinks to knative service "hello-openshift1"
@@ -47,7 +47,7 @@ Feature: Connection from Kafka Source to Managed Kafka Connection resource
 
 
         @regression @manual
-        Scenario: Joining the Kafka source with connector to different Kafka Connections
+        Scenario: Joining the Kafka source with connector to different Kafka Connections: KM-01-TC03
             Given user has created knative service "hello-openshift1"
               And user has created Kafka Connections "kafka-instance-abcd" and "kafka-instance-123"
               And user has created connection between Kafka Connection "kafka-instance-123" and kafka source "kafka-source-1" which sink to knative service "hello-openshift1"

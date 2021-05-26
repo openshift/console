@@ -196,6 +196,35 @@ export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
     getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;
 
+export const getVMStatusIcon = (
+  isPaused: boolean,
+  status: VMStatusEnum,
+  arePendingChanges: boolean,
+): React.ComponentClass | React.FC => {
+  let icon: React.ComponentClass | React.FC = UnknownIcon;
+
+  if (isPaused) {
+    icon = PausedIcon;
+  } else if (status === VMStatusEnum.RUNNING) {
+    icon = SyncAltIcon;
+  } else if (status === VMStatusEnum.OFF) {
+    icon = OffIcon;
+  } else if (status.isError()) {
+    icon = RedExclamationCircleIcon;
+  } else if (status.isPending()) {
+    // should be called before inProgress
+    icon = HourglassHalfIcon;
+  } else if (status.isInProgress()) {
+    icon = InProgressIcon;
+  }
+
+  if (arePendingChanges) {
+    icon = YellowExclamationTriangleIcon;
+  }
+
+  return icon;
+};
+
 export const VMStatus: React.FC<VMStatusProps> = ({
   vm,
   vmi,
@@ -226,29 +255,10 @@ export const VMStatus: React.FC<VMStatusProps> = ({
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  let icon: React.ComponentClass | React.FC = UnknownIcon;
-
-  if (isPaused) {
-    icon = PausedIcon;
-  } else if (status === VMStatusEnum.RUNNING) {
-    icon = SyncAltIcon;
-  } else if (status === VMStatusEnum.OFF) {
-    icon = OffIcon;
-  } else if (status.isError()) {
-    icon = RedExclamationCircleIcon;
-  } else if (status.isPending()) {
-    // should be called before inProgress
-    icon = HourglassHalfIcon;
-  } else if (status.isInProgress()) {
-    icon = InProgressIcon;
-  }
-
-  if (arePendingChanges) {
-    icon = YellowExclamationTriangleIcon;
-  }
+  const Icon = getVMStatusIcon(isPaused, status, arePendingChanges);
 
   return (
-    <GenericStatus title={title} Icon={icon} popoverTitle={popoverTitle}>
+    <GenericStatus title={title} Icon={Icon} popoverTitle={popoverTitle}>
       {(message || isPaused) && (
         <VMStatusPopoverContent key="popover" message={message} links={links} progress={progress}>
           {isPaused && (

@@ -9,7 +9,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario Outline: Editing a workload : T-06-TC14, T-06-TC15
+        Scenario Outline: Editing a workload: T-09-TC01
             Given user has created workload "<workload_name>" with resource type "<resource_type>"
              When user right clicks on the workload "<workload_name>" to open the Context Menu
               And user clicks on "Edit <workload_name>" from context action menu
@@ -24,7 +24,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario: Editing a knative service : T-06-TC14, T-06-TC15
+        Scenario: Editing a knative service: T-09-TC02
             Given user has installed OpenShift Serverless Operator
               And user is at Add page
               And user has created or selected namespace "aut-topology-edit-resource"
@@ -37,7 +37,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario: Advanced image options in Edit deployment/deployment config form
+        Scenario: Advanced image options in Edit deployment/deployment config form: T-09-TC03
             Given user has created workload "nodejs-advanced" with resource type "Deployment"
              When user right clicks on the workload "nodejs-advanced" to open the Context Menu
               And user clicks "Edit Deployment" from action menu
@@ -48,7 +48,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario: Editing deployment resource limits through form view
+        Scenario: Editing deployment resource limits through form view: T-09-TC04
             Given user has created workload "resource-limit" with resource type "Deployment Config"
              When user right clicks on the workload "resource-limit" to open the Context Menu
               And user clicks "Edit resource limits" from action menu
@@ -61,7 +61,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario: Editing deployment using form view
+        Scenario: Editing deployment using form view: T-09-TC05
             Given user has created workload "rolling-update" with resource type "Deployment"
              When user right clicks on the workload "rolling-update" to open the Context Menu
               And user clicks "Edit Deployment" from action menu
@@ -79,7 +79,7 @@ Feature: Editing an application
 
 
         @smoke
-        Scenario Outline: Editing deployment config using form view
+        Scenario Outline: Editing deployment config using form view: T-09-TC06
             Given user has created workload "recreate-update" with resource type "Deployment Config"
              When user right clicks on the workload "recreate-update" to open the Context Menu
               And user clicks "Edit DeploymentConfig" from action menu
@@ -100,7 +100,7 @@ Feature: Editing an application
 
 
         @regression @manual
-        Scenario: Edit JAR file through drag and drop
+        Scenario: Edit JAR file through drag and drop: T-09-TC07
             Given user has uploaded JAR file
              When user opens sidebar of the file
               And user clicks on Edit app in Action menu
@@ -112,7 +112,7 @@ Feature: Editing an application
 
 
         @regression @manual
-        Scenario: Additional parameters and lifecycle hooks for Edit deployment config
+        Scenario: Additional parameters and lifecycle hooks for Edit deployment config: T-09-TC08
             Given user is on Edit DeploymentConfig page
              When user clicks on "Show additional parameters and lifecycle hooks" option
               And user clicks on "Add Pre Cycle Hook" under Pre Cycle Hook section
@@ -123,7 +123,7 @@ Feature: Editing an application
 
 
         @regression @manual
-        Scenario Outline: Advanced container options in Edit deployment/deployment config form
+        Scenario Outline: Advanced container options in Edit deployment/deployment config form: T-09-TC09
             Given user has "<resource>" workload "workload-d"
               And user is on Edit "<resource>" page
              When user selects "Deploy image from an image stream tag" checkbox
@@ -138,7 +138,7 @@ Feature: Editing an application
 
 
         @regression @manual
-        Scenario Outline: Additional advanced sections in Edit deployment/deployment config form
+        Scenario Outline: Additional advanced sections in Edit deployment/deployment config form: T-09-TC10
             Given user has "<resource>" workload "workload-d"
               And user is on Edit "<resource>" page
              When user clicks on "Pause rollouts" in advanced options

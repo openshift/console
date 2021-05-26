@@ -8,7 +8,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @smoke
-        Scenario Outline: Pipelines Details page : P-03-TC01
+        Scenario Outline: Pipelines Details page: P-06-TC01
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user clicks pipeline name "<pipeline_name>" on Pipelines page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
@@ -22,7 +22,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @smoke
-        Scenario Outline: Pipelines page display on newly created pipeline : P-03-TC12
+        Scenario Outline: Pipelines page display on newly created pipeline: P-06-TC02
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user searches pipeline "<pipeline_name>" in pipelines page
              Then pipelines table displayed with column names Name, Last Run, Task Status, Last Run Status and Last Run Time
@@ -37,7 +37,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @regression
-        Scenario: Kebab menu options of newly created pipeline in Pipelines page : P-03-TC09
+        Scenario: Kebab menu options of newly created pipeline in Pipelines page: P-06-TC03
             Given pipeline "pipelines-zzz" is present on Pipelines page
              When user searches pipeline "pipelines-zzz" in pipelines page
               And user clicks kebab menu for the pipeline "pipelines-zzz"
@@ -45,20 +45,20 @@ Feature: Perform the actions on Pipelines page
 
 
         @regression
-        Scenario: Kebab menu options of pipeline with atleast one pipeline run in Pipelines page : P-03-TC09
+        Scenario: Kebab menu options of pipeline with atleast one pipeline run in Pipelines page: P-06-TC04
             Given pipeline run is displayed for "pipelines-yyy" with resource
              When user clicks kebab menu for the pipeline "pipelines-yyy"
              Then user will see "Start Last Run" under Kebab menu
 
 
         @regression
-        Scenario: Actions menu of newly created pipeline in Pipeline Details page : P-03-TC10
+        Scenario: Actions menu of newly created pipeline in Pipeline Details page: P-06-TC05
             Given user is at pipeline details page with newly created pipeline "pipelines-rrr"
              When user clicks Actions menu in pipeline Details page
              Then Actions menu display with options Start, Add Trigger, Edit Pipeline, Delete Pipeline
 
 
-        Scenario Outline: Details of completed pipeline run
+        Scenario Outline: Details of completed pipeline run: P-06-TC06
             Given pipeline run is available for "<pipeline_name>"
              When user clicks pipeline run of pipeline "<pipeline_name>"
              Then Pipeline run details page is displayed
@@ -71,7 +71,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @smoke
-        Scenario Outline: Edit the Pipeline from pipelines Details page : P-08-TC01
+        Scenario Outline: Edit the Pipeline from pipelines Details page: P-06-TC07
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user searches pipeline "<pipeline_name>" in pipelines page
               And user clicks pipeline "<pipeline_name>" from searched results on Pipelines page
@@ -85,7 +85,7 @@ Feature: Perform the actions on Pipelines page
                   | pipelines-ccc |
 
 
-        Scenario Outline: Add the task by editing the pipeline : P-08-TC02
+        Scenario Outline: Add the task by editing the pipeline: P-06-TC08
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user selects "Edit Pipeline" option from kebab menu of "<pipeline_name>"
               And user adds another task "openshift-client" in parallel
@@ -98,7 +98,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @smoke
-        Scenario Outline: Delete the Pipeline from pipelines Details page: P-03-TC13
+        Scenario Outline: Delete the Pipeline from pipelines Details page: P-06-TC09
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user searches pipeline "<pipeline_name>" in pipelines page
               And user clicks pipeline "<pipeline_name>" from searched results on Pipelines page
@@ -113,7 +113,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @regression
-        Scenario: Delete the Pipeline from pipelines page
+        Scenario: Delete the Pipeline from pipelines page: P-06-TC10
             Given pipeline "p-run-one" is present on Pipelines page
              When user selects "Delete Pipeline" from the kebab menu for "p-run-one"
               And user clicks Delete button on Delete Pipeline modal
@@ -121,7 +121,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @regression
-        Scenario: Edit the Pipeline from pipelines page
+        Scenario: Edit the Pipeline from pipelines page: P-06-TC11
             Given pipeline "p-run-two" is present on Pipelines page
              When user selects "Edit Pipeline" from the kebab menu for "p-run-two"
              Then user is at the Pipeline Builder page
@@ -130,7 +130,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @smoke
-        Scenario Outline: Start the basic pipeline from pipelines page: P-04-TC01
+        Scenario Outline: Start the basic pipeline from pipelines page: P-06-TC12
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user selects "Start" from the kebab menu for "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
@@ -141,14 +141,14 @@ Feature: Perform the actions on Pipelines page
 
 
         @regression
-        Scenario: Start Last Run for the basic pipeline from pipelines page: P-05-TC03
+        Scenario: Start Last Run for the basic pipeline from pipelines page: P-06-TC13
             Given pipeline run is displayed for "pipeline-fff" with resource
              When user selects "Start Last Run" from the kebab menu for "pipeline-fff"
              Then user will be redirected to Pipeline Run Details page
 
 
         @odc-3991
-        Scenario: Edit the workspace name for pipeline from pipelines page
+        Scenario: Edit the workspace name for pipeline from pipelines page: P-06-TC14
             Given pipeline "pipe-edit-wp" is created with "git-wp" workspace
              When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp"
               And user edits the Workspace name as "git-opt"
@@ -160,7 +160,7 @@ Feature: Perform the actions on Pipelines page
 
 
         @odc-3991
-        Scenario: Update the pipeline workspace as optional from pipelines page
+        Scenario: Update the pipeline workspace as optional from pipelines page: P-06-TC15
             Given pipeline "pipe-edit-wp-op" is created with "git-wp" workspace
              When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp-op"
               And user clicks on Optional Workspace checkbox

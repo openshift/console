@@ -310,6 +310,7 @@
   "Go To Pvc List": "Go To Pvc List",
   "Edit Block Pool": "Edit Block Pool",
   "Block Pool Update Form": "Block Pool Update Form",
+  "replacement disallowed: disk {{diskName}} is {{replacingDiskStatus}}": "replacement disallowed: disk {{diskName}} is {{replacingDiskStatus}}",
   "replacement disallowed: disk {{diskName}} is {{replacementStatus}}": "replacement disallowed: disk {{diskName}} is {{replacementStatus}}",
   "Disk Replacement": "Disk Replacement",
   "This action will start preparing the disk for replacement.": "This action will start preparing the disk for replacement.",

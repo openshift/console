@@ -45,8 +45,8 @@ export const COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY = `${USERSETTINGS_PREF
 export const PINNED_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/pinned-resources`;
 export const COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/table-columns`;
 
-// Bootstrap user for OpenShift 4.0 clusters
-export const KUBE_ADMIN_USERNAME = 'kube:admin';
+// Bootstrap user for OpenShift 4.0 clusters (kube:admin) and CRC (kubeadmin)
+export const KUBE_ADMIN_USERNAMES = ['kube:admin', 'kubeadmin'];
 
 export const RH_OPERATOR_SUPPORT_POLICY_LINK =
   'https://access.redhat.com/third-party-software-support';

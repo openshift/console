@@ -1,7 +1,8 @@
 @monitoring
 Feature: Monitoring tab on the topology Sidebar
-        As a user, I should be able to see Monitoring tab on the sidebar of topology page and add Health Checks
+              As a user, I should be able to see Monitoring tab on the sidebar of topology page and add Health Checks
 
+        
         Background:
             Given user is at developer perspective
               And user is at Add page
@@ -9,7 +10,7 @@ Feature: Monitoring tab on the topology Sidebar
 
 
         @smoke
-        Scenario Outline: Navigating to Monitoring page from topology page Sidebar for "<resourceType>" workload : "<tcNo>"
+        Scenario Outline: Navigating to Monitoring page from topology page Sidebar for "<resourceType>" workload : M-04-TC01
             Given workload "<workload>" with resource type "<resourceType>" is present in topology page
              When user clicks on the workload "<workload>" to open the sidebar
               And user clicks on Monitoring tab
@@ -21,13 +22,13 @@ Feature: Monitoring tab on the topology Sidebar
               And user will see All Events dropdown
 
         Examples:
-                  | workload      | resourceType      | tcNo                   |
-                  | parks-test-d  | Deployment        | MH-02-TC02, MH-03-TC01 |
-                  | parks-test-dc | Deployment Config | MH-02-TC03             |
+                  | workload      | resourceType      |
+                  | parks-test-d  | Deployment        |
+                  | parks-test-dc | Deployment Config |
 
 
         @smoke
-        Scenario: Monitoring tab on the Sidebar for Helm Release: MH-02-TC04
+        Scenario: Monitoring tab on the Sidebar for Helm Release: M-04-TC02
             Given helm release "nodejs-ex-k" is present in topology page
              When user clicks on the workload "node-js-ex" to open the sidebar
               And user clicks on Monitoring tab
@@ -36,7 +37,7 @@ Feature: Monitoring tab on the topology Sidebar
 
 
         @regression
-        Scenario: Monitoring tab on the Sidebar for Knative Service: MH-02-TC05
+        Scenario: Monitoring tab on the Sidebar for Knative Service: M-04-TC03
             Given workload "parks-test-kn" with resource type "Knative Service" is present in topology page
               And user is at the Topology page
              When user clicks on the knative service "nodejs-ex-git-app" to open the sidebar
@@ -44,7 +45,7 @@ Feature: Monitoring tab on the topology Sidebar
 
 
         @regression
-        Scenario: Navigating to Monitoring Metrics from the workload Sidebar
+        Scenario: Navigating to Monitoring Metrics from the workload Sidebar: M-04-TC04
             Given Deployment "nodejs-ex-git" is present in topology page
              When user clicks on the workload "nodejs-ex-git" to open the sidebar
               And user clicks on Monitoring tab

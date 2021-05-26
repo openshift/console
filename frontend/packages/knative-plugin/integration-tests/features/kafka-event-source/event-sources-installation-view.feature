@@ -8,7 +8,7 @@ Feature: Event Sources Installation View
 
 
         @regression @manual
-        Scenario: Install Event Source from Developer Catalog Page using YAML View
+        Scenario: Install Event Source from Developer Catalog Page using YAML View: KF-01-TC01
             Given user is at Add page
              When user clicks on the Developer Catalog card on the Add page
               And user clicks on Event Sources
@@ -22,7 +22,7 @@ Feature: Event Sources Installation View
 
 
         @smoke
-        Scenario: Install Event Source from Add Page using Form View: HR-02-TC01
+        Scenario: Install Event Source from Add Page using Form View: KF-01-TC02
             Given user is at Add page
               And user has created "hello-openshift" knative service
              When user clicks on the Event Source card on the Add page
@@ -38,7 +38,7 @@ Feature: Event Sources Installation View
 
 
         @regression
-        Scenario: Switch from YAML to Form view
+        Scenario: Switch from YAML to Form view: KF-01-TC03
             Given user is at the Create Event Source page
              When user selects the YAML View
               And user does some valid changes in the yaml for Event Source
@@ -47,7 +47,7 @@ Feature: Event Sources Installation View
 
 
         @regression @manual
-        Scenario: Retain the data while switching the views
+        Scenario: Retain the data while switching the views: KF-01-TC04
             Given user is at the Create Event Source page
              When user selects the Form View
               And user does some changes in the form for Event Source

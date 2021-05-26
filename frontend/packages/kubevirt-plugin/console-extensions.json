@@ -378,5 +378,69 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.dashboards/overview/health/url",
+    "properties": {
+      "title": "Virtualization",
+      "url": "apis/subresources.kubevirt.io/v1/healthz",
+      "healthHandler": {
+        "$codeRef": "dashboardHealth.getKubevirtHealthState"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item",
+    "properties": {
+      "mapper": { "$codeRef": "dashboardInventory.getVMStatusGroups" },
+      "model": { "$codeRef": "models.VirtualMachineModel" },
+      "additionalResources": {
+        "$codeRef": "dashboardHealth.additionalResources"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/inventory/item/group",
+    "properties": {
+      "id": "vm-off",
+      "icon": { "$codeRef": "dashboardInventory.VMOffGroupIcon" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "component": { "$codeRef": "dashboardActivity.DiskImportActivity" },
+      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
+      "isActivity": { "$codeRef": "dashboardActivity.isDVActivity" },
+      "k8sResource": {
+        "$codeRef": "dashboardActivity.k8sDVResource"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.dashboards/overview/activity/resource",
+    "properties": {
+      "component": { "$codeRef": "dashboardActivity.V2VImportActivity" },
+      "getTimestamp": { "$codeRef": "dashboardActivity.getTimestamp" },
+      "isActivity": { "$codeRef": "dashboardActivity.isPodActivity" },
+      "k8sResource": {
+        "$codeRef": "dashboardActivity.k8sPodResource"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

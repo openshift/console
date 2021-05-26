@@ -7,13 +7,13 @@ Feature: Install the Helm Release
 
 
         @smoke
-        Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
+        Scenario: The Helm Chart option on the +Add Page: HR-06-TC01
             Given user is at Add page
              Then user can see "Helm Chart" card on the Add page
 
 
         @smoke @manual
-        Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-01-TC02, HR-02-TC02
+        Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-06-TC02
             Given user is at Add page
               And user has added multiple helm charts repositories
              When user selects "Helm Chart" card from add page
@@ -25,7 +25,7 @@ Feature: Install the Helm Release
 
 
         @regression
-        Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-03
+        Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-06-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
@@ -39,7 +39,7 @@ Feature: Install the Helm Release
 
 
         @smoke
-        Scenario: Install Helm Chart from +Add Page using Form View: HR-02-TC01
+        Scenario: Install Helm Chart from +Add Page using Form View: HR-06-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs v0.0.1" card from catalog page
@@ -51,7 +51,7 @@ Feature: Install the Helm Release
 
 
         @regression
-        Scenario: Chart versions drop down menu
+        Scenario: Chart versions drop down menu: HR-06-TC05
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Quarkus v0.0.3" card from catalog page
@@ -61,7 +61,7 @@ Feature: Install the Helm Release
 
 
         @regression @manual
-        Scenario: Update the chart version to see the alert modal
+        Scenario: Update the chart version to see the alert modal: HR-06-TC06
             Given user is at the Install Helm Chart page
              When user does some changes on the yaml editor
               And user clicks on the Chart Versioon dropdown menu
@@ -72,7 +72,7 @@ Feature: Install the Helm Release
 
 
         @regression @manual
-        Scenario: README should be updated when chart version is updated
+        Scenario: README should be updated when chart version is updated: HR-06-TC07
             Given user is at Install Helm Chart page
              Then user will see the chart version dropdown
              When user selects YAML view
@@ -81,8 +81,8 @@ Feature: Install the Helm Release
              Then user will see that the README is also updated with new chart version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
 
 
-        @regression @odc-5450 @to-do
-        Scenario: Certification filter in Helm Catalog Page
+        @regression @to-do
+        Scenario: Certification filter in Helm Catalog Page: HR-06-TC08
             Given user is at Add page
               And user has added multiple helm charts repositories with providerType annotations in index.yaml
              When user selects "Helm Chart" card from Add page
@@ -102,8 +102,8 @@ Feature: Install the Helm Release
             # name: Red Hat Certification Charts
 
 
-        @regression @odc-5450 @to-do
-        Scenario: Applying Redhat Certification filter in Helm Catalog Page
+        @regression @to-do
+        Scenario: Applying Redhat Certification filter in Helm Catalog Page: HR-06-TC09
             Given user is at Add page
               And user has added multiple helm charts repositories with providerType annotations in index.yaml
              When user selects "Helm Chart" card from Add page
@@ -123,8 +123,8 @@ Feature: Install the Helm Release
             # name: Red Hat Certification Charts
 
 
-        @regression @odc-5450 @manual
-        Scenario: Certified badge in Helm Catalog Page
+        @regression @manual
+        Scenario: Certified badge in Helm Catalog Page: HR-06-TC10
             Given user is at Add page
               And user has added multiple helm charts repositories with providerType annotations in index.yaml
               And user has disabled the default Red Hat helm chart repo
@@ -133,8 +133,8 @@ Feature: Install the Helm Release
              Then user will see Blue certified badge associated with charts that are from certified partners
 
 
-        @regression @odc-5450 @manual
-        Scenario: Certified badge in Helm install side panel
+        @regression @manual
+        Scenario: Certified badge in Helm install side panel: HR-06-TC11
             Given user is at Add page
               And user has added multiple helm charts repositories with providerType annotations in index.yaml
               And user has disabled the default Red Hat helm chart repo

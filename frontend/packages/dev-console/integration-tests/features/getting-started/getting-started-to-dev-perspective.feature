@@ -3,7 +3,7 @@ Feature: Login to developer perspective
 
 
         @regression
-        Scenario: Developer perspective display on login to open shift application using developer credentials
+        Scenario: Developer perspective display on login to open shift application using developer credentials: GS-01-TC01
             Given user is at login page
              When user enters the username as "username"
               And password as "password"

@@ -12,6 +12,7 @@ import {
 import { calculateRadius } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { getServiceBindingStatus } from '@console/topology/src/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '../../models';
 import { kafkaIcon } from '../../const';
 import TrapezoidBaseNode from './TrapezoidBaseNode';
@@ -57,7 +58,7 @@ const KafkaNode: React.FC<KafkaNodeProps> = ({
       icon={kafkaIcon}
       innerRadius={iconRadius}
       selected={selected}
-      kind={KafkaConnectionModel.kind}
+      kind={referenceForModel(KafkaConnectionModel)}
       element={element}
       outerRadius={radius}
       {...props}

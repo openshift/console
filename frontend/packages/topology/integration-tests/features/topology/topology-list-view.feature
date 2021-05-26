@@ -9,14 +9,14 @@ Feature: List view in topology
 
 
         @smoke
-        Scenario: Topology List view : T-07-TC05
+        Scenario: Topology List view: T-12-TC01
             Given user has created workload "nodejs-ex-git-d" with resource type "Deployment"
              When user clicks on List view button
              Then user will see workloads are segregated by applications groupings
 
 
         @regression @manual
-        Scenario: Drag and drop jar file in topology list view
+        Scenario: Drag and drop jar file in topology list view: T-12-TC02
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology list view page
              When user drags and drop jar file on topology
@@ -28,7 +28,7 @@ Feature: List view in topology
 
 
         @regression @manual
-        Scenario: Drag and drop Incompatible file in topology list view
+        Scenario: Drag and drop Incompatible file in topology list view: T-12-TC03
             Given user has a incompatible file
               And user is at the Topology list view
              When user drags and drop the file on topology
@@ -36,7 +36,7 @@ Feature: List view in topology
 
 
         @regression @manual
-        Scenario: View shortcuts menu
+        Scenario: View shortcuts menu: T-12-TC04
             Given user has uploaded a jar file
              When user clicks on View shortcuts in topology list view
              Then user sees shortcut for Drag and drop a JAR file into Topology

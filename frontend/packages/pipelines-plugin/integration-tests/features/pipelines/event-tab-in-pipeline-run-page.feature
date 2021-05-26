@@ -7,7 +7,7 @@ Feature: Events tab in Pipeline run and Task run details pages
 
 
         @regression, @to-do
-        Scenario: Events tab in pipeline run details page of administrator perspective
+        Scenario: Events tab in pipeline run details page of administrator perspective: P-03-TC01
             Given user is at administrator perspective
               And pipeline named "ex-pipeline_one" is available with pipeline run
              When user clicks on pipeline tab in navigation menu
@@ -19,7 +19,7 @@ Feature: Events tab in Pipeline run and Task run details pages
 
 
         @regression, @to-do
-        Scenario: Events tab in task run details page of administrator perspective
+        Scenario: Events tab in task run details page of administrator perspective: P-03-TC02
             Given user is at administrator perspective
               And task named "ex-task-two" is available with task run
              When user clicks on pipeline tab in navigation menu
@@ -31,7 +31,7 @@ Feature: Events tab in Pipeline run and Task run details pages
 
 
         @smoke
-        Scenario: Events tab in pipeline run details page of developer perspective
+        Scenario: Events tab in pipeline run details page of developer perspective: P-03-TC03
             Given user is at developer perspective
               And user is at pipelines page
               And pipeline run is displayed for "ex-pipeline-two" with resource
@@ -44,7 +44,7 @@ Feature: Events tab in Pipeline run and Task run details pages
 
 
         @regression, @to-do
-        Scenario: Events tab in task run details page of developer perspective
+        Scenario: Events tab in task run details page of developer perspective: P-03-TC04
             Given user is at developer perspective
               And task named "ex-task-one" is available with task run
              When user clicks on pipeline tab in navigation menu

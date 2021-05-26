@@ -18,33 +18,36 @@ export const receiverTypes = Object.freeze({
   slack_configs: 'Slack',
 });
 
-export const getAlertmanagerYAML = (secret: K8sResourceKind, setErrorMsg): string => {
+export const getAlertmanagerYAML = (
+  secret: K8sResourceKind,
+): { yaml: string; errorMessage?: string } => {
   const alertManagerYaml = _.get(secret, ['data', 'alertmanager.yaml']);
-  let yaml = '';
 
   if (_.isEmpty(alertManagerYaml)) {
-    setErrorMsg(
-      'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"',
-    );
-    return yaml;
+    return {
+      yaml: '',
+      errorMessage:
+        'Error: alertmanager.yaml not found in Secret "alertmanager-main", in namespace "openshift-monitoring"',
+    };
   }
 
   try {
-    yaml = Base64.decode(alertManagerYaml);
+    const yaml = Base64.decode(alertManagerYaml);
+    return { yaml };
   } catch (e) {
-    setErrorMsg(`Error decoding alertmanager.yaml: ${e}`);
+    return { yaml: '', errorMessage: `Error decoding alertmanager.yaml: ${e}` };
   }
-
-  return yaml;
 };
 
-export const getAlertmanagerConfig = (secret: K8sResourceKind, setErrorMsg): AlertmanagerConfig => {
-  const alertManagerYAML: string = getAlertmanagerYAML(secret, setErrorMsg);
+export const getAlertmanagerConfig = (
+  secret: K8sResourceKind,
+): { config: AlertmanagerConfig; errorMessage?: string } => {
+  const parsedAlertManagerYAML = getAlertmanagerYAML(secret);
   try {
-    return safeLoad(alertManagerYAML);
+    const config = safeLoad(parsedAlertManagerYAML.yaml);
+    return { config, errorMessage: parsedAlertManagerYAML.errorMessage };
   } catch (e) {
-    setErrorMsg(`Error loading alertmanager.yaml: ${e}`);
-    return null;
+    return { config: null, errorMessage: `Error loading alertmanager.yaml: ${e}` };
   }
 };
 

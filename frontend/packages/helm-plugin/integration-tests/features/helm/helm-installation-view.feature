@@ -8,7 +8,7 @@ Feature: Helm Chart Installation View
 
 
         @regression
-        Scenario: Grouping of Helm multiple chart versions together in developer catalog
+        Scenario: Grouping of Helm multiple chart versions together in developer catalog: HR-04-TC01
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
@@ -18,7 +18,7 @@ Feature: Helm Chart Installation View
 
 
         @smoke @manual
-        Scenario: Switch from YAML to Form view
+        Scenario: Switch from YAML to Form view: HR-04-TC02
             Given user is at the Install Helm Chart page
              When user selects the YAML view
               And user does some changes in the yaml for helm chart
@@ -28,7 +28,7 @@ Feature: Helm Chart Installation View
 
 
         @smoke
-        Scenario: Data doesn't change while switching Form to YAML view
+        Scenario: Data doesn't change while switching Form to YAML view: HR-04-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
               And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page

@@ -42,6 +42,7 @@
       ]
     },
     "exposedModules": {
+      "models": "src/models/index.ts",
       "standaloneConsole": "src/components/vms/vm-console/StandaloneVMConsolePage.tsx",
       "icons": "src/utils/icons.tsx",
       "createVM": "src/components/create-vm",
@@ -64,7 +65,10 @@
       "DevConsoleCreateVmForm": "src/components/create-vm/dev-console/dev-console-create-vm-form.tsx",
       "CustomizeSourceForm": "src/components/vm-templates/customize-source/CustomizeSourceForm.tsx",
       "CustomizeSource": "src/components/vm-templates/customize-source/CustomizeSource.tsx",
-      "yamlTemplates": "src/models/templates/index.ts"
+      "yamlTemplates": "src/models/templates/index.ts",
+      "dashboardHealth": "src/components/dashboards-page/overview-dashboard/health.ts",
+      "dashboardInventory": "src/components/dashboards-page/overview-dashboard/inventory.tsx",
+      "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx"
     }
   }
 }

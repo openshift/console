@@ -6,7 +6,7 @@ Feature: Operators
 
 
         @regression
-        Scenario: OpenShift Pipeline operator subscription page : P-01-TC01
+        Scenario: OpenShift Pipeline operator subscription page : C-01-TC01
             Given user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "OpenShift Pipelines Operator"
               And user clicks OpenShift Pipelines Operator card on Operator Hub page
@@ -15,7 +15,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
+        Scenario: Install the Pipeline Operator from Operator Hub page : C-01-TC02
             Given user executed command "oc apply -f https://gist.githubusercontent.com/nikhil-thomas/f6069b00b0e3b0359ae1cbdb929a04d6/raw/7b19be0c52355d041bf3d6a883db06b578f15f0d/openshift-pipelines-early-release-catalog-source.yaml"
               And user is at OpenShift Pipeline Operator subscription page
              When user installs the pipeline operator with default values
@@ -24,7 +24,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, Kn-01-TC02
+        Scenario: Install the Serverless Operator from Operator Hub page : C-01-TC03
             Given user is at OpenShift Serverless Operator subscription page
              When user installs the OpenShift Serverless operator with default values
              Then user will see a modal with title "OpenShift Serverless Operator"
@@ -33,7 +33,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
+        Scenario: Install the knative eventing operator : C-01-TC04
             Given user has installed OpenShift Serverless Operator
               And user is on the knative-eventing namespace
              When user navigates to installed operators page in Admin perspective
@@ -44,7 +44,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the knative apache camel operator : Kn-08-TC01
+        Scenario: Install the knative apache camel operator : C-01-TC05
             Given user has installed OpenShift Serverless and eventing operator
               And user is at Operator Hub page with the header name "OperatorHub"
              When user search and installs the knative Camel operator with default values
@@ -53,7 +53,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
+        Scenario: Install the dynamic event operator : C-01-TC06
             Given user has installed OpenShift Serverless Operator
              When user executes commands from cli as "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
               And user navigates to Add page
@@ -63,7 +63,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install the Che Operator from Operator Hub page : CRW-01-TC01
+        Scenario: Install the Che Operator from Operator Hub page : C-01-TC07
             Given user is at Eclipse che Operator subscription page
              When user installs the Eclipse che operator with default values
              Then user will see a modal with title "Eclipse Che"
@@ -71,7 +71,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install OpenShift Virtualization Operator: VM-01-TC01
+        Scenario: Install OpenShift Virtualization Operator: C-01-TC08
             Given user is at Operator Hub page with the header name "OperatorHub"
               And user has selected namespace "openshift-cnv"
              When user searches for "OpenShift Virtualization"
@@ -83,7 +83,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Create OpenShift Virtualization Deployment
+        Scenario: Create OpenShift Virtualization Deployment: C-01-TC09
             Given user has installed OpenShift Virtualization Operator
               And user is at Installed Operator page
              When user clicks on OpenShift Virtualization Operator
@@ -94,7 +94,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Create HostPathProvisioner Deployment
+        Scenario: Create HostPathProvisioner Deployment: C-01-TC10
             Given user has installed OpenShift Virtualization Operator
               And user is at Installed Operator page
              When user clicks on OpenShift Virtualization Operator
@@ -106,7 +106,7 @@ Feature: Operators
 
 
         @regression @smoke
-        Scenario: Quay container security operator
+        Scenario: Quay container security operator: C-01-TC11
             Given user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "quay container security"
               And user clicks on quay container security operator card on Operator Hub page
@@ -116,12 +116,12 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        Scenario: Uninstall the knative serverless operator from Operator Hub page
+        Scenario: Uninstall the knative serverless operator from Operator Hub page: C-01-TC12
             Given user is at OpenShift Serverless Operator subscription page
 
 
         @smoke
-        Scenario: Install Web Terminal operator from Operator Hub page
+        Scenario: Install Web Terminal operator from Operator Hub page: C-01-TC13
             Given user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "Web Terminal"
               And user clicks on the Web Terminal Operator card
@@ -132,7 +132,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install Red Hat Integration - Camel K Operator
+        Scenario: Install Red Hat Integration - Camel K Operator: C-01-TC14
             Given user has installed OpenShift Serverless Operator
               And user is at Operator Hub page with the header name "OperatorHub"
              When user searches and installs the Red Hat Integration - Camel K Operator with default values
@@ -141,7 +141,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Create Integration Platform CR
+        Scenario: Create Integration Platform CR: C-01-TC15
             Given user has installed OpenShift Serverless Operator
               And user has installed Red Hat Integration - Camel K Operator
               And user has selected "aut-test-kamelets" namespace
@@ -154,7 +154,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Install Sealed Secrets Operator
+        Scenario: Install Sealed Secrets Operator: C-01-TC16
             Given user has created namespace "cicd"
               And user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "Sealed Secrets Operator"
@@ -166,7 +166,7 @@ Feature: Operators
 
    
         @smoke
-        Scenario: Create SealedSecretController CR
+        Scenario: Create SealedSecretController CR: C-01-TC17
             Given user has installed Sealed Secrets Operator
               And user has selected "cicd" namespace
               And user is on Installed Operator page
@@ -179,7 +179,7 @@ Feature: Operators
 
    
         @smoke
-        Scenario: Install Argo CD Operator
+        Scenario: Install Argo CD Operator: C-01-TC18
             Given user has created namespace "argocd"
               And user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "Argo CD"
@@ -192,7 +192,7 @@ Feature: Operators
 
         #Run RHOAS-catalog-source.yaml from dev-console/integration-tests/testData/yamls/operator-installation folder to get redhat version of RHOAS operator
         @smoke
-        Scenario: RHOAS operator
+        Scenario: RHOAS operator: C-01-TC19
             Given user is at Operator Hub page
              When user searches for "RHOAS"
               And user clicks on RHOAS operator card on Operator Hub page
@@ -203,7 +203,7 @@ Feature: Operators
 
 
         @smoke
-        Scenario: Red Hat Integration - AMQ Streams operator
+        Scenario: Red Hat Integration - AMQ Streams operator: C-01-TC20
             Given user is at Operator Hub page
              When user searches for "Red Hat Integration - AMQ Streams"
               And user clicks on Red Hat Integration - AMQ Streams operator card on Operator Hub page

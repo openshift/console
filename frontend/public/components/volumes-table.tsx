@@ -115,26 +115,26 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
       {
         title: mountPath,
         props: {
-          classname: volumeRowColumnClasses[1],
+          className: volumeRowColumnClasses[1],
           'data-test-mount-path-for': name,
         },
       },
       {
         title: subPath || <span className="text-muted">{i18next.t('public~No subpath')}</span>,
         props: {
-          classname: volumeRowColumnClasses[2],
+          className: volumeRowColumnClasses[2],
         },
       },
       {
         title: <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />,
         props: {
-          classname: volumeRowColumnClasses[3],
+          className: volumeRowColumnClasses[3],
         },
       },
       {
         title: readOnly ? i18next.t('public~Read-only') : i18next.t('public~Read/Write'),
         props: {
-          classname: volumeRowColumnClasses[4],
+          className: volumeRowColumnClasses[4],
         },
       },
       {
@@ -145,7 +145,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
             container
           ),
         props: {
-          classname: volumeRowColumnClasses[5],
+          className: volumeRowColumnClasses[5],
         },
       },
       {
@@ -158,7 +158,7 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
           />
         ),
         props: {
-          classname: volumeRowColumnClasses[6],
+          className: volumeRowColumnClasses[6],
         },
       },
     ];

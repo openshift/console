@@ -13,7 +13,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @odc-3991
-        Scenario: Pipeline Builder page : P-03-TC02
+        Scenario: Pipeline Builder page: P-02-TC01
             Given user is at pipelines page
              When user clicks Create Pipeline button on Pipelines page
              Then user will be redirected to Pipeline Builder page
@@ -24,7 +24,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression
-        Scenario Outline: Create a pipeline with series tasks : P-07-TC03
+        Scenario Outline: Create a pipeline with series tasks: P-02-TC02
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user selects "<task_name>" from Task drop down
@@ -38,7 +38,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression
-        Scenario Outline: Create a pipeline with parallel tasks : P-07-TC02
+        Scenario Outline: Create a pipeline with parallel tasks: P-02-TC03
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user selects "<task_name>" from Task drop down
@@ -52,7 +52,7 @@ Feature: Create the pipeline from builder page
 
 
         @smoke
-        Scenario Outline: Create a basic pipeline from pipeline builder page : P-03-TC08
+        Scenario Outline: Create a basic pipeline from pipeline builder page: P-02-TC04
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user selects "<task_name>" from Task drop down
@@ -64,7 +64,7 @@ Feature: Create the pipeline from builder page
                   | p-three-1     | kn        |
 
 
-        Scenario Outline: Create pipeline with "<resource_type>" as resource type from pipeline builder page : "<tc_no>"
+        Scenario Outline: Create pipeline with "<resource_type>" as resource type from pipeline builder page: P-02-TC05
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
               And user selects "<task_name>" from Task drop down
@@ -73,15 +73,15 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
-                  | pipeline_name | task_name        | resource_type | resource_name | tc_no     |
-                  | p-git         | openshift-client | Git           | git repo      | P-03-TC11 |
-                  | p-img         | buildah          | Image         | image repo    | P-03-TC05 |
-                  | p-storage     | task-storage     | Storage       | storage repo  | P-03-TC06 |
-                  | p-cluster     | task-cluster     | Cluster       | cluster repo  | P-03-TC07 |
+                  | pipeline_name | task_name        | resource_type | resource_name |
+                  | p-git         | openshift-client | Git           | git repo      |
+                  | p-img         | buildah          | Image         | image repo    |
+                  | p-storage     | task-storage     | Storage       | storage repo  |
+                  | p-cluster     | task-cluster     | Cluster       | cluster repo  |
 
 
         @regression
-        Scenario: Add Parameters to the pipeline in pipeline builder page : P-03-TC04
+        Scenario: Add Parameters to the pipeline in pipeline builder page: P-02-TC06
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-params"
               And user selects "s2i-nodejs" from Task drop down
@@ -92,7 +92,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression, @manual
-        Scenario: Create the pipeline from yaml editor : P-07-TC01
+        Scenario: Create the pipeline from yaml editor: P-02-TC07
             Given user is at Pipeline Builder page
              When user selects YAML view
               And user clicks Create button on Pipeline Yaml page
@@ -100,7 +100,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @odc-3991
-        Scenario: Create pipeline with Workspaces
+        Scenario: Create pipeline with Workspaces: P-02-TC08
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
               And user selects "git-clone" from Task drop down
@@ -116,7 +116,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @odc-3991
-        Scenario: Create pipeline with optional Workspaces
+        Scenario: Create pipeline with optional Workspaces: P-02-TC09
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipe-opt-workspace"
               And user selects "git-clone" from Task drop down
@@ -133,7 +133,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression, @manual
-        Scenario: Add finally task node
+        Scenario: Add finally task node: P-02-TC10
             Given user is at Pipeline Builder page
              When user clicks on Add finally task
               And user clicks on Select task
@@ -147,7 +147,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression
-        Scenario: Create a pipeline with finally task node
+        Scenario: Create a pipeline with finally task node: P-02-TC11
             Given user is at Pipeline Builder page
              When user enters pipeline name "pipeline-finally"
               And user selects the first task as "git-clone"
@@ -164,7 +164,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @to-do
-        Scenario: When expression in the Pipeline Builder
+        Scenario: When expression in the Pipeline Builder: P-02-TC12
             Given user is at Pipeline Builder page
               And user has chain of 3 tasks created in series
             # user uses yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
@@ -178,7 +178,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @to-do
-        Scenario: Start pipeline with When expression in the Pipeline Builder
+        Scenario: Start pipeline with When expression in the Pipeline Builder: P-02-TC13
             Given user is at Pipeline Builder page
               And user has named pipeline as "pipeline-when-expression"
               And user has tasks "git-cli" and "git-clone" in series
@@ -195,7 +195,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @to-do
-        Scenario: Code assistance for referencing params in the Pipeline Builder
+        Scenario: Code assistance for referencing params in the Pipeline Builder: P-02-TC14
             Given user is at Pipeline Builder page
              When user selects "git-clone" from Select task list
               And user enters pipeline name as "pipeline-code-assistance"
@@ -211,7 +211,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression @to-do
-        Scenario: Code assistance for referencing workspaces in the Pipeline Builder
+        Scenario: Code assistance for referencing workspaces in the Pipeline Builder: P-02-TC15
             Given user has applied yaml "configMap-test-motd.yaml"
             # user uses yaml content "using-optional-workspaces-in-when-expressions-pipelineRun/configMap-test-motd.yaml" in editor
               And user is at YAML view
@@ -224,7 +224,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression
-        Scenario: Code assistance for referencing Context-based values in the Pipeline Builder
+        Scenario: Code assistance for referencing Context-based values in the Pipeline Builder: P-02-TC16
             Given user is at pipelines page
              When user clicks on import YAML button
               And user enters yaml content from yaml file "pipelineRun-using_context_variables.yaml"
@@ -235,7 +235,7 @@ Feature: Create the pipeline from builder page
 
 
         @regression
-        Scenario: Code assistance for referencing Task Results in the Pipeline Builder
+        Scenario: Code assistance for referencing Task Results in the Pipeline Builder: P-02-TC17
             Given user has imported YAML "task-sum.yaml" and "task-multiply.yaml"
             # user uses yaml content "sum-and-multiply-pipeline/task-sum.yaml" and "sum-and-multiply-pipeline/task-multiply.yaml" in editor
               And user is at YAML view of Pipeline Builder page

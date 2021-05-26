@@ -10,7 +10,7 @@ Feature: CamelK Connector Event Sources
 
 
         @smoke
-        Scenario: CamelSource display in event sources add page - Kn-07-TC03
+        Scenario: CamelSource display in event sources add page: KC-02-TC01
             Given user is at Add page
              When user clicks on "Event Sources" card
              Then user will be redirected to page with header name "Event Sources"
@@ -18,7 +18,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: CamelK Connector Event Source cards
+        Scenario: CamelK Connector Event Source cards: KC-02-TC02
             Given user is at Developer perspective
              When user goes to +Add page
               And user clicks on the Event Sources card
@@ -31,7 +31,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create AWS 2 Simple Queue Service connector
+        Scenario: Create AWS 2 Simple Queue Service connector: KC-02-TC03
             Given user is at Event Sources page
              When user clicks on AWS Sqs card
               And user clicks on Create button
@@ -40,7 +40,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create Salesforce connector
+        Scenario: Create Salesforce connector: KC-02-TC04
             Given user is at Event Sources page
              When user clicks on Salesforce card
               And user clicks on Create button
@@ -49,7 +49,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create AWS Kinesis connector
+        Scenario: Create AWS Kinesis connector: KC-02-TC05
             Given user is at Event Sources page
              When user clicks on AWS Kinesis card
               And user clicks on Create button
@@ -58,7 +58,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create Jira connector
+        Scenario: Create Jira connector: KC-02-TC06
             Given user is at Event Sources page
              When user clicks on Jira card
               And user clicks on Create button
@@ -67,7 +67,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create Slack connector
+        Scenario: Create Slack connector: KC-02-TC07
             Given user is at Event Sources page
              When user clicks on Slack card
               And user clicks on Create button
@@ -76,7 +76,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression
-        Scenario: Create Telegram connector
+        Scenario: Create Telegram connector: KC-02-TC08
             Given user is at Event Sources page
              When user clicks on Telegram card
               And user clicks on Create button
@@ -85,7 +85,7 @@ Feature: CamelK Connector Event Sources
 
 
         @regression @manual
-        Scenario: Update YAML in the editor while installing CamelK Connector Event Source
+        Scenario: Update YAML in the editor while installing CamelK Connector Event Source: KC-02-TC09
             Given user is at Event Sources page
              When user clicks on Telegram card
               And user sees the YAML editor

@@ -8,27 +8,27 @@ Feature: Topology chart area
 
 
         @smoke
-        Scenario: Empty state of topology : T-01-TC01
+        Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
 
 
         @regression @to-do
-        Scenario: Navigate to Add page from Empty state of topology
+        Scenario: Navigate to Add page from Empty state of topology: T-06-TC02
             Given user is at the Topology page
              When user clicks on "Add page" link in the topology page
              Then user will be redirected too Add page
 
 
         @regression @todo
-        Scenario: Add to project option in Empty state of topology
+        Scenario: Add to project option in Empty state of topology: T-06-TC03
             Given user is at the Topology page
              When user clicks on "Start building your application" link in the topology page
              Then user will be able to see Add to project search bar
 
 
         @smoke
-        Scenario: Topology with workloads : T-02-TC01
+        Scenario: Topology with workloads: T-06-TC04
             Given user has created a workload named "nodejs-ex-git"
               And user has created knative workload "nodejs-ex-git-1"
              When user navigates to Topology page
@@ -36,7 +36,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for deployment : T-02-TC01
+        Scenario: Visual for deployment: T-06-TC05
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user checks nodes and the decorators associated with them
@@ -49,7 +49,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for deployment-config : T-02-TC01
+        Scenario: Visual for deployment-config: T-06-TC06
             Given user is at the Topology page
               And deployment-config workload is present in topology
              When user checks nodes and the decorators associated with them
@@ -62,7 +62,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for knative service with no revision : T-02-TC03
+        Scenario: Visual for knative service with no revision: T-06-TC07
             Given user is at the Topology page
               And knative workload without revision is present in topology
              When user checks nodes and the decorators associated with them
@@ -74,7 +74,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for knative service with revisions : T-02-TC03
+        Scenario: Visual for knative service with revisions: T-06-TC08
             Given user is at the Topology page
               And knative workload with revison is present in topology
              When user checks nodes and the decorators associated with them
@@ -91,7 +91,7 @@ Feature: Topology chart area
 
 
         @smoke
-        Scenario: Context menu of node : T-06-TC10
+        Scenario: Context menu of node: T-06-TC09
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user right clicks on the node "nodejs-ex-git" to open context menu
@@ -99,7 +99,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Zoom In in topology : T-07-TC01
+        Scenario: Zoom In in topology: T-06-TC10
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -107,7 +107,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Zoom Out in topology : T-07-TC01
+        Scenario: Zoom Out in topology: T-06-TC11
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom Out option
@@ -115,7 +115,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Fit to Screen in topology : T-07-TC03
+        Scenario: Fit to Screen in topology: T-06-TC12
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -125,7 +125,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Reset view in topology: T-07-TC02
+        Scenario: Reset view in topology: T-06-TC13
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -135,7 +135,7 @@ Feature: Topology chart area
 
 
         @regression
-        Scenario: Topology filter by resource: T-07-TC06, T-07-TC07
+        Scenario: Topology filter by resource: T-06-TC14
             Given user created two workloads with resource type "Deployment" and "Deployment-Config"
              When user is at Topology page chart view
               And user clicks the filter by resource on top
@@ -147,7 +147,7 @@ Feature: Topology chart area
 
 
         @regression
-        Scenario: Context menu on empty area
+        Scenario: Context menu on empty area: T-06-TC15
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
@@ -155,7 +155,7 @@ Feature: Topology chart area
 
 
         @regression
-        Scenario: Add to Project in topology
+        Scenario: Add to Project in topology: T-06-TC16
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
@@ -190,7 +190,7 @@ Feature: Topology chart area
 
 
         @regression, @manual
-        Scenario: Upload JAR file form
+        Scenario: Upload JAR file form: T-06-TC17
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -202,7 +202,7 @@ Feature: Topology chart area
 
 
         @regression, @manual
-        Scenario: Drag and drop jar file in topology chart view
+        Scenario: Drag and drop jar file in topology chart view: T-06-TC18
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -214,7 +214,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project to upload JAR file in topology
+        Scenario: Add to Project to upload JAR file in topology: T-06-TC19
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -230,7 +230,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project through drag and drop to upload JAR file in topology
+        Scenario: Add to Project through drag and drop to upload JAR file in topology: T-06-TC20
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -244,7 +244,7 @@ Feature: Topology chart area
 
 
         @regression, @manual
-        Scenario: Drag and drop Incompatible file in topology chart view
+        Scenario: Drag and drop Incompatible file in topology chart view: T-06-TC21
             Given user has a incompatible file
               And user is at the Topology chart view
              When user drags and drops the file on topology
@@ -252,7 +252,7 @@ Feature: Topology chart area
 
 
         @regression, @manual
-        Scenario: Exiting the browser while an upload is in progress
+        Scenario: Exiting the browser while an upload is in progress: T-06-TC22
             Given user is uploading a jar file
               And user is at the Topology chart view
              When user tries to exist the browser
@@ -260,7 +260,7 @@ Feature: Topology chart area
 
 
         @regression, @manual
-        Scenario: View shortcuts menu
+        Scenario: View shortcuts menu: T-06-TC23
             Given user has uploaded a jar file
              When user clicks on View shortcuts
              Then user sees shortcut for Move
