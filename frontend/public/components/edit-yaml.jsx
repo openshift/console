@@ -85,6 +85,7 @@ export const EditYAML_ = connect(stateToProps)(
             fileUpload: props.fileUpload,
             showSidebar: !!props.create,
             owner: null,
+            isSaveOrCreateDisabled: true,
           };
           this.monacoRef = React.createRef();
           // k8s uses strings for resource versions
@@ -517,7 +518,10 @@ export const EditYAML_ = connect(stateToProps)(
                         showShortcuts={!genericYAML}
                         minHeight="100px"
                         toolbarLinks={sidebarLink ? [sidebarLink] : []}
-                        onChange={onChange}
+                        onChange={(newValue) => {
+                          this.setState({ isSaveOrCreateDisabled: !newValue });
+                          onChange;
+                        }}
                         onSave={() => this.save()}
                       />
                       <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
@@ -553,6 +557,7 @@ export const EditYAML_ = connect(stateToProps)(
                               id="save-changes"
                               data-test="save-changes"
                               onClick={() => this.save()}
+                              isDisabled={this.state.isSaveOrCreateDisabled}
                             >
                               {t('public~Create')}
                             </Button>
@@ -564,6 +569,7 @@ export const EditYAML_ = connect(stateToProps)(
                               id="save-changes"
                               data-test="save-changes"
                               onClick={() => this.save()}
+                              isDisabled={this.state.isSaveOrCreateDisabled}
                             >
                               {t('public~Save')}
                             </Button>
