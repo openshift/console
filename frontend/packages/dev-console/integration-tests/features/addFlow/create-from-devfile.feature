@@ -39,3 +39,15 @@ Feature: Create Application from Devfile
               And user clicks Create button on Devfile page
              Then user will be redirected to Topology page
               And user is able to see workload "devfile-sample" in topology page
+
+
+        @odc-22 @regression @to-do
+        Scenario: Create the Devfiles workload from Developer Catalog: A-04-TC04
+            Given user is at Developer Catalog page
+             When user clicks on Devfiles type
+              And user clicks on Basic Python card
+              And user clicks on Create Application on the side drawer
+              And user enters Application name as "devfile-sample-python-basic-git-app" in DevFile page
+              And user enters Name as "devfile-sample-python-basic-git1"
+              And user clicks on Create
+             Then user is able to see workload "devfile-sample-python-basic-git1" in topology page
