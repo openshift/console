@@ -8,7 +8,7 @@ Feature: Triggers
 
 
         @regression
-        Scenario: Variables section in Add Trigger modal details : P-09-TC02
+        Scenario: Variables section in Add Trigger modal details: P-09-TC01
             Given user has created pipeline "pipe-trigger-one" with git resources
               And user selected Add Trigger from kebab menu of pipeline "pipe-task-with-resource"
              When user selects the "github-pullreq" from Git Provider Type field
@@ -20,7 +20,7 @@ Feature: Triggers
 
 
         @smoke
-        Scenario Outline: Add the trigger to the pipeline with resource from pipelines page : P-09-TC03
+        Scenario Outline: Add the trigger to the pipeline with resource from pipelines page: P-09-TC02
             Given user has created pipeline "<pipeline_name>" with git resources
              When user selects "Add Trigger" from the kebab menu for "<pipeline_name>"
               And user selects the "github-pullreq" from Git Provider Type field
@@ -36,7 +36,7 @@ Feature: Triggers
 
 
         @smoke
-        Scenario Outline: Pipeline Trigger template display in pipeline details page: P-09-TC04
+        Scenario Outline: Pipeline Trigger template display in pipeline details page: P-09-TC03
             Given pipeline "<pipeline_name>" with trigger in pipelines page
              When user clicks pipeline "<pipeline_name>"
              Then pipeline Details page is displayed with header name "<pipeline_name>"
@@ -48,7 +48,7 @@ Feature: Triggers
 
 
         @regression
-        Scenario: Trigger template details page : P-09-TC05
+        Scenario: Trigger template details page: P-09-TC04
             Given pipeline "git-pipeline" with trigger in pipelines page
               And user is at pipeline Details page of pipeline "git-pipeline"
              When user clicks on trigger template
@@ -59,7 +59,7 @@ Feature: Triggers
 
 
         @regression
-        Scenario: Event Listener Details page : P-09-TC06, P-09-TC07
+        Scenario: Event Listener Details page: P-09-TC05
             Given pipeline "git-pipeline-events" with trigger in pipelines page
               And user is at Trigger Template Details page of pipeline "git-pipeline-events"
              When user clicks on Event listener
@@ -70,7 +70,7 @@ Feature: Triggers
 
 
         @regression
-        Scenario: Cluster Trigger Binding Details page : P-09-TC08, P-09-TC09
+        Scenario: Cluster Trigger Binding Details page: P-09-TC06
             Given pipeline "git-pipeline-triggerbinding" with trigger in pipelines page
               And user is at Event Listener Details page of pipeline "git-pipeline-triggerbinding"
              When user clicks on Trigger Binding
@@ -81,7 +81,7 @@ Feature: Triggers
 
 
         @regression
-        Scenario Outline: Remove Trigger modal details : P-09-TC10
+        Scenario Outline: Remove Trigger modal details: P-09-TC07
             Given pipeline "<pipeline_name>" with trigger in pipelines page
              When user selects "Remove Trigger" from the kebab menu for "<pipeline_name>"
              Then modal is displayed with header message "Remove Trigger"
@@ -94,7 +94,7 @@ Feature: Triggers
 
 
         # @smoke - Bug: ODC-5716 is raised for this scenario
-        Scenario Outline: Remove the trigger from pipelines page : P-09-TC11
+        Scenario Outline: Remove the trigger from pipelines page: P-09-TC08
             Given pipeline "<pipeline_name>" with trigger in pipelines page
              When user selects "Remove Trigger" from the kebab menu for "<pipeline_name>"
               And user selects the first option from the Trigger Template drop down field
@@ -107,7 +107,7 @@ Feature: Triggers
 
 
         @regression, @manual
-        Scenario: Start the pipeline with secret by updating the git repo : P-10-TC01
+        Scenario: Start the pipeline with secret by updating the git repo: P-09-TC09
             Given pipeline "trigger-six" with trigger in pipelines page
               And user is at pipeline trigger template page for pipeline "trigger-six"
              When user navigates to github repo url
@@ -122,7 +122,7 @@ Feature: Triggers
 
 
         @regression, @manual
-        Scenario: Start the pipeline with secret by updating the git repo : P-10-TC02
+        Scenario: Start the pipeline with secret by updating the git repo: P-09-TC10
             Given pipeline "trigger-seven" with trigger in pipelines page
               And user is at pipeline trigger template page for pipeline "trigger-seven"
              When user navigates to github repo url
@@ -138,7 +138,7 @@ Feature: Triggers
 
 
         @smoke @odc-3991
-        Scenario Outline: Add the trigger to the pipeline with workspace from pipelines page : P-09-TC03
+        Scenario Outline: Add the trigger to the pipeline with workspace from pipelines page: P-09-TC11
             Given user created pipeline "<pipeline_name>" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"
              When user selects "Add Trigger" from the kebab menu for "<pipeline_name>"

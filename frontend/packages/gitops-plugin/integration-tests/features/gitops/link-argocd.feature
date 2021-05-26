@@ -9,7 +9,7 @@ Feature: External Argo CD Link for Argo CD Dashboard
 
     
         @regression @manual
-        Scenario: External link to the ArgoCD Dashboard
+        Scenario: External link to the ArgoCD Dashboard: GO-02-TC01
             Given user has logged in to cluster using CLI
               And user has created namespace "test-argocd"
               And user has imported a gitops repo using kam command to namespace "test-aregocd"

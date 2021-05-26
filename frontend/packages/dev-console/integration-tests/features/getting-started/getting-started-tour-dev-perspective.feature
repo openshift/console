@@ -3,7 +3,7 @@ Feature: Getting Started tour of developer perspective
 
 
         @regression
-        Scenario: Quick tour when user logs in for the first time
+        Scenario: Quick tour when user logs in for the first time: GS-02-TC01
             Given user is on login page for the first time
              When user enters the credential
               And user clicks on the login button
@@ -30,7 +30,7 @@ Feature: Getting Started tour of developer perspective
              Then user is in the topology view in developer perspective
 
         @regression
-        Scenario: Quick tour from help menu
+        Scenario: Quick tour from help menu: GS-02-TC02
             Given user is in developer perspective with Dev_Workspace is available
              When user opens help menu on top right
               And user clicks on 'Guided Tour' option
@@ -58,7 +58,7 @@ Feature: Getting Started tour of developer perspective
              Then user is in the topology view in developer perspective
 
         @regression
-        Scenario: Stopping Quick tour in mid of the tour
+        Scenario: Stopping Quick tour in mid of the tour: GS-02-TC03
             Given user is in developer perspective
              When user opens help menu on top right
               And user clicks on 'Guided Tour' option

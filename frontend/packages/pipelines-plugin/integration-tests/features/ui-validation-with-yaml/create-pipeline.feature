@@ -6,7 +6,7 @@ Feature: Create Pipeline using YAML Editor on Pipelines page
             Given user has created or selected namespace "aut-pipelines"
 
 
-        Scenario Outline: Create pipeline using YAML and YAML Editor
+        Scenario Outline: Create pipeline using YAML and YAML Editor: PU-01-TC01
             Given user is at "YAML View" on Pipeline Builder page
              When user creates pipeline resource using YAML editor from "<pipeline_yaml>"
              Then user will see pipeline "<pipeline_name>" in pipelines page
@@ -17,7 +17,7 @@ Feature: Create Pipeline using YAML Editor on Pipelines page
 
 
         @smoke
-        Scenario Outline: Create pipeline using YAML and CLI
+        Scenario Outline: Create pipeline using YAML and CLI: PU-01-TC02
              When user creates pipeline using YAML and CLI "<yaml_file>" in namespace "aut-pipelines"
              Then user will see pipeline "<pipeline_name>" in pipelines page
 

@@ -1,3 +1,4 @@
+@knative-admin @regression
 Feature: Serving and Eventing pages at Administrator perspective
               As a user, Brokers, Channels and Event Sources must be easily accessible in the Admin perspective
 
@@ -7,7 +8,7 @@ Feature: Serving and Eventing pages at Administrator perspective
               And user has created or selected namespace "aut-eventing-empty"
 
 
-        Scenario: Empty state of Eventing page
+        Scenario: Empty state of Eventing page: KA-03-TC01
             Given user is at Eventing page
              Then user will see Create button
               And user will see "No Event Sources found" message on Event Sources tab
@@ -17,7 +18,7 @@ Feature: Serving and Eventing pages at Administrator perspective
               And user will see "No Subscriptions found" message on Subscriptions tab
 
 
-        Scenario: Empty state of Serving page
+        Scenario: Empty state of Serving page: KA-03-TC02
             Given user is at Serving page
              Then user will see Create button
               And user will see "No Services found" message on Services tab

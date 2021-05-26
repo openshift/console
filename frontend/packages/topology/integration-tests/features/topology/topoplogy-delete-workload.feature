@@ -8,7 +8,7 @@ Feature: Deleteing an application node
               And user is at Add page
 
         @regression
-        Scenario: Deleting a workload through Action menu : T-09-TC01
+        Scenario: Deleting a workload through Action menu: T-15-TC01
             Given user has created workload "nodejs-ex-git-d" with resource type "Deployment"
              When user clicks on workload "nodejs-ex-git-d"
               And user clicks on Action menu
@@ -18,7 +18,7 @@ Feature: Deleteing an application node
 
 
         @regression
-        Scenario: Deleting a workload through context menu : T-06-TC16
+        Scenario: Deleting a workload through context menu: T-15-TC02
             Given user has created workload "nodejs-ex-git-dc" with resource type "Deployment Config"
              When user right clicks on the workload "nodejs-ex-git-dc" to open the Context Menu
               And user clicks "Delete DeploymentConfig" from action menu

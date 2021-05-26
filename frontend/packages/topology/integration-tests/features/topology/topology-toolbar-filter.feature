@@ -8,7 +8,7 @@ Feature: Topology Toolbar Filter Group
               And user is at Add page
 
         @regression
-        Scenario: Topology filter by resource: T-07-TC06, T-07-TC07
+        Scenario: Topology filter by resource: T-13-TC01
             Given user has created workload "nodejs-ex-git-dc" with resource type "Deployment Config"
              When user clicks on List view button
               And user clicks the filter by resource on top

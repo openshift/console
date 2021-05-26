@@ -8,7 +8,7 @@ Feature: Connecting nodes
 
 
         @smoke
-        Scenario: Create visual connection between two nodes using Annotations : T-05-TC01, T-05-TC02
+        Scenario: Create visual connection between two nodes using Annotations: T-07-TC01
             Given user has creaeted two worloads "nodejs-ex-git" and "dancer-ex-git"
               And user is at the Topolgy page
              When user clicks node "nodejs-ex-git" to open the side bar
@@ -19,7 +19,7 @@ Feature: Connecting nodes
 
 
         @regression @manual
-        Scenario: Create visual connection between two nodes using drag and drop : T-05-TC04
+        Scenario: Create visual connection between two nodes using drag and drop: T-07-TC02
             Given user has creaeted two worloads "nodejs-ex-git" and "dancer-ex-git"
              When user scrolls over a node to see the arrow
               And user click on the front of arrow and drag it on to the other node and drop it

@@ -7,7 +7,7 @@ Feature: Feature flag for Helm
             Given user has created or selected namespace "aut-helm-feature-flag"
 
 
-        Scenario: Disable helm features in console
+        Scenario: Disable helm features in console: HR-03-TC01
             Given user is at Helm Chart Repositories page
               And user can see only the default "redhat-helm-repo" CR is available
              When user opens "redhat-helm-repo" CR
@@ -19,7 +19,7 @@ Feature: Feature flag for Helm
               And user can not see Helm Charts filter in the Developer Catalog page
 
 
-        Scenario: Enable the disabled helm features in console
+        Scenario: Enable the disabled helm features in console: HR-03-TC02
             Given user has disabled helm features
               And the default "redhat-helm-repo" Helm Chart Repositories CR is available
              When user opens "redhat-helm-repo" CR

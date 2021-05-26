@@ -8,7 +8,7 @@ Feature: Add HPA action and topology sidebar modifications
               And user has a workload with HPA assigned to it
 
         @regression @manual
-        Scenario: Changes due to HPA in Workload Sidebar
+        Scenario: Changes due to HPA in Workload Sidebar: TH-03-TC01
             Given user is in topology
              When user opens sidebar of workload
               And user selects on resource tab

@@ -10,7 +10,7 @@ Feature: Web Terminal for Developer user
 
 
         @regression
-        Scenario: Create new project and use Web Terminal
+        Scenario: Create new project and use Web Terminal: WT-03-TC01
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
               And user selects Create Project from Project drop down menu
@@ -20,7 +20,7 @@ Feature: Web Terminal for Developer user
 
 
         @regression
-        Scenario: Open Web Terminal for existing project
+        Scenario: Open Web Terminal for existing project: WT-03-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
               And user selects "aut-terminal-testuser" from Project drop down menu

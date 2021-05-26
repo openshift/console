@@ -2,12 +2,13 @@
 Feature: Event Sources actions
               As a user, I want to perform actions on event sources
 
+        
         Background:
             Given user has created or selected namespace "aut-knative"
 
 
         @smoke
-        Scenario: Event source context menu options : Kn-11-TC01
+        Scenario: Event source context menu options: KE-01-TC01
             Given user has created knative service "nodejs-ex-git"
               And user has created Sink Binding event source "sink-binding" with knative resource "nodejs-ex-git"
               And user is at Topology page
@@ -17,7 +18,7 @@ Feature: Event Sources actions
 
 
         @smoke
-        Scenario: Sink Event Source with existing knative service : Kn-11-TC02
+        Scenario: Sink Event Source with existing knative service: KE-01-TC02
             Given user has created knative service "nodejs-ex-git"
               And user has created Sink Binding event source "sink-binding" with knative resource "nodejs-ex-git"
               And user has created knative service "nodejs-ex-git-1"
@@ -30,7 +31,7 @@ Feature: Event Sources actions
 
 
         @regression
-        Scenario: Delete event source : Kn-11-TC06
+        Scenario: Delete event source: KE-01-TC03
             Given user has created knative service "nodejs-ex-git-2"
               And user has created Sink Binding event source "sink-event" with knative resource "nodejs-ex-git-2"
              When user clicks on event source "sink-binding" to open side bar

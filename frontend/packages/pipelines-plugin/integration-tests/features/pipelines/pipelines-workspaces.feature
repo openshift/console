@@ -8,7 +8,7 @@ Feature: Workspaces
 
 
         @smoke
-        Scenario: Create the pipeline with workspace from yaml view : P-12-TC01
+        Scenario: Create the pipeline with workspace from yaml view: P-10-TC01
             Given user is at Edit Yaml page
              When user fills the yaml editor with sample "s2i-build-and-deploy-pipeline-using-workspace"
               And user clicks on create button in Edit Yaml file
@@ -16,7 +16,7 @@ Feature: Workspaces
 
 
         @regression
-        Scenario: Types of volume present in shared workspace : P-12-TC02
+        Scenario: Types of volume present in shared workspace: P-10-TC02
             Given user created pipeline with workspace
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
@@ -25,7 +25,7 @@ Feature: Workspaces
 
 
         @regression @odc-3991
-        Scenario: Start the pipeline with "Empty Directory" : P-12-TC03
+        Scenario: Start the pipeline with "Empty Directory": P-10-TC03
             Given pipeline "test-wp-pipeline" is created with workspace
              When user selects "Start" option from kebab menu for pipeline "test-wp-pipeline"
               And user selects volume type "Empty Directory" from workspaces dropdown
@@ -35,7 +35,7 @@ Feature: Workspaces
 
 
         @odc-3991
-        Scenario: Start the pipeline with ConfigMap : P-12-TC04
+        Scenario: Start the pipeline with ConfigMap: P-10-TC04
             Given user created pipeline "test-configmap-pipeline" with workspace
               And user created Config Map using yaml "pipeline-configMap.yaml"
              When user selects "Start" option from kebab menu for pipeline "test-configmap-pipeline"
@@ -47,7 +47,7 @@ Feature: Workspaces
 
 
         @odc-3991
-        Scenario: Start the pipeline with Secret : P-12-TC05
+        Scenario: Start the pipeline with Secret: P-10-TC05
             Given user created pipeline "test-secret-pipeline" with workspace
               And user created Secret using yaml "pipeline-secret.yaml"
              When user selects "Start" option from kebab menu for pipeline "test-secret-pipeline"
@@ -59,7 +59,7 @@ Feature: Workspaces
 
 
         @odc-3991
-        Scenario: Start the pipeline with PVC : P-12-TC06
+        Scenario: Start the pipeline with PVC: P-10-TC06
             Given user created pipeline "test-pvc-pipeline" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"
              When user selects "Start" option from kebab menu for pipeline "test-pvc-pipeline"

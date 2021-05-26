@@ -8,7 +8,7 @@ Feature: Secrets
 
 
         @smoke
-        Scenario: Add Secrets : P-11-TC01
+        Scenario: Add Secrets: P-08-TC01
             Given user has created pipeline "pipe-secret-0" with git resources
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "pipe-secret-0"
@@ -19,7 +19,7 @@ Feature: Secrets
 
 
         @smoke
-        Scenario Outline: Add secret to pipeline with authentication type as Basic Authentication : P-11-TC02
+        Scenario Outline: Add secret to pipeline with authentication type as Basic Authentication: P-08-TC02
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
@@ -37,7 +37,7 @@ Feature: Secrets
 
 
         @regression
-        Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-11-TC04
+        Scenario Outline: Add secret to pipeline with authentication type as SSH Key: P-08-TC03
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
@@ -55,7 +55,7 @@ Feature: Secrets
 
 
         @regression
-        Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-11-TC03
+        Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials: P-08-TC04
             Given user has created pipeline "<pipeline_name>" with git resources
               And user is at Start Pipeline modal for pipeline "<pipeline_name>"
              When user enters URL, Revision as "<git_private_repo_url>" and "master"
