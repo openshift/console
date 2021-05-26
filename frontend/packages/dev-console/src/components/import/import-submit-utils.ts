@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import {
   ImageStreamModel,
@@ -8,9 +9,16 @@ import {
   ProjectRequestModel,
   SecretModel,
   ServiceModel,
+  ServiceAccountModel,
   RouteModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  k8sGet,
+  K8sResourceKind,
+  k8sUpdate,
+  K8sVerb,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
@@ -23,6 +31,11 @@ import {
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
+import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
+import {
+  updateServiceAccount,
+  getSecretAnnotations,
+} from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import {
   getAppLabels,
@@ -438,6 +451,27 @@ export const managePipelineResources = async (
       docker.dockerfilePath,
       image.tag,
     );
+  }
+
+  if (git.secret) {
+    const secret = await k8sGet(SecretModel, git.secret, project.name);
+    const gitUrl = GitUrlParse(git.url);
+    const secretAnnotation = getSecretAnnotations({
+      key: 'git',
+      value:
+        gitUrl.protocol === 'ssh' ? gitUrl.resource : `${gitUrl.protocol}://${gitUrl.resource}`,
+    });
+    secret.metadata.annotations = _.merge(secret.metadata.annotations, secretAnnotation);
+    await k8sUpdate(SecretModel, secret, project.name);
+
+    const pipelineServiceAccount = await k8sGet(
+      ServiceAccountModel,
+      PIPELINE_SERVICE_ACCOUNT,
+      project.name,
+    );
+    if (_.find(pipelineServiceAccount.secrets, (s) => s.name === git.secret) === undefined) {
+      await updateServiceAccount(git.secret, pipelineServiceAccount, false);
+    }
   }
 
   if (_.has(managedPipeline?.metadata?.labels, 'app.kubernetes.io/instance')) {
