@@ -10,7 +10,7 @@ const CloudShellTab: React.FC = () => {
   const { t } = useTranslation();
   const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
 
-  if (!devWorkspaceFlag) return <Redirect to="/" />;
+  if (devWorkspaceFlag === false) return <Redirect to="/" />;
 
   return (
     <>
