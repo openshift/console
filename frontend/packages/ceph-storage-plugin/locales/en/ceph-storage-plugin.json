@@ -51,6 +51,7 @@
   "Version": "Version",
   "Inventory": "Inventory",
   "Raw Capacity": "Raw Capacity",
+  "Raw capacity is the absolute total disk space available to the array subsystem.": "Raw capacity is the absolute total disk space available to the array subsystem.",
   "Used": "Used",
   "Available versus Used Capacity": "Available versus Used Capacity",
   "Used of {{capacity}}": "Used of {{capacity}}",

@@ -8,7 +8,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, FieldLevelHelp } from '@console/internal/components/utils';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { CAPACITY_INFO_QUERIES } from '../../../../constants/queries';
 import './raw-capacity-card.scss';
@@ -51,7 +51,14 @@ const RawCapacityCard: React.FC = React.memo(() => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Raw Capacity')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Raw Capacity')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~Raw capacity is the absolute total disk space available to the array subsystem.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody className="ceph-raw-usage__container">
         {!loading && !loadError && (
