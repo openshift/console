@@ -25,7 +25,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const HOT_RELOAD = process.env.HOT_RELOAD || 'true';
 const CHECK_CYCLES = process.env.CHECK_CYCLES || 'false';
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE || 'false';
-const IS_WDS = process.env.WEBPACK_DEV_SERVER;
+const REACT_REFRESH = process.env.REACT_REFRESH;
 const WDS_PORT = 8080;
 
 /* Helpers */
@@ -85,7 +85,7 @@ const config: Configuration = {
               workers: require('os').cpus().length - 1,
             },
           },
-          ...(IS_WDS
+          ...(REACT_REFRESH
             ? [
                 {
                   loader: 'babel-loader',
@@ -230,7 +230,7 @@ const config: Configuration = {
     extractCSS,
     virtualModules,
     new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),
-    ...(IS_WDS
+    ...(REACT_REFRESH
       ? [
           new ReactRefreshWebpackPlugin({
             overlay: {

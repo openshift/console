@@ -11,7 +11,7 @@
   "scripts": {
     "postinstall": "yarn generate",
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
+    "dev": "yarn clean && yarn generate && REACT_REFRESH=true NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
@@ -297,7 +297,7 @@
     "protractor": "^5.4.4",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
-    "react-refresh": "^0.9.0",
+    "react-refresh": "^0.10.0",
     "read-pkg": "5.x",
     "redux-mock-store": "^1.5.3",
     "resolve-url-loader": "2.x",
