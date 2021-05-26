@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as GitUrlParse from 'git-url-parse';
 import {
   ImageStreamModel,
   BuildConfigModel,
@@ -7,9 +8,16 @@ import {
   ProjectRequestModel,
   SecretModel,
   ServiceModel,
+  ServiceAccountModel,
   RouteModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  k8sGet,
+  K8sResourceKind,
+  k8sUpdate,
+  K8sVerb,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
@@ -25,6 +33,8 @@ import {
   getTemplateLabels,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
+import { updateServiceAccount, getSecretAnnotations } from '../../utils/pipeline-utils';
+import { PIPELINE_SERVICE_ACCOUNT } from '../pipelines/const';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import {
@@ -404,6 +414,35 @@ export const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
+const managePipelineResources = async (formData: GitImportFormData) => {
+  const { git, project } = formData;
+
+  const pipeline = await createPipelineForImportFlow(formData);
+
+  if (git.secret) {
+    const secret = await k8sGet(SecretModel, git.secret, project.name);
+    const gitUrl = GitUrlParse(git.url);
+    const secretAnnotation = getSecretAnnotations({
+      key: 'git',
+      value:
+        gitUrl.protocol === 'ssh' ? gitUrl.resource : `${gitUrl.protocol}://${gitUrl.resource}`,
+    });
+    secret.metadata.annotations = _.merge(secret.metadata.annotations, secretAnnotation);
+    await k8sUpdate(SecretModel, secret, project.name);
+
+    const pipelineServiceAccount = await k8sGet(
+      ServiceAccountModel,
+      PIPELINE_SERVICE_ACCOUNT,
+      project.name,
+    );
+    if (_.find(pipelineServiceAccount.secrets, (s) => s.name === git.secret) === undefined) {
+      await updateServiceAccount(git.secret, pipelineServiceAccount);
+    }
+  }
+
+  return pipeline;
+};
+
 export const createOrUpdateResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
@@ -470,7 +509,7 @@ export const createOrUpdateResources = async (
   const defaultAnnotations = getGitAnnotations(repository, ref);
 
   if (pipeline.enabled && pipeline.template && !dryRun) {
-    responses.push(await createPipelineForImportFlow(formData));
+    responses.push(await managePipelineResources(formData));
   }
 
   if (formData.resources === Resources.KnativeService) {
