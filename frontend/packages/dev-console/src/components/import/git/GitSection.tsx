@@ -39,7 +39,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
-  const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
+  const { values, setFieldValue, setFieldTouched, touched, dirty, isSubmitting } = useFormikContext<
     FormikValues
   >();
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
@@ -75,7 +75,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
       const gitType = gitTypeTouched ? values.git.type : detectGitType(url);
       const gitRepoName = detectGitRepoName(url);
-      const showGitType = gitType === GitTypes.unsure || gitTypeTouched;
+      const showGitType = gitType === GitTypes.unsure || (gitTypeTouched && !isSubmitting);
 
       setFieldValue('git.type', gitType);
       setFieldValue('git.showGitType', showGitType);
@@ -119,17 +119,18 @@ const GitSection: React.FC<GitSectionProps> = ({
       }
     },
     [
-      buildStrategy,
-      gitTypeTouched,
-      nameTouched,
-      setFieldTouched,
       setFieldValue,
-      values.application.name,
-      values.application.selectedKey,
-      values.formType,
+      gitTypeTouched,
       values.git.type,
       values.name,
+      values.formType,
+      values.application.name,
+      values.application.selectedKey,
       values.devfile,
+      isSubmitting,
+      setFieldTouched,
+      nameTouched,
+      buildStrategy,
     ],
   );
 
