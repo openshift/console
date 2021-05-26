@@ -178,7 +178,7 @@
   "Form": "フォーム",
   "Custom script": "カスタムスクリプト",
   "Base-64 encoded": "base-64 でエンコーディング",
-  "Authorized keys must folow the SSH Pulic key format,<1></1>": "認証される鍵は、SSH 公開鍵の形式に従う必要があります。<1></1>",
+  "Authorized keys must follow the SSH Public key format,<1></1>": "認証される鍵は、SSH 公開鍵の形式に従う必要があります。<1></1>",
   "Invalid SSH public key format (use rfc4253 ssh-rsa format).": "無効な SSH 公開鍵の形式 (rfc4253 ssh-rsa 形式を使用)。",
   "Hostname": "ホスト名",
   "Authorized SSH Key": "認可された SSH キー",

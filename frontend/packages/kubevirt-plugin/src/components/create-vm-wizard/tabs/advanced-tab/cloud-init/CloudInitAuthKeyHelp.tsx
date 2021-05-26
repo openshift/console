@@ -9,7 +9,7 @@ const CloudInitAuthKeyHelp: React.FC = () => {
   return (
     <div className="pf-c-form__helper-text" aria-live="polite">
       <Trans t={t} ns="kubevirt-plugin">
-        Authorized keys must folow the SSH Pulic key format,
+        Authorized keys must follow the SSH Public key format,
         <ExternalLink
           additionalClassName="kubevirt-create-vm-modal__cloud-init-help-link"
           text={t('kubevirt-plugin~Learn more')}

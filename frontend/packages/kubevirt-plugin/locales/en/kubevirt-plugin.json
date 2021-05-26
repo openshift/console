@@ -177,7 +177,7 @@
   "Form": "Form",
   "Custom script": "Custom script",
   "Base-64 encoded": "Base-64 encoded",
-  "Authorized keys must folow the SSH Pulic key format,<1></1>": "Authorized keys must folow the SSH Pulic key format,<1></1>",
+  "Authorized keys must follow the SSH Public key format,<1></1>": "Authorized keys must follow the SSH Public key format,<1></1>",
   "Invalid SSH public key format (use rfc4253 ssh-rsa format).": "Invalid SSH public key format (use rfc4253 ssh-rsa format).",
   "Hostname": "Hostname",
   "Authorized SSH Key": "Authorized SSH Key",
