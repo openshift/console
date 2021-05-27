@@ -7,7 +7,7 @@ Feature: Connecting nodes
               And user has created or selected namespace "aut-topology-connecting-nodes"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Create visual connection between two nodes using Annotations: T-07-TC01
             Given user has creaeted two worloads "nodejs-ex-git" and "dancer-ex-git"
               And user is at the Topolgy page

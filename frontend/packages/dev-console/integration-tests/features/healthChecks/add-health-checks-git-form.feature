@@ -1,4 +1,4 @@
-@healthChecks
+@health-checks
 Feature: Health Checks
               As a user, I should be able to perform Health Checks on workloads
 
@@ -10,7 +10,7 @@ Feature: Health Checks
 
     # Git URL: https://github.com/openshift-roadshow/nationalparks-py
     # This is already covered as part of A-04-TC12
-        @smoke
+        @smoke @to-do
         Scenario: Health Checks option in Advanced Options: HC-01-TC01
             Given user is at Import from Git page
              When user enters Git Repo url as "https://github.com/openshift-roadshow/nationalparks-py"

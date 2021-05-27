@@ -1,4 +1,4 @@
-@gitOps
+@gitops
 Feature: Applications managed by GitOps and Create secret
     User should be able to see list of applications managed by GitOps
 

@@ -1,3 +1,4 @@
+@topology
 Feature: Perform actions on HPA in Administrative perspective
               As a user, I want to edit the HPA assigned to a workload
 
@@ -68,7 +69,7 @@ Feature: Perform actions on HPA in Administrative perspective
                   | nodejs-ex-git-1 | test-hpa | new-test-hpa | 7           | 4           | 75       | 60          |
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete HPA from Administrative perspective: TH-01-TC03
             Given user is at HorizontalPodAutoscaler page under workloads section
               And user has created HorizontalPodAutoscaler

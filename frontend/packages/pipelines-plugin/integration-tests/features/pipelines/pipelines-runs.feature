@@ -129,8 +129,8 @@ Feature: Pipeline Runs
              Then user will be redirected to Pipeline Run Details page
 
 
-        @regression, @manual
-        Scenario Outline: Download the logs from Pipeline Details page: P-07-TC11
+        @regression @manual
+        Scenario: Download the logs from Pipeline Details page: P-07-TC11
             Given pipeline "pipeline-two" is present on Pipeline Details page
              When user selects "Start" option from kebab menu for pipeline "pipeline-two"
               And user navigates to pipelineRun logs tab
@@ -138,8 +138,8 @@ Feature: Pipeline Runs
              Then user is able to see the downloaded file
 
 
-        @regression, @manual
-        Scenario Outline: Download the logs from Pipeline Details page: P-07-TC12
+        @regression @manual
+        Scenario: Download the logs from Pipeline Details page: P-07-TC12
             Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
              When user navigates to pipelineRun logs tab
               And user clicks on Download button
@@ -147,7 +147,7 @@ Feature: Pipeline Runs
               And logs contains tasks with details of execution
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Expand the logs page: P-07-TC13
             Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
              When user navigates to pipelineRun logs tab
@@ -222,7 +222,7 @@ Feature: Pipeline Runs
                   | p-sidebar     |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Editing a pipeline structure should not affect the previously executed pipeline runs: P-07-TC21
             Given user has pipeline with two tasks
               And user is at the Pipeline Details page
@@ -235,7 +235,7 @@ Feature: Pipeline Runs
               And existing pipeline runs contains the old pipeline graph
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Display failure details on pipeline run details: P-07-TC22
             Given user is at pipeline page in developer perspective
               And a failed pipeline is present
@@ -246,7 +246,7 @@ Feature: Pipeline Runs
               And user can see Log snippet to get know what taskruns failed
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Display failure details of pipeline run in topology sidebar: P-07-TC23
             Given user is at Topology page
               And a node with an associated pipeline that has failed is present
@@ -266,7 +266,7 @@ Feature: Pipeline Runs
              Then user sees option Empty Directory, Config Map, Secret, PersistentVolumeClaim, VolumeClaimTemplate
 
 
-        @regression, @manual @odc-3991
+        @regression @manual @odc-3991
         Scenario: Show VolumeClaimTemplate options: P-07-TC25
             Given pipeline "pipevc-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipevc-no-workspace"
@@ -290,7 +290,7 @@ Feature: Pipeline Runs
               And user will see PVC Workspace "workspace-ex" mentioned in the VolumeClaimTemplate Resources section of Pipeline Run Details page
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Pipeline Run details page with passed pipeline run having finally task: P-07-TC27
             Given user has pipeline "pipeline-one" with finally task having passed pipeline run
               And user is on Pipeline Run details page of passed pipeline run
@@ -298,7 +298,7 @@ Feature: Pipeline Runs
              Then user can see tooltip with task name and Finally task mentioned while hovering on it
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Pipeline Run details page with failed pipeline run having finally task: P-07-TC28
             Given user has pipeline "pipeline-finally-failed" with three tasks in series and a finally task
               And user has failed pipeline run for pipeline "pipeline-finally-failed" with third task as failure
@@ -324,7 +324,7 @@ Feature: Pipeline Runs
              Then user can see message "No Pipeline Run results available due to failure."
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Pipeline Run details page with passed pipeline run having Conditional task: P-07-TC31
             Given user has passed pipeline run having a succeeded Conditional task for pipeline "new-pipeline1"
               And user is on Pipeline Run details page
@@ -333,7 +333,7 @@ Feature: Pipeline Runs
               And user can see green color associated with the diamond to represent succeeded condition
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Pipeline Run details page with passed pipeline run having skipped Conditional task: P-07-TC32
             Given user has passed pipeline run having a two Conditional task with one of them being skipped for pipeline "new-pipeline2"
               And user is on Pipeline Run details page

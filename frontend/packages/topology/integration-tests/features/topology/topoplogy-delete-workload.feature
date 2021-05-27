@@ -7,6 +7,7 @@ Feature: Deleteing an application node
               And user has created or selected namespace "aut-topology-delete-workload"
               And user is at Add page
 
+
         @regression
         Scenario: Deleting a workload through Action menu: T-15-TC01
             Given user has created workload "nodejs-ex-git-d" with resource type "Deployment"

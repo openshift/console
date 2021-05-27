@@ -95,8 +95,8 @@ Feature: Editing an application
              Then user will be redirected to Topology with the updated deployment
 
         Examples:
-                  | image_value                                                                                                            | replica |
-                  | quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:51435011b4f381e292cd70c231d45a35add8b2d28ccac707c52802c143604630 | 4       |
+                  | image_value                                                                                                            |
+                  | quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:51435011b4f381e292cd70c231d45a35add8b2d28ccac707c52802c143604630 |
 
 
         @regression @manual

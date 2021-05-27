@@ -25,7 +25,7 @@ Feature: Pipeline metrics
               And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: No datapoint graphs in metrics tab: P-04-TC03
             Given pipeline "pipeline-metrics-two" is present on Pipeline Details page
              When user clicks on pipeline "pipeline-metrics-two"

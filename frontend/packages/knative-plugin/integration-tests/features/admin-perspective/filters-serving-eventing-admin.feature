@@ -8,7 +8,7 @@ Feature: Filters on Serving and Eventing page
               And user has created or selected namespace "aut-serving-eventing"
 
 
-        @regression
+        @regression @to-do
         Scenario: Search by name correctly: KA-02-TC01
             Given user is at Serving page
               And user has created knative service "hello-openshift"
@@ -20,7 +20,7 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        @regression
+        @regression @to-do
         Scenario: Search by label correctly: KA-02-TC02
             Given user is at Serving page
               And user has created knative service "hello-openshift"
@@ -32,7 +32,7 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        @regression
+        @regression @to-do
         Scenario: Search by name incorrectly: KA-02-TC03
             Given user is at Serving page
               And user has created knative service "hello-openshift"
@@ -44,7 +44,7 @@ Feature: Filters on Serving and Eventing page
               And user will see Clear all filters
 
 
-        @regression
+        @regression @to-do
         Scenario: Filter the Event Sources: KA-02-TC04
             Given user has created knative service "hello-openshift"
               And user has created ApiServer Source
@@ -60,7 +60,7 @@ Feature: Filters on Serving and Eventing page
               And user will see only Sink source as checked
 
 
-        @regression
+        @regression @to-do
         Scenario: Filter the Channels: KA-02-TC05
             Given user has created knative service "hello-openshift"
               And user has created Default Channel

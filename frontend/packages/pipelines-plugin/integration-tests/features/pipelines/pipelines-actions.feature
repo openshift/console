@@ -134,7 +134,7 @@ Feature: Perform the actions on Pipelines page
             Given pipeline "<pipeline_name>" is present on Pipelines page
              When user selects "Start" from the kebab menu for "<pipeline_name>"
              Then user will be redirected to Pipeline Run Details page
-      
+
         Examples:
                   | pipeline_name  |
                   | pipe-with-task |

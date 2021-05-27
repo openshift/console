@@ -1,3 +1,4 @@
+@getting-started
 Feature: Create Sample Application
               As a user I want to create the Sample Application from +Add page
 
@@ -6,19 +7,19 @@ Feature: Create Sample Application
               And user has created or selected namespace "aut-addflow-catalog"
 
 
-        @regression
+        @regression @to-do
         Scenario: Sample Card in Add flow: GS-03-TC01
-            Given user is at +Add page of Developer perspective
-             When user will check for Samples card
-              And user clicks on Samples card
-             Then user is taken to Samples Page
+            Given user is at Add page
+             When user clicks on "Samples" card
+             Then user is redirected to Samples Page
               And user can see different sample applications
               And sample applications are based on the builder images
 
-        @regression
+
+        @regression @to-do
         Scenario: Create node Sample Appliation: GS-03-TC02
-            Given user is in Add flow of dev perspective
-             When user clicks on Sample card
+            Given user is at Add page
+             When user clicks on "Sample" card
               And samples page opens
               And user selects a sample card
               And sample Application Creation form opens
@@ -29,7 +30,8 @@ Feature: Create Sample Application
               And user will see git url is ineditable field
               And user will see create and cancel button
 
-        @regression
+
+        @regression @to-do
         Scenario: Create node Sample Appliation: GS-03-TC03
             Given user is in Add flow of dev perspective
              When user clicks on Sample card

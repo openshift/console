@@ -11,26 +11,26 @@ Feature: Virtual Machines page
               And user has selected namespace "aut-virtualization"
 
 
-        @regression, @smoke
+        @regression @to-do
         Scenario: Virtual Machines Card on +Add page: VM-03-TC01
             Given user is at Add page
              Then user will see Virtual Machines Card on Add page
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Virtual Machines on Developer Catalog page: VM-03-TC02
             Given user is at Developer Catalog page
              Then user will see Virtual Machines type
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Virtual Machines page - Empty View: VM-03-TC03
             Given user is at Developer Catalog page
              When user clicks on Virtual Machines type
              Then user will see "No Catalog items found"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Virtual Machines page - with Template view: VM-03-TC04
             Given user is at Add page
               And user has created Virtual Machine Template

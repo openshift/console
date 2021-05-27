@@ -9,10 +9,9 @@ Feature: Create Virtual Machine templates
               And user has created the HostPathProvisioner Deployment
               And user is at administrator perspective
               And user has selected namespace "aut-virtualization"
-        
 
 
-        @smoke, @regression
+        @smoke @to-do
         Scenario: Create Virutal Machine template: VM-04-TC01
             Given user is at Virtualization tab under Workloads nav-item
              When user clicks on Templates tab

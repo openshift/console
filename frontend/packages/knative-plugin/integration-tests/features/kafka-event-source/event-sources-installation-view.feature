@@ -1,4 +1,4 @@
-@knative-camelK
+@knative-camelk
 Feature: Event Sources Installation View
               As a user, I should be able switch between YAML and Form view to install Event Sources
 
@@ -21,7 +21,7 @@ Feature: Event Sources Installation View
               And Topology page have the Event Source created
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Install Event Source from Add Page using Form View: KF-01-TC02
             Given user is at Add page
               And user has created "hello-openshift" knative service
@@ -37,7 +37,7 @@ Feature: Event Sources Installation View
               And Topology page have the Event Source created
 
 
-        @regression
+        @regression @to-do
         Scenario: Switch from YAML to Form view: KF-01-TC03
             Given user is at the Create Event Source page
              When user selects the YAML View

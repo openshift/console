@@ -17,7 +17,7 @@ Feature: CamelK Connector Event Sources
               And user is able to see CamelSource event type
 
 
-        @regression
+        @regression @to-do
         Scenario: CamelK Connector Event Source cards: KC-02-TC02
             Given user is at Developer perspective
              When user goes to +Add page
@@ -30,7 +30,7 @@ Feature: CamelK Connector Event Sources
               And user will see Telegram card
 
 
-        @regression
+        @regression @to-do
         Scenario: Create AWS 2 Simple Queue Service connector: KC-02-TC03
             Given user is at Event Sources page
              When user clicks on AWS Sqs card

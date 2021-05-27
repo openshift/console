@@ -9,14 +9,14 @@ Feature: Web Terminal
               And user has created or selected namespace "aut-terminal-basic"
 
 
-        @regression, @smoke
+        @smoke @to-do
         Scenario: Web Terminal window: WT-01-TC01
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
              Then user will see the terminal window
 
 
-        @regression
+        @regression @to-do
         Scenario: Web Terminal in new tab: WT-01-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead

@@ -10,14 +10,14 @@ Feature: Perform Actions on created VM
               And user is at the Topolgy page
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for VM: VM-01-TC01
              When user clicks on the VM "fedora-test-vm" to open the sidebar
              Then user can see the Details, Resources tab
               And user can see the Actions dropdown
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings action on VM: VM-01-TC02
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Edit Application Groupings
@@ -26,7 +26,7 @@ Feature: Perform Actions on created VM
              Then user will see Application Groupings for VM "fedora-test-vm"
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings to no application group on VM: VM-01-TC03
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Edit Application Groupings
@@ -36,14 +36,14 @@ Feature: Perform Actions on created VM
              Then user will see that VM does not belong to an application group
 
 
-        @regression
+        @regression @to-do
         Scenario: Start VM action on VM: VM-01-TC04
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Start VM
              Then user will see Stop VM, Restart VM, Migrate VM items in context menu
 
 
-        @regression
+        @regression @to-do
         Scenario: Clone VM action on VM: VM-01-TC05
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Clone VM
@@ -54,14 +54,14 @@ Feature: Perform Actions on created VM
               And user will see that the VM is cloned in the namespace
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit CD-ROMs action on VM: VM-01-TC06
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Edit CD-ROMs
              Then user will see a modal to edit the CD-ROMs
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Labels action on VM: VM-01-TC07
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Edit Labels
@@ -72,7 +72,7 @@ Feature: Perform Actions on created VM
              Then user will see the newly added label
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Annotations action on VM: VM-01-TC08
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Edit Annotations
@@ -83,7 +83,7 @@ Feature: Perform Actions on created VM
              Then user will see the newly added annotation
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete VM action on VM: VM-01-TC09
              When user right clicks on the VM "fedora-test-vm" to open the context menu
               And user clicks on the Delete VM

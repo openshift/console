@@ -1,3 +1,4 @@
+@guided-tour
 Feature: Enable hints interaction in Quick Starts sidepanel
               As a user, I should be able to click on a hint link in the Quick Starts content and see the hint being highlighted in the UI.
 
@@ -10,7 +11,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
               And add-healthchecks CR Quick Start is available
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Quick Starts hints: QS-05-TC01
             Given user is in Quick Starts catalog page
              When user clicks on sample-application Quick Starts card
@@ -19,7 +20,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
              Then user can see perspective switcher with Developer as value has been highlighted
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Quick Starts hint is out of frame: QS-05-TC02
             Given user is in Quick Starts catalog page
              When user clicks on Setting up Serverless Quick Starts card
@@ -31,7 +32,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
              Then user can see window scrolls up to highlight perspective switcher with value Administrator
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Hint when vertical navigation is collapsed: QS-05-TC03
             Given user is in Quick Starts catalog page
              When user clicks on sample-application Quick Starts card
@@ -42,7 +43,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
               And user can see perspective switcher highlighted
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: user is in the wrong perspective: QS-05-TC04
             Given user is in Administrator view
               And  user is on step one of sample-application Quick Starts
@@ -51,7 +52,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
               And user can see the perspective switcher highlighted
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Highlight disappears when clicked anywhere in the UI: QS-05-TC05
             Given user is in Quick Starts catalog page
              When user clicks on sample-application Quick Starts card
@@ -61,7 +62,7 @@ Feature: Enable hints interaction in Quick Starts sidepanel
              Then user can see highlight disappeared from perspective switcher
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Highlight changes when clicked on other hint link: QS-05-TC06
             Given user is in Quick Starts catalog page
              When user clicks on sample-application Quick Starts card

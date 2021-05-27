@@ -1,4 +1,4 @@
-@healthChecks
+@health-checks
 Feature: Health Checks
               As a user, I should be able to perform Health Checks on workloads
 
@@ -15,8 +15,8 @@ Feature: Health Checks
               And user selects "Add Health Checks" from topology sidebar Actions dropdown
              Then user will be redirected Add Health Checks page
 
-    
-        @smoke
+
+        @smoke @to-do
         Scenario: Add Health Checks to Deployments from Sidebar: HC-02-TC02
             Given workload "health-checks-d" with resource type "Deployment" is present in topology page
              When user clicks on the workload "health-checks-d" to open the sidebar
@@ -41,7 +41,7 @@ Feature: Health Checks
                   | Container Command | Container Command | Container Command |
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Add Health Checks to Deployment Configs from Actions dropdown Sidebar: HC-02-TC03
             Given workload "health-checks-dc" with resource type "Deployment Config" is present in topology page
              When user clicks on the workload "health-checks-dc" to open the sidebar
@@ -66,7 +66,7 @@ Feature: Health Checks
                   | Container Command | Container Command | Container Command |
 
 
-        @regression
+        @regression @to-do
         Scenario: Add Health Check to Deployments from Context Menu: HC-02-TC04
             Given workload "health-checks-d" with resource type "Deployment" is present in topology page
              When user right clicks on the workload "health-checks-d" to open the Context Menu
@@ -91,7 +91,7 @@ Feature: Health Checks
                   | Container Command | Container Command | Container Command |
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Health Checks option for Knative Service through Context Menu: HC-02-TC04
             Given workload "health-checks-kn" with resource type "Knative Service" is present in topology page
              When user right clicks on the Service "health-checks-kn" to open the Context Menu

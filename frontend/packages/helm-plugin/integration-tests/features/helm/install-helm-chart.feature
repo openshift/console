@@ -89,7 +89,7 @@ Feature: Install the Helm Release
              Then user will see Sources the helm chart is coming
               And user will see Partner, Community and Redhat option in Sources section
 
-            # Add a new helm chart repo that contains providerType annotations in index.yaml: 
+            # Add a new helm chart repo that contains providerType annotations in index.yaml:
             # Need to update the example repo when default is available with appropriate annotation
             # apiVersion: helm.openshift.io/v1beta1
             # kind: HelmChartRepository
@@ -110,7 +110,7 @@ Feature: Install the Helm Release
               And user clicks on Partner Source filter
              Then user will see Certified helm repositories present in the Helm Catalog Page
 
-            # Add a new helm chart repo that contains providerType annotations in index.yaml: 
+            # Add a new helm chart repo that contains providerType annotations in index.yaml:
             # Need to update the example repo when default is available with appropriate annotation
             # apiVersion: helm.openshift.io/v1beta1
             # kind: HelmChartRepository

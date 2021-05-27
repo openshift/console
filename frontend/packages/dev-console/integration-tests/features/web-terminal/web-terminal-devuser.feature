@@ -9,7 +9,7 @@ Feature: Web Terminal for Developer user
               And user is at developer perspective
 
 
-        @regression
+        @regression @to-do
         Scenario: Create new project and use Web Terminal: WT-03-TC01
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
@@ -19,7 +19,7 @@ Feature: Web Terminal for Developer user
              Then user will see the terminal window for namespace "aut-terminal-testuser"
 
 
-        @regression
+        @regression @to-do
         Scenario: Open Web Terminal for existing project: WT-03-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead

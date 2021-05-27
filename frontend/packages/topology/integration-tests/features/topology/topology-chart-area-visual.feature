@@ -7,7 +7,7 @@ Feature: Topology chart area
               And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
@@ -20,14 +20,14 @@ Feature: Topology chart area
              Then user will be redirected too Add page
 
 
-        @regression @todo
+        @regression @to-do
         Scenario: Add to project option in Empty state of topology: T-06-TC03
             Given user is at the Topology page
              When user clicks on "Start building your application" link in the topology page
              Then user will be able to see Add to project search bar
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Topology with workloads: T-06-TC04
             Given user has created a workload named "nodejs-ex-git"
               And user has created knative workload "nodejs-ex-git-1"
@@ -90,7 +90,7 @@ Feature: Topology chart area
               And user checks knative service having label "KSVC" and then the name of service
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Context menu of node: T-06-TC09
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -134,7 +134,7 @@ Feature: Topology chart area
              Then user sees the chart area is reset to original
 
 
-        @regression
+        @regression @to-do
         Scenario: Topology filter by resource: T-06-TC14
             Given user created two workloads with resource type "Deployment" and "Deployment-Config"
              When user is at Topology page chart view
@@ -146,7 +146,7 @@ Feature: Topology chart area
              Then user can see only the deployment-config workload
 
 
-        @regression
+        @regression @to-do
         Scenario: Context menu on empty area: T-06-TC15
             Given user is at the Topology page
              When user right clicks on the empty chart area
@@ -154,7 +154,7 @@ Feature: Topology chart area
              Then user is able to see options like Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression
+        @regression @to-do
         Scenario: Add to Project in topology: T-06-TC16
             Given user is at the Topology page
              When user right clicks on the empty chart area
@@ -189,7 +189,7 @@ Feature: Topology chart area
              Then user is able to see different applications created from Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Upload JAR file form: T-06-TC17
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
@@ -201,7 +201,7 @@ Feature: Topology chart area
               And user can see Resources and Advanced options sections
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Drag and drop jar file in topology chart view: T-06-TC18
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
@@ -243,7 +243,7 @@ Feature: Topology chart area
               And user can see deployment "sample-yaml-upload-1" in application "sample-upload-app" is created in topology
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Drag and drop Incompatible file in topology chart view: T-06-TC21
             Given user has a incompatible file
               And user is at the Topology chart view
@@ -251,7 +251,7 @@ Feature: Topology chart area
              Then a toast warning message will appear stating that the file is invalid.
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Exiting the browser while an upload is in progress: T-06-TC22
             Given user is uploading a jar file
               And user is at the Topology chart view
@@ -259,7 +259,7 @@ Feature: Topology chart area
              Then a web alert would appear asking the user if they really wanted to leave the page with Leave and Skip button
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: View shortcuts menu: T-06-TC23
             Given user has uploaded a jar file
              When user clicks on View shortcuts

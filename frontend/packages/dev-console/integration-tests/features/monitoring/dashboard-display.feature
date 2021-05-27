@@ -2,7 +2,7 @@
 Feature: Monitoring Page
               As a user, I should be able to perform actions related to monitoring a project and deployments inside it
 
-        
+
         Background:
             Given user is at developer perspective
               And user has created or selected namespace "aut-monitoring-1"

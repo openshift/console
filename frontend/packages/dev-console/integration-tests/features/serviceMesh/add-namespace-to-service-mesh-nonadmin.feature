@@ -1,4 +1,4 @@
-@serviceMesh
+@service-mesh
 Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace to the Service Mesh from Non-admin user
               Non-admin user should be able to add a namespace to Service Mesh to get the Kiali dashboard link for that namespace on the Topology filterbar
 
@@ -19,7 +19,7 @@ Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace t
               And user has logged in as consoledeveloper
 
 
-        @regression
+        @regression @to-do
         Scenario: Enrolling a project to Service Mesh by creating ServiceMeshMember using Istio Service Mesh Member tab: SM-02-TC01
             Given user is on the Installed Operator page
               And user has selected project that he wanted to add as Service Mesh Member
@@ -31,7 +31,7 @@ Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace t
              Then user will see the recently added Istio Service Mesh Member
 
 
-        @regression
+        @regression @to-do
         Scenario: Open on Kiali link  Project Details Overview Page: SM-02-TC02
             Given user is on the Projects page
              When user selects project that recently added Istio Service Mesh Member
@@ -40,7 +40,7 @@ Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace t
               And user will see Kiali link inside Launcher card
 
 
-        @regression
+        @regression @to-do
         Scenario: Open on Kiali link Project Details Page: SM-02-TC03
             Given user is on the Projects page
              When user selects project that recently added Istio Service Mesh Member
@@ -50,7 +50,7 @@ Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace t
               And user will see Open on Kiali link inside Launcher section
 
 
-        @regression
+        @regression @to-do
         Scenario: Kiali link in the Topology filterbar: SM-02-TC04
             Given user is at Developer perspective
               And user selects project that recently added Istio Service Mesh Member
@@ -58,7 +58,7 @@ Feature: Associate Kiali Dashboard to Topology filterbar by adding a namespace t
              Then user will see Kiali link in the Topology filterbar
 
 
-        @regression
+        @regression @to-do
         Scenario: Click on Kiali link: SM-02-TC05
             Given user is at Developer perspective
               And user selects project that recently added Istio Service Mesh Member

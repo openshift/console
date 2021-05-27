@@ -1,4 +1,4 @@
-@kafka, @odc-5399
+@kafka @odc-5399
 Feature: Connection from Kafka Source to Managed Kafka Connection resource
               As a user, in topology view would like to drag a connection from the existing Kafka Source to Kafka Connection (KC) so that Kafka Source gets updated with bootstrap server/host url, SASL secrets, TLS enabled so that I don't need to provide those manually
 
@@ -11,7 +11,7 @@ Feature: Connection from Kafka Source to Managed Kafka Connection resource
               And user has created or selected namespace "aut-kafka-connector"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Creating Kafka source connecting Kafka Connection and knative service: KM-01-TC01
             Given user has created knative service "hello-openshift1"
               And user has created Kafka Connection "kafka-instance-123"
@@ -36,7 +36,7 @@ Feature: Connection from Kafka Source to Managed Kafka Connection resource
               And user is able to see connection between Kafka Connection "kafka-instance-123" and knative service "hello-openshift1" from kafka source "kafka-source-1"
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar of the Kafka connector: KM-01-TC02
             Given user has created knative service "hello-openshift1"
               And user has created Kafka Connection "kafka-instance-123"
