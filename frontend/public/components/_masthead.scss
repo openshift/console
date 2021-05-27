@@ -6,13 +6,13 @@
   max-width: 140px !important; // PF4 does not limit username length (upstream bug)
   overflow-x: hidden;
   text-overflow: ellipsis;
-  @media(min-width: 855px) {
+  @media (min-width: 855px) {
     max-width: 225px !important;
   }
-  @media(min-width: $screen-md-min) {
+  @media (min-width: $screen-md-min) {
     max-width: 275px !important;
   }
-  @media(min-width: $screen-lg-min) {
+  @media (min-width: $screen-lg-min) {
     max-width: 300px !important;
   }
 }
@@ -33,4 +33,8 @@
     opacity: 1;
     color: var(--pf-global--icon--Color--light);
   }
+}
+
+.pf-c-page__header-tools-item .pf-c-notification-badge.pf-m-read:hover {
+  background-color: transparent;
 }
