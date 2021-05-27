@@ -23,6 +23,8 @@ import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugi
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { StorageClassModel } from '@console/internal/models';
 import { initialState, reducer } from './reducer';
 import {
   DiscoverDisks,
@@ -32,7 +34,7 @@ import { CreateStorageClass } from './install-wizard-steps/create-storage-class/
 import { StorageAndNodes } from './install-wizard-steps/storage-and-nodes-step';
 import { ReviewAndCreate } from './install-wizard-steps/review-and-create-step';
 import { Configure } from './install-wizard-steps/configure-step';
-import { taintNodes } from '../../../utils/install';
+import { taintNodes, filterSCWithNoProv } from '../../../utils/install';
 import {
   CreateStepsSC,
   MINIMUM_NODES,
@@ -121,11 +123,25 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [isForceNavigated, setForceNavigated] = React.useState(false);
   const flagDispatcher = useDispatch();
 
   const discoveryNodes = state.lvdIsSelectNodes ? state.lvdSelectNodes : state.lvdAllNodes;
 
-  const { getStep, getParamString, getIndex, getAnchor } = navUtils;
+  const { getStep, getIndex, getAnchor } = navUtils;
+
+  const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
+
+  const [storageClasses, isLoaded, err] = useK8sGet(StorageClassModel);
+
+  React.useEffect(() => {
+    if (!err && isLoaded) {
+      const filteredSCData = storageClasses['items'].filter(filterSCWithNoProv);
+      if (filteredSCData.length) {
+        setHasNoProvSC(true);
+      }
+    }
+  }, [appName, err, isLoaded, ns, storageClasses]);
 
   /**
    * This custom footer for wizard provides a control over the movement to next step.
@@ -285,16 +301,12 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
         <Wizard
           className="ocs-install-wizard"
           steps={steps}
-          startAtStep={getStep()}
+          startAtStep={getStep(0, hasNoProvSC, isForceNavigated, setForceNavigated)}
           onBack={() => {
-            history.push(
-              `~new?${getParamString(getStep() - 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
-            );
+            history.push(getAnchor(getStep() - 1, getIndex(MODES, MODES.ATTACHED_DEVICES)));
           }}
           onNext={() => {
-            history.push(
-              `~new?${getParamString(getStep() + 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
-            );
+            history.push(getAnchor(getStep() + 1, getIndex(MODES, MODES.ATTACHED_DEVICES)));
           }}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))

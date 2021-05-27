@@ -90,13 +90,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     return sanitizedMode;
   };
 
-  const getStep = (offset: number = 0) => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
-    const step = parseInt(searchParams.get('step'), 10) || 1;
-    const sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
-    return sanitizedStep;
-  };
-
   const getParamString = (step: number, mode: number) => {
     const searchParams = new URLSearchParams(window.location.search.slice(1));
     searchParams.set('step', step.toString());
@@ -104,12 +97,29 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     return searchParams.toString();
   };
 
+  const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
+
+  const getStep = (
+    offset: number = 0,
+    forceNavigate: boolean = false,
+    isForceNavigated: boolean = false,
+    setForceNavigated: React.Dispatch<React.SetStateAction<boolean>> = null,
+  ) => {
+    const searchParams = new URLSearchParams(window.location.search.slice(1));
+    const step = parseInt(searchParams.get('step'), 10) || 1;
+    let sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
+    if (forceNavigate && !isForceNavigated) {
+      history.push(getAnchor(3, 2));
+      sanitizedStep = 3;
+      setForceNavigated(true);
+    }
+    return sanitizedStep;
+  };
+
   const getIndex = (searchSpace: any, search: string, offset: number = 0) => {
     const index = Object.values(searchSpace).findIndex((el) => el === search);
     return index - offset + 1;
   };
-
-  const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
 
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
