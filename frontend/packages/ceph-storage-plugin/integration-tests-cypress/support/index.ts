@@ -25,14 +25,10 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
 
       cy.log('Subscribe to OCS Operator');
       cy.byLegacyTestID('operator-install-btn').click({ force: true });
+      cy.byTestID('stable-4.6-radio-input').click();
       cy.byTestID('Operator recommended Namespace:-radio-input').should('be.checked');
-      cy.byTestID('enable-monitoring').click();
       cy.byTestID('install-operator').click();
       cy.byTestID('success-icon', { timeout: 180000 }).should('be.visible');
-      cy.exec('oc get project openshift-storage -o json').then((res) => {
-        const obj = JSON.parse(res.stdout);
-        expect(obj.metadata.labels?.['openshift.io/cluster-monitoring']).toEqual('true');
-      });
 
       // Rook, Noobaa and OCS pod should come up after installation.
       cy.exec('oc get po -n openshift-storage -o json').then((res) => {
