@@ -327,6 +327,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                   selections={selectedRowFilters}
                   isCheckboxSelectionBadgeHidden
                   isGrouped
+                  maxHeight="60vh"
                 >
                   {dropdownItems}
                 </Select>
