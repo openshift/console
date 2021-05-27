@@ -915,7 +915,6 @@
   "{{count}} day": "{{count}} day",
   "{{count}} day_plural": "{{count}} days",
   "Reset zoom": "Reset zoom",
-  "query browser chart": "query browser chart",
   "Ungraphable results": "Ungraphable results",
   "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.": "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.",
   "Query result is a string, which cannot be graphed.": "Query result is a string, which cannot be graphed.",

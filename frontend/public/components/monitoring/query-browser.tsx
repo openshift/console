@@ -271,7 +271,6 @@ const Graph: React.FC<GraphProps> = React.memo(
     const data: GraphSeries[] = [];
     const tooltipSeriesNames: string[] = [];
     const legendData: { name: string }[] = [];
-    const { t } = useTranslation();
 
     const [xDomain, setXDomain] = React.useState(fixedXDomain || getXDomain(Date.now(), span));
 
@@ -350,8 +349,8 @@ const Graph: React.FC<GraphProps> = React.memo(
 
     return (
       <Chart
+        ariaTitle=""
         containerComponent={graphContainer}
-        ariaTitle={t('public~query browser chart')}
         domain={domain}
         domainPadding={{ y: 1 }}
         height={200}
