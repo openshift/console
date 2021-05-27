@@ -122,7 +122,7 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
                 <Timestamp timestamp={latestDeployedTime} />
               </span>
             </FlexItem>
-            <FlexItem>{latestDeployedEnv}</FlexItem>
+            <FlexItem>({latestDeployedEnv})</FlexItem>
           </Flex>
         ) : (
           <span>-</span>
