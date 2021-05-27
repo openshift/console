@@ -14,8 +14,8 @@
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
   "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
   "Insights": "Insights",
-  "Insights status": "Insights status",
+  "Insights Advisor status": "Insights Advisor status",
   "Total issue": "Total issue",
   "Total issues": "Total issues",
-  "Insights identifies and prioritizes risks to security, performance, availability, and stability of your clusters": "Insights identifies and prioritizes risks to security, performance, availability, and stability of your clusters"
+  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters": "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters"
 }
