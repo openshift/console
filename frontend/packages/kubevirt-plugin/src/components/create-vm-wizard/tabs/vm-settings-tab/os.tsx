@@ -28,7 +28,7 @@ import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
 import {
   CDI_UPLOAD_OS_URL_PARAM,
   CDI_UPLOAD_POD_ANNOTATION,
-  CDI_UPLOAD_RUNNING,
+  CDI_PVC_PHASE_RUNNING,
 } from '../../../cdi-upload-provider/consts';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -137,7 +137,8 @@ export const OS: React.FC<OSProps> = React.memo(
           (pvc) => iGetName(pvc) === pvcName && iGetNamespace(pvc) === pvcNamespace,
         );
         const isBaseImageUploading =
-          iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) === CDI_UPLOAD_RUNNING;
+          iGetAnnotation(baseImageFoundInCluster, CDI_UPLOAD_POD_ANNOTATION) ===
+          CDI_PVC_PHASE_RUNNING;
         const osField: any = {
           id: operatingSystem.id,
           name: operatingSystem.name,

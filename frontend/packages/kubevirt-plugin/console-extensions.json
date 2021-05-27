@@ -130,7 +130,18 @@
     "properties": {
       "priority": 10,
       "predicate": { "$codeRef": "pvcSelectors.isPvcUploading" },
-      "status": { "$codeRef": "pvcStatus.UploadPVCPopover" }
+      "status": { "$codeRef": "pvcUploadStatus.UploadPVCPopover" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.pvc/status",
+    "properties": {
+      "priority": 9,
+      "predicate": { "$codeRef": "pvcSelectors.isPvcCloning" },
+      "status": { "$codeRef": "pvcCloneStatus.PVCCloningStatus" }
     },
     "flags": {
       "required": ["KUBEVIRT"]

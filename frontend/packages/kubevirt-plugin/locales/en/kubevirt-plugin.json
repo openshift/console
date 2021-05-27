@@ -593,6 +593,7 @@
   "Template source not ready": "Template source not ready",
   "The boot source for the chosen template is still being prepared": "The boot source for the chosen template is still being prepared",
   "Please wait until it is complete before creating from it": "Please wait until it is complete before creating from it",
+  "Cloning": "Cloning",
   "Missing authorized key": "Missing authorized key",
   "An authorized key is not detected. SSH access is enabled with the password.": "An authorized key is not detected. SSH access is enabled with the password.",
   "Node port": "Node port",
