@@ -490,6 +490,11 @@ func (s *Server) handleKnativeChannelCRDs(w http.ResponseWriter, r *http.Request
 }
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
+	if serverutils.IsUnsupportedBrowser(r) {
+		serverutils.SendUnsupportedBrowserResponse(w, s.Branding)
+		return
+	}
+
 	jsg := &jsGlobals{
 		ConsoleVersion:        version.Version,
 		AuthDisabled:          s.authDisabled(),

@@ -3,6 +3,7 @@ package serverutils
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"k8s.io/klog"
 )
@@ -23,6 +24,32 @@ func SendResponse(rw http.ResponseWriter, code int, resp interface{}) {
 	if err != nil {
 		klog.Errorf("Failed sending HTTP response body: %v", err)
 	}
+}
+
+func IsUnsupportedBrowser(r *http.Request) bool {
+	userAgentHeader := r.Header.Get("User-Agent")
+	isUnsupported := false
+	unsupportedBrowserHeadersIdentifier := []string{
+		"Trident/", // IE 11
+		"MSIE ",    // IE 10 or older
+	}
+	for _, identifier := range unsupportedBrowserHeadersIdentifier {
+		if strings.Contains(userAgentHeader, identifier) {
+			isUnsupported = true
+			break
+		}
+	}
+	return isUnsupported
+}
+
+func SendUnsupportedBrowserResponse(rw http.ResponseWriter, brand string) {
+	content := `<p>Internet Explorer 11 and earlier are not supported, and the ` + brand + ` console will not function with your current browser.
+Please use a supported browser such as the latest version of Google Chrome, Mozilla Firefox, Microsoft Edge, or Safari.
+The current Firefox ESR (Extended Support Release) is also supported. To see the browsers we test, refer to the
+<a href="https://access.redhat.com/articles/4763741">OpenShift Container Platform 4.x Tested Integrations (for x86_x64)</a>.</p>`
+	rw.Header().Set("Content-Type", "text/html")
+	rw.WriteHeader(http.StatusFailedDependency)
+	rw.Write([]byte(content))
 }
 
 type ApiError struct {
