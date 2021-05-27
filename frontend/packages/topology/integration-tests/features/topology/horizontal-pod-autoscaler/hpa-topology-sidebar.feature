@@ -1,3 +1,4 @@
+@topology
 Feature: Add HPA action and topology sidebar modifications
               As a user, I want to add a HPA to a workload
  

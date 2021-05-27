@@ -13,7 +13,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the Channel card on the Add page
 
 
-        @regression
+        @regression @to-do
         Scenario: Create InMemoryChannel: KE-06-TC02
              When user navigates to Add page
               And user clicks on the Channel card
@@ -24,7 +24,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the channel created
 
 
-        @regression
+        @regression @to-do
         Scenario: Sink event source to Channel: KE-06-TC03
              When user creates the channel
               And user navigates to Add page
@@ -52,7 +52,7 @@ Feature: Knative Eventing Channel Support
              Then user will see that multiple event sources are connected to single channel
 
 
-        @regression
+        @regression @to-do
         Scenario: Context Menu for Channel: KE-06-TC05
              When user creates the channel
               And user right clicks on the channel
@@ -65,7 +65,7 @@ Feature: Knative Eventing Channel Support
               And user will see Delete InMemoryChannel option
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings action on Channel: KE-06-TC06
             Given user is having Channel on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -76,7 +76,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the changed Application Groupings of Channel
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings to no application group action on Channel: KE-06-TC07
             Given user is having a Channel inside an applicaiton group on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -87,7 +87,7 @@ Feature: Knative Eventing Channel Support
              Then user will see that Channel is without an application group
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Labels action on Channel: KE-06-TC08
             Given user is having Channel on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -99,7 +99,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the newly added label
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Annotations action on Channel: KE-06-TC09
             Given user is having Channel on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -111,7 +111,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the newly added annotation
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Channel action on Channel: KE-06-TC10
             Given user is having Channel on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -119,7 +119,7 @@ Feature: Knative Eventing Channel Support
              Then user will see the YAML editor to edit the channel
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Channel action on Channel: KE-06-TC11
             Given user is having Channel on the Topology page
              When user right clicks on the Channel to open the context menu
@@ -129,7 +129,7 @@ Feature: Knative Eventing Channel Support
               And user won't be able to see the Channel again
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Channel: KE-06-TC12
             Given user is having Channel on the Topology page
              When user clicks on the Channel to open the sidebar
@@ -137,7 +137,7 @@ Feature: Knative Eventing Channel Support
               And user will see the Details tab
 
 
-        @regression
+        @regression @to-do
         Scenario: Details tab for the Channel: KE-06-TC13
             Given user is having Channel on the Topology page
              When user clicks on the Channel to open the sidebar
@@ -148,7 +148,7 @@ Feature: Knative Eventing Channel Support
               And user will see the owner and channel created time
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Channel subscribed to Knative Service: KE-06-TC14
             Given user is having Channel subscribed to Knative Service on the Topology page
              When user clicks on the Channel to open the sidebar
@@ -156,7 +156,7 @@ Feature: Knative Eventing Channel Support
               And user will see the Subscribers
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the channel connected with eventsources and knative services: KE-06-TC15
             Given user is having Channel subscribed to Knative Service and event source connected to it on the Topology page
              When user clicks on the Channel to open the sidebar

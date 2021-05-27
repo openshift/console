@@ -91,7 +91,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-params"
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Create the pipeline from yaml editor: P-02-TC07
             Given user is at Pipeline Builder page
              When user selects YAML view
@@ -132,7 +132,7 @@ Feature: Create the pipeline from builder page
               And user will see workspace mentioned as "git-opt (optional)" in the Workspaces section of Pipeline Details page
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Add finally task node: P-02-TC10
             Given user is at Pipeline Builder page
              When user clicks on Add finally task
@@ -146,7 +146,7 @@ Feature: Create the pipeline from builder page
               And user sees "Add finally task" option below "git-clone" task
 
 
-        @regression
+        @regression @to-do
         Scenario: Create a pipeline with finally task node: P-02-TC11
             Given user is at Pipeline Builder page
              When user enters pipeline name "pipeline-finally"
@@ -223,7 +223,7 @@ Feature: Create the pipeline from builder page
 
 
 
-        @regression
+        @regression @to-do
         Scenario: Code assistance for referencing Context-based values in the Pipeline Builder: P-02-TC16
             Given user is at pipelines page
              When user clicks on import YAML button
@@ -234,7 +234,7 @@ Feature: Create the pipeline from builder page
              Then user will be able to see the TaskRun UID, PipelineRun UID, Task name, TaskRun name, Pipeline name, PipelineRun name
 
 
-        @regression
+        @regression @to-do
         Scenario: Code assistance for referencing Task Results in the Pipeline Builder: P-02-TC17
             Given user has imported YAML "task-sum.yaml" and "task-multiply.yaml"
             # user uses yaml content "sum-and-multiply-pipeline/task-sum.yaml" and "sum-and-multiply-pipeline/task-multiply.yaml" in editor

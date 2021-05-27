@@ -30,6 +30,7 @@ Feature: side bar details
               And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed  in topology details
 
 
+        @to-do
         Scenario: Resoruce details of knative revision in side bar: KN-06-TC03
             Given user has created knative service "nodejs-ex-git"
              When user clicks on Resoruces section
@@ -48,6 +49,7 @@ Feature: side bar details
              Then user able to see the options Edit Labels, Edit Annotations, Edit Revision, Delete Revision
 
 
+        @to-do
         Scenario: Resoruce details of knative service in side bar: KN-06-TC06
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the knative service "nodejs-ex-git"

@@ -9,7 +9,7 @@ Feature: Create workload from Operator Backed file
 
 
 # Below scenario needs to be executed only once. Second time it throws error. So not recommended to execute in automation suite
-        @regression, @manual
+        @regression @manual
         Scenario: Create the workload from Operator Backed: A-08-TC01
             Given user has created or selected namespace "knative-eventing"
               And user is at OperatorBacked page

@@ -1,4 +1,4 @@
-@knative-admin @regression
+@knative-admin
 Feature: Serving page at Administrator perspective
               As a user, I should be able to access KSVC, it's revisions and routes at Administrator perspective
 
@@ -9,6 +9,7 @@ Feature: Serving page at Administrator perspective
               And user has created or selected namespace "aut-serving-page"
 
 
+        @regression @to-do
         Scenario: Create new KSVC using Create button on Serving page: KA-04-TC01
             Given user is at Serving page
              When user clicks on Create button
@@ -18,6 +19,7 @@ Feature: Serving page at Administrator perspective
               And user can see "sample" knative service created
 
 
+        @regression @to-do
         Scenario: Services tab on Serving page: KA-04-TC02
             Given user is at Serving page
               And user has created knative service "hello-openshift"

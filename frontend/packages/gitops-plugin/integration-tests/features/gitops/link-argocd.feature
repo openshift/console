@@ -1,4 +1,4 @@
-@gitOps
+@gitops
 Feature: External Argo CD Link for Argo CD Dashboard
               As a developer, I want a way to navigate to Argo CD from the Deploy Stages page of the OpenShift console so that I can get insight on the sync status of my application.
 

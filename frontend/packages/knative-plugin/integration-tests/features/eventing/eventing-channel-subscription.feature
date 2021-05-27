@@ -33,7 +33,7 @@ Feature: Knative Eventing Channel and Subscription
               And user will see a single channel subscribed to multiple services
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Subscription: KE-05-TC03
             Given user is having Channel on the Topology page
               And user has already added the subscription
@@ -43,7 +43,7 @@ Feature: Knative Eventing Channel and Subscription
              Then subscription will get deleted
 
 
-        @regression
+        @regression @to-do
         Scenario: Move Subscription: KE-05-TC04
             Given user is having Channel on the Topology page
               And user has already added the subscription
@@ -66,7 +66,7 @@ Feature: Knative Eventing Channel and Subscription
              Then user will see connection between Channel and Subscriber
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Event Source sinked Channel subscribed to Knative Service: KE-05-TC06
             Given user is having Channel subscribed to Knative Service on the Topology page
              When user clicks on the Subscription to open the sidebar

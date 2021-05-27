@@ -52,8 +52,8 @@ Feature: Create Application from Container image file
               And user will see the deployed image "<name>" with "<runtime_icon>" icon
 
         Examples:
-                  | image  | image_stream | runtime_icon | name           |
-                  | secure | golang       | fedora       | hello-internal |
+                  | image_stream | runtime_icon | name           |
+                  | golang       | fedora       | hello-internal |
 
 
         @regression

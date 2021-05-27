@@ -1,8 +1,9 @@
+@getting-started
 Feature: Getting Started tour of developer perspective
               As a user I want to take tour of developer perspective
 
 
-        @regression
+        @regression @to-do
         Scenario: Quick tour when user logs in for the first time: GS-02-TC01
             Given user is on login page for the first time
              When user enters the credential
@@ -29,7 +30,8 @@ Feature: Getting Started tour of developer perspective
               And user can clicks on 'Okay, got it!' button
              Then user is in the topology view in developer perspective
 
-        @regression
+
+        @regression @to-do
         Scenario: Quick tour from help menu: GS-02-TC02
             Given user is in developer perspective with Dev_Workspace is available
              When user opens help menu on top right
@@ -57,7 +59,8 @@ Feature: Getting Started tour of developer perspective
               And user can clicks on 'Okay, got it!' button
              Then user is in the topology view in developer perspective
 
-        @regression
+
+        @regression @to-do
         Scenario: Stopping Quick tour in mid of the tour: GS-02-TC03
             Given user is in developer perspective
              When user opens help menu on top right

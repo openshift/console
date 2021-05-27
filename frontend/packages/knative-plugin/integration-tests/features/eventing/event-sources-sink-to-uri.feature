@@ -57,6 +57,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see the associated Connections on the Resources tab
 
 
+        @to-do
         Scenario: Manually drag a Connector from URI to Knative Service: KE-03-TC06
             Given user has sinked an event source to URI
               And user has a Knative Service
@@ -65,7 +66,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will see that Event Source is now connected to Knative Service
 
 
-        @regression
+        @regression @to-do
         Scenario: Move sink from URI to new Resource: KE-03-TC07
             Given user has sinked an event source to URI
               And user is at Topology page
@@ -78,7 +79,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see that the already existed URI will get vanished
 
 
-        @regression
+        @regression @to-do
         Scenario: Move sink from URI to new URI: KE-03-TC08
             Given user has sinked an event source to URI
               And user is at Topology page

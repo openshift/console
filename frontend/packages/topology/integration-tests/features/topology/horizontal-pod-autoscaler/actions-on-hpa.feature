@@ -1,3 +1,4 @@
+@topology
 Feature: Perform actions on HPA in Topology page
               As a user, I want to add HPA to a workload
 
@@ -6,7 +7,7 @@ Feature: Perform actions on HPA in Topology page
             Given user has created or selected namespace "topology-hpa"
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Add HorizontalPodAutoscaler to deployment workload: TH-02-TC01
             Given user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at Topology page
@@ -29,7 +30,7 @@ Feature: Perform actions on HPA in Topology page
                   | test-hpa | 2           | 5           | 60              | 30                 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Edit HorizontalPodAutoscaler: TH-02-TC02
             Given user has a workload "<workload_name>" with HPA assigned to it
               And user is at Topology page
@@ -53,7 +54,7 @@ Feature: Perform actions on HPA in Topology page
                   | nodejs-ex-git-1 | 6           | 3           | 75              | 50                 |
 
 
-        @regression
+        @regression @to-do
         Scenario: Remove HorizontalPodAutoscaler: TH-02-TC03
             Given user has a deployment workload "nodejs-ex-git-1" with HPA assigned to it
               And user is at Topology page
@@ -65,7 +66,7 @@ Feature: Perform actions on HPA in Topology page
              Then user can not see HorizontalPodAutoscalers section
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Add HPA from YAML view: TH-02-TC04
              When user clicks on workload "nodejs-ex-git"
               And user selects "Add HorizontalPodAutoscaler" option from Actions menu
@@ -83,7 +84,7 @@ Feature: Perform actions on HPA in Topology page
               And user can see the "<hpa_name>" with HPA tag associated present under HPA section
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Edit HPA action YAML view: TH-02-TC05
             Given user has a workload "<workload_name>" with HPA assigned to it
              When user opens sidebar of workload
@@ -108,7 +109,7 @@ Feature: Perform actions on HPA in Topology page
              Then user can see the changed pods number
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Edit HPA YAML view to form view: TH-02-TC06
             Given user has a workload "<workload_name>" with HPA assigned to it
              When user opens sidebar of workload

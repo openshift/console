@@ -8,7 +8,7 @@ Feature: Application groupings in topology
               And user has created or selected namespace "aut-topology-grouping"
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Verify Application grouping sidebar: T-05-TC01
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
@@ -18,7 +18,7 @@ Feature: Application groupings in topology
               And user can see Add to Application and Delete Application in the Action menu
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Verify Application grouping context menu: T-05-TC02
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
@@ -26,7 +26,7 @@ Feature: Application groupings in topology
              Then user can view Add to Application and Delete Application options
 
 
-        @regression
+        @regression @to-do
         Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
@@ -48,7 +48,7 @@ Feature: Application groupings in topology
              Then user can view options From Git, Container Image, From Dockerfile, From Devfile, Event Source, Channel
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Application grouping from Action menu: T-05-TC04
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at Topology page
@@ -59,7 +59,7 @@ Feature: Application groupings in topology
              Then user can see the applicationgroup has been removed
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Application grouping from context menu: T-05-TC05
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
              When user right clicks on applicaton grouping "nodejs-ex-git-app"

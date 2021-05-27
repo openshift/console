@@ -11,8 +11,7 @@ Feature: Create Virtual Machine templates
               And user has selected namespace "aut-virtualization"
         
 
-
-        @smoke, @regression
+        @smoke @tod-do
         Scenario: Create Virutal Machine template: VM-04-TC01
             Given user is at Virtualization tab under Workloads nav-item
              When user clicks on Templates tab

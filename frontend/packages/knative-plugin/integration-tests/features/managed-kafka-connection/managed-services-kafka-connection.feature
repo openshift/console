@@ -1,4 +1,4 @@
-@kafka, @odc-5175
+@kafka @odc-5175
 Feature: Support for Managed Services
               As a user, I want to create the Kafka connection and support the manage services
 

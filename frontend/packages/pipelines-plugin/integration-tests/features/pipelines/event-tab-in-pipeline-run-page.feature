@@ -6,7 +6,7 @@ Feature: Events tab in Pipeline run and Task run details pages
             Given user has created or selected namespace "aut-pipelines"
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Events tab in pipeline run details page of administrator perspective: P-03-TC01
             Given user is at administrator perspective
               And pipeline named "ex-pipeline_one" is available with pipeline run
@@ -18,7 +18,7 @@ Feature: Events tab in Pipeline run and Task run details pages
              Then user can see events streaming for pipeline runs and all the associated task runs and pods
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Events tab in task run details page of administrator perspective: P-03-TC02
             Given user is at administrator perspective
               And task named "ex-task-two" is available with task run
@@ -43,7 +43,7 @@ Feature: Events tab in Pipeline run and Task run details pages
              Then user can see events streaming for pipeline runs and all the associated task runs and pods
 
 
-        @regression, @to-do
+        @regression @to-do
         Scenario: Events tab in task run details page of developer perspective: P-03-TC04
             Given user is at developer perspective
               And task named "ex-task-one" is available with task run

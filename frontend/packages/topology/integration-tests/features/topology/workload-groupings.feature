@@ -7,7 +7,7 @@ Feature: Workload Groupings in Topology
             Given user is at developer perspective
 
 
-        @regression
+        @regression @to-do
         Scenario: Default state of Display dropdown: T-16-TC01
             Given user is at the Topology page
              When user clicks on the Display dropdown
@@ -18,7 +18,7 @@ Feature: Workload Groupings in Topology
               And user will see the Operator Groups checkbox checked
 
 
-        @regression
+        @regression @to-do
         Scenario: Check the Consumption Mode: T-16-TC02
             Given user is at the Topology page
              When user clicks on the Display dropdown
@@ -27,6 +27,7 @@ Feature: Workload Groupings in Topology
               And user will see that the group no longer appear in the view
 
 
+        @to-do
         Scenario: Uncheck the Expand: T-16-TC03
             Given user is at Topology page
              When user clicks on the Display dropdown
@@ -36,7 +37,7 @@ Feature: Workload Groupings in Topology
               And user will see the Operator Groups checkbox is disabled
 
 
-        @regression
+        @regression @to-do
         Scenario: Provide ability to expand and collapse all groups in Topology graph view: T-16-TC04
             Given user is at Topology page
               And user is on the graph view
@@ -46,7 +47,7 @@ Feature: Workload Groupings in Topology
               And user will see the summary of workloads
 
 
-        @regression
+        @regression @to-do
         Scenario: Provide ability to expand and collapse all groups in Topology list view: T-16-TC05
             Given user is at Topology page
               And user is on the list view

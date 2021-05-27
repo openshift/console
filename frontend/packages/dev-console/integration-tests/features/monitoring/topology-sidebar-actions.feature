@@ -44,7 +44,7 @@ Feature: Monitoring tab on the topology Sidebar
              Then user wont see Monitoring tab
 
 
-        @regression
+        @regression @tod-do
         Scenario: Navigating to Monitoring Metrics from the workload Sidebar: M-04-TC04
             Given Deployment "nodejs-ex-git" is present in topology page
              When user clicks on the workload "nodejs-ex-git" to open the sidebar
