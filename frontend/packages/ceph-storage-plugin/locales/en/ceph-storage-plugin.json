@@ -234,7 +234,7 @@
   "Error": "Error",
   "Warning": "Warning",
   "Raw Capacity": "Raw Capacity",
-  "RAW capacity is the absolute total disk space available to the array subsystem.": "RAW capacity is the absolute total disk space available to the array subsystem.",
+  "Raw capacity is the absolute total disk space available to the array subsystem.": "Raw capacity is the absolute total disk space available to the array subsystem.",
   "Used": "Used",
   "Available versus Used Capacity": "Available versus Used Capacity",
   "Used of {{capacity}}": "Used of {{capacity}}",

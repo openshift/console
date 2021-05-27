@@ -85,7 +85,7 @@ const RawCapacityCard: React.FC = React.memo(() => {
           {t('ceph-storage-plugin~Raw Capacity')}
           <FieldLevelHelp>
             {t(
-              'ceph-storage-plugin~RAW capacity is the absolute total disk space available to the array subsystem.',
+              'ceph-storage-plugin~Raw capacity is the absolute total disk space available to the array subsystem.',
             )}
           </FieldLevelHelp>
         </DashboardCardTitle>
