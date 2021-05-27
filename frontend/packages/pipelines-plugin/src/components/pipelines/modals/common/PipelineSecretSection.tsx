@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Formik, useField, useFormikContext, FormikValues } from 'formik';
+import { Formik, useField, useFormikContext } from 'formik';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { ExpandCollapse } from '@console/internal/components/utils';
@@ -15,6 +15,7 @@ import { SecretAnnotationId } from '../../const';
 import { advancedSectionValidationSchema } from './validation-utils';
 import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
+import { CommonPipelineModalFormikValues } from './types';
 
 import './PipelineSecretSection.scss';
 
@@ -25,14 +26,13 @@ const initialValues = {
   formData: {},
 };
 
-type PipelineSecretSectionProps = {
-  namespace: string;
-};
-
-const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace }) => {
+const PipelineSecretSection: React.FC = () => {
   const { t } = useTranslation();
   const [secretOpenField] = useField<boolean>('secretOpen');
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const {
+    setFieldValue,
+    values: { namespace },
+  } = useFormikContext<CommonPipelineModalFormikValues>();
 
   const handleSubmit = (values, actions) => {
     actions.setSubmitting(true);

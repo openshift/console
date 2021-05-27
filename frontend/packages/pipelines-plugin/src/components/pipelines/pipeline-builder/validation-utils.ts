@@ -3,10 +3,6 @@ import * as yup from 'yup';
 import i18n from 'i18next';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { nameValidationSchema } from '@console/shared';
-import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
-import { findTaskFromFormikData, taskParamIsRequired } from './utils';
-import { PipelineBuilderFormYamlValues, TaskType } from './types';
-import { getTaskParameters, getTaskResources } from '../resource-utils';
 import {
   PipelineTaskResource,
   PipelineTask,
@@ -18,7 +14,12 @@ import {
   TektonResourceGroup,
   WhenExpression,
 } from '../../../types';
+import { paramIsRequired } from '../../../utils/common';
 import { PipelineResourceType } from '../const';
+import { getTaskParameters, getTaskResources } from '../resource-utils';
+import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
+import { PipelineBuilderFormYamlValues, TaskType } from './types';
+import { findTaskFromFormikData } from './utils';
 
 /**
  * Checks to see if the params without a default have a value
@@ -34,7 +35,7 @@ const areRequiredParamsAdded = (
     return true;
   }
 
-  const requiredTaskParams = getTaskParameters(task).filter(taskParamIsRequired);
+  const requiredTaskParams = getTaskParameters(task).filter(paramIsRequired);
   if (requiredTaskParams.length === 0) {
     // No required params, no issue
     return true;
