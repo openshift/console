@@ -18,7 +18,7 @@
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx,.json,.gql,.graphql --color",
     "lint": "NODE_OPTIONS=--max-old-space-size=4096 yarn eslint .",
-    "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./.gherkin-lintrc ./packages/*/integration-tests/features",
+    "gherkin-lint": "./node_modules/.bin/gherkin-lint -c ./packages/dev-console/integration-tests/.gherkin-lintrc ./packages/*/integration-tests/features",
     "test": "LANG=en_US.UTF-8 jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "webdriver-update": "webdriver-manager update",
