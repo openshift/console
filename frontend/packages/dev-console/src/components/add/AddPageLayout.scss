@@ -34,6 +34,9 @@
     }
 
     &__details-switch {
+      &__loading-state {
+        display: flex;
+      }
       &__text {
         margin-left: var(--pf-global--spacer--xs);
         vertical-align: middle;

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { PageLayout } from '@console/shared';
-import { Switch, Tooltip } from '@patternfly/react-core';
-import { LoadingBox } from '@console/internal/components/utils';
-import { useShowAddCardItemDetails } from '../../../hooks/useShowAddCardItemDetails';
+import { Switch, Tooltip, Skeleton } from '@patternfly/react-core';
+import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
+import * as accessFilterHook from '../hooks/useAccessFilterExtensions';
 import * as utils from '../../../utils/useAddActionExtensions';
 import AddPageLayout from '../AddPageLayout';
 import { addActionExtensions } from './add-page-test-data';
@@ -21,7 +21,7 @@ jest.mock('@console/plugin-sdk/src/api/useExtensions', () => {
   return { useExtensions: () => addActionGroupExtensions };
 });
 
-jest.mock('../../../hooks/useShowAddCardItemDetails', () => ({
+jest.mock('../hooks/useShowAddCardItemDetails', () => ({
   useShowAddCardItemDetails: jest.fn(),
 }));
 
@@ -34,33 +34,13 @@ describe('AddPageLayout', () => {
     title: 'title',
   };
   const useAddActionExtensionsSpy = jest.spyOn(utils, 'useAddActionExtensions');
-
-  describe('Render based on if add action extensions are resolved', () => {
-    beforeEach(() => {
-      (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
-    it('should render loading state if add action extensions are not resolved', () => {
-      useAddActionExtensionsSpy.mockReturnValueOnce([addActionExtensions, false]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(wrapper.find(LoadingBox).exists()).toBe(true);
-    });
-
-    it('should render PageLayout if add action extensions are resolved', () => {
-      useAddActionExtensionsSpy.mockReturnValueOnce([addActionExtensions, true]);
-      wrapper = shallow(<AddPageLayout {...props} />);
-      expect(wrapper.find(PageLayout).exists()).toBe(true);
-    });
-  });
+  const useAccessFilterExtensionsSpy = jest.spyOn(accessFilterHook, 'useAccessFilterExtensions');
 
   describe('Hint block', () => {
     beforeAll(() => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
       useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
+      useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
     });
 
     afterAll(() => {
@@ -117,16 +97,14 @@ describe('AddPageLayout', () => {
   });
 
   describe('Details switch', () => {
-    beforeEach(() => {
-      useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
-    });
-
     afterEach(() => {
       jest.resetAllMocks();
     });
 
     it('should show correct text for switch when it is checked', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
+      useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
+      useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       wrapper = shallow(<AddPageLayout {...props} />);
       expect(
         wrapper
@@ -139,6 +117,8 @@ describe('AddPageLayout', () => {
 
     it('should show correct text for switch when it is unchecked', () => {
       (useShowAddCardItemDetails as jest.Mock).mockReturnValue([false, () => {}]);
+      useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
+      useAccessFilterExtensionsSpy.mockReturnValue([addActionExtensions, true]);
       wrapper = shallow(<AddPageLayout {...props} />);
       expect(
         wrapper
@@ -146,6 +126,34 @@ describe('AddPageLayout', () => {
           .shallow()
           .text()
           .includes(`${i18nNS}Details off`),
+      ).toBe(true);
+    });
+
+    it('should show loading state for switch if add actions have not resolved', () => {
+      (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
+      useAddActionExtensionsSpy.mockReturnValue([[], false]);
+      useAccessFilterExtensionsSpy.mockReturnValue([[], true]);
+      wrapper = shallow(<AddPageLayout {...props} />);
+      expect(
+        wrapper
+          .find(PageLayout)
+          .dive()
+          .find(Skeleton)
+          .exists(),
+      ).toBe(true);
+    });
+
+    it('should show loading state for switch if add actions from access check have not loaded', () => {
+      (useShowAddCardItemDetails as jest.Mock).mockReturnValue([true, () => {}]);
+      useAddActionExtensionsSpy.mockReturnValue([addActionExtensions, true]);
+      useAccessFilterExtensionsSpy.mockReturnValue([[], false]);
+      wrapper = shallow(<AddPageLayout {...props} />);
+      expect(
+        wrapper
+          .find(PageLayout)
+          .dive()
+          .find(Skeleton)
+          .exists(),
       ).toBe(true);
     });
   });

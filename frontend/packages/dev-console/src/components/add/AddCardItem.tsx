@@ -3,7 +3,7 @@ import { SimpleListItem, Title, Text } from '@patternfly/react-core';
 import { ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { navigateTo, resolvedHref } from '../../utils/add-page-utils';
-import { useShowAddCardItemDetails } from '../../hooks/useShowAddCardItemDetails';
+import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 import './AddCardItem.scss';
 
 type AddCardItemProps = {

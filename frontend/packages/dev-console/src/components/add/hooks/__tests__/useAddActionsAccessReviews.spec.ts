@@ -4,8 +4,8 @@ import {
   AccessReviewResourceAttributes,
   SelfSubjectAccessReviewKind,
 } from '@console/internal/module/k8s';
-import { testHook } from '../../../../../__tests__/utils/hooks-utils';
-import { addActionExtensions } from '../../components/add/__tests__/add-page-test-data';
+import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
+import { addActionExtensions } from '../../__tests__/add-page-test-data';
 import { useAddActionsAccessReviews, AccessReviewStatus } from '../useAddActionsAccessReviews';
 
 jest.mock('@console/internal/components/utils', () => ({
