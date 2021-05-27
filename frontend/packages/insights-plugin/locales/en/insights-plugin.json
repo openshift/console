@@ -3,7 +3,10 @@
   "Important": "Important",
   "Moderate": "Moderate",
   "Low": "Low",
+  "Total issue": "Total issue",
+  "Total issue_plural": "Total issues",
   "Total Risk": "Total Risk",
+  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters": "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters",
   "Temporary unavailable.": "Temporary unavailable.",
   "Disabled or waiting for results.": "Disabled or waiting for results.",
   "Fixable issues": "Fixable issues",
@@ -14,8 +17,5 @@
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
   "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
   "Insights": "Insights",
-  "Insights Advisor status": "Insights Advisor status",
-  "Total issue": "Total issue",
-  "Total issues": "Total issues",
-  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters": "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters"
+  "Insights Advisor status": "Insights Advisor status"
 }

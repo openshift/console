@@ -27,11 +27,7 @@ const AdvisorChart = ({ metrics, clusterId }) => {
         y: v,
       }))}
       title={`${issuesCount}`}
-      subTitle={
-        issuesCount === 1
-          ? t('insights-plugin~Total issue', { count: issuesCount })
-          : t('insights-plugin~Total issues', { count: issuesCount })
-      }
+      subTitle={t('insights-plugin~Total issue', { count: issuesCount })}
       subTitleComponent={<ChartLabel style={{ marginTop: 5, fill: globalColorDark200.value }} />}
       legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
       width={300}
