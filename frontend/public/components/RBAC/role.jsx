@@ -233,7 +233,7 @@ export const BindingsForRolePage = (props) => {
       createProps={{
         to: `/k8s/${
           ns ? `ns/${ns}` : 'cluster'
-        }/rolebindings/~new?rolekind=${kind}&rolename=${name}${ns && `&namespace=${ns}`}`,
+        }/rolebindings/~new?rolekind=${kind}&rolename=${name}${ns ? `&namespace=${ns}` : ''}`,
       }}
       ListComponent={BindingsListComponent}
       staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
