@@ -30,12 +30,12 @@ DOWNLOAD_PATH="$(mktemp -d)" || { echo "Failed to create temp folder"; exit 1; }
 for i in "${LANGUAGES[@]}"
 do
   COUNTER=0
-  CURRENT_PAGE=$(memsource job list --project-id "$PROJECT_ID" --target-lang "$i" -f value --page-number 0 -c uid | tr '\n' ' ')
+  CURRENT_PAGE=( $(memsource job list --project-id "$PROJECT_ID" --target-lang "$i" -f value --page-number 0 -c uid) )
   until [ -z "$CURRENT_PAGE" ]
   do
     ((COUNTER++))
     echo Downloading page "$COUNTER"
-    memsource job download --project-id "$PROJECT_ID" --output-dir "$DOWNLOAD_PATH/$i" --job-id "$CURRENT_PAGE"
+    memsource job download --project-id "$PROJECT_ID" --output-dir "$DOWNLOAD_PATH/$i" --job-id "${CURRENT_PAGE[@]}"
     CURRENT_PAGE=$(memsource job list --project-id "$PROJECT_ID" --target-lang "$i" -f value --page-number "$COUNTER" -c uid | tr '\n' ' ')
   done
 done
@@ -57,4 +57,4 @@ git add public/locales
 git add packages/**/locales
 git commit -m "chore(i18n): update translations
 
-Adding latest translations from Memsource project #$PROJECT_ID"
+Adding latest translations from Memsource project https://cloud.memsource.com/web/project2/show/$PROJECT_ID"

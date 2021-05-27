@@ -15,7 +15,7 @@ Memsource, the tool the Red Hat Globalization team uses for translation jobs.
 Before running either tool, you must first install the [unofficial Memsource CLI client](https://github.com/unofficial-memsource/memsource-cli-client#pip-install).
 You also have to [configure it with your Memsource login info](https://github.com/unofficial-memsource/memsource-cli-client#configuration-red-hat-enterprise-linux-derivatives).
 
-Example CLI usage for upload script: `yarn memsource-upload -v 4.8 -s "200"`
+Example CLI usage for upload script: `yarn memsource-upload -v 4.8 -s 200`
 * -v is the current OpenShift version
 * -s is the current sprint number
 
