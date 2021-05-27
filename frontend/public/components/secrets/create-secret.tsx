@@ -154,7 +154,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
     }
     onDataChanged(secretsData) {
       this.setState({
-        stringData: { ...secretsData.stringData },
+        stringData: { ...secretsData?.stringData },
       });
     }
     onError(err) {
@@ -183,7 +183,11 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
       const newSecret = _.assign(
         {},
         this.state.secret,
-        { stringData: this.state.stringData },
+        {
+          data: _.mapValues(this.state.stringData, (value) => {
+            return Base64.encode(value);
+          }),
+        },
         // When creating new Secret, determine it's type from the `stringData` keys.
         // When updating a Secret, use it's type.
         this.props.isCreate ? { type: determineSecretType(this.state.stringData) } : {},

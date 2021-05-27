@@ -1,4 +1,5 @@
 import withDragDropContext from './utils/drag-drop-context';
+import { containsNonPrintableCharacters } from './utils/file-input';
 import * as React from 'react';
 
 import { EditYAML } from './edit-yaml';
@@ -36,14 +37,6 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       this.handleFileDrop = this.handleFileDrop.bind(this);
     }
 
-    containsNonPrintableCharacters(value: string) {
-      if (!value) {
-        return false;
-      }
-      // eslint-disable-next-line no-control-regex
-      return /[\x00-\x09\x0E-\x1F]/.test(value);
-    }
-
     handleFileDrop(item, monitor) {
       if (!monitor) {
         return;
@@ -60,7 +53,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
         const reader = new FileReader();
         reader.onload = () => {
           const input = reader.result as string;
-          if (this.containsNonPrintableCharacters(input)) {
+          if (containsNonPrintableCharacters(input)) {
             this.setState({
               error: fileTypeErrorMsg,
             });
