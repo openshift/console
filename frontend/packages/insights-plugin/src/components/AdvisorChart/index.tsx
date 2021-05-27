@@ -14,7 +14,10 @@ const AdvisorChart = ({ metrics, clusterId }) => {
   const { t } = useTranslation();
 
   const issues = Object.entries(metrics);
-  const issuesCount = Object.values(metrics).reduce((acc: number, cur: number) => acc + cur, 0);
+  const issuesCount = Object.values(metrics).reduce<number>(
+    (acc: number, cur: number) => acc + cur,
+    0,
+  );
 
   return (
     <ChartDonut
@@ -24,7 +27,11 @@ const AdvisorChart = ({ metrics, clusterId }) => {
         y: v,
       }))}
       title={`${issuesCount}`}
-      subTitle={`Total ${issuesCount === 1 ? 'issue' : 'issues'}`}
+      subTitle={
+        issuesCount === 1
+          ? t('insights-plugin~Total issue', { count: issuesCount })
+          : t('insights-plugin~Total issues', { count: issuesCount })
+      }
       subTitleComponent={<ChartLabel style={{ marginTop: 5, fill: globalColorDark200.value }} />}
       legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
       width={300}
