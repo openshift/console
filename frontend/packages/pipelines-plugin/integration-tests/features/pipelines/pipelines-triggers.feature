@@ -106,7 +106,7 @@ Feature: Triggers
                   | trigger-five  |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Start the pipeline with secret by updating the git repo: P-09-TC09
             Given pipeline "trigger-six" with trigger in pipelines page
               And user is at pipeline trigger template page for pipeline "trigger-six"
@@ -121,7 +121,7 @@ Feature: Triggers
              Then user is able to see new pipeline run for "trigger-six" in pipelines page
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Start the pipeline with secret by updating the git repo: P-09-TC10
             Given pipeline "trigger-seven" with trigger in pipelines page
               And user is at pipeline trigger template page for pipeline "trigger-seven"

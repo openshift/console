@@ -1,3 +1,4 @@
+@topology
 Feature: Perform actions on HPA in Topology page
               As a user, I want to add HPA to a workload
 
@@ -6,7 +7,7 @@ Feature: Perform actions on HPA in Topology page
             Given user has created or selected namespace "topology-hpa"
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Add HorizontalPodAutoscaler to deployment workload: TH-02-TC01
             Given user has created a deployment workload "nodejs-ex-git" with CPU resource limit "100" and Memory resource limit "100"
               And user is at Topology page
@@ -29,7 +30,7 @@ Feature: Perform actions on HPA in Topology page
                   | test-hpa | 2           | 5           | 60              | 30                 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Edit HorizontalPodAutoscaler: TH-02-TC02
             Given user has a workload "<workload_name>" with HPA assigned to it
               And user is at Topology page
@@ -53,7 +54,7 @@ Feature: Perform actions on HPA in Topology page
                   | nodejs-ex-git-1 | 6           | 3           | 75              | 50                 |
 
 
-        @regression
+        @regression @to-do
         Scenario: Remove HorizontalPodAutoscaler: TH-02-TC03
             Given user has a deployment workload "nodejs-ex-git-1" with HPA assigned to it
               And user is at Topology page
@@ -65,7 +66,7 @@ Feature: Perform actions on HPA in Topology page
              Then user can not see HorizontalPodAutoscalers section
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Add HPA from YAML view: TH-02-TC04
              When user clicks on workload "nodejs-ex-git"
               And user selects "Add HorizontalPodAutoscaler" option from Actions menu
@@ -74,18 +75,18 @@ Feature: Perform actions on HPA in Topology page
               And user scrolls and checks schema
               And user closes the schema
               And user checks the YAML
-              And user assigns name value as "<hpa_name>"
-              And user gives value to averageUtilization under cpu target as "<cpu_utilisation>"
+              And user assigns name value as "test-hpa-1"
+              And user gives value to averageUtilization under cpu target as "70"
               And user clicks on Save button
               And user clicks on workload "nodejs-ex-git"
               And user selects Resources tab on sidebar
              Then user can see Horizontal Pod Autoscalers section
-              And user can see the "<hpa_name>" with HPA tag associated present under HPA section
+              And user can see the "test-hpa-1" with HPA tag associated present under HPA section
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Edit HPA action YAML view: TH-02-TC05
-            Given user has a workload "<workload_name>" with HPA assigned to it
+            Given user has a workload "nodejs-edit-hpa" with HPA assigned to it
              When user opens sidebar of workload
               And user opens action menu
               And user clicks on Edit Horizontal Pod Autoscaler option
@@ -95,10 +96,10 @@ Feature: Perform actions on HPA in Topology page
               And user scrolls and checks schema
               And user closes the schema
               And user checks the YAML
-              And user checks and edits values of cpu under metrics.resource.target.averageUtilization to "<cpu_utilisation>"
-              And user checks and edits values of memory under metrics.resource.target.averageUtilization to "<memory_utilization>"
-              And user checks and edits minimum pods value to "<hpa_min_pod>" in minReplicas
-              And user checks and edits maximum pods value to "<hpa_max_pod>" in maxReplicas
+              And user checks and edits values of cpu under metrics.resource.target.averageUtilization to "70"
+              And user checks and edits values of memory under metrics.resource.target.averageUtilization to "50"
+              And user checks and edits minimum pods value to "3" in minReplicas
+              And user checks and edits maximum pods value to "6" in maxReplicas
               And user checks the name value under metadata.name
               And user clicks on save to get back to topology page
               And user opens the sidebar
@@ -108,9 +109,9 @@ Feature: Perform actions on HPA in Topology page
              Then user can see the changed pods number
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Edit HPA YAML view to form view: TH-02-TC06
-            Given user has a workload "<workload_name>" with HPA assigned to it
+            Given user has a workload "th-02-tc06" with HPA assigned to it
              When user opens sidebar of workload
               And user opens action menu
               And user clicks on Edit Horizontal Pod Autoscaler option
@@ -120,9 +121,9 @@ Feature: Perform actions on HPA in Topology page
               And user checks the schema
               And user closes the schema window
               And user checks the YAML
-              And user changes values of cpu under metrics.resource.target.averageUtilization with resource name as cpu to "<cpu_utilisation>"
-              And user changes values of memory under metrics.resource.target.averageUtilization with resource name as memory to "<memory_utilization>"
-              And user changes minimum pods value to "<hpa_min_pod>" in minReplicas
-              And user changes maximum pods value to "<hpa_max_pod>" in maxReplicas
+              And user changes values of cpu under metrics.resource.target.averageUtilization with resource name as cpu to "75"
+              And user changes values of memory under metrics.resource.target.averageUtilization with resource name as memory to "50"
+              And user changes minimum pods value to "3" in minReplicas
+              And user changes maximum pods value to "6" in maxReplicas
               And user switches to form view
              Then user checks the changed values in form view

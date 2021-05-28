@@ -90,7 +90,7 @@ Feature: Create a workload of 'knative Service' type resource
               And user is able to see workload "nodejs-ex-git" in topology page
 
 
-        @regression
+        @regression @to-do
         Scenario: Create a knative workload with advanced option "Scaling" from From Git card: KN-05-TC08
             Given user is at Import from git page
              When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"

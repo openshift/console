@@ -1,3 +1,4 @@
+@monitoring
 Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monitoring page
     User should be aware of alerts related to workloads and should see alerts in the sidebar
 
@@ -7,21 +8,21 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
               And user has created or selected namespace "aut-monitoring-topology"
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Alerts tab on the Monitoring page: M-05-TC01
             Given user is at the Topology page
              When user opens Monitoring page
              Then user will see the Alerts tab
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Monitoring Firing Alerts Decorator on the workload: M-05-TC02
             Given user is at Topology page
               And user has a node with firing alerts
              Then user will see the Monitoring Alerts Decorator on the upper left quadrant of that workload
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Click on Firing Alerts Decorator on Topology workloads to see associated alerts in both graph and list view: M-05-TC03
             Given user is at Topology page
               And user has a node with firing alerts
@@ -31,7 +32,7 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
               And user will see an alerts section having the associated alerts listed in the order of severity
 
 
-        @regression
+        @regression @to-do
         Scenario: Redirect to Alert Details page on click of alert: M-05-TC04
             Given user is at the Topology page
               And user has a node with firing alerts
@@ -40,7 +41,7 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
              Then user will be redirected to Alerts details page
 
 
-        @regression
+        @regression @to-do
         Scenario: Associated Metrics on selection of Alerts in Alerts tab: M-05-TC05
             Given user is on the Monitoring page
              When user opens the Alerts tab
@@ -50,21 +51,21 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
               And user will see that associated metrics has been opened
 
 
-        @regression
+        @regression @to-do
         Scenario: Notification Column on the Alerts table: M-05-TC06
             Given user is on the Monitoring page
              When user opens the Alerts tab
              Then user will see the Notification column
 
 
-        @regression
+        @regression @to-do
         Scenario: Alerting rule details page: M-05-TC07
             Given user is on the Alerts tab
              When user clicks on the kebab menu to view alerting rule
              Then user will be redirected to the Alert Rule Details page
 
 
-        @regression
+        @regression @to-do
         Scenario: Notification Silence button: M-05-TC08
             Given user is on the Alerts tab
              When user clicks on the Notification Silence button
@@ -75,7 +76,7 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
               And user will see silence for 1 day item
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Display expire time of Notification Silence: M-05-TC09
             Given user is on the Alerts tab
              When user clicks on the Notification Silence button
@@ -84,7 +85,7 @@ Feature: Alert Icon on Topology for Workloads in sidebar and Alerts tab on Monit
               And user will not see the severity icon at the beginning of the row of rule
 
 
-        @regression
+        @regression @to-do
         Scenario: Switch on the Notification: M-05-TC10
             Given user is on the Alerts tab
              When user clicks on the Notification Silence button

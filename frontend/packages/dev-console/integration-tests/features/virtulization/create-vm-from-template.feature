@@ -11,7 +11,7 @@ Feature: Create Virtual Machines using Template from Developer perspective
               And user is at administrator perspective
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Create Virtual Machine: VM-02-TC01
             Given user has created Virtual Machine Template
               And user is at Virtual Machines page

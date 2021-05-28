@@ -1,13 +1,14 @@
+@guided-tour
 Feature: Creating a Serverless application tour
               As a user, I want to take a guided tour of creating a serverless application feature
 
         Background:
-            Given user is in developer perspective
+            Given user is at developer perspective
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the +Add page: GT-02-TC01
-            Given user is in +Add page
+            Given user is at Add page
               And user sees quick tour card
              When user clicks on the "Creating a Serverless application" link on the card
               And user sees the tour will start as a sidescreen with close button
@@ -52,8 +53,8 @@ Feature: Creating a Serverless application tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Creating a Serverless application card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the Quick Starts page: GT-02-TC02
             Given user is in +Add page
               And user sees quick tour card
@@ -102,7 +103,7 @@ Feature: Creating a Serverless application tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Creating a Serverless application card
 
-        
+
         @regression @manual
         Scenario: Trying 'No' option during the tour: GT-02-TC03
             Given user is in +Add page
@@ -118,7 +119,7 @@ Feature: Creating a Serverless application tour
               And user selects No option
              Then user sees that the alert is saying "Try walking through the steps again to properly install Serverless Operator"
 
-        
+
         @regression @manual
         Scenario: Avoiding option during the tour: GT-02-TC04
             Given user is in +Add page
@@ -175,8 +176,8 @@ Feature: Creating a Serverless application tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Creating a Serverless application card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and again resuming the tour: GT-02-TC06
             Given user is in +Add page
               And user sees quick tour card
@@ -195,8 +196,8 @@ Feature: Creating a Serverless application tour
               And user clicks on Resume the tour
              Then user sees the tour will start from the step "Create a Serverless application"
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and restarting the tour: GT-02-TC07
             Given user is in +Add page
               And user sees quick tour card
@@ -216,8 +217,8 @@ Feature: Creating a Serverless application tour
               And user clicks on the Restart the tour button
              Then user sees that the tour has started again
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Navigating between steps in the tour: GT-02-TC08
             Given user is in +Add page
               And user sees quick tour card

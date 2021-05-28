@@ -1,4 +1,4 @@
-@knative, @odc-5399
+@knative @odc-5399
 Feature: Visualisation of serverless fuctions
               As a user, I should be able to differentiate between a plain Knative Service and a Serverless Function when looking at the Details page of the KSVC and the details tab of the side panel in Topology
 
@@ -26,7 +26,7 @@ Feature: Visualisation of serverless fuctions
              Then user will see name of the serverless function as KSVC label followed by fx label and name "nodetest"
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar of serverless function: SF-01-TC03
             Given user has created serverless function "nodetest"
               And user is at Topology chart page
@@ -35,7 +35,7 @@ Feature: Visualisation of serverless fuctions
               And user will see Labels as boson.dev/function=true and boson.dev/runtime=node
 
 
-        @regression
+        @regression @to-do
         Scenario: Service details page of serverless function: SF-01-TC04
             Given user has created serverless function "nodetest"
               And user is at Topology chart page

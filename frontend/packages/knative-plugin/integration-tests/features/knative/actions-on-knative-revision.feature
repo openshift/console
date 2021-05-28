@@ -23,7 +23,7 @@ Feature: Perform actions on knative revision
              Then user can see the label "app-label" in the Details tab of the Sidebar of "nodejs-ex-git-2"
 
 
-        @regression
+        @regression @to-do
         Scenario: Remove label from knative Revision: KN-01-TC03
              When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu
               And user selects "Edit Labels" option from knative revision context menu
@@ -32,7 +32,7 @@ Feature: Perform actions on knative revision
              Then user will not see the label "app-label" in the Details tab of the Sidebar of "nodejs-ex-git-2"
 
 
-        @regression
+        @regression @to-do
         Scenario: Add labels to existing labels list and cancel the activity: KN-01-TC04
              When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu
               And user selects "Edit Labels" option from knative revision context menu
@@ -41,7 +41,7 @@ Feature: Perform actions on knative revision
              Then user will not see the label "app-label" in the Details tab of the Sidebar of "nodejs-ex-git-2"
 
 
-        @regression
+        @regression @to-do
         Scenario: Add annotation to the existing annonations list: KN-01-TC05
             Given number of annotations are "5" present in revision side bar details of service "nodejs-ex-git-2"
              When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu
@@ -53,7 +53,7 @@ Feature: Perform actions on knative revision
              Then number of annotaions increased to "6" in revision side bar details of service "nodejs-ex-git-2"
 
 
-        @regression
+        @regression @to-do
         Scenario: perform cancel action on Edit Annotations: KN-01-TC06
             Given number of annotations are "5" present in revision side bar details of service "nodejs-ex-git-2"
              When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu
@@ -64,7 +64,7 @@ Feature: Perform actions on knative revision
              Then verify the number of annotaions equal to "6" in side bar details
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Remove annotation from existing annonations list: KN-01-TC07
             Given number of annotations are "5" present in revision side bar details of service "nodejs-ex-git-2"
              When user right clicks on the revision of knative service "nodejs-ex-git-2" to open the context menu

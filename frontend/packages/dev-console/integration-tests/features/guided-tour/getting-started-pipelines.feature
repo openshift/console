@@ -1,13 +1,14 @@
+@guided-tour
 Feature: Getting started with Pipelines tour
               As a user, I want to take a guided tour of getting started with pipelines feature
 
         Background:
-            Given user is in developer perspective
+            Given user is at developer perspective
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the +Add page: GT-03-TC01
-            Given user is in +Add page
+            Given user is at Add page
               And user sees quick tour card
              When user clicks on the "Getting started with Pipelines" link on the card
               And user sees the tour will start as a sidescreen with close button
@@ -40,8 +41,8 @@ Feature: Getting started with Pipelines tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Getting started with Pipelines card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the Quick Starts page: GT-03-TC02
             Given user is in +Add page
               And user sees quick tour card
@@ -78,8 +79,8 @@ Feature: Getting started with Pipelines tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Getting started with Pipelines card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Trying 'No' option during the tour: GT-03-TC03
             Given user is in +Add page
               And user sees quick tour card
@@ -94,8 +95,8 @@ Feature: Getting started with Pipelines tour
               And user selects No option
              Then user sees that the alert is saying "Try walking through the steps again to properly install Serverless Operator"
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Avoiding option during the tour: GT-03-TC04
             Given user is in +Add page
               And user sees quick tour card
@@ -123,8 +124,8 @@ Feature: Getting started with Pipelines tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Getting started with Pipelines card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Review the tour: GT-03-TC05
             Given user is in +Add page
               And user sees quick tour card
@@ -151,8 +152,8 @@ Feature: Getting started with Pipelines tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Getting started with Pipelines card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and again resuming the tour: GT-03-TC06
             Given user is in +Add page
               And user sees quick tour card
@@ -171,8 +172,8 @@ Feature: Getting started with Pipelines tour
               And user clicks on Resume the tour
              Then user sees the tour will start from the step "Create an application from git"
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and restarting the tour: GT-03-TC07
             Given user is in +Add page
               And user sees quick tour card
@@ -192,8 +193,8 @@ Feature: Getting started with Pipelines tour
               And user clicks on the Restart the tour button
              Then user sees that the tour has started again
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Navigating between steps in the tour: GT-03-TC08
             Given user is in +Add page
               And user sees quick tour card

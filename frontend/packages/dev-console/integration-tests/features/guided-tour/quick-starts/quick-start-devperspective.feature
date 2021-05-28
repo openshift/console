@@ -1,4 +1,4 @@
-@regression
+@guided-tour @regression
 Feature: Quick Starts card in developer console
               As a user, I want to view Quick Starts card in Add page
 
@@ -10,6 +10,7 @@ Feature: Quick Starts card in developer console
               And explore-pipeline CR Quick Start is available
 
 
+        @to-do
         Scenario: Quick Starts card on +Add page: QS-03-TC01
             Given user is in developer perspective
              When user goes to +Add page
@@ -19,6 +20,7 @@ Feature: Quick Starts card in developer console
               And user can see the kebab menu on top right of the card
 
 
+        @to-do
         Scenario: Quick Starts page when no tour has started: QS-03-TC02
             Given user is in developer perspective
              When user goes to +Add page
@@ -28,6 +30,7 @@ Feature: Quick Starts card in developer console
               And user can see Start the tour link
 
 
+        @to-do
         Scenario: Quick Starts page when tour has completed: QS-03-TC03
             Given user is in developer perspective
               And user has completed "Get started with a sample application" Quick Start
@@ -39,6 +42,7 @@ Feature: Quick Starts card in developer console
               And user can see Review the tour link
 
 
+        @to-do
         Scenario: Quick tour page when tour is not completed: QS-03-TC04
             Given user is in developer perspective
               And user has not completed "Get started with a sample application" Quick Start
@@ -50,6 +54,7 @@ Feature: Quick Starts card in developer console
               And user can see Resume the tour and Restart the tour link
 
 
+        @to-do
         Scenario: Remove quick tour card from +Add view: QS-03-TC05
             Given user is in developer perspective
              When user goes to +Add page
@@ -58,6 +63,7 @@ Feature: Quick Starts card in developer console
              Then Quick Starts card will be removed from +Add page
 
 
+        @to-do
         Scenario: Quick Starts card links with status as in progress: QS-03-TC06
             Given user is at +Add page
              When user clicks on first Quick Starts link on the Quick Starts card
@@ -67,6 +73,7 @@ Feature: Quick Starts card in developer console
              Then user can see "In Progress" status below the first Quick Starts link
 
 
+        @to-do
         Scenario: Quick Starts card when all Quick Starts has completed: QS-03-TC07
             Given user is at +Add page
              When user completes all the Quick Starts present

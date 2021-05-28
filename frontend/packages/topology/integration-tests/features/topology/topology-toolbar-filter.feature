@@ -7,7 +7,8 @@ Feature: Topology Toolbar Filter Group
               And user has created or selected namespace "aut-tp-toolbar"
               And user is at Add page
 
-        @regression
+
+        @regression @to-do
         Scenario: Topology filter by resource: T-13-TC01
             Given user has created workload "nodejs-ex-git-dc" with resource type "Deployment Config"
              When user clicks on List view button

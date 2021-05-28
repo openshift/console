@@ -9,7 +9,7 @@ Feature: Knative Eventing Broker Support
 
     #Command: oc label namespace 'namespace-name' knative-eventing-injection=enabled
 
-        @smoke
+        @smoke @to-do
         Scenario: Create default Broker: KC-01-TC01
             Given user has logged in to cluster through CLI
              When user runs the command to add the labels
@@ -17,7 +17,7 @@ Feature: Knative Eventing Broker Support
              Then user will see the default broker created
 
 
-        @smoke
+        @smoke @to-do
         Scenario: Sink event source to Broker: KC-01-TC02
             Given user is at Developer Perspective
               And user has created the Broker
@@ -47,7 +47,7 @@ Feature: Knative Eventing Broker Support
              Then user will see that multiple event sources are connected to single Broker
 
 
-        @regression
+        @regression @to-do
         Scenario: Context Menu for Broker: KC-01-TC04
             Given user is at Developer Perspective
              When user creates the Broker
@@ -61,7 +61,7 @@ Feature: Knative Eventing Broker Support
               And user will see Delete InMemoryBroker option
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings action on Broker: KC-01-TC05
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -73,7 +73,7 @@ Feature: Knative Eventing Broker Support
              Then user will see the changed Application Groupings of Broker
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Application Groupings to no application group action on Broker: KC-01-TC06
             Given user is at Developer Perspective
               And user is having a Broker inside an applicaiton group on the Topology page
@@ -85,7 +85,7 @@ Feature: Knative Eventing Broker Support
              Then user will see that Broker is without an application group
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Labels action on Broker: KC-01-TC07
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -98,7 +98,7 @@ Feature: Knative Eventing Broker Support
              Then user will see the newly added label
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Annotations action on Broker: KC-01-TC08
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -111,7 +111,7 @@ Feature: Knative Eventing Broker Support
              Then user will see the newly added annotation
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit Broker action on Broker: KC-01-TC09
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -120,7 +120,7 @@ Feature: Knative Eventing Broker Support
              Then user will see the YAML editor to edit the Broker
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Broker action on Broker: KC-01-TC10
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -131,7 +131,7 @@ Feature: Knative Eventing Broker Support
               And user won't be able to see the Broker again
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Broker: KC-01-TC11
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -140,7 +140,7 @@ Feature: Knative Eventing Broker Support
               And user will see the Details tab
 
 
-        @regression
+        @regression @to-do
         Scenario: Details tab for the Broker: KC-01-TC12
             Given user is at Developer Perspective
               And user is having Broker on the Topology page
@@ -152,7 +152,7 @@ Feature: Knative Eventing Broker Support
               And user will see the owner and Broker created time
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Broker subscribed to Knative Service: KC-01-TC13
             Given user is at Developer Perspective
               And user is having Broker subscribed to Knative Service on the Topology page
@@ -161,7 +161,7 @@ Feature: Knative Eventing Broker Support
               And user will see the Subscribers
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Broker connected with eventsources and knative services: KC-01-TC14
             Given user is at Developer Perspective
               And user is having Broker subscribed to Knative Service and event source connected to it on the Topology page

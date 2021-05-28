@@ -8,7 +8,7 @@ Feature: Eventing page at Administrator perspective
               And user has created or selected namespace "aut-eventing-page"
 
 
-        @regression
+        @regression @to-do
         Scenario: Create new Event Source: KA-01-TC01
             Given user is at eventing page
               And user has created knative service "hello-openshift"
@@ -23,7 +23,7 @@ Feature: Eventing page at Administrator perspective
               And user will see ping-source created
 
 
-        @regression
+        @regression @to-do
         Scenario: Create new Channel: KA-01-TC02
             Given user is at eventing page
              When user clicks on Create button

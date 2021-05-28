@@ -2,7 +2,7 @@
 Feature: Monitoring tab on the topology Sidebar
               As a user, I should be able to see Monitoring tab on the sidebar of topology page and add Health Checks
 
-        
+
         Background:
             Given user is at developer perspective
               And user is at Add page
@@ -44,7 +44,7 @@ Feature: Monitoring tab on the topology Sidebar
              Then user wont see Monitoring tab
 
 
-        @regression
+        @regression @to-do
         Scenario: Navigating to Monitoring Metrics from the workload Sidebar: M-04-TC04
             Given Deployment "nodejs-ex-git" is present in topology page
              When user clicks on the workload "nodejs-ex-git" to open the sidebar

@@ -33,7 +33,7 @@ Feature: Knative Eventing Broker and Trigger
               And user will see a single Broker subscribed to multiple services
 
 
-        @regression
+        @regression @to-do
         Scenario: Delete Trigger: KE-04-TC03
             Given user is having Broker on the Topology page
               And user has already added the trigger
@@ -43,7 +43,7 @@ Feature: Knative Eventing Broker and Trigger
              Then subscription will get deleted
 
 
-        @regression
+        @regression @to-do
         Scenario: Move Trigger: KE-04-TC04
             Given user is having Broker on the Topology page
               And user has already added the trigger
@@ -66,7 +66,7 @@ Feature: Knative Eventing Broker and Trigger
              Then user will see connection between Broker and Subscriber
 
 
-        @regression
+        @regression @to-do
         Scenario: Sidebar for the Event Source sinked Broker subscribed to Knative Service: KE-04-TC06
             Given user is having Broker subscribed to Knative Service on the Topology page
              When user clicks on the Subscription to open the sidebar

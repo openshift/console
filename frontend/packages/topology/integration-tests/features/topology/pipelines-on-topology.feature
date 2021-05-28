@@ -8,7 +8,7 @@ Feature: Improve the integration of Pipelines & Builds.
               And user has created or selected namespace "aut-topology"
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Import flows should create pipeline instead of build config: T-01-TC01
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
               And pipeline has autostarted
@@ -22,7 +22,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Add flow should finish even if the Pipeline Run cannot be created for the added Pipeline: T-01-TC02
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image>" with pipeline
               And pipeline has not autostarted
@@ -36,7 +36,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1           | Perl          |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Pipeline start modal on clicking pipeline icon of application node in topology page: T-01-TC03
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user hovers on the bottom-left decorator on the workload "<workload_name>"
@@ -49,7 +49,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipelines are getting executed successfully: T-01-TC04
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
@@ -61,7 +61,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: PVC getting created through the add flow pipeline auto start feature: T-01-TC05
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the Administrator perspective
@@ -74,7 +74,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: PVC getting auto selected using the pipeline label attached to it: T-01-TC06
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
@@ -87,7 +87,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: In Add trigger, PVC getting auto selected: T-01-TC07
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user goes to the pipeline
@@ -100,7 +100,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipeline section in edit flow when pipeline is already present: T-01-TC08
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu
@@ -113,7 +113,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipeline section in edit flow when pipeline is not present: T-01-TC09
             Given user created workload "<workload_name>" with resource type "<resource_type>" without pipeline
              When user clicks on Edit "<workload_name>" from action menu
@@ -126,7 +126,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipeline is enabled through edit flow: T-01-TC10
             Given user created workload "<workload_name>" with resource type "<resource_type>" without pipeline
              When user clicks on Edit "<workload_name>" from action menu
@@ -142,7 +142,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1 |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipeline section when builder image is changed to one having pipeline associated: T-01-TC11
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image1>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu
@@ -155,7 +155,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | django-ex.git-1 | Python         | Perl           |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Pipeline section when builder image is changed to one not having pipeline associated: T-01-TC12
             Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image1>" with pipeline
              When user clicks on Edit "<workload_name>" from action menu

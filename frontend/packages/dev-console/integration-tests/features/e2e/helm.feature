@@ -1,3 +1,4 @@
+@e2e
 Feature: Helm Chart E2E
               As a user, I should be able to perform end to end scenarios related to Helm Chart
 
@@ -7,7 +8,7 @@ Feature: Helm Chart E2E
               And user has selected namespace "aut-helm-e2e"
 
 
-        @e2e
+        @to-do
         Scenario: Helm Scenarios: EE-01-TC01
             Given user has created helm chart "Nodejs Ex K v0.2.1" from Add Page
              When user navigates to Helm Page

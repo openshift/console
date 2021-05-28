@@ -6,7 +6,7 @@ Feature: Helm Chart
         Background:
             Given user has created or selected namespace "aut-helm-compatibility"
 
-        
+
         @smoke
         Scenario: Compatible helm charts: HR-02-TC01
             Given user is at Add page

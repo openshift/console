@@ -11,7 +11,7 @@ Feature: Kafka Event Source
               And user has created or selected namespace "aut-kafka"
 
 
-        @regression
+        @regression @to-do
         Scenario: BootStrapServers and Topics Drop Down: KF-02-TC01
              When user navig to Add page
               And user clicks on Event Sources card
@@ -20,7 +20,7 @@ Feature: Kafka Event Source
               And user will see the items in Topics dropdown
 
 
-        @regression
+        @regression @to-do
         Scenario: Select multiple BootStrapServers and Topics from dropdown: KF-02-TC02
              When user creates a BootStrapServer
               And user creates a Topics
@@ -36,7 +36,7 @@ Feature: Kafka Event Source
               And user can see the Kafka source created
 
 
-        @regression
+        @regression @to-do
         Scenario: Enter BootStrapServers and Topics: KF-02-TC03
              When user creates a BootStrapServer
               And user creates a Topics

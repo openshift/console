@@ -1,11 +1,12 @@
+@guided-tour
 Feature: Import an application and associate a pipeline with it tour
               As a user, I want to take a guided tour of import an application and associate a pipeline with it feature
 
         Background:
             Given user is in developer perspective
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the +Add page: GT-01-TC01
             Given user is in +Add page
               And user sees quick tour card
@@ -39,8 +40,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Import an application and associate a pipeline with it card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Starting tour from the Quick Starts page: GT-01-TC02
             Given user is in +Add page
               And user sees quick tour card
@@ -76,8 +77,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Import an application and associate a pipeline with it card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Trying No option during the tour: GT-01-TC03
             Given user is in +Add page
               And user sees quick tour card
@@ -92,8 +93,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user selects No option
              Then user sees that the alert is saying "Try walking through the steps again to properly Create an application from Git"
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Avoiding option during the tour: GT-01-TC04
             Given user is in +Add page
               And user sees quick tour card
@@ -121,8 +122,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Import an application and associate a pipeline with it card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Review the tour: GT-01-TC05
             Given user is in +Add page
               And user sees quick tour card
@@ -149,8 +150,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks "close" button to close the sidepane back to tour page
              Then user sees completed label marked on Import an application and associate a pipeline with it card
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and again resuming the tour: GT-01-TC06
             Given user is in +Add page
               And user sees quick tour card
@@ -169,8 +170,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks on Resume the tour
              Then user sees the tour will start from the step "Create an application from git"
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Stopping and restarting the tour: GT-01-TC07
             Given user is in +Add page
               And user sees quick tour card
@@ -190,8 +191,8 @@ Feature: Import an application and associate a pipeline with it tour
               And user clicks on the Restart the tour button
              Then user sees that the tour has started again
 
-        
-        @regression
+
+        @regression @to-do
         Scenario: Navigating between steps in the tour: GT-01-TC08
             Given user is in +Add page
               And user sees quick tour card

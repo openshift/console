@@ -21,7 +21,7 @@ Feature: Filter for Alert state and Severity
               And user is able to see filters as unchecked
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Ability to show only "<alert_state>" Alerts on the Alerts tab: M-03-TC02
             Given user is on the Alerts tab
              When user selects the "<alert_state>" option under Alert State type
@@ -35,7 +35,7 @@ Feature: Filter for Alert state and Severity
                   | Not Firing  |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Ability to show only "<severity>" Alerts on the Alerts tab: M-03-TC03
             Given user is on the Alerts tab
              When user selects the "<severity>" option under Severity type
@@ -49,7 +49,7 @@ Feature: Filter for Alert state and Severity
                   | None     |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Ability to hide only "<alert_state>" Alerts on the Alerts tab: M-03-TC04
             Given user is on the Alerts tab
              When user selects the "<alert_state>" option under Alert State type
@@ -63,7 +63,7 @@ Feature: Filter for Alert state and Severity
                   | Not Firing  |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Ability to hide only "<severity>" Alerts on the Alerts tab: M-03-TC05
             Given user is on the Alerts tab
              When user selects the "<severity>" option under Severity type
@@ -77,7 +77,7 @@ Feature: Filter for Alert state and Severity
                   | None     |
 
 
-        @regression
+        @regression @to-do
         Scenario: Alert details page: M-03-TC06
             Given user is on Alerts tab
              When user clicks on the name of the alert
@@ -86,14 +86,14 @@ Feature: Filter for Alert state and Severity
               And user will see Name, Severity, Labels, Source, State, Alerting rule
 
 
-        @regression
+        @regression @to-do
         Scenario: Time range on Metrics in Alert details page: M-03-TC07
             Given user is on Alert details page
              When user selects "1 hour" on Time range dropdown
              Then user will see alert activity for past one hour
 
 
-        @regression
+        @regression @to-do
         Scenario: Reset Zoom on Metrics in Alert details page: M-03-TC08
             Given user is on Alert details page
              When user selects "1 hour" on Time range dropdown
@@ -101,14 +101,14 @@ Feature: Filter for Alert state and Severity
              Then user will see Time range changed to 30 minutes
 
 
-        @regression
+        @regression @to-do
         Scenario: Navigating to Metrics tab from Alert details page: M-03-TC09
             Given user is on Alert details page
              When user clicks on View in Metrics
              Then user will be taken to Metrics tab in Monitoring
 
 
-        @regression
+        @regression @to-do
         Scenario: Silence alert from Alert details page: M-03-TC10
             Given user is on Alert details page
              When user clicks on Silence alert button
@@ -116,7 +116,7 @@ Feature: Filter for Alert state and Severity
              Then user will be taken to Silence details page with silence state Active
 
 
-        @regression
+        @regression @to-do
         Scenario: Alert Rule details page: M-03-TC11
             Given user is on Alerts tab
              When user clicks on the kebab menu on the alert
@@ -126,14 +126,14 @@ Feature: Filter for Alert state and Severity
               And user will see Name, Severity, Labels, Source, For, Expression, Description
 
 
-        @regression
+        @regression @to-do
         Scenario: Time range on Metrics in Alert rule details page: M-03-TC12
             Given user is on Alert rule details page
              When user selects "1 hour" on Time range dropdown
              Then user will see alert activity for past one hour
 
 
-        @regression
+        @regression @to-do
         Scenario: Reset Zoom on Metrics in Alert rule details page: M-03-TC13
             Given user is on Alert rule details page
              When user selects "1 hour" on Time range dropdown
@@ -141,14 +141,14 @@ Feature: Filter for Alert state and Severity
              Then user will see Time range changed to 30 minutes
 
 
-        @regression
+        @regression @to-do
         Scenario: Navigating to Metrics tab from Alert rule details page: M-03-TC14
             Given user is on Alert rule details page
              When user clicks on View in Metrics
              Then user will be taken to Metrics tab in Monitoring
 
 
-        @regression
+        @regression @to-do
         Scenario: Navigating to Alert details page from Alert rule details page: M-03-TC15
             Given user is on Alert rule details page
              When user clicks on name on alert under description

@@ -5,7 +5,7 @@ Feature: Create Pipeline from Add Options
         Background:
             Given user has created or selected namespace "aut-pipelines"
 
-      
+
         @regression
         Scenario: Pipelines section on git form: P-01-TC01
              When user clicks From Git card on the Add page
@@ -101,7 +101,7 @@ Feature: Create Pipeline from Add Options
               And user clicks Create button on Create Source-to-Image application
              Then user will be redirected to Topology page
               And user is able to see workload "<name>" in topology page
-      
+
         Examples:
                   | git_url                                 | name          |
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |

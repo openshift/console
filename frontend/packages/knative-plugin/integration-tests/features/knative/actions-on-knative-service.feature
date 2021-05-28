@@ -43,7 +43,7 @@ Feature: Perform actions on knative service
              Then user will not see the label "app=label" in "kn-service" service side bar details
 
 
-        @regression
+        @regression @to-do
         Scenario: Add labels to existing labels list and cancel it: KN-02-TC05
             Given user has created another knative service "kn-service-1"
               And user is at the Topology page
@@ -51,16 +51,6 @@ Feature: Perform actions on knative service
               And user adds the label "app=label" to existing labels list in Edit Labels modal
               And user clicks cancel button on the "Edit labels" modal
              Then user will not see the label "app=label" in "kn-service" service side bar details
-
-
-        @regression
-        Scenario: Edit Annotation modal details: KN-02-TC05
-            Given user is at the Topology page
-             When user selects "Edit Annotations" context menu option of knative service "kn-service"
-             Then modal with "Edit annotations" appears
-              And key, value columns are displayed with respecitve text fields
-              And Add more link is enabled
-              And save, cancel buttons are displayed
 
 
         @regression
@@ -85,7 +75,7 @@ Feature: Perform actions on knative service
              Then number of Annotations display as "5" in "kn-service" service side bar details
 
 
-        @regression
+        @regression @to-do
         Scenario: Remove annotation from existing annotations list: KN-02-TC08
             Given user is at the Topology page
               And number of annotations are "6" present in side bar - details tab
@@ -95,7 +85,7 @@ Feature: Perform actions on knative service
              Then number of Annotations decreased to "5" in side bar details
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit the service from yaml editor: KN-02-TC09
             Given user is at the Topology page
              When user selects "Edit Service" context menu option of knative service "kn-service"
@@ -105,7 +95,7 @@ Feature: Perform actions on knative service
               And another message should display as "This object has been updated."
 
 
-        @regression
+        @regression @to-do
         Scenario: Update the service to different application group existing in same project: KN-02-TC10
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
@@ -116,7 +106,7 @@ Feature: Perform actions on knative service
              Then updated service is present in side bar
 
 
-        @regression
+        @regression @to-do
         Scenario: Perform cancel operation while editing application group: KN-02-TC11
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
@@ -127,7 +117,7 @@ Feature: Perform actions on knative service
              Then updated service should not display in side bar
 
 
-        @regression
+        @regression @to-do
         Scenario: Update the service to new application group: KN-02-TC12
             Given user is at the Topology page
              When user selects "Edit Application Grouping" context menu option of knative service "kn-service"
@@ -199,7 +189,7 @@ Feature: Perform actions on knative service
              Then user will be redirected to Topology page
 
 
-        @regression
+        @regression @to-do
         Scenario: Edit NameOfWorkload for a service [TBD]: KN-02-TC19
             Given user is at the Topology page
              When user selects "Edit kn-service" context menu option of knative service "kn-service"
@@ -213,3 +203,13 @@ Feature: Perform actions on knative service
              When user selects "Delete Service" context menu option of knative service "kn-service"
               And user clicks Delete button on Delete Service modal
              Then "kn-service" service should not be displayed in project
+
+
+        @regression
+        Scenario: Edit Annotation modal details: KN-02-TC21
+            Given user is at the Topology page
+             When user selects "Edit Annotations" context menu option of knative service "kn-service"
+             Then modal with "Edit annotations" appears
+              And key, value columns are displayed with respecitve text fields
+              And Add more link is enabled
+              And save, cancel buttons are displayed

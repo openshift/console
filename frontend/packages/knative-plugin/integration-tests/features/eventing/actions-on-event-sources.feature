@@ -2,7 +2,7 @@
 Feature: Event Sources actions
               As a user, I want to perform actions on event sources
 
-        
+
         Background:
             Given user has created or selected namespace "aut-knative"
 
