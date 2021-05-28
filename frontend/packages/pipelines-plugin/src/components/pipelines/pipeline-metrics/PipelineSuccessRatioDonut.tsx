@@ -101,10 +101,16 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   }
   const successValue = _.find(finalArray, { x: 'success' })?.['count'] ?? 0;
   const successData = _.sortBy(finalArray, 'sortOrder');
+  const OVERLAP = 20;
   return (
     <Grid hasGutter>
       <GridItem xl2={3} xl={3} lg={3} md={3} sm={3}>
-        <div style={{ height: DEFAULT_CHART_HEIGHT }}>
+        <div
+          style={{
+            height: DEFAULT_CHART_HEIGHT,
+            marginTop: OVERLAP * -1,
+          }}
+        >
           <SuccessRatioDonut
             data={successData}
             successValue={successValue}
