@@ -244,6 +244,7 @@ function getMetadata(
   name?: string,
   cloudinit?: string,
   finalizers?: [string],
+  addSnapshotEnabledVolume?: boolean,
 ) {
   const vmName = name || `${provisionSource.getValue().toLowerCase()}-${namespace.slice(-5)}`;
   const metadata = {
@@ -287,11 +288,38 @@ function getMetadata(
       source: {},
     },
   };
+  const snapshotEnabledDVTemplate = {
+    apiVersion: 'cdi.kubevirt.io/v1beta1',
+    metadata: {
+      name: `${metadata.name}-snapshot-disk`,
+    },
+    spec: {
+      pvc: {
+        accessModes: [diskAccessMode.ReadWriteMany.value],
+        volumeMode: diskVolumeMode.Block,
+        resources: {
+          requests: {
+            storage: '1Gi',
+          },
+        },
+        storageClassName: `${STORAGE_CLASS}`,
+      },
+      source: {
+        image: ProvisionSource.CONTAINER.getSource(),
+      },
+    },
+  };
   const dataVolume = {
     dataVolume: {
       name: `${metadata.name}-rootdisk`,
     },
     name: 'rootdisk',
+  };
+  const snapshotEnabledDV = {
+    dataVolume: {
+      name: `${metadata.name}-snapshot-disk`,
+    },
+    name: 'snapshot-disk',
   };
   const containerDisk = {
     containerDisk: {
@@ -312,6 +340,13 @@ function getMetadata(
     },
     name: 'rootdisk',
   };
+  const snapshotEnabledDisk = {
+    bootOrder: 4,
+    disk: {
+      bus: 'virtio',
+    },
+    name: 'snapshot-disk',
+  };
   const cloudinitdisk = {
     bootOrder: 3,
     disk: {
@@ -329,6 +364,12 @@ function getMetadata(
   if (cloudinit) {
     volumes.push(cloudInitNoCloud);
     disks.push(cloudinitdisk);
+  }
+
+  if (addSnapshotEnabledVolume) {
+    disks.push(snapshotEnabledDisk);
+    dataVolumeTemplates.push(snapshotEnabledDVTemplate);
+    volumes.push(snapshotEnabledDV);
   }
 
   switch (provisionSource) {
@@ -422,12 +463,15 @@ export function getVMManifest(
   namespace: string,
   name?: string,
   cloudinit?: string,
+  addSnapshotEnabledVolume?: boolean,
 ) {
   const { metadata, dataVolumeTemplates, vmiSpec } = getMetadata(
     provisionSource,
     namespace,
     name,
     cloudinit,
+    null,
+    addSnapshotEnabledVolume,
   );
 
   const vmResource = {

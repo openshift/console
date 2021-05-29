@@ -17,7 +17,7 @@ import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMSnapshot } from '../../types';
 import { wrapWithProgress } from '../../utils/utils';
-import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
+import SnapshotModal from '../modals/snapshot-modal/SnapshotsModal';
 import { VMTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { snapshotsTableColumnClasses } from './utils';

@@ -12,6 +12,7 @@ export const {
   RHEL7_IMAGE = REMOTE_IMAGE,
   WIN10_IMAGE = REMOTE_IMAGE,
 } = process.env;
+export const { ON_CI } = process.env;
 
 export const NOT_AVAILABLE = 'Not available';
 
