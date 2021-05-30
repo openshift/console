@@ -5,7 +5,8 @@ export enum ActionType {
   SET_TEMPLATES_MAP = 'SET_TEMPLATES_MAP',
   SET_METRICS_MAP = 'SET_METRICS_MAP',
   SET_IS_REBALANCING = 'SET_IS_REBALANCING',
-  SET_REPLACEMENT_MAP = 'SET_REPLACEMENT_MAP',
+  SET_REPLACED_DISK_LIST = 'SET_REPLACED_DISK_LIST',
+  SET_REPLACING_DISK_LIST = 'SET_REPLACING_DISK_LIST',
 }
 
 export enum Status {
@@ -43,7 +44,8 @@ export const initialState: OCSColumnState = {
   metricsMap: {},
   alertsMap: {},
   isRebalancing: false,
-  replacementMap: {},
+  replacedDiskList: [],
+  replacingDiskList: [],
 };
 
 export const reducer = (state: OCSColumnState, action: OCSColumnStateAction) => {
@@ -60,16 +62,22 @@ export const reducer = (state: OCSColumnState, action: OCSColumnStateAction) => 
         metricsMap: action.payload,
       };
     }
-    case ActionType.SET_REPLACEMENT_MAP: {
+    case ActionType.SET_REPLACED_DISK_LIST: {
       return {
         ...state,
-        replacementMap: action.payload,
+        replacedDiskList: action.payload,
       };
     }
     case ActionType.SET_IS_REBALANCING: {
       return {
         ...state,
         isRebalancing: action.payload,
+      };
+    }
+    case ActionType.SET_REPLACING_DISK_LIST: {
+      return {
+        ...state,
+        replacingDiskList: action.payload,
       };
     }
     default:
@@ -80,22 +88,34 @@ export const reducer = (state: OCSColumnState, action: OCSColumnStateAction) => 
 export type OCSColumnStateAction =
   | { type: ActionType.SET_ALERTS_MAP; payload: OCSDiskList }
   | { type: ActionType.SET_METRICS_MAP; payload: OCSDiskList }
-  | { type: ActionType.SET_REPLACEMENT_MAP; payload: OCSDiskList }
-  | { type: ActionType.SET_IS_REBALANCING; payload: boolean };
+  | { type: ActionType.SET_REPLACED_DISK_LIST; payload: ReplacedDisk[] }
+  | { type: ActionType.SET_IS_REBALANCING; payload: boolean }
+  | {
+      type: ActionType.SET_REPLACING_DISK_LIST;
+      payload: {
+        id: string;
+        path: string;
+        serial: string;
+      }[];
+    };
 
 export type OCSColumnState = {
   metricsMap: OCSDiskList;
   alertsMap: OCSDiskList;
   isRebalancing: boolean;
-  replacementMap: ReplacementMap;
+  replacedDiskList: ReplacedDisk[];
+  replacingDiskList: {
+    id: string;
+    path: string;
+    serial: string;
+  }[];
 };
 
-export type ReplacementMap = OCSDiskList & {
-  [diskName: string]: OCSDiskMetadata & {
-    disk: {
-      id: string;
-      serial: string;
-    };
+export type ReplacedDisk = OCSDiskMetadata & {
+  disk: {
+    id: string;
+    path: string;
+    serial: string;
   };
 };
 
@@ -105,7 +125,7 @@ export type OCSDiskList = {
 
 export type OCSDiskStatus = keyof typeof Status;
 
-export type OCSDiskMetadata = { osd: string; status: OCSDiskStatus };
+export type OCSDiskMetadata = { osd: string; status: OCSDiskStatus; node: string };
 
 export type AlertsDiskMap = {
   [disk: string]: string;
