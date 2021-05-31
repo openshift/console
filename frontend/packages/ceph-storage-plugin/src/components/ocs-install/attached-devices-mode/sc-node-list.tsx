@@ -63,7 +63,7 @@ const EmptyMessage: React.FC = () => {
   );
 };
 
-const LoadingItem: React.FC = () => <div className="loading-skeleton--table-row" />;
+const LoadingItem: React.FC = () => <div className="skeleton-text" />;
 
 const loadingCells: IRow['cells'] = [
   {

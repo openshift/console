@@ -83,13 +83,11 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     enableMinimal,
     stretchClusterChecked,
     enableFlexibleScaling,
-    lvsSelectNodes = [],
-    lvsAllNodes = [],
+    chartNodes = new Set(),
   } = state;
 
   const memoizedPvData = useDeepCompareMemoize(pvData, true);
   const memoizedNodesData = useDeepCompareMemoize(nodesData, true);
-  const selectedNodes = [...lvsSelectNodes, ...lvsAllNodes].map(getName);
 
   const pvs: K8sResourceKind[] = React.useMemo(() => getSCAvailablePVs(memoizedPvData, scName), [
     memoizedPvData,
@@ -99,7 +97,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const tableData: NodeKindWithLoading[] =
     associatedNodes?.length > 0 && pvLoaded && nodesLoaded
       ? memoizedNodesData
-          ?.filter((node) => selectedNodes.includes(getName(node)))
+          ?.filter((node) => chartNodes.has(getName(node)))
           .map((node) =>
             associatedNodes?.includes(getName(node)) ||
             associatedNodes?.includes(node.metadata.labels?.['kubernetes.io/hostname'])
