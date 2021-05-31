@@ -1,6 +1,7 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
 import { PipelineResourceType, VolumeTypes } from '../../const';
+import { taskParamIsRequired } from '../../pipeline-builder/utils';
 import { CREATE_PIPELINE_RESOURCE } from './const';
 
 export const validateResourceType = (t: TFunction) =>
@@ -105,8 +106,15 @@ const commonPipelineSchema = (t: TFunction) =>
     parameters: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('pipelines-plugin~Required')),
+        default: yup.string(),
         description: yup.string(),
-        default: yup.string().required(t('pipelines-plugin~Required')),
+        value: yup
+          .string()
+          .test('test-if-param-can-be-empty', t('pipelines-plugin~Required'), function(
+            value: string,
+          ) {
+            return taskParamIsRequired(this.parent) ? !!value : true;
+          }),
       }),
     ),
     resources: formResources(t),

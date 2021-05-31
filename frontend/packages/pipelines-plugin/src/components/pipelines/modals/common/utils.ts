@@ -7,6 +7,7 @@ import {
   PipelineRun,
   PipelineRunInlineResource,
   PipelineRunInlineResourceParam,
+  PipelineRunParam,
   PipelineRunReferenceResource,
   PipelineRunResource,
   PipelineWorkspace,
@@ -163,7 +164,10 @@ export const convertPipelineToModalData = (
 
   return {
     namespace,
-    parameters: params || [],
+    parameters: (params || []).map((param) => ({
+      ...param,
+      value: param.default, // setup the default if it exists
+    })),
     resources: (resources || []).map((resource: PipelineResource) => ({
       name: resource.name,
       selection: alwaysCreateResources ? CREATE_PIPELINE_RESOURCE : null,
@@ -226,7 +230,7 @@ export const getPipelineRunFromForm = (
       pipelineRef: {
         name: pipeline.metadata.name,
       },
-      params: getPipelineRunParams(parameters),
+      params: parameters.map(({ name, value }): PipelineRunParam => ({ name, value })),
       resources: resources.map(convertResources),
       workspaces: getPipelineRunWorkspaces(workspaces),
     },

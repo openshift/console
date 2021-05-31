@@ -2,16 +2,18 @@ import * as React from 'react';
 import { FieldArray } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared';
-import { PipelineParam } from '../../../../utils/pipeline-augment';
+import { InputField, useFormikValidationFix } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { taskParamIsRequired } from '../../pipeline-builder/utils';
+import { ModalParameter } from './types';
 
 type ParametersSectionProps = {
-  parameters: PipelineParam[];
+  parameters: ModalParameter[];
 };
 
 const PipelineParameterSection: React.FC<ParametersSectionProps> = ({ parameters }) => {
   const { t } = useTranslation();
+  useFormikValidationFix(parameters);
   return (
     <FieldArray
       name="parameters"
@@ -22,12 +24,11 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({ parameters
             {parameters.map((parameter, index) => (
               <InputField
                 key={parameter.name}
-                name={`parameters.${index}.default`}
+                name={`parameters.${index}.value`}
                 type={TextInputTypes.text}
                 label={parameter.name}
                 helpText={parameter.description}
-                placeholder={t('pipelines-plugin~Name')}
-                required
+                required={taskParamIsRequired(parameter)}
               />
             ))}
           </FormSection>

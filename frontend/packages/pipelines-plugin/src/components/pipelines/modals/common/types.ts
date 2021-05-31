@@ -38,9 +38,13 @@ export type PipelineModalFormWorkspace = {
       };
 };
 
+export type ModalParameter = PipelineParam & {
+  value?: string | string[];
+};
+
 export type CommonPipelineModalFormikValues = FormikValues & {
   namespace: string;
-  parameters: PipelineParam[];
+  parameters: ModalParameter[];
   resources: PipelineModalFormResource[];
   workspaces: PipelineModalFormWorkspace[];
 };
