@@ -138,6 +138,8 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       ? getStringEnumValues<BinaryUnit>(BinaryUnit)
       : [BinaryUnit.Mi, BinaryUnit.Gi, BinaryUnit.Ti];
 
+  requiresBlankDisk = () => this === StorageUISource.BLANK;
+
   requiresPVC = () =>
     this === StorageUISource.ATTACH_DISK || this === StorageUISource.ATTACH_CLONED_DISK;
 

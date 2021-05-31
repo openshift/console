@@ -41,6 +41,8 @@ export const STORAGE_CLASS_SUPPORTED_VMWARE_LINK =
 export const NODE_PORTS_LINK =
   'https://docs.openshift.com/container-platform/4.7/networking/configuring_ingress_cluster_traffic/configuring-ingress-cluster-traffic-nodeport.html#nw-using-nodeport_configuring-ingress-cluster-traffic-nodeport';
 
+export const PREALLOCATION_DATA_VOLUME_LINK =
+  'https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/virtual_disks/virt-using-preallocation-for-datavolumes.html';
 export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled
     ? t('kubevirt-plugin~Please correct the invalid fields.')

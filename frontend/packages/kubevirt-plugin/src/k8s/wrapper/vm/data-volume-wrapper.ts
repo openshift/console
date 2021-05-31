@@ -10,6 +10,7 @@ import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants
 import { DataVolumeModel } from '../../../models';
 import {
   getDataVolumeAccessModes,
+  getDataVolumePreallocationDisk,
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
@@ -77,6 +78,8 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getVolumeMode = () => getDataVolumeVolumeMode(this.data);
 
+  getPreallocation = () => getDataVolumePreallocationDisk(this.data);
+
   getVolumeModeEnum = () => VolumeMode.fromString(this.getVolumeMode());
 
   getAccessModesEnum = () => {
@@ -112,6 +115,12 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   setVolumeMode = (volumeMode: VolumeMode) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.volumeMode = volumeMode && volumeMode.getValue(); // allow null and undefined
+    return this;
+  };
+
+  setPreallocationDisk = (isEnabled: boolean) => {
+    this.ensurePath('spec.preallocation');
+    this.data.spec.preallocation = isEnabled;
     return this;
   };
 

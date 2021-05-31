@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
@@ -22,6 +22,7 @@ import { getAnnotations, getName } from '@console/shared/src';
 import {
   Alert,
   AlertVariant,
+  Checkbox,
   ExpandableSection,
   Form,
   FormSelect,
@@ -62,6 +63,7 @@ import {
   getSequenceName,
   STORAGE_CLASS_SUPPORTED_RHV_LINK,
   STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
+  PREALLOCATION_DATA_VOLUME_LINK,
 } from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
@@ -187,6 +189,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (isEditing && combinedDisk.getVolumeMode()) || null,
   );
 
+  const [enablePreallocation, setEnablePreallocation] = React.useState<boolean>(
+    dataVolume.getPreallocation(),
+  );
+
   React.useEffect(() => {
     if (source.requiresPVC()) {
       const pvcNameDataVolume = dataVolume.getPersistentVolumeClaimName();
@@ -269,7 +275,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
       .setVolumeMode(volumeMode || null)
-      .setAccessModes(accessMode ? [accessMode] : null);
+      .setAccessModes(accessMode ? [accessMode] : null)
+      .setPreallocationDisk(enablePreallocation);
   }
 
   let resultPersistentVolumeClaim;
@@ -344,9 +351,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       if (newVolumeMode !== volumeMode) {
         setVolumeMode(newVolumeMode);
       }
-      if (newAccessMode !== accessMode || newVolumeMode !== volumeMode) {
-        setAdvancedDrawerIsOpen(true); // notify the user that the hidden values were changed by force
-      }
     }
   };
 
@@ -387,6 +391,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       setBus(DiskBus.SATA);
     }
   };
+
+  const onTogglePreallocation = () => setEnablePreallocation(!enablePreallocation);
 
   const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
 
@@ -644,6 +650,26 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       ? t('kubevirt-plugin~{{name}} (default)', { name: getName(sc) })
                       : getName(sc)
                   }
+                />
+              </StackItem>
+              <StackItem>
+                <Checkbox
+                  id="cnv668"
+                  description={
+                    <Trans t={t} ns="kubevirt-plugin">
+                      Refer to the{' '}
+                      <ExternalLink
+                        text={t('kubevirt-plugin~Documentation')}
+                        href={PREALLOCATION_DATA_VOLUME_LINK}
+                      />{' '}
+                      or contact your system administrator for more information. Enabling
+                      preallocation is available only for blank disk source.
+                    </Trans>
+                  }
+                  isDisabled={!source.requiresBlankDisk()}
+                  isChecked={enablePreallocation}
+                  label={t('kubevirt-plugin~Enable preallocation')}
+                  onChange={() => onTogglePreallocation()}
                 />
               </StackItem>
             </Stack>
