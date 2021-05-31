@@ -12,7 +12,7 @@ import {
   OBC_STORAGE_CLASS_EXACT,
   SECRET_KEY,
 } from '../utils/consts';
-import { testDeployment, deployment } from '../mocks/deploymentData';
+import { deployment } from '../mocks/deploymentData';
 import { CreateOBCHandler } from '../views/obcPage';
 import { testName, checkErrors } from '../../../integration-tests-cypress/support/index';
 import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
@@ -29,7 +29,6 @@ describe('Test Object Bucket Claim resource', () => {
     cy.install();
     obcHandler = new CreateOBCHandler(OBC_NAME, testName, OBC_STORAGE_CLASS);
     obcHandler.createBucketClaim();
-    cy.wait(1 * MINUTE);
     cy.url().then((url) => {
       obcUrl = url;
     });
@@ -47,8 +46,7 @@ describe('Test Object Bucket Claim resource', () => {
 
   it('Test if Object Bucket Claim details page is rendered correctly', () => {
     cy.log('Test if OBC is bound');
-    cy.byLegacyTestID('resource-title').contains(OBC_NAME);
-    cy.byTestID('resource-status').contains(BOUND, { timeout: 1 * MINUTE });
+    cy.byTestID('resource-status').contains(BOUND, { timeout: MINUTE });
 
     cy.log('Test if owner and creation date are shown correctly');
     cy.byTestSelector('details-item-value__Owner')
@@ -121,9 +119,9 @@ describe('Test Object Bucket Claim resource', () => {
     listPage.rows.shouldBeLoaded();
     listPage.rows.clickKebabAction(OBC_NAME, 'Attach to Deployment');
     cy.byTestID('dropdown-selectbox').click();
-    cy.contains(testDeployment).click();
+    cy.contains(deployment.metadata.name).click();
     modal.submit();
-    obcHandler.deploymentReady(testDeployment);
+    obcHandler.deploymentReady(deployment.metadata.name);
     cy.exec(`echo '${JSON.stringify(deployment)}' | kubectl delete -n ${testName} -f -`);
   });
 });
