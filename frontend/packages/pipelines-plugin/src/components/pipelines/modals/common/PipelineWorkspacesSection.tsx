@@ -108,6 +108,7 @@ const PipelineWorkspacesSection: React.FC = () => {
                 }
                 fullWidth
                 required={!workspace.optional}
+                helpText={workspace.description}
               />
               {getVolumeTypeFields(workspace.type, index)}
             </div>
