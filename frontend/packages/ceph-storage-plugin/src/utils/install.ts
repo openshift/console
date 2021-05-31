@@ -18,7 +18,14 @@ import {
 } from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
-import { ocsTaint, NO_PROVISIONER, MINIMUM_NODES, ZONE_LABELS, RACK_LABEL } from '../constants';
+import {
+  ocsTaint,
+  OCS_PROVISIONERS,
+  NO_PROVISIONER,
+  MINIMUM_NODES,
+  ZONE_LABELS,
+  RACK_LABEL,
+} from '../constants';
 import { getSCAvailablePVs } from '../selectors';
 
 export const hasNoTaints = (node: NodeKind) => {
@@ -48,6 +55,9 @@ export const taintNodes = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
 export const getConvertedUnits = (value: string) => {
   return humanizeBinaryBytes(convertToBaseValue(value)).string ?? '-';
 };
+
+export const filterSC = (sc: StorageClassResourceKind) =>
+  !OCS_PROVISIONERS.some((ocsProvisioner: string) => sc?.provisioner?.includes(ocsProvisioner));
 
 export const filterSCWithNoProv = (sc: StorageClassResourceKind) =>
   sc?.provisioner === NO_PROVISIONER;

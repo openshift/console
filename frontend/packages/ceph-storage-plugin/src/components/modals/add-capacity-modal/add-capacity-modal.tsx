@@ -22,6 +22,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils/field-level-h
 import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -34,13 +35,12 @@ import {
   storageClassTooltip,
   defaultRequestSize,
 } from '../../../constants';
-import { OCSStorageClassDropdown } from '../storage-class-dropdown';
+import { filterSC, isArbiterSC, isValidTopology } from '../../../utils/install';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { pvResource, nodeResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
-import { isArbiterSC, isValidTopology } from '../../../utils/install';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
@@ -57,10 +57,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const [nodesData] = useK8sWatchResource<NodeKind[]>(nodeResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
-  /* TBD(Afreen): Show installation storage class as preselected
-                  Change state metadata
-  */
-
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
@@ -78,6 +74,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const usedCapacityMetric = values?.[1];
   const usedCapacity = humanizeBinaryBytes(usedCapacityMetric);
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
+  /** Name of the installation storageClass which will be the pre-selected value for the dropdown */
+  const installStorageClass = deviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
 
   const validateSC = React.useCallback(() => {
     if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
@@ -116,8 +114,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       </div>
     );
   }
-
-  const onChange = (sc: StorageClassResourceKind) => setStorageClass(sc);
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
@@ -190,7 +186,14 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           isRequired
         >
           <div id="add-capacity-dropdown" className="ceph-add-capacity__sc-dropdown">
-            <OCSStorageClassDropdown onChange={onChange} data-test="add-cap-sc-dropdown" />
+            <StorageClassDropdown
+              onChange={(sc: StorageClassResourceKind) => setStorageClass(sc)}
+              noSelection
+              selectedKey={selectedSCName || installStorageClass}
+              filter={filterSC}
+              hideClassName="ceph-add-capacity__sc-dropdown--hide"
+              data-test="add-cap-sc-dropdown"
+            />
           </div>
         </FormGroup>
         {isNoProvionerSC ? (
