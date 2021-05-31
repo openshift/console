@@ -209,10 +209,6 @@ export const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
   };
 };
 
-export const taskParamIsRequired = (param: TektonParam): boolean => {
-  return !('default' in param);
-};
-
 export const safeName = (reservedNames: string[], desiredName: string): string => {
   if (reservedNames.includes(desiredName)) {
     const newName = `${desiredName}-${getRandomChars(3)}`;

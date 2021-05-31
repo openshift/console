@@ -4,22 +4,21 @@ import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { paramIsRequired } from '../../../../utils/common';
 import AutoCompletePopover from '../../../shared/common/auto-complete/AutoCompletePopover';
-import { TektonParam } from '../../../../types';
-import { AddTriggerFormValues } from '../triggers/types';
+import { CommonPipelineModalFormikValues, ModalParameter } from './types';
 
 type ParametersSectionProps = {
   autoCompleteValues?: string[];
-  parameters: TektonParam[];
 };
 
-const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
-  autoCompleteValues,
-  parameters,
-}) => {
+const PipelineParameterSection: React.FC<ParametersSectionProps> = ({ autoCompleteValues }) => {
   const { t } = useTranslation();
 
-  const { setFieldValue } = useFormikContext<AddTriggerFormValues>();
+  const {
+    setFieldValue,
+    values: { parameters },
+  } = useFormikContext<CommonPipelineModalFormikValues>();
 
   return (
     <FieldArray
@@ -28,32 +27,35 @@ const PipelineParameterSection: React.FC<ParametersSectionProps> = ({
       render={() =>
         parameters.length > 0 && (
           <FormSection title={t('pipelines-plugin~Parameters')} fullWidth>
-            {parameters.map((parameter, index) => {
-              const name = `parameters.${index}.default`;
+            {parameters.map((parameter: ModalParameter, index) => {
+              const name = `parameters.${index}.value`;
+              const isRequired = paramIsRequired(parameter);
 
               const input = (ref?) => (
                 <InputField
                   ref={ref}
-                  key={parameter.name}
                   name={name}
                   type={TextInputTypes.text}
                   label={parameter.name}
                   helpText={parameter.description}
-                  placeholder={t('pipelines-plugin~Name')}
-                  required
+                  required={isRequired}
                   autoComplete="off"
                 />
               );
 
-              return autoCompleteValues ? (
-                <AutoCompletePopover
-                  autoCompleteValues={autoCompleteValues}
-                  onAutoComplete={(value: string) => setFieldValue(name, value)}
-                >
-                  {(callbackRef) => input(callbackRef)}
-                </AutoCompletePopover>
-              ) : (
-                input()
+              return (
+                <React.Fragment key={parameter.name}>
+                  {autoCompleteValues ? (
+                    <AutoCompletePopover
+                      autoCompleteValues={autoCompleteValues}
+                      onAutoComplete={(value: string) => setFieldValue(name, value)}
+                    >
+                      {(callbackRef) => input(callbackRef)}
+                    </AutoCompletePopover>
+                  ) : (
+                    input()
+                  )}
+                </React.Fragment>
               );
             })}
           </FormSection>
