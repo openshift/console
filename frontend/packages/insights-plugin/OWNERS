@@ -1,8 +1,8 @@
 reviewers:
-  - bond95
+  - gkarat
   - tisnik
 approvers:
-  - bond95
+  - gkarat
   - tisnik
 labels:
   - component/insights
