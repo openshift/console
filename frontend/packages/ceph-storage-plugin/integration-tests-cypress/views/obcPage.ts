@@ -1,4 +1,4 @@
-import { DEPLOYMENT_REPLICAS_STATUS } from '../utils/consts';
+import { DEPLOYMENT_REPLICAS_STATUS, MINUTE } from '../utils/consts';
 import { projectNameSpace } from '../../../dev-console/integration-tests/support/pages/app';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 
@@ -30,6 +30,7 @@ export class CreateOBCHandler {
       .click();
     cy.contains('openshift-storage.noobaa.io').click();
     modal.submit();
+    cy.byLegacyTestID('resource-title').contains(this.name, { timeout: MINUTE });
   }
 
   revealHiddenValues() {
@@ -46,7 +47,7 @@ export class CreateOBCHandler {
 
   deploymentReady(deploymentName: string) {
     cy.byLegacyTestID('horizontal-link-public~Details').click();
-    cy.contains(DEPLOYMENT_REPLICAS_STATUS);
+    cy.contains(DEPLOYMENT_REPLICAS_STATUS, { timeout: MINUTE });
     cy.byTestSelector('details-item-value__Name')
       .should('be.visible')
       .contains(deploymentName);
