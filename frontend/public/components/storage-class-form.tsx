@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
+import { i18n, TFunction } from 'i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 import { getName } from '@console/shared';
-import { Extension, withExtensions } from '@console/plugin-sdk';
 import {
-  StorageClassProvisioner,
   isStorageClassProvisioner,
-  ExtensionSCProvisionerProp,
-} from '@console/plugin-sdk/src/typings/storage-class-params';
-
+  StorageClassProvisioner,
+  useResolvedExtensions,
+  ProvisionerType,
+} from '@console/dynamic-plugin-sdk';
 import {
   AsyncComponent,
   ButtonBar,
@@ -28,12 +28,6 @@ import {
 import { k8sCreate, K8sResourceKind, referenceForModel, referenceFor } from './../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import { CSIDriverModel, StorageClassModel } from './../models';
-import { i18n, TFunction } from 'i18next';
-
-enum Provisioner {
-  CSI = 'csi',
-  OTHERS = 'others',
-}
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -76,39 +70,28 @@ class StorageClassFormWithTranslation extends React.Component<
     title: '',
     provisioner: '',
     parameters: {},
-    allowVolumeExpansion: true,
+    allowVolumeExpansion: () => true,
   };
 
   storageTypes = {};
 
-  // Fetch Storage type provisioners from different operators
-  // For CSI - provisionerType: 'csi'
-  // For Defaults - provisionerType: 'others'
-  getExtensionsStorageClassProvisioners = (provisionerType = Provisioner.OTHERS) => {
-    const extensionCSIProvisioners: ExtensionSCProvisionerProp = _.reduce(
-      this.props.params,
-      (res, value) => {
-        const obj = value.properties.getStorageClassProvisioner || {};
-        if (obj) {
-          const key = provisionerType;
-          const keyValue = obj[provisionerType];
-          res[key] = keyValue;
-        }
-        return res;
-      },
-      {},
-    );
-
-    return extensionCSIProvisioners[provisionerType];
+  getExtensions = (extensions) => {
+    extensions.forEach((ext: StorageClassProvisioner) => {
+      Object.entries(ext?.properties?.[ProvisionerType.CSI] ?? {})?.forEach(
+        ([key, val]) => (this.CSIStorageTypes[key] = val),
+      );
+      Object.entries(ext?.properties?.[ProvisionerType.OTHERS] ?? {})?.forEach(
+        ([key, val]) => (this.defaultStorageTypes[key] = val),
+      );
+    });
   };
 
   // For 'csi' storage type
-  CSIStorageTypes = Object.freeze({
-    ...this.getExtensionsStorageClassProvisioners(Provisioner.CSI),
+  CSIStorageTypes = {
     'ebs.csi.aws.com': {
       title: 'AWS CSI', // t('public~AWS CSI')
       provisioner: 'ebs.csi.aws.com',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       parameters: {
         type: {
           name: 'Type', // t('public~Type')
@@ -143,11 +126,10 @@ class StorageClassFormWithTranslation extends React.Component<
         },
       },
     },
-  });
+  };
 
   // For 'other' storage type
-  defaultStorageTypes = Object.freeze({
-    ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisoners
+  defaultStorageTypes = {
     local: {
       title: 'Local', // t('public~Local')
       provisioner: 'kubernetes.io/no-provisioner',
@@ -158,7 +140,7 @@ class StorageClassFormWithTranslation extends React.Component<
     aws: {
       title: 'AWS Elastic Block Storage',
       provisioner: 'kubernetes.io/aws-ebs',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs',
       parameters: {
         type: {
@@ -196,7 +178,7 @@ class StorageClassFormWithTranslation extends React.Component<
     'gce-pd': {
       title: 'GCE PD',
       provisioner: 'kubernetes.io/gce-pd',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#gce',
       parameters: {
         type: {
@@ -241,12 +223,12 @@ class StorageClassFormWithTranslation extends React.Component<
     glusterfs: {
       title: 'Glusterfs',
       provisioner: 'kubernetes.io/glusterfs',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#glusterfs',
       parameters: {
         resturl: {
           name: 'Gluster REST/Heketi URL', // t('public~Gluster REST/Heketi URL')
-          required: true,
+          required: () => true,
         },
         restuser: {
           name: 'Gluster REST/Heketi user', // t('public~Gluster REST/Heketi user')
@@ -286,7 +268,7 @@ class StorageClassFormWithTranslation extends React.Component<
     openstackCinder: {
       title: 'OpenStack Cinder',
       provisioner: 'kubernetes.io/cinder',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink:
         'https://kubernetes.io/docs/concepts/storage/storage-classes/#openstack-cinder',
       parameters: {
@@ -301,7 +283,7 @@ class StorageClassFormWithTranslation extends React.Component<
     azureFile: {
       title: 'Azure File',
       provisioner: 'kubernetes.io/azure-file',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-file',
       parameters: {
         skuName: {
@@ -321,7 +303,7 @@ class StorageClassFormWithTranslation extends React.Component<
     azureDisk: {
       title: 'Azure Disk',
       provisioner: 'kubernetes.io/azure-disk',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-disk',
       parameters: {
         storageaccounttype: {
@@ -338,7 +320,7 @@ class StorageClassFormWithTranslation extends React.Component<
     quobyte: {
       title: 'Quobyte',
       provisioner: 'kubernetes.io/quobyte',
-      allowVolumeExpansion: false,
+      allowVolumeExpansion: () => false,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#quobyte',
       parameters: {
         quobyteAPIServer: {
@@ -378,7 +360,7 @@ class StorageClassFormWithTranslation extends React.Component<
     vSphereVolume: {
       title: 'vSphere Volume',
       provisioner: 'kubernetes.io/vsphere-volume',
-      allowVolumeExpansion: false,
+      allowVolumeExpansion: () => false,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#vsphere',
       parameters: {
         diskformat: {
@@ -399,7 +381,7 @@ class StorageClassFormWithTranslation extends React.Component<
     portworxVolume: {
       title: 'Portworx Volume',
       provisioner: 'kubernetes.io/portworx-volume',
-      allowVolumeExpansion: true,
+      allowVolumeExpansion: () => true,
       documentationLink:
         'https://kubernetes.io/docs/concepts/storage/storage-classes/#portworx-volume',
       parameters: {
@@ -472,27 +454,27 @@ class StorageClassFormWithTranslation extends React.Component<
     scaleIo: {
       title: 'ScaleIO',
       provisioner: 'kubernetes.io/scaleio',
-      allowVolumeExpansion: false,
+      allowVolumeExpansion: () => false,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#scaleio',
       parameters: {
         gateway: {
           name: 'API gateway', // t('public~API gateway')
-          required: true,
+          required: () => true,
           hintText: 'ScaleIO API gateway address', // t('public~ScaleIO API gateway address')
         },
         system: {
           name: 'System name', // t('public~System name')
-          required: true,
+          required: () => true,
           hintText: 'Name of the ScaleIO system', // t('public~Name of the ScaleIO system')
         },
         protectionDomain: {
           name: 'Protection domain', // t('public~Protection domain')
-          required: true,
+          required: () => true,
           hintText: 'Name of the ScaleIO protection domain', // t('public~Name of the ScaleIO protection domain')
         },
         storagePool: {
           name: 'Storage pool', // t('public~Storage pool')
-          required: true,
+          required: () => true,
           hintText: 'Name of the volume storage pool', // t('public~Name of the volume storage pool')
         },
         storageMode: {
@@ -502,7 +484,7 @@ class StorageClassFormWithTranslation extends React.Component<
         },
         secretRef: {
           name: 'Secret reference', // t('public~Secret reference')
-          required: true,
+          required: () => true,
           hintText: 'Reference to a configured Secret object', // t('public~Reference to a configured Secret object')
         },
         readOnly: {
@@ -518,7 +500,7 @@ class StorageClassFormWithTranslation extends React.Component<
     storageOs: {
       title: 'StorageOS',
       provisioner: 'kubernetes.io/storageos',
-      allowVolumeExpansion: false,
+      allowVolumeExpansion: () => false,
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#storageos',
       parameters: {
         pool: {
@@ -548,7 +530,7 @@ class StorageClassFormWithTranslation extends React.Component<
         },
       },
     },
-  });
+  };
 
   reclaimPolicies = {
     Retain: 'Retain',
@@ -579,7 +561,11 @@ class StorageClassFormWithTranslation extends React.Component<
   };
 
   componentDidUpdate(prevProps) {
-    if (this.props !== prevProps) {
+    const [extensions, extensionsLoaded] = this.props.extensions;
+    if (extensionsLoaded && !_.isEqual(this.props.extensions, prevProps.extensions)) {
+      this.getExtensions(extensions);
+    }
+    if (this.props !== prevProps && extensionsLoaded) {
       const { resources } = this.props;
       const loaded = _.get(resources.sc, 'loaded');
       const csiLoaded = _.get(resources.csi, 'loaded');
@@ -648,7 +634,7 @@ class StorageClassFormWithTranslation extends React.Component<
     const defaultParams = this.storageTypes?.[this.state?.newStorageClass?.type]?.parameters ?? {};
     const hiddenParmas = {};
     _.each(defaultParams, (values, param) => {
-      if (values.visible && !values.visible() && values.value) {
+      if (values.hasOwnProperty('visible') && values.visible(defaultParams) && values.value) {
         hiddenParmas[param] = values;
       }
     });
@@ -690,7 +676,7 @@ class StorageClassFormWithTranslation extends React.Component<
         data.volumeBindingMode = volumeBindingMode;
       }
 
-      if (this.storageTypes[type].allowVolumeExpansion) {
+      if (this.storageTypes[type].allowVolumeExpansion(this.state.newStorageClass.parameters)) {
         data.allowVolumeExpansion = expansion;
       }
 
@@ -838,7 +824,7 @@ class StorageClassFormWithTranslation extends React.Component<
     );
     let isRequired = false;
     if (requiredParam) {
-      isRequired = _.isFunction(requiredParam) ? requiredParam(params) : requiredParam;
+      isRequired = requiredParam(params);
     }
 
     return isRequired;
@@ -852,8 +838,10 @@ class StorageClassFormWithTranslation extends React.Component<
       const validationMsg = _.get(parameter, 'validationMsg', null);
       const isCheckbox = parameter.type === 'checkbox';
       const selectedKey = ['newStorageClass', 'parameters', key, 'value'];
-
-      if (parameter.visible && !parameter.visible(this.state.newStorageClass.parameters)) {
+      if (
+        parameter.hasOwnProperty('visible') &&
+        parameter?.visible(this.state.newStorageClass.parameters) === false
+      ) {
         return null;
       }
 
@@ -976,7 +964,8 @@ class StorageClassFormWithTranslation extends React.Component<
     const reclaimPolicyKey =
       newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
     const expansionFlag =
-      newStorageClass.type && this.storageTypes[newStorageClass.type].allowVolumeExpansion;
+      newStorageClass.type &&
+      this.storageTypes[newStorageClass.type].allowVolumeExpansion(newStorageClass.parameters);
     const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
 
     return (
@@ -1185,15 +1174,14 @@ export const ConnectedStorageClassForm = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(
-  withTranslation()(
-    withExtensions<StorageClassFormExtensionProps, Extension, StorageClassFormProps>({
-      params: isStorageClassProvisioner,
-    })(StorageClassFormWithTranslation),
-  ),
+  withTranslation()<StateProps & DispatchProps & WithTranslation>((props) => {
+    const extensions = useResolvedExtensions(isStorageClassProvisioner);
+    return <StorageClassFormWithTranslation extensions={extensions} {...props} />;
+  }),
 );
 
 export type StorageClassFormExtensionProps = {
-  params: StorageClassProvisioner[];
+  extensions?: [any[], boolean, any[]];
 };
 
 export const StorageClassForm = (props) => {

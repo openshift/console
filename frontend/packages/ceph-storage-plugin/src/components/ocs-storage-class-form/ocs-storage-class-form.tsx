@@ -26,12 +26,12 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { ProvisionerProps } from '@console/plugin-sdk';
 import {
   ConfigMapKind,
   K8sResourceKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s/types';
+import { ProvisionerProps } from '@console/dynamic-plugin-sdk';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { ConfigMapModel, StorageClassModel } from '@console/internal/models';
 import { OCS_INDEPENDENT_FLAG, GUARDED_FEATURES } from '../../features';
@@ -550,3 +550,6 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
 
   return <></>;
 };
+
+export const trueFunction = () => true;
+export const falseFunction = () => false;
