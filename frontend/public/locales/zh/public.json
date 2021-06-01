@@ -1427,7 +1427,7 @@
   "ProjectRequest": "ProjectRequest",
   "ProjectRequests": "ProjectRequests",
   "Ingress": "Ingress",
-  "Route": "Route",
+  "Route": "路由",
   "ConfigMap": "ConfigMap",
   "ClusterRoleBinding": "ClusterRoleBinding",
   "ClusterRoleBindings": "ClusterRoleBindings",
