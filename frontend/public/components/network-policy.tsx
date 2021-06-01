@@ -135,28 +135,10 @@ const EgressHeader = () => {
   );
 };
 
-const RuleRow = ({ peers, ports, namespace, podSelector }) => {
+const RuleRow = ({ peer, ports, namespace, mainPodSelector }) => {
   const { t } = useTranslation();
-  const podSelectors = [];
-  const nsSelectors = [];
-  let i = 0;
-
   const style = { margin: '5px 0' };
-  _.each(peers, ({ namespaceSelector, podSelector: ps }) => {
-    if (namespaceSelector) {
-      nsSelectors.push(
-        <div key={i++} style={style}>
-          <Selector selector={namespaceSelector} kind="Namespace" />
-        </div>,
-      );
-    } else {
-      podSelectors.push(
-        <div key={i++} style={style}>
-          <Selector selector={ps} namespace={namespace} />
-        </div>,
-      );
-    }
-  });
+
   return (
     <div className="row co-resource-list__item">
       <div className="col-xs-4">
@@ -164,31 +146,71 @@ const RuleRow = ({ peers, ports, namespace, podSelector }) => {
           <span className="text-muted">{t('public~Pod selector')}:</span>
         </div>
         <div style={style}>
-          <Selector selector={podSelector} namespace={namespace} />
+          <Selector selector={mainPodSelector} namespace={namespace} />
         </div>
       </div>
       <div className="col-xs-5">
         <div>
-          {!podSelectors.length ? null : (
-            <div>
-              <span className="text-muted">{t('public~Pod selector')}:</span>
-              {podSelectors}
-            </div>
-          )}
-          {!nsSelectors.length ? null : (
-            <div style={{ paddingTop: podSelectors.length ? 10 : 0 }}>
-              <span className="text-muted">{t('public~NS selector')}:</span>
-              {nsSelectors}
-            </div>
+          {peer ? (
+            <>
+              {peer.namespaceSelector ? (
+                <div>
+                  <span className="text-muted">{t('public~NS selector')}:</span>
+                  <div style={style}>
+                    {_.isEmpty(peer.namespaceSelector) ? (
+                      <span>{t('public~Any namespace')}</span>
+                    ) : (
+                      <Selector selector={peer.namespaceSelector} kind="Namespace" />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                peer.podSelector && (
+                  <div>
+                    <span className="text-muted">{t('public~Namespace')}:</span>
+                    <div style={style}>{namespace}</div>
+                  </div>
+                )
+              )}
+              {peer.podSelector && (
+                <div style={{ paddingTop: 10 }}>
+                  <span className="text-muted">{t('public~Pod selector')}:</span>
+                  <div style={style}>
+                    {_.isEmpty(peer.podSelector) ? (
+                      <span>{t('public~Any pod')}</span>
+                    ) : (
+                      <Selector
+                        selector={peer.podSelector}
+                        namespace={peer.namespaceSelector ? undefined : namespace}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+              {peer.ipBlock && (
+                <div>
+                  <span className="text-muted">{t('public~IP Block')}:</span>
+                  <div style={style}>{peer.ipBlock.cidr}</div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div>{t('public~Any peer')}</div>
           )}
         </div>
       </div>
       <div className="col-xs-3">
-        {_.map(ports, (port, k) => (
-          <p key={k}>
-            {port.protocol}/{port.port}
-          </p>
-        ))}
+        {ports && ports.length > 0 ? (
+          <>
+            {_.map(ports, (port, k) => (
+              <p key={k}>
+                {port.protocol}/{port.port}
+              </p>
+            ))}
+          </>
+        ) : (
+          <div>{t('public~Any port')}</div>
+        )}
       </div>
     </div>
   );
@@ -204,6 +226,8 @@ const Details_ = ({ obj: np, flags }) => {
     ? np.spec.policyTypes.includes('Egress')
     : !!np.spec.egress;
   const affectsIngress = explicitPolicyTypes ? np.spec.policyTypes.includes('Ingress') : true;
+  const egressDenied = affectsEgress && (!np.spec.egress || np.spec.egress.length === 0);
+  const ingressDenied = affectsIngress && (!np.spec.ingress || np.spec.ingress.length === 0);
   return (
     <>
       <div className="co-m-pane__body">
@@ -230,7 +254,7 @@ const Details_ = ({ obj: np, flags }) => {
               .
             </Trans>
           </p>
-          {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
+          {ingressDenied ? (
             t('public~All incoming traffic is denied to Pods in {{namespace}}', {
               namespace: np.metadata.namespace,
             })
@@ -238,15 +262,17 @@ const Details_ = ({ obj: np, flags }) => {
             <div className="co-m-table-grid co-m-table-grid--bordered">
               <IngressHeader />
               <div className="co-m-table-grid__body">
-                {_.map(np.spec.ingress, (rule, i) => (
-                  <RuleRow
-                    key={i}
-                    peers={rule.from}
-                    ports={rule.ports}
-                    podSelector={np.spec.podSelector}
-                    namespace={np.metadata.namespace}
-                  />
-                ))}
+                {_.map(np.spec.ingress, (rule, i) =>
+                  (rule.from || [undefined]).map((peer, j) => (
+                    <RuleRow
+                      key={`${i}_${j}`}
+                      peer={peer}
+                      ports={rule.ports}
+                      mainPodSelector={np.spec.podSelector}
+                      namespace={np.metadata.namespace}
+                    />
+                  )),
+                )}
               </div>
             </div>
           )}
@@ -268,7 +294,7 @@ const Details_ = ({ obj: np, flags }) => {
               .
             </Trans>
           </p>
-          {_.isEmpty(_.get(np, 'spec.egress[0]', [])) ? (
+          {egressDenied ? (
             t('public~All outgoing traffic is denied from Pods in {{namespace}}', {
               namespace: np.metadata.namespace,
             })
@@ -276,15 +302,17 @@ const Details_ = ({ obj: np, flags }) => {
             <div className="co-m-table-grid co-m-table-grid--bordered">
               <EgressHeader />
               <div className="co-m-table-grid__body">
-                {_.map(np.spec.egress, (rule, i) => (
-                  <RuleRow
-                    key={i}
-                    peers={rule.to}
-                    ports={rule.ports}
-                    podSelector={np.spec.podSelector}
-                    namespace={np.metadata.namespace}
-                  />
-                ))}
+                {_.map(np.spec.egress, (rule, i) =>
+                  rule.to.map((peer, j) => (
+                    <RuleRow
+                      key={`${i}_${j}`}
+                      peer={peer}
+                      ports={rule.ports}
+                      mainPodSelector={np.spec.podSelector}
+                      namespace={np.metadata.namespace}
+                    />
+                  )),
+                )}
               </div>
             </div>
           )}
