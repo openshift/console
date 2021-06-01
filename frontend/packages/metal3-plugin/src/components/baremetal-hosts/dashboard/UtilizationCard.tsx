@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -12,16 +11,12 @@ import {
   humanizeCpuCores,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
-import { getMachineNodeName } from '@console/shared';
+import { getMachineNodeName, DEFAULT_DURATION, useDateRange } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
 } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import {
   getUtilizationQueries,
@@ -29,11 +24,12 @@ import {
   getTopConsumerQueries,
   getMultilineUtilizationQueries,
 } from './queries';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
+  const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [startDate, endDate, updateEndDate] = useDateRange(duration);
 
   const { machine } = React.useContext(BareMetalHostDashboardContext);
   const nodeName = getMachineNodeName(machine);
@@ -134,21 +130,18 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('metal3-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown onChange={setDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody startDate={startDate} endDate={endDate}>
         <PrometheusUtilizationItem
           title={t('metal3-plugin~CPU')}
           utilizationQuery={queries[HostQuery.CPU_UTILIZATION].utilization}
           humanizeValue={humanizeCpuCores}
           TopConsumerPopover={cpuPopover}
           duration={duration}
-          setTimestamps={setTimestamps}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('metal3-plugin~Memory')}
@@ -158,6 +151,9 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('metal3-plugin~Filesystem')}
@@ -167,18 +163,27 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusMultilineUtilizationItem
           title={t('metal3-plugin~Network Transfer')}
           queries={multilineQueries[HostQuery.NETWORK_UTILIZATION]}
           humanizeValue={humanizeDecimalBytesPerSec}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('metal3-plugin~Pod count')}
           utilizationQuery={queries[HostQuery.NUMBER_OF_PODS].utilization}
           humanizeValue={humanizePods}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
       </UtilizationBody>
     </DashboardCard>

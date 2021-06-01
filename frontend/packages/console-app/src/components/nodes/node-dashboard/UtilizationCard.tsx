@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import ConsumerPopover, {
   LimitsBody,
@@ -21,7 +17,6 @@ import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
-  Dropdown,
 } from '@console/internal/components/utils';
 import {
   PrometheusUtilizationItem,
@@ -36,6 +31,8 @@ import {
   getResourceQutoaQueries,
 } from './queries';
 import { NodeDashboardContext } from './NodeDashboardContext';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { DEFAULT_DURATION, useDateRange } from '@console/shared';
 
 const getPodConsumers = (query: string, nodeName: string) => ({
   query,
@@ -110,8 +107,8 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
+  const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [startDate, endDate, updateEndDate] = useDateRange(duration);
 
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
@@ -203,14 +200,9 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('nodes~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown onChange={setDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody startDate={startDate} endDate={endDate}>
         <PrometheusUtilizationItem
           title={t('nodes~CPU')}
           humanizeValue={humanizeCpuCores}
@@ -220,8 +212,10 @@ const UtilizationCard: React.FC = () => {
           requestQuery={resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_CPU]}
           TopConsumerPopover={cpuPopover}
           duration={duration}
-          setTimestamps={setTimestamps}
           setLimitReqState={setCPULimit}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('nodes~Memory')}
@@ -234,6 +228,9 @@ const UtilizationCard: React.FC = () => {
           TopConsumerPopover={memPopover}
           duration={duration}
           setLimitReqState={setMemoryLimit}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('nodes~Filesystem')}
@@ -243,6 +240,9 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={filesystemPopover}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusMultilineUtilizationItem
           title={t('nodes~Network transfer')}
@@ -250,12 +250,18 @@ const UtilizationCard: React.FC = () => {
           queries={multilineQueries[NodeQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('nodes~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[NodeQueries.POD_COUNT]}
           duration={duration}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
       </UtilizationBody>
     </DashboardCard>

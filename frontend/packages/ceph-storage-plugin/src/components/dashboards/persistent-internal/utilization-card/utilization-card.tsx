@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
@@ -13,10 +12,8 @@ import UtilizationBody from '@console/shared/src/components/dashboard/utilizatio
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
+import { DEFAULT_DURATION, useDateRange } from '@console/shared';
 import { humanizeIOPS, humanizeLatency } from './utils';
 import {
   StorageDashboardQuery,
@@ -26,8 +23,8 @@ import {
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [duration, setDuration] = useMetricDuration(t);
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
+  const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [startDate, endDate, updateEndDate] = useDateRange(duration);
 
   const storagePopover = React.useCallback(
     ({ current }) => (
@@ -52,40 +49,46 @@ const UtilizationCard: React.FC = () => {
             )}
           </FieldLevelHelp>
         </DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown onChange={setDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody startDate={startDate} endDate={endDate}>
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Used Capacity')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
-          setTimestamps={setTimestamps}
           TopConsumerPopover={storagePopover}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~IOPS')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
           duration={duration}
           humanizeValue={humanizeIOPS}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Latency')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
           duration={duration}
           humanizeValue={humanizeLatency}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Throughput')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
           duration={duration}
           humanizeValue={humanizeDecimalBytesPerSec}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Recovery')}
@@ -94,6 +97,9 @@ const UtilizationCard: React.FC = () => {
           }
           duration={duration}
           humanizeValue={humanizeDecimalBytesPerSec}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
       </UtilizationBody>
     </DashboardCard>

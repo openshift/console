@@ -6,24 +6,26 @@ import {
   PrometheusUtilizationItem,
 } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
-  Dropdown,
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import { getCreationTimestamp, getName, getNamespace } from '@console/shared';
+import {
+  getCreationTimestamp,
+  getName,
+  getNamespace,
+  DEFAULT_DURATION,
+  useDateRange,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  Duration,
-  useMetricDuration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {
@@ -47,8 +49,8 @@ const adjustDurationForStart = (start: number, createdAt: string): number => {
 
 export const VMUtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
+  const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [startDate, endDate, updateEndDate] = useDateRange(duration);
   const { vm, vmi, pods } = React.useContext(VMDashboardContext);
   const vmiLike = vm || vmi;
   const vmName = getName(vmiLike);
@@ -76,7 +78,7 @@ export const VMUtilizationCard: React.FC = () => {
 
   const createdAt = getCreationTimestamp(vmi);
   const adjustDuration = React.useCallback(
-    (start: number) => adjustDurationForStart(start, createdAt),
+    (start) => setDuration(adjustDurationForStart(start, createdAt)),
     [createdAt],
   );
 
@@ -84,23 +86,19 @@ export const VMUtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('kubevirt-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown onChange={adjustDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody startDate={startDate} endDate={endDate}>
         <PrometheusUtilizationItem
           title={t('kubevirt-plugin~CPU')}
           utilizationQuery={queries[VMQueries.CPU_USAGE]}
           humanizeValue={humanizeCpuCores}
           duration={duration}
-          adjustDuration={adjustDuration}
-          setTimestamps={setTimestamps}
           namespace={namespace}
           isDisabled={!vmiIsRunning}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('kubevirt-plugin~Memory')}
@@ -109,8 +107,10 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('kubevirt-plugin~Filesystem')}
@@ -119,8 +119,10 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusMultilineUtilizationItem
           title={t('kubevirt-plugin~Network Transfer')}
@@ -129,8 +131,10 @@ export const VMUtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
       </UtilizationBody>
     </DashboardCard>

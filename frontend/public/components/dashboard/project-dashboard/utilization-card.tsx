@@ -5,11 +5,10 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import { getName } from '@console/shared';
+import { getName, DEFAULT_DURATION, useDateRange } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PopoverPosition } from '@patternfly/react-core';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { Dropdown } from '../../utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeCpuCores,
@@ -18,10 +17,6 @@ import {
 } from '../../utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { PodModel } from '../../../models';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import {
   getUtilizationQueries,
   ProjectQueries,
@@ -32,11 +27,12 @@ import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
 } from '../dashboards-page/cluster-dashboard/utilization-card';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 
 export const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
+  const [duration, setDuration] = React.useState(DEFAULT_DURATION);
+  const [startDate, endDate, updateEndDate] = useDateRange(duration);
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
@@ -151,14 +147,9 @@ export const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('public~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown onChange={setDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody startDate={startDate} endDate={endDate}>
         <PrometheusUtilizationItem
           title={t('public~CPU')}
           humanizeValue={humanizeCpuCores}
@@ -166,8 +157,10 @@ export const UtilizationCard: React.FC = () => {
           requestQuery={queries[ProjectQueries.CPU_REQUESTS]}
           TopConsumerPopover={cpuPopover}
           duration={duration}
-          setTimestamps={setTimestamps}
           namespace={projectName}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('public~Memory')}
@@ -178,6 +171,9 @@ export const UtilizationCard: React.FC = () => {
           TopConsumerPopover={memPopover}
           duration={duration}
           namespace={projectName}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('public~Filesystem')}
@@ -187,6 +183,9 @@ export const UtilizationCard: React.FC = () => {
           TopConsumerPopover={filesystemPopover}
           duration={duration}
           namespace={projectName}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusMultilineUtilizationItem
           title={t('public~Network transfer')}
@@ -195,6 +194,9 @@ export const UtilizationCard: React.FC = () => {
           TopConsumerPopovers={networkPopovers}
           duration={duration}
           namespace={projectName}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
         <PrometheusUtilizationItem
           title={t('public~Pod count')}
@@ -202,6 +204,9 @@ export const UtilizationCard: React.FC = () => {
           utilizationQuery={queries[ProjectQueries.POD_COUNT]}
           duration={duration}
           namespace={projectName}
+          startDate={startDate}
+          endDate={endDate}
+          updateEndDate={updateEndDate}
         />
       </UtilizationBody>
     </DashboardCard>

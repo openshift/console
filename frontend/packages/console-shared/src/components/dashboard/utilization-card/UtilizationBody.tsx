@@ -7,16 +7,16 @@ import { useTranslation } from 'react-i18next';
 
 import './utilization-card.scss';
 
-const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) => {
+const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ startDate, endDate }) => {
   const [containerRef, width] = useRefWidth();
   const { t } = useTranslation();
   return (
     <div ref={containerRef}>
-      {!!timestamps.length && (
+      {startDate && endDate && (
         <ChartAxis
           containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
           scale={{ x: 'time' }}
-          domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
+          domain={{ x: [startDate, endDate] }}
           tickFormat={timeFormatter.format}
           orientation="top"
           height={15}
@@ -32,7 +32,11 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) =>
   );
 };
 
-export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
+export const UtilizationBody: React.FC<UtilizationBodyProps> = ({
+  children,
+  startDate,
+  endDate,
+}) => {
   const { t } = useTranslation();
   const axis = (
     <div className="co-utilization-card__item">
@@ -45,7 +49,7 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
         </span>
       </div>
       <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">
-        <UtilizationAxis timestamps={timestamps} />
+        <UtilizationAxis startDate={startDate} endDate={endDate} />
       </div>
     </div>
   );
@@ -64,9 +68,11 @@ export default UtilizationBody;
 
 type UtilizationBodyProps = {
   children: React.ReactNode;
-  timestamps: Date[];
+  startDate: Date;
+  endDate: Date;
 };
 
 type UtilizationAxisProps = {
-  timestamps: Date[];
+  startDate: Date;
+  endDate: Date;
 };
