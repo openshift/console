@@ -5,7 +5,7 @@ Feature: Kafka Event Source
 
         Background:
             Given user has installed Serverless Operator
-              And user has created Knative Kafka instance in knative-eventing namespace
+              And user has created Knative Kafka instance with source enabled true in knative-eventing namespace
               And user has installed Red Hat Integration - AMQ Streams operator
               And user has created Kafka instance and Topics
               And user has created or selected namespace "aut-kafka"
