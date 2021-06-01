@@ -4,10 +4,10 @@ Feature: Developer Catalog Page
 
 
         Background:
-            Given user is at developer perspective
+            Given user has installed OpenShift Serverless Operator
+              And user is at developer perspective
               And user is at Add page
               And user has created or selected namespace "aut-addflow-pagedetails"
-              And user has installed OpenShift Serverless Operator
 
 
         @regression
@@ -43,17 +43,6 @@ Feature: Developer Catalog Page
             Given user is at Developer Catalog page
              When user clicks on Event Sources type
              Then user will see the cards of Event Sources
-              And user will see Filter by Keyword field
-              And user will see A-Z, Z-A sort by dropdown
-
-
-        @smoke @manual
-        Scenario: Event Sources Providers on Developer Catalog: A-09-TC05
-            Given user has installed one or more operators that contribute event sources
-              And user is at Developer Catalog page
-             When user clicks on Event Sources type
-             Then user will see the list of Providers
-              And user will see the cards of Event Sources
               And user will see Filter by Keyword field
               And user will see A-Z, Z-A sort by dropdown
 
