@@ -10,7 +10,7 @@ Feature: Triggers
         @regression
         Scenario: Variables section in Add Trigger modal details: P-09-TC01
             Given user has created pipeline "pipe-trigger-one" with git resources
-              And user selected Add Trigger from kebab menu of pipeline "pipe-task-with-resource"
+              And user selected Add Trigger from kebab menu of pipeline "pipe-trigger-one"
              When user selects the "github-pullreq" from Git Provider Type field
               And user clicks on "Show Variables" link
              Then Git provider type field is enabled
@@ -93,7 +93,7 @@ Feature: Triggers
                   | trigger-four  |
 
 
-        # @smoke - Bug: ODC-5716 is raised for this scenario
+        @smoke
         Scenario Outline: Remove the trigger from pipelines page: P-09-TC08
             Given pipeline "<pipeline_name>" with trigger in pipelines page
              When user selects "Remove Trigger" from the kebab menu for "<pipeline_name>"
