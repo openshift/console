@@ -5,6 +5,6 @@
   "Size": "大小",
   "Source": "源",
   "Snapshot content": "快照内容",
-  "VolumeSnapshotClass": "VolumeSnapshotClass",
+  "VolumeSnapshotClass": "卷快照类",
   "Created at": "创建于"
 }
