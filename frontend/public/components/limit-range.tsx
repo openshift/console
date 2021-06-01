@@ -173,9 +173,7 @@ export const LimitRangeDetailsPage = (props) => {
   const Details = ({ obj: rq }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', { resource: LimitRangeModel.label })}
-        />
+        <SectionHeading text={t('public~LimitRange details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={rq} />

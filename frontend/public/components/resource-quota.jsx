@@ -261,11 +261,13 @@ const Details = ({ obj: rq }) => {
   const resourceTypes = getQuotaResourceTypes(rq);
   const showChartRow = hasComputeResources(resourceTypes);
   const scopes = _.get(rq, ['spec', 'scopes']);
-  const label = isClusterQuota(rq) ? ClusterResourceQuotaModel.label : ResourceQuotaModel.label;
+  const text = isClusterQuota(rq)
+    ? t('public~ClusterResourceQuota details')
+    : t('public~ResourceQuota details');
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~{{resource}} details', { resource: label })} />
+        <SectionHeading text={text} />
         {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
         <div className="row">
           <div className="col-sm-6">
@@ -282,10 +284,7 @@ const Details = ({ obj: rq }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', { resource: label })}
-          style={{ display: 'block', marginBottom: '20px' }}
-        >
+        <SectionHeading text={text} style={{ display: 'block', marginBottom: '20px' }}>
           <FieldLevelHelp>
             <p>
               {t(
