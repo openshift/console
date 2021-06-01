@@ -43,6 +43,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
 Then(
   'user can see the created workload {string} is linked to existing application {string}',
   (workloadName: string, appName: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(workloadName);
     topologyPage.getAppNode(appName).click({ force: true });
     topologySidePane.verifyResource(workloadName);
   },
@@ -180,7 +181,7 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
   topologyPage.componentNode(nodeName).click({ force: true });
   topologySidePane.selectTab('Resources');
-  topologySidePane.verifySection('Routes').should('be.visible');
+  topologySidePane.verifySection('Routes');
   cy.get('[role="dialog"] h2')
     .contains('Routes')
     .next('span')
@@ -188,12 +189,12 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
 });
 
 Then(
-  'the route of application {string} contains {string}',
+  'the route of application {string} contains {string} in the Routes section of the workload sidebar',
   (nodeName: string, routeName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(nodeName);
     topologyPage.componentNode(nodeName).click({ force: true });
     topologySidePane.selectTab('Resources');
-    topologySidePane.verifySection('Routes').should('be.visible');
+    topologySidePane.verifySection('Routes');
     cy.get('[role="dialog"] h2')
       .contains('Routes')
       .next('span')

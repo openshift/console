@@ -6,3 +6,4 @@ export * from './event-source-page';
 export * from './git-page';
 export * from './yaml-page';
 export * from './channel-page';
+export * from './dockerfile-page';
