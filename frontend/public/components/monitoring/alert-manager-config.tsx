@@ -193,11 +193,12 @@ export const numberOfIncompleteReceivers = (config: AlertmanagerConfig): number 
 // Puts sets of key=value pairs into single comma delimited label
 const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
   let count = 0;
+  const { t } = useTranslation();
   const list = _.map(labels, (value, key) => {
     count++;
     return key === 'default' ? (
       <span key="default" className="co-m-label__value">
-        All (default receiver)
+        {t('public~All (default receiver)')}
       </span>
     ) : (
       <React.Fragment key={`label-${key}-${value}`}>

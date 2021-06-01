@@ -20,7 +20,7 @@ const ServicePortList: React.SFC<ServicePortListProps> = ({ service }) => {
           &nbsp;
           <LongArrowAltRightIcon />
           &nbsp;
-          <span className="text-muted">{t('public~Pod Port:')}</span> {targetPort}
+          <span className="text-muted">{t('public~Pod port:')}</span> {targetPort}
         </li>
       ))}
     </ul>
@@ -51,7 +51,8 @@ const RoutesOverviewListItem: React.SFC<RoutesOverviewListItemProps> = ({ route 
   return (
     <li className="list-group-item">
       <ResourceLink kind="Route" name={name} namespace={namespace} />
-      <span className="text-muted">{t('public~Location:')}</span> <RouteLocation obj={route} />
+      <span className="text-muted">{t('public~Location:')}</span>
+      <RouteLocation obj={route} />
     </li>
   );
 };
@@ -71,7 +72,6 @@ export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({ obj }) 
     serviceResources.loaded && !serviceResources.loadError ? serviceResources.services : [];
   const routeResources = useRoutesWatcher(obj);
   const routes = routeResources.loaded && !routeResources.loadError ? routeResources.routes : [];
-
   return (
     <>
       <SidebarSectionHeading text={t('public~Services')} />

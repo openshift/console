@@ -577,7 +577,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   timespan,
 }) => {
   const { t } = useTranslation();
-
   const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
   const tickInterval = useSelector(
     ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
@@ -588,7 +587,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
-
   // If we have both `timespan` and `defaultTimespan`, `timespan` takes precedence
   const [span, setSpan] = React.useState(timespan || parsePrometheusDuration(defaultSpanText));
 
@@ -758,17 +756,18 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   if (isRangeVector) {
     return (
-      <GraphEmptyState title="Ungraphable results">
-        Query results include range vectors, which cannot be graphed. Try adding a function to
-        transform the data.
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t(
+          'public~Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
+        )}
       </GraphEmptyState>
     );
   }
 
   if (isDatasetTooBig) {
     return (
-      <GraphEmptyState title="Ungraphable results">
-        The resulting dataset is too large to graph.
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t('public~The resulting dataset is too large to graph.')}
       </GraphEmptyState>
     );
   }
@@ -819,7 +818,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             <Alert
               isInline
               className="co-alert"
-              title="Displaying with reduced resolution due to large dataset."
+              title={t('public~Displaying with reduced resolution due to large dataset.')}
               variant="info"
             />
           )}

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Trans } from 'react-i18next';
+import i18next from 'i18next';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { modelFor } from '../../module/k8s';
 import { confirmModal } from '../modals/confirm-modal';
@@ -17,19 +19,22 @@ const confirmNavUnpinModal = (resource: string, pinnedResources: string[], updat
   const label = modelFor(resource)?.labelPlural;
   const title = (
     <>
-      <YellowExclamationTriangleIcon className="co-icon-space-r" /> Remove from navigation?
+      <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+      {i18next.t('public~Remove from navigation?')}
     </>
   );
   const message = (
     <span>
-      Are you sure you want to remove <strong>{label}</strong> from navigation?
+      <Trans ns="public">
+        Are you sure you want to remove <strong>{{ label }}</strong> from navigation?
+      </Trans>
     </span>
   );
 
   return confirmModal({
     title,
     message,
-    btnText: 'Remove',
+    btnText: i18next.t('public~Remove'),
     submitDanger: true,
     executeFn,
   });
