@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEventListener, useForceRender } from '../../hooks';
+import { useEventListener } from '../../hooks';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
@@ -62,19 +62,6 @@ const MarkdownCopyClipboard: React.FC<MarkdownCopyClipboardProps> = ({
   rootSelector,
 }) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_COPY_BUTTON_ID}]`);
-  const forceRender = useForceRender();
-  /**
-   * During the first render of component docContext is not updated with the latest copy of `document`
-   * because we use `dangerouslySetInnerHTML` to set the markdown markup to a div.
-   * So while react updates the dom with latest of markdown markup with `dangerouslySetInnerHTML`
-   * this component mounts and access the old copy of dom in which there are no elements present
-   * with querySelector.
-   * So using forceRender to rerender the component and access the `document` in which markdown markup is present.
-   */
-  React.useEffect(() => {
-    forceRender();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return elements.length > 0 ? (
     <>
       {Array.from(elements).map((elm) => {

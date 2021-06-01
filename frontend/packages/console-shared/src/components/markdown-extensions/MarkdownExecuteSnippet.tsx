@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useCloudShellAvailable';
 import { useCloudShellCommandDispatch } from '@console/app/src/redux/actions/cloud-shell-dispatchers';
-import { useEventListener, useForceRender } from '../../hooks';
+import { useEventListener } from '../../hooks';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
 
@@ -66,19 +66,6 @@ const MarkdownExecuteSnippet: React.FC<MarkdownExecuteCommandProps> = ({
 }) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_EXECUTE_BUTTON_ID}]`);
   const showExecuteButton = useCloudShellAvailable();
-  const forceRender = useForceRender();
-  /**
-   * During the first render of component docContext is not updated with the latest copy of `document`
-   * because we use `dangerouslySetInnerHTML` to set the markdown markup to a div.
-   * So while react updates the dom with latest of markdown markup with `dangerouslySetInnerHTML`
-   * this component mounts and access the old copy of dom in which there are no elements present
-   * with querySelector.
-   * So using forceRender to rerender the component and access the `document` in which markdown markup is present.
-   */
-  React.useEffect(() => {
-    forceRender();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return elements.length > 0 && showExecuteButton ? (
     <>
       {Array.from(elements).map((elm) => {
