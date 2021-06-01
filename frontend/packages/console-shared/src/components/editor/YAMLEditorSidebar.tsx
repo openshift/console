@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import MonacoEditor from 'react-monaco-editor';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -10,7 +10,7 @@ type YAMLEditorSidebarProps = {
   editorRef: React.MutableRefObject<MonacoEditor>;
   model?: K8sKind;
   samples?: Sample[];
-  schema?: JSONSchema6;
+  schema?: JSONSchema7;
   snippets?: Sample[];
   sidebarLabel?: string;
   sanitizeYamlContent?: (id: string, yaml: string, kind: string) => string;

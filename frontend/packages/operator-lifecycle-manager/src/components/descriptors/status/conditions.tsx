@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
 import { SectionHeading } from '@console/internal/components/utils';
@@ -48,5 +48,5 @@ DescriptorConditions.displayName = 'DescriptorConditions';
 type ConditionsDescriptorProps = {
   descriptor: StatusDescriptor;
   obj: K8sResourceKind;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
 };

@@ -1,8 +1,8 @@
+import { UiSchema } from '@rjsf/core';
+import { getSchemaType, getUiOptions } from '@rjsf/core/dist/cjs/utils';
 import * as Immutable from 'immutable';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { UiSchema } from 'react-jsonschema-form';
-import { getSchemaType, getUiOptions } from 'react-jsonschema-form/lib/utils';
 import { THOUSAND, MILLION, BILLION } from './const';
 import { DynamicFormSchemaError, JSONSchemaType } from './types';
 
@@ -14,7 +14,7 @@ export const stringPathToUISchemaPath = (path: string): string[] =>
     return /^\d+$/.test(subPath) ? 'items' : subPath;
   });
 
-export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
+export const useSchemaLabel = (schema: JSONSchema7, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
   const showLabel = options?.label ?? true;
   const label = (options?.title || schema?.title) as string;
@@ -22,7 +22,7 @@ export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultL
 };
 
 export const useSchemaDescription = (
-  schema: JSONSchema6,
+  schema: JSONSchema7,
   uiSchema: UiSchema,
   defaultDescription?: string,
 ) =>
@@ -30,7 +30,7 @@ export const useSchemaDescription = (
     schema?.description ||
     defaultDescription) as string;
 
-export const getSchemaErrors = (schema: JSONSchema6): DynamicFormSchemaError[] => {
+export const getSchemaErrors = (schema: JSONSchema7): DynamicFormSchemaError[] => {
   return [
     ...(_.isEmpty(schema)
       ? [
@@ -51,7 +51,7 @@ export const getSchemaErrors = (schema: JSONSchema6): DynamicFormSchemaError[] =
 };
 
 // Determine if a schema will produce no form fields.
-export const hasNoFields = (jsonSchema: JSONSchema6 = {}, uiSchema: UiSchema = {}): boolean => {
+export const hasNoFields = (jsonSchema: JSONSchema7 = {}, uiSchema: UiSchema = {}): boolean => {
   // If schema is empty or has unsupported properties, it will not render any fields on the form
   if (getSchemaErrors(jsonSchema).length > 0) {
     return true;
@@ -61,12 +61,12 @@ export const hasNoFields = (jsonSchema: JSONSchema6 = {}, uiSchema: UiSchema = {
   const noUIFieldOrWidget = !uiSchema?.['ui:field'] && !uiSchema?.['ui:widget'];
   switch (type) {
     case JSONSchemaType.array:
-      return noUIFieldOrWidget && hasNoFields(jsonSchema.items as JSONSchema6, uiSchema?.items);
+      return noUIFieldOrWidget && hasNoFields(jsonSchema.items as JSONSchema7, uiSchema?.items);
     case JSONSchemaType.object:
       return (
         noUIFieldOrWidget &&
         _.every(jsonSchema?.properties, (property, propertyName) =>
-          hasNoFields(property as JSONSchema6, uiSchema?.[propertyName]),
+          hasNoFields(property as JSONSchema7, uiSchema?.[propertyName]),
         )
       );
     case JSONSchemaType.boolean:
@@ -129,7 +129,7 @@ const getControlFieldsAtPath = (uiSchema: UiSchema, path: string[]): string[] =>
  */
 const getJSONSchemaPropertySortWeight = (
   property: string,
-  jsonSchema: JSONSchema6,
+  jsonSchema: JSONSchema7,
   uiSchema: UiSchema,
   currentPath?: string[],
 ): number => {
@@ -190,13 +190,13 @@ const getJSONSchemaPropertySortWeight = (
 //  - field dependency properties (control then dependent)
 //  - all other properties
 export const getJSONSchemaOrder = (
-  jsonSchema: JSONSchema6,
+  jsonSchema: JSONSchema7,
   uiSchema: UiSchema,
   currentPath?: string[],
 ) => {
   const type = getSchemaType(jsonSchema ?? {});
   const handleArray = () => {
-    const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema6, uiSchema?.items, [
+    const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema7, uiSchema?.items, [
       ...(currentPath ?? []),
       'items',
     ]);
@@ -221,7 +221,7 @@ export const getJSONSchemaOrder = (
         jsonSchema?.properties ?? {},
         (orderAccumulator, propertySchema, propertyName) => {
           const descendantOrder = getJSONSchemaOrder(
-            propertySchema as JSONSchema6,
+            propertySchema as JSONSchema7,
             uiSchema?.[propertyName],
             [...(currentPath ?? []), propertyName],
           );

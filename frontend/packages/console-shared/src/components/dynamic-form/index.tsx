@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
+import Form, { FormProps } from '@rjsf/core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import Form, { FormProps } from 'react-jsonschema-form';
 import { history } from '@console/internal/components/utils';
 import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';

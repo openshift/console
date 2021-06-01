@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextVariants, Text } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -49,7 +49,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
   const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
   const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
   useFormikValidationFix(values);
-  const formSchema: JSONSchema6 = React.useMemo(
+  const formSchema: JSONSchema7 = React.useMemo(
     () => ({
       type: 'object',
       required: kameletSource?.spec?.definition?.required,

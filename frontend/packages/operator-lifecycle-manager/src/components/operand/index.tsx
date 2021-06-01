@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
@@ -492,7 +492,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 
   const schema =
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
-    (definitionFor(kindObj) as JSONSchema6);
+    (definitionFor(kindObj) as JSONSchema7);
 
   const {
     podStatuses,
@@ -716,7 +716,7 @@ type PodStatusesProps = {
   kindObj: K8sKind;
   obj: K8sResourceKind;
   podStatusDescriptors: StatusDescriptor[];
-  schema?: JSONSchema6;
+  schema?: JSONSchema7;
 };
 
 export type OperandDetailsProps = {

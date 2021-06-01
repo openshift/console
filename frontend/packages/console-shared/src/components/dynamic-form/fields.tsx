@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
+import { FieldProps, UiSchema } from '@rjsf/core';
+import SchemaField, { SchemaFieldProps } from '@rjsf/core/dist/cjs/components/fields/SchemaField';
+import { getUiOptions } from '@rjsf/core/dist/cjs/utils';
 import * as classnames from 'classnames';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FieldProps, UiSchema } from 'react-jsonschema-form';
-import SchemaField, {
-  SchemaFieldProps,
-} from 'react-jsonschema-form/lib/components/fields/SchemaField';
-import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
 import {
@@ -17,7 +15,6 @@ import {
 } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
-import { JSONSchemaType } from './types';
 import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
 
 const Description = ({ id, description }) =>
@@ -324,31 +321,12 @@ export const DropdownField: React.FC<FieldProps> = ({
 };
 
 export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
-  // TODO Remove this workaround when the issue has been fixed upstream in react-jsonschema-form and
-  // we bump our version to include that fix.
-  // Provide a fallback formData value for objects and arrays to prevent undefined
-  // references. This can occur if formData is malformed (for example, almExamples annotation
-  // explicitly sets an array value to null). This is an edge case that should be handled in the
-  // react-jsonschema-form package. An issue and fix have been opened upstream:
-  // Issue filed in @rjsf/core repo: https://github.com/rjsf-team/react-jsonschema-form/issues/2153
-  // PR opened for fix: https://github.com/rjsf-team/react-jsonschema-form/pull/2154
-  const type = getSchemaType(props.schema);
-  const fallbackFormData = React.useMemo(() => {
-    switch (type) {
-      case JSONSchemaType.array:
-        return [];
-      case JSONSchemaType.object:
-        return {};
-      default:
-        return undefined;
-    }
-  }, [type]);
-
-  // If a the provided schema will not generate any form field elements, return null.
+  // If the provided schema will not generate any form field elements, return null.
   if (hasNoFields(props.schema, props.uiSchema)) {
     return null;
   }
-  return <SchemaField {...props} formData={props.formData ?? fallbackFormData} />;
+
+  return <SchemaField {...props} />;
 };
 
 export const NullField = () => null;
@@ -370,7 +348,7 @@ type FormFieldProps = {
   id: string;
   defaultLabel?: string;
   required: boolean;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
   uiSchema: UiSchema;
 };
 
