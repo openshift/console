@@ -14,7 +14,8 @@ const operatorInstance = 'StorageCluster';
 const openshiftOperatorsNS = 'openshift-operators';
 const operandLink = 'portworx';
 
-describe(`Interacting with a global install mode Operator (${operatorName})`, () => {
+// TODO: Disable until https://github.com/libopenstorage/operator/pull/323 is merged
+xdescribe(`Interacting with a global install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
