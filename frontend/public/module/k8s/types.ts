@@ -1,4 +1,4 @@
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import { BadgeType, NodeAddress } from '@console/shared';
 import {
   ObjectReference,
@@ -499,7 +499,7 @@ export type CRDVersion = {
   storage: boolean;
   schema: {
     // NOTE: Actually a subset of JSONSchema, but using this type for convenience
-    openAPIV3Schema: JSONSchema6;
+    openAPIV3Schema: JSONSchema7;
   };
 };
 

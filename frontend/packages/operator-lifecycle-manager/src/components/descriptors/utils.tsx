@@ -1,6 +1,6 @@
-import { JSONSchema6 } from 'json-schema';
+import { getSchemaType } from '@rjsf/core/dist/cjs/utils';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { getSchemaAtPath } from '@console/shared';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
@@ -205,7 +205,7 @@ export function getValidCapabilitiesForValue<CapabilityType extends string = Spe
 
 export function getValidCapabilitiesForSchema<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
-  schema: JSONSchema6,
+  schema: JSONSchema7,
   allowDeprecated?: boolean,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
