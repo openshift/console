@@ -33,7 +33,7 @@ export const useTabbedTableBreadcrumbsFor = (
         ? []
         : [
             {
-              name: customBreadcrumbName || labelPluralKey ? t(labelPluralKey) : labelPlural,
+              name: customBreadcrumbName || (labelPluralKey ? t(labelPluralKey) : labelPlural),
               path: isAdminPerspective
                 ? `/${navOption}/${nsURL}/${subTab}`
                 : getBreadcrumbPath(match),
