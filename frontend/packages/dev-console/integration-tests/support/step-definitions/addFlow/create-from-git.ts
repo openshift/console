@@ -9,11 +9,6 @@ Given('user is at Import from git page', () => {
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
-  cy.get('body').then(($el) => {
-    if ($el.find('[aria-label$="Alert"]').length) {
-      cy.log('Builder image detected');
-    }
-  });
 });
 
 Then('git url gets Validated', () => {
@@ -43,6 +38,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
 Then(
   'user can see the created workload {string} is linked to existing application {string}',
   (workloadName: string, appName: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(workloadName);
     topologyPage.getAppNode(appName).click({ force: true });
     topologySidePane.verifyResource(workloadName);
   },

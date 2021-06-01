@@ -2,6 +2,7 @@ import { detailsPage } from '@console/cypress-integration-tests/views/details-pa
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { operatorsPO } from '../pageObjects';
 import { operators, pageTitle } from '../constants';
+import { app } from './app';
 
 export const operatorsPage = {
   navigateToOperatorHubPage: () => {
@@ -14,7 +15,7 @@ export const operatorsPage = {
   navigateToInstallOperatorsPage: () => {
     cy.get(operatorsPO.nav.operators).click();
     cy.get(operatorsPO.nav.installedOperators).click({ force: true });
-    cy.reload();
+    app.waitForLoad();
     detailsPage.titleShouldContain(pageTitle.InstalledOperators);
   },
 
@@ -43,12 +44,11 @@ export const operatorsPage = {
     cy.get('body').then(($body) => {
       if ($body.find(operatorsPO.installOperators.noOperatorsDetails).length === 0) {
         cy.get(operatorsPO.installOperators.search)
-          .should('be.visible')
           .clear()
           .type(operatorName);
       } else {
         cy.log(
-          `Operators are not installed in this cluster, so lets install the operator from operator Hub`,
+          `${operatorName} operator is not installed in this cluster, so lets install it from operator Hub`,
         );
       }
     });
@@ -62,9 +62,9 @@ export const operatorsPage = {
       .should('be.visible')
       .clear()
       .type(operatorName);
-    cy.get(operatorsPO.installOperators.operatorsNameRow, {
+    cy.get(operatorsPO.installOperators.operatorStatus, {
       timeout: 50000,
-    }).should('be.visible');
+    }).should('contain.text', 'Succeeded');
   },
 
   verifyOperatorNotAvailable: (operatorName: string) => {

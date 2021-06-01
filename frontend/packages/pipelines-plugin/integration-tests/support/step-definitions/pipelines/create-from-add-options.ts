@@ -12,6 +12,7 @@ import {
   catalogPage,
   addPage,
   createGitWorkload,
+  dockerfilePage,
 } from '@console/dev-console/integration-tests/support/pages';
 import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
@@ -69,7 +70,7 @@ When('user enters Git Repo url in docker file as {string}', (gitRepoUrl: string)
 
 When('user enters Git Repo url in builder image as {string}', (gitRepoUrl: string) => {
   gitPage.enterGitUrl(gitRepoUrl);
-  gitPage.verifyValidatedMessage();
+  cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
 });
 
 When('user clicks From Dockerfile card on the Add page', () => {
@@ -108,6 +109,10 @@ Then('Add pipeline checkbox is displayed', () => {
 
 When('user enters Name as {string} in General section', (name: string) => {
   gitPage.enterComponentName(name);
+});
+
+When('user enters Name as {string} in General section of Dockerfile page', (name: string) => {
+  dockerfilePage.enterName(name);
 });
 
 When('user selects Add Pipeline checkbox in Pipelines section', () => {

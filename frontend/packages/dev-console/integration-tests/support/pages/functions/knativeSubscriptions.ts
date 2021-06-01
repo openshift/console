@@ -1,4 +1,3 @@
-import { operatorsPage } from '@console/dev-console/integration-tests/support/pages/operators-page';
 import { operators } from '@console/dev-console/integration-tests/support/constants/global';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
@@ -6,7 +5,6 @@ import { projectNameSpace } from '@console/dev-console/integration-tests/support
 import { pageTitle } from '../../constants';
 
 export const createKnativeServing = () => {
-  operatorsPage.navigateToInstallOperatorsPage();
   projectNameSpace.selectProject('knative-serving');
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
@@ -19,13 +17,10 @@ export const createKnativeServing = () => {
   cy.get(operatorsPO.installOperators.knativeServingLink)
     .should('be.visible')
     .click();
-  cy.get(operatorsPO.installOperators.title).should(
-    'contain.text',
-    pageTitle.RedHatOpenShiftServerless,
-  );
+  detailsPage.titleShouldContain(pageTitle.KnativeServings);
   cy.get('body').then(($body) => {
-    if ($body.find('[role="grid"]').length) {
-      cy.log(`${pageTitle.CreateKnativeServing} already subscribed`);
+    if ($body.find('[role="grid"]').length > 0) {
+      cy.log(`${pageTitle.KnativeServings} already subscribed`);
     } else {
       cy.byTestID('item-create').click();
       detailsPage.titleShouldContain(pageTitle.CreateKnativeServing);
@@ -35,7 +30,6 @@ export const createKnativeServing = () => {
 };
 
 export const createKnativeEventing = () => {
-  operatorsPage.navigateToInstallOperatorsPage();
   projectNameSpace.selectProject('knative-eventing');
   cy.get('body').then(($body) => {
     if ($body.find(operatorsPO.installOperators.search)) {
@@ -48,13 +42,10 @@ export const createKnativeEventing = () => {
   cy.get(operatorsPO.installOperators.knativeEventingLink)
     .should('be.visible')
     .click();
-  cy.get(operatorsPO.installOperators.title).should(
-    'contain.text',
-    pageTitle.RedHatOpenShiftServerless,
-  );
+  detailsPage.titleShouldContain(pageTitle.KnativeEventings);
   cy.get('body').then(($body) => {
-    if ($body.find('[role="grid"]').length) {
-      cy.log(`${pageTitle.CreateKnativeEventing} already subscribed`);
+    if ($body.find('[role="grid"]').length > 0) {
+      cy.log(`${pageTitle.KnativeEventings} already subscribed`);
     } else {
       cy.byTestID('item-create').click();
       detailsPage.titleShouldContain(pageTitle.CreateKnativeEventing);

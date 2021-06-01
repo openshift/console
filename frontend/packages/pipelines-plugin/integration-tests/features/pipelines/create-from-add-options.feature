@@ -3,7 +3,7 @@ Feature: Create Pipeline from Add Options
               As a user, I want to create, edit, delete and view the pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipelines"
+            Given user has created or selected namespace "aut-pipelines-add-options"
 
 
         @regression
@@ -34,7 +34,7 @@ Feature: Create Pipeline from Add Options
         Scenario Outline: Create a pipeline from git workload with knative resource type: P-01-TC03
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
-              And user has created or selected namespace "aut-pipelines"
+              And user has created or selected namespace "aut-pipelines-add-options"
               And user is at Add page
               And user is at Import from Git form
              When user enters Git Repo url as "<git_url>"
@@ -58,6 +58,7 @@ Feature: Create Pipeline from Add Options
              When user searches for "<name>" in topology page
               And user clicks node "<name>" in topology page
              Then pipeline name "<name>" is displayed in topology side bar
+              And side bar is displayed with the pipelines section
 
         Examples:
                   | name       |
@@ -80,7 +81,7 @@ Feature: Create Pipeline from Add Options
         Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Docker file page
              When user enters Git Repo url in docker file as "<docker_git_url>"
-              And user enters Name as "<pipeline_name>" in General section
+              And user enters Name as "<pipeline_name>" in General section of Dockerfile page
               And user selects Add Pipeline checkbox in Pipelines section
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
@@ -107,6 +108,8 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/nodejs-ex.git | nodejs-ex-git |
 
 
+        #Marking this as manual due to git rate limit  issue
+        @manual
         Scenario Outline: Add Pipeline display in git workload for builder image: P-01-TC08
             Given user is at Import from Git form
              When user enters Git Repo url as "<git_url>"
@@ -124,17 +127,3 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/django-ex.git                   |
                   | https://github.com/jboss-openshift/openshift-quickstarts  |
                   | https://github.com/sclorg/nodejs-ex.git                   |
-
-
-        @regression
-        Scenario Outline: Pipelines section in topology page: P-01-TC09
-            Given user created workload "<node_name>" from add page with pipeline
-              And user is at the Topology page
-             When user searches for "<node_name>" in topology page
-              And user clicks on workload "<node_name>"
-             Then user can see sidebar opens with Resources tab selected by default
-              And side bar is displayed with the pipelines section
-
-        Examples:
-                  | node_name    |
-                  | nodejs-d-git |
