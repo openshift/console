@@ -16,8 +16,8 @@ import { ListKind } from '@console/internal/module/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 
-import { CephClusterKind, StorageClusterKind, StoragePoolKind } from '../../types';
-import { OCSServiceModel, CephBlockPoolModel } from '../../models';
+import { CephClusterKind, StorageClusterKind } from '../../types';
+import { OCSServiceModel } from '../../models';
 import { CEPH_STORAGE_NAMESPACE, OCS_DEVICE_REPLICA } from '../../constants/index';
 import { checkArbiterCluster } from '../../utils/common';
 import {
@@ -27,7 +27,6 @@ import {
   BlockPoolAction,
   BlockPoolActionType,
   getErrorMessage,
-  isDefaultPool,
 } from '../../utils/block-pool';
 import { POOL_STATE, POOL_PROGRESS } from '../../constants/storage-pool-const';
 
@@ -65,26 +64,19 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
   const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
     ListKind<StorageClusterKind>
   >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
-  const [pools, poolsLoaded, poolsLoadedError] = useK8sGet<ListKind<StoragePoolKind>>(
-    CephBlockPoolModel,
-    null,
-    CEPH_STORAGE_NAMESPACE,
-  );
-
-  React.useMemo(() => {
-    if (!state.failureDomain && poolsLoaded && !poolsLoadedError) {
-      // Fetch failure domain from default pool
-      const pool: StoragePoolKind = pools?.items.find(isDefaultPool);
-      dispatch({
-        type: BlockPoolActionType.SET_FAILURE_DOMAIN,
-        payload: pool?.spec?.failureDomain,
-      });
-    }
-  }, [dispatch, pools, poolsLoaded, poolsLoadedError, state.failureDomain]);
 
   const [isReplicaOpen, setReplicaOpen] = React.useState(false);
   const [isVolumeTypeOpen, setVolumeTypeOpen] = React.useState(false);
   const [availableDeviceClasses, setAvailableDeviceClasses] = React.useState([]);
+
+  // Failure Domain
+  React.useEffect(() => {
+    if (storageClusterLoaded && !storageClusterLoadError)
+      dispatch({
+        type: BlockPoolActionType.SET_FAILURE_DOMAIN,
+        payload: storageCluster.items[0].status?.failureDomain || '',
+      });
+  }, [storageCluster, storageClusterLoaded, storageClusterLoadError, dispatch]);
 
   // Volume Type
   const deviceClasses = cephCluster?.status?.storage?.deviceClasses ?? [];
