@@ -49,8 +49,8 @@ export const gitPO = {
       buildTriggerImage: 'input#form-checkbox-build-triggers-image-field',
       buildTriggerConfigField: 'input#form-checkbox-build-triggers-config-field',
       // Add Environment Value
-      envName: '[data-test=pairs-list-name]',
-      envValue: '[data-test=pairs-list-value]',
+      envName: 'input[data-test=pairs-list-name]',
+      envValue: 'input[data-test=pairs-list-value]',
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
       deleteRowButton: 'button[data-test="delete-button"]',

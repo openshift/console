@@ -15,6 +15,7 @@ export const app = {
   waitForLoad: (timeout: number = 80000) => {
     cy.get('.co-m-loader', { timeout }).should('not.exist');
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
+    cy.get('.skeleton-catalog--grid').should('not.exist');
     app.waitForDocumentLoad();
   },
   waitForNameSpacesToLoad: () => {
