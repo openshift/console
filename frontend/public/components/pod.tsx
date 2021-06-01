@@ -289,7 +289,7 @@ const getHeader = (showNodes) => {
       {
         title: i18next.t(podColumnInfo.ipaddress.title),
         id: podColumnInfo.ipaddress.id,
-        sortField: 'status.hostIP',
+        sortField: 'status.podIP',
         transforms: [sortable],
         props: { className: podColumnInfo.ipaddress.classes },
         additional: true,
@@ -418,7 +418,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
           columns={columns}
           columnID={podColumnInfo.ipaddress.id}
         >
-          {pod?.status?.hostIP ?? '-'}
+          {pod?.status?.podIP ?? '-'}
         </TableData>
         <TableData className={Kebab.columnClass}>
           <ResourceKebab
