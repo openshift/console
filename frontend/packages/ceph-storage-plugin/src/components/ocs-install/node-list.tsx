@@ -21,9 +21,9 @@ import './ocs-install.scss';
 
 const tableColumnClasses = [
   classNames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-inherit-on-md'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl', 'pf-u-w-inherit-on-xl'),
   classNames('pf-u-w-inherit'),
 ];
 
