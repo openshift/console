@@ -20,7 +20,7 @@ export const pageTitle = {
   Project: 'Project Details',
   ConfigMaps: 'Config Maps',
   Secrets: 'Secrets',
-  PipelineRunDetails: 'Pipeline Run details',
+  PipelineRunDetails: 'PipelineRun details',
   PipelineDetails: 'Pipeline details',
   TriggerTemplateDetails: 'Trigger Template details',
   EventListenerDetails: 'Event Listener details',

@@ -143,7 +143,7 @@ Feature: Perform the actions on Pipelines page
         @regression
         Scenario: Start Last Run for the basic pipeline from pipelines page: P-06-TC13
             Given pipeline run is displayed for "pipeline-fff" with resource
-             When user selects "Start Last Run" from the kebab menu for "pipeline-fff"
+             When user selects "Start last run" from the kebab menu for "pipeline-fff"
              Then user will be redirected to Pipeline Run Details page
 
 
