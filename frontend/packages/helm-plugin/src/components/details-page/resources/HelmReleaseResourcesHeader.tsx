@@ -2,10 +2,10 @@ import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 
 export const tableColumnClasses = {
-  name: 'col-lg-4 col-md-4 col-sm-4 col-xs-6',
-  type: 'col-lg-2 col-md-2 col-sm-4 col-xs-6',
-  status: 'col-lg-2 col-md-3 col-sm-4 hidden-xs',
-  created: 'col-lg-4 col-md-3 hidden-sm hidden-xs',
+  name: '',
+  type: '',
+  status: 'pf-m-hidden pf-m-visible-on-md',
+  created: 'pf-m-hidden pf-m-visible-on-lg',
 };
 
 const HelmReleaseResourcesHeader = (t: TFunction) => () => {

@@ -4,13 +4,13 @@ import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
   input: Kebab.columnClass,
-  revision: 'col-lg-1 col-md-3 col-sm-3 col-xs-3',
-  updated: 'col-lg-2 col-md-3 col-sm-5 col-xs-5',
-  status: 'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  chartName: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  chartVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  appVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  description: 'col-lg-2 hidden-md hidden-sm hidden-xs',
+  revision: 'pf-u-w-8-on-xl pf-u-w-25-on-xs',
+  updated: 'pf-u-w-16-on-xl pf-u-w-25-on-lg pf-u-w-40-on-xs',
+  status: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-8-on-xl pf-u-w-16-on-lg',
+  chartName: 'pf-m-hidden pf-m-visible-on-xl',
+  chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
+  appVersion: 'pf-m-hidden pf-m-visible-on-xl',
+  description: 'pf-m-hidden pf-m-visible-on-xl',
 };
 
 const RevisionListHeader = (t: TFunction) => () => {

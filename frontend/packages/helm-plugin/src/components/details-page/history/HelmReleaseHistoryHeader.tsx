@@ -3,13 +3,13 @@ import { sortable } from '@patternfly/react-table';
 import { Kebab } from '@console/internal/components/utils';
 
 export const tableColumnClasses = {
-  revision: 'col-lg-1 col-md-3 col-sm-3 col-xs-3',
-  updated: 'col-lg-2 col-md-3 col-sm-5 col-xs-5',
-  status: 'col-lg-1 col-md-2 hidden-sm hidden-xs',
-  chartName: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  chartVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  appVersion: 'col-lg-2 hidden-md hidden-sm hidden-xs',
-  description: 'col-lg-2 hidden-md hidden-sm hidden-xs',
+  revision: '',
+  updated: '',
+  status: 'pf-m-hidden pf-m-visible-on-lg',
+  chartName: 'pf-m-hidden pf-m-visible-on-xl',
+  chartVersion: 'pf-m-hidden pf-m-visible-on-xl',
+  appVersion: 'pf-m-hidden pf-m-visible-on-xl',
+  description: 'pf-m-hidden pf-m-visible-on-xl',
   kebab: Kebab.columnClass,
 };
 
