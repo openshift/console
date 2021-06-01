@@ -1,6 +1,7 @@
 import { ValidationErrorType } from '@console/shared/src';
 
 import { CLOUDINIT_DISK } from '../../../../constants';
+import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
@@ -27,7 +28,7 @@ import {
   hasVMSettingsValueChanged,
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
-import { getStorages } from '../../selectors/selectors';
+import { getStorages, getV2VConfigMap } from '../../selectors/selectors';
 import { getTemplateValidation } from '../../selectors/template';
 import { VMSettingsField, VMWizardProps, VMWizardStorage, VMWizardStorageType } from '../../types';
 import {
@@ -143,7 +144,12 @@ const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOption
   );
 
   if (mountWindowsGuestTools && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](
+        id,
+        windowsToolsStorage(winToolsContainerNames(getV2VConfigMap(state))),
+      ),
+    );
   }
   if (!mountWindowsGuestTools && windowsTools) {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));

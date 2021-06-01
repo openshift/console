@@ -12,13 +12,19 @@ type winToolsContainerNamesResult = {
   okd: string;
 };
 
-export const winToolsContainerNames = (): winToolsContainerNamesResult => {
+export const winToolsContainerNames = (images?: {
+  [key: string]: string;
+}): winToolsContainerNamesResult => {
   const configMapImages = async () => {
     const configMap = (await getVmwareConfigMap()) as ConfigMapKind;
     return configMap?.data?.[VIRTIO_WIN_IMAGE];
   };
+
   const winImage =
-    configMapImages() || 'registry.redhat.io/container-native-virtualization/virtio-win';
+    images?.[VIRTIO_WIN_IMAGE] ||
+    configMapImages() ||
+    'registry.redhat.io/container-native-virtualization/virtio-win';
+
   return {
     openshift: winImage,
     ocp: winImage,
