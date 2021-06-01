@@ -6,7 +6,7 @@ export const getOperatorTopologyDataModel = () =>
 export const getOperatorsComponentFactory = () =>
   import(
     './components/operatorsComponentFactory' /* webpackChunkName: "operators-topology-components" */
-  ).then((m) => m.getOperatorsComponentFactory());
+  ).then((m) => m.getOperatorsComponentFactory);
 
 export const getDataModelReconciler = () =>
   import(

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, ComponentFactory, withSelection } from '@patternfly/react-topology';
+import { GraphElement, withSelection } from '@patternfly/react-topology';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
@@ -24,15 +24,16 @@ const serviceBindingActions = (edge: OdcBaseEdge) => {
   return createMenuItems(kebabOptionsToMenu(actions));
 };
 
-export const getOperatorsComponentFactory = (): ComponentFactory => {
-  return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-    switch (type) {
-      case TYPE_OPERATOR_BACKED_SERVICE:
-        return withSelection({ controlled: true })(withNoDrop()(OperatorBackedService));
-      case TYPE_SERVICE_BINDING:
-        return withContextMenu(serviceBindingActions)(ServiceBinding);
-      default:
-        return undefined;
-    }
-  };
+export const getOperatorsComponentFactory = (
+  kind,
+  type,
+): React.ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
+    case TYPE_OPERATOR_BACKED_SERVICE:
+      return withSelection({ controlled: true })(withNoDrop()(OperatorBackedService));
+    case TYPE_SERVICE_BINDING:
+      return withContextMenu(serviceBindingActions)(ServiceBinding);
+    default:
+      return undefined;
+  }
 };

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  ComponentFactory,
   GraphElement,
   Node,
   withCreateConnector,
@@ -54,29 +53,30 @@ export const vmContextMenu = (element: Node) => {
   return createMenuItems(kebabOptionsToMenu(vmActions(getResource(element), element.getData())));
 };
 
-export const getKubevirtComponentFactory = (): ComponentFactory => {
-  return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-    switch (type) {
-      case TYPE_VIRTUAL_MACHINE:
-        return withCreateConnector(
-          createConnectorCallback(),
-          CreateConnector,
-        )(
-          withDndDrop<
-            any,
-            any,
-            { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-            NodeComponentProps
-          >(nodeDropTargetSpec)(
-            withEditReviewAccess('patch')(
-              withDragNode(nodeDragSourceSpec(type))(
-                withSelection({ controlled: true })(withContextMenu(vmContextMenu)(VmNode)),
-              ),
+export const getKubevirtComponentFactory = (
+  kind,
+  type,
+): React.ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
+    case TYPE_VIRTUAL_MACHINE:
+      return withCreateConnector(
+        createConnectorCallback(),
+        CreateConnector,
+      )(
+        withDndDrop<
+          any,
+          any,
+          { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+          NodeComponentProps
+        >(nodeDropTargetSpec)(
+          withEditReviewAccess('patch')(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection({ controlled: true })(withContextMenu(vmContextMenu)(VmNode)),
             ),
           ),
-        );
-      default:
-        return undefined;
-    }
-  };
+        ),
+      );
+    default:
+      return undefined;
+  }
 };

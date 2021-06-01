@@ -4,9 +4,9 @@ export const getKnativeTopologyDataModel = () =>
   );
 
 export const getKnativeComponentFactory = () =>
-  import(
-    './components/knativeComponentFactory' /* webpackChunkName: "knative-components" */
-  ).then((m) => m.getKnativeComponentFactory());
+  import('./components/knativeComponentFactory' /* webpackChunkName: "knative-components" */).then(
+    (m) => m.getKnativeComponentFactory,
+  );
 
 export const getIsKnativeResource = () =>
   import('./isKnativeResource' /* webpackChunkName: "knative-components" */).then(
