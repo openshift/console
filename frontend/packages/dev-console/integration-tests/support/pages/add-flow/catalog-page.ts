@@ -12,7 +12,10 @@ export const catalogPage = {
   verifyTitle: () => detailsPage.titleShouldContain('Developer Catalog'),
   verifyPageTitle: (page: string) => detailsPage.titleShouldContain(page),
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
-  isCardsDisplayed: () => cy.get(catalogPO.card).should('be.visible'),
+  isCardsDisplayed: () => {
+    app.waitForLoad();
+    cy.get(catalogPO.card).should('be.visible');
+  },
   search: (keyword: string) => {
     cy.get('.skeleton-catalog--grid').should('not.exist');
     cy.get(catalogPO.search)
@@ -84,11 +87,7 @@ export const catalogPage = {
       .get(cardTitle, { timeout: 40000 })
       .contains('Knative Serving')
       .click(),
-  selectHelmChartCard: (cardName: string) =>
-    cy
-      .get(cardTitle, { timeout: 40000 })
-      .contains(cardName)
-      .click(),
+  selectHelmChartCard: (cardName: string) => cy.byTestID(`HelmChart-${cardName}`).click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.install).click();
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
@@ -183,7 +182,7 @@ export const catalogPage = {
     navigateTo(devNavigationMenu.Add);
     app.waitForDocumentLoad();
     addPage.selectCardFromOptions(addOptions.HelmChart);
-    catalogPage.verifyPageTitle('Helm Charts');
+    catalogPage.verifyPageTitle(pageTitle.HelmCharts);
     catalogPage.isCardsDisplayed();
     catalogPage.search(helmChartName);
     catalogPage.selectHelmChartCard(helmChartName);

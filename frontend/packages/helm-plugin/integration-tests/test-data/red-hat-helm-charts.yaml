@@ -1,0 +1,9 @@
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: redhat-helm-charts
+spec:
+  connectionConfig:
+    url: >-
+      https://redhat-developer.github.io/redhat-helm-charts
+  name: Red Hat Helm Charts

@@ -69,7 +69,7 @@ When('user enters Git Repo url in docker file as {string}', (gitRepoUrl: string)
 
 When('user enters Git Repo url in builder image as {string}', (gitRepoUrl: string) => {
   gitPage.enterGitUrl(gitRepoUrl);
-  gitPage.verifyValidatedMessage();
+  cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
 });
 
 When('user clicks From Dockerfile card on the Add page', () => {

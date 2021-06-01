@@ -1,4 +1,4 @@
-export const cardTitle = '.catalog-tile-pf-title';
+export const cardTitle = '[data-test="title"]';
 
 export const addPagePO = {
   gettingStarted: '[data-test="getting-started"]',

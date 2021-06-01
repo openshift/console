@@ -35,7 +35,7 @@ export const pipelineBuilderPO = {
       parameterUrlHelper: '[id$="tasks-0-params-0-value-field-helper"]',
       parameterRevision: '[id$="tasks-0-params-1-value-field"]',
       parameterRevisionHelper: '[id$="tasks-0-params-1-value-field-helper"]',
-      imageName: '#IMAGE',
+      imageName: '#form-input-formData-tasks-0-params-3-value-field',
       script: '#SCRIPT',
       args: '#ARGS-0',
       actions: '[data-test-id="actions-menu-button"]',
@@ -166,7 +166,7 @@ export const pipelineRunDetailsPO = {
   logsTab: '[data-test-id="horizontal-link-Logs"]',
   yamlTab: '[data-test-id$="YAML"]',
   detailsTab: '[data-test-id$="Details"]',
-  taskRunsTab: '[data-test-id="horizontal-link-Task Runs"]',
+  taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
   eventsTab: '[data-test-id$="Events"]',
   pipelineRunStatus: 'h1 [data-test="status-text"]',
   details: {
