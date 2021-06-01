@@ -25,6 +25,7 @@ import { useErrorTranslation } from '../../hooks/use-error-translation';
 import useSSHKeys from '../../hooks/use-ssh-keys';
 import useSSHService from '../../hooks/use-ssh-service';
 import { useSupportModal } from '../../hooks/use-support-modal';
+import useV2VConfigMap from '../../hooks/use-v2v-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -183,6 +184,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     kind: ProjectModel.kind,
     isList: true,
   });
+
+  const [V2VConfigMapImages, V2VConfigMapImagesLoaded, V2VConfigMapImagesError] = useV2VConfigMap();
+
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const {
     pods,
@@ -196,8 +200,8 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
 
   const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
-  const loaded = resourcesLoaded && projectsLoaded && scLoaded;
-  const loadError = resourcesLoadError || projectsError || scError;
+  const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
+  const loadError = resourcesLoadError || projectsError || scError || V2VConfigMapImagesError;
 
   const sourceStatus =
     selectedTemplate &&
@@ -426,6 +430,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                       scConfigMap,
                       tempSSHKey,
                       enableSSHService,
+                      V2VConfigMapImages,
                     );
                     if (vm) {
                       enableSSHService && createOrDeleteSSHService(vm);
