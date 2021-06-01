@@ -1,10 +1,8 @@
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { createForm } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineBuilderText } from '../../constants';
 import { pipelineBuilderPO, pipelineDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
-import { pipelinesPage } from './pipelines-page';
 
 export const pipelineBuilderSidePane = {
   verifyDialog: () => cy.get(pipelineBuilderPO.formView.sidePane.dialog).should('be.visible'),
@@ -60,6 +58,11 @@ export const pipelineBuilderPage = {
       .type(pipelineName);
   },
   selectTask: (taskName: string = 'kn') => {
+    cy.get('body').then(($body) => {
+      if ($body.text().includes('Unable to locate any tasks.')) {
+        cy.reload();
+      }
+    });
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
     cy.byTestActionID(taskName).click({ force: true });
   },
@@ -116,7 +119,15 @@ export const pipelineBuilderPage = {
       .eq(3)
       .should('contain.text', pipelineBuilderText.formView.Workspaces);
   },
-  clickCreateButton: () => cy.get(pipelineBuilderPO.create).click(),
+  clickCreateButton: () => {
+    cy.get(pipelineBuilderPO.create).click();
+    cy.get('body').then(($body) => {
+      if ($body.find('[aria-label="Danger Alert"]').length) {
+        cy.log($body.find('[aria-label="Danger Alert"]').text());
+        createForm.clickCancel();
+      }
+    });
+  },
   clickSaveButton: () => cy.get(pipelineBuilderPO.create).click(),
   clickYaml: () => {
     cy.get(pipelinesPO.createPipeline).click();
@@ -163,38 +174,10 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.clickOnAddWorkSpace();
     pipelineBuilderPage.addWorkspace(workspaceName);
     pipelineBuilderPage.clickOnTask(taskName);
-    pipelineBuilderSidePane.enterParameterUrl();
+    pipelineBuilderSidePane.enterParameterUrl('https://github.com/sclorg/nodejs-ex.git');
     pipelineBuilderSidePane.selectWorkspace(workspaceName);
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);
-  },
-
-  verifyAndCreatePipelineWithWorkspaces: (
-    pipelineName: string = 'git-pipeline',
-    workspaceName: string = 'git-wp',
-    taskName: string = 'git-clone',
-  ) => {
-    cy.get('body').then(($body) => {
-      if ($body.find(pipelinesPO.emptyMessage).length !== 0) {
-        cy.log(`No pipelines found, let's create a new pipeline "${pipelineName}"`);
-        pipelinesPage.clickOnCreatePipeline();
-        pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, taskName, workspaceName);
-        navigateTo(devNavigationMenu.Pipelines);
-      } else if ($body.find(pipelinesPO.search).length !== 0) {
-        cy.log('check');
-        pipelinesPage.searchPipelineInPipelinesPage(pipelineName);
-        if ($body.find(pipelinesPO.emptyMessage)) {
-          cy.log(
-            `No pipelines found with the given name "${pipelineName}", lets create a pipeline with given name`,
-          );
-          pipelinesPage.clickOnCreatePipeline();
-        } else {
-          cy.log(`"${pipelineName}" is already present in pipelines page`);
-        }
-        pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, taskName, workspaceName);
-        navigateTo(devNavigationMenu.Pipelines);
-      }
-    });
   },
 
   selectSampleInYamlView: (yamlSample: string) => {

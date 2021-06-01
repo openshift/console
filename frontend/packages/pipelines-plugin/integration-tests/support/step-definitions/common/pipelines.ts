@@ -13,13 +13,13 @@ import {
   startPipelineInPipelinesPage,
 } from '../../pages';
 import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
+import { pipelineActions } from '../../constants';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',
   (option: string, pipelineName: string) => {
     pipelinesPage.search(pipelineName);
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(option).click();
+    pipelinesPage.selectActionForPipeline(pipelineName, option);
   },
 );
 
@@ -28,8 +28,7 @@ Given('pipeline run is displayed for {string} with resource', (pipelineName: str
   pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
   cy.byLegacyTestID('breadcrumb-link-0').click();
   pipelinesPage.search(pipelineName);
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.addGitResource('https://github.com/sclorg/nodejs-ex.git');
   startPipelineInPipelinesPage.clickStart();
@@ -46,8 +45,7 @@ Given(
     pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, workspaceName);
     cy.byLegacyTestID('breadcrumb-link-0').click();
     pipelinesPage.search(pipelineName);
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID('Start').click();
+    pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
     startPipelineInPipelinesPage.selectWorkSpace(workspaceType);
     startPipelineInPipelinesPage.clickStart();
@@ -69,10 +67,10 @@ Given(
 );
 
 Given(
-  'pipeline {string} with at least one workspace and no previous Pipeline Runs',
-  (pipelineName: string) => {
+  'pipeline {string} with at least one workspace {string} and no previous Pipeline Runs',
+  (pipelineName: string, workspaceName: string) => {
     pipelinesPage.clickOnCreatePipeline();
-    pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName);
+    pipelineBuilderPage.createPipelineWithWorkspaces(pipelineName, 'git-clone', workspaceName);
     cy.byLegacyTestID('breadcrumb-link-0').click();
     pipelinesPage.search(pipelineName);
   },

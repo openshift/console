@@ -12,7 +12,8 @@ Given('user is at developer perspective', () => {
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
-  cy.testA11y('Developer perspective');
+  // Commenting below line, because it is executing on every test scenario - we will remove this in future releases
+  // cy.testA11y('Developer perspective');
 });
 
 Given('user has created namespace starts with {string}', (projectName: string) => {

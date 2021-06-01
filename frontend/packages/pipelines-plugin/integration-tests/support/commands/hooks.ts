@@ -9,6 +9,7 @@ before(() => {
 });
 
 after(() => {
+  cy.log(`Deleting "${Cypress.env('NAMESPACE')}" namespace`);
   cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, {
     failOnNonZeroExit: false,
     timeout: 180000,

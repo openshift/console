@@ -19,8 +19,7 @@ import { actionsDropdownMenu } from '../../pages/functions/common';
 When(
   'user selects {string} from the kebab menu for {string}',
   (option: string, pipelineName: string) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(option).click();
+    pipelinesPage.selectActionForPipeline(pipelineName, option);
   },
 );
 
@@ -34,8 +33,7 @@ Then('Add button is disabled', () => {
 });
 
 Given('user selected Add Trigger from kebab menu of pipeline {string}', (pipelineName: string) => {
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Add Trigger').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.AddTrigger);
 });
 
 When('user clicks on {string} link', (linkName: string) => {

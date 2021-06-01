@@ -51,7 +51,7 @@ Feature: Create Pipeline from Add Options
 
 
         @smoke
-        Scenario Outline: Pipeline in topology page: P-01-TC04
+        Scenario Outline: Pipeline details display in topology page: P-01-TC04
             Given user created workload "<name>" from add page with pipeline
               And user is at the Topology page
               And workload "<name>" is added to namespace
@@ -59,6 +59,7 @@ Feature: Create Pipeline from Add Options
               And user clicks node "<name>" in topology page
              Then pipeline name "<name>" is displayed in topology side bar
               And side bar is displayed with the pipelines section
+              And Last Run status of the "<pipeline_name>" displays as "Succeeded" in topology page
 
         Examples:
                   | name       |
