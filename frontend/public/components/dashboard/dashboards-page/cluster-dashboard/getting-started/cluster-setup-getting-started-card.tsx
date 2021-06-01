@@ -25,7 +25,7 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
   const moreLinkBaseURL = window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
   const moreLinkURL = `${moreLinkBaseURL}post_installation_configuration/machine-configuration-tasks.html`;
   const moreLink: GettingStartedLink = {
-    key: 'quick-starts',
+    id: 'machine-configuration',
     title: t('public~View all steps in documentation'),
     href: moreLinkURL,
     external: true,
@@ -33,6 +33,7 @@ export const ClusterSetupGettingStartedCard: React.FC = () => {
 
   return (
     <GettingStartedCard
+      id="cluster-setup"
       icon={<ClipboardCheckIcon color="var(--pf-global--primary-color--100)" aria-hidden="true" />}
       title={t('public~Set up your cluster')}
       titleColor={'var(--pf-global--palette--blue-600)'}

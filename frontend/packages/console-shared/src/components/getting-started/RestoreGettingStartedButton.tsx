@@ -30,6 +30,7 @@ export const RestoreGettingStartedButton: React.FC<RestoreGettingStartedButtonPr
         setShowState(GettingStartedShowState.DISAPPEAR);
       }}
       style={{ cursor: 'pointer' }}
+      data-test="restore-getting-started"
     >
       {t('console-shared~Show getting started resources')}
     </Label>

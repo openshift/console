@@ -66,7 +66,7 @@ describe('useIdentityProviderLink', () => {
     const { result } = testHook(() => useIdentityProviderLink());
 
     expect(result.current).toEqual({
-      key: 'identity-providers',
+      id: 'identity-providers',
       title: 'Add identity providers',
       href: '/k8s/cluster/config.openshift.io~v1~OAuth/cluster',
     });

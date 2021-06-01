@@ -47,7 +47,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
   const [activeNamespace] = useActiveNamespace();
 
   const moreLink: GettingStartedLink = {
-    key: 'all-samples',
+    id: 'all-samples',
     title: t('devconsole~View all samples'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
@@ -64,7 +64,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
         const links: GettingStartedLink[] = service.loaded
           ? slicedCatalogItems.map((item) => {
               return {
-                key: item.uid,
+                id: item.uid,
                 title: item.name,
                 href: item.cta?.href,
                 onClick: item.cta?.callback,
@@ -72,13 +72,14 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
             })
           : featured.map((uid) => {
               return {
-                key: uid,
+                id: uid,
                 loading: true,
               };
             });
 
         return (
           <GettingStartedCard
+            id="samples"
             icon={<CatalogIcon color="var(--pf-global--primary-color--100)" aria-hidden="true" />}
             title={t('devconsole~Create applications using samples')}
             titleColor={'var(--pf-global--palette--blue-600)'}

@@ -22,18 +22,11 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
 
   const actionIcon = (): JSX.Element => {
     if (typeof icon === 'string') {
-      return (
-        <img
-          className="odc-add-card-item__header__icon"
-          src={icon}
-          alt={label}
-          aria-hidden="true"
-        />
-      );
+      return <img className="odc-add-card-item__icon" src={icon} alt={label} aria-hidden="true" />;
     }
     if (typeof icon !== 'string' && React.isValidElement(icon)) {
       return (
-        <span className="odc-add-card-item__header__icon" aria-hidden="true">
+        <span className="odc-add-card-item__icon" aria-hidden="true">
           {icon}
         </span>
       );
@@ -42,31 +35,31 @@ const AddCardItem: React.FC<AddCardItemProps> = ({
   };
 
   return (
-    <div className="odc-add-card-item" data-test-id={`odc-add-card-item-${id}`}>
-      <SimpleListItem
-        component="a"
-        onClick={(e: React.SyntheticEvent) => {
-          fireTelemetryEvent('Add Item Selected', {
-            id,
-            name: label,
-          });
-          navigateTo(e, resolvedHref(href, namespace));
-        }}
-        href={resolvedHref(href, namespace)}
-        data-test-id="odc-add-card-link"
-        className="odc-add-card-item__header"
-      >
+    <SimpleListItem
+      component="a"
+      componentProps={{
+        'data-test': `item ${id}`,
+      }}
+      href={resolvedHref(href, namespace)}
+      onClick={(e: React.SyntheticEvent) => {
+        fireTelemetryEvent('Add Item Selected', {
+          id,
+          name: label,
+        });
+        navigateTo(e, resolvedHref(href, namespace));
+      }}
+      className="odc-add-card-item"
+    >
+      <Title headingLevel="h3" size="md" className="odc-add-card-item__title" data-test="title">
         {actionIcon()}
-        <Title headingLevel="h5" size="md" className="odc-add-card-item__header__title">
-          {label}
-        </Title>
-        {showDetails && (
-          <Text className="odc-add-card-item__description" data-test-id="odc-add-card-item-desc">
-            {description}
-          </Text>
-        )}
-      </SimpleListItem>
-    </div>
+        {label}
+      </Title>
+      {showDetails && (
+        <Text className="odc-add-card-item__description" data-test="description">
+          {description}
+        </Text>
+      )}
+    </SimpleListItem>
   );
 };
 

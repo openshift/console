@@ -46,18 +46,18 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'helm-charts',
+        id: 'helm-charts',
         title: 'Discover certified Helm Charts',
         href: '/catalog/ns/active-namespace?catalogType=HelmChart',
       },
       {
-        key: 'topology',
+        id: 'topology',
         title: 'Start building your application quickly in topology',
         href: '/topology/ns/active-namespace?catalogSearch=',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'whats-new',
+      id: 'whats-new',
       title: "What's new in OpenShift x.y",
       href: 'https://developers.redhat.com/products/openshift/getting-started',
       external: true,
@@ -74,18 +74,18 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'helm-charts',
+        id: 'helm-charts',
         title: 'Discover certified Helm Charts',
         href: '/catalog/all-namespaces?catalogType=HelmChart',
       },
       {
-        key: 'topology',
+        id: 'topology',
         title: 'Start building your application quickly in topology',
         href: '/topology/all-namespaces?catalogSearch=',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'whats-new',
+      id: 'whats-new',
       title: "What's new in OpenShift x.y",
       href: 'https://developers.redhat.com/products/openshift/getting-started',
       external: true,

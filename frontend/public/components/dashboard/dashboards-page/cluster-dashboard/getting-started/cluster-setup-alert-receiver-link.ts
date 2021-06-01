@@ -44,7 +44,7 @@ export const useAlertReceiverLink = (): GettingStartedLink | null => {
 
   if (canEdit && hasIncompleteReceivers) {
     return {
-      key: 'alert-receivers',
+      id: 'alert-receivers',
       title: t('public~Configure alert receivers'),
       href: '/monitoring/alertmanagerconfig',
     };

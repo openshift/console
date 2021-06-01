@@ -43,7 +43,7 @@ export const useIdentityProviderLink = (): GettingStartedLink | null => {
   }
 
   return {
-    key: 'identity-providers',
+    id: 'identity-providers',
     title: t('public~Add identity providers'),
     href: resourcePathFromModel(OAuthModel, 'cluster'),
   };

@@ -39,6 +39,7 @@ export const GettingStartedGrid: React.FC<GettingStartedGridProps> = ({ onHide, 
           'console-shared~You can always bring these getting started resources back into view by clicking Show getting started resources in the page heading.',
         )}
         onClick={onHide}
+        data-test="hide"
       >
         {t('console-shared~Hide from view')}
       </DropdownItem>,
@@ -55,10 +56,10 @@ export const GettingStartedGrid: React.FC<GettingStartedGridProps> = ({ onHide, 
   );
 
   return (
-    <Card className="ocs-getting-started-grid">
+    <Card className="ocs-getting-started-grid" data-test="getting-started">
       <CardHeader className="ocs-getting-started-grid__header">
         <CardTitle>
-          <Title headingLevel="h2" size={TitleSizes.lg}>
+          <Title headingLevel="h2" size={TitleSizes.lg} data-test="title">
             {title}{' '}
             <Popover bodyContent={titleTooltip}>
               <span
@@ -75,7 +76,7 @@ export const GettingStartedGrid: React.FC<GettingStartedGridProps> = ({ onHide, 
             <Dropdown
               isOpen={menuIsOpen}
               isPlain
-              toggle={<KebabToggle onToggle={onToggle} />}
+              toggle={<KebabToggle onToggle={onToggle} data-test="actions" />}
               position="right"
               dropdownItems={actionDropdownItem}
               className="ocs-getting-started-grid__action-dropdown"

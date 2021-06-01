@@ -43,18 +43,18 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().title).toEqual('Explore new admin features');
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'api-explorer',
+        id: 'api-explorer',
         title: 'API Explorer',
         href: '/api-explorer',
       },
       {
-        key: 'console-customizations',
+        id: 'console-customizations',
         title: 'Console customizations',
         href: '/k8s/cluster/customresourcedefinitions?name=console',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'whats-new',
+      id: 'whats-new',
       title: "See what's new in OpenShift x.y",
       href: 'https://www.openshift.com/learn/whats-new',
       external: true,

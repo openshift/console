@@ -6,40 +6,35 @@
   }
 
   margin-top: var(--pf-global--spacer--lg);
+  margin-left: calc(var(--pf-global--spacer--lg) - var(--pf-global--spacer--sm));
 
-  &__header {
-    margin-left: calc(var(--pf-global--spacer--lg) - var(--pf-global--spacer--sm));
+  &__icon {
+    height: var(--pf-global--FontSize--lg);
+    max-width: var(--pf-global--spacer--lg);
+    min-width: var(--pf-global--spacer--md);
+    color: var(--pf-global--Color--100) !important;
+    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-global--FontSize--md);
+    margin-right: var(--pf-global--spacer--sm);
+  }
 
-    &__icon {
-      display: inline;
-      vertical-align: middle;
-      height: var(--pf-global--FontSize--lg);
-      max-width: var(--pf-global--spacer--lg);
-      min-width: var(--pf-global--spacer--md);
-      color: var(--pf-global--Color--100) !important;
-      // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
-      font-size: var(--pf-global--FontSize--md);
-      margin-left: var(--pf-global--spacer--sm);
+  &__title {
+    display: inline;
+    vertical-align: middle;
+    margin-left: var(--pf-global--spacer--sm);
+    // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
+    font-size: var(--pf-global--spacer--md) !important;
+  }
+
+  a.pf-c-simple-list__item-link {
+    &:hover .odc-add-card-item__title {
+      color: var(--pf-c-simple-list__item-link--hover--Color);
     }
-
-    &__title {
-      display: inline;
-      vertical-align: middle;
-      margin-left: var(--pf-global--spacer--sm);
-      // temporary fix since --pf-global--FontSize--md is being computed to 14px instead of 16px
-      font-size: var(--pf-global--spacer--md) !important;
+    &:focus .odc-add-card-item__title {
+      color: var(--pf-c-simple-list__item-link--focus--Color);
     }
-
-    a.pf-c-simple-list__item-link {
-      &:hover .odc-add-card-item__header__title {
-        color: var(--pf-c-simple-list__item-link--hover--Color);
-      }
-      &:focus .odc-add-card-item__header__title {
-        color: var(--pf-c-simple-list__item-link--focus--Color);
-      }
-      &:active .odc-add-card-item__header__title {
-        color: var(--pf-c-simple-list__item-link--active--Color);
-      }
+    &:active .odc-add-card-item__title {
+      color: var(--pf-c-simple-list__item-link--active--Color);
     }
   }
 
