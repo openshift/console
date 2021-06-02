@@ -55,7 +55,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
-  const [nodesData] = useK8sWatchResource<NodeKind[]>(nodeResource);
+  const [nodesData, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
@@ -76,6 +76,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   /** Name of the installation storageClass which will be the pre-selected value for the dropdown */
   const installStorageClass = deviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
+  const nodesError = nodesLoadError || !nodesData.length || !nodesLoaded;
 
   const validateSC = React.useCallback(() => {
     if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
@@ -250,7 +251,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           errorMessage={errorMessage}
           submitText={t('ceph-storage-plugin~Add')}
           cancel={cancel}
-          submitDisabled={isNoProvionerSC && !availablePvsCount}
+          submitDisabled={isNoProvionerSC && (!availablePvsCount || nodesError)}
         />
       </div>
     </form>
