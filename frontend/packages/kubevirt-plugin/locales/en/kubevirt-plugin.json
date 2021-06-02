@@ -410,7 +410,7 @@
   "No base image specified": "No base image specified",
   "You cannot add source to this template because it is missing base image specification.": "You cannot add source to this template because it is missing base image specification.",
   "This data can be found in <2>Storage &gt; Persistent volume claims &gt; {baseImageName}</2> under the <5>{baseImageNamespace}</5> project.": "This data can be found in <2>Storage &gt; Persistent volume claims &gt; {baseImageName}</2> under the <5>{baseImageNamespace}</5> project.",
-  "No Storage classes found in cluster, adding source is disabled.": "No Storage classes found in cluster, adding source is disabled.",
+  "Adding source is disabled because no storage classes were found in the cluster.": "Adding source is disabled because no storage classes were found in the cluster.",
   "Customizing boot source will be available after the source is added": "Customizing boot source will be available after the source is added",
   "For customizing boot source, select \"Customize boot source\" from the template actions menu.": "For customizing boot source, select \"Customize boot source\" from the template actions menu.",
   "Add boot source to template": "Add boot source to template",
