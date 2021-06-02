@@ -41,7 +41,7 @@ import {
 } from '../../install-wizard/capacity-and-nodes';
 import { State, Action } from '../reducer';
 import AttachedDevicesNodeTable from '../sc-node-list';
-import { PVsAvailableCapacity } from '../../pvs-available-capacity';
+import { Capacity } from '../../capacity';
 import { getSCAvailablePVs } from '../../../../selectors';
 import { nodeResource, pvResource } from '../../../../resources';
 import { GUARDED_FEATURES } from '../../../../features';
@@ -170,15 +170,16 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
               noSelection
               hideClassName="ocs-install-wizard__storage-class-label"
             />
-            <PVsAvailableCapacity
+            <Capacity
+              data-test-id="ceph-ocs-install-pvs-available-capacity"
+              data={pvData}
+              loaded={pvLoaded}
+              loadError={pvLoadError || !getName(storageClass) || !pvData}
+              capacityText={'Available capacity'}
               replica={
                 hasStretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
               }
-              data-test-id="ceph-ocs-install-pvs-available-capacity"
               storageClass={storageClass}
-              data={pvData}
-              loaded={pvLoaded}
-              loadError={pvLoadError}
             />
           </GridItem>
           <GridItem span={7} />

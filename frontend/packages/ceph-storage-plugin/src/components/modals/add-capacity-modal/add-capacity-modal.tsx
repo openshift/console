@@ -21,7 +21,6 @@ import { getName, getRequestedPVCSize } from '@console/shared';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -35,7 +34,7 @@ import {
   defaultRequestSize,
 } from '../../../constants';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
-import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
+import { Capacity } from '../../ocs-install/capacity';
 import { pvResource, nodeResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
@@ -76,8 +75,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const name = getName(ocsConfig);
   const totalCapacityMetric = values?.[0];
   const usedCapacityMetric = values?.[1];
-  const usedCapacity = humanizeBinaryBytes(usedCapacityMetric);
-  const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
 
   const validateSC = React.useCallback(() => {
     if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
@@ -95,26 +92,11 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     return '';
   }, [selectedSCName, t, isNoProvionerSC, isArbiterEnabled, hasFlexibleScaling, pvData, nodesData]);
 
-  let currentCapacity: React.ReactNode;
   let availablePvsCount: number = 0;
 
   if (!pvLoadError && pvData.length && pvLoaded) {
     const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, selectedSCName);
     availablePvsCount = pvs.length;
-  }
-
-  if (loading) {
-    currentCapacity = (
-      <div className="skeleton-text ceph-add-capacity__current-capacity--loading" />
-    );
-  } else if (loadError || !totalCapacityMetric || !usedCapacityMetric) {
-    currentCapacity = <div className="text-muted">{t('ceph-storage-plugin~Not available')}</div>;
-  } else {
-    currentCapacity = (
-      <div className="text-muted">
-        <strong>{`${usedCapacity.string} / ${totalCapacity.string}`}</strong>
-      </div>
-    );
   }
 
   const onChange = (sc: StorageClassResourceKind) => setStorageClass(sc);
@@ -194,13 +176,14 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           </div>
         </FormGroup>
         {isNoProvionerSC ? (
-          <PVsAvailableCapacity
-            replica={replica}
+          <Capacity
             data-test-id="ceph-add-capacity-pvs-available-capacity"
-            storageClass={storageClass}
             data={pvData}
             loaded={pvLoaded}
-            loadError={pvLoadError}
+            loadError={pvLoadError || !getName(storageClass) || !pvData}
+            capacityText={'Available capacity'}
+            replica={replica}
+            storageClass={storageClass}
           />
         ) : (
           <>
@@ -221,7 +204,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                 aria-label="requestSize"
                 data-test-id="requestSize"
               />
-              {provisionedCapacity && (
+              {!!provisionedCapacity && (
                 <TextContent className="ceph-add-capacity__provisioned-capacity">
                   {' '}
                   {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
@@ -230,10 +213,13 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                   <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
                 </TextContent>
               )}
-              <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
-                {t('ceph-storage-plugin~Currently Used:')}&nbsp;
-                {currentCapacity}
-              </TextContent>
+              <Capacity
+                data-test-id="ceph-add-capacity-current-capacity"
+                data={values}
+                loaded={!loading}
+                loadError={loadError || !totalCapacityMetric || !usedCapacityMetric}
+                capacityText={'Currently Used'}
+              />
             </FormGroup>
           </>
         )}

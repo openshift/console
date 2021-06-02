@@ -37,7 +37,6 @@ const addCapacity = (uid: string, scName: string) => {
     .click();
 
   // wait for Pvs & Nodes data to load (used for validations)
-  // to-do (Sanjal): add a more robust way instead of wait by checking the currentCapacity/PVsAvailableCapacity components state
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(5000);
   cy.byTestID('confirm-action').click();
