@@ -203,7 +203,7 @@ export const eventSourceKafkaLinkDragSourceSpec = (): DragSourceSpec<
       createEventSourceKafkaConnection(props.element.getSource(), dropResult).catch((error) => {
         errorModal({
           title: i18next.t('knative-plugin~Error moving event source kafka connector'),
-          error: error.message,
+          error: error?.message,
           showIcon: true,
         });
       });
