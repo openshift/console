@@ -194,5 +194,6 @@
   "Move sink to {{resourceObjKind}}": "Move sink to {{resourceObjKind}}",
   "Move sink to URI": "Move sink to URI",
   "Open URI": "Open URI",
+  "Unable to create kafka connector as bootstrapServerHost or secret is not available in target resource.": "Unable to create kafka connector as bootstrapServerHost or secret is not available in target resource.",
   "Knative Services": "Knative Services"
 }

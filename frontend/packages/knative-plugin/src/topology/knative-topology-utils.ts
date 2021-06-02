@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18next from 'i18next';
 import {
   K8sResourceKind,
   apiVersionForModel,
@@ -1209,21 +1210,30 @@ export const createEventSourceKafkaConnection = (
   const mkcBoostrapServer = targetObj?.status?.bootstrapServerHost;
   const mkcServiceAccountSecretName = targetObj?.spec?.credentials?.serviceAccountSecretName;
   const knKafkaSourceObj = _.omit(sourceObj, 'status');
+
+  if (!mkcBoostrapServer || !mkcServiceAccountSecretName) {
+    return Promise.reject(
+      new Error(
+        i18next.t(
+          'knative-plugin~Unable to create kafka connector as bootstrapServerHost or secret is not available in target resource.',
+        ),
+      ),
+    );
+  }
+
   const updatedObjPayload = {
     ...knKafkaSourceObj,
     spec: {
       ...knKafkaSourceObj.spec,
-      ...(mkcBoostrapServer && { bootstrapServers: [mkcBoostrapServer] }),
-      ...(mkcServiceAccountSecretName && {
-        net: {
-          sasl: {
-            enable: true,
-            user: { secretKeyRef: { name: mkcServiceAccountSecretName, key: 'client-id' } },
-            password: { secretKeyRef: { name: mkcServiceAccountSecretName, key: 'client-secret' } },
-          },
-          tls: { enable: true },
+      bootstrapServers: [mkcBoostrapServer],
+      net: {
+        sasl: {
+          enable: true,
+          user: { secretKeyRef: { name: mkcServiceAccountSecretName, key: 'client-id' } },
+          password: { secretKeyRef: { name: mkcServiceAccountSecretName, key: 'client-secret' } },
         },
-      }),
+        tls: { enable: true },
+      },
     },
   };
   return k8sUpdate(EventSourceKafkaModel, updatedObjPayload);
