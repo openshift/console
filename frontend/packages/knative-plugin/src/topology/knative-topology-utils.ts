@@ -1,5 +1,9 @@
-import * as _ from 'lodash';
+import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
+import { DeploymentModel, PodModel } from '@console/internal/models';
 import {
   K8sResourceKind,
   apiVersionForModel,
@@ -8,9 +12,8 @@ import {
   k8sUpdate,
   kindForReference,
 } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import { getOwnedResources, OverviewItem } from '@console/shared';
-import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
-import { TopologyDataResources, TopologyDataObject } from '@console/topology/src/topology-types';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
   getTopologyGroupItems,
@@ -19,31 +22,17 @@ import {
   mergeGroup,
   WorkloadModelProps,
 } from '@console/topology/src/data-transforms/transform-utils';
+import { TopologyDataResources, TopologyDataObject } from '@console/topology/src/topology-types';
 import {
   filterBasedOnActiveApplication,
   getTopologyResourceObject,
   getResource,
 } from '@console/topology/src/utils/topology-utils';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { DeploymentModel, PodModel } from '@console/internal/models';
-import { RootState } from '@console/internal/redux';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   FLAG_KNATIVE_EVENTING,
   CAMEL_SOURCE_INTEGRATION,
   SERVERLESS_FUNCTION_LABEL,
 } from '../const';
-import { KnativeItem } from '../utils/get-knative-resources';
-import {
-  KNATIVE_GROUP_NODE_HEIGHT,
-  KNATIVE_GROUP_NODE_PADDING,
-  KNATIVE_GROUP_NODE_WIDTH,
-  URI_KIND,
-} from './const';
-import {
-  getDynamicEventSourcesModelRefs,
-  getDynamicChannelModelRefs,
-} from '../utils/fetch-dynamic-eventsources-utils';
 import {
   EventingBrokerModel,
   EventSourceCamelModel,
@@ -52,6 +41,17 @@ import {
   EventSourceSinkBindingModel,
   EventSourceKafkaModel,
 } from '../models';
+import {
+  getDynamicEventSourcesModelRefs,
+  getDynamicChannelModelRefs,
+} from '../utils/fetch-dynamic-eventsources-utils';
+import { KnativeItem } from '../utils/get-knative-resources';
+import {
+  KNATIVE_GROUP_NODE_HEIGHT,
+  KNATIVE_GROUP_NODE_PADDING,
+  KNATIVE_GROUP_NODE_WIDTH,
+  URI_KIND,
+} from './const';
 import {
   NodeType,
   Subscriber,

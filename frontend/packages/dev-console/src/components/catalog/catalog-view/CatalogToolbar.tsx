@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { SearchInput } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import * as ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
-import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 import { NO_GROUPING } from '../utils/category-utils';
+import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
 
 type CatalogToolbarProps = {
   title: string;

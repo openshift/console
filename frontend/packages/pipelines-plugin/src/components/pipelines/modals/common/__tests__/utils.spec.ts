@@ -1,10 +1,11 @@
-import { PipelineKind, PipelineRunKind } from '../../../../../types';
 import {
   DataState,
   PipelineExampleNames,
   pipelineTestData,
 } from '../../../../../test-data/pipeline-data';
+import { PipelineKind, PipelineRunKind } from '../../../../../types';
 import { preferredNameAnnotation, TektonResourceLabel, VolumeTypes } from '../../../const';
+import { CommonPipelineModalFormikValues } from '../types';
 import {
   convertPipelineToModalData,
   getPipelineName,
@@ -12,7 +13,6 @@ import {
   getPipelineRunFromForm,
   migratePipelineRun,
 } from '../utils';
-import { CommonPipelineModalFormikValues } from '../types';
 
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
 const samplePipelineRun =

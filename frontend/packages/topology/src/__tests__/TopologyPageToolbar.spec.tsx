@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Button, Tooltip } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import TopologyPageToolbar from '../components/page/TopologyPageToolbar';
 import { TopologyViewType } from '../topology-types';
 

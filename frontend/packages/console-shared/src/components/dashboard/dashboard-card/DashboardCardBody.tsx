@@ -1,6 +1,6 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { CardBody, CardBodyProps } from '@patternfly/react-core';
+import classNames from 'classnames';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 
 const DashboardCardBody: React.FC<DashboardCardBodyProps> = React.memo(

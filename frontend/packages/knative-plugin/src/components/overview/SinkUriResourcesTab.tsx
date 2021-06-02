@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import {
   ActionsMenu,
   ResourceLink,
@@ -11,6 +10,7 @@ import {
   KebabAction,
   ResourceIcon,
 } from '@console/internal/components/utils';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 
 export type SinkUriResourcesTabProps = {

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
 import { SelectOption } from '@patternfly/react-core';
+import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS, SHOW_GROUPS_FILTER_ID } from '../const';
 import { getFilterById } from '../filter-utils';

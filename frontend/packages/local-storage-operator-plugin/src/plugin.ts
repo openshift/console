@@ -1,4 +1,7 @@
 import * as _ from 'lodash';
+import { NodeModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   CustomFeatureFlag,
   ModelDefinition,
@@ -7,9 +10,6 @@ import {
   RoutePage,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { NodeModel } from '@console/internal/models';
 import { detectOCSAttachedDeviceMode, OCS_ATTACHED_DEVICES_FLAG } from './features';
 import * as models from './models';
 

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import {
@@ -11,6 +9,8 @@ import {
   defaultControlButtonsOptions,
   Visualization,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { COLA_FORCE_LAYOUT, COLA_LAYOUT } from './layouts/layoutFactory';
 
 interface ControlBarProps {

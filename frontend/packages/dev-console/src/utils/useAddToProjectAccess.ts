@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useFlag } from '@console/shared';
-import { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -11,6 +9,8 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
+import { AccessReviewResourceAttributes, K8sKind } from '@console/internal/module/k8s';
+import { useFlag } from '@console/shared';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
 import { SERVICE_BINDING_ENABLED } from '../const';

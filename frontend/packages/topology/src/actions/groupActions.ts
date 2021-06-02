@@ -1,16 +1,16 @@
-import * as _ from 'lodash';
-import { KebabOption } from '@console/internal/components/utils/kebab';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { Model, Node } from '@patternfly/react-topology';
-import { deleteResourceModal } from '@console/shared';
-import { asAccessReview } from '@console/internal/components/utils';
-import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
+import * as _ from 'lodash';
 import { addGroupResourceMenu } from '@console/dev-console/src/actions/add-resources';
 import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
-import { TopologyApplicationObject, GraphData, OdcNodeModel } from '../topology-types';
-import { getResource, getTopologyResourceObject } from '../utils/topology-utils';
-import { cleanUpWorkload } from '../utils/application-utils';
+import { asAccessReview } from '@console/internal/components/utils';
+import { KebabOption } from '@console/internal/components/utils/kebab';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
+import { deleteResourceModal } from '@console/shared';
 import { ApplicationModel } from '../models';
+import { TopologyApplicationObject, GraphData, OdcNodeModel } from '../topology-types';
+import { cleanUpWorkload } from '../utils/application-utils';
+import { getResource, getTopologyResourceObject } from '../utils/topology-utils';
 
 export const getGroupComponents = (groupId: string, model: Model): TopologyApplicationObject => {
   return _.values(model.nodes).reduce(

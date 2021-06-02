@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import { ModelDefinition, CustomFeatureFlag, RoutePage, Plugin } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
+import { ModelDefinition, CustomFeatureFlag, RoutePage, Plugin } from '@console/plugin-sdk';
+import { FLAG_OPENSHIFT_HELM } from './const';
+import * as models from './models';
 import {
   HelmTopologyConsumedExtensions,
   helmTopologyPlugin,
 } from './topology/helm-topology-plugin';
 import { detectHelmChartRepositories } from './utils/helm-detection-utils';
-import { FLAG_OPENSHIFT_HELM } from './const';
-import * as models from './models';
 
 type ConsumedExtensions =
   | ModelDefinition

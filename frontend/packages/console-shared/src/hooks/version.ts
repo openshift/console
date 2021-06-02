@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
-import { ClusterVersionModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ClusterVersionModel } from '@console/internal/models';
+import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
 import { getFlagsObject } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
 import { FLAGS } from '../constants';

@@ -1,5 +1,13 @@
 import * as _ from 'lodash';
+import { errorModal } from '@console/internal/components/modals/error-modal';
+import {
+  LOG_SOURCE_RESTARTING,
+  LOG_SOURCE_WAITING,
+  LOG_SOURCE_RUNNING,
+  LOG_SOURCE_TERMINATED,
+} from '@console/internal/components/utils';
 import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
+import { ServiceAccountModel } from '@console/internal/models';
 import {
   ContainerStatus,
   k8sUpdate,
@@ -9,16 +17,21 @@ import {
   K8sKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import {
-  LOG_SOURCE_RESTARTING,
-  LOG_SOURCE_WAITING,
-  LOG_SOURCE_RUNNING,
-  LOG_SOURCE_TERMINATED,
-} from '@console/internal/components/utils';
-import { ServiceAccountModel } from '@console/internal/models';
-import { errorModal } from '@console/internal/components/modals/error-modal';
 import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
+import {
+  PipelineRunModel,
+  TaskRunModel,
+  PipelineResourceModel,
+  ConditionModel,
+  ClusterTaskModel,
+  TriggerTemplateModel,
+  TriggerBindingModel,
+  ClusterTriggerBindingModel,
+  PipelineModel,
+  TaskModel,
+  EventListenerModel,
+} from '../models';
 import {
   PipelineRunKind,
   PipelineRunParam,
@@ -34,19 +47,6 @@ import {
   pipelineRunStatus,
   SucceedConditionReason,
 } from './pipeline-filter-reducer';
-import {
-  PipelineRunModel,
-  TaskRunModel,
-  PipelineResourceModel,
-  ConditionModel,
-  ClusterTaskModel,
-  TriggerTemplateModel,
-  TriggerBindingModel,
-  ClusterTriggerBindingModel,
-  PipelineModel,
-  TaskModel,
-  EventListenerModel,
-} from '../models';
 
 interface ServiceAccountSecretNames {
   [name: string]: string;

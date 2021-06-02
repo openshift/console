@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { ClipboardCopy, Stack, StackItem, Text, TextVariants } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import useSSHCommand from '../../../hooks/use-ssh-command';
 import useSSHService from '../../../hooks/use-ssh-service';
 import { EditButton } from '../../edit-button';

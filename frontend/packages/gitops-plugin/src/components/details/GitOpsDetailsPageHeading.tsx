@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
 import { Split, SplitItem, Label } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
+import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
 import './GitOpsDetailsPageHeading.scss';
 
 interface GitOpsDetailsPageHeadingProps {

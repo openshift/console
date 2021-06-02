@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { InProgressIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
 import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
@@ -6,8 +8,6 @@ import {
   BlueSyncIcon,
   GrayUnknownIcon,
 } from '@console/shared/src/components/status/icons';
-import { InProgressIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
 
 export enum HealthState {
   OK = 'OK',

@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { ProvidedType } from '../../../selectors/vm-template/basic';
 
 type TemplatesFilter = {

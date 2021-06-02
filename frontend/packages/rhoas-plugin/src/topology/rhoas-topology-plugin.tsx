@@ -1,17 +1,16 @@
-import { Plugin } from '@console/plugin-sdk';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { Plugin } from '@console/plugin-sdk';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import {
   TopologyComponentFactory,
   TopologyCreateConnector,
   TopologyDataModelFactory,
 } from '@console/topology/src/extensions/topology';
-import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { KafkaConnectionModel } from '../models';
 import { FLAG_RHOAS } from '../const';
+import { KafkaConnectionModel } from '../models';
+import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory

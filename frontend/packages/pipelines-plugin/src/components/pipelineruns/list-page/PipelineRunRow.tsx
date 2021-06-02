@@ -2,15 +2,15 @@ import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
-import { pipelineRunDuration } from '../../../utils/pipeline-utils';
-import { PipelineRunKind } from '../../../types';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
+import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
+import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { pipelineRunDuration } from '../../../utils/pipeline-utils';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
+import PipelineRunStatus from '../status/PipelineRunStatus';
 import { ResourceKebabWithUserLabel } from '../triggered-by';
 import { tableColumnClasses } from './pipelinerun-table';
-import PipelineRunStatus from '../status/PipelineRunStatus';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 

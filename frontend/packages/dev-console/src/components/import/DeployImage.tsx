@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
+import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
-import { DeployImageFormData, FirehoseList, Resources } from './import-types';
+import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
 import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
-import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
+import { DeployImageFormData, FirehoseList, Resources } from './import-types';
 import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface DeployImageProps {

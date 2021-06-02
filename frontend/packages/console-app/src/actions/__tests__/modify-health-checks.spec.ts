@@ -1,6 +1,6 @@
+import { DeploymentModel } from '@console/internal/models';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { AddHealthChecks, EditHealthChecks } from '../modify-health-checks';
-import { DeploymentModel } from '@console/internal/models';
 
 describe('modify health checks action', () => {
   it('"Edit Health Checks" option should be visible for Deployments with probes', () => {

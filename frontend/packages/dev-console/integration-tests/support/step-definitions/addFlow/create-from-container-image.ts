@@ -1,8 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addPage, containerImagePage, topologyPage, gitPage } from '../../pages';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { addOptions, pageTitle } from '../../constants';
 import { gitPO } from '../../pageObjects';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addPage, containerImagePage, topologyPage, gitPage } from '../../pages';
 
 Given('user is at Deploy Image page', () => {
   addPage.selectCardFromOptions(addOptions.ContainerImage);

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import AddCardSection from '../AddCardSection';
-import { addActionExtensions, addActionGroupExtensions } from './add-page-test-data';
 import AddCardSectionEmptyState from '../AddCardSectionEmptyState';
 import { MasonryLayout } from '../layout/MasonryLayout';
+import { addActionExtensions, addActionGroupExtensions } from './add-page-test-data';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

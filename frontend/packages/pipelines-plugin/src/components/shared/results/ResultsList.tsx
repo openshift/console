@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Bullseye, EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
 import { TableComposable, Thead, Tbody, Th, Td, Tr } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { SectionHeading } from '@console/internal/components/utils';
 import { TektonResultsRun } from '../../../types';
 import { runStatus } from '../../../utils/pipeline-augment';

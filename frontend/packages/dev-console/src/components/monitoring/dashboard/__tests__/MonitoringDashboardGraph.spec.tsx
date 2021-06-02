@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TFunction } from 'i18next';
-import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
+import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
 

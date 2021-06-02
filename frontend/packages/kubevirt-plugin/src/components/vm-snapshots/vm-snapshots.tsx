@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-
 import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
@@ -8,9 +9,6 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getName, getNamespace } from '@console/shared';
-import { Button } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
-
 import { VirtualMachineSnapshotModel } from '../../models';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';

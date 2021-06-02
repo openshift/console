@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useFormikContext, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { TextInputTypes, FormGroup } from '@patternfly/react-core';
-import { InputField, getFieldId } from '@console/shared';
-import { AsyncComponent } from '@console/internal/components/utils/async';
+import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { AsyncComponent } from '@console/internal/components/utils/async';
+import { InputField, getFieldId } from '@console/shared';
 import { EventSources } from '../import-types';
 
 interface SinkBindingSectionProps {

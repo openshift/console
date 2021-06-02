@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as cx from 'classnames';
 import {
   AngleDoubleRightIcon,
   BanIcon,
@@ -9,6 +8,7 @@ import {
   HourglassHalfIcon,
   SyncAltIcon,
 } from '@patternfly/react-icons';
+import * as cx from 'classnames';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 
 interface StatusIconProps {

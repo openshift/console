@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-
-import WhenExpressionDecorator from '../WhenExpressionDecorator';
 import { runStatus } from '../../../../utils/pipeline-augment';
+import WhenExpressionDecorator from '../WhenExpressionDecorator';
 
 type WhenExpressionDecoratorProps = React.ComponentProps<typeof WhenExpressionDecorator>;
 

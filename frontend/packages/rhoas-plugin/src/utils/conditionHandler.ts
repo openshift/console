@@ -1,5 +1,5 @@
-import { StatusCondition } from './rhoas-types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { StatusCondition } from './rhoas-types';
 
 export const getCondition = (request: K8sResourceKind, name: string) => {
   if (request?.status?.conditions) {

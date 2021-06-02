@@ -5,6 +5,7 @@ import {
   checkErrors,
   testName,
 } from '@console/internal-integration-tests/protractor.conf';
+import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import {
   navigateImportFromGit,
   setBuilderImage,
@@ -16,6 +17,7 @@ import {
   createButton,
   addApplicationWithExistingApps,
 } from '../views/git-import-flow.view';
+import { newApplicationShortName, newAppShortName } from '../views/new-app-name.view';
 import {
   topologyContainer,
   topologyGraph,
@@ -34,8 +36,6 @@ import {
   emptyStateTitle,
   namespaceBar,
 } from '../views/topology.view';
-import { newApplicationShortName, newAppShortName } from '../views/new-app-name.view';
-import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 
 describe('Topology', () => {
   const importFromGitHeader = $('[data-test-id="resource-title"]');

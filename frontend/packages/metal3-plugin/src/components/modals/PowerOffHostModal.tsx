@@ -1,22 +1,21 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { Alert, Button, Stack, StackItem, Checkbox } from '@patternfly/react-core';
-import {
-  withHandlePromise,
-  HandlePromiseProps,
-  LoadingBox,
-} from '@console/internal/components/utils';
+import { TFunction } from 'i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
+import {
+  withHandlePromise,
+  HandlePromiseProps,
+  LoadingBox,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { powerOffHost } from '../../k8s/requests/bare-metal-host';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   HOST_STATUS_READY,
@@ -24,11 +23,12 @@ import {
   NODE_STATUS_STARTING_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { powerOffHost } from '../../k8s/requests/bare-metal-host';
 import { BareMetalHostKind } from '../../types';
-import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 import { StatusProps } from '../types';
 import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
-import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { startNodeMaintenanceModal } from './StartNodeMaintenanceModal';
 
 type PowerOffWarning = {
   restart?: boolean;

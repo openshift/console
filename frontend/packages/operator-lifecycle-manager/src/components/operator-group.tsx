@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import { AsyncComponent } from '@console/internal/components/utils/async';
 import { MsgBox } from '@console/internal/components/utils/status-box';
 import {
   K8sResourceKind,
@@ -8,11 +11,8 @@ import {
   referenceForModel,
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { OperatorGroupModel } from '../models';
 import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
-import { useTranslation } from 'react-i18next';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
   obj?.metadata?.annotations?.['olm.targetNamespaces'];

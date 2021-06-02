@@ -3,17 +3,18 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { ImageStreamModel } from '@console/internal/models';
+import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { useActivePerspective } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
+import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
 import {
   createOrUpdateResources as createOrUpdateGitResources,
   handleRedirect,
 } from '../import/import-submit-utils';
-import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
-import EditApplicationForm from './EditApplicationForm';
+import { useUploadJarFormToast } from '../import/jar/useUploadJarFormToast';
+import { createOrUpdateJarFile } from '../import/upload-jar-submit-utils';
 import { EditApplicationProps } from './edit-application-types';
 import {
   getFlowType,
@@ -21,8 +22,7 @@ import {
   ApplicationFlowType,
   getValidationSchema,
 } from './edit-application-utils';
-import { createOrUpdateJarFile } from '../import/upload-jar-submit-utils';
-import { useUploadJarFormToast } from '../import/jar/useUploadJarFormToast';
+import EditApplicationForm from './EditApplicationForm';
 
 export interface StateProps {
   perspective: string;

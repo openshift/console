@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,

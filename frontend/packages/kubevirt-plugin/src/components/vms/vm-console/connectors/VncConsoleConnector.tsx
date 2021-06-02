@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { constants, VncConsole } from '@patternfly/react-console';
-
 import { getVMIApiPath, getVMISubresourcePath } from '../../../../selectors/vmi';
 import { VMIKind } from '../../../../types';
 import { isConnectionEncrypted } from '../../../../utils/url';

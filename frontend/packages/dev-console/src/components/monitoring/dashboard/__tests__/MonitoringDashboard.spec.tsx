@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TFunction } from 'i18next';
-import * as link from '@console/internal/components/utils';
 import {
   TimespanDropdown,
   PollIntervalDropdown,
 } from '@console/internal/components/monitoring/dashboards';
-import { ResourceDropdown } from '@console/shared';
+import * as link from '@console/internal/components/utils';
 import { Firehose } from '@console/internal/components/utils/firehose';
-import { MonitoringDashboard } from '../MonitoringDashboard';
-import { OptionTypes, MonitoringWorkloadFilter } from '../MonitoringWorkloadFilter';
-import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
+import { ResourceDropdown } from '@console/shared';
 import { monitoringDashboardQueries, topWorkloadMetricsQueries } from '../../queries';
+import { MonitoringDashboard } from '../MonitoringDashboard';
+import ConnectedMonitoringDashboardGraph from '../MonitoringDashboardGraph';
+import { OptionTypes, MonitoringWorkloadFilter } from '../MonitoringWorkloadFilter';
 
 type MonitoringDashboardProps = React.ComponentProps<typeof MonitoringDashboard>;
 

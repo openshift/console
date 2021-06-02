@@ -1,9 +1,7 @@
 import { get } from 'lodash';
-
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
-
 import { VMIKind, VMKind } from '../../types';
 import { getPvcImportPodName, getPvcUploadPodName } from '../pvc/selectors';
 import { getDataVolumeTemplates } from '../vm';

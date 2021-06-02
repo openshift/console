@@ -1,26 +1,26 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { RootState } from '@console/internal/redux';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { match as RMatch } from 'react-router-dom';
+import {
+  TimespanDropdown,
+  PollIntervalDropdown,
+} from '@console/internal/components/monitoring/dashboards';
 import {
   getURLSearchParams,
   setQueryArguments,
   removeQueryArguments,
 } from '@console/internal/components/utils';
-import {
-  TimespanDropdown,
-  PollIntervalDropdown,
-} from '@console/internal/components/monitoring/dashboards';
-import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
+import { RootState } from '@console/internal/redux';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import {
   monitoringDashboardQueries,
   workloadMetricsQueries,
   topWorkloadMetricsQueries,
 } from '../queries';
+import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
 import { MonitoringWorkloadFilter, OptionTypes } from './MonitoringWorkloadFilter';
 import './MonitoringDashboard.scss';
 

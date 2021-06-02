@@ -1,11 +1,10 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
 import { DeploymentConfigModel, PodModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RevisionModel } from '@console/knative-plugin';
-import * as utils from '../pod-utils';
-import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
+import { ExtPodKind } from '../../types';
 import {
   deployment,
   deploymentConfig,
@@ -13,7 +12,8 @@ import {
   daemonSet,
   mockPod,
 } from '../__mocks__/pod-utils-test-data';
-import { ExtPodKind } from '../../types';
+import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
+import * as utils from '../pod-utils';
 
 const t = (key): TFunction => key;
 const i18nNS = 'console-shared';

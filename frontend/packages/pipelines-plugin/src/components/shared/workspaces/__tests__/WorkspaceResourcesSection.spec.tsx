@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
-import WorkspaceResourcesSection from '../WorkspaceResourcesSection';
 import { PipelineRunWorkspace } from '../../../../types';
+import WorkspaceResourcesSection from '../WorkspaceResourcesSection';
 
 describe('WorkspaceResourcesSection', () => {
   it('should handle nulls', () => {

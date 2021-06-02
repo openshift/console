@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { TextArea } from '@patternfly/react-core';
-
 import { prefixedID } from '../../../../../utils';
 import { FormRow } from '../../../../form/form-row';
 

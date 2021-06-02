@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { EditorType, EditorToggle } from './editor-toggle';
-import { safeJSToYAML, asyncYAMLToJS } from '../../utils/yaml';
 import { Alert, Button } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { safeJSToYAML, asyncYAMLToJS } from '../../utils/yaml';
+import { EditorType, EditorToggle } from './editor-toggle';
 
 const YAML_KEY_ORDER = ['apiVerion', 'kind', 'metadata', 'spec', 'status'];
 export const YAML_TO_JS_OPTIONS = {

@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { K8sKind, k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalBody,
@@ -11,8 +11,8 @@ import {
   ConfigureUpdateStrategy,
   getNumberOrPercent,
 } from '@console/internal/components/modals/configure-update-strategy-modal';
+import { K8sKind, k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { useTranslation } from 'react-i18next';
 
 export const UpdateStrategyModal: React.FC<UpdateStrategyModalProps> = ({
   cancel,

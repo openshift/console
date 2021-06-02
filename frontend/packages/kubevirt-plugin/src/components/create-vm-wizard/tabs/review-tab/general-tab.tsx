@@ -1,8 +1,7 @@
-import classNames from 'classnames';
 import * as React from 'react';
+import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { toShallowJS } from '../../../../utils/immutable';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';

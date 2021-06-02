@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { TFunction } from 'i18next';
 import { Table } from '@console/internal/components/factory';
-import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
+import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
 
 type Component = typeof HelmResourcesList;

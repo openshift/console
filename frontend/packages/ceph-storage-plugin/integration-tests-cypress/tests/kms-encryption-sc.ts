@@ -1,6 +1,6 @@
 import { configureVault, isPodRunningWithEncryptedPV } from '../support/vault-standalone';
-import { createStorageClass } from '../views/storage-class';
 import { pvc } from '../views/pvc';
+import { createStorageClass } from '../views/storage-class';
 
 describe('Test Ceph pool creation', () => {
   before(() => {

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService, GitProvider } from '@console/git-service';
-import { getLimitsDataFromResource } from '@console/shared/src';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { parseDevfile } from '@console/internal/module/k8s';
+import { getLimitsDataFromResource } from '@console/shared/src';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
-import { createComponentName, detectGitType } from '../import-validation-utils';
 import { DevfileSuggestedResources } from '../import-types';
+import { createComponentName, detectGitType } from '../import-validation-utils';
 import { DevfileSample } from './devfile-types';
 
 const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);

@@ -1,7 +1,7 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { operatorsPO } from '../pageObjects';
 import { operators, pageTitle } from '../constants';
+import { operatorsPO } from '../pageObjects';
 import { app } from './app';
 
 export const operatorsPage = {

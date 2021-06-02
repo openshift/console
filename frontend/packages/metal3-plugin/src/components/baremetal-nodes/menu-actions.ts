@@ -1,9 +1,12 @@
-import { Kebab, KebabOption, asAccessReview } from '@console/internal/components/utils';
+import { TFunction } from 'i18next';
 import {
   MarkAsSchedulable,
   MarkAsUnschedulable,
   Delete,
 } from '@console/app/src/components/nodes/menu-actions';
+import { confirmModal } from '@console/internal/components/modals/confirm-modal';
+import { Kebab, KebabOption, asAccessReview } from '@console/internal/components/utils';
+import { CertificateSigningRequestModel } from '@console/internal/models';
 import {
   K8sKind,
   NodeKind,
@@ -12,13 +15,10 @@ import {
   k8sUpdate,
 } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
+import { findNodeMaintenance } from '../../selectors';
+import { CertificateSigningRequestKind } from '../../types';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
 import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
-import { findNodeMaintenance } from '../../selectors';
-import { confirmModal } from '@console/internal/components/modals/confirm-modal';
-import { CertificateSigningRequestModel } from '@console/internal/models';
-import { CertificateSigningRequestKind } from '../../types';
-import { TFunction } from 'i18next';
 
 type ActionArgs = {
   nodeMaintenance?: K8sResourceKind;

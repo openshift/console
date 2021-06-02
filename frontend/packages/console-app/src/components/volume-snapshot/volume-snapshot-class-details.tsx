@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ResourceEventStream } from '@console/internal/components/events';
+import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
   SectionHeading,
   ResourceSummary,
   navFactory,
   Kebab,
 } from '@console/internal/components/utils';
-import { useTranslation } from 'react-i18next';
 import { VolumeSnapshotClassKind } from '@console/internal/module/k8s';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
-import { ResourceEventStream } from '@console/internal/components/events';
 
 const { editYaml, events } = navFactory;
 

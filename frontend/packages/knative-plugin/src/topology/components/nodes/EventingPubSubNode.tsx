@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -16,12 +15,17 @@ import {
   WithCreateConnectorProps,
   RectAnchor,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
 } from '@console/topology/src/components/graph-view';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
 import {
   useSearchFilter,
   useDisplayFilters,
@@ -29,21 +33,17 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
-import { TYPE_AGGREGATE_EDGE } from '@console/topology/src/const';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
-import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
-import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
-
-import './EventingPubSubNode.scss';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
+import * as eventPubSubImg from '../../../imgs/event-pub-sub.svg';
 import {
   EventingTriggerModel,
   EventingBrokerModel,
   EventingSubscriptionModel,
 } from '../../../models';
-import * as eventPubSubImg from '../../../imgs/event-pub-sub.svg';
-import { useTranslation } from 'react-i18next';
+import PubSubSourceAnchor from '../anchors/PubSubSourceAnchor';
+import PubSubTargetAnchor from '../anchors/PubSubTargetAnchor';
+
+import './EventingPubSubNode.scss';
 
 export type EventingPubSubNodeProps = {
   element: Node;

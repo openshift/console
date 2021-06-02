@@ -1,24 +1,24 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Formik, FormikHelpers } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { history } from '@console/internal/components/utils';
+import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import {
   ALL_APPLICATIONS_KEY,
   useActivePerspective,
   usePostFormSubmitAction,
 } from '@console/shared/src';
-import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
-import { history } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
-import { BaseFormData, Resources, UploadJarFormData } from '../import-types';
-import UploadJarForm from './UploadJarForm';
 import { BuilderImage } from '../../../utils/imagestream-utils';
-import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
-import { handleRedirect } from '../import-submit-utils';
-import { validationSchema } from '../upload-jar-validation-utils';
 import { getBaseInitialValues } from '../form-initial-values';
+import { handleRedirect } from '../import-submit-utils';
+import { BaseFormData, Resources, UploadJarFormData } from '../import-types';
+import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
+import { validationSchema } from '../upload-jar-validation-utils';
+import UploadJarForm from './UploadJarForm';
 import { useUploadJarFormToast } from './useUploadJarFormToast';
 
 type UploadJarProps = {

@@ -1,19 +1,20 @@
 import * as React from 'react';
-import i18n from '@console/internal/i18n';
-import * as classNames from 'classnames';
-import { GitOpsAppGroupData } from '../utils/gitops-types';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
-import { ExternalLink, Timestamp } from '@console/internal/components/utils';
+import * as classNames from 'classnames';
+import { Link } from 'react-router-dom';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import GitOpsSyncFragment from './GitOpsSyncFragment';
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { ExternalLink, Timestamp } from '@console/internal/components/utils';
+import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
 } from '@console/shared';
+import { GitOpsAppGroupData } from '../utils/gitops-types';
+import GitOpsSyncFragment from './GitOpsSyncFragment';
+
 import './GitOpsTableRow.scss';
-import { Link } from 'react-router-dom';
 
 const tableColumnClasses = [
   classNames('pf-m-width-20'), // Application name

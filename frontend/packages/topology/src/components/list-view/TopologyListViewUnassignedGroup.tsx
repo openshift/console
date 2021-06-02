@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   DataListCell,
   DataListContent,
@@ -8,6 +7,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { getChildKinds } from './list-view-utils';
 import TopologyListViewKindGroup from './TopologyListViewKindGroup';
 

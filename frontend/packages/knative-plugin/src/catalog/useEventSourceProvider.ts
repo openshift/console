@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { useEventSourceModelsWithAccess } from '../hooks';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
-import { useEventSourceModelsWithAccess } from '../hooks';
 
 const normalizeEventSources = (
   eventSources: K8sKind[],

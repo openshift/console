@@ -1,12 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import * as _ from 'lodash';
 import * as React from 'react';
-
+import * as _ from 'lodash';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import { VolumeReferencedObject, VolumeWrapper } from '../k8s/wrapper/vm/volume-wrapper';
 import { V1Volume } from '../types/api';
 import { K8sResourceWithModel } from '../types/k8s-resource-with-model';

@@ -1,13 +1,11 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-
 import { ListPage, MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { CDI_APP_LABEL } from '../../constants';
 import {
   TEMPLATE_CUSTOMIZED_ANNOTATION,

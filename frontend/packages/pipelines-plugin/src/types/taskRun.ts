@@ -1,7 +1,6 @@
 import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { TektonResource, TektonResultsRun, TektonTaskSpec } from './coreTekton';
 import { PipelineTaskParam, PipelineTaskRef } from './pipeline';
-
 import {
   Condition,
   PLRTaskRunStep,

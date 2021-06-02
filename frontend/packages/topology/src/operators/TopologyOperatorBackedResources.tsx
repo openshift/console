@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
 import {
   GroupVersionKind,
   K8sResourceKind,
@@ -19,9 +20,8 @@ import {
   flattenCsvResources,
   linkForCsvResource,
 } from '@console/operator-lifecycle-manager/src/components/k8s-resource';
-import { Firehose, ResourceIcon, StatusBox } from '@console/internal/components/utils';
-import { TopologyDataObject } from '../topology-types';
 import TopologyGroupResourcesPanel from '../components/side-bar/TopologyGroupResourcesPanel';
+import { TopologyDataObject } from '../topology-types';
 
 type OperatorResourcesProps = {
   namespace: string;

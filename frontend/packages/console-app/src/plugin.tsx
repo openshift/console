@@ -1,7 +1,16 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { CogsIcon } from '@patternfly/react-icons';
-import { FLAGS } from '@console/shared/src/constants';
+import * as _ from 'lodash';
+import {
+  ClusterVersionModel,
+  NodeModel,
+  PodModel,
+  StorageClassModel,
+  PersistentVolumeClaimModel,
+  VolumeSnapshotContentModel,
+  ClusterOperatorModel,
+} from '@console/internal/models';
+import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
   Plugin,
   Perspective,
@@ -16,34 +25,25 @@ import {
   ResourceListPage,
   ResourceTabPage,
 } from '@console/plugin-sdk';
-import {
-  ClusterVersionModel,
-  NodeModel,
-  PodModel,
-  StorageClassModel,
-  PersistentVolumeClaimModel,
-  VolumeSnapshotContentModel,
-  ClusterOperatorModel,
-} from '@console/internal/models';
-import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import { FLAGS } from '@console/shared/src/constants';
 import '@console/internal/i18n.js';
+import {
+  getClusterUpdateTimestamp,
+  isClusterUpdateActivity,
+} from './components/dashboards-page/activity';
 import {
   fetchK8sHealth,
   getK8sHealthState,
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
+import * as models from './models';
 import {
   API_SERVERS_UP,
   API_SERVER_REQUESTS_SUCCESS,
   CONTROLLER_MANAGERS_UP,
   SCHEDULERS_UP,
 } from './queries';
-import {
-  getClusterUpdateTimestamp,
-  isClusterUpdateActivity,
-} from './components/dashboards-page/activity';
-import * as models from './models';
 
 type ConsumedExtensions =
   | Perspective

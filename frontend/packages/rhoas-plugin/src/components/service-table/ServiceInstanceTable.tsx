@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   EmptyState,
@@ -9,6 +8,7 @@ import {
   Title,
   EmptyStateIcon,
 } from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import {
   sortable,
   Table,
@@ -20,7 +20,7 @@ import {
   Tr,
   Td,
 } from '@patternfly/react-table';
-import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+import { useTranslation } from 'react-i18next';
 import { Timestamp } from '@console/internal/components/utils';
 import { CloudKafka } from '../../utils/rhoas-types';
 import ServiceIconStatus from './ServiceIconStatus';

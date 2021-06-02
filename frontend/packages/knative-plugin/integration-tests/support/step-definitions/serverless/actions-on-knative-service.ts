@@ -1,3 +1,4 @@
+import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
@@ -17,7 +18,6 @@ import {
   topologyPage,
   topologySidePane,
 } from '@console/dev-console/integration-tests/support/pages';
-import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 
 When('user right clicks on the knative service {string}', (serviceName: string) => {
   topologyPage.waitForLoad();

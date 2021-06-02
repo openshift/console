@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { FormikErrors } from 'formik';
 import i18n from 'i18next';
+import * as _ from 'lodash';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { ClusterTaskModel, PipelineModel, TaskModel } from '../../../models';

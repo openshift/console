@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormGroup } from '@patternfly/react-core';
-
-import FormSection from './FormSection';
 import IconDropdown from '../icon/IconDropdown';
+import FormSection from './FormSection';
 
 const IconSection: React.FC = () => {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { URLHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
@@ -8,7 +8,6 @@ import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
 } from '../../../models';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 
 export const getKubevirtHealthState: URLHealthHandler<KubevirtHealthResponse> = (
   response,

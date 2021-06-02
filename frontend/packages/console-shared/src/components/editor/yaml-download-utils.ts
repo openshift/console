@@ -1,5 +1,5 @@
-import { safeLoad } from 'js-yaml';
 import { saveAs } from 'file-saver';
+import { safeLoad } from 'js-yaml';
 
 export const downloadYaml = (data) => {
   const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });

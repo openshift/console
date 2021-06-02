@@ -1,24 +1,24 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
-import * as _ from 'lodash';
 import { Edge, Node, isNode } from '@patternfly/react-topology';
-import { referenceFor, modelFor } from '@console/internal/module/k8s';
+import * as classNames from 'classnames';
+import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   ActionsMenu,
   ResourceLink,
   SidebarSectionHeading,
   ExternalLink,
 } from '@console/internal/components/utils';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { edgeActions } from '@console/topology/src/actions';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
+import { setSinkSource } from '../../actions/sink-source';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KAFKA_CONNECTION_LINK,
   TYPE_REVISION_TRAFFIC,
 } from '../../topology/const';
-import { setSinkSource } from '../../actions/sink-source';
 
 export type TopologyEdgePanelProps = {
   edge: Edge;

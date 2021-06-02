@@ -1,11 +1,9 @@
 import * as React from 'react';
+import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
-
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import {
   getCPU,

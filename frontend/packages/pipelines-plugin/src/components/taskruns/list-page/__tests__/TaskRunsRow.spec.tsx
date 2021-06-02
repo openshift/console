@@ -1,8 +1,8 @@
 import { shallow } from 'enzyme';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { TaskRunKind } from '../../../../types';
 import TaskRunsRow from '../TaskRunsRow';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 
 let taskRunsData: RowFunctionArgs<TaskRunKind>;
 

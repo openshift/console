@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { useField, useFormikContext, FormikValues } from 'formik';
-import cx from 'classnames';
 import { Alert, Button, AlertActionCloseButton } from '@patternfly/react-core';
+import cx from 'classnames';
+import { useField, useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 import { EditorType } from '../synced-editor/editor-toggle';
 import RadioGroupField from './RadioGroupField';
 
 import './SyncedEditorField.scss';
-import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 
 type EditorContext = {
   name: string;

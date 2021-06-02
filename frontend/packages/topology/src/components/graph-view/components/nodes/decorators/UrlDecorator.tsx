@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Node } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import { useRoutesURL } from '../../../../../data-transforms/useRoutesURL';
 import { getResource } from '../../../../../utils';
 import Decorator from './Decorator';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useRoutesURL } from '../../../../../data-transforms/useRoutesURL';
 
 interface DefaultDecoratorProps {
   element: Node;

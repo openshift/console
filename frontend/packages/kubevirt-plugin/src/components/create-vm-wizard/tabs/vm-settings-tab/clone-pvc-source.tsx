@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { ListDropdown } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { toShallowJS } from '../../../../utils/immutable';
 import { ProjectDropdown } from '../../../form/project-dropdown';

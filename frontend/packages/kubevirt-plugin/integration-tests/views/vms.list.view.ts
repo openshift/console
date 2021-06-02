@@ -1,8 +1,6 @@
 import { last } from 'lodash';
 import { $, browser, ExpectedConditions as until } from 'protractor';
-
 import { click } from '@console/shared/src/test-utils/utils';
-
 import { Status } from '../tests/types/types';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
 

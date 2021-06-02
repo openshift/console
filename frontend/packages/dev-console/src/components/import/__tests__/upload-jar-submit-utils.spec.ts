@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as k8s from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -9,12 +8,13 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
+import * as k8s from '@console/internal/module/k8s';
 import { ServiceModel as knServiceModel } from '@console/knative-plugin/src/models';
+import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
+import * as importSubmitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
 import * as submitUtils from '../upload-jar-submit-utils';
 import { nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
-import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
-import * as importSubmitUtils from '../import-submit-utils';
 
 const { createOrUpdateDeployment, createOrUpdateJarFile } = submitUtils;
 

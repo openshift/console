@@ -1,3 +1,4 @@
+import { checkErrors } from '../../../integration-tests-cypress/support';
 import {
   createBucketClass,
   Tier,
@@ -9,7 +10,6 @@ import {
   deleteBucketClass,
   visitBucketClassPage,
 } from '../views/bc';
-import { checkErrors } from '../../../integration-tests-cypress/support';
 
 describe('Tests creation of Standard Bucket Class', () => {
   const backingStoreResources = ['test-store1', 'test-store2', 'test-store3', 'test-store4'];

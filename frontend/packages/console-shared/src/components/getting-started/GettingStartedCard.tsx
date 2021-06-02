@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import {
   Flex,
   FlexItem,
@@ -12,6 +11,7 @@ import {
   Skeleton,
   SimpleListItem,
 } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 
 import './GettingStartedCard.scss';
 

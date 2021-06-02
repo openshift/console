@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { Timestamp } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   K8sResourceKind,
   referenceForGroupVersionKind,

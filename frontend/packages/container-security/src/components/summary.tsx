@@ -1,18 +1,18 @@
 import * as React from 'react';
+import { ChartDonut } from '@patternfly/react-charts';
+import { pluralize } from '@patternfly/react-core';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { pluralize } from '@patternfly/react-core';
-import { ChartDonut } from '@patternfly/react-charts';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { ResourceHealthHandler } from '@console/plugin-sdk';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { ExternalLink } from '@console/internal/components/utils/link';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ImageManifestVuln, WatchImageVuln } from '../types';
+import { ResourceHealthHandler } from '@console/plugin-sdk';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { vulnPriority, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
+import { ImageManifestVuln, WatchImageVuln } from '../types';
 
 export const securityHealthHandler: ResourceHealthHandler<WatchImageVuln> = ({
   imageManifestVuln,

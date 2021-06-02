@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -12,7 +11,6 @@ import { HandlePromiseProps, withHandlePromise } from '@console/internal/compone
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVMI } from '../../../k8s/requests/vmi/actions';

@@ -7,8 +7,8 @@ import {
   VisualizationSurface,
   VisualizationProvider,
 } from '@patternfly/react-topology';
-import { componentFactory, layoutFactory } from './factories';
 import { DROP_SHADOW_SPACING, NODE_HEIGHT, PipelineLayout } from './const';
+import { componentFactory, layoutFactory } from './factories';
 import { getLayoutData } from './utils';
 
 type PipelineVisualizationSurfaceProps = {

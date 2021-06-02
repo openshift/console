@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
 import { navFactory, Kebab } from '@console/internal/components/utils';
-import { DetailsForKind } from '@console/internal/components/default-resource';
 import { useTriggersBreadcrumbsFor } from './hooks';
 
 const ClusterTriggerBindingPage: React.FC<DetailsPageProps> = (props) => {

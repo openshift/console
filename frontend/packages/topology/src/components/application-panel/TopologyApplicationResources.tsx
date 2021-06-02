@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { OdcNodeModel } from '../../topology-types';
 import { labelKeyForNodeKind } from '../list-view/list-view-utils';
 import ApplicationGroupResource from './ApplicationGroupResource';

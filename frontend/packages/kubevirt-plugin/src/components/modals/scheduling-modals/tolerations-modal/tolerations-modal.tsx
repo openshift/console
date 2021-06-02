@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Button, ButtonVariant, Text, TextVariants } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   ExternalLink,
@@ -11,8 +11,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
-import { Button, ButtonVariant, Text, TextVariants } from '@patternfly/react-core';
-
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
 import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';

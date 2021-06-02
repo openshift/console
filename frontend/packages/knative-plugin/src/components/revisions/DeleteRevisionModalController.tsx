@@ -1,20 +1,7 @@
 import * as React from 'react';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { Formik, FormikHelpers, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { RedExclamationCircleIcon } from '@console/shared';
-import {
-  k8sKill,
-  K8sResourceKind,
-  k8sUpdate,
-  referenceForModel,
-} from '@console/internal/module/k8s';
-import {
-  Firehose,
-  FirehoseResult,
-  history,
-  resourceListPathFromModel,
-} from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalBody,
@@ -22,17 +9,30 @@ import {
   ModalFooter,
   ModalTitle,
 } from '@console/internal/components/factory';
+import {
+  Firehose,
+  FirehoseResult,
+  history,
+  resourceListPathFromModel,
+} from '@console/internal/components/utils';
+import {
+  k8sKill,
+  K8sResourceKind,
+  k8sUpdate,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { RedExclamationCircleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel, ServiceModel } from '../../models';
+import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
+import { Traffic } from '../../types';
 import {
   knativeServingResourcesTrafficSplitting,
   getRevisionItems,
   constructObjForUpdate,
 } from '../../utils/traffic-splitting-utils';
-import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
 import { TrafficSplittingType } from '../traffic-splitting/TrafficSplitting';
 import DeleteRevisionModal from './DeleteRevisionModal';
-import { Traffic } from '../../types';
 
 type ControllerProps = {
   loaded?: boolean;

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { CatalogIcon } from '@patternfly/react-icons';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { CatalogIcon } from '@patternfly/react-icons';
 
 type AddActionExtension = ResolvedExtension<AddAction>;
 type AddActionGroupExtension = LoadedExtension<AddActionGroup>;

@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
-import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { usePodsWatcher } from '@console/shared';
 import {
   ServiceModel,
   EventSourceApiServerModel,
@@ -18,8 +17,9 @@ import {
   EventSourceContainerModel,
   EventSourceSinkBindingModel,
 } from '../../../models';
-import EventSourceResources from '../EventSourceResources';
+import { getEventSourceResponse } from '../../../topology/__tests__/topology-knative-test-data';
 import EventSourceOwnedList from '../EventSourceOwnedList';
+import EventSourceResources from '../EventSourceResources';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

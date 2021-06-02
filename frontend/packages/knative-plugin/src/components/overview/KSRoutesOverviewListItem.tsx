@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../models';
 
 type KSRoutesOverviewListItemProps = {

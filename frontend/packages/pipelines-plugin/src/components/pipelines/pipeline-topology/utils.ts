@@ -2,6 +2,7 @@ import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import { PipelineKind, PipelineRunKind, PipelineTask } from '../../../types';
 import { getPipelineTasks, getFinallyTasksWithStatus } from '../../../utils/pipeline-utils';
+import { CheckTaskErrorMessage } from '../pipeline-builder/types';
 import {
   NODE_HEIGHT,
   NodeType,
@@ -31,7 +32,6 @@ import {
   FinallyNodeModel,
   PipelineFinallyNodeModel,
 } from './types';
-import { CheckTaskErrorMessage } from '../pipeline-builder/types';
 
 const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, data) => ({
   id: name,

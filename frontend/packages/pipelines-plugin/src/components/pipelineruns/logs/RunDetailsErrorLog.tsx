@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import LogSnippetBlock from './LogSnippetBlock';
 import { CombinedErrorDetails } from './log-snippet-types';
+import LogSnippetBlock from './LogSnippetBlock';
 
 type RunDetailErrorLogProps = {
   logDetails: CombinedErrorDetails;

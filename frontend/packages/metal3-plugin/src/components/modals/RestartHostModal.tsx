@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { withHandlePromise } from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-import { BareMetalHostKind } from '../../types';
+import { withHandlePromise } from '@console/internal/components/utils';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
+import { BareMetalHostKind } from '../../types';
 import { PowerOffWarning } from './PowerOffHostModal';
 
 export type RestartHostModalProps = {

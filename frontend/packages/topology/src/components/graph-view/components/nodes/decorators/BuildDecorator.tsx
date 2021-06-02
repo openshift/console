@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { BuildModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BuildModel } from '@console/internal/models';
 import { Status, useBuildConfigsWatcher } from '@console/shared';
 import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';

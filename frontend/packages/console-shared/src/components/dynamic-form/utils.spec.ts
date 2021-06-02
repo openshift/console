@@ -1,6 +1,6 @@
 import { JSONSchema6 } from 'json-schema';
-import { hasNoFields, prune } from './utils';
 import { JSONSchemaType } from './types';
+import { hasNoFields, prune } from './utils';
 
 const OBJECT: JSONSchema6 = {
   type: JSONSchemaType.object,

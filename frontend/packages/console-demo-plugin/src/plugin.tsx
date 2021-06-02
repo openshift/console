@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+// TODO(vojtech): internal code needed by plugins should be moved to console-shared package
+import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import {
   Plugin,
   ModelDefinition,
@@ -19,14 +21,12 @@ import {
   DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-// TODO(vojtech): internal code needed by plugins should be moved to console-shared package
-import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
-import { FooBarModel } from './models';
-import TestIcon from './components/test-icon';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
+import TestIcon from './components/test-icon';
+import { FooBarModel } from './models';
 
 type ConsumedExtensions =
   | ModelDefinition

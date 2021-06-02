@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils';
-import { useDeepCompareMemoize } from './deep-compare-memoize';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodRCData } from '../types';
+import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils';
 import { useDebounceCallback } from './debounce';
+import { useDeepCompareMemoize } from './deep-compare-memoize';
 
 export const usePodsWatcher = (
   resource: K8sResourceKind,

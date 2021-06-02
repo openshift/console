@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { TechPreviewBadge } from '@console/shared';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 import './PipelineBuilderHeader.scss';
-import { useTranslation } from 'react-i18next';
-import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 const PipelineBuilderHeader: React.FC<{ namespace: string }> = ({ namespace }) => {
   const { t } = useTranslation();

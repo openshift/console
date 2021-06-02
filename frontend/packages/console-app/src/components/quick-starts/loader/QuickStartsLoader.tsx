@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
-import { QuickStart } from '../utils/quick-start-types';
 import { QuickStartModel } from '../../../models';
-import QuickStartPermissionChecker from './QuickStartPermissionChecker';
+import { QuickStart } from '../utils/quick-start-types';
 import { isDisabledQuickStart, getDisabledQuickStarts } from '../utils/quick-start-utils';
+import QuickStartPermissionChecker from './QuickStartPermissionChecker';
 
 type QuickStartsLoaderProps = {
   children: (quickStarts: QuickStart[], loaded: boolean) => React.ReactNode;

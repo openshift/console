@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   ActionsMenu,
@@ -11,8 +12,6 @@ import {
 } from '@console/internal/components/utils';
 import { modelFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils';
-import { observer } from '@patternfly/react-topology';
-
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';

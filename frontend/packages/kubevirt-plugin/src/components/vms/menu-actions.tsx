@@ -1,8 +1,9 @@
+import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import cn from 'classnames';
 import * as copy from 'copy-to-clipboard';
-import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { confirmModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
@@ -12,9 +13,6 @@ import {
   PodKind,
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
-import { Tooltip } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-
 import { StatusGroup } from '../../constants/status-group';
 import { VMStatus } from '../../constants/vm/vm-status';
 import useSSHCommand from '../../hooks/use-ssh-command';

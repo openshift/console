@@ -1,7 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { operatingSystemsNative } from '../../../constants/vm-templates/os';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { ITemplate } from '../../../types/template';

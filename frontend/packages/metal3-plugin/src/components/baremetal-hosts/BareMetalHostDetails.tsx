@@ -1,13 +1,7 @@
 import * as React from 'react';
+import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { RebootingIcon } from '@patternfly/react-icons';
-import {
-  referenceForModel,
-  K8sResourceKind,
-  MachineKind,
-  NodeKind,
-} from '@console/internal/module/k8s';
 import {
   SectionHeading,
   Timestamp,
@@ -15,6 +9,12 @@ import {
   ResourceLink,
 } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
+import {
+  referenceForModel,
+  K8sResourceKind,
+  MachineKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
 import {
   getName,
   getMachineNode,
@@ -27,7 +27,7 @@ import {
   SecondaryStatus,
   DASH,
 } from '@console/shared';
-import { getHostStatus } from '../../status/host-status';
+import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,
   getHostDescription,
@@ -46,11 +46,11 @@ import {
   isHostScheduledForRestart,
   hasPowerManagement,
 } from '../../selectors';
+import { getHostStatus } from '../../status/host-status';
 import { BareMetalHostKind } from '../../types';
-import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
-import MachineLink from './MachineLink';
 import BareMetalHostPowerStatusIcon from './BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from './BareMetalHostStatus';
+import MachineLink from './MachineLink';
 
 type BareMetalHostDetailsProps = {
   obj: BareMetalHostKind;

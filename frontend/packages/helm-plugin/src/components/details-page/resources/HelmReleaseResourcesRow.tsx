@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
+import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
-import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
-import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
 import { tableColumnClasses } from './HelmReleaseResourcesHeader';
 
 type HelmReleaseResourceStatusProps = {

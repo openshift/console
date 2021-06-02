@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { ExternalLink } from '@console/internal/components/utils';
 
 const CloudInitAuthKeyHelp: React.FC = () => {

@@ -3,7 +3,6 @@ import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-
 import { VirtualMachineModel } from '../../../models';
 import { isVMExpectedRunning } from '../../../selectors/vm';
 import { VMIKind, VMKind } from '../../../types/vm';

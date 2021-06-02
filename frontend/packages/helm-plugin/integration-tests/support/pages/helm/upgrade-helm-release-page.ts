@@ -1,5 +1,5 @@
-import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects/helm-po';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects/helm-po';
 
 export const upgradeHelmRelease = {
   verifyTitle: () =>

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
-import { ExpandCollapse } from '@console/internal/components/utils';
 import { TextInputTypes } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, useDebounceCallback } from '@console/shared';
 import FormSection from '../section/FormSection';
 import SourceSecretSelector from './SourceSecretSelector';

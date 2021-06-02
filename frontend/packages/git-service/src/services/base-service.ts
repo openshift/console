@@ -1,4 +1,3 @@
-import { detectBuildTypes, isModernWebApp } from '../utils';
 import {
   BranchList,
   BuildType,
@@ -8,6 +7,7 @@ import {
   RepoMetadata,
   RepoStatus,
 } from '../types';
+import { detectBuildTypes, isModernWebApp } from '../utils';
 
 export abstract class BaseService {
   protected gitsource: GitSource;

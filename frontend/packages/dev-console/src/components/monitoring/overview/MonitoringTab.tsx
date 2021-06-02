@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { OverviewItem, usePodsWatcher } from '@console/shared';
 import { Firehose } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
+import { OverviewItem, usePodsWatcher } from '@console/shared';
 import MonitoringOverview from './MonitoringOverview';
 
 type MonitoringTabProps = {

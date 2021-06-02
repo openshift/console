@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { confirmModal } from '@console/internal/components/modals';
-
 import { CLOUDINIT_DISK } from '../../../../../../constants/vm';
 import { DiskBus, DiskType, VolumeType } from '../../../../../../constants/vm/storage';
 import { CloudInitDataHelper } from '../../../../../../k8s/wrapper/vm/cloud-init-data-helper';

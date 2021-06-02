@@ -1,12 +1,12 @@
-import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
-import { pageTitle } from '../../constants/pageTitle';
-import { addPage } from './add-page';
-import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
-import { helmPO } from '../../pageObjects/helm-po';
-import { app, navigateTo } from '../app';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { devNavigationMenu } from '../../constants';
+import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
+import { pageTitle } from '../../constants/pageTitle';
+import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
+import { helmPO } from '../../pageObjects/helm-po';
+import { app, navigateTo } from '../app';
+import { addPage } from './add-page';
 
 export const catalogPage = {
   verifyTitle: () => detailsPage.titleShouldContain('Developer Catalog'),

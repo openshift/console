@@ -1,4 +1,4 @@
-import { getTRLogSnippet } from '../taskRunLogSnippet';
+import { PipelineRunKind } from 'packages/pipelines-plugin/src/types';
 import {
   pipelineTestData,
   PipelineExampleNames,
@@ -8,7 +8,7 @@ import {
   ErrorDetailsWithStaticLog,
   ErrorDetailsWithLogName,
 } from '../../../pipelineruns/logs/log-snippet-types';
-import { PipelineRunKind } from 'packages/pipelines-plugin/src/types';
+import { getTRLogSnippet } from '../taskRunLogSnippet';
 
 const taskRunMock = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE].taskRuns[0];
 const plrWithFailedTaskRun =

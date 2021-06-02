@@ -1,7 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { Button, Tooltip } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   NodeAffinity as NodeAffinityType,
   MatchExpression,
@@ -10,7 +11,6 @@ import {
   Selector,
 } from '@console/internal/module/k8s';
 import { MatchExpressions } from './match-expressions';
-import { useTranslation } from 'react-i18next';
 
 enum AffinityRuleType {
   Preferred = 'Preferred',

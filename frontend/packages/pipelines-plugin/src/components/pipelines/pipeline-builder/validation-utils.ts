@@ -1,8 +1,8 @@
+import i18n from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
-import i18n from 'i18next';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { nameValidationSchema } from '@console/shared';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   PipelineTaskResource,
   PipelineTask,

@@ -1,13 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import { browser, by, element, ExpectedConditions as until } from 'protractor';
-
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { TemplateModel } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
-
 import { diskStorageClass } from '../../views/dialogs/diskDialog.view';
 import { confirmActionButton } from '../../views/importWizard.view';
 import { continueButton, modalTitle, saveButton } from '../../views/kubevirtUIResource.view';

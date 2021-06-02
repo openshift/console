@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { MouseIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import './Shortcut.scss';
 
 interface ShortcutProps {

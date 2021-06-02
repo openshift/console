@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Measure from 'react-measure';
 import MonacoEditor from 'react-monaco-editor';
-
 import { registerYAMLinMonaco, defaultEditorOptions } from './yaml-editor-utils';
 import YAMLEditorToolbar from './YAMLEditorToolbar';
 

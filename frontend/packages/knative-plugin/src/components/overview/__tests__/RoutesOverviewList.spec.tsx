@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import RoutesOverviewList from '../RoutesOverviewList';
 import RoutesOverviewListItem from '../RoutesOverviewListItem';
-import { K8sResourceKind } from '@console/internal/module/k8s/types';
 
 type RoutesOverviewListProps = React.ComponentProps<typeof RoutesOverviewList>;
 

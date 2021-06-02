@@ -1,4 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import {
+  devNavigationMenu,
+  switchPerspective,
+  addOptions,
+  catalogCards,
+} from '@console/dev-console/integration-tests/support/constants';
 import {
   navigateTo,
   perspective,
@@ -9,13 +16,6 @@ import {
   catalogPage,
   addPage,
 } from '@console/dev-console/integration-tests/support/pages';
-import {
-  devNavigationMenu,
-  switchPerspective,
-  addOptions,
-  catalogCards,
-} from '@console/dev-console/integration-tests/support/constants';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);

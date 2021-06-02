@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { PipelineRunWorkspace } from '../../../types';
+import EmptyDirectoriesSection from './EmptyDirectoriesSection';
 import VolumeClaimTemplateSection from './VolumeClaimTemplateSection';
 import WorkspaceResourcesSection from './WorkspaceResourcesSection';
-import EmptyDirectoriesSection from './EmptyDirectoriesSection';
 
 export interface WorkspaceResourceLinkListProps {
   workspaces: PipelineRunWorkspace[];

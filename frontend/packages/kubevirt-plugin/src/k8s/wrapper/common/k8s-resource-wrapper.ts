@@ -10,7 +10,6 @@ import {
   hasLabel,
 } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import { K8sResourceKindMethods } from '../types/types';
 import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
 import { Wrapper } from './wrapper';

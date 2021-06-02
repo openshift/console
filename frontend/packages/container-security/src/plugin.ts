@@ -1,4 +1,6 @@
+import { NamespaceModel, PodModel, ProjectModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import {
   Plugin,
   ModelDefinition,
@@ -10,11 +12,9 @@ import {
   ResourceDetailsPage,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { NamespaceModel, PodModel, ProjectModel } from '@console/internal/models';
-import { ImageManifestVulnModel } from './models';
-import { ContainerSecurityFlag } from './const';
 import { securityHealthHandler } from './components/summary';
+import { ContainerSecurityFlag } from './const';
+import { ImageManifestVulnModel } from './models';
 import { WatchImageVuln } from './types';
 
 type ConsumedExtensions =

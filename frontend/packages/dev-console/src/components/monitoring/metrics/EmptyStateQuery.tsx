@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateBody,
@@ -7,6 +6,7 @@ import {
   EmptyStateVariant,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 const EmptyStateQuery: React.FC = () => {
   const { t } = useTranslation();

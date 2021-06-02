@@ -1,10 +1,3 @@
-import { testName } from '../../support';
-import {
-  switchPerspective,
-  Perspective,
-  addHeader,
-  topologyHeader,
-} from '../../view/dev-perspective';
 import {
   DEFAULTS_VALUES,
   VM_ACTION,
@@ -14,16 +7,23 @@ import {
   TEMPLATE_NAME,
   TEMPLATE_BASE_IMAGE,
 } from '../../const/index';
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
 import {
   detailViewAction,
   detailViewDropdown,
   modalTitle,
   selectActionFromDropdown,
 } from '../../view/actions';
-import { waitForStatus } from '../../view/vm';
 import { alertTitle, confirmCloneButton } from '../../view/clone';
-import { VirtualMachineData } from '../../types/vm';
+import {
+  switchPerspective,
+  Perspective,
+  addHeader,
+  topologyHeader,
+} from '../../view/dev-perspective';
 import { detailsTab } from '../../view/selector';
+import { waitForStatus } from '../../view/vm';
 
 const vm: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,

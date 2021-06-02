@@ -1,19 +1,20 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
-import { safeLoad } from 'js-yaml';
-import { FormikValues, useFormikContext } from 'formik';
 import { GridItem } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { FormikValues, useFormikContext } from 'formik';
+import { safeLoad } from 'js-yaml';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
-import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { DropdownField } from '@console/shared';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { HelmChartRepositoryModel } from '../../../models';
 import {
   HelmChartMetaData,
   HelmChart,
@@ -29,7 +30,6 @@ import {
   getChartEntriesByName,
   getChartRepositoryTitle,
 } from '../../../utils/helm-utils';
-import { HelmChartRepositoryModel } from '../../../models';
 
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;

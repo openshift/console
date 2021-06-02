@@ -6,11 +6,11 @@ import {
   WatchK8sResults,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDebounceCallback } from '@console/shared';
+import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
-import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
-import { useMonitoringAlerts } from './useMonitoringAlerts';
 import { updateTopologyDataModel } from './updateTopologyDataModel';
+import { useMonitoringAlerts } from './useMonitoringAlerts';
 
 type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;

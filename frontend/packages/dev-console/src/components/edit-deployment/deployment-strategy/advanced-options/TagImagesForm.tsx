@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
-import { DropdownField } from '@console/shared/src';
 import { FormSection } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { DropdownField } from '@console/shared/src';
 import ImageStream from '../../../import/image-search/ImageStream';
 import { getContainerNames } from '../../utils/edit-deployment-utils';
 

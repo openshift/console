@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import { V1DataVolumeTemplateSpec } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { getStorageSize } from '../selectors';

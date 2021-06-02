@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   Tooltip,
   Button,
@@ -10,6 +8,8 @@ import {
   Grid,
   gridItemSpanValueShape,
 } from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 
 export interface RowRendererProps {

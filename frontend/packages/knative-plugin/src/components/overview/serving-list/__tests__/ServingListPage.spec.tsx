@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { NamespaceBar } from '@console/internal/components/namespace';
 import { MultiTabListPage } from '@console/shared';
-import ServingListPage from '../ServingListsPage';
 import { RevisionModel } from '../../../../models';
+import ServingListPage from '../ServingListsPage';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

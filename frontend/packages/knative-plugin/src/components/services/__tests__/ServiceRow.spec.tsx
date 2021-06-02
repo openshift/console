@@ -1,11 +1,11 @@
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { ClampedText } from '@console/shared';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
+import { ClampedText } from '@console/shared';
 import { knativeServiceObj } from '../../../topology/__tests__/topology-knative-test-data';
-import ServiceRow from '../ServiceRow';
 import { ServiceKind } from '../../../types';
+import ServiceRow from '../ServiceRow';
 
 let svcData: RowFunctionArgs<ServiceKind>;
 let wrapper: ShallowWrapper;

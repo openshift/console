@@ -1,8 +1,9 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
-import { match } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
+import Helmet from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { match } from 'react-router-dom';
+import { RadioGroup } from '@console/internal/components/radio';
 import {
   ButtonBar,
   history,
@@ -10,7 +11,6 @@ import {
   withHandlePromise,
   HandlePromiseProps,
 } from '@console/internal/components/utils';
-import { RadioGroup } from '@console/internal/components/radio';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../models';
 

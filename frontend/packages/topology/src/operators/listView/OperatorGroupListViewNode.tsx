@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Node, observer } from '@patternfly/react-topology';
 import { TypedResourceBadgeCell } from '../../components/list-view/cells';
-import { getResourceKind } from '../../utils/topology-utils';
 import TopologyListViewNode from '../../components/list-view/TopologyListViewNode';
+import { getResourceKind } from '../../utils/topology-utils';
 
 interface OperatorGroupListViewNodeProps {
   item: Node;

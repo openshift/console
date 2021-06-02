@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { DataListCell, Tooltip } from '@patternfly/react-core';
+import { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Node } from '@patternfly/react-topology';
-import { DataListCell, Tooltip } from '@patternfly/react-core';
 import {
   Status as TooltipStatus,
   useBuildConfigsWatcher,

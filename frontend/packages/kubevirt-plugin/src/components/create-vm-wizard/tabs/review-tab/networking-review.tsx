@@ -1,9 +1,7 @@
 import * as React from 'react';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { getNetworks } from '../../selectors/selectors';

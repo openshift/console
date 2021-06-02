@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
@@ -13,12 +13,12 @@ import {
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import EventSourceSection from './event-sources/EventSourceSection';
-import { EventSourceSyncFormData } from './import-types';
 import {
   getCatalogEventSourceResource,
   sanitizeSourceToForm,
 } from '../../utils/create-eventsources-utils';
+import EventSourceSection from './event-sources/EventSourceSection';
+import { EventSourceSyncFormData } from './import-types';
 
 interface OwnProps {
   namespace: string;

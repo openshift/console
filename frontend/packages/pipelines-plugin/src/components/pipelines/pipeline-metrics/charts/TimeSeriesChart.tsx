@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   Chart,
   ChartAxis,
@@ -12,10 +11,11 @@ import {
   ChartThemeColor,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
+import * as _ from 'lodash';
 import { DomainPropType } from 'victory-core';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import { formatDate, formatValue, getXaxisValues } from '../pipeline-metrics-utils';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
+import { formatDate, formatValue, getXaxisValues } from '../pipeline-metrics-utils';
 
 type TimeSeriesChart = {
   timespan: number;

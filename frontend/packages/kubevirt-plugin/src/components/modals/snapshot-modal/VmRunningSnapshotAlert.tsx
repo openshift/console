@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Alert, AlertVariant, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 const VmRunningSnapshotAlert = (props: VmRunningSnapshotAlertProps) => {
   const { vmName, isVMRunningOrExpectedRunning } = props;

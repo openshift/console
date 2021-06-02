@@ -1,5 +1,5 @@
-import { taskRunSnippetMessage } from '../log-snippet-utils';
 import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
+import { taskRunSnippetMessage } from '../log-snippet-utils';
 import { LogSnippetTaskData } from './log-snippet-test-data';
 
 const testContainer = 'container-B';

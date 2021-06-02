@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
 import { apiVersionForModel, Toleration } from '@console/internal/module/k8s';
-import { LocalVolumeSetModel } from '../../models';
-import { LocalVolumeSetKind, DiskType } from './types';
-import { State } from './state';
 import {
   DISK_TYPES,
   HOSTNAME_LABEL_KEY,
   LABEL_OPERATOR,
   deviceTypeDropdownItems,
 } from '../../constants';
+import { LocalVolumeSetModel } from '../../models';
+import { State } from './state';
+import { LocalVolumeSetKind, DiskType } from './types';
 
 const getDeviceTypes = (deviceType: string[]) => {
   const { DISK, PART } = deviceTypeDropdownItems;

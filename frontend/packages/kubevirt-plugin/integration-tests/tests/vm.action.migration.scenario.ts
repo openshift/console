@@ -1,5 +1,4 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
-
 import {
   detailViewAction,
   getDetailActionDropdownOptions,
@@ -9,7 +8,6 @@ import {
   deleteResource,
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
-
 import { confirmButton } from '../views/uiResource.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';

@@ -1,5 +1,8 @@
-import * as _ from 'lodash';
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import * as _ from 'lodash';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   apiVersionForReference,
   isGroupVersionKind,
@@ -8,21 +11,12 @@ import {
   kindForReference,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { isKnativeServing, OverviewItem } from '@console/shared';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_KAFKA,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
-import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
-import {
-  TopologyDataObject,
-  TopologyDataResources,
-  TopologyDataModelDepicted,
-  OdcNodeModel,
-} from '../topology-types';
+import { isKnativeServing, OverviewItem } from '@console/shared';
 import {
   TYPE_APPLICATION_GROUP,
   TYPE_CONNECTS_TO,
@@ -33,8 +27,14 @@ import {
   GROUP_HEIGHT,
   GROUP_PADDING,
 } from '../const';
+import {
+  TopologyDataObject,
+  TopologyDataResources,
+  TopologyDataModelDepicted,
+  OdcNodeModel,
+} from '../topology-types';
+import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 
 export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
   return {

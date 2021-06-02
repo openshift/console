@@ -1,7 +1,7 @@
-import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { nav } from '../../../integration-tests-cypress/views/nav';
 
 const catalogSource = 'redhat-operators';
 

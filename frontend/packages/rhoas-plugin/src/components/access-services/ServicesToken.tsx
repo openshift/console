@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   ActionGroup,
   Button,
@@ -10,9 +9,10 @@ import {
   Text,
   TextVariants,
 } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
-import { createServiceAccountIfNeeded, createSecretIfNeeded } from '../../utils/resourceCreators';
 import { APITokenLengthMinimum } from '../../const';
+import { createServiceAccountIfNeeded, createSecretIfNeeded } from '../../utils/resourceCreators';
 
 type ServiceTokenProps = {
   namespace: string;

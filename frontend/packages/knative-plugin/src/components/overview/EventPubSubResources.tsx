@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { OverviewItem } from '@console/shared';
-import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
+import { referenceFor, K8sResourceKind } from '@console/internal/module/k8s';
+import { OverviewItem } from '@console/shared';
 import { EventingSubscriptionModel, EventingTriggerModel, EventingBrokerModel } from '../../models';
+import { Subscriber } from '../../topology/topology-types';
 import PubSubSubscribers from './EventPubSubSubscribers';
 import EventTriggerFilterList from './EventTriggerFilterList';
 import { FilterTableRowProps } from './FilterTable';
-import { Subscriber } from '../../topology/topology-types';
 
 type PubSubResourceOverviewListProps = {
   items: K8sResourceKind[];

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
-import { subscribeToExtensions } from './subscribeToExtensions';
+import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import useTranslationExt from '../utils/useTranslationExt';
+import { subscribeToExtensions } from './subscribeToExtensions';
 
 const translate = (obj: any, t: (str: string) => string): typeof obj => {
   if (typeof obj === 'string') {

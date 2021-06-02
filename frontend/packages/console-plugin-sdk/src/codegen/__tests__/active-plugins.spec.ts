@@ -1,15 +1,15 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
-import * as assetPluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
-import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
-import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import { PluginPackage } from '../plugin-resolver';
+import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import * as jsoncModule from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
+import * as assetPluginModule from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
 import { Extension } from '../../typings';
-import * as activePluginsModule from '../active-plugins';
 import { trimStartMultiLine } from '../../utils/string';
 import { getTemplatePackage } from '../../utils/test-utils';
+import * as activePluginsModule from '../active-plugins';
+import { PluginPackage } from '../plugin-resolver';
 
 const parseJSONC = jest.spyOn(jsoncModule, 'parseJSONC');
 const validateExtensionsFileSchema = jest.spyOn(assetPluginModule, 'validateExtensionsFileSchema');

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { PlusIcon } from '@patternfly/react-icons';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { PlusIcon } from '@patternfly/react-icons';
 import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import { BUILDER_NODE_ADD_RADIUS } from './const';
 

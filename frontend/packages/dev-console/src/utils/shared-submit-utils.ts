@@ -5,6 +5,7 @@ import {
   DeployImageFormData,
   UploadJarFormData,
 } from '../components/import/import-types';
+import { makePortName } from './imagestream-utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -12,7 +13,6 @@ import {
   getCommonAnnotations,
   mergeData,
 } from './resource-label-utils';
-import { makePortName } from './imagestream-utils';
 
 export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 

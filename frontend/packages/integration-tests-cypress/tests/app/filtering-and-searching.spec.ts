@@ -1,13 +1,12 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
 import { checkErrors, testName } from '../../support';
-import { nav } from '../../views/nav';
-import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
-import { modal } from '../../views/modal';
-import * as yamlEditor from '../../views/yaml-editor';
 import { errorMessage } from '../../views/form';
+import { listPage } from '../../views/list-page';
+import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
+import * as yamlEditor from '../../views/yaml-editor';
 
 const WORKLOAD_NAME = `filter-${testName}`;
 const WORKLOAD_LABEL = `lbl-filter=${testName}`;

@@ -1,4 +1,9 @@
 import { expect } from 'chai';
+import { testName, checkErrors } from '../../../integration-tests-cypress/support/index';
+import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
+import { listPage } from '../../../integration-tests-cypress/views/list-page';
+import { modal } from '../../../integration-tests-cypress/views/modal';
+import { deployment } from '../mocks/deploymentData';
 import {
   ACCESS_KEY,
   BOUND,
@@ -12,12 +17,7 @@ import {
   OBC_STORAGE_CLASS_EXACT,
   SECRET_KEY,
 } from '../utils/consts';
-import { deployment } from '../mocks/deploymentData';
 import { CreateOBCHandler } from '../views/obcPage';
-import { testName, checkErrors } from '../../../integration-tests-cypress/support/index';
-import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
-import { listPage } from '../../../integration-tests-cypress/views/list-page';
-import { modal } from '../../../integration-tests-cypress/views/modal';
 
 describe('Test Object Bucket Claim resource', () => {
   let obcHandler;

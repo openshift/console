@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
   topologySidePane,
@@ -6,7 +7,6 @@ import {
   navigateTo,
   catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {

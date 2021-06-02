@@ -1,26 +1,26 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as cx from 'classnames';
-import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
-import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
+import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import {
   Firehose,
   resourcePathFromModel,
   truncateMiddle,
 } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
+import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { TektonTaskSpec, PipelineTaskRef, TaskKind, WhenExpression } from '../../../../types';
+import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
-import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
-import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
-import { StatusIcon } from './StatusIcon';
-import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
+import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
+import { StatusIcon } from './StatusIcon';
 
 import './PipelineVisualizationTask.scss';
 

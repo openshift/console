@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { flatten, mapValues } from 'lodash';
-import { RouteModel } from '@console/internal/models';
 import { getRouteWebURL } from '@console/internal/components/routes';
-import { K8sResourceCommon, referenceForModel, RouteKind } from '@console/internal/module/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import {
   useK8sWatchResource,
@@ -12,12 +10,15 @@ import {
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { RouteModel } from '@console/internal/models';
+import { K8sResourceCommon, referenceForModel, RouteKind } from '@console/internal/module/k8s';
 import { EventListenerModel, PipelineRunModel, TriggerTemplateModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import {
   getResourceModelFromBindingKind,
   getSafeBindingResourceKind,
 } from '../../../utils/pipeline-augment';
+import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
 import {
   EventListenerKind,
   EventListenerKindTrigger,
@@ -25,7 +26,6 @@ import {
   TriggerTemplateKind,
   EventListenerKindBindingReference,
 } from '../resource-types';
-import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
 
 type RouteMap = { [generatedName: string]: RouteKind };
 type TriggerTemplateMapping = { [key: string]: TriggerTemplateKind };

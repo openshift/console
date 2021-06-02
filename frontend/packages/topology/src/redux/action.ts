@@ -1,5 +1,5 @@
-import { action, ActionType } from 'typesafe-actions';
 import { GraphModel } from '@patternfly/react-topology';
+import { action, ActionType } from 'typesafe-actions';
 import { RootState } from '@console/internal/redux';
 
 export enum Actions {

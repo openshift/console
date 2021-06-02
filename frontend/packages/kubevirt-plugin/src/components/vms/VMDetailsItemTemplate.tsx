@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import VMDetailsItem from './VMDetailsItem';
 

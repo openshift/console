@@ -1,22 +1,22 @@
 import * as React from 'react';
+import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
 } from '@console/internal/actions/dashboards';
-import { RootState } from '@console/internal/redux';
-import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
 import {
   getInstantVectorStats,
   GetRangeStats,
   GetInstantStats,
 } from '@console/internal/components/graphs/utils';
 import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
+import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
+import { RootState } from '@console/internal/redux';
 
 export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
   const dispatch = useDispatch();

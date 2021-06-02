@@ -1,6 +1,13 @@
 import * as React from 'react';
+import {
+  Checkbox,
+  ExpandableSection,
+  FileUpload,
+  Form,
+  SelectOption,
+  TextInput,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
@@ -13,15 +20,6 @@ import {
 } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import {
-  Checkbox,
-  ExpandableSection,
-  FileUpload,
-  Form,
-  SelectOption,
-  TextInput,
-} from '@patternfly/react-core';
-
 import { AccessMode, ANNOTATION_SOURCE_PROVIDER, VolumeMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
@@ -33,6 +31,7 @@ import {
 } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
+import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
 import { FormPFSelect } from '../../form/form-pf-select';
@@ -42,7 +41,6 @@ import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
 import { BOOT_ACTION_TYPE, BootSourceAction, BootSourceState } from './boot-source-form-reducer';
-import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 
 type AdvancedSectionProps = {
   state: BootSourceState;

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
 import { Radio, SelectOption, Switch } from '@patternfly/react-core';
-import FilterDropdown from '../FilterDropdown';
+import { mount, shallow } from 'enzyme';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../../topology-types';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
@@ -10,6 +9,7 @@ import {
   SHOW_GROUPS_FILTER_ID,
 } from '../const';
 import { getFilterById } from '../filter-utils';
+import FilterDropdown from '../FilterDropdown';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

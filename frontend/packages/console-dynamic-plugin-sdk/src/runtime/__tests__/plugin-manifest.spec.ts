@@ -1,7 +1,7 @@
 import * as coFetchModule from '@console/internal/co-fetch';
-import * as pluginManifestModule from '../plugin-manifest';
-import { SchemaValidator } from '../../validation/SchemaValidator';
 import { getPluginManifest } from '../../utils/test-utils';
+import { SchemaValidator } from '../../validation/SchemaValidator';
+import * as pluginManifestModule from '../plugin-manifest';
 
 const coFetch = jest.spyOn(coFetchModule, 'coFetch');
 

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { OverviewItem, PodRing } from '@console/shared';
 import { RevisionModel } from '../../models';
-import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import ServerlessFunctionType from './ServerlessFunctionType';
 
 type KnativeOverviewProps = {

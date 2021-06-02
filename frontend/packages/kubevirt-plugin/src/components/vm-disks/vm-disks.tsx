@@ -1,16 +1,14 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
 import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getNamespace } from '@console/shared';
-import { sortable } from '@patternfly/react-table';
-
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';

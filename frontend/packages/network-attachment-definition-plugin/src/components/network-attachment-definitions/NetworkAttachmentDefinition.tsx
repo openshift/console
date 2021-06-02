@@ -1,9 +1,11 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
-import { RocketIcon } from '@patternfly/react-icons';
 import { Button, EmptyState, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
+import { RocketIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
+import { QuickStartModel } from '@console/app/src/models';
 import {
   ListPage,
   Table,
@@ -12,6 +14,7 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -23,9 +26,6 @@ import {
   getUID,
   useActiveNamespace,
 } from '@console/shared';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
-import { QuickStartModel } from '@console/app/src/models';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';

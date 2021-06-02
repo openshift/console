@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ChartAxis, ChartContainer } from '@patternfly/react-charts';
 import { Grid } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
-import { useTranslation } from 'react-i18next';
 
 import './utilization-card.scss';
 

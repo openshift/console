@@ -1,5 +1,5 @@
-import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { app } from '@console/dev-console/integration-tests/support/pages';
+import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 
 export const topologyHelper = {
   search: (name: string) =>

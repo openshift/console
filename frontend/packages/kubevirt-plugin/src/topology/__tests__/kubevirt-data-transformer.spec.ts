@@ -3,7 +3,6 @@ import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-
 import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
 import { WORKLOAD_TYPES } from '@console/topology/src/utils';
-
 import { VMStatus } from '../../constants/vm/vm-status';
 import { VirtualMachineModel } from '../../models';
 import { getKubevirtTopologyDataModel } from '../kubevirt-data-transformer';

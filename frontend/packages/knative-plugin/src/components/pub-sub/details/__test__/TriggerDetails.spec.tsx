@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { shallow } from 'enzyme';
+import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
-import TriggerDetails from '../TriggerDetails';
 import { triggerData } from '../../../../utils/__tests__/knative-eventing-data';
-import DynamicResourceLink from '../DynamicResourceLink';
 import FilterTable from '../../../overview/FilterTable';
+import DynamicResourceLink from '../DynamicResourceLink';
+import TriggerDetails from '../TriggerDetails';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

@@ -2,14 +2,14 @@ import * as React from 'react';
 import { GraphElement, ComponentFactory, withSelection } from '@patternfly/react-topology';
 import { Kebab, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { OdcBaseEdge } from '../../elements';
-import { TYPE_SERVICE_BINDING } from '../../const';
 import {
   withContextMenu,
   withNoDrop,
   createMenuItems,
   ServiceBinding,
 } from '../../components/graph-view/components';
+import { TYPE_SERVICE_BINDING } from '../../const';
+import { OdcBaseEdge } from '../../elements';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './const';
 import OperatorBackedService from './OperatorBackedService';
 

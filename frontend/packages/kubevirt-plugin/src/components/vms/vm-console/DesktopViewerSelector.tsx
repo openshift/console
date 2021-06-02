@@ -1,12 +1,10 @@
 import * as React from 'react';
-
+import { DesktopViewer } from '@patternfly/react-console';
+import { Alert, Form, FormGroup } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceModel } from '@console/internal/models';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { DesktopViewer } from '@patternfly/react-console';
-import { Alert, Form, FormGroup } from '@patternfly/react-core';
-
 import { DEFAULT_RDP_PORT, NetworkType, TEMPLATE_VM_NAME_LABEL } from '../../../constants';
 import { getRdpAddressPort } from '../../../selectors/service';
 import { getNetworks } from '../../../selectors/vm';

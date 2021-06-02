@@ -1,26 +1,26 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
+import { connect } from 'react-redux';
+import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
 import {
+  useFlag,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
-  useFlag,
 } from '@console/shared';
-import CloudshellExec from './CloudShellExec';
-import TerminalLoadingBox from './TerminalLoadingBox';
+import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
+import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 import { TerminalInitData, initTerminal } from './cloud-shell-utils';
-import useCloudShellWorkspace from './useCloudShellWorkspace';
+import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
-
-import './CloudShellTerminal.scss';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
-import { useAccessReview2 } from '@console/internal/components/utils/rbac';
-import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
-import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
+import TerminalLoadingBox from './TerminalLoadingBox';
+import useCloudShellWorkspace from './useCloudShellWorkspace';
+
+import './CloudShellTerminal.scss';
 
 type StateProps = {
   user: UserKind;

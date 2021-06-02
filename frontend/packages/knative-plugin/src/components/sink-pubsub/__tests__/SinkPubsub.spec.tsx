@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
-import SinkPubsub from '../SinkPubsub';
 import {
   EventTriggerObj,
   EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
+import SinkPubsub from '../SinkPubsub';
 
 type SinkPubsubProps = React.ComponentProps<typeof SinkPubsub>;
 

@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { match as RMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { match as RMatch } from 'react-router';
+import { ErrorPage404 } from '@console/internal/components/error';
+import { DetailsPage } from '@console/internal/components/factory';
 import {
   navFactory,
   LoadingBox,
@@ -9,11 +12,8 @@ import {
   FirehoseResult,
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
-import { Badge } from '@patternfly/react-core';
 import {
   deleteHelmRelease,
   upgradeHelmRelease,
@@ -21,10 +21,10 @@ import {
 } from '../../actions/modify-helm-release';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmReleases } from '../../utils/helm-utils';
-import HelmReleaseResources from './resources/HelmReleaseResources';
-import HelmReleaseOverview from './overview/HelmReleaseOverview';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
 import HelmReleaseNotes from './notes/HelmReleaseNotes';
+import HelmReleaseOverview from './overview/HelmReleaseOverview';
+import HelmReleaseResources from './resources/HelmReleaseResources';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';

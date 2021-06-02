@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import { coFetch } from '@console/internal/co-fetch';
 import {
   ServiceModel,
   RouteModel,
@@ -7,15 +7,10 @@ import {
   DeploymentModel,
   DeploymentConfigModel,
 } from '@console/internal/models';
-import { coFetch } from '@console/internal/co-fetch';
-import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
+import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
-import {
-  createOrUpdateImageStream,
-  createProject,
-  createWebhookSecret,
-} from './import-submit-utils';
 import {
   getAppLabels,
   getCommonAnnotations,
@@ -24,10 +19,15 @@ import {
   getTriggerAnnotation,
   mergeData,
 } from '../../utils/resource-label-utils';
-import { Resources, UploadJarFormData } from './import-types';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
+import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
+import {
+  createOrUpdateImageStream,
+  createProject,
+  createWebhookSecret,
+} from './import-submit-utils';
+import { Resources, UploadJarFormData } from './import-types';
 
 export const createOrUpdateDeployment = (
   formData: UploadJarFormData,

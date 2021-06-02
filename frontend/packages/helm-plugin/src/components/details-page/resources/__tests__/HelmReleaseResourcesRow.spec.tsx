@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import { Status } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RowFunctionArgs } from '@console/internal/components/factory';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
 import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Button, ButtonVariant, Popover, PopoverPosition } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import './vm-ip.scss';
 

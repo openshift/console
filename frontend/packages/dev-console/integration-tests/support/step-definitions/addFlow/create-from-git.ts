@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
 import { addOptions, buildConfigOptions, messages } from '../../constants';
+import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
 import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
 Given('user is at Import from git page', () => {

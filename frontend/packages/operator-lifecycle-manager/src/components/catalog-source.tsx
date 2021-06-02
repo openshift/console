@@ -1,19 +1,21 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
-import { match } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { CreateYAML } from '@console/internal/components/create-yaml';
-import { ListPageProps } from '@console/internal/components/monitoring/types';
-import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match } from 'react-router-dom';
+import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
-  K8sResourceKind,
-  referenceForModel,
-  K8sKind,
-  k8sPatch,
-} from '@console/internal/module/k8s';
+  DetailsPage,
+  Table,
+  TableRow,
+  TableData,
+  TableProps,
+  MultiListPage,
+  RowFunction,
+} from '@console/internal/components/factory';
+import { ListPageProps } from '@console/internal/components/monitoring/types';
 import {
   Firehose,
   Kebab,
@@ -28,17 +30,17 @@ import {
   ResourceSummary,
   DetailsItem,
 } from '@console/internal/components/utils';
-import {
-  DetailsPage,
-  Table,
-  TableRow,
-  TableData,
-  TableProps,
-  MultiListPage,
-  RowFunction,
-} from '@console/internal/components/factory';
+import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  K8sKind,
+  k8sPatch,
+} from '@console/internal/module/k8s';
 import { PopoverStatus, StatusIconAndText } from '@console/shared';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {
   SubscriptionModel,
   CatalogSourceModel,
@@ -47,15 +49,13 @@ import {
   OperatorHubModel,
 } from '../models';
 import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../types';
-import { requireOperatorGroup } from './operator-group';
+import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
-import { OperatorHubKind } from './operator-hub';
 import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-modal';
+import { requireOperatorGroup } from './operator-group';
+import { OperatorHubKind } from './operator-hub';
 import { PackageManifestsPage } from './package-manifest';
-import useOperatorHubConfig from '../utils/useOperatorHubConfig';
-import i18n from '@console/internal/i18n';
-import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 

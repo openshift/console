@@ -1,13 +1,4 @@
-import * as classNames from 'classnames';
-import { isEmpty } from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
-
-import { history, LoadingBox } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel } from '@console/internal/models';
-import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import {
   Alert,
   AlertActionCloseButton,
@@ -18,7 +9,14 @@ import {
   WizardContextType,
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
-
+import * as classNames from 'classnames';
+import { isEmpty } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+import { history, LoadingBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';

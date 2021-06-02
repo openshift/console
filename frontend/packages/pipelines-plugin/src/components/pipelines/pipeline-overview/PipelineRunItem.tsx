@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePath } from '@console/internal/components/utils';
+import { fromNow } from '@console/internal/components/utils/datetime';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { LogSnippet, Status } from '@console/shared';
-import { fromNow } from '@console/internal/components/utils/datetime';
-import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
+import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import LogSnippetBlock from '../../pipelineruns/logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
 import './PipelineRunItem.scss';

@@ -7,7 +7,6 @@ import {
   TopologyDataModelFactory,
   TopologyDisplayFilters,
 } from '@console/topology/src/extensions';
-
 import * as models from '../models';
 import {
   getIsKubevirtResource,

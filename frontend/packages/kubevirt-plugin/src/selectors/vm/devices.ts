@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { DeviceType } from '../../constants';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { BootableDeviceType, V1NetworkInterface } from '../../types';

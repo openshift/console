@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PodKind, podPhase } from '@console/internal/module/k8s';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { PodModel } from '@console/internal/models';
+import { PodKind, podPhase } from '@console/internal/module/k8s';
 import {
   AllPodStatus,
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
 } from '@console/shared';
-import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
-import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
-import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
-import RevisionsOverviewList from './RevisionsOverviewList';
-import KSRoutesOverviewList from './RoutesOverviewList';
+import { KnativeServiceOverviewItem } from '../../topology/topology-types';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import { PubSubResourceOverviewList } from './EventPubSubResources';
 import PubSubSubscribers from './EventPubSubSubscribers';
+import RevisionsOverviewList from './RevisionsOverviewList';
+import KSRoutesOverviewList from './RoutesOverviewList';
 
 type KnativeServiceResourceProps = {
   item: KnativeServiceOverviewItem;

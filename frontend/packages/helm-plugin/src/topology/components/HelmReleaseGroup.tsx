@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   Layer,
   useHover,
@@ -12,13 +11,14 @@ import {
   observer,
   useCombineRefs,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import * as classNames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
   noRegroupDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   getFilterById,
   useDisplayFilters,

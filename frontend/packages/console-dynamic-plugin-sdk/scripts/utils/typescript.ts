@@ -1,8 +1,8 @@
 import * as findUp from 'find-up';
-import * as ts from 'typescript';
+import * as _ from 'lodash';
 import * as tsj from 'ts-json-schema-generator';
 import * as tsu from 'tsutils';
-import * as _ from 'lodash';
+import * as ts from 'typescript';
 import { resolvePath, relativePath } from './path';
 
 const formatDiagnostics = (diagnostics: readonly ts.Diagnostic[], currentDirectory: string) =>

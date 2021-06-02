@@ -1,8 +1,8 @@
-import * as path from 'path';
 import * as fs from 'fs';
-import * as _ from 'lodash';
-import * as glob from 'glob';
+import * as path from 'path';
 import * as findUp from 'find-up';
+import * as glob from 'glob';
+import * as _ from 'lodash';
 import * as readPkg from 'read-pkg';
 
 export const consolePkgScope = '@console';

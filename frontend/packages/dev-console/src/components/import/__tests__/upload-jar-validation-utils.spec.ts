@@ -1,7 +1,7 @@
 import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
-import { fileNameRegex, getAppName, validationSchema } from '../upload-jar-validation-utils';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
+import { fileNameRegex, getAppName, validationSchema } from '../upload-jar-validation-utils';
 
 const t = (key): TFunction => key;
 

@@ -1,7 +1,8 @@
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
-import { TFunction } from 'i18next';
 import { nameValidationSchema } from '@console/shared';
+import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
@@ -13,7 +14,6 @@ import {
   buildValidationSchema,
   resourcesValidationSchema,
 } from './validation-schema';
-import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
 export const fileNameRegex = /\.(jar)$/i;
 

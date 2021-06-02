@@ -1,13 +1,11 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { Form, Stack, StackItem } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { getNamespace } from '@console/shared';
-import { Form, Stack, StackItem } from '@patternfly/react-core';
-
 import { BOOT_SOURCE_AVAILABLE } from '../../../constants';
 import { getDescription } from '../../../selectors/selectors';
 import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm';

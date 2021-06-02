@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
-import { getFieldId } from './field-utils';
-import { SelectInputFieldProps, SelectInputOption } from './field-types';
 import { useFormikValidationFix } from '../../hooks';
+import { SelectInputFieldProps, SelectInputOption } from './field-types';
+import { getFieldId } from './field-utils';
 
 const SelectInputField: React.FC<SelectInputFieldProps> = ({
   name,

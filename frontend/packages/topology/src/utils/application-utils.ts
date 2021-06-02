@@ -1,14 +1,7 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
-import {
-  K8sKind,
-  k8sList,
-  k8sPatch,
-  k8sKill,
-  K8sResourceKind,
-  modelFor,
-  referenceFor,
-} from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
+import { checkAccess } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
   BuildConfigModel,
@@ -23,11 +16,18 @@ import {
   CronJobModel,
   BuildModel,
 } from '@console/internal/models';
+import {
+  K8sKind,
+  k8sList,
+  k8sPatch,
+  k8sKill,
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
-import { checkAccess } from '@console/internal/components/utils';
 import { getBuildConfigsForResource } from '@console/shared';
-import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
 

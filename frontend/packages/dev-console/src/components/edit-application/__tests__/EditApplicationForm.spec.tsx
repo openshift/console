@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import GitSection from '../../import/git/GitSection';
+import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import AdvancedSection from '../../import/advanced/AdvancedSection';
+import AppSection from '../../import/app/AppSection';
 import BuilderSection from '../../import/builder/BuilderSection';
 import DockerSection from '../../import/git/DockerSection';
+import GitSection from '../../import/git/GitSection';
 import ImageSearchSection from '../../import/image-search/ImageSearchSection';
+import JarSection from '../../import/jar/section/JarSection';
 import IconSection from '../../import/section/IconSection';
-import AppSection from '../../import/app/AppSection';
-import AdvancedSection from '../../import/advanced/AdvancedSection';
 import { ApplicationFlowType } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
-import JarSection from '../../import/jar/section/JarSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

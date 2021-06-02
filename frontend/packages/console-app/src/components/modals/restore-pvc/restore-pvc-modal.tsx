@@ -1,7 +1,20 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import {
+  ModalBody,
+  ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
+  createModalLauncher,
+} from '@console/internal/components/factory';
+import {
+  dropdownUnits,
+  snapshotPVCStorageClassAnnotation,
+  snapshotPVCAccessModeAnnotation,
+  snapshotPVCVolumeModeAnnotation,
+} from '@console/internal/components/storage/shared';
 import {
   HandlePromiseProps,
   ResourceIcon,
@@ -13,6 +26,14 @@ import {
   resourcePathFromModel,
   convertToBaseValue,
 } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import {
+  NamespaceModel,
+  PersistentVolumeClaimModel,
+  VolumeSnapshotModel,
+  VolumeSnapshotClassModel,
+} from '@console/internal/models';
 import {
   k8sCreate,
   VolumeSnapshotKind,
@@ -20,30 +41,9 @@ import {
   PersistentVolumeClaimKind,
   VolumeSnapshotClassKind,
 } from '@console/internal/module/k8s';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  createModalLauncher,
-} from '@console/internal/components/factory';
-import {
-  NamespaceModel,
-  PersistentVolumeClaimModel,
-  VolumeSnapshotModel,
-  VolumeSnapshotClassModel,
-} from '@console/internal/models';
 import { getName, getNamespace, Status, isCephProvisioner, getAnnotations } from '@console/shared';
-import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import {
-  dropdownUnits,
-  snapshotPVCStorageClassAnnotation,
-  snapshotPVCAccessModeAnnotation,
-  snapshotPVCVolumeModeAnnotation,
-} from '@console/internal/components/storage/shared';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
-import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import { AccessModeSelector } from '../../access-modes/access-mode';
+
 import './restore-pvc-modal.scss';
 
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(

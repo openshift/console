@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { LoadingBox } from '@console/internal/components/utils';
-import ProjectsExistWrapper from '../ProjectsExistWrapper';
 import AddPageLayout from '../add/AddPageLayout';
+import ProjectsExistWrapper from '../ProjectsExistWrapper';
 
 type ProjectsExistWrapperProps = React.ComponentProps<typeof ProjectsExistWrapper>;
 

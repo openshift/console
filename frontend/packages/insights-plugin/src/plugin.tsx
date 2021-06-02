@@ -1,6 +1,6 @@
-import { Plugin, DashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
 import { ClusterVersionModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { Plugin, DashboardsOverviewHealthPrometheusSubsystem } from '@console/plugin-sdk';
 import { getClusterInsightsStatus } from './components/InsightsPopup/status';
 
 type ConsumedExtensions = DashboardsOverviewHealthPrometheusSubsystem;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import SinkUriModal from './SinkUriModal';

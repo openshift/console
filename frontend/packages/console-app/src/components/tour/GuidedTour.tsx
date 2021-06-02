@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TourContext } from './tour-context';
 import StepComponent from './StepComponent';
+import { TourContext } from './tour-context';
 
 const GuidedTour: React.FC = () => {
   const { tourState, tour, totalSteps, onComplete } = React.useContext(TourContext);

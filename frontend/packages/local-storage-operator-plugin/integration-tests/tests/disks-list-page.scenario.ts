@@ -1,8 +1,13 @@
-import { $, ExpectedConditions as until, browser, Key } from 'protractor';
 import { execSync } from 'child_process';
+import { $, ExpectedConditions as until, browser, Key } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click } from '@console/shared/src/test-utils/utils';
+import {
+  LocalVolumeDiscoveryResultKind,
+  DiskMetadata,
+  DiskStates,
+} from '../../src/components/disks-list/types';
 import {
   page,
   diskList,
@@ -10,11 +15,6 @@ import {
   checkDiskFilter,
   clearDiskFilter,
 } from '../views/disks-list-page.views';
-import {
-  LocalVolumeDiscoveryResultKind,
-  DiskMetadata,
-  DiskStates,
-} from '../../src/components/disks-list/types';
 
 // Prerequisite: Local volume discovery to be present
 describe('Disk list is accessible from Nodes view', () => {

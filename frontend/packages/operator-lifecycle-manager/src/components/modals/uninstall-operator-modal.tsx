@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   createModalLauncher,
   ModalTitle,
@@ -8,21 +10,19 @@ import {
 import { history, resourceListPathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import {
   K8sKind,
   K8sResourceKind,
   k8sPatch,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
-import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { Trans, useTranslation } from 'react-i18next';
-import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
-import { ConsoleOperatorConfigModel } from '@console/internal/models';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { getClusterServiceVersionPlugins, isPluginEnabled, getPluginPatch } from '../../utils';
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({

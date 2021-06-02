@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { MsgBox } from '@console/internal/components/utils';
+import { Feature } from '../types';
 import ImageVulnerabilityRow, {
   imageVulnerabilitiesTableColumnClasses,
 } from './ImageVulnerabilityRow';
-import { Feature } from '../types';
 
 type ImageVulnerabilitiesTableProps = {
   features: Feature[];

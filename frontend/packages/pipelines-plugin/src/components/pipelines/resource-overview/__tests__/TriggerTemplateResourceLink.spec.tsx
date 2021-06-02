@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { ClipboardCopy } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { ResourceLink } from '@console/internal/components/utils';
-import TriggerTemplateResourceLink from '../TriggerTemplateResourceLink';
 import { TriggerTemplateModel } from '../../../../models';
+import TriggerTemplateResourceLink from '../TriggerTemplateResourceLink';
 
 type TriggerTemplateResourceLinkProps = React.ComponentProps<typeof TriggerTemplateResourceLink>;
 describe('TriggerTemplateResourceLink', () => {

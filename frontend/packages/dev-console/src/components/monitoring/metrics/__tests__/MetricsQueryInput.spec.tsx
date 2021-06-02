@@ -1,9 +1,9 @@
 import * as React from 'react';
-import * as redux from 'react-redux';
-import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
-import { Dropdown } from '@console/internal/components/utils';
+import { shallow } from 'enzyme';
+import * as redux from 'react-redux';
 import { QueryInput } from '@console/internal/components/monitoring/metrics';
+import { Dropdown } from '@console/internal/components/utils';
 import MetricsQueryInput from '../MetricsQueryInput';
 
 jest.mock('react-i18next', () => {

@@ -1,8 +1,8 @@
 import { Dispatch } from 'react-redux';
-import { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
-import { fetchK8s } from '@console/internal/graphql/client';
-import { FeatureDetector } from '@console/plugin-sdk';
 import { setFlag, handleError } from '@console/internal/actions/features';
+import { fetchK8s } from '@console/internal/graphql/client';
+import { K8sResourceKind, ListKind } from '@console/internal/module/k8s';
+import { FeatureDetector } from '@console/plugin-sdk';
 import { FLAG_OPENSHIFT_HELM } from '../const';
 import { HelmChartRepositoryModel } from '../models';
 

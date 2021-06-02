@@ -1,6 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
+import { DataList } from '@patternfly/react-core';
 import {
   observer,
   isGraph,
@@ -10,17 +9,18 @@ import {
   GraphElement,
   Model,
 } from '@patternfly/react-topology';
-import { DataList } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { connect } from 'react-redux';
+import * as UIActions from '@console/internal/actions/ui';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { Alert } from '@console/internal/components/monitoring/types';
+import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import { useQueryParams } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
-import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
-import { Alert } from '@console/internal/components/monitoring/types';
-import * as UIActions from '@console/internal/actions/ui';
 import { TYPE_APPLICATION_GROUP } from '../../const';
 import { odcElementFactory } from '../../elements';
-import { useOverviewMetricsUpdater } from '../hooks/useOverviewMetricsUpdater';
 import { useOverviewAlertsUpdater } from '../hooks/useOverviewAlertsUpdater';
+import { useOverviewMetricsUpdater } from '../hooks/useOverviewMetricsUpdater';
 import { getChildKinds, sortGroupChildren } from './list-view-utils';
 import TopologyListViewAppGroup from './TopologyListViewAppGroup';
 import TopologyListViewUnassignedGroup from './TopologyListViewUnassignedGroup';

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
+import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
-import { mount, ReactWrapper } from 'enzyme';
-import store from '@console/internal/redux';
 import { ResourceLink, Selector, history } from '@console/internal/components/utils';
-import { SpecCapability, Descriptor, DescriptorType } from '../types';
+import store from '@console/internal/redux';
+import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testResourceInstance, testModel } from '../../../../mocks';
+import { SpecCapability, Descriptor, DescriptorType } from '../types';
+import * as configureSize from './configure-size';
 import { EndpointList } from './endpoint';
 import { ResourceRequirementsModalLink } from './resource-requirements';
-import * as configureSize from './configure-size';
-import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

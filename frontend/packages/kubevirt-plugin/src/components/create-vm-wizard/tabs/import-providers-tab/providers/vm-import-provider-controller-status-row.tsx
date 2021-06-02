@@ -1,18 +1,16 @@
+import * as React from 'react';
+import { Alert, AlertVariant } from '@patternfly/react-core';
+import { InProgressIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import * as _ from 'lodash';
-import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
 import { resourcePath } from '@console/internal/components/utils';
 import { DeploymentModel, PodModel } from '@console/internal/models';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
 import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
-import { Alert, AlertVariant } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
-
 import { PodDeploymentStatus } from '../../../../../statuses/pod-deployment/constants';
 import { getPodDeploymentStatus } from '../../../../../statuses/pod-deployment/pod-deployment-status';
 import { prefixedID } from '../../../../../utils';

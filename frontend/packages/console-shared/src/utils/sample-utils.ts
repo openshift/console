@@ -1,14 +1,18 @@
-import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash';
-import YAML from 'js-yaml';
 import { TFunction } from 'i18next';
-
+import { Map as ImmutableMap } from 'immutable';
+import YAML from 'js-yaml';
+import * as _ from 'lodash';
 import { defaultCatalogCategories } from '@console/dev-console/src/components/catalog/utils/default-categories';
-
+import { defaultProjectAccessRoles } from '@console/dev-console/src/components/project-access/project-access-form-utils';
 import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk/src';
-import { subscribeToExtensions } from '@console/plugin-sdk/src/api/subscribeToExtensions';
-
+import { FirehoseResult } from '@console/internal/components/utils';
+import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
+import * as limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
+import * as allowIngressImg from '@console/internal/imgs/network-policy-samples/3-allow-ingress.svg';
+import * as defaultDenyAllImg from '@console/internal/imgs/network-policy-samples/4-default-deny-all.svg';
+import * as webAllowExternalImg from '@console/internal/imgs/network-policy-samples/5-web-allow-external.svg';
+import * as webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
+import * as webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
 import {
   BuildConfigModel,
   ClusterRoleModel,
@@ -25,16 +29,8 @@ import {
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-
-import * as denyOtherNamespacesImg from '@console/internal/imgs/network-policy-samples/1-deny-other-namespaces.svg';
-import * as limitCertainAppImg from '@console/internal/imgs/network-policy-samples/2-limit-certain-apps.svg';
-import * as allowIngressImg from '@console/internal/imgs/network-policy-samples/3-allow-ingress.svg';
-import * as defaultDenyAllImg from '@console/internal/imgs/network-policy-samples/4-default-deny-all.svg';
-import * as webAllowExternalImg from '@console/internal/imgs/network-policy-samples/5-web-allow-external.svg';
-import * as webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
-import * as webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
-import { FirehoseResult } from '@console/internal/components/utils';
-import { defaultProjectAccessRoles } from '@console/dev-console/src/components/project-access/project-access-form-utils';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { subscribeToExtensions } from '@console/plugin-sdk/src/api/subscribeToExtensions';
 
 export type Sample = {
   highlightText?: string;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getRouteData } from '../topology/knative-topology-utils';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../models';
+import { getRouteData } from '../topology/knative-topology-utils';
 
 export const useRoutesURL = (resource: K8sResourceKind): string => {
   const { namespace } = resource.metadata;

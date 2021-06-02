@@ -1,7 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   DataList,
@@ -14,14 +11,16 @@ import {
   TooltipPosition,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getSeverityAlertType,
   AlertSeverityIcon,
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
 } from '@console/shared';
-import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-
 import { useSearchFilter } from '../../filters';
 import { getResourceKind } from '../../utils/topology-utils';
 import {

@@ -1,6 +1,6 @@
 import { HealthChecksData } from '../../import/import-types';
-import { RequestType } from '../health-checks-types';
 import { healthChecksDefaultValues } from '../health-checks-probe-utils';
+import { RequestType } from '../health-checks-types';
 
 export const healthChecksData: HealthChecksData = {
   readinessProbe: {

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { isEmpty } from 'lodash';
-import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
+import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
+import { isEmpty } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { getGitService, GitProvider, BuildType, RepoStatus } from '@console/git-service';
+import { BuildStrategyType } from '@console/internal/components/build';
 import {
   InputField,
   DropdownField,
@@ -11,18 +12,17 @@ import {
   useDebounceCallback,
 } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
-import { BuildStrategyType } from '@console/internal/components/build';
-import { GitData, GitReadableTypes, GitTypes } from '../import-types';
-import { detectGitType, detectGitRepoName, createComponentName } from '../import-validation-utils';
 import {
   getSampleRepo,
   getSampleRef,
   getSampleContextDir,
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
+import { GitData, GitReadableTypes, GitTypes } from '../import-types';
+import { detectGitType, detectGitRepoName, createComponentName } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
-import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
+import SampleRepo from './SampleRepo';
 
 export interface GitSectionProps {
   defaultSample?: { url: string; ref?: string; dir?: string };

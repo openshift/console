@@ -1,6 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { Button } from '@patternfly/react-core';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import * as _ from 'lodash';
 import * as modal from '@console/internal/components/factory/modal';
 import * as k8s from '@console/internal/module/k8s';
 import { testResourceInstance, testModel } from '../../../../mocks';
@@ -10,8 +11,6 @@ import {
   ResourceRequirementsModalLink,
   ResourceRequirementsModalLinkProps,
 } from './resource-requirements';
-import { Button } from '@patternfly/react-core';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

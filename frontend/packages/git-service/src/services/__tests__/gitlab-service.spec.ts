@@ -7,8 +7,8 @@ import {
   RepoLanguageList,
   RepoStatus,
 } from '../../types';
-import { GitlabService } from '../gitlab-service';
 import { DockerFileParser } from '../../utils';
+import { GitlabService } from '../gitlab-service';
 
 describe('Gitlab Service', () => {
   const nockBack = nock.back;

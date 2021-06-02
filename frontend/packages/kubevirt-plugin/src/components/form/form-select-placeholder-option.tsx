@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { FormSelectOption } from '@patternfly/react-core';
 
 export const asFormSelectValue = (value) => value || '';

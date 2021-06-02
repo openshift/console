@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { match as Rmatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Page } from '@console/internal/components/utils';
+import { match as Rmatch } from 'react-router-dom';
 import { NamespaceBar } from '@console/internal/components/namespace';
+import { Page } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { MenuActions, MultiTabListPage } from '@console/shared';
 import { ServiceModel, RevisionModel, RouteModel } from '../../../models';
-import ServicesPage from '../../services/ServicesPage';
 import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';
+import ServicesPage from '../../services/ServicesPage';
 
 interface ServingListPageProps {
   match: Rmatch<{ ns: string }>;

@@ -1,18 +1,18 @@
 import * as React from 'react';
+import { TextInputTypes, InputGroupText } from '@patternfly/react-core';
+import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikValues, useFormikContext } from 'formik';
-import { TextInputTypes, InputGroupText } from '@patternfly/react-core';
 import { InputGroupField, InputField, DropdownField, ActionGroupWithIcons } from '@console/shared';
+import FormSection from '../import/section/FormSection';
+import { RequestType } from './health-checks-types';
+import { HealthCheckContext } from './health-checks-utils';
 import {
   HTTPRequestTypeForm,
   TCPRequestTypeForm,
   CommandRequestTypeForm,
 } from './RequestTypeForms';
-import { RequestType } from './health-checks-types';
-import FormSection from '../import/section/FormSection';
 import './ProbeForm.scss';
-import { HealthCheckContext } from './health-checks-utils';
 
 const getRequestTypeForm = (value: string, probeType: string) => {
   switch (value) {

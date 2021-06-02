@@ -1,8 +1,6 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
-
 import { TextInput } from '@patternfly/react-core';
-
+import * as classNames from 'classnames';
 import {
   INPUT_CTRL_COMBINATIONS_KEYS,
   INPUT_NAVIGATION_KEYS,

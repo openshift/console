@@ -2,11 +2,11 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ModalSubmitFooter } from '@console/internal/components/factory/modal';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import TrafficSplittingModal from '../TrafficSplittingModal';
 import {
   mockTrafficData,
   mockRevisionItems,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
+import TrafficSplittingModal from '../TrafficSplittingModal';
 
 type TrafficSplittingModalProps = React.ComponentProps<typeof TrafficSplittingModal>;
 

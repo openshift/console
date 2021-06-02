@@ -1,4 +1,6 @@
 import { checkErrors } from '@console/cypress-integration-tests/support';
+import { modal } from '../../../integration-tests-cypress/views/modal';
+import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   createBlockPool,
   deleteBlockPoolFromCli,
@@ -6,8 +8,6 @@ import {
   verifyBlockPoolJSON,
   poolMessage,
 } from '../views/block-pool';
-import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
-import { modal } from '../../../integration-tests-cypress/views/modal';
 
 describe('Test block pool update under OCS UI', () => {
   before(() => {

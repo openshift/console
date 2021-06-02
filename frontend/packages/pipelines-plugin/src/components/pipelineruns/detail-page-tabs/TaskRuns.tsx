@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import { TaskRunKind } from '../../../types';
+import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 
 interface TaskRunsProps {
   obj: TaskRunKind;

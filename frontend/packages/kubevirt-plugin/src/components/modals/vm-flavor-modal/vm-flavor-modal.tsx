@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -18,8 +18,6 @@ import {
 import { TemplateModel } from '@console/internal/models';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
-
 import { CUSTOM_FLAVOR } from '../../../constants';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';

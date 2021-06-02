@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared/src';
+import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { InputField } from '@console/shared/src';
 import { DeploymentStrategyType } from '../utils/types';
 import LifecycleHookField from './LifecycleHookField';
 

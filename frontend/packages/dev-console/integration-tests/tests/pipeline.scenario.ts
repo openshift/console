@@ -7,6 +7,12 @@ import {
   testName,
   retry,
 } from '../../../../integration-tests/protractor.conf';
+import * as catalogPageView from '../../../../integration-tests/views/catalog-page.view';
+import * as catalogView from '../../../../integration-tests/views/catalog.view';
+import * as crudView from '../../../../integration-tests/views/crud.view';
+import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
+import * as operatorHubView from '../../../operator-lifecycle-manager/integration-tests/views/operator-hub.view';
+import * as operatorView from '../../../operator-lifecycle-manager/integration-tests/views/operator.view';
 import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import {
   pipelinecheckStatus,
@@ -37,12 +43,6 @@ import {
   pipelineTab,
   pipelineRunLogContainer,
 } from '../views/pipeline.view';
-import * as sidenavView from '../../../../integration-tests/views/sidenav.view';
-import * as crudView from '../../../../integration-tests/views/crud.view';
-import * as catalogView from '../../../../integration-tests/views/catalog.view';
-import * as catalogPageView from '../../../../integration-tests/views/catalog-page.view';
-import * as operatorView from '../../../operator-lifecycle-manager/integration-tests/views/operator.view';
-import * as operatorHubView from '../../../operator-lifecycle-manager/integration-tests/views/operator-hub.view';
 
 const JASMINE_DEFAULT_TIMEOUT_INTERVAL = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 1000 * 60 * 5;

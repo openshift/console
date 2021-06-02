@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Status } from '@console/shared';
 import { PipelineRunKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import DynamicResourceLinkList from '../../pipelines/resource-overview/DynamicResourceLinkList';
 import {
   convertBackingPipelineToPipelineResourceRefProps,
   getPipelineResourceLinks,
 } from '../../pipelines/detail-page-tabs';
+import DynamicResourceLinkList from '../../pipelines/resource-overview/DynamicResourceLinkList';
+import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResourceLinkList';
+import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
 import TriggeredBySection from './TriggeredBySection';
-import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
-import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 
 export type PipelineRunCustomDetailsProps = {
   pipelineRun: PipelineRunKind;

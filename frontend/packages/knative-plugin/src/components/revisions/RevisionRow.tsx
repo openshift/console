@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
-import { ClampedText } from '@console/shared';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { RevisionModel, ServiceModel } from '../../models';
-import { getConditionString, getCondition } from '../../utils/condition-utils';
-import { RevisionKind, ConditionTypes } from '../../types';
-import { tableColumnClasses } from './revision-table';
+import { ClampedText } from '@console/shared';
 import { getRevisionActions } from '../../actions/getRevisionActions';
+import { RevisionModel, ServiceModel } from '../../models';
+import { RevisionKind, ConditionTypes } from '../../types';
+import { getConditionString, getCondition } from '../../utils/condition-utils';
+import { tableColumnClasses } from './revision-table';
 
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);

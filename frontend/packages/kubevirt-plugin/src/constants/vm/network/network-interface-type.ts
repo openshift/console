@@ -1,6 +1,5 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-
 import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 
 export class NetworkInterfaceType extends SelectDropdownObjectEnum<string> {

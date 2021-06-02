@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -11,7 +10,6 @@ import {
 import { HandlePromiseProps, history, withHandlePromise } from '@console/internal/components/utils';
 import { k8sKill } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
 

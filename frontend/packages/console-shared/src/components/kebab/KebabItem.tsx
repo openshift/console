@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { KEY_CODES, Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
-import { KEY_CODES, Tooltip } from '@patternfly/react-core';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
-import { Action } from '@console/dynamic-plugin-sdk';
 
 export type KebabItemProps = {
   option: Action;

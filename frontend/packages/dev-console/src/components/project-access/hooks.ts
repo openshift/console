@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterRoleModel } from '@console/internal/models';
 import { K8sResourceCommon, WatchK8sResource } from '@console/internal/module/k8s';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { defaultAccessRoles, getAvailableAccessRoles, Roles } from './project-access-form-utils';
 
 export type ClusterRoleKind = K8sResourceCommon & {

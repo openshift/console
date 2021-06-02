@@ -1,10 +1,10 @@
 import * as React from 'react';
-import * as formik from 'formik';
 import { shallow, ShallowWrapper } from 'enzyme';
+import * as formik from 'formik';
 import { InputField } from '@console/shared';
 import { CREATE_APPLICATION_KEY } from '../../../const';
-import ApplicationSelector from '../ApplicationSelector';
 import ApplicationDropdown from '../ApplicationDropdown';
+import ApplicationSelector from '../ApplicationSelector';
 
 type ApplicationSelectorProps = React.ComponentProps<typeof ApplicationSelector>;
 

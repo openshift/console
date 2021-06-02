@@ -1,14 +1,13 @@
 import { OrderedMap } from 'immutable';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
-import { listPage, ListPageSelector } from '../../views/list-page';
-import { detailsPage, DetailsPageSelector } from '../../views/details-page';
 import { projectDropdown } from '../../views/common';
+import { detailsPage, DetailsPageSelector } from '../../views/details-page';
+import { errorMessage } from '../../views/form';
+import { listPage, ListPageSelector } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
-import { errorMessage } from '../../views/form';
 
 describe('Kubernetes resource CRUD operations', () => {
   before(() => {

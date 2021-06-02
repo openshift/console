@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import {
   Plugin,
   ModelFeatureFlag,
@@ -11,8 +12,6 @@ import {
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
-import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import * as models from './models';
 import {
   FLAG_KNATIVE_SERVING_CONFIGURATION,
   FLAG_KNATIVE_SERVING,
@@ -24,9 +23,7 @@ import {
   FLAG_KNATIVE_EVENTING_BROKER,
   FLAG_CAMEL_KAMELETS,
 } from './const';
-import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
-import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
-
+import * as models from './models';
 import {
   eventSourceBreadcrumbsProvider,
   channelBreadcrumbsProvider,
@@ -35,6 +32,8 @@ import {
   channelModelsProviderForBreadcrumbs,
   brokerModelProviderForBreadcrumbs,
 } from './providers';
+import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
+import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
 
 type ConsumedExtensions =
   | ModelFeatureFlag

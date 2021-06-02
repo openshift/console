@@ -1,5 +1,4 @@
 import { TemplateModel } from '@console/internal/models';
-
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 
 export const diskImportKindMapping = {

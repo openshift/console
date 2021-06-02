@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { HorizontalPodAutoscalerKind, k8sList } from '@console/internal/module/k8s';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { HorizontalPodAutoscalerKind, k8sList } from '@console/internal/module/k8s';
 import { doesHpaMatch } from '../utils/hpa-utils';
 
 export const useRelatedHPA = (

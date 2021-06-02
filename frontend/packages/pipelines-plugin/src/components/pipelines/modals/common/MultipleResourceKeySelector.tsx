@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { useField, useFormikContext, FormikValues } from 'formik';
+import { FormGroup } from '@patternfly/react-core';
 import cx from 'classnames';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { ResourceDropdown, getFieldId, useFormikValidationFix } from '@console/shared';
-import { FormGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { ResourceDropdown, getFieldId, useFormikValidationFix } from '@console/shared';
 import MultipleKeySelector from './MultipleKeySelector';
 
 interface MultipleResourceKeySelectorProps {

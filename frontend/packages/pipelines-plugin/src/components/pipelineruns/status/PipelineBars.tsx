@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import HorizontalStackedBars from '../../charts/HorizontalStackedBars';
 import { PipelineRunKind } from '../../../types';
 import { runStatus, getRunStatusColor } from '../../../utils/pipeline-augment';
+import HorizontalStackedBars from '../../charts/HorizontalStackedBars';
 import { useTaskStatus } from '../hooks/useTaskStatus';
 import TaskStatusToolTip from './TaskStatusTooltip';
 

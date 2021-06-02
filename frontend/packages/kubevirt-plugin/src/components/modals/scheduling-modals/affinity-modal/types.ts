@@ -1,5 +1,4 @@
 import { Selector } from '@console/internal/module/k8s';
-
 import { IDEntity } from '../../../../types';
 
 export enum AffinityType {

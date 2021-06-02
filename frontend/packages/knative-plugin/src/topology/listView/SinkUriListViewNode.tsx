@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { DataListCell } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
-import { OdcBaseNode } from '@console/topology/src/elements';
 import {
   TopologyListViewNode,
   TypedResourceBadgeCell,
 } from '@console/topology/src/components/list-view';
-import { DataListCell } from '@patternfly/react-core';
+import { OdcBaseNode } from '@console/topology/src/elements';
 
 interface SinkUriListViewNodeProps {
   item: OdcBaseNode;

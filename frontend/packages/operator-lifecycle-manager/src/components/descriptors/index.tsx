@@ -1,19 +1,19 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { DetailsItem } from '@console/internal/components/utils';
-import { getSchemaAtPath } from '@console/shared';
-import { Descriptor, DescriptorType } from './types';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { DetailsItem } from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { getSchemaAtPath } from '@console/shared';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { SpecDescriptorDetailsItem } from './spec';
 import { StatusDescriptorDetailsItem } from './status';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { Descriptor, DescriptorType } from './types';
 import {
   DescriptorGroup,
   groupDescriptorDetails,
   useCalculatedDescriptorProperties,
 } from './utils';
-import { useTranslation } from 'react-i18next';
 
 export const DescriptorDetailsItem = withFallback<DescriptorDetailsItemProps>(
   ({ descriptor, model, obj, onError, schema, type }) => {

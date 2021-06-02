@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const minimist = require('minimist');
 const { gettextToI18next } = require('i18next-conv');
+const minimist = require('minimist');
 
 function save(target) {
   return (result) => {

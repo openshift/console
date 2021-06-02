@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -14,10 +13,15 @@ import {
   createSvgIdUrl,
   useSvgAnchor,
 } from '@patternfly/react-topology';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import {
+  NodeShadows,
+  NODE_SHADOW_FILTER_ID_HOVER,
+  NODE_SHADOW_FILTER_ID,
+} from '@console/topology/src/components/graph-view';
 import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
 import {
   getFilterById,
   useDisplayFilters,
@@ -25,11 +29,7 @@ import {
   useAllowEdgeCreation,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
-import {
-  NodeShadows,
-  NODE_SHADOW_FILTER_ID_HOVER,
-  NODE_SHADOW_FILTER_ID,
-} from '@console/topology/src/components/graph-view';
+import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
 
 import './TrapezoidBaseNode.scss';
 

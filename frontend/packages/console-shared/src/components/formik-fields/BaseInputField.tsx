@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useField } from 'formik';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { useField } from 'formik';
+import { useFormikValidationFix } from '../../hooks';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import { useFormikValidationFix } from '../../hooks';
 
 const BaseInputField: React.FC<BaseInputFieldProps & {
   children: (props) => React.ReactNode;

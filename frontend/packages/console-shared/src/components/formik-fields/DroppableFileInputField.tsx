@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { DroppableFileInput } from '@console/internal/components/utils/file-input';
-import { FormGroup } from '@patternfly/react-core';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

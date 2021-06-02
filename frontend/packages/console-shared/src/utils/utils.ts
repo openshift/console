@@ -1,8 +1,8 @@
-import { toPath } from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FirehoseResult } from '@console/internal/components/utils/types';
-import { getUID } from '../selectors/common';
 import { JSONSchema6 } from 'json-schema';
+import { toPath } from 'lodash';
+import { FirehoseResult } from '@console/internal/components/utils/types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { getUID } from '../selectors/common';
 
 export type EntityMap<A> = { [propertyName: string]: A };
 export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;

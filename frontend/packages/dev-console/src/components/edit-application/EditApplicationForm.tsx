@@ -1,23 +1,23 @@
 import * as React from 'react';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
 import { PageHeading } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, FormBody } from '@console/shared';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import GitSection from '../import/git/GitSection';
-import BuilderSection from '../import/builder/BuilderSection';
-import DockerSection from '../import/git/DockerSection';
-import IconSection from '../import/section/IconSection';
+import { FormFooter, FlexForm, FormBody } from '@console/shared';
+import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import AdvancedSection from '../import/advanced/AdvancedSection';
 import AppSection from '../import/app/AppSection';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import ImageSearchSection from '../import/image-search/ImageSearchSection';
-import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
-import { AppResources } from './edit-application-types';
-import JarSection from '../import/jar/section/JarSection';
 import BuilderImageTagSelector from '../import/builder/BuilderImageTagSelector';
+import BuilderSection from '../import/builder/BuilderSection';
+import DockerSection from '../import/git/DockerSection';
+import GitSection from '../import/git/GitSection';
+import ImageSearchSection from '../import/image-search/ImageSearchSection';
+import JarSection from '../import/jar/section/JarSection';
 import FormSection from '../import/section/FormSection';
+import IconSection from '../import/section/IconSection';
+import { AppResources } from './edit-application-types';
+import { ApplicationFlowType, getFlowTypePageTitle } from './edit-application-utils';
 
 export interface EditApplicationFormProps {
   flowType: ApplicationFlowType;

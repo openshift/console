@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { ContainerDropdown, ResourceLink } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import { ContainerDropdown, ResourceLink } from '@console/internal/components/utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { getResourcesType } from '../../edit-application/edit-application-utils';
 import AddHealthChecks from '../AddHealthChecks';
 import { getHealthChecksData } from '../create-health-checks-probe-utils';
-import { getResourcesType } from '../../edit-application/edit-application-utils';
 import HealthChecks from '../HealthChecks';
 
 let addHealthCheckProbs: React.ComponentProps<typeof AddHealthChecks>;

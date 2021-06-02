@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { BootableDeviceType } from '../../types';
 import { AddDeviceButton } from './add-device-button';
 import { AddDeviceFormSelect } from './add-device-form-select';

@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { PipelineKind } from '../../../../types';
 import ModalStructure from '../common/ModalStructure';
-import RemoveTriggerForm from './RemoveTriggerForm';
 import { removeTrigger } from './remove-utils';
+import RemoveTriggerForm from './RemoveTriggerForm';
 import { RemoveTriggerFormValues } from './types';
 import { removeTriggerSchema } from './validation-utils';
 

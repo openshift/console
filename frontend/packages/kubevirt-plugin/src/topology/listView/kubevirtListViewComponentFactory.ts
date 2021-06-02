@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { Node } from '@patternfly/react-topology';
-
 import { TYPE_VIRTUAL_MACHINE } from '../components/const';
 import { VmListViewNode } from './VmListViewNode';
 

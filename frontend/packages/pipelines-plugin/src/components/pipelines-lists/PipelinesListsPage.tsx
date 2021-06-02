@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Page } from '@console/internal/components/utils';
-import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { DefaultPage } from '@console/internal/components/default-resource';
+import { Page } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import {
   PipelineModel,
   PipelineResourceModel,
   ConditionModel,
   PipelineRunModel,
 } from '../../models';
-import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
-import { DefaultPage } from '@console/internal/components/default-resource';
-import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
-import PipelinesList from '../pipelines/list-page/PipelinesList';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
+import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
+import PipelinesList from '../pipelines/list-page/PipelinesList';
 
 interface PipelinesListPageProps {
   match: Rmatch<any>;

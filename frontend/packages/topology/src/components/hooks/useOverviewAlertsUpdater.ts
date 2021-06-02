@@ -1,5 +1,5 @@
-import { fetchMonitoringAlerts } from '@console/internal/components/overview/metricUtils';
 import { Alert } from '@console/internal/components/monitoring/types';
+import { fetchMonitoringAlerts } from '@console/internal/components/overview/metricUtils';
 
 type StopOverviewAUpdater = () => void;
 

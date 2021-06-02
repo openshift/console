@@ -1,10 +1,12 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { match, Link } from 'react-router-dom';
-import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
+import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Button } from '@patternfly/react-core';
+import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match, Link } from 'react-router-dom';
+import { Conditions } from '@console/internal/components/conditions';
 import {
   MultiListPage,
   DetailsPage,
@@ -13,7 +15,6 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
-import { Conditions } from '@console/internal/components/conditions';
 import {
   SectionHeading,
   MsgBox,
@@ -41,10 +42,9 @@ import {
   CatalogSourceModel,
 } from '../models';
 import { InstallPlanKind, InstallPlanApproval, Step } from '../types';
-import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from './modals/installplan-preview-modal';
+import { requireOperatorGroup } from './operator-group';
 import { InstallPlanReview, referenceForStepResource } from './index';
-import { useTranslation } from 'react-i18next';
 
 const tableColumnClasses = [
   '',

@@ -1,17 +1,17 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
-import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { Alert } from '@patternfly/react-core';
 import { VolumeTypes } from '../../const';
-import VolumeClaimTemplateForm from './VolumeClaimTemplateForm';
-import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
+import PVCDropdown from './PVCDropdown';
 import { PipelineModalFormWorkspace } from './types';
+import VolumeClaimTemplateForm from './VolumeClaimTemplateForm';
 import './PipelineWorkspacesSection.scss';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number) => {

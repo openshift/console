@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
-import { KebabAction } from '@console/internal/components/utils';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { KebabAction } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   setTrafficDistribution,
   setKnatify,

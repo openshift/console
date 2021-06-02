@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
+import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import {
   Table,
   MultiListPage,
@@ -35,11 +35,8 @@ import {
   InstallPlanDetails,
   InstallPlanDetailsProps,
 } from './install-plan';
-
 import * as modal from './modals/installplan-preview-modal';
-
 import { referenceForStepResource } from '.';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

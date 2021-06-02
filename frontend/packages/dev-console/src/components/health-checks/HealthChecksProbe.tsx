@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { GreenCheckCircleIcon } from '@console/shared';
-import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
-import ProbeForm from './ProbeForm';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';
+import ProbeForm from './ProbeForm';
 import './HealthChecksProbe.scss';
 
 interface HealthCheckProbeProps {

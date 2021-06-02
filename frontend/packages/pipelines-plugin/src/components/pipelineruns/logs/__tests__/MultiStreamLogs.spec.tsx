@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { cloneDeep } from 'lodash';
-import { MultiStreamLogs } from '../MultiStreamLogs';
 import Logs from '../Logs';
+import { MultiStreamLogs } from '../MultiStreamLogs';
 import { podData } from './logs-test-data';
 
 describe('MultiStreamLogs', () => {

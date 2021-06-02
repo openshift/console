@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
+import { RadioInput } from '@console/internal/components/radio';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { RadioInput } from '@console/internal/components/radio';
-import { SubscriptionKind, PackageManifestKind } from '../../types';
-import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { useTranslation } from 'react-i18next';
+import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
+import { SubscriptionKind, PackageManifestKind } from '../../types';
 
 export const SubscriptionChannelModal: React.FC<SubscriptionChannelModalProps> = ({
   cancel,

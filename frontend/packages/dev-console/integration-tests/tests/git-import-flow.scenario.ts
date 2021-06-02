@@ -5,6 +5,10 @@ import {
   checkErrors,
   testName,
 } from '@console/internal-integration-tests/protractor.conf';
+import { testData } from '../testData/git-import-flow.data';
+import { naviagteTo, NavigationMenu, ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
+import { elementByDataTestID, click, enterText, getText } from '../utilities/elementInteractions';
+import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import {
   navigateImportFromGit,
   enterGitRepoUrl,
@@ -35,11 +39,7 @@ import {
   builderImageSelected,
 } from '../views/git-import-flow.view';
 import { newApplicationName, newAppName } from '../views/new-app-name.view';
-import { switchPerspective, Perspective, sideHeader } from '../views/dev-perspective.view';
 import { pipelinecheckStatus, pipelineTableBody } from '../views/pipeline.view';
-import { elementByDataTestID, click, enterText, getText } from '../utilities/elementInteractions';
-import { testData } from '../testData/git-import-flow.data';
-import { naviagteTo, NavigationMenu, ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
 import {
   verifyCreatedAppsInTopology,
   selectActionInSideBar,

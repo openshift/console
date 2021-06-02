@@ -1,7 +1,6 @@
 import { isEqual } from 'lodash';
 import * as coFetch from '@console/internal/co-fetch';
 import { referenceForModel } from '@console/internal/module/k8s';
-
 import {
   EventSourceApiServerModel,
   EventSourceSinkBindingModel,
@@ -10,6 +9,8 @@ import {
   ServiceModel,
   EventingIMCModel,
 } from '../../models';
+import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
+import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
 import {
   getEventSourceModels,
   fetchEventSourcesCrd,
@@ -24,8 +25,6 @@ import {
   getDynamicChannelModel,
   getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
-import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
-import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
 
 describe('fetch-dynamic-eventsources: EventSources', () => {
   beforeEach(() => {

@@ -1,9 +1,7 @@
 import * as React from 'react';
-
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, KebabOption, pluralize } from '@console/internal/components/utils';
 import { DASH, dimensifyRow } from '@console/shared';
-
 import { isVMI } from '../../../../../../selectors/check-type';
 import { VMLikeEntityKind } from '../../../../../../types/vmLike';
 import { ValidationCell } from '../../../../../table/validation-cell';

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { ModelContext, ExtensibleModel } from './ModelContext';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../extensions/topology';
 import DataModelExtension from './DataModelExtension';
+import { ModelContext, ExtensibleModel } from './ModelContext';
 import TopologyDataRetriever from './TopologyDataRetriever';
 
 interface DataModelProviderProps {

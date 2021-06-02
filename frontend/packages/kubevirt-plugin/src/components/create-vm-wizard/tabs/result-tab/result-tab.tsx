@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
 import { isStepPending, isStepValid } from '../../selectors/immutable/wizard-selectors';
 import { VMWizardTab } from '../../types';
 import { ErrorResults } from './error-results';

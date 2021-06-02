@@ -2,7 +2,6 @@ import { SecretModel } from '@console/internal/models';
 import { getName, getOwnerReferences } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import { OVIRT_TYPE_LABEL, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel } from '../../../models';
 import { buildOwnerReference } from '../../../utils';

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
-import { DropdownField } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DeploymentStrategyType, DeploymentStrategyDropdownData } from './utils/types';
-import RecreateStrategy from './RecreateStrategy';
-import RollingStrategy from './RollingStrategy';
-import CustomStrategy from './CustomStrategy';
+import { DropdownField } from '@console/shared/src';
 import FormSection from '../../import/section/FormSection';
 import { getStrategyData } from '../utils/edit-deployment-utils';
+import CustomStrategy from './CustomStrategy';
+import RecreateStrategy from './RecreateStrategy';
+import RollingStrategy from './RollingStrategy';
+import { DeploymentStrategyType, DeploymentStrategyDropdownData } from './utils/types';
 
 export type DeploymentStrategySectionProps = {
   resourceType: string;

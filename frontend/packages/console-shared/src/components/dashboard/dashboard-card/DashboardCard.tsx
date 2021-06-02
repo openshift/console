@@ -1,6 +1,6 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { Card, CardProps } from '@patternfly/react-core';
+import classNames from 'classnames';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import './card.scss';
 

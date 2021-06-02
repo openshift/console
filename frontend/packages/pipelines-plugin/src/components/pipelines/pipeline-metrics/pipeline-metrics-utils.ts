@@ -1,12 +1,11 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
 import { humanizeNumberSI } from '@console/internal/components/utils';
 import {
   dateFormatterNoYear,
   parsePrometheusDuration,
 } from '@console/internal/components/utils/datetime';
-import { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
-
 import { PipelineKind } from '../../../types';
 
 export interface GraphData {

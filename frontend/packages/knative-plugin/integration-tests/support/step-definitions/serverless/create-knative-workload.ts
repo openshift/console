@@ -1,4 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import {
+  addOptions,
+  catalogCards,
+  catalogTypes,
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants';
+import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   addPage,
   gitPage,
@@ -6,14 +14,6 @@ import {
   catalogPage,
   navigateTo,
 } from '@console/dev-console/integration-tests/support/pages';
-import {
-  addOptions,
-  catalogCards,
-  catalogTypes,
-  devNavigationMenu,
-} from '@console/dev-console/integration-tests/support/constants';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is on {string} form', (formName: string) => {
   navigateTo(devNavigationMenu.Add);

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { FormikValues, useField, useFormikContext } from 'formik';
-import { cloneDeep } from 'lodash';
 import { ButtonVariant, Button, Tooltip } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import LifecycleHookForm from './LifecycleHookForm';
+import { FormikValues, useField, useFormikContext } from 'formik';
+import { cloneDeep } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getStrategyData } from '../../utils/edit-deployment-utils';
 import { getResourcesType } from '../../../edit-application/edit-application-utils';
+import { getStrategyData } from '../../utils/edit-deployment-utils';
+import LifecycleHookForm from './LifecycleHookForm';
 import './LifecycleHookField.scss';
 
 interface LifecycleHookFieldProps {

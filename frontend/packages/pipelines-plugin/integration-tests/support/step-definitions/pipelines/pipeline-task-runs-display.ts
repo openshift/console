@@ -1,7 +1,7 @@
+import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
 import { pipelineActions } from '../../constants';
 import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages';

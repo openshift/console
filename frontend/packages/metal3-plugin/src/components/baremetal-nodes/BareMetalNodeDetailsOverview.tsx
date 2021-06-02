@@ -1,7 +1,9 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Button, pluralize } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { NodeKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import {
   useAccessReview,
   SectionHeading,
@@ -13,8 +15,7 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
-import { Button, pluralize } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { NodeKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getNodeMachineNameAndNamespace,
   getNodeAddresses,
@@ -22,11 +23,10 @@ import {
   getNamespace,
   DASH,
 } from '@console/shared';
-import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { BareMetalHostModel } from '../../models';
+import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
-import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 
 type BareMetalNodeDetailsOverview = {
   node: NodeKind;

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   ProgressStatus,
   SuccessStatus,
@@ -11,7 +12,6 @@ import {
   PopoverStatus,
   InfoStatus,
 } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
@@ -22,11 +22,11 @@ import {
   HOST_STATUS_UNMANAGED,
   HOST_INFO_STATES,
 } from '../../constants';
-import { getHostErrorMessage } from '../../selectors';
-import { StatusProps } from '../types';
-import MaintenancePopover from '../maintenance/MaintenancePopover';
-import { BareMetalHostKind } from '../../types';
 import { BareMetalHostModel } from '../../models';
+import { getHostErrorMessage } from '../../selectors';
+import { BareMetalHostKind } from '../../types';
+import MaintenancePopover from '../maintenance/MaintenancePopover';
+import { StatusProps } from '../types';
 
 import './status.scss';
 

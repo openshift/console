@@ -1,6 +1,6 @@
+import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import { NS } from '../utils/consts';
 import { commonFlows } from './common';
-import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 
 // Pool var
 export const poolName: string = 'example.pool';

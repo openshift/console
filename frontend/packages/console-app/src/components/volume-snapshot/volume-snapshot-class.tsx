@@ -1,9 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
 import {
   TableRow,
   TableData,
@@ -11,7 +9,9 @@ import {
   ListPage,
   RowFunction,
 } from '@console/internal/components/factory';
+import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
+import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
 import { getAnnotations } from '@console/shared';
 
 const tableColumnClasses = [

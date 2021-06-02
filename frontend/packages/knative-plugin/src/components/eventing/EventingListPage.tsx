@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { match as Rmatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Page } from '@console/internal/components/utils';
+import { match as Rmatch } from 'react-router-dom';
 import { NamespaceBar } from '@console/internal/components/namespace';
+import { Page } from '@console/internal/components/utils';
 import { MenuActions, MultiTabListPage } from '@console/shared';
-import EventSourceListPage from './eventsource-list/EventSourceListPage';
+import { EventingBrokerModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';
 import ChannelListPage from './channels-list/ChannelListPage';
-import TriggerListPage from './triggers-list/TriggerListPage';
+import EventSourceListPage from './eventsource-list/EventSourceListPage';
 import SubscriptionListPage from './subscription-list/SubscriptionListPage';
-import { EventingBrokerModel } from '../../models';
+import TriggerListPage from './triggers-list/TriggerListPage';
 
 interface EventingListPageProps {
   match: Rmatch<{ ns: string }>;

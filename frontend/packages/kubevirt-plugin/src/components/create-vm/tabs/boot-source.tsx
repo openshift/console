@@ -1,20 +1,18 @@
 import * as React from 'react';
+import { Grid, GridItem, Stack, StackItem, Title } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { Grid, GridItem, Stack, StackItem, Title } from '@patternfly/react-core';
-
+import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../../../constants/vm/constants';
+import { getParameterValue } from '../../../selectors/selectors';
 import { getTemplateName } from '../../../selectors/vm-template/basic';
 import { TemplateItem } from '../../../types/template';
 import { BootSourceForm } from '../forms/boot-source-form';
 import { BootSourceAction, BootSourceState } from '../forms/boot-source-form-reducer';
 
 import './tab.scss';
-import { getParameterValue } from '../../../selectors/selectors';
-import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../../../constants/vm/constants';
 
 type BootSourceProps = {
   template: TemplateItem;

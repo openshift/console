@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
+import { Firehose } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
 import { PipelineModel } from '../../../models';
 import { filters } from './PipelineAugmentRuns';
-import { Firehose } from '@console/internal/components/utils';
+import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
 
 interface PipelinesListProps {
   match: Rmatch<any>;

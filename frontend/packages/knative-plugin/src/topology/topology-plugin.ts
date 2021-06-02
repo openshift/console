@@ -1,5 +1,5 @@
-import { Plugin } from '@console/plugin-sdk';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -9,14 +9,6 @@ import {
 } from '@console/topology/src/extensions';
 import { TopologyDecoratorQuadrant } from '@console/topology/src/topology-types';
 import {
-  getIsKnativeResource,
-  getKnativeComponentFactory,
-  getKnativeTopologyDataModel,
-  getTopologyFilters,
-  applyDisplayOptions,
-  getCreateConnector,
-} from './index';
-import {
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_CONFIGURATION,
@@ -24,6 +16,12 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
+import {
+  getDynamicEventSourcesWatchers,
+  getDynamicEventingChannelWatchers,
+  fetchEventSourcesCrd,
+  fetchChannelsCrd,
+} from '../utils/fetch-dynamic-eventsources-utils';
 import {
   knativeServingResourcesConfigurationsWatchers,
   knativeServingResourcesRevisionWatchers,
@@ -35,13 +33,15 @@ import {
   knativeCamelIntegrationsResourceWatchers,
   knativeCamelKameletBindingResourceWatchers,
 } from '../utils/get-knative-resources';
-import {
-  getDynamicEventSourcesWatchers,
-  getDynamicEventingChannelWatchers,
-  fetchEventSourcesCrd,
-  fetchChannelsCrd,
-} from '../utils/fetch-dynamic-eventsources-utils';
 import { getRevisionRouteDecorator, getServiceRouteDecorator } from './components/decorators';
+import {
+  getIsKnativeResource,
+  getKnativeComponentFactory,
+  getKnativeTopologyDataModel,
+  getTopologyFilters,
+  applyDisplayOptions,
+  getCreateConnector,
+} from './index';
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();

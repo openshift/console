@@ -1,14 +1,14 @@
 import { Simulate } from 'react-dom/test-utils';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import * as pluginLoaderModule from '../plugin-loader';
-import * as pluginManifestModule from '../plugin-manifest';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
   getEntryModuleMocks,
 } from '../../utils/test-utils';
+import * as pluginLoaderModule from '../plugin-loader';
+import * as pluginManifestModule from '../plugin-manifest';
 
 const {
   scriptIDPrefix,

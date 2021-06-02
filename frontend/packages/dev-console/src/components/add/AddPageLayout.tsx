@@ -1,21 +1,17 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as cx from 'classnames';
-import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
+import * as cx from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src';
-
 import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
-
-import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
-import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
-
-import AddCardSection from './AddCardSection';
-import { GettingStartedSection } from './GettingStartedSection';
-import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
-
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
+import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
+import AddCardSection from './AddCardSection';
+import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
+import { GettingStartedSection } from './GettingStartedSection';
 import { useAccessFilterExtensions } from './hooks/useAccessFilterExtensions';
+import { useShowAddCardItemDetails } from './hooks/useShowAddCardItemDetails';
 import './AddPageLayout.scss';
 
 type AddPageLayoutProps = {

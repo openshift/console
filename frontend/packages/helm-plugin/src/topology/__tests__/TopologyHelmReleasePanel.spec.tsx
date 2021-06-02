@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
-import { SidebarSectionHeading, StatusBox } from '@console/internal/components/utils';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { SidebarSectionHeading, StatusBox } from '@console/internal/components/utils';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import HelmReleaseNotesEmptyState from '../../components/details-page/notes/HelmReleaseNotesEmptyState';
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';

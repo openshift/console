@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
-import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
 import { pageTitle } from '../../constants';
 

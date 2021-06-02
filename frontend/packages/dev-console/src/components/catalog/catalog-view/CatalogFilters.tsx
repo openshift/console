@@ -1,10 +1,10 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   FilterSidePanel,
   FilterSidePanelCategory,
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
+import * as _ from 'lodash';
 import { CatalogFilterCounts, CatalogFilters } from '../utils/types';
 
 type CatalogFiltersProps = {

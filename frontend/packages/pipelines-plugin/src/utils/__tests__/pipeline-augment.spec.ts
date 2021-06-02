@@ -1,5 +1,13 @@
 import * as _ from 'lodash';
 import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
+import {
+  ClusterTaskModel,
+  PipelineRunModel,
+  TaskModel,
+  PipelineModel,
+  ClusterTriggerBindingModel,
+  TriggerBindingModel,
+} from '../../models';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
 import { PipelineKind } from '../../types';
 import {
@@ -17,14 +25,6 @@ import {
   getResourceModelFromBindingKind,
   shouldHidePipelineRunStop,
 } from '../pipeline-augment';
-import {
-  ClusterTaskModel,
-  PipelineRunModel,
-  TaskModel,
-  PipelineModel,
-  ClusterTriggerBindingModel,
-  TriggerBindingModel,
-} from '../../models';
 import { testData } from './pipeline-augment-test-data';
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {

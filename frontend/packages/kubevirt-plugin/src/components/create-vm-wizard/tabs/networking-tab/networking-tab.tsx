@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
 import {
   Bullseye,
   Button,
@@ -13,7 +10,8 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { DeviceType } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';

@@ -2,12 +2,11 @@ import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { ModalTitle, ModalSubmitFooter } from '@console/internal/components/factory/modal';
-import { testSubscription, dummyPackageManifest } from '../../../mocks';
-import { SubscriptionKind } from '../../types';
-import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
-import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall-operator-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import { testSubscription, dummyPackageManifest } from '../../../mocks';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { SubscriptionKind } from '../../types';
+import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall-operator-modal';
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

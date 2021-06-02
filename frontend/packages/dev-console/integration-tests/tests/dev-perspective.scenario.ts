@@ -4,13 +4,13 @@ import {
   checkLogs,
   checkErrors,
 } from '@console/internal-integration-tests/protractor.conf';
+import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src';
 import {
   switchPerspective,
   Perspective,
   pageSidebar,
   sideHeader,
 } from '../views/dev-perspective.view';
-import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src';
 
 describe('Application Launcher Menu', () => {
   beforeAll(async () => {

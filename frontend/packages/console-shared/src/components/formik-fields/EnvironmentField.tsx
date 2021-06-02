@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { useFormikContext, FormikValues } from 'formik';
-import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { FormGroup } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { errorModal } from '@console/internal/components/modals';
+import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { errorModal } from '@console/internal/components/modals';
 import { EnvironmentFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 

@@ -1,12 +1,4 @@
-import * as classnames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
-import { ProjectModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { FLAGS, VirtualizedGrid } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
   Alert,
@@ -30,7 +22,15 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import * as classnames from 'classnames';
+import * as fuzzy from 'fuzzysearch';
+import { Trans, useTranslation } from 'react-i18next';
 import { createProjectModal } from '@console/internal/components/modals';
+import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
+import { ProjectModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { FLAGS, VirtualizedGrid } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import {

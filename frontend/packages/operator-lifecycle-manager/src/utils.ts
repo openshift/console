@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { K8sResourceKind, ObjectMetadata, Patch } from '@console/internal/module/k8s';
+import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { INTERNAL_OBJECTS_ANNOTATION, OPERATOR_PLUGINS_ANNOTATION } from './const';
 
 export const getClusterServiceVersionPlugins = (

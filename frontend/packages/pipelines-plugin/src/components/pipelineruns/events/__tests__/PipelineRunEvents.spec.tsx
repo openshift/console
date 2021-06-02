@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourcesEventStream } from '@console/internal/components/events';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../../models';
 import {
   DataState,
   PipelineExampleNames,
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
-import PipelineRunEvents from '../PipelineRunEvents';
 import * as utils from '../event-utils';
+import PipelineRunEvents from '../PipelineRunEvents';
 
 const pipeline = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
 const pipelineRun = pipeline.pipelineRuns[DataState.SUCCESS];

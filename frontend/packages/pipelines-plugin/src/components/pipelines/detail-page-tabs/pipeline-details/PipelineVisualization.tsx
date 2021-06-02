@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
+import { PipelineLayout } from '../../pipeline-topology/const';
 import PipelineTopologyGraph from '../../pipeline-topology/PipelineTopologyGraph';
 import { getTopologyNodesEdges, hasWhenExpression } from '../../pipeline-topology/utils';
-import { PipelineLayout } from '../../pipeline-topology/const';
 
 import './PipelineVisualization.scss';
 

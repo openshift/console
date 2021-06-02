@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import Decorator from '../Decorator';
 import { Link } from 'react-router-dom';
+import Decorator from '../Decorator';
 
 describe('Decorator', () => {
   it('should show anchors for external links', () => {

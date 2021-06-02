@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Tooltip } from '@patternfly/react-core';
 import { truncateMiddle } from '@console/internal/components/utils';
 import { useIsMobile } from '@console/shared';
 

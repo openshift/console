@@ -1,6 +1,5 @@
 import { k8sCreate } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 import { VMIKind } from '../../../types/vm';
 import { prefixedID } from '../../../utils';

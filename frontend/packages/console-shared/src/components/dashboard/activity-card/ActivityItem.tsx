@@ -1,7 +1,7 @@
 import * as React from 'react';
-import classNames from 'classnames';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
+import classNames from 'classnames';
 
 export const ActivityProgress: React.FC<ActivityProgressProps> = ({
   title,

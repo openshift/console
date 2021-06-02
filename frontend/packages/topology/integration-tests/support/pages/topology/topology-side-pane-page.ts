@@ -1,8 +1,8 @@
-import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { topologyActions } from './topology-actions-page';
-import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { app } from '@console/dev-console/integration-tests/support/pages';
+import { topologyActions } from './topology-actions-page';
 
 export const topologySidePane = {
   verify: () => cy.get(topologyPO.sidePane.dialog).should('be.visible'),

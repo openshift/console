@@ -1,6 +1,5 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
+import * as _ from 'lodash';
 import { BootableDeviceType } from '../../../types';
 import { deviceKey, deviceLabel } from '../constants';
 import { BootOrderEmptySummary } from './boot-order-empty-summary';

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { EmptyStateIcon, Title } from '@patternfly/react-core';
 import { ExclamationCircleIcon, LockIcon } from '@patternfly/react-icons';
+import { shallow, ShallowWrapper } from 'enzyme';
 import AddCardSectionEmptyState from '../AddCardSectionEmptyState';
 
 jest.mock('react-i18next', () => {

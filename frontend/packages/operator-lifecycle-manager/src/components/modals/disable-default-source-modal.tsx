@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { k8sPatch, K8sKind } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
@@ -8,10 +8,10 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
+import { k8sPatch, K8sKind } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { OperatorHubKind } from '../operator-hub';
-import { useTranslation } from 'react-i18next';
 
 const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
   kind,

@@ -1,6 +1,6 @@
-import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_palette_purple_300 as globalPurple300 } from '@patternfly/react-tokens/dist/js/global_palette_purple_300';
 import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
+import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 
 export enum AllPodStatus {
   Running = 'Running',

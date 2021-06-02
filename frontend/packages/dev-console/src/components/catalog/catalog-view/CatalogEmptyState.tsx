@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   EmptyState,
@@ -10,6 +9,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 type CatalogEmptyStateProps = {
   onClear: () => void;

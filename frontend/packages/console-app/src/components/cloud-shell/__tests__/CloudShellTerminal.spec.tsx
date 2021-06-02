@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import { InternalCloudShellTerminal } from '../CloudShellTerminal';
-import TerminalLoadingBox from '../TerminalLoadingBox';
-import { user } from './cloud-shell-test-data';
-import useCloudShellWorkspace from '../useCloudShellWorkspace';
-import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
 import { useFlag } from '@console/shared';
+import { InternalCloudShellTerminal } from '../CloudShellTerminal';
+import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
+import TerminalLoadingBox from '../TerminalLoadingBox';
+import useCloudShellWorkspace from '../useCloudShellWorkspace';
+import { user } from './cloud-shell-test-data';
 
 jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),

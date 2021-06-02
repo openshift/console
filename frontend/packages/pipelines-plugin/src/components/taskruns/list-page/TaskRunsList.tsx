@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
-import { SortByDirection } from '@patternfly/react-table';
 import { TaskRunModel } from '../../../models';
 import TaskRunsHeader from './TaskRunsHeader';
 import TaskRunsRow from './TaskRunsRow';

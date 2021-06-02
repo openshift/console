@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import SinkPubsub from './SinkPubsub';
 
 type SinkPubsubControllerProps = {

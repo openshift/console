@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { WindowScroller, AutoSizer, Size, CellMeasurerCache } from 'react-virtualized';
-import { Item, GroupedItems, GridChildrenProps, RenderHeader, RenderCell } from './types';
-import GroupByFilterGrid from './GroupByFilterGrid';
-import Grid from './Grid';
-import Cell from './Cell';
 import { WithScrollContainer } from '@console/internal/components/utils';
+import Cell from './Cell';
 import {
   IDEAL_SPACE_BW_TILES,
   IDEAL_CELL_WIDTH,
@@ -13,6 +10,9 @@ import {
   HEADER_FIXED_HEIGHT,
   ESTIMATED_ROW_SIZE,
 } from './const';
+import Grid from './Grid';
+import GroupByFilterGrid from './GroupByFilterGrid';
+import { Item, GroupedItems, GridChildrenProps, RenderHeader, RenderCell } from './types';
 import { CellMeasurementContext } from './utils';
 
 type VirtualizedGridProps = {

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext } from 'formik';
 import { Grid, GridItem, TextInputTypes } from '@patternfly/react-core';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { InputField, DropdownField, TextColumnField } from '@console/shared';
 import AutoCompletePopover from '../../shared/common/auto-complete/AutoCompletePopover';
-import { PipelineBuilderFormikValues } from '../pipeline-builder/types';
 import { WhenExpressionOperatorType } from '../pipeline-builder/const';
+import { PipelineBuilderFormikValues } from '../pipeline-builder/types';
 
 type WhenExpressionFormProps = {
   namePrefix?: string;

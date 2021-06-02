@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import { k8sGet, referenceForModel } from '@console/internal/module/k8s';
-import PipelineBuilderPage from './PipelineBuilderPage';
 import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
+import PipelineBuilderPage from './PipelineBuilderPage';
 
 import './PipelineBuilderEditPage.scss';
 

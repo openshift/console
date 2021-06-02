@@ -6,8 +6,8 @@ import {
   mockTrafficData,
   mockRevisionItems,
 } from '../../../utils/__mocks__/traffic-splitting-utils-mock';
-import TrafficSplittingFields from '../TrafficSplittingFields';
 import TrafficModalRevisionsDropdownField from '../TrafficModalRevisionsDropdownField';
+import TrafficSplittingFields from '../TrafficSplittingFields';
 
 const formProps = {
   ...formikFormProps,

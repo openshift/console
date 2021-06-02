@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
-import { validationSchema } from '../utils/edit-deployment-validation-utils';
 import { mockEditDeploymentData } from '../__mocks__/edit-deployment-data';
 import { LifecycleAction } from '../deployment-strategy/utils/types';
+import { validationSchema } from '../utils/edit-deployment-validation-utils';
 
 describe('Validation Schema', () => {
   it('should validate the form data', async () => {

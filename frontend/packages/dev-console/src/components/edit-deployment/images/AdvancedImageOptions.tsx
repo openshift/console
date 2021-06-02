@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { FormikValues, useFormikContext } from 'formik';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { ResourceDropdownField } from '@console/shared/src';
+import { FormikValues, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
+import { ResourceDropdownField } from '@console/shared/src';
 import { secretModalLauncher } from '../../import/CreateSecretModal';
 
 const AdvancedImageOptions: React.FC = () => {

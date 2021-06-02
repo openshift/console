@@ -1,5 +1,4 @@
 import { PodKind } from '@console/internal/module/k8s';
-
 import { Status } from '..';
 import {
   findFailingContainerStatus,

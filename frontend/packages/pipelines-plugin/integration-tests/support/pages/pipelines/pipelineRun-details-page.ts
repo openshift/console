@@ -1,13 +1,13 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
+import { pipelineActions } from '../../constants';
 import {
   pipelineDetailsPO,
   pipelineRunDetailsPO,
   pipelineRunsPO,
 } from '../../page-objects/pipelines-po';
 import { actionsDropdownMenu } from '../functions/common';
-import { pipelineActions } from '../../constants';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {

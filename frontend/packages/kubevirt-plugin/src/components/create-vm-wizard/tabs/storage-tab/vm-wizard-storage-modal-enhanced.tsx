@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
@@ -10,7 +9,6 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
 import { DUMMY_VM_NAME } from '../../../../constants/vm';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
@@ -21,6 +19,7 @@ import { TemplateValidations } from '../../../../utils/validations/template/temp
 import { DiskModal } from '../../../modals/disk-modal';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
+import { iGetImportProvidersValue } from '../../selectors/immutable/import-providers';
 import { getInitialData, iGetCommonData } from '../../selectors/immutable/selectors';
 import { getStorages } from '../../selectors/selectors';
 import { getTemplateValidation } from '../../selectors/template';
@@ -31,7 +30,6 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../types';
-import { iGetImportProvidersValue } from '../../selectors/immutable/import-providers';
 
 const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
   const {

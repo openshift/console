@@ -1,19 +1,19 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import {
   devNavigationMenu,
   pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { pipelineActions } from '../../constants';
+import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
 import {
   pipelineRunDetailsPage,
   pipelineBuilderPage,
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
-import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
-import { pipelineActions } from '../../constants';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',

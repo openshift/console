@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Flex, FlexItem } from '@patternfly/react-core';
 import {
   SidebarSectionHeading,
   ResourceLink,
@@ -12,11 +12,11 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
 import { PipelineRunModel, PipelineModel } from '../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../types';
-import TriggerLastRunButton from './TriggerLastRunButton';
-import PipelineRunItem from './PipelineRunItem';
-import PipelineStartButton from './PipelineStartButton';
 import { isPipelineNotStarted, removePipelineNotStarted } from './pipeline-overview-utils';
 import PipelineOverviewAlert from './PipelineOverviewAlert';
+import PipelineRunItem from './PipelineRunItem';
+import PipelineStartButton from './PipelineStartButton';
+import TriggerLastRunButton from './TriggerLastRunButton';
 
 const MAX_VISIBLE = 3;
 

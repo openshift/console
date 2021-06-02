@@ -1,6 +1,13 @@
 import { And, Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
+import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
+import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import {
+  pipelineBuilderPO,
+  pipelineDetailsPO,
+  pipelineRunDetailsPO,
+} from '../../page-objects/pipelines-po';
 import {
   pipelinesPage,
   pipelineBuilderPage,
@@ -8,13 +15,6 @@ import {
   pipelineBuilderSidePane,
   pipelineRunDetailsPage,
 } from '../../pages';
-import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import {
-  pipelineBuilderPO,
-  pipelineDetailsPO,
-  pipelineRunDetailsPO,
-} from '../../page-objects/pipelines-po';
 
 When('user clicks Create Pipeline button on Pipelines page', () => {
   pipelinesPage.clickOnCreatePipeline();

@@ -1,16 +1,16 @@
 import * as _ from 'lodash';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { referenceFor } from '@console/internal/module/k8s';
+import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { topologyDataModel, dataModel, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
-import { updateModelFromFilters } from '../updateModelFromFilters';
+import { TYPE_WORKLOAD } from '../../const';
 import { EXPAND_GROUPS_FILTER_ID, getFilterById, SHOW_GROUPS_FILTER_ID } from '../../filters';
 import { DEFAULT_TOPOLOGY_FILTERS, EXPAND_APPLICATION_GROUPS_FILTER_ID } from '../../filters/const';
+import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
+import { WORKLOAD_TYPES } from '../../utils/topology-utils';
 import { baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';
-import { WORKLOAD_TYPES } from '../../utils/topology-utils';
-import { DisplayFilters, TopologyDisplayFilterType } from '../../topology-types';
-import { TYPE_WORKLOAD } from '../../const';
+import { updateModelFromFilters } from '../updateModelFromFilters';
 
 const namespace = 'test-project';
 

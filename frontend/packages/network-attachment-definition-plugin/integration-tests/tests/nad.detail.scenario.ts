@@ -4,8 +4,8 @@ import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as nadDetailView from '../views/nad.detail.view';
 import { NetworkAttachmentDefinition } from './models/nad';
-import { getNADManifest } from './utils/mocks';
 import { CNV_BRIDGE } from './utils/constants';
+import { getNADManifest } from './utils/mocks';
 
 describe('Test NAD overview', () => {
   const namespace = testName;

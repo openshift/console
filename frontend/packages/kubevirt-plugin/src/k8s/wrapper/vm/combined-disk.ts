@@ -1,11 +1,9 @@
 import * as _ from 'lodash';
-
 import { FirehoseResult } from '@console/internal/components/utils';
 import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';

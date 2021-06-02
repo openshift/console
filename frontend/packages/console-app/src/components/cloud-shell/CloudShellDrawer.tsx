@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, Flex, FlexItem, Button } from '@patternfly/react-core';
 import { CloseIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { InlineTechPreviewBadge } from '@console/shared';
 import Drawer from '@console/shared/src/components/drawer/Drawer';
 import MinimizeRestoreButton from './MinimizeRestoreButton';

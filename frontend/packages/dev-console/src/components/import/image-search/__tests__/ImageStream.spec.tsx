@@ -1,18 +1,18 @@
 import * as React from 'react';
-import * as formik from 'formik';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
+import * as formik from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import * as imgUtils from '../../../../utils/imagestream-utils';
+import { BuilderImagesNamespace } from '../../../../utils/imagestream-utils';
 import {
   appResources,
   internalImageValues,
 } from '../../../edit-application/__tests__/edit-application-data';
-import * as imgUtils from '../../../../utils/imagestream-utils';
-import { BuilderImagesNamespace } from '../../../../utils/imagestream-utils';
+import ImageStream from '../ImageStream';
+import ImageStreamDropdown from '../ImageStreamDropdown';
 import ImageStreamNsDropdown from '../ImageStreamNsDropdown';
 import ImageStreamTagDropdown from '../ImageStreamTagDropdown';
-import ImageStreamDropdown from '../ImageStreamDropdown';
-import ImageStream from '../ImageStream';
 
 const spyUseFormikContext = jest.spyOn(formik, 'useFormikContext');
 const spyUseReducer = jest.spyOn(React, 'useReducer');

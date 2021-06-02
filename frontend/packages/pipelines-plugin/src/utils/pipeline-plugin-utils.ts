@@ -1,5 +1,5 @@
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineRunModel, PipelineModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
 

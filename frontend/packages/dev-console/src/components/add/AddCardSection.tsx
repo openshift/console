@@ -4,8 +4,8 @@ import { LoadedExtension } from '@console/plugin-sdk/src';
 import { getAddGroups, getSortedExtensionItems } from '../../utils/add-page-utils';
 import { AddGroup } from '../types';
 import AddCard from './AddCard';
-import AddCardSectionSkeleton from './AddCardSectionSkeleton';
 import AddCardSectionEmptyState from './AddCardSectionEmptyState';
+import AddCardSectionSkeleton from './AddCardSectionSkeleton';
 import { MasonryLayout } from './layout/MasonryLayout';
 
 type AddCardSectionProps = {

@@ -1,4 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { devNavigationMenu, switchPerspective, addOptions } from '../../constants';
+import { addPagePO, operatorsPO } from '../../pageObjects';
 import {
   navigateTo,
   perspective,
@@ -7,8 +9,6 @@ import {
   gitPage,
   verifyAddPage,
 } from '../../pages';
-import { devNavigationMenu, switchPerspective, addOptions } from '../../constants';
-import { addPagePO, operatorsPO } from '../../pageObjects';
 
 Given('cluster is not installed with any operators', () => {
   perspective.switchTo(switchPerspective.Administrator);

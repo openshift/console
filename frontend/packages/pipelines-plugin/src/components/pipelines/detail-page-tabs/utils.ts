@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { PipelineModel, PipelineResourceModel } from '../../../models';
 import {
   PipelineKind,
   PipelineRunKind,
@@ -10,9 +11,8 @@ import {
   TektonResource,
 } from '../../../types';
 import { getSafeTaskResourceKind } from '../../../utils/pipeline-augment';
-import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
-import { PipelineModel, PipelineResourceModel } from '../../../models';
 import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
+import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
 
 export const removeEmptyDefaultFromPipelineParams = (parameters: TektonParam[]): TektonParam[] =>
   _.map(

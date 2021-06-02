@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ResourceIcon, ActionsMenu } from '@console/internal/components/utils';
-import { GraphData, TopologyApplicationObject } from '../../topology-types';
 import { groupActions } from '../../actions/groupActions';
+import { GraphData, TopologyApplicationObject } from '../../topology-types';
 import TopologyApplicationResources from './TopologyApplicationResources';
 
 type TopologyApplicationPanelProps = {

@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { NADConfig } from '../../types';
-import { NADForm } from './nadForm';
 import { NADDetail } from './nadDetail';
+import { NADForm } from './nadForm';
 
 export class NetworkAttachmentDefinition extends NADDetail {
   async create({ name, description, bridgeName, vlanTagNum }: NADConfig, networkTypeID: string) {

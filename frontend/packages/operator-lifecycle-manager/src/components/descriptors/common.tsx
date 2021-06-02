@@ -1,10 +1,10 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
-import { CapabilityProps, SpecCapability, StatusCapability } from './types';
-import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
+import { YellowExclamationTriangleIcon } from '@console/shared';
+import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
+import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 
 export const Invalid: React.FC<{ path: string }> = ({ path }) => {
   return (

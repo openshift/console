@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { PageHeading } from '@console/internal/components/utils';
+import { RouteComponentProps } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
+import { PageHeading } from '@console/internal/components/utils';
 import { useChannelList } from '../../utils/create-channel-utils';
 import AddChannel from './channels/AddChannel';
 

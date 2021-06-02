@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { PodModel } from '@console/internal/models';
+import { LoadingInline } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PodModel } from '@console/internal/models';
 import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { PodRing, ExtPodKind } from '@console/shared';
-import { LoadingInline } from '@console/internal/components/utils';
 import { GitOpsResource } from '../utils/gitops-types';
 
 interface PodRingWrapperProps {

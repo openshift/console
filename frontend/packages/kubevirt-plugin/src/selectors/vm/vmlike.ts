@@ -1,6 +1,5 @@
 import { TemplateModel } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
-
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { VMKind } from '../../types/vm';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';

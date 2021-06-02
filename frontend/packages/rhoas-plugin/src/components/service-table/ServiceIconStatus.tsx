@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, Spinner } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,

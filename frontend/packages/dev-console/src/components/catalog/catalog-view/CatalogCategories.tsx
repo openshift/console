@@ -1,9 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as cx from 'classnames';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
-import { CatalogCategory } from '../utils/types';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
+import { CatalogCategory } from '../utils/types';
 
 type CatalogCategoriesProp = {
   categories: CatalogCategory[];

@@ -1,5 +1,5 @@
-import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { authenticationTypes } from '@console/dev-console/integration-tests/support/constants';
+import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 
 export const editDeployment = {
   verifyModalTitle: () => {

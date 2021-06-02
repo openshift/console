@@ -1,20 +1,20 @@
 import * as React from 'react';
-import Measure from 'react-measure';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { ChartVoronoiContainer } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { usePipelineSuccessRatioPoll } from '../hooks';
+import { LoadingInline } from '@console/internal/components/utils';
 import { DEFAULT_CHART_HEIGHT } from '../const';
+import { usePipelineSuccessRatioPoll } from '../hooks';
+import SuccessRatioDonut from './charts/successRatioDonut';
+import { TimeSeriesChart } from './charts/TimeSeriesChart';
 import {
   PipelineMetricsGraphProps,
   getRangeVectorData,
   formatDate,
 } from './pipeline-metrics-utils';
-import SuccessRatioDonut from './charts/successRatioDonut';
-import { TimeSeriesChart } from './charts/TimeSeriesChart';
 
 import './pipeline-chart.scss';
 

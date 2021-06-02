@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
-import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
-import { ANNOTATIONS, APIError } from '@console/shared';
 import {
   getImageForIconClass,
   getTemplateIcon,
 } from '@console/internal/components/catalog/catalog-item-icon';
+import { TemplateModel } from '@console/internal/models';
+import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
+import { ANNOTATIONS, APIError } from '@console/shared';
 
 const normalizeTemplates = (
   templates: PartialObjectMetadata[],

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { getQuickStartByName } from '../../utils/quick-start-utils';
+import QuickStartMarkdownView from '../../QuickStartMarkdownView';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
-import QuickStartTask from '../QuickStartTasks';
+import { getQuickStartByName } from '../../utils/quick-start-utils';
 import TaskHeader from '../QuickStartTaskHeader';
 import QuickStartTaskReview from '../QuickStartTaskReview';
-import QuickStartMarkdownView from '../../QuickStartMarkdownView';
+import QuickStartTask from '../QuickStartTasks';
 
 type QuickStartTaskProps = React.ComponentProps<typeof QuickStartTask>;
 let wrapper: ShallowWrapper<QuickStartTaskProps>;

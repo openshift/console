@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ClipboardCopy, ClipboardCopyVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { EventListenerKind } from '../resource-types';
 import { useEventListenerURL } from '../utils/triggers';
 

@@ -3,7 +3,6 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 import { validateEntityAlreadyExists } from '../common';
 

@@ -1,16 +1,16 @@
-import i18next from 'i18next';
-import { TYPE_KAFKA_CONNECTION_LINK } from '@console/knative-plugin/src/topology/const';
-import {
-  CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION,
-  MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION,
-  nodesEdgeIsDragging,
-} from '@console/knative-plugin/src/topology/components/knativeComponentUtils';
 import {
   CREATE_CONNECTOR_DROP_TYPE,
   DropTargetSpec,
   GraphElement,
   isEdge,
 } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import {
+  CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION,
+  MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION,
+  nodesEdgeIsDragging,
+} from '@console/knative-plugin/src/topology/components/knativeComponentUtils';
+import { TYPE_KAFKA_CONNECTION_LINK } from '@console/knative-plugin/src/topology/const';
 import {
   canDropEdgeOnNode,
   EDGE_DRAG_TYPE,

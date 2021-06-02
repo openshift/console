@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { PipelineData } from '../import-types';
 import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
@@ -8,14 +7,15 @@ import {
 } from '../../../const';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineRunKind, TektonParam, TektonWorkspace } from '../../../types';
-import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
+import { VolumeTypes } from '../../pipelines/const';
 import {
   convertPipelineToModalData,
   getDefaultVolumeClaimTemplate,
 } from '../../pipelines/modals/common/utils';
 import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
 import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
-import { VolumeTypes } from '../../pipelines/const';
+import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
+import { PipelineData } from '../import-types';
 
 const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;

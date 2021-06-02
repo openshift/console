@@ -1,17 +1,18 @@
-import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
+import { INCONTEXT_ACTIONS_SERVICE_BINDING } from '@console/dev-console/src/const';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
+import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
+import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
   TopologyCreateConnector,
 } from '../extensions/topology';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
-import { INCONTEXT_ACTIONS_SERVICE_BINDING } from '@console/dev-console/src/const';
 import { ServiceBindingModel } from '../models';
-import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
+import { doContextualBinding } from '../utils/connector-utils';
 import { getCreateConnector } from './actions';
 import {
   getOperatorsComponentFactory,
@@ -20,7 +21,6 @@ import {
   getTopologyFilters,
   applyDisplayOptions,
 } from './index';
-import { doContextualBinding } from '../utils/connector-utils';
 
 export type OperatorsTopologyConsumedExtensions =
   | TopologyComponentFactory

@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as cx from 'classnames';
 import { FocusTrap, Tooltip } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useHover } from '@patternfly/react-topology';
-import Popper from '@console/shared/src/components/popper/Popper';
-import { referenceForModel } from '@console/internal/module/k8s';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   KebabItem,
   KebabOption,
   ResourceIcon,
   truncateMiddle,
 } from '@console/internal/components/utils';
-import { getResourceModelFromTaskKind } from '../../../utils/pipeline-augment';
+import { referenceForModel } from '@console/internal/module/k8s';
+import Popper from '@console/shared/src/components/popper/Popper';
 import { TaskKind } from '../../../types';
+import { getResourceModelFromTaskKind } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback } from './types';
 
 type KeyedKebabOption = KebabOption & { key: string };

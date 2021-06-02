@@ -1,12 +1,7 @@
 import * as utils from '@console/internal/components/utils/rbac';
-import {
-  isIdled,
-  isKnativeServing,
-  getPodStatus,
-  getPodData,
-  checkPodEditAccess,
-  isContainerLoopingFilter,
-} from '../pod-utils';
+import { DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import { PodControllerOverviewItem } from '../../types';
 import {
   deploymentConfig,
   notIdledDeploymentConfig,
@@ -15,9 +10,14 @@ import {
   statefulSets,
   allpods,
 } from '../__mocks__/pod-utils-test-data';
-import { PodControllerOverviewItem } from '../../types';
-import { DeploymentConfigModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s/types';
+import {
+  isIdled,
+  isKnativeServing,
+  getPodStatus,
+  getPodData,
+  checkPodEditAccess,
+  isContainerLoopingFilter,
+} from '../pod-utils';
 
 describe('Pod Utils:', () => {
   it('isIdle should return true', () => {

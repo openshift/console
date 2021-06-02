@@ -1,11 +1,11 @@
 import { ValidatedOptions } from '@patternfly/react-core';
-import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
-import { LazyLoader } from '@console/plugin-sdk';
-import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
+import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
+import { LazyLoader } from '@console/plugin-sdk';
+import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { HealthCheckProbe } from '../health-checks/health-checks-types';
 

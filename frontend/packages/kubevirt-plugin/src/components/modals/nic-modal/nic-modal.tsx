@@ -1,15 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
-import {
-  FirehoseResult,
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { getName, ValidationErrorType } from '@console/shared';
 import {
   Alert,
   AlertVariant,
@@ -19,7 +8,16 @@ import {
   SelectOption,
   TextInput,
 } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
+import {
+  FirehoseResult,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import { getName, ValidationErrorType } from '@console/shared';
 import {
   NetworkInterfaceModel,
   NetworkInterfaceType,

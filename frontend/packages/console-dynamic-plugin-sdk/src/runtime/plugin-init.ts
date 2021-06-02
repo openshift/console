@@ -1,10 +1,10 @@
-import { Store } from 'redux';
 import * as _ from 'lodash';
+import { Store } from 'redux';
 import { RootState } from '@console/internal/redux';
-import { PluginStore } from '@console/plugin-sdk/src/store';
 import { initSubscriptionService } from '@console/plugin-sdk/src/api/subscribeToExtensions';
-import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loader';
+import { PluginStore } from '@console/plugin-sdk/src/store';
 import { exposePluginAPI } from './plugin-api';
+import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loader';
 
 export const initConsolePlugins = _.once(
   (pluginStore: PluginStore, reduxStore: Store<RootState>) => {

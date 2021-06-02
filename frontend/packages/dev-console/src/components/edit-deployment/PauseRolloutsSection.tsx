@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField } from '@console/shared/src';
-import FormSection from '../import/section/FormSection';
 import { Resources } from '../import/import-types';
+import FormSection from '../import/section/FormSection';
 
 const PauseRolloutsSection: React.FC<{ name: string; resourceType: string }> = ({
   name,

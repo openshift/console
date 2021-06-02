@@ -1,5 +1,5 @@
-import { RouteModel, ServiceModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals';
+import { RouteModel, ServiceModel } from '@console/internal/models';
 import { k8sCreate, k8sGet, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
@@ -8,6 +8,7 @@ import {
   TriggerTemplateKind,
   TriggerTemplateKindParam,
 } from '../../resource-types';
+import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
 import { getPipelineRunFromForm } from '../common/utils';
 import {
   createEventListener,
@@ -15,7 +16,6 @@ import {
   createTriggerTemplate,
 } from './resource-utils';
 import { AddTriggerFormValues } from './types';
-import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
 
 export const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
   const elResource: EventListenerKind = await k8sGet(EventListenerModel, elName, ns);

@@ -1,46 +1,45 @@
-import * as _ from 'lodash';
-import * as k8s from '@console/internal/module/k8s';
 import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
+import * as _ from 'lodash';
+import * as utils from '@console/internal/components/utils';
+import * as k8s from '@console/internal/module/k8s';
 import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
-import {
-  OdcNodeModel,
-  TopologyDataModelDepicted,
-  TopologyDataResources,
-  WorkloadData,
-} from '@console/topology/src/topology-types';
-import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
-import { cleanUpWorkload, WORKLOAD_TYPES } from '@console/topology/src/utils';
+import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
 import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
+import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
+import { updateModelFromFilters } from '@console/topology/src/data-transforms/updateModelFromFilters';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
   SHOW_GROUPS_FILTER_ID,
   getFilterById,
 } from '@console/topology/src/filters';
-import { updateModelFromFilters } from '@console/topology/src/data-transforms/updateModelFromFilters';
-import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
-import * as utils from '@console/internal/components/utils';
-import { getKnativeTopologyDataModel } from '../data-transformer';
 import {
-  MockKnativeResources,
-  sampleDeploymentsCamelConnector,
-} from './topology-knative-test-data';
+  OdcNodeModel,
+  TopologyDataModelDepicted,
+  TopologyDataResources,
+  WorkloadData,
+} from '@console/topology/src/topology-types';
+import { cleanUpWorkload, WORKLOAD_TYPES } from '@console/topology/src/utils';
 import { ServiceModel, EventingBrokerModel } from '../../models';
-import {
-  applyKnativeDisplayOptions,
-  EXPAND_KNATIVE_SERVICES_FILTER_ID,
-  getTopologyFilters,
-} from '../knativeFilters';
-import { isKnativeResource } from '../isKnativeResource';
+import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
 import {
   TYPE_EVENT_PUB_SUB,
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_KNATIVE_REVISION,
   TYPE_KNATIVE_SERVICE,
 } from '../const';
-import * as knativefetchutils from '../../utils/fetch-dynamic-eventsources-utils';
-
+import { getKnativeTopologyDataModel } from '../data-transformer';
+import { isKnativeResource } from '../isKnativeResource';
+import {
+  applyKnativeDisplayOptions,
+  EXPAND_KNATIVE_SERVICES_FILTER_ID,
+  getTopologyFilters,
+} from '../knativeFilters';
+import {
+  MockKnativeResources,
+  sampleDeploymentsCamelConnector,
+} from './topology-knative-test-data';
 import Spy = jasmine.Spy;
 
 const spyAndReturn = (spy: Spy) => (returnValue: any) =>

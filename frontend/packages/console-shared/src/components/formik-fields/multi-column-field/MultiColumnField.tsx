@@ -1,13 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FieldArray, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, gridItemSpanValueShape } from '@patternfly/react-core';
+import { FieldArray, useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { SecondaryStatus, useFormikValidationFix } from '@console/shared';
 import { MultiColumnFieldProps } from '../field-types';
+import { getSpans } from './multicolumn-field-utils';
+import MultiColumnFieldFooter from './MultiColumnFieldFooter';
 import MultiColumnFieldHeader from './MultiColumnFieldHeader';
 import MultiColumnFieldRow from './MultiColumnFieldRow';
-import MultiColumnFieldFooter from './MultiColumnFieldFooter';
-import { getSpans } from './multicolumn-field-utils';
 import './MultiColumnField.scss';
 
 const MultiColumnField: React.FC<MultiColumnFieldProps> = ({

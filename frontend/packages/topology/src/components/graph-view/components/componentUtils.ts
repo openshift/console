@@ -1,8 +1,4 @@
 import * as React from 'react';
-import { action } from 'mobx';
-import i18next from 'i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { errorModal } from '@console/internal/components/modals';
 import {
   Modifiers,
   Edge,
@@ -24,6 +20,10 @@ import {
   DragEvent,
   DragOperationWithType,
 } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import { action } from 'mobx';
+import { errorModal } from '@console/internal/components/modals';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { createConnection, moveNodeToGroup } from '../../../utils';
 import { isWorkloadRegroupable, graphContextMenu, groupContextMenu } from './nodeContextMenu';
 

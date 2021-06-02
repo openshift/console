@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Checkbox, Text, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -9,8 +9,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { Checkbox, Text, TextVariants } from '@patternfly/react-core';
-
 import { getEvictionStrategyPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { getVMLikeModel } from '../../../../selectors/vm/vmlike';
 import { VMLikeEntityKind } from '../../../../types/vmLike';

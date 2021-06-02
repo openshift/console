@@ -1,6 +1,6 @@
 import * as React from 'react';
-import LogSnippetBlock from '../logs/LogSnippetBlock';
 import { CombinedErrorDetails } from '../logs/log-snippet-types';
+import LogSnippetBlock from '../logs/LogSnippetBlock';
 
 import './StatusPopoverContent.scss';
 

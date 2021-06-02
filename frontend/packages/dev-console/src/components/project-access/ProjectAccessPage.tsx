@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Firehose } from '@console/internal/components/utils';
-import ProjectAccess from './ProjectAccess';
 import { useProjectAccessRoles } from './hooks';
+import ProjectAccess from './ProjectAccess';
 
 export interface ProjectAccessPageProps {
   customData: { activeNamespace: string };

@@ -1,10 +1,10 @@
+import { Model } from '@patternfly/react-topology';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { EventKind } from '@console/internal/module/k8s';
-import { Model } from '@patternfly/react-topology';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
-import { OdcNodeModel, TopologyDataResources } from '../topology-types';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../const';
 import { WorkloadModelProps } from '../data-transforms/transform-utils';
+import { OdcNodeModel, TopologyDataResources } from '../topology-types';
 
 export const TEST_KINDS_MAP = {
   deploymentConfigs: 'DeploymentConfig',

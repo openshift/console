@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { checkAccess } from '@console/internal/components/utils';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
+import { checkAccess } from '@console/internal/components/utils';
 import { SelfSubjectAccessReviewKind } from '@console/internal/module/k8s';
 
 export type AddAccessReviewResults = {

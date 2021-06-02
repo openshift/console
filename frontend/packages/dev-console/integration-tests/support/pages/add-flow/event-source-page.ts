@@ -1,8 +1,8 @@
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { addOptions, devNavigationMenu, eventSourceCards } from '../../constants';
 import { catalogPO, eventSourcePO, topologyPO } from '../../pageObjects';
-import { addPage } from './add-page';
 import { createForm, navigateTo } from '../app';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { addPage } from './add-page';
 
 export const eventSourcesPage = {
   search: (type: string) => cy.get(eventSourcePO.search).type(type),

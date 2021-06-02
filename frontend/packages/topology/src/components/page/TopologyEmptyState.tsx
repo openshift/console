@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Button,
   EmptyState,
@@ -10,6 +8,8 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 type TopologyEmptyStateProps = {
   setIsQuickSearchOpen: (isOpen: boolean) => void;

@@ -1,17 +1,17 @@
+import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
+import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { ServiceModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
-import { getKebabActionsForKind } from '../kebab-actions';
-import { setTrafficDistribution } from '../../actions/traffic-splitting';
+import { EditKsvc } from '../../actions';
 import { setSinkSource } from '../../actions/sink-source';
+import { setTrafficDistribution } from '../../actions/traffic-splitting';
 import {
   EventSourceContainerModel,
   ServiceModel as knSvcModel,
   CamelKameletBindingModel,
 } from '../../models';
 import * as fetchDynamicEventsource from '../fetch-dynamic-eventsources-utils';
-import { EditKsvc } from '../../actions';
+import { getKebabActionsForKind } from '../kebab-actions';
 
 describe('kebab-actions: ', () => {
   it('kebab action should have "Move Sink" option for EventSourceContainerModel', () => {

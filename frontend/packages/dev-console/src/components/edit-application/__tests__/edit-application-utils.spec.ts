@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   getResourcesType,
   getFlowType,
@@ -12,7 +13,6 @@ import {
   getFileUploadValues,
   BuildSourceType,
 } from '../edit-application-utils';
-import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   knativeService,
   knAppResources,

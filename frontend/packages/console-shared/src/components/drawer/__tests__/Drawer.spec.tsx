@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { DraggableData } from 'react-draggable';
-import Drawer from '../Drawer';
 import DraggableCoreIFrameFix from '../DraggableCoreIFrameFix';
+import Drawer from '../Drawer';
 
 describe('DrawerComponent', () => {
   it('should exist', () => {

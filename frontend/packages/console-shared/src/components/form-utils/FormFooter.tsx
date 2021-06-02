@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as cx from 'classnames';
 import { ActionGroup, Alert, Button, ButtonVariant } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
+import * as cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { ButtonBar } from '@console/internal/components/utils';
-import { FormFooterProps } from './form-utils-types';
-import './FormFooter.scss';
 import { Shadows, useScrollShadows, useScrollContainer } from '../../hooks';
+import { FormFooterProps } from './form-utils-types';
+
+import './FormFooter.scss';
 
 const FormFooter: React.FC<FormFooterProps> = ({
   handleSubmit,

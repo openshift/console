@@ -2,13 +2,11 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
-
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { useActiveNamespace } from '@console/shared';
-
 import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
 import {
   createOrDeleteSSHService,

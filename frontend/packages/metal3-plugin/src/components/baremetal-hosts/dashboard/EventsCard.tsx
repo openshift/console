@@ -2,31 +2,31 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
+  DashboardItemProps,
+  withDashboardResources,
+} from '@console/internal/components/dashboard/with-dashboard-resources';
+import {
   FirehoseResource,
   FirehoseResult,
   ResourceLink,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { EventModel, MachineModel, NodeModel } from '@console/internal/models';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
+import { getName, getNamespace, getMachineNodeName } from '@console/shared';
 import ActivityBody, {
   RecentEventsBody,
   Activity,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import { EventKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
-import {
-  DashboardItemProps,
-  withDashboardResources,
-} from '@console/internal/components/dashboard/with-dashboard-resources';
-import { getName, getNamespace, getMachineNodeName } from '@console/shared';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { BareMetalHostModel } from '../../../models';
-import { BareMetalHostKind } from '../../../types';
 import { isHostInProgressState, getBareMetalHostStatus } from '../../../status/host-status';
+import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };

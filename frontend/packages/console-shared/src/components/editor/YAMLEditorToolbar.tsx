@@ -1,8 +1,9 @@
 import * as React from 'react';
-import ShortcutsLink from './ShortcutsLink';
-import './YAMLEditorToolbar.scss';
 import { useTranslation } from 'react-i18next';
 import { isMac, ShortcutCommand } from '../shortcuts/Shortcut';
+import ShortcutsLink from './ShortcutsLink';
+
+import './YAMLEditorToolbar.scss';
 
 interface YAMLEditorToolbarProps {
   showShortcuts?: boolean;

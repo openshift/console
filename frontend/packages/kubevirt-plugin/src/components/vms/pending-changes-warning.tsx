@@ -1,7 +1,4 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
   Breadcrumb,
   BreadcrumbHeading,
@@ -11,7 +8,8 @@ import {
   List,
   ListItem,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';

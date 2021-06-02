@@ -1,6 +1,5 @@
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import {
   BinaryUnit,
   stringValueUnitSplit,

@@ -1,26 +1,26 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import {
   Accordion,
   AccordionItem,
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
-import { pluralize } from '@console/internal/components/utils';
-import {
-  useExtensions,
-  DashboardsInventoryItemGroup,
-  isDashboardsInventoryItemGroup,
-} from '@console/plugin-sdk';
+import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   useResolvedExtensions,
   DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup as isDynamicDashboardsInventoryItemGroup,
 } from '@console/dynamic-plugin-sdk';
+import { pluralize } from '@console/internal/components/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import {
+  useExtensions,
+  DashboardsInventoryItemGroup,
+  isDashboardsInventoryItemGroup,
+} from '@console/plugin-sdk';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { TextArea } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -10,8 +10,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { K8sKind, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { TextArea } from '@patternfly/react-core';
-
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
 import { getDescription } from '../../../selectors/selectors';
 

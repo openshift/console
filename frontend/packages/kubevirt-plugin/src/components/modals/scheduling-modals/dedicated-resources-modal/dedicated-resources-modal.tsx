@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Button, ButtonVariant, Checkbox, Text, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -10,8 +10,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
-import { Button, ButtonVariant, Checkbox, Text, TextVariants } from '@patternfly/react-core';
-
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { getDedicatedCpuPatch } from '../../../../k8s/patches/vm/vm-cpu-patches';
 import { asVM, getVMLikeModel, isDedicatedCPUPlacement } from '../../../../selectors/vm';

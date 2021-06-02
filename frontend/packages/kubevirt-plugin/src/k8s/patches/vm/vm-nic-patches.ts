@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-
 import { Patch } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
-
 import { getSimpleName } from '../../../selectors/utils';
 import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
 import { V1Network, V1NetworkInterface } from '../../../types/vm';

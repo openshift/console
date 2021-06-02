@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useExtensions, OverviewTabSection, LazyLoader } from '@console/plugin-sdk';
-import { OverviewItem } from '../../types/resource';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
-import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
+import { OverviewItem } from '../../types/resource';
 import { sampleDeploymentConfigs } from '../../utils/__tests__/test-resource-data';
+import { usePluginsOverviewTabSection } from '../plugins-overview-tab-section';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),

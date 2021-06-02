@@ -1,12 +1,10 @@
 import * as _ from 'lodash';
-
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   asValidationObject,
   joinGrammaticallyListOfItems,
   ValidationErrorType,
 } from '@console/shared/src';
-
 import { intervalBracket } from '../../strings';
 import { IntervalValidationResult } from './interval-validation-result';
 import { Interval } from './types';

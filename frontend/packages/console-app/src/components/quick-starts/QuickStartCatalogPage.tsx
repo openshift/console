@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Text } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils';
-import { Text } from '@patternfly/react-core';
 import QuickStartCatalog from './catalog/QuickStartCatalog';
 import QuickStartsLoader from './loader/QuickStartsLoader';
 

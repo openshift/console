@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunModel } from '../../../../models';
 import * as hookUtils from '../../../pipelines/hooks';
 import TaskRunDetailsPage from '../../TaskRunDetailsPage';

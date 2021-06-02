@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import { Formik } from 'formik';
 import { FirehoseResult, LoadingBox, StatusBox, history } from '@console/internal/components/utils';
 import { K8sResourceKind, k8sUpdate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResourcesType } from '../edit-application/edit-application-utils';
-import { healthChecksProbesValidationSchema } from './health-checks-probe-validation-utils';
-import { getHealthChecksData } from './create-health-checks-probe-utils';
 import AddHealthChecks from './AddHealthChecks';
+import { getHealthChecksData } from './create-health-checks-probe-utils';
+import { healthChecksProbesValidationSchema } from './health-checks-probe-validation-utils';
 import { updateHealthChecksProbe } from './health-checks-utils';
 
 type AddHealthChecksFormProps = {

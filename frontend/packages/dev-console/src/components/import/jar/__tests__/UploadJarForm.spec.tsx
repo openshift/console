@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
-import UploadJarForm from '../UploadJarForm';
-import JarSection from '../section/JarSection';
-import IconSection from '../../section/IconSection';
-import BuilderImageTagSelector from '../../builder/BuilderImageTagSelector';
-import AppSection from '../../app/AppSection';
-import ResourceSection from '../../section/ResourceSection';
+import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import AdvancedSection from '../../advanced/AdvancedSection';
+import AppSection from '../../app/AppSection';
+import BuilderImageTagSelector from '../../builder/BuilderImageTagSelector';
+import IconSection from '../../section/IconSection';
+import ResourceSection from '../../section/ResourceSection';
+import JarSection from '../section/JarSection';
+import UploadJarForm from '../UploadJarForm';
 
 let UploadJarFormProps: React.ComponentProps<typeof UploadJarForm>;
 jest.mock('react-i18next', () => {

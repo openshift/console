@@ -6,9 +6,9 @@ import {
   PipelineExampleNames,
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
-import PipelineRunVisualization from '../PipelineRunVisualization';
 import PipelineVisualization from '../../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import * as plrDetailsHooks from '../../hooks/usePipelineFromPipelineRun';
+import PipelineRunVisualization from '../PipelineRunVisualization';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
 const pipelineRun = pipelineData.pipelineRuns[DataState.SUCCESS];

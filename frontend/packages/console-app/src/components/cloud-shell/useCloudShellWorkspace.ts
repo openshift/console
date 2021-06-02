@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { UserKind, referenceForModel, k8sList, K8sKind } from '@console/internal/module/k8s';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { useAccessReview2 } from '@console/internal/components/utils';
 import {
   WatchK8sResource,
   useK8sWatchResource,
   WatchK8sResult,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import { UserKind, referenceForModel, k8sList, K8sKind } from '@console/internal/module/k8s';
 import {
   CLOUD_SHELL_LABEL,
   CLOUD_SHELL_CREATOR_LABEL,
@@ -13,9 +16,6 @@ import {
   startWorkspace,
   CLOUD_SHELL_PROTECTED_NAMESPACE,
 } from './cloud-shell-utils';
-import { useAccessReview2 } from '@console/internal/components/utils';
-import { ProjectModel } from '@console/internal/models';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 
 const findWorkspace = (data?: CloudShellResource[]): CloudShellResource | undefined => {
   if (Array.isArray(data)) {

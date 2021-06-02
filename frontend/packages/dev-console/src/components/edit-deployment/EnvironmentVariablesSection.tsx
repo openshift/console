@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
-import { EnvironmentField } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { EnvironmentField } from '@console/shared/src';
 import FormSection from '../import/section/FormSection';
 import ContainerField from './ContainerField';
 

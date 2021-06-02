@@ -6,9 +6,9 @@ import {
   NODE_STATUS_STARTING_MAINTENANCE,
   NODE_STATUS_STOPPING_MAINTENANCE,
 } from '../../constants';
-import { BareMetalHostStatusProps } from '../types';
-import MaintenancePopover from '../maintenance/MaintenancePopover';
 import { NODE_STATUS_SERVER_CSR } from '../../status/baremetal-node-status';
+import MaintenancePopover from '../maintenance/MaintenancePopover';
+import { BareMetalHostStatusProps } from '../types';
 import CSRStatus from './CSRStatus';
 
 const BareMetalNodeStatus: React.FC<BareMetalHostStatusProps> = ({

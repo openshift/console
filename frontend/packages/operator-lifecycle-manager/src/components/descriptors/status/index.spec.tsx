@@ -1,12 +1,12 @@
 import * as React from 'react';
-import store from '@console/internal/redux';
-import { Router } from 'react-router';
-import { Provider } from 'react-redux';
 import { mount, ReactWrapper } from 'enzyme';
-import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
-import { testModel, testResourceInstance } from '../../../../mocks';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router';
 import { ResourceLink, history } from '@console/internal/components/utils';
+import store from '@console/internal/redux';
 import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
+import { testModel, testResourceInstance } from '../../../../mocks';
+import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

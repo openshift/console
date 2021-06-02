@@ -1,17 +1,17 @@
 import * as _ from 'lodash';
-import {
-  healthChecksData,
-  healthChecksInputData,
-  enabledProbeData,
-} from './create-health-checks-probe-data';
+import { appResources } from '../../edit-application/__tests__/edit-application-data';
+import { Resources } from '../../import/import-types';
 import {
   getHealthChecksData,
   getRequestType,
   constructProbeData,
   getProbesData,
 } from '../create-health-checks-probe-utils';
-import { appResources } from '../../edit-application/__tests__/edit-application-data';
-import { Resources } from '../../import/import-types';
+import {
+  healthChecksData,
+  healthChecksInputData,
+  enabledProbeData,
+} from './create-health-checks-probe-data';
 
 describe('Create Health Check probe Utils', () => {
   const { editAppResource } = appResources;

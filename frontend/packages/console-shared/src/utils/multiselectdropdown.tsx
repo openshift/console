@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   onChange,

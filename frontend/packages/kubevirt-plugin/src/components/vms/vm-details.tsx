@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import { ServicesList } from '@console/internal/components/service';
 import {
   asAccessReview,
@@ -14,8 +14,6 @@ import {
 import { ServiceModel } from '@console/internal/models';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { getNamespace } from '@console/shared';
-import { Alert } from '@patternfly/react-core';
-
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';

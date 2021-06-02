@@ -1,5 +1,13 @@
-import i18next from 'i18next';
 import { saveAs } from 'file-saver';
+import i18next from 'i18next';
+import { coFetchText } from '@console/internal/co-fetch';
+import { errorModal } from '@console/internal/components/modals';
+import {
+  LOG_SOURCE_TERMINATED,
+  LOG_SOURCE_WAITING,
+  LineBuffer,
+} from '@console/internal/components/utils';
+import { PodModel } from '@console/internal/models';
 import {
   PodKind,
   ContainerSpec,
@@ -7,14 +15,6 @@ import {
   resourceURL,
   k8sGet,
 } from '@console/internal/module/k8s';
-import {
-  LOG_SOURCE_TERMINATED,
-  LOG_SOURCE_WAITING,
-  LineBuffer,
-} from '@console/internal/components/utils';
-import { PodModel } from '@console/internal/models';
-import { coFetchText } from '@console/internal/co-fetch';
-import { errorModal } from '@console/internal/components/modals';
 import { PLRTaskRunData, PLRTaskRuns } from '../../../types';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
 

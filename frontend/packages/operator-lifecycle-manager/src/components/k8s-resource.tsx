@@ -1,14 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { Status } from '@console/shared';
-import {
-  ResourceLink,
-  Timestamp,
-  MsgBox,
-  FirehoseResource,
-} from '@console/internal/components/utils';
 import {
   MultiListPage,
   Table,
@@ -17,16 +11,11 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import {
-  K8sResourceKind,
-  GroupVersionKind,
-  kindForReference,
-  modelFor,
-  referenceForGroupVersionKind,
-} from '@console/internal/module/k8s';
-import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
-import { providedAPIForReference } from './index';
-import { OperandLink } from './operand/operand-link';
-import { useTranslation } from 'react-i18next';
+  ResourceLink,
+  Timestamp,
+  MsgBox,
+  FirehoseResource,
+} from '@console/internal/components/utils';
 import {
   ConfigMapModel,
   DeploymentModel,
@@ -36,6 +25,17 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  GroupVersionKind,
+  kindForReference,
+  modelFor,
+  referenceForGroupVersionKind,
+} from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
+import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
+import { OperandLink } from './operand/operand-link';
+import { providedAPIForReference } from './index';
 
 const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: DeploymentModel.kind, version: DeploymentModel.apiVersion },

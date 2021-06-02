@@ -1,3 +1,4 @@
+import { Model } from '@patternfly/react-topology';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   apiVersionForModel,
@@ -14,8 +15,6 @@ import {
   WorkloadModelProps,
 } from '@console/topology/src/data-transforms/transform-utils';
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
-import { Model } from '@patternfly/react-topology';
-
 import { VirtualMachineModel } from '../models';
 import { getVMStatus } from '../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../types';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EventingKafkaChannelModel } from '../../../../models';
-import KafkaChannelSection from './KafkaChannelSection';
 import DefaultChannelSection from './DefaultChannelSection';
+import KafkaChannelSection from './KafkaChannelSection';
 
 type FormViewSectionProps = {
   namespace: string;

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { MatchExpression } from '@console/internal/module/k8s';
-import { Dropdown } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
+import { Dropdown } from '@console/internal/components/utils';
+import { MatchExpression } from '@console/internal/module/k8s';
 
 const ALL_OPERATORS: MatchExpression['operator'][] = [
   'DoesNotExist',

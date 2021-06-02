@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { Button, ButtonVariant, Split, SplitItem, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { ValidationErrorType } from '@console/shared';
-import { Button, ButtonVariant, Split, SplitItem, TextInput } from '@patternfly/react-core';
-
 import { iGet } from '../../../../../utils/immutable';
 import { FormField, FormFieldType } from '../../../form/form-field';
 import { FormFieldRow } from '../../../form/form-field-row';

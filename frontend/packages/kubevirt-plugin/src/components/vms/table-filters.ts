@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-
 import { VM_STATUS_SIMPLE_LABELS } from '../../constants/vm/vm-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
 

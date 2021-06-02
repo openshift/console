@@ -1,5 +1,6 @@
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { modal } from '../../../integration-tests-cypress/views/modal';
+import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   poolName,
   scName,
@@ -10,7 +11,6 @@ import {
 } from '../views/block-pool';
 import { pvc } from '../views/pvc';
 import { createStorageClass, deleteStorageClassFromCli } from '../views/storage-class';
-import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 
 const pvcName: string = 'testing-pvc';
 

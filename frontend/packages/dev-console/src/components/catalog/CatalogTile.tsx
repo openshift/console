@@ -1,16 +1,16 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   CatalogTileBadge,
   CatalogTile as PfCatalogTile,
 } from '@patternfly/react-catalog-view-extension';
 import { Badge } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
+import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
-import CatalogBadges from './CatalogBadges';
 
 import './CatalogTile.scss';
 

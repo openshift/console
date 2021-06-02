@@ -1,6 +1,6 @@
 import { checkErrors } from '../../support';
-import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
+import { listPage } from '../../views/list-page';
 import { nav } from '../../views/nav';
 
 describe('Visiting other routes', () => {

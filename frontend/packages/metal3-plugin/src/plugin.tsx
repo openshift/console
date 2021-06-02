@@ -1,6 +1,9 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { MaintenanceIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import '@console/internal/i18n.js';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
@@ -15,15 +18,9 @@ import {
   CustomFeatureFlag,
   ResourceTabPage,
 } from '@console/plugin-sdk';
-import '@console/internal/i18n.js';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
-import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
-import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
-import { BareMetalHostKind } from './types';
 import {
   detectBaremetalPlatform,
   BAREMETAL_FLAG,
@@ -31,6 +28,9 @@ import {
   detectBMOEnabled,
   NODE_MAINTENANCE_OLD_FLAG,
 } from './features';
+import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
+import { getHostPowerStatus, hasPowerManagement } from './selectors';
+import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem

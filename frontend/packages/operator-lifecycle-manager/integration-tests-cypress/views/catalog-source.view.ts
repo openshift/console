@@ -1,5 +1,5 @@
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { listPage } from '../../../integration-tests-cypress/views/list-page';
+import { modal } from '../../../integration-tests-cypress/views/modal';
 
 export const createCatalogSource = (operatorName: string, catalogSourceName: string) => {
   cy.log('navigate to OperatorHub > Sources');

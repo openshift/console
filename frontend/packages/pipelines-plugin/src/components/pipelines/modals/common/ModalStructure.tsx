@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps, FormikValues } from 'formik';
 import { Form } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import {
   ModalBody,
   ModalComponentProps,

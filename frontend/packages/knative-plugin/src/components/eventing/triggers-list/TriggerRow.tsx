@@ -3,8 +3,8 @@ import { TableRow, TableData, RowFunction } from '@console/internal/components/f
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { EventingTriggerModel, EventingBrokerModel } from '../../../models';
-import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { EventTriggerKind, TriggerConditionTypes } from '../../../types';
+import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './trigger-table';
 
 type TriggerRowType = {

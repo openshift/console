@@ -1,39 +1,39 @@
+import { Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
-import { Model, NodeModel } from '@patternfly/react-topology';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
-  WorkloadData,
-  TopologyDataResources,
-  TopologyDisplayFilterType,
-} from '../../topology-types';
+  sbrBackingServiceSelector,
+  sbrBackingServiceSelectors,
+} from '../../__tests__/service-binding-test-data';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
-import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
+import { TYPE_SERVICE_BINDING, TYPE_WORKLOAD } from '../../const';
+import { baseDataModelGetter } from '../../data-transforms/data-transformer';
+import { getWorkloadResources } from '../../data-transforms/transform-utils';
+import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
+import { getFilterById } from '../../filters';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
   SHOW_GROUPS_FILTER_ID,
 } from '../../filters/const';
 import {
-  getOperatorGroupResources,
-  getOperatorTopologyDataModel,
-  getServiceBindingEdges,
-} from '../operators-data-transformer';
-import { baseDataModelGetter } from '../../data-transforms/data-transformer';
-import { getWorkloadResources } from '../../data-transforms/transform-utils';
-import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
+  WorkloadData,
+  TopologyDataResources,
+  TopologyDisplayFilterType,
+} from '../../topology-types';
 import { WORKLOAD_TYPES } from '../../utils/topology-utils';
+import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 import {
   applyOperatorDisplayOptions,
   EXPAND_OPERATORS_RELEASE_FILTER,
   getTopologyFilters,
 } from '../operatorFilters';
-import { getFilterById } from '../../filters';
 import {
-  sbrBackingServiceSelector,
-  sbrBackingServiceSelectors,
-} from '../../__tests__/service-binding-test-data';
-import { TYPE_SERVICE_BINDING, TYPE_WORKLOAD } from '../../const';
+  getOperatorGroupResources,
+  getOperatorTopologyDataModel,
+  getServiceBindingEdges,
+} from '../operators-data-transformer';
 import { operatorsDataModelReconciler } from '../operatorsDataModelReconciler';
 
 const filterers = [applyOperatorDisplayOptions];

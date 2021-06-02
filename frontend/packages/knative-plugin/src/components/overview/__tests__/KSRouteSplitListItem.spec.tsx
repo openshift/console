@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { ExternalLink } from '@console/internal/components/utils';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
-import KSRouteSplitListItem from '../KSRouteSplitListItem';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
+import KSRouteSplitListItem from '../KSRouteSplitListItem';
 
 type RoutesOverviewListItemProps = React.ComponentProps<typeof KSRouteSplitListItem>;
 

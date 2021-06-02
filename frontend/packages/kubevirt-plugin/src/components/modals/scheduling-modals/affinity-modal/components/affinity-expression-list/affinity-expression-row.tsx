@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import {
   Button,
   FormSelect,
@@ -12,7 +10,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';
 

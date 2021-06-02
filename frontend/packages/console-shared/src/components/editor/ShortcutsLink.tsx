@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Popover, Button } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { ShortcutTable, Shortcut } from '../shortcuts';
 import { isMac } from '../shortcuts/Shortcut';
-import { useTranslation } from 'react-i18next';
 
 interface ShortcutsLinkProps {
   onHideShortcuts?: () => {};

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
   observer,
@@ -9,14 +9,14 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import { Tooltip } from '@patternfly/react-core';
-import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import PodSet, { podSetInnerRadius } from './PodSet';
-import BaseNode from './BaseNode';
-import { getTopologyResourceObject } from '../../../../utils/topology-utils';
+import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../../../filters';
+import { getTopologyResourceObject } from '../../../../utils/topology-utils';
+import BaseNode from './BaseNode';
 import { getNodeDecorators } from './decorators/getNodeDecorators';
+import PodSet, { podSetInnerRadius } from './PodSet';
 
 import './WorkloadNode.scss';
 

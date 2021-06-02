@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as k8s from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -9,11 +8,12 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
+import * as k8s from '@console/internal/module/k8s';
 import * as pipelineUtils from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
+import * as pipelineOverviewUtils from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
-import { Resources } from '../import-types';
 import * as submitUtils from '../import-submit-utils';
+import { Resources } from '../import-types';
 import {
   defaultData,
   nodeJsBuilderImage as buildImage,

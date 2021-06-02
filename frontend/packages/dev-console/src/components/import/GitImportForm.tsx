@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
-import { GitImportFormProps } from './import-types';
-import GitSection from './git/GitSection';
-import BuilderSection from './builder/BuilderSection';
-import AppSection from './app/AppSection';
-import AdvancedSection from './advanced/AdvancedSection';
-import DockerSection from './git/DockerSection';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
+import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
+import AdvancedSection from './advanced/AdvancedSection';
+import AppSection from './app/AppSection';
+import BuilderSection from './builder/BuilderSection';
+import DockerSection from './git/DockerSection';
+import GitSection from './git/GitSection';
+import { GitImportFormProps } from './import-types';
 import ResourceSection from './section/ResourceSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({

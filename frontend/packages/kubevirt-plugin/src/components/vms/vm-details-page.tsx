@@ -1,13 +1,11 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-
 import {
   VM_DETAIL_CONSOLES_HREF,
   VM_DETAIL_DETAILS_HREF,

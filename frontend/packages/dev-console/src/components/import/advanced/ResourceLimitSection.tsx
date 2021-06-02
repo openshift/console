@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
-import { ResourceLimitField } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
-import FormSection from '../section/FormSection';
+import { ResourceLimitField } from '@console/shared';
 import { MemoryUnits, CPUUnits } from '../import-types';
+import FormSection from '../section/FormSection';
 
 export type ResourceLimitSectionProps = {
   hideTitle?: boolean;

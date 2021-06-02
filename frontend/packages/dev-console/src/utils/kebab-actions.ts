@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import {
   DaemonSetModel,
@@ -7,6 +6,7 @@ import {
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { EditApplication } from '@console/topology/src/actions/modify-application';
 
 const modifyWebConsoleApplicationRefs = [

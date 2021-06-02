@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import { QuickStartStatus } from '../../utils/quick-start-types';
 import QuickStartFooter from '../QuickStartFooter';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import cx from 'classnames';
 import { Text } from '@patternfly/react-core';
+import cx from 'classnames';
 
 import './PageLayout.scss';
 

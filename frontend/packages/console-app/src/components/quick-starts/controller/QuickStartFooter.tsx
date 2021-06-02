@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
-import { QuickStartStatus } from '../utils/quick-start-types';
+import { useTranslation } from 'react-i18next';
 import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
+import { QuickStartStatus } from '../utils/quick-start-types';
 
 import './QuickStartFooter.scss';
 

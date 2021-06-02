@@ -1,8 +1,9 @@
-import { K8sResourceKind, K8sKind, apiVersionForModel } from '@console/internal/module/k8s';
+import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
 import {
   DeployImageFormData,
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
+import { K8sResourceKind, K8sKind, apiVersionForModel } from '@console/internal/module/k8s';
 import {
   EventSourceSyncFormData,
   SinkType,
@@ -10,7 +11,6 @@ import {
   EventSources,
 } from '../../components/add/import-types';
 import { RevisionModel, ServiceModel, KafkaModel } from '../../models';
-import { healthChecksProbeInitialData } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
 import { getChannelKind, getChannelData } from '../create-channel-utils';
 
 export const defaultData: DeployImageFormData = {

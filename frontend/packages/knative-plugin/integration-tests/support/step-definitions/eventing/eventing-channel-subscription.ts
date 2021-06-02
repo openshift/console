@@ -1,12 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { sidePane } from '@console/dev-console/integration-tests/support/pages/app';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   topologyPage,
   topologySidePane,
   addSubscription,
   createChannel,
 } from '@console/dev-console/integration-tests/support/pages';
-import { modal } from '@console/cypress-integration-tests/views/modal';
+import { sidePane } from '@console/dev-console/integration-tests/support/pages/app';
 
 Given('user has created channel {string}', (channelName: string) => {
   createChannel(channelName);

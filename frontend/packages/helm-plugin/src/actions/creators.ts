@@ -1,7 +1,7 @@
-import { deleteResourceModal } from '@console/shared';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import { Action } from '@console/dynamic-plugin-sdk';
 import { TFunction } from 'i18next';
+import { Action } from '@console/dynamic-plugin-sdk';
+import { coFetchJSON } from '@console/internal/co-fetch';
+import { deleteResourceModal } from '@console/shared';
 import { HelmActionsScope } from './types';
 
 export const getHelmDeleteAction = (

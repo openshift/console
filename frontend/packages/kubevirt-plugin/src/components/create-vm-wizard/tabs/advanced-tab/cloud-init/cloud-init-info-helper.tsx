@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ExternalLink, FieldLevelHelp } from '@console/internal/components/utils';
 import { Stack, StackItem } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { ExternalLink, FieldLevelHelp } from '@console/internal/components/utils';
 import { CLOUD_INIT_DOC_LINK } from '../../../../../utils/strings';
 
 export const CloudInitInfoHelper = () => {

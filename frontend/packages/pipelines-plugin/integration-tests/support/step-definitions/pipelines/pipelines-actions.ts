@@ -1,11 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { navigateTo, topologySidePane } from '@console/dev-console/integration-tests/support/pages';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   devNavigationMenu,
   adminNavigationMenu,
 } from '@console/dev-console/integration-tests/support/constants';
-import { modal } from '@console/cypress-integration-tests/views/modal';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { navigateTo, topologySidePane } from '@console/dev-console/integration-tests/support/pages';
+import { pipelineActions } from '../../constants';
 import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import {
   pipelinesPage,
@@ -13,7 +14,6 @@ import {
   pipelineDetailsPage,
   pipelineRunDetailsPage,
 } from '../../pages';
-import { pipelineActions } from '../../constants';
 import { actionsDropdownMenu } from '../../pages/functions/common';
 
 Given('pipeline run is available for {string}', (pipelineName: string) => {

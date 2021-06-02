@@ -1,5 +1,7 @@
 import { TFunction } from 'i18next';
+import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
+import { MachineModel, MachineSetModel } from '@console/internal/models';
 import {
   K8sKind,
   k8sPatch,
@@ -17,19 +19,7 @@ import {
   getNamespace,
   getAnnotations,
 } from '@console/shared';
-import { confirmModal, deleteModal } from '@console/internal/components/modals';
-import { MachineModel, MachineSetModel } from '@console/internal/models';
 import { patchSafeValue } from '@console/shared/src/k8s';
-import {
-  findNodeMaintenance,
-  getHostMachine,
-  getHostPowerStatus,
-  isHostScheduledForRestart,
-  hasPowerManagement,
-  getPoweroffAnnotation,
-} from '../../selectors';
-import { BareMetalHostModel } from '../../models';
-import { getHostStatus } from '../../status/host-status';
 import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_POWER_STATUS_POWERED_ON,
@@ -41,15 +31,25 @@ import {
   HOST_ERROR_STATES,
   HOST_STATUS_UNKNOWN,
 } from '../../constants';
-import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
-import { powerOffHostModal } from '../modals/PowerOffHostModal';
-import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
-import { BareMetalHostKind } from '../../types';
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { deprovision } from '../../k8s/requests/bare-metal-host';
+import { BareMetalHostModel } from '../../models';
+import {
+  findNodeMaintenance,
+  getHostMachine,
+  getHostPowerStatus,
+  isHostScheduledForRestart,
+  hasPowerManagement,
+  getPoweroffAnnotation,
+} from '../../selectors';
 import { getMachineMachineSetOwner } from '../../selectors/machine';
 import { findMachineSet } from '../../selectors/machine-set';
+import { getHostStatus } from '../../status/host-status';
+import { BareMetalHostKind } from '../../types';
+import { powerOffHostModal } from '../modals/PowerOffHostModal';
 import { restartHostModal } from '../modals/RestartHostModal';
+import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';
+import stopNodeMaintenanceModal from '../modals/StopNodeMaintenanceModal';
 import { StatusProps } from '../types';
 
 type ActionArgs = {

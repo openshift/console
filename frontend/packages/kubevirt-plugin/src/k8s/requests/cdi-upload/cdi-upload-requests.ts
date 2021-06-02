@@ -9,7 +9,6 @@ import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plug
 import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import { getName, getNamespace } from '@console/shared';
-
 import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
 import { delay } from '../../../utils/utils';
 

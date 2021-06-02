@@ -1,8 +1,8 @@
 import * as React from 'react';
-import FormSection from '../import/section/FormSection';
-import HealthCheckProbe from './HealthChecksProbe';
-import { HealthChecksProbeType } from './health-checks-types';
 import { Resources } from '../import/import-types';
+import FormSection from '../import/section/FormSection';
+import { HealthChecksProbeType } from './health-checks-types';
+import HealthCheckProbe from './HealthChecksProbe';
 
 interface HealthChecksProps {
   title?: string;

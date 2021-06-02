@@ -12,8 +12,8 @@ import {
 import { referenceForModel, referenceFor, K8sKind } from '@console/internal/module/k8s';
 import { ClampedText } from '@console/shared';
 import { ServiceModel } from '../../models';
-import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { ServiceKind, ConditionTypes } from '../../types';
+import { getConditionString, getCondition } from '../../utils/condition-utils';
 import { tableColumnClasses } from './service-table';
 
 const serviceReference = referenceForModel(ServiceModel);

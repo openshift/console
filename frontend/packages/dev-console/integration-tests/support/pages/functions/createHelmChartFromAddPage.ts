@@ -1,6 +1,6 @@
-import { catalogPage, addPage } from '../add-flow';
-import { addOptions, pageTitle } from '../../constants';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addOptions, pageTitle } from '../../constants';
+import { catalogPage, addPage } from '../add-flow';
 
 export const createHelmChartFromAddPage = (
   releaseName: string = 'nodejs-ex-k',

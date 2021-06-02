@@ -1,6 +1,6 @@
 import { AddAction, AddActionGroup, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { LoadedExtension } from '@console/plugin-sdk/src';
 import { history } from '@console/internal/components/utils';
+import { LoadedExtension } from '@console/plugin-sdk/src';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { AddGroup } from '../components/types';
 

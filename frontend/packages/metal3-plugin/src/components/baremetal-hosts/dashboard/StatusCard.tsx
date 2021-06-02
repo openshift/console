@@ -1,37 +1,34 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { RebootingIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
+import { Alert } from '@console/internal/components/monitoring/types';
+import { alertURL } from '@console/internal/components/monitoring/utils';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import { Alert } from '@console/internal/components/monitoring/types';
-import { alertURL } from '@console/internal/components/monitoring/utils';
-import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,
   HOST_HARDWARE_ERROR_STATES,
   HOST_STATUS_UNMANAGED,
   HOST_REGISTERING_STATES,
 } from '../../../constants';
-import { BareMetalHostKind } from '../../../types';
-import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import { BareMetalHostModel } from '../../../models';
 import {
   getHostPowerStatus,
@@ -39,10 +36,13 @@ import {
   hasPowerManagement,
   isHostScheduledForRestart,
 } from '../../../selectors';
+import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
+import { BareMetalHostKind } from '../../../types';
+import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 import BareMetalHostStatus from '../BareMetalHostStatus';
+import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 import './status.scss';
-import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 
 const getHostHardwareHealthState = (obj): HostHealthState => {
   const { status, titleKey } = getBareMetalHostStatus(obj);

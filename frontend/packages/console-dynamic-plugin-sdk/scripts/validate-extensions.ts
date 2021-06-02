@@ -1,7 +1,7 @@
 import chalk from 'chalk';
-import { getProgramFromFile } from './utils/typescript';
-import { getConsoleTypeResolver } from './utils/type-resolver';
 import { resolvePath } from './utils/path';
+import { getConsoleTypeResolver } from './utils/type-resolver';
+import { getProgramFromFile } from './utils/typescript';
 
 const getConsoleExtensionDiagnostics = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));

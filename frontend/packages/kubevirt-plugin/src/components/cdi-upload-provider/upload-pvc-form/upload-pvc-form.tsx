@@ -1,11 +1,22 @@
+import * as React from 'react';
+import {
+  ActionGroup,
+  Alert,
+  Button,
+  Checkbox,
+  FileUpload,
+  FormSelect,
+  FormSelectOption,
+  SelectOption,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
 import axios from 'axios';
 import cx from 'classnames';
 import { TFunction } from 'i18next';
-import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
@@ -40,19 +51,6 @@ import {
 } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import {
-  ActionGroup,
-  Alert,
-  Button,
-  Checkbox,
-  FileUpload,
-  FormSelect,
-  FormSelectOption,
-  SelectOption,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
-
-import {
   AccessMode,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
@@ -73,6 +71,7 @@ import {
   getDefaultStorageClass,
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
+import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
 import { getParameterValue } from '../../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { OperatingSystemRecord } from '../../../types';
@@ -80,6 +79,7 @@ import { V1alpha1DataVolume } from '../../../types/api';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
+import { BinaryUnit, convertToBytes } from '../../form/size-unit-utils';
 import { CDIUploadContext } from '../cdi-upload-provider';
 import {
   CDI_UPLOAD_OS_URL_PARAM,
@@ -87,8 +87,6 @@ import {
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
 import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
-import { BinaryUnit, convertToBytes } from '../../form/size-unit-utils';
-import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {

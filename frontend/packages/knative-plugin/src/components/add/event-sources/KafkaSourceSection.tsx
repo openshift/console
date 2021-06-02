@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { TextInputTypes } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField, SelectInputField, SelectInputOption } from '@console/shared';
-import { TextInputTypes } from '@patternfly/react-core';
-import KafkaSourceNetSection from './KafkaSourceNetSection';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { InputField, SelectInputField, SelectInputOption } from '@console/shared';
 import { getBootstrapServers } from '../../../utils/create-eventsources-utils';
 import { strimziResourcesWatcher } from '../../../utils/get-knative-resources';
 import { EventSources } from '../import-types';
+import KafkaSourceNetSection from './KafkaSourceNetSection';
 
 interface KafkaSourceSectionProps {
   title: string;

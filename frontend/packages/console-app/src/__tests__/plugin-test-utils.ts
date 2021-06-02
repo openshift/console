@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
 import { List as ImmutableList } from 'immutable';
+import * as _ from 'lodash';
 import { Extension, PluginStore } from '@console/plugin-sdk';
-import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 import { loadActivePluginsForTestPurposes } from '@console/plugin-sdk/src/codegen/active-plugins';
+import { resolvePluginPackages } from '@console/plugin-sdk/src/codegen/plugin-resolver';
 
 const testedPlugins = loadActivePluginsForTestPurposes(resolvePluginPackages());
 const testedPluginStore = new PluginStore(testedPlugins);

@@ -1,16 +1,15 @@
 import * as React from 'react';
+import { Form, FormGroup } from '@patternfly/react-core';
+import { SortByDirection } from '@patternfly/react-table';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { Form, FormGroup } from '@patternfly/react-core';
-import { FormFooter, FormHeader, FormBody } from '@console/shared';
-import { SortByDirection } from '@patternfly/react-table';
 import { Table } from '@console/internal/components/factory';
+import { FormFooter, FormHeader, FormBody } from '@console/shared';
 import { HelmRelease, HelmActionConfigType } from '../../../types/helm-types';
-
+import { helmActionString } from '../../../utils/helm-utils';
 import RevisionListHeader from './RevisionListHeader';
 import RevisionListRow from './RevisionListRow';
-import { helmActionString } from '../../../utils/helm-utils';
 
 interface HelmReleaseRollbackFormProps {
   releaseName: string;

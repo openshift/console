@@ -1,5 +1,5 @@
-import i18next from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import i18next from 'i18next';
 import { tableColumnClasses } from './pipeline-table';
 
 const PipelineHeader = () => {

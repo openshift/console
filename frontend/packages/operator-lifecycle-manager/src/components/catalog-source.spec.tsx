@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { DetailsPage } from '@console/internal/components/factory';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
+import * as _ from 'lodash';
 import { CreateYAML, CreateYAMLProps } from '@console/internal/components/create-yaml';
+import { DetailsPage } from '@console/internal/components/factory';
+import { Firehose, LoadingBox, DetailsItem } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
+import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
 import {
   SubscriptionModel,
   CatalogSourceModel,
   PackageManifestModel,
   OperatorGroupModel,
 } from '../models';
-import { testCatalogSource, testPackageManifest, dummyPackageManifest } from '../../mocks';
 import {
   CatalogSourceDetails,
   CatalogSourceDetailsProps,
@@ -23,7 +24,6 @@ import {
   CreateSubscriptionYAMLProps,
   CatalogSourceOperatorsPage,
 } from './catalog-source';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

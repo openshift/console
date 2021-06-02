@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ResourceEventStream } from '@console/internal/components/events';
+import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
   SectionHeading,
   ResourceSummary,
@@ -13,10 +16,7 @@ import {
   VolumeSnapshotContentModel,
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
-import { useTranslation } from 'react-i18next';
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
-import { ResourceEventStream } from '@console/internal/components/events';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Status, snapshotSource, FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';

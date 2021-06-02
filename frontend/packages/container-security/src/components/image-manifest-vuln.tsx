@@ -1,11 +1,14 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
+import { ChartDonut } from '@patternfly/react-charts';
 import { EmptyState, EmptyStateVariant, Title, Tooltip } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
 import { SecurityIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match } from 'react-router';
+import { DefaultList } from '@console/internal/components/default-resource';
 import {
   MultiListPage,
   Table,
@@ -15,9 +18,7 @@ import {
   ListPage,
   RowFunction,
 } from '@console/internal/components/factory';
-import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
-import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
-import { match } from 'react-router';
+import { ContainerLink } from '@console/internal/components/pod';
 import {
   ResourceLink,
   ExternalLink,
@@ -29,14 +30,13 @@ import {
   FirehoseResult,
   Loading,
 } from '@console/internal/components/utils';
-import { ChartDonut } from '@patternfly/react-charts';
-import { DefaultList } from '@console/internal/components/default-resource';
-import { ContainerLink } from '@console/internal/components/pod';
+import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
+import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
 import { vulnPriority, totalFor, priorityFor } from '../const';
-import { ImageManifestVuln } from '../types';
 import { ImageManifestVulnModel } from '../models';
-import { quayURLFor } from './summary';
+import { ImageManifestVuln } from '../types';
 import ImageVulnerabilitiesList from './ImageVulnerabilitiesList';
+import { quayURLFor } from './summary';
 import './image-manifest-vuln.scss';
 
 const shortenImage = (img: string) =>

@@ -1,5 +1,4 @@
 import { PodKind } from '@console/internal/module/k8s';
-
 import { DataVolumeSourceType } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { getPodStatusPhase } from '../../selectors/pod/selectors';

@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { getName, getUID } from '@console/shared/src';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
-
 import { iGet, iGetLoadedData, toJS } from '../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../form/form-select-placeholder-option';
 import { FormField, FormFieldType } from '../../../form/form-field';

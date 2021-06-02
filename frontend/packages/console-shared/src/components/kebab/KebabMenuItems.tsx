@@ -1,9 +1,9 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
-import { Action } from '@console/dynamic-plugin-sdk';
 import { FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { Popper } from '../popper';
 import { KebabMenuOption, KebabSubMenuOption } from './kebab-types';
 import { isKebabSubMenu } from './kebab-utils';

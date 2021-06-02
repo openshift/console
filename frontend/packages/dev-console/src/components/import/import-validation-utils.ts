@@ -1,7 +1,8 @@
-import * as yup from 'yup';
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import * as yup from 'yup';
 import { nameValidationSchema, nameRegex } from '@console/shared';
+import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import { GitTypes } from './import-types';
 import {
   projectNameValidationSchema,
@@ -18,7 +19,6 @@ import {
   resourcesValidationSchema,
   devfileValidationSchema,
 } from './validation-schema';
-import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({

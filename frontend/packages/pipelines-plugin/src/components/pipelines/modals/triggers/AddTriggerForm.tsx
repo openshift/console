@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FormikProps } from 'formik';
 import { useAddTriggerParams } from '../../../shared/common/auto-complete/autoCompleteValueParsers';
-import PipelineResourceSection from '../common/PipelineResourceSection';
 import PipelineParameterSection from '../common/PipelineParameterSection';
+import PipelineResourceSection from '../common/PipelineResourceSection';
 import PipelineWorkspacesSection from '../common/PipelineWorkspacesSection';
 import TriggerBindingSection from './TriggerBindingSection';
 import { AddTriggerFormValues } from './types';

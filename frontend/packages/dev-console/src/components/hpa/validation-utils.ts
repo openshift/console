@@ -1,5 +1,5 @@
-import * as yup from 'yup';
 import { TFunction } from 'i18next';
+import * as yup from 'yup';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 
 export const hpaValidationSchema = (t: TFunction) =>

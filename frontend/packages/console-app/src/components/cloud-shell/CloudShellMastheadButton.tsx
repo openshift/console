@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
-import { TerminalIcon } from '@patternfly/react-icons';
 import { Button, PageHeaderToolsItem } from '@patternfly/react-core';
-import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { TerminalIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
+import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import useCloudShellAvailable from './useCloudShellAvailable';
 
 type DispatchProps = {

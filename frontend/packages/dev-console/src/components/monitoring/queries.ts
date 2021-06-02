@@ -1,6 +1,5 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { GraphTypes } from './dashboard/MonitoringDashboardGraph';
+import * as _ from 'lodash';
 import {
   Humanize,
   humanizeBinaryBytes,
@@ -8,6 +7,7 @@ import {
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { GraphTypes } from './dashboard/MonitoringDashboardGraph';
 
 export interface MonitoringQuery {
   query: _.TemplateExecutor;

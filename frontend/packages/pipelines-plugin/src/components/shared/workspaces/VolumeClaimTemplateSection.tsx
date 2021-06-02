@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { ResourceLink } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
 import { getMatchedPVCs } from '../../../utils/pipeline-utils';
 

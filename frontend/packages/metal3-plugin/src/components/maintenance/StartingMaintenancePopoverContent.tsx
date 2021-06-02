@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Timestamp } from '@console/internal/components/utils';
 import { Progress, ProgressSize, Alert, ExpandableSection, Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Timestamp } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getNodeMaintenanceReason,
   getNodeMaintenanceCreationTimestamp,

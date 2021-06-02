@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { getMachineNode } from '@console/shared/src/selectors/machine';
-import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { BareMetalHostKind } from '../../../types';
 import { findNodeMaintenance, getHostMachine } from '../../../selectors';
+import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
-import StatusCard from './StatusCard';
-import UtilizationCard from './UtilizationCard';
+import DetailsCard from './DetailsCard';
 import EventsCard from './EventsCard';
 import InventoryCard from './InventoryCard';
-import DetailsCard from './DetailsCard';
+import StatusCard from './StatusCard';
+import UtilizationCard from './UtilizationCard';
 
 const BareMetalHostDashboard: React.FC<BareMetalHostDashboardProps> = ({
   obj,

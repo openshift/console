@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { restartVM } from '../../../k8s/requests/vm';
 import { VMIKind, VMKind } from '../../../types';
 import { ActionMessage } from '../../vms/constants';

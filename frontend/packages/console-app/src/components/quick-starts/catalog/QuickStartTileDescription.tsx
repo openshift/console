@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Button,
   Popover,
@@ -9,6 +8,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import './QuickStartTileDescription.scss';
 

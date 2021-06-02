@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
   TextInput,
@@ -10,19 +9,20 @@ import {
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { Dropdown } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
+import { Dropdown } from '@console/internal/components/utils';
+import { NodeModel } from '@console/internal/models';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getName, MultiSelectDropdown } from '@console/shared';
-import { NodeModel } from '@console/internal/models';
-import { NodesTable } from '../tables/nodes-table';
-import { State, Action } from './state';
 import {
   diskModeDropdownItems,
   diskTypeDropdownItems,
   diskSizeUnitOptions,
   deviceTypeDropdownItems,
 } from '../../constants';
+import { NodesTable } from '../tables/nodes-table';
+import { State, Action } from './state';
 import './create-local-volume-set.scss';
 
 export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({

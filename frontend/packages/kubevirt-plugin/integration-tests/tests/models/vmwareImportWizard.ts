@@ -1,11 +1,9 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
-
 import * as view from '../../views/importWizard.view';
 import * as wizardView from '../../views/wizard.view';
 import { InstanceConfig, VMImportConfig, vmwareConfig } from '../types/types';

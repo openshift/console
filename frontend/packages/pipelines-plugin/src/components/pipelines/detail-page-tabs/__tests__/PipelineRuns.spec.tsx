@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ListPage } from '@console/internal/components/factory';
 import { shallow } from 'enzyme';
+import { ListPage } from '@console/internal/components/factory';
 import PipelineRuns from '../PipelineRuns';
 
 const pipelineRunProps: React.ComponentProps<typeof PipelineRuns> = {

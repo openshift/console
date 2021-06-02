@@ -1,10 +1,10 @@
+import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import {
   createEventSourcePage,
   topologyPage,
   topologySidePane,
 } from '@console/dev-console/integration-tests/support/pages';
-import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 
 Given(
   'user has sinked event source {string} to URI {string}',

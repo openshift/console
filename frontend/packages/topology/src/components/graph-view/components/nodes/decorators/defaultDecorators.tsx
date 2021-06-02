@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Node } from '@patternfly/react-topology';
-import EditDecorator from './EditDecorator';
-import UrlDecorator from './UrlDecorator';
-import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
 import BuildDecorator from './BuildDecorator';
+import EditDecorator from './EditDecorator';
+import MonitoringAlertsDecorator from './MonitoringAlertsDecorator';
+import UrlDecorator from './UrlDecorator';
 
 export const getEditDecorator = (element: Node, radius: number, x: number, y: number) => {
   return <EditDecorator key="edit" element={element} radius={radius} x={x} y={y} />;

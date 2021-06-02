@@ -1,7 +1,7 @@
 import { checkErrors } from '../../support';
 import { guidedTour } from '../../views/guided-tour';
-import { nav } from '../../views/nav';
 import { masthead } from '../../views/masthead';
+import { nav } from '../../views/nav';
 
 describe('Auth test', () => {
   const KUBEADMIN_IDP = 'kube:admin';

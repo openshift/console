@@ -1,13 +1,11 @@
 import * as React from 'react';
+import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
-
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { iGet, iGetIn } from '../../../../utils/immutable';

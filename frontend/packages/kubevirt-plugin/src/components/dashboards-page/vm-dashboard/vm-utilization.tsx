@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   PrometheusMultilineUtilizationItem,
   PrometheusUtilizationItem,
@@ -20,7 +19,6 @@ import {
 } from '@console/shared/src/components/dashboard/duration-hook';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';

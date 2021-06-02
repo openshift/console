@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import { PodControllerOverviewItem } from '@console/shared';
 import {
   sampleKnativeReplicaSets,
   sampleKnativePods,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
 import DeploymentOverviewList from '../DeploymentOverviewList';
 
 type DeploymentOverviewListProps = React.ComponentProps<typeof DeploymentOverviewList>;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { Form } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FormFooter } from '@console/shared';
 import NamespaceSection from './NamespaceSection';
 

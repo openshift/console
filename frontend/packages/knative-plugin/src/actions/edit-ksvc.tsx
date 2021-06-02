@@ -1,7 +1,7 @@
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
 
 export const EditKsvc = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {

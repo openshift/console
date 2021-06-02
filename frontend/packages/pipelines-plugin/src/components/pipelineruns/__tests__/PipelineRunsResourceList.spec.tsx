@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { ListPage } from '@console/internal/components/factory';
+import { PIPELINE_GA_VERSION } from '../../pipelines/const';
 import * as operatorUtils from '../../pipelines/utils/pipeline-operator';
 import PipelineRunsResourceList from '../PipelineRunsResourceList';
-import { PIPELINE_GA_VERSION } from '../../pipelines/const';
 
 type PipelineRunsResourceListProps = React.ComponentProps<typeof PipelineRunsResourceList>;
 

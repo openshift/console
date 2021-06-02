@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as _ from 'lodash';
-import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import {
   ButtonBar,
   Dropdown,
@@ -11,20 +11,20 @@ import {
   history,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
+import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import {
   HyperConvergedModel,
   NetworkAttachmentDefinitionModel,
   SriovNetworkNodePolicyModel,
 } from '../..';
+import { networkTypeParams, networkTypes } from '../../constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
   TypeParamsData,
 } from '../../types';
-import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
-import { useTranslation } from 'react-i18next';
 
 const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
