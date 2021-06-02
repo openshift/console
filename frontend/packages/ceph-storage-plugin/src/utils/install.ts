@@ -63,7 +63,7 @@ export const getRack = (node: NodeKind) => node.metadata.labels?.[RACK_LABEL];
 export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   const nodes = pvs.reduce((res, pv) => {
     const matchExpressions: MatchExpression[] =
-      pv?.spec?.nodeAffinity?.required?.nodeSelectorTerms?.[0]?.matchExpressions;
+      pv?.spec?.nodeAffinity?.required?.nodeSelectorTerms?.[0]?.matchExpressions || [];
     matchExpressions.forEach(({ key, operator, values }) => {
       if (key === HOSTNAME_LABEL_KEY && operator === LABEL_OPERATOR) {
         values.forEach((value) => res.add(value));
