@@ -3,13 +3,6 @@ import * as _ from 'lodash-es';
 
 import { LoadingBox } from './status-box';
 
-/**
- * FIXME: Comparing two functions is not the *best* solution, but we can handle false negatives.
- */
-const sameLoader = (a: () => Promise<React.ComponentType>) => (
-  b: () => Promise<React.ComponentType>,
-) => (a || 'a').toString() === (b || 'b').toString();
-
 enum AsyncComponentError {
   ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
@@ -23,7 +16,7 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
   private isAsyncMounted: boolean = false;
 
   static getDerivedStateFromProps(props, state) {
-    if (!sameLoader(props.loader)(state.loader)) {
+    if (!_.isEqual(props.loader, state.loader)) {
       return { Component: null, loader: props.loader };
     }
     return null;
