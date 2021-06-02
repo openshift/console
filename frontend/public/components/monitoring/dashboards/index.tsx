@@ -35,6 +35,7 @@ import { history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
+import customTimeRangeModal from './custom-time-range-modal';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
@@ -308,23 +309,31 @@ const DashboardDropdown = ({ items, onChange, selectedKey }) => {
   );
 };
 
+const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
+
 export const TimespanDropdown = () => {
   const { t } = useTranslation();
 
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'timespan']),
   );
+  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
 
   const dispatch = useDispatch();
   const onChange = React.useCallback(
     (v: string) => {
-      dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
-      dispatch(monitoringDashboardsSetEndTime(null));
+      if (v === CUSTOM_TIME_RANGE_KEY) {
+        customTimeRangeModal({});
+      } else {
+        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
+        dispatch(monitoringDashboardsSetEndTime(null));
+      }
     },
     [dispatch],
   );
 
   const timespanOptions = {
+    [CUSTOM_TIME_RANGE_KEY]: t('public~Custom time range'),
     '5m': t('public~Last {{count}} minute', { count: 5 }),
     '15m': t('public~Last {{count}} minute', { count: 15 }),
     '30m': t('public~Last {{count}} minute', { count: 30 }),
@@ -344,7 +353,7 @@ export const TimespanDropdown = () => {
       items={timespanOptions}
       label={t('public~Time range')}
       onChange={onChange}
-      selectedKey={formatPrometheusDuration(timespan)}
+      selectedKey={endTime ? CUSTOM_TIME_RANGE_KEY : formatPrometheusDuration(timespan)}
     />
   );
 };

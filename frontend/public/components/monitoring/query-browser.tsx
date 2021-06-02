@@ -622,9 +622,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   React.useEffect(() => {
     setGraphData(null);
-    if (fixedEndTime) {
-      setXDomain(getXDomain(fixedEndTime, span));
-    }
+    setXDomain(fixedEndTime ? getXDomain(fixedEndTime, span) : undefined);
   }, [fixedEndTime, span]);
 
   // Clear any existing series data when the namespace is changed
