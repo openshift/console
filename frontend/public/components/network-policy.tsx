@@ -189,7 +189,7 @@ const RuleRow = ({ peer, ports, namespace, mainPodSelector }) => {
               )}
               {peer.ipBlock && (
                 <div>
-                  <span className="text-muted">{t('public~IP Block')}:</span>
+                  <span className="text-muted">{t('public~IP block')}:</span>
                   <div style={style}>{peer.ipBlock.cidr}</div>
                 </div>
               )}
@@ -303,7 +303,7 @@ const Details_ = ({ obj: np, flags }) => {
               <EgressHeader />
               <div className="co-m-table-grid__body">
                 {_.map(np.spec.egress, (rule, i) =>
-                  rule.to.map((peer, j) => (
+                  (rule.to || [undefined]).map((peer, j) => (
                     <RuleRow
                       key={`${i}_${j}`}
                       peer={peer}
