@@ -1,19 +1,23 @@
 import * as React from 'react';
+import * as semver from 'semver';
 import { Trans, useTranslation } from 'react-i18next';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useOpenshiftVersion } from '@console/shared/src/hooks/version';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
 
 const DevPerspectiveTourText: React.FC = () => {
   const { t } = useTranslation();
-  const openshiftVersion = useOpenshiftVersion();
+  const fullVersion = useOpenShiftVersion();
+  const parsed = semver.parse(fullVersion);
+  // Show only major and minor version.
+  const version = parsed ? `${parsed.major}.${parsed.minor}` : '4.x';
   return (
     <>
       {t(
-        'devconsole~Get started with a tour of some of the key areas in OpenShift {{version}} Developer perspective that can help you complete workflows and be more productive.',
-        { version: openshiftVersion ? [openshiftVersion?.slice(0, 3), "'s"].join('') : '4.x' },
+        "devconsole~Get started with a tour of some of the key areas in OpenShift {{version}}'s Developer perspective that can help you complete workflows and be more productive.",
+        { version },
       )}
     </>
   );

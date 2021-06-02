@@ -20,12 +20,12 @@ export const useClusterVersion = (): ClusterVersionKind => {
   return cvLoaded && !cvLoadError ? cvData : null;
 };
 
-export const useOpenshiftVersion = (): string => {
-  const [openshiftVersion, setOpenshiftVersion] = useState<string>();
+export const useOpenShiftVersion = (): string => {
+  const [openshiftVersion, setOpenShiftVersion] = useState<string>();
   const clusterVersion = useClusterVersion();
   const version = clusterVersion?.status?.history?.[0]?.version;
   useEffect(() => {
-    setOpenshiftVersion(version);
+    setOpenShiftVersion(version);
   }, [version]);
   return openshiftVersion;
 };

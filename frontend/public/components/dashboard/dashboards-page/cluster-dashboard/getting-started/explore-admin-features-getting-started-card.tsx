@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons';
 
-import { useOpenshiftVersion } from '@console/shared/src';
+import { useOpenShiftVersion } from '@console/shared/src';
 import {
   GettingStartedCard,
   GettingStartedLink,
@@ -10,11 +11,9 @@ import {
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
+  const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
-  const version = (useOpenshiftVersion() || '')
-    .split('.')
-    .slice(0, 2)
-    .join('.');
+  const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
 
   const links: GettingStartedLink[] = [
     {
