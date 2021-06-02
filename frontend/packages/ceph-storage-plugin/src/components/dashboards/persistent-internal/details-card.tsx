@@ -1,7 +1,9 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getInfrastructurePlatform } from '@console/shared';
+import { isEmpty } from 'lodash';
+import { BlueArrowCircleUpIcon, getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -17,12 +19,19 @@ import { InfrastructureModel } from '@console/internal/models/index';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
+  PackageManifestModel,
 } from '@console/operator-lifecycle-manager/src/models';
-import { K8sResourceKind } from '@console/internal/module/k8s/index';
+import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import {
+  PackageManifestKind,
+  SubscriptionKind,
+} from '@console/operator-lifecycle-manager/src/types';
+import { createSubscriptionChannelModal } from '@console/operator-lifecycle-manager/src/components/modals/subscription-channel-modal';
+import { Button } from '@patternfly/react-core';
 import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
@@ -53,6 +62,21 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     InfrastructureModel,
     'cluster',
   );
+  const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sGet<
+    SubscriptionKind
+  >(SubscriptionModel, 'ocs-operator', 'openshift-storage');
+  const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sGet<
+    PackageManifestKind
+  >(PackageManifestModel, 'ocs-operator', 'openshift-storage');
+  const currentChannel =
+    ocsSubscription?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
+  const filteredVersions = packageManifest?.status?.channels?.filter(
+    (channel) =>
+      parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) >
+      parseFloat(currentChannel.substring(currentChannel.indexOf('-') + 1)),
+  );
+  _.set(packageManifest, 'status.channels', filteredVersions);
+
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchK8sResource(ocsResource);
@@ -78,6 +102,17 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     ocsVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
+  const k8sUpdatedFunction = (...args) => k8sUpdate(...args);
+  const ocsChannelModal = () => {
+    if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
+      return createSubscriptionChannelModal({
+        subscription: ocsSubscription,
+        pkg: packageManifest,
+        k8sUpdate: k8sUpdatedFunction,
+      });
+    }
+    return 0;
+  };
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -117,6 +152,20 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             error={subscriptionLoaded && !ocsVersion}
           >
             {ocsVersion}
+            <Button
+              type="button"
+              isInline
+              onClick={ocsChannelModal}
+              variant="link"
+              isDisabled={
+                !packageManifest ||
+                isEmpty(filteredVersions) ||
+                ocsSubscription?.spec?.installPlanApproval === 'Automatic'
+              }
+            >
+              <BlueArrowCircleUpIcon className="co-icon-space-r" />
+              {ocsSubscriptionLoaded ? ocsSubscription.spec.channel : null}
+            </Button>
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
