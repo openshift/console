@@ -42,3 +42,12 @@ Feature: Create Sample Application
               And user can change builder image version from dropdown if required
               And user clicks on create
              Then user is taken to topology with a node deployment workload created inside sample application
+
+
+        @odc-22 @regression @to-do
+        Scenario: Create Basic NodeJS Devfile Sample Appliation: GS-03-TC04
+            Given user is at Samples page
+             When user clicks on Basic NodeJS card
+              And user assigns a name "node-js-basic-sample1" in the Name section of Import from Devfile form
+              And user clicks on Create
+             Then user is taken to Topology page with deployment workload "node-js-basic-sample1" created

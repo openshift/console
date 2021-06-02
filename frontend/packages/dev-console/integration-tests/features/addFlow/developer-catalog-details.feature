@@ -10,12 +10,12 @@ Feature: Developer Catalog Page
               And user has installed OpenShift Serverless Operator
 
 
-        @regression
+        @regression, @odc-22, @to-do
         Scenario: Developer Catalog page - Default view: A-09-TC01
-             When user clicks on From Catalog card
+             When user clicks on All Services card in Developer Catalog section
              Then user will see All Items already selected
-              And user will see CICD, Databases, Languages, Middleware, Other categories
-              And user will see Builder Images, Event Sources, Helm Charts, Operator Backed, Templates types
+              And user will see CI/CD, Databases, Languages, Middleware, Other categories
+              And user will see Builder Images, Devfiles,Event Sources, Helm Charts, Operator Backed, Templates types
               And user will see Filter by Keyword field
               And user will see A-Z, Z-A sort by dropdown
 
@@ -119,3 +119,12 @@ Feature: Developer Catalog Page
               And user clicks on Reload button
              Then user will see all the categories except Languages added under spec.customization.developerCatalog.categories
               And user will see all the categories except Languages on Developer Catalog page
+
+
+        @regression @manual @odc-22
+        Scenario: Devfiles on Developer Catalog: A-09-TC011
+            Given user is at Developer Catalog page
+             When user clicks on Devfiles type
+             Then user will see the cards of Devfiles
+              And user will see Filter by Keyword field
+              And user will see A-Z, Z-A sort by dropdown
