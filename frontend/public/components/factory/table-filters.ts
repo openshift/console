@@ -1,7 +1,12 @@
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
-import { getNodeRole, getLabelsAsString } from '@console/shared';
+import {
+  getNodeRole,
+  getLabelsAsString,
+  SYSTEM_NAMESPACES_PREFIX,
+  SYSTEM_NAMESPACES,
+} from '@console/shared';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
@@ -24,6 +29,9 @@ import {
   alertState,
   silenceState,
 } from '../monitoring/utils';
+
+import { getActiveUserName } from '../../actions/ui';
+
 import { Alert, Rule, Silence } from '../monitoring/types';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
@@ -32,9 +40,7 @@ export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
 export const isCurrentUser = (user: string): boolean => user === getActiveUserName();
 
 export const isSystemNamespace = (option: { title: string; key?: string }) => {
-  const SYSTEM_NAMESPACES_PREFIX = ['kube-', 'openshift-', 'kubernetes-'];
-  const SYSTEM_NAMESPACES = ['default', 'openshift'];
-  const startwithNamespace = SYSTEM_NAMESPACES_PREFIX.find((ns) => option.title?.startsWith(ns));
+  const startwithNamespace = SYSTEM_NAMESPACES_PREFIX.some((ns) => option.title?.startsWith(ns));
   const isNamespace = SYSTEM_NAMESPACES.includes(option.title);
 
   return startwithNamespace || isNamespace;
@@ -51,8 +57,6 @@ const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
-<<<<<<< HEAD
-=======
   requester: (filter, obj) => {
     if (filter.selected.size === 0) {
       return true;
@@ -60,27 +64,20 @@ export const tableFilters: TableFilterMap = {
 
     const annotations = obj.metadata?.annotations;
     const requestor = annotations ? annotations['openshift.io/requester'] : undefined;
-    if (filter.selected.has('me')) {
-      if (isCurrentUser(requestor)) {
-        return true;
-      }
+    if (filter.selected.has('me') && isCurrentUser(requestor)) {
+      return true;
     }
 
-    if (filter.selected.has('user')) {
-      if (isOtherUser(requestor, obj.metadata?.name)) {
-        return true;
-      }
+    if (filter.selected.has('user') && isOtherUser(requestor, obj.metadata.name)) {
+      return true;
     }
-    if (filter.selected.has('system')) {
-      if (isSystemNamespace({ title: obj.metadata?.name })) {
-        return true;
-      }
+    if (filter.selected.has('system') && isSystemNamespace({ title: obj.metadata.name })) {
+      return true;
     }
 
     return false;
   },
 
->>>>>>> 0ac2e0693a... Namespace select - code cleanup
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
   'resource-list-text': (filter, resource: Rule | Alert) => {

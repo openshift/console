@@ -2,7 +2,17 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Button, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStatePrimary,
+  Title,
+  Tooltip,
+} from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -88,10 +98,35 @@ import { isCurrentUser, isOtherUser, isSystemNamespace } from './factory/table-f
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
+
 const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
 
-const SYSTEM_NAMESPACES = ['kube-', 'openshift-']; // System namespaces start with these strings.  Used for filtering
+export const REQUEST_FILTER = { me: 'me', user: 'user', system: 'system' };
 
+const getFilters = () => [
+  {
+    filterGroupName: i18next.t('public~Requester'),
+    type: 'requester',
+    reducer: (namespace) => {
+      const name = namespace.metadata?.name;
+      const requestor = namespace.metadata?.annotations['openshift.io/requester'];
+      if (isCurrentUser(requestor)) {
+        return REQUEST_FILTER.me;
+      }
+      if (isOtherUser(requestor, name)) {
+        return REQUEST_FILTER.user;
+      }
+      if (isSystemNamespace({ title: name })) {
+        return REQUEST_FILTER.system;
+      }
+    },
+    items: [
+      { id: REQUEST_FILTER.me, title: i18next.t('public~Me') },
+      { id: REQUEST_FILTER.user, title: i18next.t('public~User') },
+      { id: REQUEST_FILTER.system, title: i18next.t('public~System'), hideIfEmpty: true },
+    ],
+  },
+];
 export const deleteModal = (kind, ns) => {
   const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
@@ -401,6 +436,18 @@ export const NamespacesList = connect(
       tableColumns?.[NamespacesColumnManagementID]?.length > 0
         ? new Set(tableColumns[NamespacesColumnManagementID])
         : null;
+
+    const NamespaceNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No namespaces found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
     return (
       <Table
         {...props}
@@ -411,6 +458,7 @@ export const NamespacesList = connect(
         Row={NamespacesRow}
         customData={{ tableColumns: tableColumns?.[NamespacesColumnManagementID] }}
         virtualize
+        EmptyMsg={NamespaceNotFoundMessage}
       />
     );
   }),
@@ -430,6 +478,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
   return (
     <ListPage
       {...props}
+      rowFilters={getFilters()}
       ListComponent={NamespacesList}
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
@@ -708,6 +757,7 @@ const ProjectRow = (rowArgs) => (
   />
 );
 
+// KKD: Project Table (for Dev console)
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
   return (
@@ -728,6 +778,7 @@ export const ProjectsTable = (props) => {
 
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
+
 const ProjectList_ = connectToFlags(
   FLAGS.CAN_CREATE_PROJECT,
   FLAGS.CAN_GET_NS,
@@ -768,7 +819,18 @@ const ProjectList_ = connectToFlags(
         detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
       />
     );
-    const ProjectNotFoundMessage = () => <MsgBox title={t('public~No projects found')} />;
+
+    const ProjectNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No projects found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
     return (
       <Table
         {...tableProps}
@@ -809,6 +871,7 @@ export const ProjectsPage = connectToFlags(
     return (
       <ListPage
         {...rest}
+        rowFilters={getFilters()}
         ListComponent={ProjectList}
         canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
         createHandler={() => createProjectModal({ blocking: true })}
@@ -1048,10 +1111,6 @@ const namespaceBarDropdownDispatchToProps = (dispatch) => ({
 });
 
 const NamespaceBarDropdowns_ = (props) => {
-  //   // KKD TODO:
-  //   // X step 1 - convert to a function component
-  //   // step 2 - implement PF Select vs using custom drop down
-  //   // step 3 - consider moving toward TS ... maybe for this function just add as comments??
   const {
     activeNamespace,
     canCreateProject,

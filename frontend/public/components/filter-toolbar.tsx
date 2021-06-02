@@ -167,19 +167,23 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   // Map row filters to select groups
   const dropdownItems = generatedRowFilters.map((rowFilter) => (
     <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
-      {rowFilter.items?.map?.((item) => (
-        <SelectOption
-          data-test-row-filter={item.id}
-          key={item.id}
-          inputId={item.id}
-          value={item.id}
-        >
-          <span className="co-filter-dropdown-item__name">{item.title}</span>
-          <Badge key={item.id} isRead>
-            {item.count}
-          </Badge>
-        </SelectOption>
-      ))}
+      {rowFilter.items?.map?.((item) =>
+        item.hideIfEmpty && (item.count === 0 || item.count === '0') ? (
+          <></>
+        ) : (
+          <SelectOption
+            data-test-row-filter={item.id}
+            key={item.id}
+            inputId={item.id}
+            value={item.id}
+          >
+            <span className="co-filter-dropdown-item__name">{item.title}</span>
+            <Badge key={item.id} isRead>
+              {item.count}
+            </Badge>
+          </SelectOption>
+        ),
+      )}
     </SelectGroup>
   ));
 
@@ -421,6 +425,7 @@ type FilterToolbarProps = {
 type RowFilterItem = {
   id?: string;
   title?: string;
+  hideIfEmpty?: string;
   [key: string]: string;
 };
 
