@@ -54,13 +54,10 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
 
   if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
 
+  const label = t('topology~Monitoring alert');
   return (
-    <Tooltip
-      key="monitoringAlert"
-      content={t('topology~Monitoring alert')}
-      position={TooltipPosition.left}
-    >
-      <Decorator x={x} y={y} radius={radius} onClick={showSidebar}>
+    <Tooltip key="monitoringAlert" content={label} position={TooltipPosition.left}>
+      <Decorator x={x} y={y} radius={radius} onClick={showSidebar} ariaLabel={label}>
         <g transform={`translate(-${radius / 2}, -${radius / 2})`}>
           <AlertSeverityIcon severityAlertType={severityAlertType} fontSize={radius} />
         </g>

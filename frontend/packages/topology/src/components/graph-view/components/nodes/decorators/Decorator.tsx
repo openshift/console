@@ -11,6 +11,7 @@ type DecoratorTypes = {
   radius: number;
   onClick?(event: React.MouseEvent<SVGGElement, MouseEvent>): void;
   href?: string;
+  ariaLabel?: string;
   external?: boolean;
   circleRef?: React.Ref<SVGCircleElement>;
 };
@@ -22,23 +23,32 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
   x,
   y,
   radius,
-  onClick,
   children,
+  onClick,
   href,
+  ariaLabel,
   external,
   circleRef,
 }) => {
   const [hover, hoverRef] = useHover();
   const decorator = (
     <g
-      className="odc-decorator"
-      onClick={(e) => {
-        if (onClick) {
-          e.stopPropagation();
-          onClick(e);
-        }
-      }}
       ref={hoverRef}
+      className="odc-decorator"
+      {...(onClick
+        ? {
+            onClick: (e) => {
+              e.stopPropagation();
+              onClick(e);
+            },
+          }
+        : null)}
+      {...(!href
+        ? {
+            role: 'button',
+            'aria-label': ariaLabel,
+          }
+        : null)}
     >
       <SvgDropShadowFilter id={FILTER_ID} stdDeviation={1} floodOpacity={0.5} />
       <SvgDropShadowFilter id={HOVER_FILTER_ID} dy={3} stdDeviation={5} floodOpacity={0.5} />
@@ -67,11 +77,13 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
         onClick={(e) => {
           e.stopPropagation();
         }}
+        role="button"
+        aria-label={ariaLabel}
       >
         {decorator}
       </a>
     ) : (
-      <Link className="odc-decorator__link" to={href}>
+      <Link className="odc-decorator__link" to={href} role="button" aria-label={ariaLabel}>
         {decorator}
       </Link>
     );

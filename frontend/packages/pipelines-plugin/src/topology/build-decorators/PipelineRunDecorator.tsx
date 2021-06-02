@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
@@ -37,6 +38,7 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
   y,
   impersonate,
 }) => {
+  const { t } = useTranslation();
   const { latestPipelineRun, status } = getLatestPipelineRunStatus(pipelineRuns);
 
   const statusIcon = <Status status={status} iconOnly noTooltip />;
@@ -49,9 +51,11 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
   };
   const canStartPipeline = useAccessReview(defaultAccessReview, impersonate);
 
+  let ariaLabel;
   let tooltipContent;
   let decoratorContent;
   if (latestPipelineRun) {
+    ariaLabel = t(`pipelines-plugin~Pipeline status is {{status}}. View logs.`, { status });
     tooltipContent = (
       <PipelineBuildDecoratorTooltip pipelineRun={latestPipelineRun} status={status} />
     );
@@ -62,13 +66,14 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
     )}/logs`;
     decoratorContent = (
       <Link to={link}>
-        <BuildDecoratorBubble x={x} y={y} radius={radius}>
+        <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={ariaLabel}>
           {statusIcon}
         </BuildDecoratorBubble>
       </Link>
     );
   } else {
-    tooltipContent = 'Pipeline not started';
+    ariaLabel = t('pipelines-plugin~Pipeline not started. Start pipeline.');
+    tooltipContent = t('pipelines-plugin~Pipeline not started');
 
     let onClick = null;
     if (canStartPipeline) {
@@ -81,7 +86,7 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
     }
 
     decoratorContent = (
-      <BuildDecoratorBubble x={x} y={y} radius={radius} onClick={onClick}>
+      <BuildDecoratorBubble x={x} y={y} radius={radius} onClick={onClick} ariaLabel={ariaLabel}>
         {statusIcon}
       </BuildDecoratorBubble>
     );
