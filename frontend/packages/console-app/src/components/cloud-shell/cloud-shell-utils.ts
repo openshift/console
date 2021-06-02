@@ -8,16 +8,19 @@ type DevWorkspaceTemplateSpec = {
 };
 
 type Component = {
+  name: string;
   plugin: {
-    name?: string;
-    id: string;
+    kubernetes: {
+      name: string;
+      namespace?: string;
+    };
   };
 };
 
 export type CloudShellResource = K8sResourceKind & {
   status?: {
     phase: string;
-    ideUrl: string;
+    mainUrl: string;
   };
   spec?: {
     started?: boolean;
@@ -37,7 +40,7 @@ export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
 export const newCloudShellWorkSpace = (name: string, namespace: string): CloudShellResource => ({
-  apiVersion: 'workspace.devfile.io/v1alpha1',
+  apiVersion: 'workspace.devfile.io/v1alpha2',
   kind: 'DevWorkspace',
   metadata: {
     name,
@@ -55,9 +58,21 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
     template: {
       components: [
         {
+          name: 'web-terminal-tooling',
           plugin: {
-            name: 'web-terminal',
-            id: 'redhat-developer/web-terminal/latest',
+            kubernetes: {
+              name: 'web-terminal-tooling',
+              namespace: 'openshift-operators',
+            },
+          },
+        },
+        {
+          name: 'web-terminal-exec',
+          plugin: {
+            kubernetes: {
+              name: 'web-terminal-exec',
+              namespace: 'openshift-operators',
+            },
           },
         },
       ],

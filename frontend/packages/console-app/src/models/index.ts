@@ -5,7 +5,7 @@ export const WorkspaceModel: K8sKind = {
   label: 'DevWorkspace',
   labelPlural: 'devworkspaces',
   apiGroup: 'workspace.devfile.io',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1alpha2',
   abbr: 'DW',
   namespaced: true,
   crd: true,
