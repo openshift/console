@@ -219,6 +219,7 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/topology/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/helm-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/rhoas-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/git-service/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/gitops-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/kubevirt-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/ceph-storage-plugin/locales', to: 'locales' }]),
