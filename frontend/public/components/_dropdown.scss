@@ -91,7 +91,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
       color: inherit;
       padding: 4px 0 2px !important;
 
-      @media(min-width: $grid-float-breakpoint) {
+      @media (min-width: $grid-float-breakpoint) {
         padding-bottom: 10px !important;
         padding-top: 11px !important;
       }
@@ -128,7 +128,6 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   }
 }
 
-
 // Custom dropdown menu rules for namespace-selector & resource-item that don't use the default pf4 styles
 .co-namespace-selector .dropdown-menu__autocomplete-filter {
   li {
@@ -156,7 +155,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
         }
       }
       &.next-to-bookmark {
-        padding-left: 5px
+        padding-left: 5px;
       }
     }
   }
@@ -241,7 +240,6 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
     &.pf-m-align-right-on-md {
       right: 0;
     }
-
   }
 }
 
@@ -260,5 +258,8 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   .co-resource-item__resource-name {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .co-resource-item__resource-namespace {
+    display: none !important;
   }
 }
