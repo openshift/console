@@ -18,6 +18,13 @@ export enum OCS_PROVISIONER {
   FILE = 'openshift-storage.cephfs.csi.ceph.com',
 }
 
+export const OCS_PROVISIONERS = [
+  'ceph.rook.io/block',
+  'cephfs.csi.ceph.com',
+  'rbd.csi.ceph.com',
+  'noobaa.io/obc',
+];
+
 export enum CLUSTER_STATUS {
   READY = 'Ready',
   PROGRESSING = 'Progressing',
