@@ -344,7 +344,7 @@
   "Set up your cluster": "Set up your cluster",
   "Finish setting up your cluster with recommended configurations.": "Finish setting up your cluster with recommended configurations.",
   "Add identity providers": "Add identity providers",
-  "Console customizations": "Console customizations",
+  "OperatorHub": "OperatorHub",
   "See what's new in OpenShift {{version}}": "See what's new in OpenShift {{version}}",
   "Explore new admin features": "Explore new admin features",
   "Explore new features and resources within the admin perspective.": "Explore new features and resources within the admin perspective.",
