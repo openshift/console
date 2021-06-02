@@ -91,7 +91,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('public~{{resource}} details', { resource: OAuthModel.label })} />
+        <SectionHeading text={t('public~OAuth details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj}>

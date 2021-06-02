@@ -158,11 +158,7 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', {
-            resource: CustomResourceDefinitionModel.label,
-          })}
-        />
+        <SectionHeading text={t('public~CustomResourceDefinition details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

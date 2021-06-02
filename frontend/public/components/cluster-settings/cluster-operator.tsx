@@ -224,11 +224,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', {
-            resource: ClusterOperatorModel.label,
-          })}
-        />
+        <SectionHeading text={t('public~ClusterOperator details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />
@@ -279,11 +275,12 @@ export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProp
         },
       ]}
       breadcrumbsFor={() => [
-        { name: ClusterOperatorModel.labelPlural, path: '/settings/cluster/clusteroperators' },
         {
-          name: t('public~{{resource}} details', {
-            resource: ClusterOperatorModel.label,
-          }),
+          name: t(ClusterOperatorModel.labelPluralKey),
+          path: '/settings/cluster/clusteroperators',
+        },
+        {
+          name: t('public~ClusterOperator details'),
           path: props.match.url,
         },
       ]}
