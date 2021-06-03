@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
-import { ListKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  ListKind,
+  referenceForModel,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import { history, BreadCrumbs } from '@console/internal/components/utils';
 import { RadioGroup } from '@console/internal/components/radio';
-import { InfrastructureModel } from '@console/internal/models';
+import { InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -22,6 +26,7 @@ import { CEPH_STORAGE_NAMESPACE, MODES, CreateStepsSC } from '../../constants';
 import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
 import './install-page.scss';
+import { filterSCWithNoProv } from '../../utils/install';
 
 const INDEP_MODE_SUPPORTED_PLATFORMS = [
   'BareMetal',
@@ -57,8 +62,16 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
     CEPH_STORAGE_NAMESPACE,
   );
-
+  const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
+  const [sc, isLoaded, err] = useK8sGet<ListKind<StorageClassResourceKind>>(StorageClassModel);
   const memoizedCSV = useDeepCompareMemoize(csv, true);
+
+  React.useEffect(() => {
+    if (!err && isLoaded) {
+      const isSCWithNoProv = sc?.items?.some(filterSCWithNoProv);
+      setHasNoProvSC(isSCWithNoProv);
+    }
+  }, [appName, err, isLoaded, ns, sc]);
 
   React.useEffect(() => {
     if (csvLoaded && !csvError) {
@@ -99,20 +112,10 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
   const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
 
-  const getStep = (
-    offset: number = 0,
-    forceNavigate: boolean = false,
-    isForceNavigated: boolean = false,
-    setForceNavigated: React.Dispatch<React.SetStateAction<boolean>> = null,
-  ) => {
+  const getStep = (offset: number = 0) => {
     const searchParams = new URLSearchParams(window.location.search.slice(1));
     const step = parseInt(searchParams.get('step'), 10) || 1;
-    let sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
-    if (forceNavigate && !isForceNavigated) {
-      history.push(getAnchor(3, 2));
-      sanitizedStep = 3;
-      setForceNavigated(true);
-    }
+    const sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
     return sanitizedStep;
   };
 
@@ -124,9 +127,15 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     const modeIndex = getIndex(MODES, value);
-    history.push(
-      `~new?${getParamString(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex)}`,
-    );
+    switch (modeIndex) {
+      case 2:
+        if (hasNoProvSC) {
+          history.push(getAnchor(3, 2));
+        }
+        break;
+      default:
+        history.push(getAnchor(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex));
+    }
   };
 
   const disableClusterCreation: boolean = storageCluster?.items?.length > 0;

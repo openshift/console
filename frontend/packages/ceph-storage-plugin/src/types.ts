@@ -287,12 +287,7 @@ export type DiscoveredDisk = {
 } & DiskMetadata;
 
 export type NavUtils = {
-  getStep: (
-    offset?: number,
-    forceNavigate?: boolean,
-    isForceNavigated?: boolean,
-    setForceNavigated?: React.Dispatch<React.SetStateAction<boolean>>,
-  ) => number;
+  getStep: (offset?: number) => number;
   getParamString: (step: number, mode: number) => string;
   getIndex: (searchSpace: any, search: string, offset?: number) => number;
   getAnchor: (step: number, mode: number) => string;
