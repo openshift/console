@@ -15,7 +15,7 @@ Feature: Admin user created Service Mesh Control Plane to get the Kiali dashboar
               And user has created a user with self-provisioner and view roles
 
 
-        @regression
+        @smoke @regression
         Scenario: Open on Kiali link Project Details Overview Page: SM-01-TC01
             Given user is on the "istio-system" Projects page
              When user selects the "istio-system" project that recently created Open Shift Service Mesh Control Plane
