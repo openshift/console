@@ -120,8 +120,16 @@ type RenderExtensionProps = {
 
 const RenderExtension: React.FC<RenderExtensionProps> = ({ renderExtension, selector, markup }) => {
   const forceRender = useForceRender();
+  const markupRef = React.useRef<string>(null);
+  const shouldRenderExtension = React.useCallback(() => {
+    if (markupRef.current === markup) {
+      return true;
+    }
+    markupRef.current = markup;
+    return false;
+  }, [markup]);
   /**
-   * During any render cycle renderExtension receives an old copy of document
+   * During a render cycle in which markup changes, renderExtension receives an old copy of document
    * because react is still updating the dom using `dangerouslySetInnerHTML` with latest markdown markup
    * which causes the component rendered by renderExtension to receive old copy of document
    * use forceRender to delay the rendering of extension by one render cycle
@@ -130,7 +138,7 @@ const RenderExtension: React.FC<RenderExtensionProps> = ({ renderExtension, sele
     renderExtension && forceRender();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markup]);
-  return <>{renderExtension?.(document, selector)}</>;
+  return <>{shouldRenderExtension() ? renderExtension?.(document, selector) : null}</>;
 };
 
 const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
