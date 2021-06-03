@@ -19,7 +19,7 @@ jest.mock('react-i18next', () => ({
 
 jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
-  useOpenshiftVersion: () => 'x.y.z',
+  useOpenShiftVersion: () => '4.8.0',
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
@@ -55,7 +55,7 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
-      title: "See what's new in OpenShift x.y",
+      title: "See what's new in OpenShift 4.8",
       href: 'https://www.openshift.com/learn/whats-new',
       external: true,
     });

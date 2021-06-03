@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons';
 
-import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenshiftVersion } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
 import {
   GettingStartedLink,
   GettingStartedCard,
@@ -11,11 +12,9 @@ import {
 export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+  const parsed = semver.parse(useOpenShiftVersion());
   // Show only major and minor version.
-  const version = (useOpenshiftVersion() || '')
-    .split('.')
-    .slice(0, 2)
-    .join('.');
+  const version = parsed ? `${parsed.major}.${parsed.minor}` : '';
 
   const links: GettingStartedLink[] = [
     {

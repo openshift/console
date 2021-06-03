@@ -16,7 +16,7 @@ jest.mock('react-i18next', () => ({
 jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),
-  useOpenshiftVersion: () => 'x.y.z',
+  useOpenShiftVersion: () => '4.8.0',
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState
@@ -58,7 +58,7 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
-      title: "What's new in OpenShift x.y",
+      title: "What's new in OpenShift 4.8",
       href: 'https://developers.redhat.com/products/openshift/getting-started',
       external: true,
     });
@@ -86,7 +86,7 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
-      title: "What's new in OpenShift x.y",
+      title: "What's new in OpenShift 4.8",
       href: 'https://developers.redhat.com/products/openshift/getting-started',
       external: true,
     });
