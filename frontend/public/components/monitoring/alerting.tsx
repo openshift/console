@@ -720,11 +720,6 @@ export const AlertsDetailsPage = withFallback(
 
     React.useEffect(() => {
       const asyncFn = async () => {
-        /*const [infrastructure] = await useK8sGet<K8sResourceKind>(
-        InfrastructureModel,
-        'cluster',
-      );*/
-
         if (infrastructure) {
           const apiServerURL = infrastructure?.status?.apiServerURL;
           const logExplorationApiUrl = `http://log-exploration-api-route-openshift-logging.apps.${
