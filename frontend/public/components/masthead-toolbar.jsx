@@ -18,8 +18,6 @@ import {
   PageHeaderTools,
   PageHeaderToolsGroup,
   PageHeaderToolsItem,
-  TooltipPosition,
-  Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
@@ -44,17 +42,15 @@ const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
     <PageHeaderToolsItem className={className}>
-      <Tooltip content={t('public~System status')} position={TooltipPosition.auto}>
-        <a
-          className="pf-c-button pf-m-plain"
-          aria-label={t('public~System status')}
-          href={statuspageData.page.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <YellowExclamationTriangleIcon className="co-masthead-icon" />
-        </a>
-      </Tooltip>
+      <a
+        className="pf-c-button pf-m-plain"
+        aria-label={t('public~System status')}
+        href={statuspageData.page.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <YellowExclamationTriangleIcon className="co-masthead-icon" />
+      </a>
     </PageHeaderToolsItem>
   ) : null;
 };
@@ -590,90 +586,81 @@ class MastheadToolbarContents_ extends React.Component {
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
             {!_.isEmpty(launchActions) && (
               <PageHeaderToolsItem>
-                <Tooltip content={t('public~Application launcher')} position={TooltipPosition.auto}>
-                  <ApplicationLauncher
-                    className="co-app-launcher"
-                    data-test-id="application-launcher"
-                    onSelect={this._onApplicationLauncherDropdownSelect}
-                    onToggle={this._onApplicationLauncherDropdownToggle}
-                    isOpen={isApplicationLauncherDropdownOpen}
-                    items={this._renderApplicationItems(this._launchActions())}
-                    data-quickstart-id="qs-masthead-applications"
-                    position="right"
-                    isGrouped
-                  />
-                </Tooltip>
+                <ApplicationLauncher
+                  aria-label={t('public~Application launcher')}
+                  className="co-app-launcher"
+                  data-test-id="application-launcher"
+                  onSelect={this._onApplicationLauncherDropdownSelect}
+                  onToggle={this._onApplicationLauncherDropdownToggle}
+                  isOpen={isApplicationLauncherDropdownOpen}
+                  items={this._renderApplicationItems(this._launchActions())}
+                  data-quickstart-id="qs-masthead-applications"
+                  position="right"
+                  isGrouped
+                />
               </PageHeaderToolsItem>
             )}
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <PageHeaderToolsItem>
-                <Tooltip content={t('public~Notification drawer')} position={TooltipPosition.auto}>
-                  <NotificationBadge
-                    aria-label={t('public~Notification drawer')}
-                    onClick={drawerToggle}
-                    variant="read"
-                    count={notificationAlerts?.data?.length || 0}
-                    data-quickstart-id="qs-masthead-notifications"
-                  >
-                    <BellIcon alt="" />
-                  </NotificationBadge>
-                </Tooltip>
+                <NotificationBadge
+                  aria-label={t('public~Notification drawer')}
+                  onClick={drawerToggle}
+                  variant="read"
+                  count={notificationAlerts?.data?.length || 0}
+                  data-quickstart-id="qs-masthead-notifications"
+                >
+                  <BellIcon alt="" />
+                </NotificationBadge>
               </PageHeaderToolsItem>
             )}
             <PageHeaderToolsItem>
-              <Tooltip content={t('public~Import YAML')} position={TooltipPosition.auto}>
-                <Link
-                  to={this._getImportYAMLPath()}
-                  className="pf-c-button pf-m-plain"
-                  aria-label={t('public~Import YAML')}
-                  data-quickstart-id="qs-masthead-import"
-                >
-                  <PlusCircleIcon className="co-masthead-icon" alt="" />
-                </Link>
-              </Tooltip>
+              <Link
+                to={this._getImportYAMLPath()}
+                className="pf-c-button pf-m-plain"
+                aria-label={t('public~Import YAML')}
+                data-quickstart-id="qs-masthead-import"
+              >
+                <PlusCircleIcon className="co-masthead-icon" alt="" />
+              </Link>
             </PageHeaderToolsItem>
             <CloudShellMastheadButton />
             <PageHeaderToolsItem>
-              <Tooltip content={t('public~Help menu')} position={TooltipPosition.auto}>
-                <ApplicationLauncher
-                  aria-label={t('public~Help menu')}
-                  className="co-app-launcher"
-                  data-test="help-dropdown-toggle"
-                  data-tour-id="tour-help-button"
-                  data-quickstart-id="qs-masthead-help"
-                  onSelect={this._onHelpDropdownSelect}
-                  onToggle={this._onHelpDropdownToggle}
-                  isOpen={isHelpDropdownOpen}
-                  items={this._renderApplicationItems(
-                    this._helpActions(
-                      this._getAdditionalActions(
-                        this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
-                      ),
+              <ApplicationLauncher
+                aria-label={t('public~Help menu')}
+                className="co-app-launcher"
+                data-test="help-dropdown-toggle"
+                data-tour-id="tour-help-button"
+                data-quickstart-id="qs-masthead-help"
+                onSelect={this._onHelpDropdownSelect}
+                onToggle={this._onHelpDropdownToggle}
+                isOpen={isHelpDropdownOpen}
+                items={this._renderApplicationItems(
+                  this._helpActions(
+                    this._getAdditionalActions(
+                      this._getAdditionalLinks(consoleLinks?.data, 'HelpMenu'),
                     ),
-                  )}
-                  position="right"
-                  toggleIcon={<QuestionCircleIcon alt="" />}
-                  isGrouped
-                />
-              </Tooltip>
+                  ),
+                )}
+                position="right"
+                toggleIcon={<QuestionCircleIcon alt="" />}
+                isGrouped
+              />
             </PageHeaderToolsItem>
           </PageHeaderToolsGroup>
           <PageHeaderToolsGroup>
             {/* mobile -- (notification drawer button) */
             alertAccess && notificationAlerts?.data?.length > 0 && (
               <PageHeaderToolsItem className="visible-xs-block">
-                <Tooltip content={t('public~Notification drawer')} position={TooltipPosition.auto}>
-                  <NotificationBadge
-                    aria-label={t('public~Notification drawer')}
-                    onClick={drawerToggle}
-                    variant="read"
-                    count={notificationAlerts?.data?.length}
-                    data-quickstart-id="qs-masthead-notifications"
-                  >
-                    <BellIcon />
-                  </NotificationBadge>
-                </Tooltip>
+                <NotificationBadge
+                  aria-label={t('public~Notification drawer')}
+                  onClick={drawerToggle}
+                  variant="read"
+                  count={notificationAlerts?.data?.length}
+                  data-quickstart-id="qs-masthead-notifications"
+                >
+                  <BellIcon />
+                </NotificationBadge>
               </PageHeaderToolsItem>
             )}
             {/* mobile -- (system status button) */}
