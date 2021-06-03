@@ -222,4 +222,13 @@ export const pipelineBuilderPage = {
       .type(workSpaceName);
     pipelineBuilderPage.selectOptionalWorkspace(optional);
   },
+  addFinallyNode: () => {
+    cy.get(pipelineBuilderPO.formView.addFinallyNode).click({ force: true });
+  },
+  clickFinallyTaskList: () =>
+    cy.get(pipelineBuilderPO.formView.finallyTaskList).click({ force: true }),
+  selectFinallyTask: (taskName: string) => {
+    cy.get(pipelineBuilderPO.formView.finallyTaskList).click({ force: true });
+    cy.byTestActionID(taskName).click({ force: true });
+  },
 };

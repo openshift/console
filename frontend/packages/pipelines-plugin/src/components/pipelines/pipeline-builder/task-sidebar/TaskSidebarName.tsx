@@ -35,6 +35,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
       isRequired
     >
       <TextInput
+        data-test={`task-name ${interimName}`}
         id="task-name"
         validated={isValid ? 'default' : 'error'}
         isRequired

@@ -271,7 +271,13 @@ const TaskComponent: React.FC<TaskProps> = ({
       {taskPill}
     </>
   );
-  return enableLogLink ? <Link to={path}>{taskNode}</Link> : taskNode;
+  return enableLogLink ? (
+    <Link to={path}>
+      <g data-test={`task ${visualName}`}>{taskNode}</g>
+    </Link>
+  ) : (
+    taskNode
+  );
 };
 
 interface SvgTaskStatusProps {

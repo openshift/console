@@ -71,6 +71,7 @@ const TaskList: React.FC<any> = ({
   return (
     <>
       <g
+        data-test="task-list"
         ref={hoverRef}
         className="odc-task-list-node__trigger"
         onClick={() => setMenuOpen(!isMenuOpen)}

@@ -81,6 +81,9 @@ export const pipelineDetailsPage = {
       .next('a')
       .click();
   },
+  finallyNode: () => {
+    return cy.get('[data-test="pipeline-visualization"] [data-test="finally-node"]');
+  },
 };
 
 export const triggerTemplateDetailsPage = {

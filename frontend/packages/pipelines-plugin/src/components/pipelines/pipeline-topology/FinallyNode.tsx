@@ -27,7 +27,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
 
   const { finallyTasks = [] } = task;
   return (
-    <g transform="translate(0.5, 0.5)">
+    <g transform="translate(0.5, 0.5)" data-test="finally-node">
       <rect
         className="opp-finally-node"
         strokeWidth={1}
@@ -39,7 +39,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
 
       {finallyTasks.map((ft, i) => {
         return (
-          <>
+          <g data-test={`finally-task-node ${ft.name}`}>
             <path
               className="opp-finally-node__connector"
               d={
@@ -69,7 +69,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
                 isSkipped={pipelineRun?.status?.skippedTasks?.some((t) => t.name === ft.name)}
               />
             </g>
-          </>
+          </g>
         );
       })}
     </g>

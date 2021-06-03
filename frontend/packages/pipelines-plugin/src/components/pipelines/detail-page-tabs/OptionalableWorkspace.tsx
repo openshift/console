@@ -14,6 +14,7 @@ const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({ namePrefix, is
   return (
     <>
       <InputField
+        data-test="name"
         name={`${namePrefix}.name`}
         type={TextInputTypes.text}
         placeholder={t('pipelines-plugin~Name')}

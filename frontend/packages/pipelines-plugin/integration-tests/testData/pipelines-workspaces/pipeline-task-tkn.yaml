@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: tkn
+  labels:
+    app.kubernetes.io/version: '0.1'
+    operator.tekton.dev/provider-type: redhat
+spec:
+  description: >-
+    This Task performs operations on Knative resources (services, revisions,
+    routes) using kn CLI
+  params:
+    - default: >-
+        registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:efb51d4a337566ca8532073cd598cc2cfbbec260f037ce4de19d4c67ee411358
+      description: kn CLI container image to run this task
+      name: kn-image
+      type: string
+    - default:
+        - help
+      description: kn CLI arguments to run
+      name: ARGS
+      type: array
+  steps:
+    - args:
+        - $(params.ARGS)
+      command:
+        - /ko-app/kn
+      image: $(params.kn-image)
+      name: kn
+      resources: {}

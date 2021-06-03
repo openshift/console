@@ -43,7 +43,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   };
 
   return (
-    <div className="opp-task-sidebar-param">
+    <div className="opp-task-sidebar-param" data-test={`parameter ${resourceParamName}`}>
       {resourceParam.type === 'array' ? (
         <TextColumnField name={fieldName} label={resourceParam.name} required={emptyIsInvalid}>
           {({ name: arrayName, ...additionalProps }, mergeNewValue: MergeNewValueUtil) => (
@@ -57,6 +57,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
               {(ref) => (
                 <TextAreaField
                   ref={ref}
+                  data-test={`value ${arrayName}`}
                   name={arrayName}
                   {...additionalProps}
                   {...textAreaSettings}
@@ -76,6 +77,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
           {(ref) => (
             <TextAreaField
               ref={ref}
+              data-test={`value ${fieldName}`}
               name={fieldName}
               label={resourceParam.name}
               placeholder={resourceParam.default as string}

@@ -620,6 +620,7 @@ class MastheadToolbarContents_ extends React.Component {
                 className="pf-c-button pf-m-plain"
                 aria-label={t('public~Import YAML')}
                 data-quickstart-id="qs-masthead-import"
+                data-test="import-yaml"
               >
                 <PlusCircleIcon className="co-masthead-icon" alt="" />
               </Link>

@@ -41,7 +41,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
     (allTasksLength === 0 ? 0 : WHEN_EXPRESSION_SPACING);
 
   return (
-    <>
+    <g data-test="builder-finally-node">
       <rect className="opp-builder-finally-node" width={width} height={height} rx="20" ry="20" />
 
       {finallyTasks.map((ft, i) => (
@@ -58,6 +58,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             }
           />
           <g
+            data-test={`finally-task-node ${ft.name}`}
             transform={`translate(${leftPadding}, ${NODE_HEIGHT * i +
               FINALLY_NODE_VERTICAL_SPACING * i +
               FINALLY_NODE_PADDING})`}
@@ -83,7 +84,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
         </g>
       ))}
       {finallyListTasks.map((flt, i) => (
-        <g key={flt.name}>
+        <g key={flt.name} data-test={`finally-task-list-node ${flt.name}`}>
           <path
             className="opp-builder-finally-node__task-connectors"
             d={
@@ -127,13 +128,13 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
               y={FINALLY_ADD_LINK_TEXT_HEIGHT - FINALLY_ADD_LINK_SIZE}
               tooltip={t('pipelines-plugin~Add finally task')}
             />
-            <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE}>
+            <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE} data-test="add-finally-node">
               {t('pipelines-plugin~Add finally task')}
             </text>
           </g>
         </g>
       }
-    </>
+    </g>
   );
 };
 

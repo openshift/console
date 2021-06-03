@@ -39,6 +39,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
+        data-test="pipeline-resources"
         name={fieldName}
         addLabel={addLabel}
         headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}

@@ -63,7 +63,7 @@ Cypress.Commands.add('mouseHover', (selector: string) => {
   cy.get(selector)
     .invoke('show')
     .should('be.visible')
-    .trigger('mouseover');
+    .trigger('mouseover', { force: true });
 });
 
 Cypress.Commands.add(
