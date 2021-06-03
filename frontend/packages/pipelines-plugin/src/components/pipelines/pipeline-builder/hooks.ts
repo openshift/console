@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { getRandomChars } from '@console/shared';
-import { useFormikContext } from 'formik';
+import { useFormikContext, FormikTouched } from 'formik';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
@@ -261,4 +261,41 @@ export const useNodes = (
   );
 
   return [...nodes, finallyNode];
+};
+
+const touchTaskWorkspaces = (task: PipelineTask): FormikTouched<PipelineTask> => ({
+  workspaces: task.workspaces?.map(() => ({ workspace: true })),
+});
+
+const touchTaskResources = (task: PipelineTask): FormikTouched<PipelineTask> => ({
+  resources: {
+    inputs: task.resources?.inputs?.map(() => ({ resource: true })),
+    outputs: task.resources?.outputs?.map(() => ({ resource: true })),
+  },
+});
+
+export const useExplicitPipelineTaskTouch = () => {
+  const { setTouched, touched, values } = useFormikContext<PipelineBuilderFormikValues>();
+  const workspacesTouched = !!touched.formData?.workspaces;
+  const resourcesTouched = !!touched.formData?.resources;
+
+  React.useEffect(() => {
+    if (workspacesTouched) {
+      setTouched({
+        formData: {
+          tasks: values.formData?.tasks?.map(touchTaskWorkspaces),
+          finallyTasks: values.formData?.finallyTasks?.map(touchTaskWorkspaces),
+        },
+      });
+    }
+    if (resourcesTouched) {
+      setTouched({
+        formData: {
+          tasks: values.formData?.tasks?.map(touchTaskResources),
+          finallyTasks: values.formData?.finallyTasks?.map(touchTaskResources),
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspacesTouched, resourcesTouched]);
 };

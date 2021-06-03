@@ -14,7 +14,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import { PipelineModel } from '../../../models';
-import { useFormikFetchAndSaveTasks } from './hooks';
+import { useFormikFetchAndSaveTasks, useExplicitPipelineTaskTouch } from './hooks';
 import { removeTaskModal } from './modals';
 import PipelineBuilderHeader from './PipelineBuilderHeader';
 import Sidebar from './task-sidebar/Sidebar';
@@ -60,6 +60,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     validateForm,
   } = props;
   useFormikFetchAndSaveTasks(namespace, validateForm);
+  useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);
   statusRef.current = status;
