@@ -116,9 +116,15 @@ type RenderExtensionProps = {
   renderExtension: (contentDocument: HTMLDocument, rootSelector: string) => React.ReactNode;
   selector: string;
   markup: string;
+  docContext?: HTMLDocument;
 };
 
-const RenderExtension: React.FC<RenderExtensionProps> = ({ renderExtension, selector, markup }) => {
+const RenderExtension: React.FC<RenderExtensionProps> = ({
+  renderExtension,
+  selector,
+  markup,
+  docContext,
+}) => {
   const forceRender = useForceRender();
   const markupRef = React.useRef<string>(null);
   const shouldRenderExtension = React.useCallback(() => {
@@ -138,7 +144,9 @@ const RenderExtension: React.FC<RenderExtensionProps> = ({ renderExtension, sele
     renderExtension && forceRender();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markup]);
-  return <>{shouldRenderExtension() ? renderExtension?.(document, selector) : null}</>;
+  return (
+    <>{shouldRenderExtension() ? renderExtension?.(docContext ?? document, selector) : null}</>
+  );
 };
 
 const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
@@ -241,7 +249,14 @@ const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
         ref={(r) => setFrame(r)}
         onLoad={() => onLoad()}
       />
-      {loaded && frame && renderExtension && renderExtension(frame.contentDocument, '')}
+      {loaded && frame && (
+        <RenderExtension
+          markup={markup}
+          selector={''}
+          renderExtension={renderExtension}
+          docContext={frame.contentDocument}
+        />
+      )}
     </>
   );
 };
