@@ -41,6 +41,7 @@
   "API version": "API バージョン",
   "Restore": "復元",
   "VolumeSnapshotClass with same provisioner as claim": "要求と同じプロビジョナーを持つボリュームスナップショットクラス",
+  "Select volume snapshot class": "ボリュームスナップショットクラスの選択",
   "PersistentVolumeClaim details": "永続ボリューム要求の詳細",
   "StorageClass": "ストレージクラス",
   "Create VolumeSnapshot": "ボリュームスナップショットの作成",
@@ -68,6 +69,6 @@
   "Cluster": "クラスター",
   "Control Plane": "コントロールプレーン",
   "Control Plane status": "コントロールプレーンのステータス",
-  "Cluster operators": "クラスター Operator ",
+  "Cluster operators": "クラスター Operator",
   "Creating snapshot for claim <1>{resourceName}</1>": "要求 <1>{resourceName}</1> のスナップショットの作成"
 }

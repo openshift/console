@@ -3,6 +3,6 @@
   "Status": "상태",
   "Size": "크기",
   "Source": "소스",
-  "VolumeSnapshotContent": "VolumeSnapshotContent",
+  "VolumeSnapshotContent": "볼륨 스냅샷 컨텐츠",
   "VolumeSnapshotClass": "볼륨 스냅샷 클래스"
 }
