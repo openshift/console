@@ -26,6 +26,7 @@ import {
 } from '@console/shared';
 import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { coFetch } from '@console/internal/co-fetch';
 import * as UIActions from '../../actions/ui';
 import { coFetchJSON } from '../../co-fetch';
 import {
@@ -37,8 +38,8 @@ import {
   NodeModel,
   PodModel,
   StatefulSetModel,
+  InfrastructureModel,
 } from '../../models';
-import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
@@ -100,6 +101,9 @@ import { Timestamp } from '../utils/timestamp';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 import { Details } from './alert-details';
+import { useK8sGet } from '../utils/k8s-get-hook';
+
+import { K8sResourceKind, K8sKind } from '../../module/k8s';
 
 export const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -682,6 +686,7 @@ const getSourceKey = (source) => {
 
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
+    const [logExpApiFlag, setLogExpApiFlag] = React.useState('error');
     const { alert, loaded, loadError, namespace, rule, silencesLoaded, match, location } = props;
     const state = alertState(alert);
 
@@ -692,6 +697,8 @@ export const AlertsDetailsPage = withFallback(
     const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
     const queryParams: string = React.useMemo(() => location?.search, [location]);
+
+    const [infrastructure] = useK8sGet<K8sResourceKind>(InfrastructureModel, 'cluster');
 
     const ele = (
       <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
@@ -710,6 +717,42 @@ export const AlertsDetailsPage = withFallback(
         <HeaderAlertMessage alert={alert} rule={rule} />
       </StatusBox>
     );
+
+    React.useEffect(() => {
+      const asyncFn = async () => {
+        /*const [infrastructure] = await useK8sGet<K8sResourceKind>(
+        InfrastructureModel,
+        'cluster',
+      );*/
+
+        if (infrastructure) {
+          const apiServerURL = infrastructure?.status?.apiServerURL;
+          const logExplorationApiUrl = `http://log-exploration-api-route-openshift-logging.apps.${
+            apiServerURL.split('.')[1]
+          }.devcluster.openshift.com/logs/filter?`;
+          try {
+            const response = await coFetch(
+              logExplorationApiUrl +
+                new URLSearchParams({
+                  namespace: alert?.labels.namespace,
+                  pod: alert?.labels.pod,
+                  maxlogs: '2',
+                }),
+            );
+            await response.json().then(() => {
+              setLogExpApiFlag('success');
+            });
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            setLogExpApiFlag('error');
+            throw err;
+          }
+        } else {
+          setLogExpApiFlag('error');
+        }
+      };
+      asyncFn();
+    }, [alert, infrastructure]);
 
     const alertPodObj = {
       namespace: alert?.labels.namespace,
@@ -731,43 +774,78 @@ export const AlertsDetailsPage = withFallback(
     };
 
     return (
-      <DetailsPage
-        match={match}
-        namespace={alertPodObj.namespace}
-        kind={alertPodObj.kind}
-        kindObj={alertPodObj.kindObj}
-        name={alertPodObj.name}
-        ele={ele}
-        breadcrumbsFor={() => [
-          {
-            name: t('public~Alerts'),
-            path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
-          },
-          { name: t('public~Alert details'), path: undefined },
-        ]}
-        pages={[
-          {
-            href: '',
-            queryParams,
-            // t('public~Details')
-            nameKey: 'public~Details',
-            component: Details,
-            pageData: {
-              alert,
-              rule,
-              namespace: alertPodObj.namespace,
-              silencesLoaded,
-            },
-          },
-          {
-            href: 'logs',
-            queryParams,
-            // t('public~Logs')
-            nameKey: 'public~Logs',
-            component: AlertLogs,
-          },
-        ]}
-      />
+      <>
+        {logExpApiFlag === 'success' ? (
+          <DetailsPage
+            match={match}
+            namespace={alertPodObj.namespace}
+            kind={alertPodObj.kind}
+            kindObj={alertPodObj.kindObj}
+            name={alertPodObj.name}
+            ele={ele}
+            breadcrumbsFor={() => [
+              {
+                name: t('public~Alerts'),
+                path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
+              },
+              { name: t('public~Alert details'), path: undefined },
+            ]}
+            pages={[
+              {
+                href: '',
+                queryParams,
+                // t('public~Details')
+                nameKey: 'public~Details',
+                component: Details,
+                pageData: {
+                  alert,
+                  rule,
+                  namespace: alertPodObj.namespace,
+                  silencesLoaded,
+                },
+              },
+              {
+                href: 'logs',
+                queryParams,
+                // t('public~Logs')
+                nameKey: 'public~Logs',
+                component: AlertLogs,
+              },
+            ]}
+          />
+        ) : (
+          <DetailsPage
+            match={match}
+            namespace={alertPodObj.namespace}
+            kind={alertPodObj.kind}
+            kindObj={alertPodObj.kindObj}
+            name={alertPodObj.name}
+            ele={ele}
+            breadcrumbsFor={() => [
+              {
+                name: t('public~Alerts'),
+                path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
+              },
+              { name: t('public~Alert details'), path: undefined },
+            ]}
+            pages={[
+              {
+                href: '',
+                queryParams,
+                // t('public~Details')
+                nameKey: 'public~Details',
+                component: Details,
+                pageData: {
+                  alert,
+                  rule,
+                  namespace: alertPodObj.namespace,
+                  silencesLoaded,
+                },
+              },
+            ]}
+          />
+        )}
+      </>
     );
   }),
 );
