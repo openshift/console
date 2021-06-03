@@ -27,8 +27,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/InsightsPopup/index' /* webpackChunkName: "insights-plugin" */).then(
           (m) => m.InsightsPopup,
         ),
-      // t('insights-plugin~Insights status')
-      popupTitle: '%insights-plugin~Insights status%',
+      // t('insights-plugin~Insights Advisor status')
+      popupTitle: '%insights-plugin~Insights Advisor status%',
     },
   },
 ];
