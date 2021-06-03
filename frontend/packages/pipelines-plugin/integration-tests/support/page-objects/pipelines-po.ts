@@ -79,7 +79,7 @@ export const pipelineDetailsPO = {
   detailsTab: '[data-test-id$="Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
   yamlTab: '[data-test-id$="YAML"]',
-  pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
+  pipelineRunsTab: '[data-test-id="horizontal-link-PipelineRuns"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   details: {
