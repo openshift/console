@@ -171,8 +171,7 @@ const AppContents: React.FC<{}> = () => {
       <div id="content">
         <GlobalNotifications />
         <Route path={namespacedRoutes} component={NamespaceBar} />
-        {/* tabIndex is necessary to restore keyboard scrolling as a result of PatternFly's <Page> having a hard-coded tabIndex.  See https://github.com/patternfly/patternfly-react/issues/4180 */}
-        <div id="content-scrollable" tabIndex={-1}>
+        <div id="content-scrollable">
           <Switch>
             {pluginPageRoutes}
 
