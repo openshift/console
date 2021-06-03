@@ -3063,7 +3063,7 @@ export const sampleClusterServiceVersions: FirehoseResult = {
             name: 'elasticsearches.logging.openshift.io',
             status: 'Present',
             uuid: '58fe3dc1-0670-48f6-8382-27aadcb7eadb',
-            version: 'v1beta1',
+            version: 'v1',
           },
           {
             group: 'apiextensions.k8s.io',
@@ -3072,7 +3072,7 @@ export const sampleClusterServiceVersions: FirehoseResult = {
             name: 'jaegers.jaegertracing.io',
             status: 'Present',
             uuid: 'f68d706b-7807-453f-91bf-ead0e2fcefcb',
-            version: 'v1beta1',
+            version: 'v1',
           },
           {
             dependents: [
