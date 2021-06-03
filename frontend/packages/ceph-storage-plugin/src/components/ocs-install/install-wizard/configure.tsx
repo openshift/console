@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import * as fuzzy from 'fuzzysearch';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
 import { getName, ResourceDropdown, useFlag } from '@console/shared';
@@ -219,6 +220,10 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
     (device: NetworkAttachmentDefinitionKind) => publicNetworkName !== getName(device),
     [publicNetworkName],
   );
+
+  const autoCompleteFilter = (strText: string, item: React.ReactElement): boolean =>
+    fuzzy(strText, item?.props?.name);
+
   return (
     <>
       <FormGroup
@@ -269,6 +274,7 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
                   setNetwork(NADSelectorType.PUBLIC, selectedResource)
                 }
                 resourceFilter={filterForPublicDevices}
+                autocompleteFilter={autoCompleteFilter}
                 showBadge
               />
             </Firehose>
@@ -288,6 +294,7 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
                   setNetwork(NADSelectorType.CLUSTER, selectedResource)
                 }
                 resourceFilter={filterForClusterDevices}
+                autocompleteFilter={autoCompleteFilter}
                 showBadge
               />
             </Firehose>
