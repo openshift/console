@@ -131,7 +131,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         onClick: cancel,
       },
       {
-        id: 'modal-confirm-action',
+        id: 'confirm-action',
         label: t(`ceph-storage-plugin~${primaryAction}`),
         type: ButtonType.submit,
         variant:
@@ -160,7 +160,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
             variant={buttonProp.variant}
             isDisabled={buttonProp.disable}
             id={buttonProp.id}
-            data-test={buttonProp.id}
+            data-test-id={buttonProp.id}
             onClick={buttonProp.onClick}
           >
             {buttonProp.label}

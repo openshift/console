@@ -106,7 +106,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
               key={`device-${device?.name}`}
               component="button"
               id={device?.name}
-              data-test={device?.name}
+              data-test="volume-type-dropdown-item"
               onClick={(e) => setVolumeType(e.currentTarget.id)}
             >
               {device?.name.toUpperCase()}
@@ -145,7 +145,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
       key={`replica-${OCS_DEVICE_REPLICA[replica]}`}
       component="button"
       id={replica}
-      data-test-id={replica}
+      data-test-id="replica-dropdown-item"
       onClick={(e) =>
         dispatch({ type: BlockPoolActionType.SET_POOL_REPLICA_SIZE, payload: e.currentTarget.id })
       }
