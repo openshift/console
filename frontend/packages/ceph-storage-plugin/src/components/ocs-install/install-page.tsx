@@ -62,16 +62,10 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     null,
     CEPH_STORAGE_NAMESPACE,
   );
-  const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
-  const [sc, isLoaded, err] = useK8sGet<ListKind<StorageClassResourceKind>>(StorageClassModel);
-  const memoizedCSV = useDeepCompareMemoize(csv, true);
 
-  React.useEffect(() => {
-    if (!err && isLoaded) {
-      const isSCWithNoProv = sc?.items?.some(filterSCWithNoProv);
-      setHasNoProvSC(isSCWithNoProv);
-    }
-  }, [appName, err, isLoaded, ns, sc]);
+  const memoizedCSV = useDeepCompareMemoize(csv, true);
+  const [sc] = useK8sGet<ListKind<StorageClassResourceKind>>(StorageClassModel);
+  const hasNoProvSC = sc?.items?.some(filterSCWithNoProv);
 
   React.useEffect(() => {
     if (csvLoaded && !csvError) {
@@ -131,8 +125,9 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
       case 2:
         if (hasNoProvSC) {
           history.push(getAnchor(3, 2));
+          break;
         }
-        break;
+      // eslint-disable-next-line no-fallthrough
       default:
         history.push(getAnchor(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex));
     }
