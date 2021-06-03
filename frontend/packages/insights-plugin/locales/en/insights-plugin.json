@@ -10,6 +10,7 @@
   "Total Risk": "Total Risk",
   "Fixable issues": "Fixable issues",
   "View all in OpenShift Cluster Manager": "View all in OpenShift Cluster Manager",
+  "Go to OpenShift Cluster Manager": "Go to OpenShift Cluster Manager",
   "More about Insights": "More about Insights",
   "Not available": "Not available",
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",

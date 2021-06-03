@@ -98,7 +98,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         )}
       </div>
       <div className="co-status-popup__section">
-        {!isWaitingOrDisabled && !isError && (
+        {!isWaitingOrDisabled && !isError && clusterID && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
             <div>
@@ -108,6 +108,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               />
             </div>
           </>
+        )}
+        {!isWaitingOrDisabled && !isError && !clusterID && (
+          <div>
+            <ExternalLink
+              href={`https://cloud.redhat.com/openshift/`}
+              text={t('insights-plugin~Go to OpenShift Cluster Manager')}
+            />
+          </div>
         )}
         {(isWaitingOrDisabled || isError) && (
           <ExternalLink
