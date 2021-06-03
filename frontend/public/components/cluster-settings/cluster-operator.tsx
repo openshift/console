@@ -58,10 +58,10 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
 };
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-4', 'col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-md',
   Kebab.columnClass,
 ];
 

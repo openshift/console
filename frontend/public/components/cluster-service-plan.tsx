@@ -11,11 +11,7 @@ import {
 } from '../models';
 import { viewYamlComponent } from './utils/horizontal-nav';
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
-];
+const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md'];
 
 const ClusterServicePlanTableHeader = () => {
   return [
