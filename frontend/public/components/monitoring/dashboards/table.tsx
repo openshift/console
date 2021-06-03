@@ -19,6 +19,8 @@ import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
 import TablePagination from '../table-pagination';
 
+import { useTranslation } from 'react-i18next';
+
 type AugmentedColumnStyle = ColumnStyle & {
   className?: string;
 };
@@ -63,6 +65,8 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
   const onSort = (e, index: ISortBy['index'], direction: ISortBy['direction']) =>
     setSortBy({ index, direction });
   const safeFetch = React.useCallback(useSafeFetch(), []);
+
+  const { t } = useTranslation();
 
   const tick = () => {
     Promise.all(
@@ -111,7 +115,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
     return <ErrorAlert message={error} />;
   }
   if (_.isEmpty(data)) {
-    return <EmptyBox label="Data" />;
+    return <EmptyBox label={t('public~Data')} />;
   }
 
   const columns: AugmentedColumnStyle[] = getColumns(panel.styles);
@@ -158,7 +162,7 @@ const Table: React.FC<Props> = ({ panel, pollInterval, queries }) => {
     <>
       <div className="monitoring-dashboards__table-container">
         <PFTable
-          aria-label="query results table"
+          aria-label={t('public~query results table')}
           cells={headers}
           className="monitoring-dashboards__table"
           gridBreakPoint={TableGridBreakpoint.none}
