@@ -125,10 +125,10 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             <PlusNodeDecorator
               x={0}
               y={FINALLY_ADD_LINK_TEXT_HEIGHT - FINALLY_ADD_LINK_SIZE}
-              tooltip={t('pipelines-plugin~Add final task')}
+              tooltip={t('pipelines-plugin~Add finally task')}
             />
             <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE}>
-              {t('pipelines-plugin~Add final task')}
+              {t('pipelines-plugin~Add finally task')}
             </text>
           </g>
         </g>

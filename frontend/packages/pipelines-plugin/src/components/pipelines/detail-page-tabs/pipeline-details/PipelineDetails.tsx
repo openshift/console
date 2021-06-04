@@ -35,7 +35,7 @@ const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, cus
           <DynamicResourceLinkList
             namespace={pipeline.metadata.namespace}
             links={finallyTaskLinks}
-            title={t('pipelines-plugin~Final tasks')}
+            title={t('pipelines-plugin~Finally tasks')}
           />
           <WorkspaceDefinitionList workspaces={pipeline.spec.workspaces} />
         </div>
