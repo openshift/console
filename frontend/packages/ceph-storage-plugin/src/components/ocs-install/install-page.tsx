@@ -121,15 +121,14 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     const modeIndex = getIndex(MODES, value);
-    switch (modeIndex) {
-      case 2:
-        if (hasNoProvSC) {
-          history.push(getAnchor(3, 2));
-          break;
-        }
-      // eslint-disable-next-line no-fallthrough
-      default:
-        history.push(getAnchor(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex));
+    // `modeIndex` can have one of the following numerical values:
+    // 1: INTERNAL
+    // 2: ATTACHED_DEVICES
+    // 3: EXTERNAL
+    if (modeIndex === 2 && hasNoProvSC) {
+      history.push(getAnchor(3, 2));
+    } else {
+      history.push(getAnchor(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex));
     }
   };
 
