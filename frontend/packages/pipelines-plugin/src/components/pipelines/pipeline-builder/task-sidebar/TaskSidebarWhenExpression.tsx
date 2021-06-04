@@ -21,24 +21,24 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
   const { name, selectedData } = props;
   const [field] = useField(name);
   const { t } = useTranslation();
-  const removeWhenExpressionLabel = t('pipelines-plugin~Remove When Expression');
+  const removeWhenExpressionLabel = t('pipelines-plugin~Remove when expression');
   const autoCompleteValues: string[] = useBuilderParams(selectedData);
 
   return (
     <div className="opp-task-sidebar-when-expression">
-      <h2>{t('pipelines-plugin~When Expression')}</h2>
+      <h2>{t('pipelines-plugin~When expressions')}</h2>
       <p className="co-help-text">
         {field.value?.length > 0 ? (
           <Trans ns="pipelines-plugin">
             use this format while referencing the variables in this form: <code>$(</code>
           </Trans>
         ) : (
-          t('pipelines-plugin~No When expressions are associated with this task')
+          t('pipelines-plugin~No when expressions are associated with this task.')
         )}
       </p>
       <MultiColumnField
         name={name}
-        addLabel={t('pipelines-plugin~Add When Expression')}
+        addLabel={t('pipelines-plugin~Add when expression')}
         headers={[]}
         emptyValues={{ input: '', operator: '', values: [''] }}
         rowRenderer={({ onDelete, fieldName }: RowRendererProps) => (

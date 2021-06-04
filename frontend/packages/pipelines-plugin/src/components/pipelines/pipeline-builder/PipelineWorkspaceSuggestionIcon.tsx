@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Popover } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import './PipelineWorkspaceSuggestionIcon.scss';
 
@@ -14,7 +14,7 @@ const PipelineWorkspaceSuggestionIcon: React.FC = () => {
 
   return (
     <Popover aria-label={content} bodyContent={content}>
-      <OutlinedQuestionCircleIcon className="opp-pipeline-workspace-suggestion-icon" />
+      <InfoCircleIcon className="opp-pipeline-workspace-suggestion-icon" />
     </Popover>
   );
 };
