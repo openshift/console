@@ -159,7 +159,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
                   disabled={disabled}
                   checked={radio.value === accessMode}
                   aria-describedby="access-mode-help"
-                  name="accessMode"
+                  name={`${name}.accessMode`}
                 />
               );
             })}
@@ -200,7 +200,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
                 onChange={handleVolumeMode}
                 inline
                 checked={radio.value === volumeMode}
-                name="volumeMode"
+                name={`${name}.volumeMode`}
               />
             ))}
           </FormGroup>
