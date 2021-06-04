@@ -36,14 +36,16 @@ import './body.scss';
 
 export const BlockPoolStatus: React.FC<BlockPoolStatusProps> = ({ status, name, error = '' }) => {
   const { t } = useTranslation();
-  const statusObj: ProgressStatusProps = PROGRESS_STATUS(t).find((state) => state.name === status);
+  const statusObj: ProgressStatusProps = PROGRESS_STATUS(t, name).find(
+    (state) => state.name === status,
+  );
 
   return (
     <>
       <EmptyState>
         <EmptyStateIcon icon={statusObj.icon} className={statusObj.className} />
         <EmptyStateBody data-test="empty-state-body">
-          {error ? getErrorMessage(error) : statusObj.desc.replace('{name}', name)}
+          {error ? getErrorMessage(error) : statusObj.desc}
         </EmptyStateBody>
       </EmptyState>
     </>
