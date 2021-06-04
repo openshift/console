@@ -88,7 +88,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   }, [infra, infraLoaded, infraError]);
 
   const getMode = () => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
+    const searchParams = new URLSearchParams(window.location.search);
     const modeParam = parseInt(searchParams.get('mode'), 10) || 1;
     const sanitizedMode =
       modeParam && modeParam <= (!isIndepModeSupportedPlatform ? 2 : 3) && modeParam >= 1
@@ -98,7 +98,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   };
 
   const getParamString = (step: number, mode: number) => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
+    const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('step', step.toString());
     searchParams.set('mode', mode.toString());
     return searchParams.toString();
@@ -106,10 +106,10 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
   const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
 
-  const getStep = (offset: number = 0) => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
+  const getStep = (maxSteps: number = 5) => {
+    const searchParams = new URLSearchParams(window.location.search);
     const step = parseInt(searchParams.get('step'), 10) || 1;
-    const sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
+    const sanitizedStep = step <= maxSteps && step >= 1 ? step : 1;
     return sanitizedStep;
   };
 
@@ -121,10 +121,9 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     const modeIndex = getIndex(MODES, value);
-    // `modeIndex` can have one of the following numerical values:
-    // 1: INTERNAL
-    // 2: ATTACHED_DEVICES
-    // 3: EXTERNAL
+    // Set the currently active step in the wizard to "Storage and Nodes"
+    // when the currently active mode is set to "Internal - Attached Devices"
+    // and a "no-provisioner" storage class exists.
     if (modeIndex === 2 && hasNoProvSC) {
       history.push(getAnchor(3, 2));
     } else {
