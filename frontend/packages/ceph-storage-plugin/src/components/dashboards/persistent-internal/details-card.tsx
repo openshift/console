@@ -31,6 +31,7 @@ import {
   SubscriptionKind,
 } from '@console/operator-lifecycle-manager/src/types';
 import { createSubscriptionChannelModal } from '@console/operator-lifecycle-manager/src/components/modals/subscription-channel-modal';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { Button } from '@patternfly/react-core';
 import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
@@ -62,14 +63,14 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     InfrastructureModel,
     'cluster',
   );
-  const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sGet<
+  const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sWatchResource<
     SubscriptionKind
-  >(SubscriptionModel, 'ocs-operator', 'openshift-storage');
+  >(SubscriptionResource);
   const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sGet<
     PackageManifestKind
   >(PackageManifestModel, 'ocs-operator', 'openshift-storage');
   const currentChannel =
-    ocsSubscription?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
+    ocsSubscription?.[0]?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
   const filteredVersions = packageManifest?.status?.channels?.filter(
     (channel) =>
       parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) >
@@ -145,28 +146,36 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             {infrastructurePlatform}
           </DetailItem>
           <DetailItem title={t('ceph-storage-plugin~Mode')}>Internal</DetailItem>
-          <DetailItem
-            key="version"
-            title={t('ceph-storage-plugin~Version')}
-            isLoading={!subscriptionLoaded}
-            error={subscriptionLoaded && !ocsVersion}
-          >
-            {ocsVersion}
-            <Button
-              type="button"
-              isInline
-              onClick={ocsChannelModal}
-              variant="link"
-              isDisabled={
-                !packageManifest ||
-                isEmpty(filteredVersions) ||
-                ocsSubscription?.spec?.installPlanApproval === 'Automatic'
-              }
+          {!isEmpty(filteredVersions) &&
+          ocsSubscription?.[0]?.spec?.installPlanApproval === 'Manual' ? (
+            <DetailItem
+              key="version"
+              title={t('ceph-storage-plugin~Version')}
+              isLoading={!subscriptionLoaded}
+              error={subscriptionLoaded && !ocsVersion}
             >
-              <BlueArrowCircleUpIcon className="co-icon-space-r" />
-              {ocsSubscriptionLoaded ? ocsSubscription.spec.channel : null}
-            </Button>
-          </DetailItem>
+              {ocsVersion}
+              <Button
+                type="button"
+                isInline
+                onClick={ocsChannelModal}
+                variant="link"
+                isDisabled={!ocsSubscriptionLoaded || !packageManifest}
+              >
+                <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                {ocsSubscriptionLoaded ? ocsSubscription?.[0].spec.channel : null}
+              </Button>
+            </DetailItem>
+          ) : (
+            <DetailItem
+              key="version"
+              title={t('ceph-storage-plugin~Version')}
+              isLoading={!subscriptionLoaded}
+              error={subscriptionLoaded && !ocsVersion}
+            >
+              {ocsVersion}
+            </DetailItem>
+          )}
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>
