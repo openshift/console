@@ -31,30 +31,33 @@ export const LoadingComponent: React.FC = () => {
   );
 };
 
-export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
+export const PROGRESS_STATUS = (t: TFunction, poolName: string): ProgressStatusProps[] => [
   {
     name: POOL_PROGRESS.PROGRESS,
     icon: LoadingComponent,
-    desc: t('ceph-storage-plugin~Pool {name} creation in progress'),
+    desc: t('ceph-storage-plugin~Pool {{name}} creation in progress', { name: poolName }),
     className: '',
   },
   {
     name: POOL_PROGRESS.CREATED,
     icon: CheckCircleIcon,
-    desc: t('ceph-storage-plugin~Pool {name} was successfully created'),
+    desc: t('ceph-storage-plugin~Pool {{name}} was successfully created', { name: poolName }),
     className: 'ceph-block-pool__check-icon',
   },
   {
     name: POOL_PROGRESS.FAILED,
     icon: ExclamationCircleIcon,
-    desc: t('ceph-storage-plugin~An error occurred Pool {name} was not created'),
+    desc: t('ceph-storage-plugin~An error occurred Pool {{name}} was not created', {
+      name: poolName,
+    }),
     className: 'ceph-block-pool__error-icon',
   },
   {
     name: POOL_PROGRESS.TIMEOUT,
     icon: DisconnectedIcon,
     desc: t(
-      'ceph-storage-plugin~Pool {name} creation timed out. Please check if ocs-operator and rook operator are running',
+      'ceph-storage-plugin~Pool {{name}} creation timed out. Please check if ocs-operator and rook operator are running',
+      { name: poolName },
     ),
     className: '',
   },
@@ -77,7 +80,7 @@ export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
   {
     name: POOL_PROGRESS.NOTREADY,
     icon: ExclamationCircleIcon,
-    desc: t('ceph-storage-plugin~Pool {name} got created with errors.'),
+    desc: t('ceph-storage-plugin~Pool {{name}} got created with errors.', { name: poolName }),
     className: 'ceph-block-pool__error-icon',
   },
 ];
