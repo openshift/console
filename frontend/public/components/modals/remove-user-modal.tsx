@@ -30,7 +30,7 @@ export const RemoveUserModal = withHandlePromise((props: RemoveUserModalProps) =
         {t('public~Remove User from Group?')}
       </ModalTitle>
       <ModalBody>
-        {t('public~Remove User {user} from Group {name}?', {
+        {t('public~Remove User {{ user }} from Group {{ name }}?', {
           user: props.user,
           name: props.group.metadata.name,
         })}

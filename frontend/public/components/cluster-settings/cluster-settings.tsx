@@ -768,7 +768,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               variant="danger"
               isInline
               title={t(
-                'public~Version {{version}} not found in channel {{channel}}.  To request update recommendations, configure a channel that supports your version.',
+                'public~Version {{version}} not found in channel {{channel}}. To request update recommendations, configure a channel that supports your version.',
                 { version: getLastCompletedUpdate(cv), channel: cv.spec.channel },
               )}
               className="co-alert"
