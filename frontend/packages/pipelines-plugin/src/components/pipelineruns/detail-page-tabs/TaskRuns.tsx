@@ -11,6 +11,7 @@ const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => (
     showTitle={false}
     selector={{ 'tekton.dev/pipelineRun': obj.metadata.name }}
     showPipelineColumn={false}
+    namespace={obj.metadata.namespace}
     hideBadge
   />
 );
