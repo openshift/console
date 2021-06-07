@@ -7,7 +7,8 @@ describe('Test for offensive language', () => {
         `git grep --ignore-case ${word} -- ../*\
          ':(exclude)../integration-tests-cypress/tests/inclusive-language.spec.ts'\
          ':(exclude)../src/components/create-vm-wizard/strings/strings-with-offensive-language.ts'\
-         ':(exclude)../integration-tests/deploy-kubevirt-gating.sh'`,
+         ':(exclude)../integration-tests/deploy-kubevirt-gating.sh'\
+         ':(exclude)../integration-tests/ci-scripts/setup-storage.sh'`,
         {
           timeout: 10000,
           failOnNonZeroExit: false,
