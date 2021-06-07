@@ -124,7 +124,7 @@ export const pipelineDetailsPO = {
 };
 
 export const triggerTemplateDetailsPO = {
-  title: '[data-test-section-heading="Trigger Template details"]',
+  title: '[data-test-section-heading="TriggerTemplate details"]',
   detailsTab: '[data-test-id="horizontal-link-public~Details"]',
   yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
   details: {
@@ -150,7 +150,7 @@ export const triggerTemplateDetailsPO = {
 };
 
 export const eventListenerDetailsPO = {
-  title: '[data-test-section-heading="Event Listener details"]',
+  title: '[data-test-section-heading="EventListener details"]',
   details: {
     triggerBindingLink: '[data-test-id="github-pullreq"]',
     triggerTemplateIcon: '[title="TriggerTemplate"]',

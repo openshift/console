@@ -204,7 +204,7 @@ Then('modal is displayed with header message {string}', (headerName: string) => 
 });
 
 Then('trigger template dropdown displayed with help text Select Trigger Template', () => {
-  cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('have.text', 'Select Trigger Template');
+  cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('have.text', 'Select TriggerTemplate');
 });
 
 Then('Remove button will be disabled', () => {
