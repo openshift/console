@@ -142,7 +142,7 @@ export const EventSourceCronJobModel: K8sKind = {
 
 export const EventSourcePingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1beta2',
   kind: 'PingSource',
   label: 'PingSource',
   // t('knative-plugin~PingSource')
@@ -160,7 +160,7 @@ export const EventSourcePingModel: K8sKind = {
 
 export const EventSourceContainerModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'ContainerSource',
   label: 'ContainerSource',
   // t('knative-plugin~ContainerSource')
@@ -178,7 +178,7 @@ export const EventSourceContainerModel: K8sKind = {
 
 export const EventSourceApiServerModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'ApiServerSource',
   label: 'ApiServerSource',
   // t('knative-plugin~ApiServerSource')
@@ -232,7 +232,7 @@ export const EventSourceKafkaModel: K8sKind = {
 
 export const EventSourceSinkBindingModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP,
-  apiVersion: 'v1beta1',
+  apiVersion,
   kind: 'SinkBinding',
   label: 'SinkBinding',
   // t('knative-plugin~SinkBinding')
