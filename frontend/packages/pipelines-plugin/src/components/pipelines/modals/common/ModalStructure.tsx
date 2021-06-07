@@ -44,7 +44,7 @@ const ModalStructure: React.FC<ModalStructureCombinedProps> = (props) => {
           errorMessage={status?.submitError}
           inProgress={isSubmitting}
           submitText={submitBtnText}
-          submitDisabled={!_.isEmpty(errors)}
+          submitDisabled={!_.isEmpty(errors) || isSubmitting}
           submitDanger={submitDanger}
           cancel={close}
         />

@@ -72,7 +72,6 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
 
     return resourceCall
       .then(() => {
-        actions.setSubmitting(false);
         history.push(`/k8s/ns/${ns}/${referenceForModel(PipelineModel)}/${pipeline.metadata.name}`);
       })
       .catch((e) => {

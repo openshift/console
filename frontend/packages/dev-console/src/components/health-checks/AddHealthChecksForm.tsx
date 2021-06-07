@@ -41,14 +41,12 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   const handleSubmit = (values, actions) => {
     const updatedResource = updateHealthChecksProbe(values, resource.data, container);
 
-    k8sUpdate(modelFor(referenceFor(resource.data)), updatedResource)
+    return k8sUpdate(modelFor(referenceFor(resource.data)), updatedResource)
       .then(() => {
-        actions.setSubmitting(false);
         actions.setStatus({ error: '' });
         history.goBack();
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ errors: err });
       });
   };

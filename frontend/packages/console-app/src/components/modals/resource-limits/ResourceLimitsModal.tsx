@@ -30,9 +30,9 @@ const ResourceLimitsModal: React.FC<Props> = ({
         <ResourceLimitSection hideTitle />
       </ModalBody>
       <ModalSubmitFooter
-        submitDisabled={!_.isEmpty(errors)}
+        submitDisabled={!_.isEmpty(errors) || isSubmitting}
         inProgress={isSubmitting}
-        errorMessage={status && status.submitError}
+        errorMessage={status?.submitError}
         submitText={t('console-app~Save')}
         cancel={cancel}
       />

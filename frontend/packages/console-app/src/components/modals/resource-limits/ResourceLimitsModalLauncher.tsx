@@ -28,7 +28,8 @@ const ResourceLimitsModalLauncher: React.FC<ResourceLimitsModalLauncherProps> = 
       limits: { cpu, memory },
     } = values;
     const resources = getResourceLimitsData({ cpu, memory });
-    k8sPatch(props.model, props.resource, [
+
+    return k8sPatch(props.model, props.resource, [
       {
         op: 'replace',
         path: `/spec/template/spec/containers/0/resources`,
@@ -36,11 +37,9 @@ const ResourceLimitsModalLauncher: React.FC<ResourceLimitsModalLauncherProps> = 
       },
     ])
       .then(() => {
-        actions.setSubmitting(false);
         props.close();
       })
       .catch((error) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: error });
       });
   };

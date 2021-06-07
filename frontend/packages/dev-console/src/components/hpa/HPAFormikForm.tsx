@@ -52,18 +52,16 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
     const invalidUsageError = getInvalidUsageError(hpa, values);
     if (invalidUsageError) {
       helpers.setStatus({ submitError: invalidUsageError });
-      return;
+      return Promise.reject();
     }
 
-    helpers.setSubmitting(true);
     const method = existingHPA ? k8sUpdate : k8sCreate;
-    method(HorizontalPodAutoscalerModel, hpa)
+
+    return method(HorizontalPodAutoscalerModel, hpa)
       .then(() => {
-        helpers.setSubmitting(false);
         history.goBack();
       })
       .catch((error) => {
-        helpers.setSubmitting(false);
         helpers.setStatus({
           submitError: error?.message || t('devconsole~Unknown error submitting'),
         });

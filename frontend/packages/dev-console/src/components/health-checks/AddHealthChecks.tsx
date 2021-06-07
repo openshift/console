@@ -125,7 +125,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
             errorMessage={status && status?.errors?.json?.message}
             isSubmitting={isSubmitting}
             submitLabel={healthCheckAdded ? t('devconsole~Save') : t('devconsole~Add')}
-            disableSubmit={isFormClean || !dirty || !_.isEmpty(errors)}
+            disableSubmit={isFormClean || !dirty || !_.isEmpty(errors) || isSubmitting}
             resetLabel={t('devconsole~Cancel')}
             hideSubmit={viewOnly}
           />

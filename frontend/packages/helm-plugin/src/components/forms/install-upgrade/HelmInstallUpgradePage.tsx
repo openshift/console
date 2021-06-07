@@ -141,7 +141,6 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   };
 
   const handleSubmit = (values, actions) => {
-    actions.setStatus({ isSubmitting: true });
     const {
       releaseName,
       chartURL,
@@ -164,14 +163,14 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             errorsText: ajv.errorsText(),
           }),
         });
-        return;
+        return Promise.reject();
       }
     } else if (yamlData) {
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
         actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
-        return;
+        return Promise.reject();
       }
     }
 
@@ -185,7 +184,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const isGoingToTopology =
       helmAction === HelmActionType.Install || helmActionOrigin === HelmActionOrigins.topology;
 
-    config
+    return config
       .fetch('/api/helm/release', payload, null, -1)
       .then(async (res: HelmRelease) => {
         let redirect = config.redirectURL;
@@ -206,12 +205,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           }
         }
 
-        actions.setStatus({ isSubmitting: false });
         history.push(redirect);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message, isSubmitting: false });
+        actions.setStatus({ submitError: err.message });
       });
   };
 

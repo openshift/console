@@ -30,6 +30,7 @@ const TrafficSplittingModal: React.FC<Props> = (props) => {
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
+        submitDisabled={isSubmitting}
         submitText={t('knative-plugin~Save')}
         cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}

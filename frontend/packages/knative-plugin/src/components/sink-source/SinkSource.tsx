@@ -57,9 +57,8 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
           }
         : { spec: { ...source.spec, sink: { uri: sink?.uri } } }),
     };
-    k8sUpdate(modelFor(referenceFor(source)), updatePayload)
+    return k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ error: '' });
         close();
       })

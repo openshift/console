@@ -58,21 +58,18 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
   };
 
   const handleSubmit = (values, actions) => {
-    actions.setStatus({ isSubmitting: true });
     const payload = {
       namespace,
       name: releaseName,
       version: values.revision,
     };
 
-    config
+    return config
       .fetch('/api/helm/release', payload, null, -1)
       .then(() => {
-        actions.setStatus({ isSubmitting: false });
         history.push(config.redirectURL);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

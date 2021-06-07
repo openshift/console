@@ -18,7 +18,7 @@ const ProjectAccessForm: React.FC<ProjectAccessFormProps> = ({
   roles,
 }) => {
   const { t } = useTranslation();
-  const disableSubmit = !dirty || !_.isEmpty(errors);
+  const disableSubmit = !dirty || !_.isEmpty(errors) || isSubmitting;
   return (
     <Form onSubmit={handleSubmit}>
       <div className="co-m-pane__form">

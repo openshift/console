@@ -37,9 +37,8 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
         spec: { ...source.spec, subscriber: { ...values } },
       }),
     };
-    k8sUpdate(modelFor(referenceFor(source)), updatePayload)
+    return k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ error: '' });
         close();
       })

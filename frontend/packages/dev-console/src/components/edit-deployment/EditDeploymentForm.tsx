@@ -105,7 +105,9 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
         infoMessage={t('devconsole~Click reload to see the new version.')}
         isSubmitting={isSubmitting}
         submitLabel={t('devconsole~Save')}
-        disableSubmit={editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)}
+        disableSubmit={
+          (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
+        }
         handleCancel={history.goBack}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
         sticky

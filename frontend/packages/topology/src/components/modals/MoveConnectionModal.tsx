@@ -108,7 +108,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> &
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('topology~Move')}
-        submitDisabled={!isDirty}
+        submitDisabled={!isDirty || isSubmitting}
         cancel={cancel}
         inProgress={isSubmitting}
         errorMessage={status && status.submitError}
@@ -146,15 +146,12 @@ class MoveConnectionModal extends PromiseComponent<
   };
 
   private handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
     const { close } = this.props;
-    this.handlePromise(this.onSubmit(values.target))
+    return this.handlePromise(this.onSubmit(values.target))
       .then(() => {
-        actions.setSubmitting(false);
         close();
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err });
       });
   };

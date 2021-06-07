@@ -23,15 +23,11 @@ const RemoveTriggerModal: React.FC<RemoveTriggerModalProps> = ({ pipeline, close
     values: RemoveTriggerFormValues,
     actions: FormikHelpers<RemoveTriggerFormValues>,
   ) => {
-    actions.setSubmitting(true);
-
-    removeTrigger(values, pipeline)
+    return removeTrigger(values, pipeline)
       .then(() => {
-        actions.setSubmitting(false);
         close();
       })
       .catch((e) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: e.message });
       });
   };

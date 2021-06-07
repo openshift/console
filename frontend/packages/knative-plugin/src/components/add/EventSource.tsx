@@ -142,13 +142,12 @@ export const EventSource: React.FC<Props> = ({
       },
     } = values;
     const eventSrcRequest: Promise<K8sResourceKind> = createResources(values);
-    eventSrcRequest
+
+    return eventSrcRequest
       .then(() => {
-        actions.setSubmitting(false);
         handleRedirect(projectName, perspective, perpectiveExtension);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

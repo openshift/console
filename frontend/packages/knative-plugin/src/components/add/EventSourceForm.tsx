@@ -92,7 +92,8 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         isSubmitting={isSubmitting}
         submitLabel={t('knative-plugin~Create')}
         disableSubmit={
-          values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)
+          (values.editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) ||
+          isSubmitting
         }
         resetLabel={t('knative-plugin~Cancel')}
         sticky
