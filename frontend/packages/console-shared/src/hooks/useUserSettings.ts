@@ -85,16 +85,14 @@ export const useUserSettings = <T>(
     if (isLocalStorage) {
       return;
     }
-    if (cfLoadError || (!cfData && cfLoaded)) {
+    if (cfLoadError?.response?.status === 404 || (!cfData && cfLoaded)) {
       (async () => {
         try {
           await createConfigMap();
         } catch (err) {
-          if (err?.response?.status === 403 || err?.response?.status === 404) {
-            setFallbackLocalStorage(true);
-          } else {
-            throw err;
-          }
+          // eslint-disable-next-line no-console
+          console.error(err);
+          setFallbackLocalStorage(true);
         }
       })();
     } else if (
@@ -120,9 +118,11 @@ export const useUserSettings = <T>(
       updateConfigMap(cfData, keyRef.current, seralizeData(defaultValueRef.current));
       setSettings(defaultValueRef.current);
       setLoaded(true);
-    } else if (cfLoaded) {
+    } else if (cfLoaded && !cfLoadError) {
       setSettings(defaultValueRef.current);
       setLoaded(true);
+    } else if (cfLoadError && cfLoadError.response?.status !== 404) {
+      setFallbackLocalStorage(true);
     }
     // This effect should only be run on change of configmap data, status.
     // eslint-disable-next-line react-hooks/exhaustive-deps
