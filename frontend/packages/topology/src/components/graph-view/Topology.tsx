@@ -27,6 +27,8 @@ import {
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
 } from '@console/shared';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
@@ -321,13 +323,19 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-export default connect<StateProps, DispatchProps, TopologyProps>(
-  TopologyStateToProps,
-  TopologyDispatchToProps,
-)(
-  withUserSettingsCompatibility<TopologyProps & WithUserSettingsCompatibilityProps<object>, object>(
-    TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
-    TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
-    {},
-  )(React.memo(Topology)),
+export default withFallback(
+  connect<StateProps, DispatchProps, TopologyProps>(
+    TopologyStateToProps,
+    TopologyDispatchToProps,
+  )(
+    withUserSettingsCompatibility<
+      TopologyProps & WithUserSettingsCompatibilityProps<object>,
+      object
+    >(
+      TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
+      TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
+      {},
+    )(React.memo(Topology)),
+  ),
+  ErrorBoundaryFallback,
 );

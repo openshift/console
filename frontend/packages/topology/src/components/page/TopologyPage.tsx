@@ -12,6 +12,8 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import TopologyDataRenderer from './TopologyDataRenderer';
 import {
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
@@ -123,4 +125,4 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   );
 };
 
-export default TopologyPage;
+export default withFallback(TopologyPage, ErrorBoundaryFallback);
