@@ -2,6 +2,7 @@ package actions
 
 import (
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
 )
@@ -9,13 +10,13 @@ import (
 func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
 	cmd := action.NewInstall(conf)
 
-	name, chart, err := cmd.NameAndChart([]string{name, url})
+	releaseName, chartName, err := cmd.NameAndChart([]string{name, url})
 	if err != nil {
 		return nil, err
 	}
-	cmd.ReleaseName = name
+	cmd.ReleaseName = releaseName
 
-	cp, err := cmd.ChartPathOptions.LocateChart(chart, settings)
+	cp, err := cmd.ChartPathOptions.LocateChart(chartName, settings)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +27,12 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	}
 
 	// Add chart URL as an annotation before installation
-	ch.Metadata.Annotations = make(map[string]string)
+	if ch.Metadata == nil {
+		ch.Metadata = new(chart.Metadata)
+	}
+	if ch.Metadata.Annotations == nil {
+		ch.Metadata.Annotations = make(map[string]string)
+	}
 	ch.Metadata.Annotations["chart_url"] = url
 
 	cmd.Namespace = ns
