@@ -25,6 +25,10 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 		return nil, err
 	}
 
+	// Add chart URL as an annotation before installation
+	ch.Metadata.Annotations = make(map[string]string)
+	ch.Metadata.Annotations["chart_url"] = url
+
 	cmd.Namespace = ns
 	release, err := cmd.Run(ch, vals)
 	if err != nil {

@@ -61,6 +61,9 @@ func TestInstallChart(t *testing.T) {
 				if rel.Chart.Metadata.Version != tt.chartVersion {
 					t.Error("Chart version mismatch")
 				}
+				if rel.Chart.Metadata.Annotations["chart_url"] != tt.chartPath {
+					t.Error("Chart URL is not set")
+				}
 			} else if tt.releaseName == "invalid chart path" {
 				if err == nil {
 					t.Error("Should fail to parse while locating invalid chart")

@@ -23,6 +23,12 @@ func UpgradeRelease(ns, name, url string, vals map[string]interface{}, conf *act
 		}
 		return nil, err
 	}
+
+	// Before proceeding, check if chart URL is present as an annotation
+	if chart_url, ok := rel.Chart.Metadata.Annotations["chart_url"]; url == "" && ok {
+		url = chart_url
+	}
+
 	// if url is not provided then we expect user trying to upgrade release with the same
 	// version of chart but with the different values
 	if url == "" {
@@ -43,6 +49,12 @@ func UpgradeRelease(ns, name, url string, vals map[string]interface{}, conf *act
 		if err := action.CheckDependencies(ch, req); err != nil {
 			return nil, err
 		}
+	}
+
+	// Ensure chart URL is properly set in the upgrade chart
+	if _, ok := ch.Metadata.Annotations["chart_url"]; url != "" && !ok {
+		ch.Metadata.Annotations = make(map[string]string)
+		ch.Metadata.Annotations["chart_url"] = url
 	}
 
 	return client.Run(name, ch, vals)
