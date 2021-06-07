@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  NavItemSeparator,
-  Title,
-} from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { history } from '../utils';
@@ -112,21 +106,18 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   );
 
   return (
-    <>
-      <div
-        className="oc-nav-header"
-        data-tour-id="tour-perspective-dropdown"
-        data-quickstart-id="qs-perspective-switcher"
-      >
-        <Dropdown
-          isOpen={isPerspectiveDropdownOpen}
-          toggle={renderToggle(icon, name)}
-          dropdownItems={perspectiveItems}
-          data-test-id="perspective-switcher-menu"
-        />
-      </div>
-      <NavItemSeparator key={`separator-nav-header`} inset={{ default: 'insetNone' }} />
-    </>
+    <div
+      className="oc-nav-header"
+      data-tour-id="tour-perspective-dropdown"
+      data-quickstart-id="qs-perspective-switcher"
+    >
+      <Dropdown
+        isOpen={isPerspectiveDropdownOpen}
+        toggle={renderToggle(icon, name)}
+        dropdownItems={perspectiveItems}
+        data-test-id="perspective-switcher-menu"
+      />
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 .oc-nav-header {
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--sm);
+  border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
+  padding: 0.6rem var(--pf-global--spacer--sm);
 
   @media screen and (min-width: $grid-float-breakpoint) {
     padding-left: var(--pf-global--spacer--md);
