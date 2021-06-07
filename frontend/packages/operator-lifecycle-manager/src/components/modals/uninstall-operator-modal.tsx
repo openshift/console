@@ -6,7 +6,14 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { history, resourceListPathFromModel } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import {
+  K8sKind,
+  K8sResourceKind,
+  k8sPatch,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
@@ -14,6 +21,9 @@ import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { Trans, useTranslation } from 'react-i18next';
 import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { ConsoleOperatorConfigModel } from '@console/internal/models';
+import { getClusterServiceVersionPlugins, isPluginEnabled, getPluginPatch } from '../../utils';
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   cancel,
@@ -24,49 +34,79 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
-  const submit = React.useCallback(
-    (event: React.FormEvent<HTMLFormElement>): void => {
-      event.preventDefault();
-      const deleteOptions = {
-        kind: 'DeleteOptions',
-        apiVersion: 'v1',
-        propagationPolicy: 'Foreground',
-      };
-      handlePromise(
-        Promise.all([
-          k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
-          ...(subscription?.status?.installedCSV
-            ? [
-                k8sKill(
-                  ClusterServiceVersionModel,
-                  {
-                    metadata: {
-                      name: subscription.status.installedCSV,
-                      namespace: subscription.metadata.namespace,
-                    },
-                  },
-                  {},
-                  deleteOptions,
-                ).catch(() => Promise.resolve()),
-              ]
-            : []),
-        ]),
-      )
-        .then(() => {
-          close();
-          if (
-            window.location.pathname.split('/').includes(subscription.metadata.name) ||
-            window.location.pathname.split('/').includes(subscription.status.installedCSV)
-          ) {
-            history.push(
-              resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()),
-            );
-          }
-        })
-        .catch(() => {});
-    },
-    [close, handlePromise, k8sKill, subscription],
+
+  const canPatchConsoleOperatorConfig = useAccessReview({
+    group: ConsoleOperatorConfigModel.apiGroup,
+    resource: ConsoleOperatorConfigModel.plural,
+    verb: 'patch',
+    name: CONSOLE_OPERATOR_CONFIG_NAME,
+  });
+
+  const csvPlugins = getClusterServiceVersionPlugins(csv?.metadata?.annotations);
+
+  const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(
+    canPatchConsoleOperatorConfig && csvPlugins.length > 0
+      ? {
+          kind: referenceForModel(ConsoleOperatorConfigModel),
+          isList: false,
+          name: CONSOLE_OPERATOR_CONFIG_NAME,
+        }
+      : null,
   );
+
+  const enabledPlugins = csvPlugins.filter((plugin) =>
+    isPluginEnabled(consoleOperatorConfig, plugin),
+  );
+
+  const removePlugins: boolean =
+    !!consoleOperatorConfig && canPatchConsoleOperatorConfig && enabledPlugins.length > 0;
+
+  const submit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    const deleteOptions = {
+      kind: 'DeleteOptions',
+      apiVersion: 'v1',
+      propagationPolicy: 'Foreground',
+    };
+
+    const patch = removePlugins
+      ? enabledPlugins.map((plugin) => getPluginPatch(consoleOperatorConfig, plugin, false))
+      : null;
+
+    const allPromises = [
+      k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
+      ...(subscription?.status?.installedCSV
+        ? [
+            k8sKill(
+              ClusterServiceVersionModel,
+              {
+                metadata: {
+                  name: subscription.status.installedCSV,
+                  namespace: subscription.metadata.namespace,
+                },
+              },
+              {},
+              deleteOptions,
+            ).catch(() => Promise.resolve()),
+          ]
+        : []),
+      ...(removePlugins
+        ? [k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, patch)]
+        : []),
+    ];
+
+    handlePromise(Promise.all(allPromises))
+      .then(() => {
+        close();
+        if (
+          window.location.pathname.split('/').includes(subscription.metadata.name) ||
+          window.location.pathname.split('/').includes(subscription.status.installedCSV)
+        ) {
+          history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
+        }
+      })
+      .catch(() => {});
+  };
 
   const name = csv?.spec?.displayName || subscription?.spec?.name;
   const namespace =
@@ -80,13 +120,21 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
         <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('olm~Uninstall Operator?')}
       </ModalTitle>
       <ModalBody>
-        <Trans t={t} ns="olm">
-          This will remove Operator <strong>{{ name }}</strong> from{' '}
-          <strong>{{ namespace }}</strong>. Removing the Operator will not remove any of its custom
-          resource definitions or managed resources. If your Operator has deployed applications on
-          the cluster or configured off-cluster resources, these will continue to run and need to be
-          cleaned up manually.
-        </Trans>
+        <p>
+          <Trans t={t} ns="olm">
+            Operator <strong>{{ name }}</strong> will be removed from{' '}
+            <strong>{{ namespace }}</strong>, but any of its custom resource definitions or managed
+            resources will remain. If your Operator deployed applications on the cluster or
+            configured off-cluster resources, these will continue to run and require manual cleanup.
+          </Trans>
+        </p>
+        {removePlugins && (
+          <p>
+            {t('olm~The console plugin provided by this operator will be disabled and removed.', {
+              count: enabledPlugins.length,
+            })}
+          </p>
+        )}
         {uninstallMessage && (
           <>
             <h2>{t('olm~Message from Operator developer')}</h2>
