@@ -23,8 +23,14 @@ export enum CapabilityLevel {
 
 export enum InfraFeatures {
   Disconnected = 'Disconnected',
-  Proxy = 'Proxy',
+  disconnected = 'Disconnected',
+  Proxy = 'Proxy-aware',
+  'proxy-aware' = 'Proxy-aware',
   FipsMode = 'FIPS Mode',
+  fips = 'FIPS Mode',
+  cnf = 'Cloud-Native Network Function',
+  cni = 'Container Network Interface',
+  csi = 'Container Storage Interface',
 }
 
 export type OperatorHubItem = {

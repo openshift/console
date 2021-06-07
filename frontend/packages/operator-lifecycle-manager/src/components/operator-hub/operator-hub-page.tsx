@@ -28,6 +28,7 @@ import {
   InstalledState,
   OperatorHubCSVAnnotationKey,
   ProviderType,
+  InfraFeatures,
 } from './index';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { Trans, useTranslation } from 'react-i18next';
@@ -72,12 +73,17 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
           const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
           const currentCSVAnnotations: OperatorHubCSVAnnotations =
             currentCSVDesc?.annotations ?? {};
-          const [infraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map((annotationKey) => {
-            return parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
-              // eslint-disable-next-line no-console
-              console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
-            );
-          });
+          const [parsedInfraFeatures = [], validSubscription] = ANNOTATIONS_WITH_JSON.map(
+            (annotationKey) => {
+              return parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
+                // eslint-disable-next-line no-console
+                console.warn(`Error parsing annotation in PackageManifest ${pkg.metadata.name}`),
+              );
+            },
+          );
+          const filteredInfraFeatures = _.uniq(
+            _.compact(_.map(parsedInfraFeatures, (key) => InfraFeatures[key])),
+          );
 
           const {
             certifiedLevel,
@@ -132,7 +138,7 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             marketplaceRemoteWorkflow,
             marketplaceSupportWorkflow,
             validSubscription,
-            infraFeatures,
+            infraFeatures: filteredInfraFeatures,
             keywords: currentCSVDesc?.keywords ?? [],
           };
         },
