@@ -16,12 +16,27 @@ import {
 import { humanizeBinaryBytes, Dropdown } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize } from '@console/shared';
+import { TechPreviewBadge, useDeepCompareMemoize } from '@console/shared';
 import { State, Action } from '../attached-devices/create-sc/state';
 import { scResource } from '../../../constants/resources';
 import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
 import { AdvancedSubscription } from '../subscription-icon';
+import './_capacity-and-nodes.scss';
+
+const EnableArbiterLabel: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="ocs-enable-arbiter-label">
+      <span className="ocs-enable-arbiter-label__title--padding">
+        {t('ceph-storage-plugin~Enable arbiter')}
+      </span>
+      <TechPreviewBadge />
+      <AdvancedSubscription />
+    </div>
+  );
+};
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text, replica }) => {
   const { t } = useTranslation();
@@ -114,7 +129,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
         aria-label={t('ceph-storage-plugin~Enable Arbiter')}
         id="arbiter-cluster"
         isChecked={stretchClusterChecked}
-        label={<AdvancedSubscription prefix={t('ceph-storage-plugin~Enable arbiter')} />}
+        label={<EnableArbiterLabel />}
         description={t(
           'ceph-storage-plugin~To support high availability when two data centers can be used, enable arbiter to get the valid quorum between two data centers.',
         )}
