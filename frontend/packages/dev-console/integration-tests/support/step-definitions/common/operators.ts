@@ -5,6 +5,7 @@ import {
   operatorsPage,
   installOperator,
   verifyAndInstallKnativeOperator,
+  verifyAndInstallPipelinesOperator,
 } from '../../pages';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
@@ -28,4 +29,8 @@ Given('user has installed Web Terminal operator', () => {
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user has installed OpenShift Pipelines Operator', () => {
+  verifyAndInstallPipelinesOperator();
 });
