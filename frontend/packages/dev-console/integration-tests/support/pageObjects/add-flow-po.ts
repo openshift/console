@@ -1,5 +1,16 @@
 export const cardTitle = '.catalog-tile-pf-title';
 
+export const addPagePO = {
+  gettingStarted: '[data-test="getting-started"]',
+  detailsOnOffText: '[data-test="label"]',
+  detailsOnOffSwitch: '.pf-c-switch__toggle',
+  cardDetails: 'p.odc-add-card-item__description',
+  restoreGettingStarted: '[data-test="restore-getting-started"]',
+  kebabMenuGettingStarted: '[data-test="actions"]',
+  hideGettingStarted: '[data-test="hide"]',
+  closeButton: '[aria-label="label-close-button"]',
+};
+
 export const gitPO = {
   noWorkLoadsText: 'h2.co-hint-block__title',
   sectionTitle: '.odc-form-section__heading',

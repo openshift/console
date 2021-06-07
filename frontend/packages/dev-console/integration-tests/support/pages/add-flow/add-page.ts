@@ -101,3 +101,70 @@ export const addPage = {
   },
   verifyCard: (cardName: string) => cy.get(cardTitle).should('contain.text', cardName),
 };
+
+export const verifyAddPage = {
+  verifyAddPageCard: (card: addOptions | string) => {
+    app.waitForDocumentLoad();
+    switch (card) {
+      case 'Git Repository':
+        cy.byTestID('card git-repository').should('be.visible');
+        break;
+      case 'Developer Catalog':
+        cy.byTestID('card developer-catalog').should('be.visible');
+        break;
+      case 'Container images':
+        cy.byTestID('card container-images').should('be.visible');
+        break;
+      case 'From Local Machine':
+        cy.byTestID('card local-machine').should('be.visible');
+        break;
+      case 'Pipeline':
+        cy.byTestID('item pipeline').should('be.visible');
+        break;
+      case 'Pipelines':
+        cy.byTestID('card pipelines').should('be.visible');
+        break;
+      case 'Samples':
+        cy.byTestID('card samples').should('be.visible');
+        break;
+      case 'Serverless':
+        cy.byTestID('card serverless').should('be.visible');
+        break;
+      case 'Channel':
+        cy.byTestID('item knative-eventing-channel').should('be.visible');
+        break;
+      case 'All services':
+        cy.byTestID('item dev-catalog').should('be.visible');
+        break;
+      case 'Database':
+        cy.byTestID('item dev-catalog-databases').should('be.visible');
+        break;
+      case 'Operator Backed':
+        cy.byTestID('item operator-backed').should('be.visible');
+        break;
+      case 'Helm Chart':
+        cy.byTestID('item helm').should('be.visible');
+        break;
+      case 'Event Source':
+        cy.byTestID('item knative-event-source').should('be.visible');
+        break;
+      case 'From Git':
+        cy.byTestID('item import-from-git').should('be.visible');
+        break;
+      case 'From Devfile':
+        cy.byTestID('item import-from-devfile').should('be.visible');
+        break;
+      case 'From Dockerfile':
+        cy.byTestID('item import-from-dockerfile').should('be.visible');
+        break;
+      case 'Import YAML':
+        cy.byTestID('item import-yaml').should('be.visible');
+        break;
+      case 'Upload JAR file':
+        cy.byTestID('item upload-jar').should('be.visible');
+        break;
+      default:
+        throw new Error(`Unable to find the "${card}" card on Add page`);
+    }
+  },
+};
