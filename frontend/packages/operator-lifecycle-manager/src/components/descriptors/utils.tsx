@@ -10,7 +10,7 @@ import {
   REGEXP_CAPTURE_GROUP_SUBGROUP,
   REGEXP_NESTED_ARRAY_PATH,
 } from './const';
-import { Descriptor, SpecCapability, StatusCapability } from './types';
+import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
 import { getSchemaAtPath } from '@console/shared';
 
 export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
@@ -78,8 +78,11 @@ export const groupDescriptorDetails = (
           };
     };
 
-    // Nested arrays are not supported
-    if (REGEXP_NESTED_ARRAY_PATH.test(descriptor.path)) {
+    // Ignore nested arrays and hidden descriptors.
+    if (
+      REGEXP_NESTED_ARRAY_PATH.test(descriptor.path) ||
+      descriptor?.['x-descriptors']?.includes(CommonCapability.hidden)
+    ) {
       return acc;
     }
 
