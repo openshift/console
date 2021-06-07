@@ -45,8 +45,8 @@ Feature: Add page on Developer Console
         Scenario: From Local Machine option to create an Application, Component or Service: A-11-TC05
              Then user will see "Import YAML" option
               And user will see "Upload JAR file" option
-        
-        
+
+
         @smoke
         Scenario: Hide Getting Started Resources from View: A-11-TC06
             Given user has hidden Getting Started Resources from View
@@ -60,7 +60,7 @@ Feature: Add page on Developer Console
              Then user will see Getting started resources card
 
 
-        @smoke
+        @smoke @manual
         Scenario: Close Show Getting Started Resources link: A-11-TC08
              When user selects Hide from view option from kebab menu
               And user clicks on close Show getting started resources link
