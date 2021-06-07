@@ -123,7 +123,7 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
     );
   }
 
-  const chartDisks = selectedLvsNodes.length
+  const chartDisks = state.lvsIsSelectNodes
     ? filteredDisks.filter((disk: DiscoveredDisk) => selectedLvsNodes.includes(disk.node))
     : filteredDisks;
   const chartNodes: Set<string> = chartDisks.reduce(
