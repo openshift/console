@@ -57,12 +57,11 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   const [textFilter, setTextFilter] = React.useState('');
   const { t } = useTranslation();
 
-  const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
-    label: t('public~{{label}}', { label }),
-    href: `/settings/idp/${id}`,
-  }));
-
   React.useEffect(() => {
+    const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
+      label: t('public~{{label}}', { label }),
+      href: `/settings/idp/${id}`,
+    }));
     const editYAMLMenuItem = (name: string, resourceLink: string) => ({
       label: t('global-config~Edit {{name}} resource', { name }),
       href: `${resourceLink}/yaml`,
@@ -134,7 +133,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       }
     });
     return () => (isSubscribed = false);
-  }, [configResources, errors, globalConfigs, oauthMenuItems, t]);
+  }, [configResources, globalConfigs, t]);
   const visibleItems = items.filter(({ label, description = '' }) => {
     return (
       fuzzyCaseInsensitive(textFilter, label) ||
