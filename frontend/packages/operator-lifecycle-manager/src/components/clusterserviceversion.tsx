@@ -973,6 +973,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const subscription = subscriptionForCSV(props.subscriptions, props.obj);
+  const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
 
   return (
     <>
@@ -1110,11 +1111,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   />
                 </dd>
               ))}
-              {spec?.install?.spec?.permissions && (
+              {!_.isEmpty(permissions) && (
                 <>
                   <dt>{t('olm~Operator ServiceAccounts')}</dt>
-                  {spec.install.spec.permissions.map(({ serviceAccountName }) => (
-                    <dd key={serviceAccountName}>
+                  {permissions.map(({ serviceAccountName }) => (
+                    <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
                       <ResourceLink
                         name={serviceAccountName}
                         kind="ServiceAccount"

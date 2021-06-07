@@ -431,6 +431,44 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .props().text,
     ).toEqual('olm~Conditions');
   });
+
+  it('does not render service accounts section if empty', () => {
+    const emptyTestClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    emptyTestClusterServiceVersion.spec.install.spec.permissions = [];
+    wrapper = shallow(
+      <ClusterServiceVersionDetails
+        obj={emptyTestClusterServiceVersion}
+        subscriptions={testSubscriptions}
+      />,
+    );
+    expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
+    expect(
+      wrapper.findWhere(
+        (node) => node.type() === 'dt' && node.text() === 'olm~Operator ServiceAccounts',
+      ).length,
+    ).toEqual(0);
+  });
+
+  it('does not render duplicate service accounts', () => {
+    const duplicateTestClusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    const permission = duplicateTestClusterServiceVersion.spec.install.spec.permissions[0];
+    duplicateTestClusterServiceVersion.spec.install.spec.permissions.push(permission);
+    wrapper = shallow(
+      <ClusterServiceVersionDetails
+        obj={duplicateTestClusterServiceVersion}
+        subscriptions={testSubscriptions}
+      />,
+    );
+    expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
+    expect(
+      wrapper.findWhere(
+        (node) => node.type() === 'dt' && node.text() === 'olm~Operator ServiceAccounts',
+      ).length,
+    ).toEqual(1);
+    expect(
+      wrapper.find(`[data-service-account-name="${permission.serviceAccountName}"]`).length,
+    ).toEqual(1);
+  });
 });
 
 describe(CSVSubscription.displayName, () => {
