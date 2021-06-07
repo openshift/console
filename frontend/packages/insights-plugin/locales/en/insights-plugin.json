@@ -3,6 +3,7 @@
   "moderate": "moderate",
   "important": "important",
   "critical": "critical",
+  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.",
   "Temporary unavailable.": "Temporary unavailable.",
   "Disabled or waiting for results.": "Disabled or waiting for results.",
   "Total issue": "Total issue",
@@ -16,5 +17,5 @@
   "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
   "{{issuesNumber}} issues found": "{{issuesNumber}} issues found",
   "Insights": "Insights",
-  "Insights status": "Insights status"
+  "Insights Advisor status": "Insights Advisor status"
 }
