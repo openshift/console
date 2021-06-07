@@ -14,8 +14,6 @@
   "Reconnect to terminal": "Reconnect to terminal",
   "Restart terminal": "Restart terminal",
   "OpenShift command line": "OpenShift command line",
-  "Close command line terminal": "Close command line terminal",
-  "Open command line terminal": "Open command line terminal",
   "OpenShift command line terminal": "OpenShift command line terminal",
   "Failed to connect to your OpenShift command line terminal": "Failed to connect to your OpenShift command line terminal",
   "Initialize terminal": "Initialize terminal",
