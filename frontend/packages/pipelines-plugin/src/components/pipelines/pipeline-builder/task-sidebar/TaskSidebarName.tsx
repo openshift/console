@@ -29,7 +29,7 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
   return (
     <FormGroup
       fieldId="task-name"
-      label={t('pipelines-plugin~Display Name')}
+      label={t('pipelines-plugin~Display name')}
       helperTextInvalid={error}
       validated={isValid ? 'default' : 'error'}
       isRequired
