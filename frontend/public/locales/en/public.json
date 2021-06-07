@@ -715,6 +715,7 @@
   "Are you sure you want to delete <2>{{pvcName}}</2> PersistentVolumeClaim?": "Are you sure you want to delete <2>{{pvcName}}</2> PersistentVolumeClaim?",
   "Expand {{kind}}": "Expand {{kind}}",
   "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.": "Increase the capacity of PVC <2>{{resourceName}}.</2> Note that capacity can't be less than the current PVC size. This can be a time-consuming process.",
+  "Total size": "Total size",
   "requestSize": "requestSize",
   "Expand": "Expand",
   "Edit {{description}}": "Edit {{description}}",
