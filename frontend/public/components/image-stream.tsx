@@ -167,17 +167,17 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
         <div>
           <p>
             {t(
-              'public~Create a new Image Stream Tag by pushing an image to this Image Stream with the desired tag.',
+              'public~Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
             )}
           </p>
           <br />
           <p>{t('public~Authenticate to the internal registry')}</p>
           <CopyToClipboard value={loginCommand} />
           <br />
-          <p>{t('public~Push an image to this Image Stream')}</p>
+          <p>{t('public~Push an image to this ImageStream')}</p>
           <CopyToClipboard value={pushCommand} />
           <br />
-          <p>{t('public~Pull an image from this Image Stream')}</p>
+          <p>{t('public~Pull an image from this ImageStream')}</p>
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
@@ -192,7 +192,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
     >
       <Button className="hidden-sm hidden-xs" type="button" variant="link">
         <QuestionCircleIcon className="co-icon-space-r" />
-        {t('public~Do you need to work with this Image Stream outside of the web console?')}
+        {t('public~Do you need to work with this ImageStream outside of the web console?')}
       </Button>
     </Popover>
   );
