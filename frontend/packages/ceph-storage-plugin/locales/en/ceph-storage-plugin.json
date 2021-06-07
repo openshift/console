@@ -616,6 +616,8 @@
   "Requested Cluster Capacity:": "Requested Cluster Capacity:",
   "StorageClass:": "StorageClass:",
   "create internal mode StorageCluster wizard": "create internal mode StorageCluster wizard",
+  "Select capacity and nodes": "Select capacity and nodes",
+  "Info Alert": "Info Alert",
   "Can be used on any platform, except bare metal. It means that OpenShift Container Storage uses an infrastructure StorageClass, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.": "Can be used on any platform, except bare metal. It means that OpenShift Container Storage uses an infrastructure StorageClass, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.",
   "{{title}} steps": "{{title}} steps",
   "{{title}} content": "{{title}} content",
