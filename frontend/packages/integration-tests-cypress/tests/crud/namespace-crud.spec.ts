@@ -63,6 +63,7 @@ describe('Namespace', () => {
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
     listPage.filter.byName('kubernetes');
+    listPage.rows.countShouldBe(1);
     listPage.rows.clickRowByName('kubernetes');
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
@@ -71,6 +72,7 @@ describe('Namespace', () => {
     projectDropdown.shouldContain(allProjectsDropdownLabel);
     cy.log('Details page to list page via breadcrumb should change Project back to "All Projects"');
     listPage.filter.byName('kubernetes');
+    listPage.rows.countShouldBe(1);
     listPage.rows.clickRowByName('kubernetes');
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);

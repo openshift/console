@@ -17,15 +17,18 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { FilterIcon, ColumnsIcon } from '@patternfly/react-icons';
-import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
+import {
+  Dropdown as DropdownInternal,
+  setOrRemoveQueryArgument,
+} from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
-
-import { setQueryArgument, removeQueryArgument } from './utils';
-import { filterList } from '../actions/k8s';
+import { filterList as filterListAction } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { ColumnLayout } from './modals/column-management-modal';
+import { TextFilter } from './factory';
+import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -49,32 +52,6 @@ type FilterKeys = {
   [key: string]: string;
 };
 
-const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =>
-  rowFilters.map((grp) => {
-    const items = grp.itemsGenerator ? grp.itemsGenerator(props, props.kind) : grp.items;
-    return (
-      <SelectGroup key={grp.filterGroupName} label={grp.filterGroupName}>
-        {_.map(items, (item) => {
-          return (
-            <SelectOption
-              data-test-row-filter={item.id}
-              key={item.id}
-              inputId={item.id}
-              value={item.id}
-            >
-              <span className="co-filter-dropdown-item__name">{item.title}</span>
-              <Badge key={item.id} isRead>
-                {grp.isMatch
-                  ? _.filter(data, (d) => grp.isMatch(d, item.id)).length
-                  : _.countBy(data, grp.reducer)?.[item.id] ?? '0'}
-              </Badge>
-            </SelectOption>
-          );
-        })}
-      </SelectGroup>
-    );
-  });
-
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
   const {
     rowFilters,
@@ -89,6 +66,9 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     textFilter = filterTypeMap[FilterType.NAME],
     labelFilter = filterTypeMap[FilterType.LABEL],
     uniqueFilterName,
+    reduxIDs,
+    filterList,
+    kinds,
   } = props;
 
   const { t } = useTranslation();
@@ -108,130 +88,127 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   };
 
   // use unique name only when only when more than 1 table is in the view
-  const uniqTextFilter = uniqueFilterName ? `${uniqueFilterName}-${textFilter}` : textFilter;
-  const uniqlabelFilter = uniqueFilterName ? `${uniqueFilterName}-${labelFilter}` : labelFilter;
-
-  const [inputText, setInputText] = React.useState('');
+  const nameFilterQueryArgumentKey = uniqueFilterName
+    ? `${uniqueFilterName}-${textFilter}`
+    : textFilter;
+  const labelFilterQueryArgumentKey = uniqueFilterName
+    ? `${uniqueFilterName}-${labelFilter}`
+    : labelFilter;
+  const params = new URLSearchParams(location.search);
+  const labelFilters = params.get(labelFilterQueryArgumentKey)?.split(',') ?? [];
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);
-  const [placeholder, setPlaceholder] = React.useState(
-    nameFilterPlaceholder || t('public~Search by name...'),
+  const [nameInputText, setNameInputText] = React.useState(
+    params.get(nameFilterQueryArgumentKey) ?? '',
+  );
+  const [labelInputText, setLabelInputText] = React.useState('');
+
+  // Generate rowFilter items and counts. Memoize to minimize re-renders.
+  const generatedRowFilters = useDeepCompareMemoize(
+    (rowFilters ?? []).map((rowFilter) => ({
+      ...rowFilter,
+      items: (rowFilter.itemsGenerator?.(props, kinds) ?? rowFilter.items).map((item) => ({
+        ...item,
+        count: rowFilter.isMatch
+          ? _.filter(data, (d) => rowFilter.isMatch(d, item.id)).length
+          : _.countBy(data, rowFilter.reducer)?.[item.id] ?? '0',
+      })),
+    })),
   );
 
-  // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
-  const filters: Filter = (rowFilters ?? [])?.reduce((acc, curr) => {
-    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
-    const items = _.map(rowItems, 'id');
-    acc[curr.filterGroupName] = items;
-    return acc;
-  }, {});
+  // Reduce generatedRowFilters once and memoize
+  const [filters, filtersNameMap, filterKeys, defaultSelections]: [
+    Filter,
+    FilterKeys,
+    FilterKeys,
+    string[],
+  ] = React.useMemo(
+    () =>
+      generatedRowFilters.reduce(
+        (
+          [filtersAcc, filtersNameMapAcc, filterKeysAcc, defaultSelectedAcc],
+          { defaultSelected, filterGroupName, items, type },
+        ) => [
+          // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
+          {
+            ...filtersAcc,
+            [filterGroupName]: (items ?? []).map(({ id }) => id),
+          },
+          // {id: 'a' , title: 'A'} => filterNameMap['a'] = A
+          {
+            ...filtersNameMapAcc,
+            ...(items ?? []).reduce(
+              (itemAcc, { id, title }) => ({
+                ...itemAcc,
+                [id]: title,
+              }),
+              {},
+            ),
+          },
+          // (storagePrefix, rowFilters) => { 'rowFilterTypeA' = 'storagePrefix-filterTypeA' ...}
+          {
+            ...filterKeysAcc,
+            [filterGroupName]: `${storagePrefix}${type}`,
+          },
+          // Default selections
+          _.uniq([...defaultSelectedAcc, ...(defaultSelected ?? [])]),
+        ],
+        [{}, {}, {}, []],
+      ),
+    [generatedRowFilters],
+  );
 
-  // {id: 'a' , title: 'A'} => filterNameMap['a'] = A
-  const filtersNameMap: FilterKeys = (rowFilters ?? []).reduce((acc, curr) => {
-    const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
-    const items = rowItems.reduce((itemAcc, itemCurr) => {
-      itemAcc[itemCurr.id] = itemCurr.title;
-      return itemAcc;
-    }, {});
-    return { ...acc, ...items };
-  }, {});
+  // Parse selected row filters from url query params
+  const selectedRowFilters = React.useMemo(
+    () => _.flatMap(filterKeys, (f) => params.get(f)?.split(',') ?? []),
+    [filterKeys, params],
+  );
 
-  // (storagePrefix, rowFilters) => { 'rowFilterTypeA' = 'storagePrefix-filterTypeA' ...}
-  const filterKeys: FilterKeys = (rowFilters ?? []).reduce((acc, curr) => {
-    const str = `${storagePrefix}${curr.type}`;
-    acc[curr.filterGroupName] = str;
-    return acc;
-  }, {});
+  // Map row filters to select groups
+  const dropdownItems = generatedRowFilters.map((rowFilter) => (
+    <SelectGroup key={rowFilter.filterGroupName} label={rowFilter.filterGroupName}>
+      {rowFilter.items?.map?.((item) => (
+        <SelectOption
+          data-test-row-filter={item.id}
+          key={item.id}
+          inputId={item.id}
+          value={item.id}
+        >
+          <span className="co-filter-dropdown-item__name">{item.title}</span>
+          <Badge key={item.id} isRead>
+            {item.count}
+          </Badge>
+        </SelectOption>
+      ))}
+    </SelectGroup>
+  ));
 
-  // (url) => {nameFilter, labelFilters, rowFilters}
-  const { name: nameFilter, labels: labelFilters, rowFiltersFromURL: selectedRowFilters } = (() => {
-    const rowFiltersFromURL: string[] = [];
-    const params = new URLSearchParams(location.search);
-    const q = params.get(uniqlabelFilter);
-    const name = params.get(uniqTextFilter);
-    _.map(filterKeys, (f) => {
-      const vals = params.get(f);
-      if (vals) {
-        rowFiltersFromURL.push(...vals.split(','));
-      }
-    });
-    const labels = q ? q.split(',') : [];
-    return { name, labels, rowFiltersFromURL };
-  })();
-
-  /* Logic for Name and Label Filter */
-
-  const applyFilter = (input: string | string[], type: FilterType) => {
-    const filter = type === FilterType.NAME ? textFilter : labelFilter;
-    const value = type === FilterType.NAME ? input : { all: input };
-    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
-  };
-
-  const updateLabelFilter = (filterValues: string[]) => {
-    if (filterValues.length > 0) {
-      setQueryArgument(uniqlabelFilter, filterValues.join(','));
-    } else {
-      removeQueryArgument(uniqlabelFilter);
-    }
-    setInputText('');
-    applyFilter(filterValues, FilterType.LABEL);
-  };
-
-  const updateNameFilter = (filterValue: string) => {
-    if (!_.isEmpty(filterValue)) {
-      setQueryArgument(uniqTextFilter, filterValue);
-    } else {
-      removeQueryArgument(uniqTextFilter);
-    }
-    setInputText(filterValue);
-    applyFilter(filterValue, FilterType.NAME);
-  };
-
-  const updateSearchFilter = (value: string) => {
-    switch (filterType) {
-      case FilterType.NAME:
-        updateNameFilter(value);
-        break;
-      case FilterType.LABEL:
-        setInputText(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  /* Logic Related to Row Filters Ex:(Status, Type) */
+  const applyFilters = React.useCallback(
+    (type, filter) => reduxIDs?.forEach?.((id) => filterList(id, type, filter)),
+    [reduxIDs, filterList],
+  );
 
   const applyRowFilter = (selected: string[]) => {
-    rowFilters?.forEach((filter) => {
-      const rowItems = filter.itemsGenerator
-        ? filter.itemsGenerator(props, props?.kinds)
-        : filter.items;
-      const all = _.map(rowItems, 'id');
+    generatedRowFilters?.forEach?.(({ items, type }) => {
+      const all = items?.map?.(({ id }) => id) ?? [];
       const recognized = _.intersection(selected, all);
-      (props.reduxIDs || []).forEach((id) =>
-        props.filterList(id, filter.type, { selected: new Set(recognized), all }),
-      );
+      applyFilters(type, { selected: new Set(recognized), all });
     });
   };
 
-  const setQueryParameters = (selected: string[]) => {
+  const setRowFilterQueryParameters = (selected: string[]) => {
     if (!_.isEmpty(selectedRowFilters) || !_.isEmpty(selected)) {
       _.forIn(filters, (value, key) => {
         const recognized = _.filter(selected, (item) => value.includes(item));
-        if (recognized.length > 0) {
-          setQueryArgument(filterKeys[key], recognized.join(','));
-        } else {
-          removeQueryArgument(filterKeys[key]);
-        }
+        setOrRemoveQueryArgument(filterKeys[key], recognized.join(','));
       });
     }
   };
 
   const updateRowFilterSelected = (id: string[]) => {
     const selectedNew = _.xor(selectedRowFilters, id);
+    setRowFilterQueryParameters(selectedNew);
     applyRowFilter(selectedNew);
-    setQueryParameters(selectedNew);
   };
 
   const clearAllRowFilter = (f: string) => {
@@ -242,49 +219,50 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     updateRowFilterSelected([event?.target?.id]);
   };
 
+  const applyLabelFilters = (values: string[]) => {
+    setLabelInputText('');
+    setOrRemoveQueryArgument(labelFilterQueryArgumentKey, values.join(','));
+    applyFilters(labelFilter, { all: values });
+  };
+
+  const applyNameFilter = React.useCallback(
+    (value: string) => {
+      setOrRemoveQueryArgument(nameFilterQueryArgumentKey, value);
+      applyFilters(textFilter, value);
+    },
+    [applyFilters, nameFilterQueryArgumentKey, textFilter],
+  );
+
+  const debounceApplyNameFilter = useDebounceCallback(applyNameFilter, 250);
+
   const clearAll = () => {
     updateRowFilterSelected(selectedRowFilters);
     if (!hideNameLabelFilters) {
-      updateNameFilter('');
+      setNameInputText('');
+      applyNameFilter('');
     }
     if (!hideNameLabelFilters || !hideLabelFilter) {
-      updateLabelFilter([]);
+      setLabelInputText('');
+      applyLabelFilters([]);
     }
   };
 
-  // Initial URL parsing
+  // Run once on mount to apply filters from query params
   React.useEffect(() => {
     if (!hideNameLabelFilters || !hideLabelFilter) {
-      applyFilter(labelFilters, FilterType.LABEL);
+      applyFilters(labelFilter, { all: labelFilters });
     }
     if (!hideNameLabelFilters) {
-      setInputText(nameFilter ?? '');
-      applyFilter(nameFilter, FilterType.NAME);
+      applyFilters(textFilter, nameInputText);
     }
     if (_.isEmpty(selectedRowFilters)) {
-      updateRowFilterSelected(_.uniq(_.flatMap(rowFilters ?? [], 'defaultSelected')));
+      updateRowFilterSelected(defaultSelections);
     } else {
       applyRowFilter(selectedRowFilters);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const switchFilter = (type: FilterType) => {
-    setFilterType(FilterType[type]);
-    switch (FilterType[type]) {
-      case 'Name':
-        setPlaceholder(nameFilterPlaceholder || t('public~Search by name...'));
-        break;
-      case 'Label':
-        setPlaceholder(labelFilterPlaceholder || t('public~Search by label...'));
-        break;
-      default:
-        setPlaceholder('app=frontend');
-    }
-    setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
-  };
-
-  const dropdownItems = getDropdownItems(rowFilters ?? [], selectedRowFilters, data, props);
   return (
     <Toolbar
       data-test="filter-toolbar"
@@ -301,7 +279,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                 <ToolbarFilter
                   key={key}
                   chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
-                    return { key: item, node: filtersNameMap[item] };
+                    return {
+                      key: item,
+                      node: filtersNameMap[item],
+                    };
                   })}
                   deleteChip={(filter, chip: ToolbarChip) => updateRowFilterSelected([chip.key])}
                   categoryName={key}
@@ -338,39 +319,57 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
         {!hideNameLabelFilters && (
           <ToolbarItem className="co-filter-search--full-width">
             <ToolbarFilter
-              deleteChipGroup={() => updateLabelFilter([])}
-              chips={[...labelFilters]}
-              deleteChip={(filter, chip: string) =>
-                updateLabelFilter(_.difference(labelFilters, [chip]))
-              }
+              deleteChipGroup={() => {
+                setLabelInputText('');
+                applyLabelFilters([]);
+              }}
+              chips={labelFilters}
+              deleteChip={(f, chip: string) => {
+                setLabelInputText('');
+                applyLabelFilters(_.difference(labelFilters, [chip]));
+              }}
               categoryName={t('public~Label')}
             >
               <ToolbarFilter
-                chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
-                deleteChip={() => updateNameFilter('')}
+                chips={nameInputText ? [nameInputText] : []}
+                deleteChip={() => {
+                  setNameInputText('');
+                  applyNameFilter('');
+                }}
                 categoryName={t('public~Name')}
               >
                 <div className="pf-c-input-group">
                   {!hideLabelFilter && (
                     <DropdownInternal
                       items={filterDropdownItems}
-                      onChange={switchFilter}
+                      onChange={(type) => setFilterType(FilterType[type])}
                       selectedKey={filterType}
                       title={translateFilterType(filterType)}
                     />
                   )}
-                  <AutocompleteInput
-                    className="co-text-node"
-                    onSuggestionSelect={(selected) => {
-                      updateLabelFilter(_.uniq([...labelFilters, selected]));
-                    }}
-                    showSuggestions={FilterType.LABEL === filterType}
-                    textValue={inputText}
-                    setTextValue={updateSearchFilter}
-                    placeholder={placeholder}
-                    data={data}
-                    labelPath={props.labelPath}
-                  />
+                  {filterType === FilterType.LABEL ? (
+                    <AutocompleteInput
+                      className="co-text-node"
+                      onSuggestionSelect={(selected) => {
+                        applyLabelFilters(_.uniq([...labelFilters, selected]));
+                      }}
+                      showSuggestions
+                      textValue={labelInputText}
+                      setTextValue={setLabelInputText}
+                      placeholder={labelFilterPlaceholder ?? t('public~Search by label...')}
+                      data={data}
+                      labelPath={props.labelPath}
+                    />
+                  ) : (
+                    <TextFilter
+                      value={nameInputText}
+                      onChange={(value: string) => {
+                        setNameInputText(value);
+                        value ? debounceApplyNameFilter(value) : applyNameFilter(value);
+                      }}
+                      placeholder={nameFilterPlaceholder ?? t('public~Search by name...')}
+                    />
+                  )}
                 </div>
               </ToolbarFilter>
             </ToolbarFilter>
@@ -418,18 +417,24 @@ type FilterToolbarProps = {
   uniqueFilterName?: string;
 };
 
+type RowFilterItem = {
+  id?: string;
+  title?: string;
+  [key: string]: string;
+};
+
 export type RowFilter<R = any> = {
   defaultSelected?: string[];
   filterGroupName: string;
   isMatch?: (param: R, id: string) => boolean;
   type: string;
-  items?: {
-    [key: string]: string;
-  }[];
-  itemsGenerator?: (...args) => { [key: string]: string }[];
+  items?: RowFilterItem[];
+  itemsGenerator?: (...args) => RowFilterItem[];
   reducer?: (param: R) => React.ReactText;
   filter?: any;
 };
 
-export const FilterToolbar = withRouter(connect(null, { filterList })(FilterToolbar_));
+export const FilterToolbar = withRouter(
+  connect(null, { filterList: filterListAction })(FilterToolbar_),
+);
 FilterToolbar.displayName = 'FilterToolbar';

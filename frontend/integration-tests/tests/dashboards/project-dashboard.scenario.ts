@@ -5,7 +5,7 @@ import {
   addLeakableResource,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-import { testName } from '../../protractor.conf';
+import { testName, waitForCount } from '../../protractor.conf';
 import * as sideNavView from '../../views/sidenav.view';
 import * as crudView from '../../views/crud.view';
 import { horizontalTabFor, clickHorizontalTab } from '../../views/horizontal-nav.view';
@@ -65,6 +65,7 @@ describe('Project Dashboard', () => {
     // Filter by resource name to make sure the resource is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
     await crudView.filterForName(testName);
+    await browser.wait(waitForCount(crudView.resourceRows, 1));
     expect(crudView.rowForName(testName).isPresent()).toBe(true);
     await crudView
       .rowForName(testName)

@@ -25,4 +25,7 @@
 .co-filter-search--full-width {
   flex-grow: 1;
   max-width: 370px;
+  .has-feedback {
+    width: 100%;
+  }
 }
