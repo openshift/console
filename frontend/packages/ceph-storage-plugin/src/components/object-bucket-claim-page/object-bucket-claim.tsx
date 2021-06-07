@@ -117,7 +117,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             <dd>
               <OBCStatus obc={obj} />
             </dd>
-            <dt>{t('ceph-storage-plugin~Storage Class')}</dt>
+            <dt>{t('ceph-storage-plugin~StorageClass')}</dt>
             <dd>
               {storageClassName ? (
                 <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -175,7 +175,7 @@ const ObjectBucketClaimsList: React.FC = (props) => {
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('ceph-storage-plugin~Storage Class'),
+        title: t('ceph-storage-plugin~StorageClass'),
         sortField: 'spec.storageClassName',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },

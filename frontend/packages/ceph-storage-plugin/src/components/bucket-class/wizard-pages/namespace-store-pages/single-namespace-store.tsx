@@ -20,7 +20,7 @@ export const SingleNamespaceStorePage: React.FC<SingleNamespaceStoreProps> = Rea
         </Title>
         <p className="nb-create-bc-step-page-form__element--light-text">
           {t(
-            'ceph-storage-plugin~Select one namespace-store, defines the read and write targets of the namespace bucket',
+            'ceph-storage-plugin~Select one NamespaceStore which defines the read and write targets of the namespace bucket.',
           )}
         </p>
         <Form>

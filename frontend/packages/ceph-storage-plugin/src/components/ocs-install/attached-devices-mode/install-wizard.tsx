@@ -224,7 +224,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGECLASS, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Create Storage Class')}{' '}
+          {t('ceph-storage-plugin~Create StorageClass')}{' '}
         </Link>
       ),
       component: <CreateStorageClass dispatch={dispatch} state={state} ns={lsoNs} />,
@@ -276,7 +276,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
             actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
           >
             {t(
-              'ceph-storage-plugin~Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.',
+              'ceph-storage-plugin~Can be used on any platform. It means that OpenShift Container Storage uses attached disks, via Local Storage Operator. In this case, the infrastructure StorageClass is actually provided by Local Storage Operator, on top of attached drives.',
             )}
           </Alert>
         )}

@@ -108,7 +108,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
               <Trans t={t} ns="ceph-storage-plugin">
                 <p>
                   <strong>{{ poolName }}</strong> cannot be deleted. When a pool is bounded to PVC
-                  it cannot be deleted. Please detach all the resources from storage class(es):{' '}
+                  it cannot be deleted. Please detach all the resources from StorageClass(es):{' '}
                   <strong>{{ scNames }}</strong>.{' '}
                 </p>
               </Trans>

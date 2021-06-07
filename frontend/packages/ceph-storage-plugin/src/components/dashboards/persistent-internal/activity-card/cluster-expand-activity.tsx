@@ -6,7 +6,11 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 export const ClusterExpandActivity: React.FC = () => {
   const { t } = useTranslation();
 
-  return <ActivityItem>{t('ceph-storage-plugin~Expanding OCS Cluster')}</ActivityItem>;
+  return (
+    <ActivityItem>
+      {t("ceph-storage-plugin~Expanding OpenShift Container Storage's Cluster")}
+    </ActivityItem>
+  );
 };
 
 export const isClusterExpandActivity = (storageCluster: K8sResourceKind): boolean =>

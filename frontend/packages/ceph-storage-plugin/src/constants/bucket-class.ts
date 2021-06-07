@@ -19,7 +19,7 @@ export const bucketClassTypeRadios = (t: TFunction) => [
     value: BucketClassType.STANDARD,
     label: t('ceph-storage-plugin~Standard'),
     description: t(
-      'ceph-storage-plugin~Data will be ingested by Multi-cloud object gateway, deduped, compressed and encrypted. The encrypted chunks would be saved on the selected backing stores. Best used when the applications would always use the OpenShift Container Storage endpoints to access the data.',
+      'ceph-storage-plugin~Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Container Storage endpoints to access the data.',
     ),
   },
   {
@@ -27,7 +27,7 @@ export const bucketClassTypeRadios = (t: TFunction) => [
     value: BucketClassType.NAMESPACE,
     label: t('ceph-storage-plugin~Namespace'),
     description: t(
-      'ceph-storage-plugin~Data will be stored as is(no dedupe, compression, encryption) on the namespace stores. Namespace buckets allow for connecting to existing data and serving from them. Best used for existing data or when other applications (and native cloud services) need to access the data from outside the OpenShift Container Storage.',
+      'ceph-storage-plugin~Data is stored on the NamespaceStores without performing de-duplication, compression, or encryption. BucketClasses of namespace type allow connecting to existing data and serving from them. These are best used for existing data or when other applications (and cloud-native services) need to access the data from outside the OpenShift Container Storage.',
     ),
   },
 ];
@@ -42,13 +42,13 @@ export const namespacePolicyTypeRadios = (t: TFunction) => [
   {
     id: NamespacePolicyType.SINGLE,
     value: NamespacePolicyType.SINGLE,
-    label: t('ceph-storage-plugin~Single namespace-store'),
+    label: t('ceph-storage-plugin~Single NamespaceStore'),
     description: 'The namespace bucket will read and write its data to a selected namespace store',
   },
   {
     id: NamespacePolicyType.MULTI,
     value: NamespacePolicyType.MULTI,
-    label: t('ceph-storage-plugin~Multi namespace-stores'),
+    label: t('ceph-storage-plugin~Multi NamespaceStores'),
     description: t(
       'ceph-storage-plugin~The namespace bucket will serve reads from several selected backing stores, creating a virtual namespace on top of them and will write to one of those as its chosen write target',
     ),
@@ -56,7 +56,7 @@ export const namespacePolicyTypeRadios = (t: TFunction) => [
   {
     id: NamespacePolicyType.CACHE,
     value: NamespacePolicyType.CACHE,
-    label: t('ceph-storage-plugin~Cache namespace-store'),
+    label: t('ceph-storage-plugin~Cache NamespaceStore'),
     description: t(
       'ceph-storage-plugin~The caching bucket will serve data from a large raw data out of a local caching tiering.',
     ),

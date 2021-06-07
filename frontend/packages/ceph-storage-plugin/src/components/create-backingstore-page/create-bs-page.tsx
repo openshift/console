@@ -47,7 +47,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           <Alert
             isInline
             variant="info"
-            title={t('ceph-storage-plugin~What is a BackingStore ?')}
+            title={t('ceph-storage-plugin~What is a BackingStore?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             {t(

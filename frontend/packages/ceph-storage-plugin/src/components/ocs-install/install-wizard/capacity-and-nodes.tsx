@@ -48,7 +48,7 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
       <Text>
         <Trans t={t} ns="ceph-storage-plugin">
           If not labeled, the selected nodes are labeled <Label color="blue">{{ label }}</Label> to
-          make them target hosts for OCS components.
+          make them target hosts for OpenShift Container Storage&apos;s components.
         </Trans>
       </Text>
     </TextContent>
@@ -90,7 +90,9 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispa
   return (
     <Checkbox
       label={t('ceph-storage-plugin~Enable taint nodes')}
-      description={t('ceph-storage-plugin~Selected nodes will be dedicated to OCS use only')}
+      description={t(
+        "ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Container Storage's use only",
+      )}
       className="ocs-enable-taint"
       id="taint-nodes"
       isChecked={state.enableTaint}

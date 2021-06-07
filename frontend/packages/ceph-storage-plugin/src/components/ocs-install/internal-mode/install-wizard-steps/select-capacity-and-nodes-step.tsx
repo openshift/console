@@ -72,7 +72,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
       </TextContent>
       <FormGroup
         fieldId="storage-class-dropdown"
-        label={t('ceph-storage-plugin~Storage Class')}
+        label={t('ceph-storage-plugin~StorageClass')}
         labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>

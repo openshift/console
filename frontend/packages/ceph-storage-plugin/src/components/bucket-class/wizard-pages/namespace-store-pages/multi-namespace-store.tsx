@@ -58,7 +58,7 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
             </Title>
             <p className="nb-create-bc-step-page-form__element--light-text">
               {t(
-                'ceph-storage-plugin~Select list of namespace stores, defines the read targets of the namespace bucket',
+                'ceph-storage-plugin~Select a list of NamespaceStores that defines the read targets of the namespace bucket.',
               )}
             </p>
           </FlexItem>
@@ -93,7 +93,7 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
           </Title>
           <p className="nb-create-bc-step-page-form__element--light-text">
             {t(
-              'ceph-storage-plugin~Select a single namespace store, defines the write target of the namespace bucket',
+              'ceph-storage-plugin~Select a single NamespaceStore that defines the write targets of the namespace bucket.',
             )}
           </p>
           <FormGroup className="nb-create-bc-step-page-form" fieldId="namespacestore-input">

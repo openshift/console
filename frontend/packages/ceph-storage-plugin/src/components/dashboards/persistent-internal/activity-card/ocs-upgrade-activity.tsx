@@ -10,5 +10,9 @@ export const isOCSUpgradeActivity = (subscription: SubscriptionKind): boolean =>
 export const OCSUpgradeActivity: React.FC = () => {
   const { t } = useTranslation();
 
-  return <ActivityItem>{t('ceph-storage-plugin~Upgrading OCS Operator')}</ActivityItem>;
+  return (
+    <ActivityItem>
+      {t("ceph-storage-plugin~Upgrading OpenShift Container Storage's Operator")}
+    </ActivityItem>
+  );
 };

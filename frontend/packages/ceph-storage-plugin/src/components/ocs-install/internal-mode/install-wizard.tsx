@@ -75,7 +75,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
   const [errorMessage, setErrorMessage] = React.useState('');
   const flagDispatcher = useDispatch();
 
-  const title = t('ceph-storage-plugin~create internal mode storage cluster wizard');
+  const title = t('ceph-storage-plugin~create internal mode StorageCluster wizard');
   const scName = getName(state.storageClass);
   const hasConfiguredNetwork =
     state.networkType === NetworkType.MULTUS
@@ -160,7 +160,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
           >
             <p>
               {t(
-                'ceph-storage-plugin~Can be used on any platform, except bare metal. It means that OCS uses an infrastructure storage class, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.',
+                'ceph-storage-plugin~Can be used on any platform, except bare metal. It means that OpenShift Container Storage uses an infrastructure StorageClass, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.',
               )}
             </p>
           </Alert>

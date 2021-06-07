@@ -157,7 +157,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       )}
       <FormGroup
         fieldId="storage-class-dropdown"
-        label={t('ceph-storage-plugin~Storage Class')}
+        label={t('ceph-storage-plugin~StorageClass')}
         labelIcon={<FieldLevelHelp>{attachedDevicesStorageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
