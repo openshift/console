@@ -3,7 +3,13 @@ import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { OffIcon } from '@patternfly/react-icons';
 import { TableData } from '@console/internal/components/factory';
-import { OCSColumnState, Status, OCSDiskStatus, getOCSColumnStatus } from './state-reducer';
+import {
+  Status,
+  OCSDiskStatus,
+  OCSColumnState,
+  getOCSColumnStatus,
+  ReplacedDisk,
+} from './state-reducer';
 import { ExternalLink } from '@console/internal/components/utils';
 import {
   ErrorStatus,
@@ -12,6 +18,7 @@ import {
   ProgressStatus,
   StatusIconAndText,
 } from '@console/shared';
+
 import './ocs-status-column.scss';
 
 const getOCSStatusBody = (
@@ -71,15 +78,42 @@ const getOCSStatusBody = (
 export const OCSStatus: React.FC<{
   ocsState: OCSColumnState;
   diskName: string;
+  diskID: string;
+  diskSerial: string;
+  nodeName: string;
   className: string;
-}> = React.memo(({ ocsState, className, diskName }) => {
+}> = React.memo(({ ocsState, className, diskName, diskID, diskSerial, nodeName }) => {
   const { t } = useTranslation();
 
-  const { replacementMap, alertsMap, metricsMap } = ocsState;
+  const { replacedDiskList, alertsMap, metricsMap, replacingDiskList } = ocsState;
   let status: OCSDiskStatus;
-  if (replacementMap[diskName]) status = replacementMap[diskName].status;
-  else if (alertsMap[diskName]) status = alertsMap[diskName].status;
-  else if (metricsMap[diskName]) status = metricsMap[diskName].status;
+  let replacingDiskIndex: number = -1;
+
+  const { status: replacementStatus } =
+    replacedDiskList?.find((rd: ReplacedDisk) => {
+      const diskInfo = rd?.disk || { id: '', serial: '', path: '' };
+      return (
+        diskInfo.path === diskName &&
+        diskInfo.id === diskID &&
+        diskInfo.serial === diskSerial &&
+        rd?.node === nodeName
+      );
+    }) || {};
+
+  if (replacingDiskList.length)
+    replacingDiskIndex = replacingDiskList.findIndex(
+      (disk) => disk?.id === diskID && disk?.serial === diskSerial && disk?.path === diskName,
+    );
+
+  // If device replacement is just triggered from modal and template status is not fetched
+  if (replacingDiskIndex !== -1) status = Status.PreparingToReplace;
+  // If device is already replaced then show the replacement status
+  else if (replacementStatus) status = replacementStatus;
+  // If device is failed then show the failure status
+  else if (alertsMap[diskName]?.node === nodeName) status = alertsMap[diskName].status;
+  // If device is neither failed nor replaced then show underlying osd status
+  else if (metricsMap[diskName]?.node === nodeName) status = metricsMap[diskName].status;
+
   return (
     <TableData className={className}>
       {status ? getOCSStatusBody(status, diskName, t) : '-'}

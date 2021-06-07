@@ -3,11 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { TableData } from '@console/internal/components/factory';
 import { KebabOption, Kebab } from '@console/internal/components/utils';
 import { diskReplacementModal } from './disk-replacement-modal';
-import { OCSDiskList, OCSColumnStateAction } from './state-reducer';
+import { OCSColumnState, OCSColumnStateAction } from './state-reducer';
+import { DiskMetadata } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 
 export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
-  ({ diskName, alertsMap, replacementMap, isRebalancing, dispatch }) => {
+  ({ nodeName, disk, ocsState, dispatch }) => {
     const { t } = useTranslation();
+
+    const { alertsMap } = ocsState;
 
     const kebabOptions: KebabOption[] = [
       {
@@ -15,10 +18,9 @@ export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
         labelKey: t('ceph-storage-plugin~Start Disk Replacement'),
         callback: () =>
           diskReplacementModal({
-            diskName,
-            alertsMap,
-            replacementMap,
-            isRebalancing,
+            nodeName,
+            disk,
+            ocsState,
             dispatch,
           }),
       },
@@ -27,16 +29,15 @@ export const OCSKebabOptions: React.FC<OCSKebabOptionsProps> = React.memo(
     return (
       <TableData className={Kebab.columnClass}>
         {/* Enables the options for the disk with failures */}
-        <Kebab options={kebabOptions} isDisabled={!alertsMap[diskName]} />
+        <Kebab options={kebabOptions} isDisabled={alertsMap?.[disk.path]?.node !== nodeName} />
       </TableData>
     );
   },
 );
 
 type OCSKebabOptionsProps = {
-  diskName: string;
-  alertsMap: OCSDiskList;
-  replacementMap: OCSDiskList;
-  isRebalancing: boolean;
+  disk: DiskMetadata;
+  nodeName: string;
+  ocsState: OCSColumnState;
   dispatch: React.Dispatch<OCSColumnStateAction>;
 };
