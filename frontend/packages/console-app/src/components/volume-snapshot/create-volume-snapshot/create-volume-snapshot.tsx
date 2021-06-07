@@ -244,7 +244,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
           {pvcName ? (
             <p>
               <Trans ns="console-app">
-                Creating snapshot for claim <strong>{pvcName}</strong>
+                Creating snapshot for claim <strong>{{ pvcName }}</strong>
               </Trans>
             </p>
           ) : (
