@@ -22,6 +22,7 @@ import {
   getDynamicChannelResourceList,
   getDynamicEventSourcesResourceList,
   getDynamicChannelModel,
+  getLabelPlural,
 } from '../fetch-dynamic-eventsources-utils';
 import { mockEventSourcCRDData } from '../__mocks__/dynamic-event-source-crd-mock';
 import { mockChannelCRDData } from '../__mocks__/dynamic-channels-crd-mock';
@@ -93,6 +94,15 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     await fetchEventSourcesCrd();
     const resultModel = getDynamicEventSourcesResourceList('sample-app');
     expect(resultModel[0].limit).toBeUndefined();
+  });
+
+  it('should return the correct plural version of the kind', () => {
+    let kind = 'AbcClass';
+    let plural = 'abcclasses';
+    expect(getLabelPlural(kind, plural)).toBe('AbcClasses');
+    kind = 'SinkBinding';
+    plural = 'sinkbindings';
+    expect(getLabelPlural(kind, plural)).toBe('SinkBindings');
   });
 });
 
