@@ -56,7 +56,7 @@ describe('GettingStartedCard', () => {
     );
 
     expect(wrapper.find('Link')).toHaveLength(1);
-    expect(wrapper.find('ExternalLinkAltIcon')).toHaveLength(0);
+    expect(wrapper.find('.co-external-link')).toHaveLength(0);
   });
 
   it('should render external more link', () => {
@@ -72,6 +72,6 @@ describe('GettingStartedCard', () => {
     );
 
     expect(wrapper.find('a')).toHaveLength(1);
-    expect(wrapper.find('ExternalLinkAltIcon')).toHaveLength(1);
+    expect(wrapper.find('.co-external-link')).toHaveLength(1);
   });
 });
