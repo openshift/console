@@ -39,6 +39,11 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
     onChange({ value, unit: newUnit });
   };
 
+  React.useEffect(() => {
+    setUnit(defaultRequestSizeUnit);
+    setValue(parseInt(defaultRequestSizeValue, 10));
+  }, [defaultRequestSizeUnit, defaultRequestSizeValue]);
+
   const { t } = useTranslation();
   const inputName = `${name}Value`;
   const dropdownName = `${name}Unit`;
