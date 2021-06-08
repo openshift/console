@@ -7,7 +7,7 @@ Feature: Applications managed by GitOps and Create secret
               And user has installed Pipelines operator
               And user has installed Sealed Secrets operator in "cicd" namespace
               And user has created Sealed Secrets instance of name "sealedsecretcontroller"
-              Then user is at developer perspective
+              And user is at developer perspective
 
         @smoke
         Scenario: No GitOps Manifest URLs found: GO-01-TC01
