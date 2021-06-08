@@ -76,10 +76,7 @@ describe('test dev console', () => {
   describe('create vm in dev console', () => {
     it('ID(CNV-5699) create virtual machine', () => {
       cy.byLegacyTestID(addHeader).click();
-      cy.get('.odc-namespaced-page__content').scrollTo('bottom');
-      cy.contains('Virtual Machines')
-        .should('be.visible')
-        .click();
+      cy.get('[data-test="item dev-catalog-virtualization"]').click();
       cy.contains(TEMPLATE_NAME)
         .should('be.visible')
         .click();
