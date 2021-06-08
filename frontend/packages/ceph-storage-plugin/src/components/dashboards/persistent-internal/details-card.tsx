@@ -53,6 +53,15 @@ const SubscriptionResource: FirehoseResource = {
   isList: true,
 };
 
+const PackageManifestResource: FirehoseResource = {
+  kind: referenceForModel(PackageManifestModel),
+  namespaced: true,
+  isList: false,
+  namespace: 'openshift-storage',
+  prop: 'packages',
+  name: 'ocs-operator',
+};
+
 const DetailsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
   stopWatchK8sResource,
@@ -66,9 +75,9 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sWatchResource<
     SubscriptionKind
   >(SubscriptionResource);
-  const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sGet<
+  const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sWatchResource<
     PackageManifestKind
-  >(PackageManifestModel, 'ocs-operator', 'openshift-storage');
+  >(PackageManifestResource);
   const currentChannel =
     ocsSubscription?.[0]?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
   const filteredVersions = packageManifest?.status?.channels?.filter(
@@ -103,13 +112,13 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     ocsVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
-  const k8sUpdatedFunction = (...args) => k8sUpdate(...args);
+  const updateFunction = (...args) => k8sUpdate(...args);
   const ocsChannelModal = () => {
     if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
       return createSubscriptionChannelModal({
         subscription: ocsSubscription,
         pkg: packageManifest,
-        k8sUpdate: k8sUpdatedFunction,
+        k8sUpdate: updateFunction,
       });
     }
     return 0;
