@@ -4,6 +4,8 @@ export enum VMQueries {
   CPU_USAGE = 'CPU_USAGE',
   MEMORY_USAGE = 'MEMORY_USAGE',
   FILESYSTEM_USAGE = 'FILESYSTEM_USAGE',
+  FILESYSTEM_READ_USAGE = 'FILESYSTEM_READ_USAGE',
+  FILESYSTEM_WRITE_USAGE = 'FILESYSTEM_WRITE_USAGE',
   NETWORK_USAGE = 'NETWORK_USAGE',
   NETWORK_IN_USAGE = 'NETWORK_IN_USAGE',
   NETWORK_OUT_USAGE = 'NETWORK_OUT_USAGE',
@@ -18,8 +20,11 @@ const queries = {
     `pod:container_cpu_usage:sum{pod='<%= launcherPodName %>'}`,
   ),
   [VMQueries.MEMORY_USAGE]: _.template(`kubevirt_vmi_memory_resident_bytes{name='<%= vmName %>'}`),
-  [VMQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(kubevirt_vmi_storage_traffic_bytes_total{name='<%= vmName %>'})`,
+  [VMQueries.FILESYSTEM_READ_USAGE]: _.template(
+    `sum(kubevirt_vmi_storage_read_traffic_bytes_total{name='<%= vmName %>'})`,
+  ),
+  [VMQueries.FILESYSTEM_WRITE_USAGE]: _.template(
+    `sum(kubevirt_vmi_storage_write_traffic_bytes_total{name='<%= vmName %>'})`,
   ),
   [VMQueries.NETWORK_IN_USAGE]: _.template(
     `sum(kubevirt_vmi_network_receive_bytes_total{name='<%= vmName %>'})`,
@@ -32,13 +37,22 @@ const queries = {
 export const getUtilizationQueries = (props: { vmName: string; launcherPodName?: string }) => ({
   [VMQueries.CPU_USAGE]: queries[VMQueries.CPU_USAGE](props),
   [VMQueries.MEMORY_USAGE]: queries[VMQueries.MEMORY_USAGE](props),
-  [VMQueries.FILESYSTEM_USAGE]: queries[VMQueries.FILESYSTEM_USAGE](props),
 });
 
 export const getMultilineUtilizationQueries = (props: {
   vmName: string;
   launcherPodName?: string;
 }) => ({
+  [VMQueries.FILESYSTEM_USAGE]: [
+    {
+      query: queries[VMQueries.FILESYSTEM_READ_USAGE](props),
+      desc: 'read',
+    },
+    {
+      query: queries[VMQueries.FILESYSTEM_WRITE_USAGE](props),
+      desc: 'write',
+    },
+  ],
   [VMQueries.NETWORK_USAGE]: [
     {
       query: queries[VMQueries.NETWORK_IN_USAGE](props),
