@@ -45,7 +45,7 @@
   "PersistentVolumeClaim details": "PersistentVolumeClaim details",
   "StorageClass": "StorageClass",
   "Create VolumeSnapshot": "Create VolumeSnapshot",
-  "Creating snapshot for claim <1>{pvcName}</1>": "Creating snapshot for claim <1>{pvcName}</1>",
+  "Creating snapshot for claim <1>{{pvcName}}</1>": "Creating snapshot for claim <1>{{pvcName}}</1>",
   "PersistentVolumeClaim": "PersistentVolumeClaim",
   "Snapshot Class": "Snapshot Class",
   "Create": "Create",
