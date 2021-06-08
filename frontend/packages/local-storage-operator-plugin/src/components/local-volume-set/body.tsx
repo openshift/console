@@ -75,7 +75,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('lso-plugin~Storage Class Name')} fieldId="create-lvs-storage-class-name">
+      <FormGroup label={t('lso-plugin~StorageClass Name')} fieldId="create-lvs-storage-class-name">
         <TextInput
           type={TextInputTypes.text}
           id="create-lvs-storage-class-name"
