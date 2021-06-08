@@ -8,7 +8,7 @@ import {
   VisualizationProvider,
 } from '@patternfly/react-topology';
 import { componentFactory, layoutFactory } from './factories';
-import { DROP_SHADOW_SPACING, NODE_HEIGHT, NODE_WIDTH, PipelineLayout } from './const';
+import { DROP_SHADOW_SPACING, NODE_HEIGHT, PipelineLayout } from './const';
 import { getLayoutData } from './utils';
 
 type PipelineVisualizationSurfaceProps = {
@@ -24,11 +24,13 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
   const onLayoutUpdate = React.useCallback(
     (nodes: Node[]) => {
       const nodeBounds = nodes.map((node) => node.getBounds());
+      const maxWidth = Math.floor(
+        nodeBounds.map((bounds) => bounds.width).reduce((w1, w2) => Math.max(w1, w2), 0),
+      );
       const maxHeight = Math.floor(
         nodeBounds.map((bounds) => bounds.height).reduce((h1, h2) => Math.max(h1, h2), 0),
       );
       const maxObject = nodeBounds.find((nb) => nb.height === maxHeight);
-      const hasFinallyNodes = nodes.some((n) => !!n.getData()?.isFinallyTask);
 
       const maxX = Math.floor(
         nodeBounds.map((bounds) => bounds.x).reduce((x1, x2) => Math.max(x1, x2), 0),
@@ -43,20 +45,13 @@ const PipelineVisualizationSurface: React.FC<PipelineVisualizationSurfaceProps> 
         horizontalMargin = getLayoutData(layout).marginx || 0;
         verticalMargin = getLayoutData(layout).marginy || 0;
       }
+      const finallyTaskHeight = maxObject.y + maxHeight + DROP_SHADOW_SPACING + verticalMargin * 2;
+      const regularTaskHeight = maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin * 2;
 
-      if (hasFinallyNodes) {
-        setMaxSize({
-          // Nodes are rendered from the top-left
-          height: maxObject.y + maxHeight + DROP_SHADOW_SPACING + verticalMargin * 2,
-          width: maxObject.x + maxObject.width + DROP_SHADOW_SPACING + horizontalMargin * 2,
-        });
-      } else {
-        setMaxSize({
-          // Nodes are rendered from the top-left
-          height: maxY + NODE_HEIGHT + DROP_SHADOW_SPACING + verticalMargin * 2,
-          width: maxX + NODE_WIDTH + horizontalMargin * 2,
-        });
-      }
+      setMaxSize({
+        height: Math.max(finallyTaskHeight, regularTaskHeight),
+        width: maxX + maxWidth + DROP_SHADOW_SPACING + horizontalMargin * 2,
+      });
     },
     [setMaxSize, layout],
   );
