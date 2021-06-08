@@ -27,6 +27,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   spans,
   complexFields,
   rowRenderer,
+  ...props
 }) => {
   const { values } = useFormikContext<FormikValues>();
   const fieldValue = _.get(values, name, []);
@@ -41,6 +42,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
       render={({ push, remove }) => {
         return (
           <FormGroup
+            data-test={props['data-test'] || 'multicolumn-field'}
             fieldId={`form-multi-column-input-${name.replace(/\./g, '-')}-field`}
             label={label}
             helperText={helpText}

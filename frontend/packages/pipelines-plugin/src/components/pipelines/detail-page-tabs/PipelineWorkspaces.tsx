@@ -20,6 +20,7 @@ const PipelineWorkspaces: React.FC<PipelineWorkspacesParam> = (props) => {
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
+        data-test="pipeline-workspaces"
         name={fieldName}
         addLabel={addLabel}
         headers={[t('pipelines-plugin~Name')]}

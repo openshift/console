@@ -37,17 +37,19 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
         )}
       </p>
       <MultiColumnField
+        data-test="when-expression"
         name={name}
         addLabel={t('pipelines-plugin~Add when expression')}
         headers={[]}
         emptyValues={{ input: '', operator: '', values: [''] }}
         rowRenderer={({ onDelete, fieldName }: RowRendererProps) => (
-          <div className="opp-task-sidebar-when-expression__section">
+          <div className="opp-task-sidebar-when-expression__section" data-test={`row ${fieldName}`}>
             <WhenExpressionForm autoCompleteValues={autoCompleteValues} namePrefix={fieldName} />
             <div className="opp-task-sidebar-when-expression__control-button-wrapper">
               <Tooltip content={removeWhenExpressionLabel}>
                 <Button
                   onClick={onDelete}
+                  data-test="remove-when-expression"
                   className="opp-task-sidebar-when-expression__control-button"
                   aria-label={removeWhenExpressionLabel}
                   variant={ButtonVariant.plain}

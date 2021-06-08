@@ -21,6 +21,7 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
+        data-test="pipeline-parameters"
         name={fieldName}
         addLabel={addLabel}
         headers={[
@@ -33,18 +34,21 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
         isReadOnly={isReadOnly}
       >
         <InputField
+          data-test="name"
           name="name"
           type={TextInputTypes.text}
           placeholder={t('pipelines-plugin~Name')}
           isReadOnly={isReadOnly}
         />
         <InputField
+          data-test="description"
           name="description"
           type={TextInputTypes.text}
           placeholder={t('pipelines-plugin~Description')}
           isReadOnly={isReadOnly}
         />
         <InputField
+          data-test="default"
           name="default"
           type={TextInputTypes.text}
           placeholder={t('pipelines-plugin~Default value')}

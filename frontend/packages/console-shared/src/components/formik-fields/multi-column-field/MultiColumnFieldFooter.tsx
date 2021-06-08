@@ -17,6 +17,7 @@ const MultiColumnFieldFooter: React.FC<MultiColumnFieldHeader> = ({
   const { t } = useTranslation();
   return (
     <Button
+      data-test={'add-action'}
       variant="link"
       isDisabled={disableAddRow}
       onClick={onAdd}

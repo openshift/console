@@ -40,11 +40,15 @@ export const pipelineBuilderPO = {
       args: '#ARGS-0',
       actions: '[data-test-id="actions-menu-button"]',
       workspaces: '#form-dropdown-formData-tasks-0-workspaces-0-workspace-field',
+      whenExpression: '[data-test="when-expression"]',
+      addWhenExpression: '[data-test="when-expression"] [data-test="add-action"]',
     },
     addWorkspaces: {
       name: '[id$="workspaces-0-name-field"]',
       optionalWorkspace: '#form-checkbox-formData-workspaces-0-optional-field',
     },
+    addFinallyNode: '[data-test="pipeline-builder"] [data-test="add-finally-node"]',
+    finallyTaskList: '[data-test="builder-finally-node"] [data-test="task-list"]',
   },
   yamlView: {
     switchToYAMLView: '[id="form-radiobutton-editorType-yaml-field"]',
@@ -83,6 +87,8 @@ export const pipelineDetailsPO = {
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   details: {
+    visualization: '[data-test="pipeline-visualization"]',
+    finallyNode: '[data-test="pipeline-visualization"] [data-test="finally-node"]',
     sectionTitle: '[data-test-section-heading="Pipeline details"]',
     triggerTemplateSection: 'div.odc-trigger-template-list',
     triggerTemplateLink: 'a[data-test-id^="trigger-template-"]',

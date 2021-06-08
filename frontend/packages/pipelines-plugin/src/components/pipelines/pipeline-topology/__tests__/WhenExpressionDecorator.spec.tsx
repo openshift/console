@@ -9,6 +9,9 @@ type WhenExpressionDecoratorProps = React.ComponentProps<typeof WhenExpressionDe
 
 describe('WhenExpressionDecorator', () => {
   let wrapper: ShallowWrapper<WhenExpressionDecoratorProps>;
+  const whenExpressionContent = (content: string) => {
+    return <div data-test="when-expression-tooltip">{content}</div>;
+  };
   const props: WhenExpressionDecoratorProps = {
     width: 10,
     height: 10,
@@ -60,23 +63,24 @@ describe('WhenExpressionDecorator', () => {
   it('should contain the succeeded tooltip content if the task status is succeeded', () => {
     wrapper.setProps({ enableTooltip: true, status: runStatus.Succeeded });
     const tooltip = wrapper.find(Tooltip);
-    expect(tooltip.props().content).toEqual(<div>{'When expression was met'}</div>);
+    expect(tooltip.props().content).toEqual(whenExpressionContent('When expression was met'));
   });
 
   it('should contain the skipped tooltip content if the task status is skipped', () => {
     wrapper.setProps({ enableTooltip: true, status: runStatus.Skipped });
     const tooltip = wrapper.find(Tooltip);
-    expect(tooltip.props().content).toEqual(<div>{'When expression was not met'}</div>);
+    expect(tooltip.props().content).toEqual(whenExpressionContent('When expression was not met'));
   });
 
   it('should contain the default tooltip content for other task status', () => {
     wrapper.setProps({ enableTooltip: true, status: runStatus.PipelineNotStarted });
-    expect(wrapper.find(Tooltip).props().content).toEqual(<div>{'When expression'}</div>);
+
+    expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
     wrapper.setProps({ enableTooltip: true, status: runStatus.Failed });
-    expect(wrapper.find(Tooltip).props().content).toEqual(<div>{'When expression'}</div>);
+    expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
     wrapper.setProps({ enableTooltip: true, status: runStatus.Pending });
-    expect(wrapper.find(Tooltip).props().content).toEqual(<div>{'When expression'}</div>);
+    expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
     wrapper.setProps({ enableTooltip: true, status: runStatus['In Progress'] });
-    expect(wrapper.find(Tooltip).props().content).toEqual(<div>{'When expression'}</div>);
+    expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
   });
 });

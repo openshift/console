@@ -16,6 +16,7 @@ export interface FieldProps {
   className?: string;
   isDisabled?: boolean;
   validated?: ValidatedOptions;
+  dataTest?: string;
 }
 
 export interface BaseInputFieldProps extends FieldProps {

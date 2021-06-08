@@ -35,6 +35,7 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   const diamondNode = (
     <g transform={`translate(-${width * leftOffset}, ${NODE_HEIGHT / 2 - diamondHeight / 2})`}>
       <rect
+        data-test="diamond-decorator"
         className="opp-when-expression-decorator-diamond"
         width={width}
         height={height}
@@ -55,17 +56,21 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   let tooltipContent;
   switch (status) {
     case runStatus.Succeeded:
-      tooltipContent = <div>{t('pipelines-plugin~When expression was met')}</div>;
+      tooltipContent = t('pipelines-plugin~When expression was met');
       break;
     case runStatus.Skipped:
-      tooltipContent = <div>{t('pipelines-plugin~When expression was not met')}</div>;
+      tooltipContent = t('pipelines-plugin~When expression was not met');
       break;
     default:
-      tooltipContent = <div>{t('pipelines-plugin~When expression')}</div>;
+      tooltipContent = t('pipelines-plugin~When expression');
   }
 
   return enableTooltip ? (
-    <Tooltip position="bottom" enableFlip={false} content={tooltipContent}>
+    <Tooltip
+      position="bottom"
+      enableFlip={false}
+      content={<div data-test="when-expression-tooltip">{tooltipContent}</div>}
+    >
       {diamondNode}
     </Tooltip>
   ) : (

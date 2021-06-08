@@ -63,6 +63,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
       // TODO: fix this; the graph layout isn't properly laying out nodes
       key={`${nodes.map((n) => n.id).join('-')}${hasWhenExpression ? '-spaced' : ''}`}
       id="pipeline-builder"
+      data-test="pipeline-builder"
       fluid
       nodes={nodes}
       edges={getEdgesFromNodes(nodes)}

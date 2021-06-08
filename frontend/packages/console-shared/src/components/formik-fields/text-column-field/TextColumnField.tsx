@@ -40,6 +40,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
             label={label}
             validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
             isRequired={required}
+            data-test={props['data-test'] || 'text-column-field'}
           >
             {helpText && <div className="pf-c-form__helper-text">{helpText}</div>}
             {dndEnabled ? (
@@ -67,16 +68,16 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
                 })}
               </>
             )}
+            {!isReadOnly && (
+              <MultiColumnFieldFooter
+                addLabel={addLabel}
+                onAdd={() => {
+                  arrayHelpers.push('');
+                  onChange && onChange([...rowValues, '']);
+                }}
+              />
+            )}
           </FormGroup>
-          {!isReadOnly && (
-            <MultiColumnFieldFooter
-              addLabel={addLabel}
-              onAdd={() => {
-                arrayHelpers.push('');
-                onChange && onChange([...rowValues, '']);
-              }}
-            />
-          )}
         </>
       )}
     />

@@ -29,6 +29,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
           {(ref) => (
             <InputField
               ref={ref}
+              data-test="input"
               type={TextInputTypes.text}
               name={`${namePrefix}.input`}
               label={t('pipelines-plugin~Input')}
@@ -39,6 +40,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
       </GridItem>
       <GridItem span={6}>
         <DropdownField
+          dataTest="operator"
           name={`${namePrefix}.operator`}
           label={t('pipelines-plugin~Operator')}
           items={WhenExpressionOperatorType}
@@ -48,7 +50,11 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
         />
       </GridItem>
       <GridItem>
-        <TextColumnField name={`${namePrefix}.values`} label={t('pipelines-plugin~Values')}>
+        <TextColumnField
+          data-test="values"
+          name={`${namePrefix}.values`}
+          label={t('pipelines-plugin~Values')}
+        >
           {({ name: arrayName, ...additionalProps }) => (
             <AutoCompletePopover
               autoCompleteValues={autoCompleteValues}
@@ -57,7 +63,13 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
               }}
             >
               {(ref) => (
-                <InputField ref={ref} name={arrayName} {...additionalProps} autoComplete="off" />
+                <InputField
+                  data-test={`${arrayName} value`}
+                  ref={ref}
+                  name={arrayName}
+                  {...additionalProps}
+                  autoComplete="off"
+                />
               )}
             </AutoCompletePopover>
           )}

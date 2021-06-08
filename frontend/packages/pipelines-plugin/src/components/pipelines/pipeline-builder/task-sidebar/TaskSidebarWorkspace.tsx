@@ -60,6 +60,7 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
 
   return (
     <FormSelectField
+      data-test={`workspaces ${workspaceName}`}
       name={`${name}.workspace`}
       label={workspaceName}
       isDisabled={options.length === 1}

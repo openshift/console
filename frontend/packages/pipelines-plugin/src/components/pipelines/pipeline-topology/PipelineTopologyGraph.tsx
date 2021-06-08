@@ -20,9 +20,14 @@ const PipelineTopologyGraph: React.FC<PipelineTopologyGraphProps> = ({
   nodes,
   edges,
   layout,
+  ...props
 }) => {
   return (
-    <div className="odc-pipeline-topology-graph" style={{ display: fluid ? 'block' : undefined }}>
+    <div
+      className="odc-pipeline-topology-graph"
+      data-test={props['data-test'] || 'pipeline-topology-graph'}
+      style={{ display: fluid ? 'block' : undefined }}
+    >
       <PipelineVisualizationSurface
         model={{
           graph: {
