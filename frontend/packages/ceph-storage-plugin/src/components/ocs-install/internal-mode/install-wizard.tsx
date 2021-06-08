@@ -177,10 +177,10 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
           backButtonText={t('ceph-storage-plugin~Back')}
           startAtStep={getStep()}
           onBack={() => {
-            history.push(`~new?${getParamString(getStep(2) - 1, getIndex(MODES, MODES.INTERNAL))}`);
+            history.push(`~new?${getParamString(getStep(3) - 1, getIndex(MODES, MODES.INTERNAL))}`);
           }}
           onNext={() => {
-            history.push(`~new?${getParamString(getStep(2) + 1, getIndex(MODES, MODES.INTERNAL))}`);
+            history.push(`~new?${getParamString(getStep(3) + 1, getIndex(MODES, MODES.INTERNAL))}`);
           }}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))

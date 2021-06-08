@@ -288,7 +288,7 @@ export type DiscoveredDisk = {
 } & DiskMetadata;
 
 export type NavUtils = {
-  getStep: (offset?: number) => number;
+  getStep: (maxSteps?: number) => number;
   getParamString: (step: number, mode: number) => string;
   getIndex: (searchSpace: any, search: string, offset?: number) => number;
   getAnchor: (step: number, mode: number) => string;

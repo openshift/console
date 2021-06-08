@@ -125,7 +125,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
 
   const discoveryNodes = state.lvdIsSelectNodes ? state.lvdSelectNodes : state.lvdAllNodes;
 
-  const { getStep, getParamString, getIndex, getAnchor } = navUtils;
+  const { getStep, getIndex, getAnchor } = navUtils;
 
   /**
    * This custom footer for wizard provides a control over the movement to next step.
@@ -287,14 +287,10 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
           steps={steps}
           startAtStep={getStep()}
           onBack={() => {
-            history.push(
-              `~new?${getParamString(getStep() - 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
-            );
+            history.push(getAnchor(getStep() - 1, getIndex(MODES, MODES.ATTACHED_DEVICES)));
           }}
           onNext={() => {
-            history.push(
-              `~new?${getParamString(getStep() + 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
-            );
+            history.push(getAnchor(getStep() + 1, getIndex(MODES, MODES.ATTACHED_DEVICES)));
           }}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))

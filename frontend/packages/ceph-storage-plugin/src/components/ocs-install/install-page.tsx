@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
-import { ListKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  ListKind,
+  referenceForModel,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import { history, BreadCrumbs } from '@console/internal/components/utils';
 import { RadioGroup } from '@console/internal/components/radio';
-import { InfrastructureModel } from '@console/internal/models';
+import { InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -22,6 +26,7 @@ import { CEPH_STORAGE_NAMESPACE, MODES, CreateStepsSC } from '../../constants';
 import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
 import './install-page.scss';
+import { filterSCWithNoProv } from '../../utils/install';
 
 const INDEP_MODE_SUPPORTED_PLATFORMS = [
   'BareMetal',
@@ -59,6 +64,8 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   );
 
   const memoizedCSV = useDeepCompareMemoize(csv, true);
+  const [sc] = useK8sGet<ListKind<StorageClassResourceKind>>(StorageClassModel);
+  const hasNoProvSC = sc?.items?.some(filterSCWithNoProv);
 
   React.useEffect(() => {
     if (csvLoaded && !csvError) {
@@ -81,7 +88,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   }, [infra, infraLoaded, infraError]);
 
   const getMode = () => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
+    const searchParams = new URLSearchParams(window.location.search);
     const modeParam = parseInt(searchParams.get('mode'), 10) || 1;
     const sanitizedMode =
       modeParam && modeParam <= (!isIndepModeSupportedPlatform ? 2 : 3) && modeParam >= 1
@@ -90,18 +97,20 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     return sanitizedMode;
   };
 
-  const getStep = (offset: number = 0) => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
-    const step = parseInt(searchParams.get('step'), 10) || 1;
-    const sanitizedStep = step && step <= 5 - offset && step >= 1 ? step : 1;
-    return sanitizedStep;
-  };
-
   const getParamString = (step: number, mode: number) => {
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
+    const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('step', step.toString());
     searchParams.set('mode', mode.toString());
     return searchParams.toString();
+  };
+
+  const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
+
+  const getStep = (maxSteps: number = 5) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const step = parseInt(searchParams.get('step'), 10) || 1;
+    const sanitizedStep = step <= maxSteps && step >= 1 ? step : 1;
+    return sanitizedStep;
   };
 
   const getIndex = (searchSpace: any, search: string, offset: number = 0) => {
@@ -109,14 +118,17 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     return index - offset + 1;
   };
 
-  const getAnchor = (step: number, mode: number) => `~new?${getParamString(step, mode)}`;
-
   const handleModeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     const modeIndex = getIndex(MODES, value);
-    history.push(
-      `~new?${getParamString(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex)}`,
-    );
+    // Set the currently active step in the wizard to "Storage and Nodes"
+    // when the currently active mode is set to "Internal - Attached Devices"
+    // and a "no-provisioner" storage class exists.
+    if (modeIndex === 2 && hasNoProvSC) {
+      history.push(getAnchor(3, 2));
+    } else {
+      history.push(getAnchor(getIndex(CreateStepsSC, CreateStepsSC.DISCOVER), modeIndex));
+    }
   };
 
   const disableClusterCreation: boolean = storageCluster?.items?.length > 0;
