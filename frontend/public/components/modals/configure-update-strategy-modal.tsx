@@ -89,7 +89,7 @@ export const ConfigureUpdateStrategy: React.FC<ConfigureUpdateStrategyProps> = (
 
               <div className="row co-m-form-row">
                 <div className="col-sm-3">
-                  <label htmlFor="input-max-surge" className="control-label">
+                  <label htmlFor="input-max-surge" className="control-label co-break-word">
                     {t('public~Max surge')}
                   </label>
                 </div>

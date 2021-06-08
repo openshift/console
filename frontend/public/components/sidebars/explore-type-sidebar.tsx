@@ -152,7 +152,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                     isInline
                     variant="link"
                   >
-                    {t('View details')}
+                    {t('public~View details')}
                   </Button>
                 )}
               </li>

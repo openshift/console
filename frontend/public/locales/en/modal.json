@@ -8,8 +8,5 @@
   "Prefix": "Prefix",
   "Volume": "Volume",
   "Mount path": "Mount path",
-  "Save": "Save",
-  "Secret name": "Secret name",
-  "Create {{label}}": "Create {{label}}",
-  "Delete {{label}}?": "Delete {{label}}?"
+  "Save": "Save"
 }

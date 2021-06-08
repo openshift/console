@@ -74,7 +74,6 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const { t } = useTranslation();
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
-
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>

@@ -186,7 +186,9 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
   render() {
     const { namespace, pullSecret, t } = this.props;
+
     const existingData = parseExisitingPullSecret(pullSecret);
+
     return (
       <form onSubmit={this._submit} name="form" className="modal-content">
         <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
@@ -205,7 +207,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               title={t('public~Overwriting default pull Secret')}
             >
               {t(
-                "public~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
+                'public~A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.',
               )}
             </Alert>
           )}
@@ -221,7 +223,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="public-pull-secret-name">{t('modal~Secret name')}</label>
+              <label htmlFor="namespace-pull-secret-name">{t('public~Secret name')}</label>
             </div>
             {pullSecret ? (
               <div className="col-xs-9">
