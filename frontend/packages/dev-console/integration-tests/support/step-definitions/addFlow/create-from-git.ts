@@ -180,7 +180,7 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
   topologyPage.componentNode(nodeName).click({ force: true });
   topologySidePane.selectTab('Resources');
-  topologySidePane.verifySection('Routes').should('be.visible');
+  topologySidePane.verifySection('Routes');
   cy.get('[role="dialog"] h2')
     .contains('Routes')
     .next('span')
@@ -188,16 +188,13 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
 });
 
 Then(
-  'the route of application {string} contains {string}',
+  'the route of application {string} contains {string} in the Routes section of the workload sidebar',
   (nodeName: string, routeName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(nodeName);
     topologyPage.componentNode(nodeName).click({ force: true });
     topologySidePane.selectTab('Resources');
-    topologySidePane.verifySection('Routes').should('be.visible');
-    cy.get('[role="dialog"] h2')
-      .contains('Routes')
-      .next('span')
-      .should('contain.text', routeName);
+    topologySidePane.verifySection('Routes');
+    cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
   },
 );
 
