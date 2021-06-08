@@ -20,6 +20,7 @@ import { V1PersistentVolumeClaimSpec } from './V1PersistentVolumeClaimSpec';
  * @interface V1alpha1DataVolumeSpec
  */
 export interface V1alpha1DataVolumeSpec {
+  preallocation?: boolean;
   /**
    * DataVolumeContentType options: \"kubevirt\", \"archive\"
    * @type {string}

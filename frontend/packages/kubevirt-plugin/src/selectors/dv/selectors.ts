@@ -16,6 +16,8 @@ export const getDataVolumeAccessModes = (dataVolume: K8sResourceKind) =>
   _.get(dataVolume, 'spec.pvc.accessModes');
 export const getDataVolumeVolumeMode = (dataVolume: K8sResourceKind) =>
   _.get(dataVolume, 'spec.pvc.volumeMode');
+export const getDataVolumePreallocationDisk = (dataVolume: K8sResourceKind) =>
+  _.get(dataVolume, 'spec.preallocation');
 export const getDataVolumeStorageClassName = (dataVolume: K8sResourceKind): string =>
   _.get(dataVolume, 'spec.pvc.storageClassName');
 
