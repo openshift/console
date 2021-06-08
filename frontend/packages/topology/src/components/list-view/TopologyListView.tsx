@@ -12,6 +12,8 @@ import {
 } from '@patternfly/react-topology';
 import { DataList } from '@patternfly/react-core';
 import { useQueryParams } from '@console/shared';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
 import { Alert } from '@console/internal/components/monitoring/types';
 import * as UIActions from '@console/internal/actions/ui';
@@ -320,13 +322,12 @@ const dispatchToProps = (dispatch): TopologyListViewPropsFromDispatch => ({
     dispatch(UIActions.monitoringLoaded('devAlerts', alerts, 'dev')),
 });
 
-const TopologyListView = connect<
-  TopologyListViewPropsFromState,
-  TopologyListViewPropsFromDispatch,
-  TopologyListViewProps
->(
-  stateToProps,
-  dispatchToProps,
-)(React.memo(ConnectedTopologyListView));
+const TopologyListView = withFallback(
+  connect<TopologyListViewPropsFromState, TopologyListViewPropsFromDispatch, TopologyListViewProps>(
+    stateToProps,
+    dispatchToProps,
+  )(React.memo(ConnectedTopologyListView)),
+  ErrorBoundaryFallback,
+);
 
 export default TopologyListView;

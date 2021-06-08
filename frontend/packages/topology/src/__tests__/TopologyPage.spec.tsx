@@ -58,38 +58,45 @@ describe('Topology page tests', () => {
   });
 
   it('should render topology page', () => {
-    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
+    const wrapperWithFallback = shallow(<TopologyPage match={match} hideProjects={false} />);
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
   it('should default to graph view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
-    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
+    const wrapperWithFallback = shallow(<TopologyPage match={match} hideProjects={false} />);
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
   it('should allow setting default to list view', () => {
-    const wrapper = shallow(
+    const wrapperWithFallback = shallow(
       <TopologyPage match={match} hideProjects={false} defaultViewType={TopologyViewType.list} />,
     );
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should use useUserSettingsCompatibility setting', () => {
+  it('should render graph if useUserSettingsCompatibility setting returns that', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
-    let wrapper = shallow(
+    const wrapperWithFallback = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+  });
 
+  it('should render list if useUserSettingsCompatibility setting returns that', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
-    wrapper = shallow(
+    const wrapperWithFallback = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
-  it('should continue to support URL view path', () => {
+  it('should continue to support URL view path for graph', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
     const viewMatch = {
       params: { name: 'default' },
@@ -97,11 +104,20 @@ describe('Topology page tests', () => {
       path: '/topology/graph',
       url: '',
     };
-    let wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
+    const wrapperWithFallback = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
+  });
 
-    viewMatch.path = '/topology/list';
-    wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
+  it('should continue to support URL view path for list', () => {
+    const viewMatch = {
+      params: { name: 'default' },
+      isExact: true,
+      path: '/topology/list',
+      url: '',
+    };
+    const wrapperWithFallback = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
+    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 });
