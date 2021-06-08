@@ -5,6 +5,7 @@ export const topologyActions = {
   selectAction: (action: nodeActions | string) => {
     switch (action) {
       case 'Edit Application Grouping':
+      case 'Edit Application grouping':
       case nodeActions.EditApplicationGrouping: {
         cy.byTestActionID(action)
           .should('be.visible')
@@ -26,6 +27,7 @@ export const topologyActions = {
         break;
       }
       case 'Edit Pod Count':
+      case 'Edit Pod count':
       case nodeActions.EditPodCount: {
         cy.byTestActionID(action)
           .should('be.visible')
@@ -33,21 +35,23 @@ export const topologyActions = {
         break;
       }
       case 'Edit Labels':
+      case 'Edit labels':
       case nodeActions.EditLabels: {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         cy.get('form').should('be.visible');
-        modal.modalTitleShouldContain('Edit Labels');
+        modal.modalTitleShouldContain('Edit labels');
         break;
       }
       case 'Edit Annotations':
+      case 'Edit annotations':
       case nodeActions.EditAnnotations: {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();
         cy.get('form').should('be.visible');
-        modal.modalTitleShouldContain('Edit Annotations');
+        modal.modalTitleShouldContain('Edit annotations');
         break;
       }
       case 'Edit Update Strategy':
