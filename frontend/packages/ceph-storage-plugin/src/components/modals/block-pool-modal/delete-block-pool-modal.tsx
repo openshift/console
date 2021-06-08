@@ -86,7 +86,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
     handlePromise(k8sKill(CephBlockPoolModel, blockPoolConfig), () => close());
   };
 
-  const MODAL_TITLE = t('ceph-storage-plugin~Delete Block Pool');
+  const MODAL_TITLE = t('ceph-storage-plugin~Delete BlockPool');
 
   return (
     <div className="modal-content modal-content--no-inner-scroll">
@@ -136,7 +136,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
         <StatusBox
           loaded={isLoaded && pvcLoaded && scLoaded}
           loadError={loadError ?? pvcLoadError ?? scLoadError}
-          label={t('ceph-storage-plugin~Block Pool Delete Modal')}
+          label={t('ceph-storage-plugin~BlockPool Delete Modal')}
         />
       )}
     </div>

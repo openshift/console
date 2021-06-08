@@ -43,9 +43,9 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
   const [timer, setTimer] = React.useState<NodeJS.Timer>(null);
 
   const MODAL_DESC = t(
-    'ceph-storage-plugin~A block pool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
+    'ceph-storage-plugin~A BlockPool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
   );
-  const MODAL_TITLE = t('ceph-storage-plugin~Create New Block Pool');
+  const MODAL_TITLE = t('ceph-storage-plugin~Create BlockPool');
 
   // Watch newly created pool after submit
   const poolResource: WatchK8sResource = React.useMemo(() => {

@@ -40,9 +40,9 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
   );
   const cephCluster: CephClusterKind = useDeepCompareMemoize(cephClusters[0], true);
 
-  const MODAL_TITLE = t('ceph-storage-plugin~Edit Block Pool');
+  const MODAL_TITLE = t('ceph-storage-plugin~Edit BlockPool');
   const MODAL_DESC = t(
-    'ceph-storage-plugin~A block pool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
+    'ceph-storage-plugin~A BlockPool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
   );
 
   const populateBlockPoolData = React.useCallback(
@@ -139,7 +139,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
         <StatusBox
           loadError={loadError}
           loaded={isLoaded}
-          label={t('ceph-storage-plugin~Block Pool Update Form')}
+          label={t('ceph-storage-plugin~BlockPool Update Form')}
         />
       )}
     </div>

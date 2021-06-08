@@ -65,7 +65,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
         .catch((err) =>
           dispatch({
             type: BlockPoolActionType.SET_ERROR_MESSAGE,
-            payload: getErrorMessage(err.message) || 'Could not create block pool.',
+            payload: getErrorMessage(err.message) || 'Could not create BlockPool.',
           }),
         );
     } else
@@ -80,7 +80,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
   if (cephCluster?.metadata.name === CEPH_EXTERNAL_CR_NAME) {
     return (
       <Modal
-        title={t('ceph-storage-plugin~Create Block Pool')}
+        title={t('ceph-storage-plugin~Create BlockPool')}
         titleIconVariant="warning"
         isOpen
         onClose={onClose}
@@ -112,7 +112,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
                 path: url.replace('/~new', ''),
               },
               {
-                name: t('ceph-storage-plugin~Create Block Pool'),
+                name: t('ceph-storage-plugin~Create BlockPool'),
                 path: url,
               },
             ]}
@@ -120,11 +120,11 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
         </div>
 
         <h1 className="co-create-operand__header-text">
-          {t('ceph-storage-plugin~Create Block Pool')}
+          {t('ceph-storage-plugin~Create BlockPool')}
         </h1>
         <p className="help-block">
           {t(
-            'ceph-storage-plugin~A block pool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
+            'ceph-storage-plugin~A BlockPool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
           )}
         </p>
       </div>
@@ -143,7 +143,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
           <StatusBox
             loadError={loadError}
             loaded={isLoaded}
-            label={t('ceph-storage-plugin~Block Pool Creation Form')}
+            label={t('ceph-storage-plugin~BlockPool Creation Form')}
           />
         )}
       </div>

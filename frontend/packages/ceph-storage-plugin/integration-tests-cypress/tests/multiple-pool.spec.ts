@@ -24,7 +24,7 @@ const prepareStorageClassForm = () => {
 const createBlockPool = (poolCreationAction: string) => {
   cy.log('Make sure the storage pool creation form is open');
   modal.shouldBeOpened();
-  modal.modalTitleShouldContain('Create New Block Pool');
+  modal.modalTitleShouldContain('Create BlockPool');
   populateBlockPoolForm();
   blockPoolFooter('create');
 
