@@ -4,7 +4,7 @@
   font-size: 80%;
   fill: $color-container-dark;
   text {
-    fill: #fff !important;
+    fill: var(--pf-global--palette--white) !important;
   }
 }
 .odc-resource-icon-service {
@@ -13,8 +13,7 @@
 .odc-resource-icon-deployment,
 .odc-resource-icon-daemonset,
 .odc-resource-icon-deploymentconfig,
-.odc-resource-icon-job
-{
+.odc-resource-icon-job {
   fill: $color-pod-overlord;
 }
 .odc-resource-icon-application {
@@ -23,4 +22,3 @@
 .odc-resource-icon-pod {
   fill: $color-pod-dark;
 }
-

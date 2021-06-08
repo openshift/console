@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
+import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
 
 type KnativeIconProps = {
   x: number;
@@ -25,7 +26,7 @@ const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
           <feMergeNode in="se" />
           <feMergeNode in="sw" />
         </feMerge>
-        <feFlood floodColor="#FFFFFF" />
+        <feFlood floodColor={globalWhite.value} />
         <feComposite in2="blackborder" operator="in" result="offsetColor" />
         <feMerge>
           <feMergeNode in="offsetColor" />

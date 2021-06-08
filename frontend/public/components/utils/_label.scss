@@ -8,7 +8,8 @@
   max-width: 100%;
   padding: 0 8px;
 
-  &__key, &__value {
+  &__key,
+  &__value {
     max-width: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -16,8 +17,10 @@
   }
 }
 
-.co-m-label-list:hover .co-m-label, .co-m-label--expand {
-  .co-m-label__key, .co-m-label__value {
+.co-m-label-list:hover .co-m-label,
+.co-m-label--expand {
+  .co-m-label__key,
+  .co-m-label__value {
     max-width: 100%;
   }
 }
@@ -54,13 +57,13 @@ tags-input .tags {
   min-height: 120px;
 
   .tag-item {
-    background-color: rgba(235,235,235,.5); // enable scroll-shadows to be seen
+    background-color: rgba(235, 235, 235, 0.5); // enable scroll-shadows to be seen
   }
 }
 
 tags-input .tags.focused,
 tags-input .tags:focus {
-  border-color: #66AFE9;
+  border-color: #66afe9;
   outline: none;
 }
 
@@ -91,7 +94,7 @@ tags-input .tags .tag-item .remove-button {
 }
 
 tags-input .tags .tag-item .remove-button:active {
-  color: #fff;
+  color: var(--pf-global--palette--white);
 }
 
 tags-input .remove-button:active,
@@ -106,8 +109,10 @@ tags-input .tags .input {
   outline: none;
   padding: 0;
   // Since iOS phone text input size is larger, remove border and margin and increase line-height
-  @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
-    @media (max-width: $grid-float-breakpoint-max) { // Target phones
+  @supports (-webkit-overflow-scrolling: touch) {
+    // Target mobile Safari
+    @media (max-width: $grid-float-breakpoint-max) {
+      // Target phones
       border: 0;
       line-height: 24px;
       margin-bottom: 0;
@@ -149,7 +154,7 @@ tags-input .autocomplete .suggestion-item {
   background-color: white;
   color: black;
   cursor: pointer;
-  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow: hidden;
   padding: 5px 10px;
   text-overflow: ellipsis;
@@ -169,5 +174,5 @@ tags-input .autocomplete .suggestion-item.selected em {
 tags-input .autocomplete .suggestion-item em {
   background-color: white;
   color: black;
-  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: normal bold 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

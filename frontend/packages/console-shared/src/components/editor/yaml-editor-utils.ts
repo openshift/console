@@ -7,6 +7,8 @@ import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_dark_100';
+import { global_Color_light_100 as globalColorLight100 } from '@patternfly/react-tokens/dist/js/global_Color_light_100';
+import { global_BackgroundColor_200 as globalBackground200 } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
 import * as yaml from 'yaml-ast-parser';
 
 window.monaco.editor.defineTheme('console', {
@@ -22,8 +24,8 @@ window.monaco.editor.defineTheme('console', {
   colors: {
     'editor.background': editorBackground.value,
     'editorGutter.background': '#292e34', // no pf token defined
-    'editorLineNumber.activeForeground': '#fff',
-    'editorLineNumber.foreground': '#f0f0f0',
+    'editorLineNumber.activeForeground': globalColorLight100.value,
+    'editorLineNumber.foreground': globalBackground200.value,
   },
 });
 

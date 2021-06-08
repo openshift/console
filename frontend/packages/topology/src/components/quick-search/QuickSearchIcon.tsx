@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
 
 const QuickSearchIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): React.ReactElement => {
   return (
@@ -23,7 +24,7 @@ const QuickSearchIcon: React.FC<React.HTMLProps<SVGElement>> = ({ style }): Reac
           d="M62.66 67.25h-4.41c-.52 0-.95-.39-.95-.86v-6.63h-7.25c-.52 0-.95-.39-.95-.86v-4.04c0-.48.43-.86.95-.86h7.25v-6.63c0-.48.43-.86.95-.86h4.41c.52 0 .95.39.95.86V54h7.25c.52 0 .95.39.95.86v4.04c0 .48-.43.86-.95.86H63.6v6.63c0 .47-.42.86-.94.86zm-2.21 7.49c10.8 0 19.55-8 19.55-17.87S71.25 39 60.45 39 40.9 47 40.9 56.87s8.75 17.87 19.55 17.87z"
           fillRule="evenodd"
           clipRule="evenodd"
-          fill="#fff"
+          fill={globalWhite.value}
         />
       </g>
       <g id="prefix__Layer_2">

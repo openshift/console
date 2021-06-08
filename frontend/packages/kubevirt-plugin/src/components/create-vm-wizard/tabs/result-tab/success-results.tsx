@@ -14,6 +14,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons';
+import { global_palette_light_green_400 as globalLightGreen400 } from '@patternfly/react-tokens/dist/js/global_palette_light_green_400';
 
 import { getVMLikeModelDetailPath, getVMLikeModelListPath } from '../../../../utils/utils';
 import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
@@ -87,7 +88,7 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   }
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
-      <EmptyStateIcon icon={CheckIcon} color="#92d400" />
+      <EmptyStateIcon icon={CheckIcon} color={globalLightGreen400.value} />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
         {title}
       </Title>

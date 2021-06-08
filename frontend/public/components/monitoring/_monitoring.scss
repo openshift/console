@@ -1,4 +1,4 @@
-$tooltip-background-color: #151515;
+$tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 
 .co-alert-manager-config__edit-alert-routing-btn {
   margin-bottom: 10px;
@@ -121,7 +121,11 @@ $tooltip-background-color: #151515;
     max-height: $legend-content-height; // Required for Chrome to prevent vertical scrolling
   }
   &:after {
-    background: linear-gradient(to left, var(--pf-global--BackgroundColor--100), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to left,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
     content: '';
     height: $legend-content-height;
     pointer-events: none;

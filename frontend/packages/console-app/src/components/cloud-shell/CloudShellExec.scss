@@ -2,7 +2,7 @@
 
 .co-cloudshell-exec {
   &__container-error {
-    background-color: #fff;
+    background-color: var(--pf-global--BackgroundColor--100);
     height: 100%;
   }
 
