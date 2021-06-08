@@ -4,13 +4,11 @@ Feature: Web Terminal
 
         Background:
             Given user has logged in as basic user
-              And  user is at developer perspective
               And  user has created or selected namespace "aut-terminal-basic"
 
         @regression @to-do
         Scenario: Open existing Web Terminal instance: WT-01-TC01
             Given user has installed Web Terminal operator
-              And user is at developer perspective
              When user clicks on the Web Terminal icon on the Masthead
              Then user will see the terminal window
               And user close current Web Terminal session

@@ -6,8 +6,6 @@ Feature: Web Terminal for Admin user
         Background:
             Given user has logged in as admin user
               And user has installed Web Terminal operator
-              And user is at developer perspective
-
 
         @smoke @to-do
         Scenario: Create new project and use Web Terminal: WT-02-TC01

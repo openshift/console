@@ -11,7 +11,6 @@ Feature: Web Terminal for Developer user
               # in existed project
               And user has created or selected namespace "aut-terminal-testuser-existed"
               And user has installed Web Terminal operator
-              And user is at developer perspectivegitg
 
         @regression @to-do
         Scenario: Create new project and use Web Terminal: WT-03-TC01
@@ -27,5 +26,5 @@ Feature: Web Terminal for Developer user
         Scenario: Open Web Terminal for existing project WT-03-TC02
             Given user can see terminal icon on masthead
              When user clicks on the Web Terminal icon on the Masthead
-              And user selects "aut-terminal-testuser-existed2" from Project drop down menu
+              And user selects "aut-terminal-testuser-existed" from Project drop down menu
              Then user will see the terminal instance for developer namespace "aut-terminal-testuser-existed"
