@@ -11,6 +11,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
   Button,
+  Divider,
   Popover,
   Grid,
   GridItem,
@@ -50,6 +51,8 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   podRestarts,
+  isWindowsPod,
+  isContainerCrashLoopBackOff,
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
@@ -102,6 +105,7 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 // t('public~Login is required. Please try again.')
 // t('public~Could not check CSRF token. Please try again.')
 // t('public~Invalid login or password. Please try again.')
+import { resourcePath } from './utils/resource-link';
 import { useK8sWatchResource } from './utils/k8s-watch-hook';
 import { useListPageFilter } from './factory/ListPage/filter-hook';
 import VirtualizedTable, { TableData } from './factory/Table/VirtualizedTable';
@@ -619,10 +623,11 @@ const PodMetrics = requirePrometheus(({ obj }) => {
 const PodStatusPopover: React.FC<PodStatusPopoverProps> = ({
   bodyContent,
   headerContent,
+  footerContent,
   status,
 }) => {
   return (
-    <Popover headerContent={headerContent} bodyContent={bodyContent}>
+    <Popover headerContent={headerContent} bodyContent={bodyContent} footerContent={footerContent}>
       <Button variant="link" isInline>
         <Status status={status} />
       </Button>
@@ -653,9 +658,59 @@ export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
     (status === 'CrashLoopBackOff' || status === 'ErrImagePull' || status === 'ImagePullBackOff') &&
     containerStatusStateWaiting
   ) {
+    let footerLinks: React.ReactNode;
+    let headerTitle = '';
+    if (status === 'CrashLoopBackOff') {
+      headerTitle = t('public~Pod crash loop back-off');
+      const containers: ContainerSpec[] = pod.spec.containers;
+      footerLinks = (
+        <div>
+          <p>
+            {t(
+              'public~CrashLoopBackOff indicates that the application within the container is failing to start properly.',
+            )}
+          </p>
+          <div>
+            <p>{t('public~To troubleshoot, view logs and events, then debug in terminal.')}</p>
+          </div>
+          <div>
+            <p>
+              <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/logs`}>
+                {t('public~View logs')}
+              </Link>
+              &emsp;
+              <Link to={`${resourcePath('Pod', pod.metadata.name, pod.metadata.namespace)}/events`}>
+                {t('public~View events')}
+              </Link>
+            </p>
+          </div>
+          <Divider />
+          {containers.map((container) => {
+            if (isContainerCrashLoopBackOff(pod, container.name) && !isWindowsPod(pod)) {
+              return (
+                <div key={container.name}>
+                  <Link
+                    to={`${resourcePath(
+                      'Pod',
+                      pod.metadata.name,
+                      pod.metadata.namespace,
+                    )}/containers/${container.name}/debug`}
+                  >
+                    {t('public~Debug container {{name}}', { name: container.name })}
+                  </Link>
+                </div>
+              );
+            }
+          })}
+        </div>
+      );
+    }
+
     return (
       <PodStatusPopover
+        headerContent={headerTitle}
         bodyContent={containerStatusStateWaiting.state.waiting.message}
+        footerContent={footerLinks}
         status={status}
       />
     );
@@ -782,7 +837,12 @@ const PodEnvironmentComponent = (props) => (
   <EnvironmentPage obj={props.obj} rawEnvData={props.obj.spec} envPath={envPath} readOnly={true} />
 );
 
-export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) => (
+export const PodExecLoader: React.FC<PodExecLoaderProps> = ({
+  obj,
+  message,
+  initialContainer,
+  infoMessage,
+}) => (
   <div className="co-m-pane__body">
     <div className="row">
       <div className="col-xs-12">
@@ -791,6 +851,8 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
             loader={() => import('./pod-exec').then((c) => c.PodExec)}
             obj={obj}
             message={message}
+            infoMessage={infoMessage}
+            initialContainer={initialContainer}
           />
         </div>
       </div>
@@ -1014,6 +1076,7 @@ type PodContainerTableProps = {
 type PodStatusPopoverProps = {
   bodyContent: string;
   headerContent?: string;
+  footerContent?: React.ReactNode | string;
   status: string;
 };
 
@@ -1032,6 +1095,8 @@ type PodDetailsListProps = {
 type PodExecLoaderProps = {
   obj: PodKind;
   message?: React.ReactElement;
+  infoMessage?: React.ReactElement;
+  initialContainer?: string;
 };
 
 type PodDetailsProps = {

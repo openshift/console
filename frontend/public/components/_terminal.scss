@@ -33,6 +33,10 @@ $console-collapse-link-z-index: $console-z-index + 20;
   z-index: $console-collapse-link-z-index; // in fullscreen mode, to get above console's z-index
 }
 
+.co-terminal-info-message {
+  padding: 10px;
+}
+
 .default-overflow {
   overflow: visible !important;
 }

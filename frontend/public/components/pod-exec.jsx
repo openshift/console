@@ -14,6 +14,7 @@ import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';
 import { PodModel } from '../models';
+import { isWindowsPod } from '../module/k8s/pods';
 
 const nameWithIcon = (name) => (
   <span>
@@ -40,28 +41,25 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       this.state = {
         open: false,
         containers: [],
-        activeContainer: _.get(props, 'obj.spec.containers[0].name'),
+        activeContainer: props.initialContainer
+          ? props.initialContainer
+          : props.obj?.spec.containers[0].name,
       };
       this.terminal = React.createRef();
       this.onResize = (rows, cols) => this.onResize_(rows, cols);
       this.onData = (d) => this.onData_(d);
       this.onChangeContainer = (index) => this.onChangeContainer_(index);
     }
-
     connect_() {
       const {
-        metadata,
-        spec: { tolerations },
+        metadata: { name, namespace },
       } = this.props.obj;
       const { activeContainer } = this.state;
       const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
-      const isWindows = _.some(tolerations, (t) => {
-        return t.key === 'os' && t.value === 'Windows';
-      });
-      const command = isWindows ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
+      const command = isWindowsPod(this.props.obj) ? ['cmd'] : ['sh', '-i', '-c', 'TERM=xterm sh'];
       const params = {
-        ns: metadata.namespace,
-        name: metadata.name,
+        ns: namespace,
+        name,
         path: 'exec',
         queryParams: {
           stdout: 1,
@@ -83,7 +81,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
       const subprotocols = (impersonate.subprotocols || []).concat('base64.channel.k8s.io');
 
       let previous;
-      this.ws = new WSFactory(`${metadata.name}-terminal`, {
+      this.ws = new WSFactory(`${name}-terminal`, {
         host: 'auto',
         reconnect: true,
         path: resourceURL(PodModel, params),
@@ -97,7 +95,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
             if (previous.includes(NO_SH)) {
               current.reset();
               current.onConnectionClosed(
-                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${metadata.namespace} exec ${metadata.name} -ti <command>`,
+                `This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${namespace} exec ${name} -ti <command>`,
               );
               this.ws.destroy();
               previous = '';
@@ -179,7 +177,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
 
     render() {
       const { containers, activeContainer, open, error } = this.state;
-      const { message, t, obj } = this.props;
+      const { message, infoMessage, t, obj } = this.props;
 
       let contents = <LoadingBox />;
       if (error) {
@@ -195,16 +193,21 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
 
       return (
         <div>
+          {infoMessage}
           <div className="co-toolbar">
             <div className="co-toolbar__group co-toolbar__group--left">
               <div className="co-toolbar__item">{t('public~Connecting to')}</div>
               <div className="co-toolbar__item">
-                <Dropdown
-                  className="co-toolbar__item-dropdown"
-                  items={_.mapValues(containers, nameWithIcon)}
-                  title={nameWithIcon(activeContainer || <LoadingInline />)}
-                  onChange={this.onChangeContainer}
-                />
+                {containers.length > 1 ? (
+                  <Dropdown
+                    className="co-toolbar__item-dropdown"
+                    items={_.mapValues(containers, nameWithIcon)}
+                    title={nameWithIcon(activeContainer || <LoadingInline />)}
+                    onChange={this.onChangeContainer}
+                  />
+                ) : (
+                  nameWithIcon(containers[0])
+                )}
               </div>
             </div>
             {!error && (
