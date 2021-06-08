@@ -121,7 +121,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               formValues={formValues}
               dispatchFormChange={dispatchFormChange}
               tooltip={t(
-                'public~Checking this box will write the url to the global section of the configuration file where it will become default url for future PagerDuty receivers.',
+                'public~Checking this box will write the URL to the global section of the configuration file where it will become the default URL for future PagerDuty receivers.',
               )}
             />
           </div>

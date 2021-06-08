@@ -52,19 +52,21 @@ const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
 
   const label = (stage: ContainerLifecycleStage) =>
     lifecycle && k8sProbe.getLifecycleHookLabel(lifecycle, stage);
+  const postStartLabel = label('postStart');
+  const preStopLabel = label('preStop');
   return (
     <div>
       {postStart && (
         <div>
           <Trans t={t} ns="public">
-            PostStart: {label('postStart')} <code>{postStart}</code>
+            PostStart: {{ postStartLabel }} <code>{{ postStart }}</code>
           </Trans>
         </div>
       )}
       {preStop && (
         <div>
           <Trans t={t} ns="public">
-            PreStop: {label('preStop')} <code>{preStop}</code>
+            PreStop: {{ preStopLabel }} <code>{{ preStop }}</code>
           </Trans>
         </div>
       )}
