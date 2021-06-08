@@ -19,11 +19,15 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-  const [acmLink] = useK8sWatchResource<K8sResourceKind>({
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    name: ACM_LINK_ID,
     optional: true,
   });
+  const acmLink = consoleLinks.find(
+    (link: K8sResourceKind) =>
+      link.spec.location === 'ApplicationMenu' && link.metadata.name === ACM_LINK_ID,
+  );
   const { t } = useTranslation();
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
