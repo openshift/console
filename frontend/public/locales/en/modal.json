@@ -1,0 +1,15 @@
+{
+  "Select a workload": "Select a workload",
+  "Add Secret to workload": "Add Secret to workload",
+  "addSecretDescription": "Add all values from <1></1>{{secretName}} to a workload as environment variables or a volume.",
+  "Add this secret to workload": "Add this secret to workload",
+  "Add secret as": "Add secret as",
+  "Environment variables": "Environment variables",
+  "Prefix": "Prefix",
+  "Volume": "Volume",
+  "Mount path": "Mount path",
+  "Save": "Save",
+  "Secret name": "Secret name",
+  "Create {{label}}": "Create {{label}}",
+  "Delete {{label}}?": "Delete {{label}}?"
+}

@@ -10,7 +10,6 @@ import { k8sPatch, k8sPatchByName, k8sCreate } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceIcon } from '../utils';
-import { withTranslation } from 'react-i18next';
 
 const parseExisitingPullSecret = (pullSecret) => {
   let invalidData = false;
@@ -187,17 +186,14 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
   render() {
     const { namespace, pullSecret, t } = this.props;
-
     const existingData = parseExisitingPullSecret(pullSecret);
-    const { t } = this.props;
-
     return (
       <form onSubmit={this._submit} name="form" className="modal-content">
-        <ModalTitle>{t('modal~Default pull Secret')}</ModalTitle>
+        <ModalTitle>{t('public~Default pull Secret')}</ModalTitle>
         <ModalBody>
           <p>
             {t(
-              'modal~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
+              'public~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
             )}
           </p>
 
@@ -206,17 +202,17 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               isInline
               className="co-alert"
               variant="danger"
-              title={t('modal~Overwriting default pull Secret')}
+              title={t('public~Overwriting default pull Secret')}
             >
               {t(
-                "modal~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
+                "public~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
               )}
             </Alert>
           )}
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label>{t('modal~Namespace')}</label>
+              <label>{t('public~Namespace')}</label>
             </div>
             <div className="col-xs-9">
               <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
@@ -225,7 +221,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-name">{t('modal~Secret name')}</label>
+              <label htmlFor="public-pull-secret-name">{t('modal~Secret name')}</label>
             </div>
             {pullSecret ? (
               <div className="col-xs-9">
@@ -242,7 +238,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   required
                 />
                 <p className="help-block text-muted" id="namespace-pull-secret-name-help">
-                  {t('modal~Friendly name to help you manage this in the future')}
+                  {t('public~Friendly name to help you manage this in the future')}
                 </p>
               </div>
             )}
@@ -250,7 +246,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
           <div className="row co-m-form-row form-group">
             <div className="col-xs-3">
-              <label>{t('modal~Method')}</label>
+              <label>{t('public~Method')}</label>
             </div>
             <div className="col-xs-9">
               <div className="radio">
@@ -262,7 +258,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     onChange={this._onMethodChange}
                     value="form"
                   />
-                  {t('modal~Enter username/password')}
+                  {t('public~Enter username/password')}
                 </label>
               </div>
               <div className="radio">
@@ -274,7 +270,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     id="namespace-pull-secret-method--upload"
                     value="upload"
                   />
-                  {t('modal~Upload Docker config.json')}
+                  {t('public~Upload Docker config.json')}
                 </label>
               </div>
             </div>
@@ -285,7 +281,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
                   <label htmlFor="namespace-pull-secret-address">
-                    {t('modal~Registry address')}
+                    {t('public~Registry address')}
                   </label>
                 </div>
                 <div className="col-xs-9">
@@ -301,7 +297,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-email">{t('modal~Email address')}</label>
+                  <label htmlFor="namespace-pull-secret-email">{t('public~Email address')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -312,13 +308,13 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     aria-describedby="namespace-pull-secret-email-help"
                   />
                   <p className="help-block text-muted" id="namespace-pull-secret-email-help">
-                    {t('modal~Optional, depending on registry provider')}
+                    {t('public~Optional, depending on registry provider')}
                   </p>
                 </div>
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-username">{t('modal~Username')}</label>
+                  <label htmlFor="namespace-pull-secret-username">{t('public~Username')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -332,7 +328,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-password">{t('modal~Password')}</label>
+                  <label htmlFor="namespace-pull-secret-password">{t('public~Password')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -351,7 +347,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             <div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-file">{t('modal~File upload')}</label>
+                  <label htmlFor="namespace-pull-secret-file">{t('public~File upload')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -362,7 +358,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                   />
                   <p className="help-block etext-muted" id="namespace-pull-secret-file-help">
                     {t(
-                      'modal~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
+                      'public~Properly configured Docker config file in JSON format. Will be base64 encoded after upload.',
                     )}
                   </p>
                 </div>
@@ -371,8 +367,13 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                 (existingData.invalidJson && (
                   <div className="row co-m-form-row">
                     <div className="col-xs-9 col-sm-offset-3">
-                      <Alert isInline className="co-alert" variant="danger" title="Invalid JSON">
-                        {t('modal~The uploaded file is not properly-formatted JSON.')}
+                      <Alert
+                        isInline
+                        className="co-alert"
+                        variant="danger"
+                        title={t('public~Invalid JSON')}
+                      >
+                        {t('public~The uploaded file is not properly-formatted JSON.')}
                       </Alert>
                     </div>
                   </div>
@@ -390,7 +391,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}
           inProgress={this.state.inProgress}
-          submitText={t('modal~Save')}
+          submitText={t('public~Save')}
           cancel={this._cancel}
         />
       </form>
@@ -404,9 +405,3 @@ ConfigureNamespacePullSecret.propTypes = {
   namespace: PropTypes.object.isRequired,
   pullSecret: PropTypes.object,
 };
-
-const ConfigureNamespacePullSecretWithTrans = withTranslation()(ConfigureNamespacePullSecret);
-
-export const configureNamespacePullSecretModal = createModalLauncher(
-  ConfigureNamespacePullSecretWithTrans,
-);
