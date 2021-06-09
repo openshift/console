@@ -26,18 +26,12 @@ import ProjectAccessForm from './ProjectAccessForm';
 import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 
 export interface ProjectAccessProps {
-  formName: string;
   namespace: string;
   roleBindings?: { data: []; loaded: boolean; loadError: {} };
   roles: { data: Roles; loaded: boolean };
 }
 
-const ProjectAccess: React.FC<ProjectAccessProps> = ({
-  formName,
-  namespace,
-  roleBindings,
-  roles,
-}) => {
+const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, roles }) => {
   const { t } = useTranslation();
   if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
     return <LoadingBox />;
@@ -95,7 +89,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
           values: {
             projectAccess: values.projectAccess,
           },
-          status: { success: `Successfully updated the ${formName}.` },
+          status: { success: t('devconsole~Successfully updated the project access.') },
         });
       })
       .catch((err) => {
@@ -104,7 +98,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
   };
 
   const handleReset = (values, actions) => {
-    actions.resetForm({ status: { success: null } });
+    actions.resetForm({ status: { success: null }, values: initialValues });
   };
 
   return (
@@ -125,20 +119,20 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
           .
         </Trans>
       </PageHeading>
-      <div className="co-m-pane__body">
-        {roleBindings.loadError ? (
-          <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
-        ) : (
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            onReset={handleReset}
-            validationSchema={validationSchema}
-          >
-            {(formikProps) => <ProjectAccessForm {...formikProps} roles={roles.data} />}
-          </Formik>
-        )}
-      </div>
+      {roleBindings.loadError ? (
+        <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
+      ) : (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          onReset={handleReset}
+          validationSchema={validationSchema}
+        >
+          {(formikProps) => (
+            <ProjectAccessForm {...formikProps} roles={roles.data} roleBindings={initialValues} />
+          )}
+        </Formik>
+      )}
     </>
   );
 };

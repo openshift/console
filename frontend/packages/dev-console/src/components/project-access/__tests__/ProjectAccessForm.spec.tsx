@@ -35,6 +35,20 @@ describe('Project Access Form', () => {
           },
         ],
       },
+      roleBindings: {
+        projectAccess: [
+          {
+            roleBindingName: 'abc-admin',
+            user: 'abc',
+            role: 'admin',
+          },
+          {
+            roleBindingName: 'xyz-edit',
+            user: 'xyz',
+            role: 'edit',
+          },
+        ],
+      },
       errors: {},
       touched: {},
       isSubmitting: true,
