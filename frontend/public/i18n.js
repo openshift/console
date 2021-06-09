@@ -23,7 +23,7 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     backend: {
-      loadPath: 'static/locales/{{lng}}/{{ns}}.json',
+      loadPath: '/locales/resource.json?lng={{lng}}&ns={{ns}}',
     },
     lng: localStorage.getItem('bridge/language'),
     fallbackLng: 'en',

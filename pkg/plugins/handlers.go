@@ -17,32 +17,77 @@ import (
 type PluginsHandler struct {
 	Client             *http.Client
 	PluginsEndpointMap map[string]string
+	PublicDir          string
 }
 
-func NewPluginsHandler(client *http.Client, token string, pluginsEndpointMap map[string]string) *PluginsHandler {
+func NewPluginsHandler(client *http.Client, pluginsEndpointMap map[string]string, publicDir string) *PluginsHandler {
 	return &PluginsHandler{
 		Client:             client,
 		PluginsEndpointMap: pluginsEndpointMap,
+		PublicDir:          publicDir,
 	}
 }
 
-func (p *PluginsHandler) HandlePlugins(w http.ResponseWriter, r *http.Request) {
+func (p *PluginsHandler) HandleI18nResources(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
 		return
 	}
-	pluginName, pluginAssetPath := parsePluginNameAndAssetPath(r.URL.Path)
-	serviceRequestURL, err := p.getServiceRequestURL(pluginName)
+
+	query := r.URL.Query()
+	lang := query.Get("lng")
+	// In case of the dynamic plugins, the namespace should contain name of the plugin prefixed with 'plugin__' prefix.
+	// eg. 'plugin__helm' will fetch `locales/{lang}/plugin__helm.json` from the plugin service
+	namespace := query.Get("ns")
+	if lang == "" || namespace == "" {
+		errMsg := fmt.Sprintf("GET request %q is missing 'lng' or 'ns' query parameter", r.URL.String())
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadRequest, serverutils.ApiError{Err: errMsg})
+		return
+	}
+
+	if !strings.HasPrefix(namespace, "plugin__") {
+		http.ServeFile(w, r, path.Join(p.PublicDir, "locales", lang, fmt.Sprintf("%s.json", namespace)))
+		return
+	}
+	// In case of dynamic-plugin we need to trim the "plugin__" prefix, since we are using the ConsolePlugin CR's name
+	// as key when looking for the plugin's Service endpoint.
+	pluginName := strings.TrimPrefix(namespace, "plugin__")
+
+	pluginServiceRequestURL, err := p.getServiceRequestURL(pluginName)
 	if err != nil {
 		errMsg := err.Error()
 		klog.Error(errMsg)
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	serviceRequestURL.Path = path.Join(serviceRequestURL.Path, pluginAssetPath)
+	pluginServiceRequestURL.Path = path.Join(pluginServiceRequestURL.Path, "locales", lang, fmt.Sprintf("%s.json", namespace))
 
-	resp, err := p.Client.Get(serviceRequestURL.String())
+	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
+}
+
+func (p *PluginsHandler) HandlePluginAssets(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
+		return
+	}
+	pluginName, pluginAssetPath := parsePluginNameAndAssetPath(r.URL.Path)
+	pluginServiceRequestURL, err := p.getServiceRequestURL(pluginName)
+	if err != nil {
+		errMsg := err.Error()
+		klog.Error(errMsg)
+		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
+		return
+	}
+	pluginServiceRequestURL.Path = path.Join(pluginServiceRequestURL.Path, pluginAssetPath)
+
+	p.proxyPluginRequest(pluginServiceRequestURL, pluginName, w, r)
+}
+
+func (p *PluginsHandler) proxyPluginRequest(requestURL *url.URL, pluginName string, w http.ResponseWriter, r *http.Request) {
+	resp, err := p.Client.Get(requestURL.String())
 	if err != nil {
 		errMsg := fmt.Sprintf("GET request for %q plugin failed: %v", pluginName, err)
 		klog.Error(errMsg)
