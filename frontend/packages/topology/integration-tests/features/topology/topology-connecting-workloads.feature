@@ -4,18 +4,20 @@ Feature: Connecting nodes
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-topology-connecting-nodes"
+              And user has created or selected namespace "aut-tp-connect-workloads"
+              And user has created workload "nodejs-ex-git" with resource type "Deployment"
+              And user is at Add page
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Create visual connection between two nodes using Annotations: T-07-TC01
-            Given user has creaeted two worloads "nodejs-ex-git" and "dancer-ex-git"
-              And user is at the Topolgy page
-             When user clicks node "nodejs-ex-git" to open the side bar
-              And user selects "Edit Annotations" option from Actions menu
+            Given user has created workload "dancer-ex-git" with resource type "Deployment Config"
+             When user clicks on workload "nodejs-ex-git"
+              And user clicks on Action menu
+              And user clicks "Edit annotations" from action menu
               And user enters key as "app.openshift.io/connects-to"
-              And user enters value as name of the node "dancer-ex-git" to which it will be associated
-             Then user can see that two nodes are connected with dotted arrow
+              And user enters value as "dancer-ex-git" to which it will be connected
+             Then user can see that two workloads are connected with arrow
 
 
         @regression @manual
