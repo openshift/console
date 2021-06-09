@@ -7,13 +7,12 @@ import {
   getAccessModeRadios,
   getVolumeModeRadios,
   initialAccessModes,
-  provisionerAccessModeMapping,
   dropdownUnits,
   getAccessModeForProvisioner,
 } from '@console/internal/components/storage/shared';
 import { RadioInput } from '@console/internal/components//radio';
 import { RequestSizeInput, ExpandCollapse } from '@console/internal/components/utils';
-import { isCephProvisioner, cephStorageProvisioners } from '@console/shared/src/utils';
+import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { useFormikValidationFix } from '@console/shared/src/hooks';
 import './VolumeClaimTemplateForm.scss';
 
@@ -40,7 +39,7 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   const initAccessModeHelp = t('pipelines-plugin~Permissions to the mounted drive.');
   const [accessModeHelp, setAccessModeHelp] = React.useState(initAccessModeHelp);
   const { setFieldValue, setFieldTouched, errors } = useFormikContext<FormikValues>();
-  const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
+  const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>(initialAccessModes);
   const [volumeMode, setVolumeMode] = React.useState(initialVolumeMode);
   const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
   const [requestSizeError, setRequestSizeError] = React.useState(null);
@@ -61,14 +60,11 @@ const VolumeClaimTemplateForm: React.FC<VolumeClaimTemplateFormProps> = ({
   const handleStorageClass = (updatedStorageClass): void => {
     const provisioner: string = updatedStorageClass?.provisioner || '';
     // if the provisioner is unknown or no storage class selected, user should be able to set any access mode
-    const modes = provisionerAccessModeMapping[provisioner]
-      ? provisionerAccessModeMapping[provisioner]
-      : getAccessModeForProvisioner(provisioner);
+    const modes = getAccessModeForProvisioner(provisioner);
     // setting message to display for various modes when a storage class of a know provisioner is selected
-    const displayMessage =
-      provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
-        ? t('pipelines-plugin~Access mode is set by storage class and cannot be changed')
-        : t('pipelines-plugin~Permissions to the mounted drive');
+    const displayMessage = modes
+      ? t('pipelines-plugin~Access mode is set by storage class and cannot be changed')
+      : t('pipelines-plugin~Permissions to the mounted drive');
     setAccessMode('ReadWriteOnce');
     setAccessModeHelp(displayMessage);
     // setting accessMode to default with the change to Storage Class selection

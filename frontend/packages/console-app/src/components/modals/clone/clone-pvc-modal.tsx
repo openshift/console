@@ -42,7 +42,10 @@ import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { dropdownUnits } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { isCephProvisioner } from '@console/shared';
-import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
+import {
+  getPVCAccessModes,
+  AccessModeSelector,
+} from '@console/app/src/components/access-modes/access-mode';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
@@ -62,8 +65,6 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
     StorageClassModel,
     resource?.spec?.storageClassName,
   );
-
-  const handleAccessMode = (value: string) => setCloneAccessMode(value);
 
   const pvcUsedCapacityQuery: string = `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
   const [response, error, loading] = usePrometheusPoll({
@@ -139,12 +140,13 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
             />
           </FormGroup>
           <AccessModeSelector
-            onChange={handleAccessMode}
-            formClassName="co-clone-pvc-modal__form--space"
+            onChange={setCloneAccessMode}
+            className="co-clone-pvc-modal__form--space"
             pvcResource={resource}
             provisioner={scResource?.provisioner}
             loaded={scResourceLoaded}
             loadError={scResourceLoadError}
+            filterByVolumeMode
           />
           <FormGroup
             label={t('console-app~Size')}

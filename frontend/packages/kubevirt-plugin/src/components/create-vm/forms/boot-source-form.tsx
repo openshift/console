@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
-  provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
 import {
   FieldLevelHelp,
@@ -73,8 +72,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
   );
   const storageClassName = updatedStorageClass?.metadata?.name;
   const provisioner = updatedStorageClass?.provisioner || '';
-  let accessModes: string[] =
-    provisionerAccessModeMapping[provisioner] || getAccessModeForProvisioner(provisioner);
+  let accessModes: string[] = getAccessModeForProvisioner(provisioner);
 
   if (!scAllowedLoading && !scAllowed && scConfigMap) {
     accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());

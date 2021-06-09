@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
-import { Form, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
+import { FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
   HandlePromiseProps,
   ResourceIcon,
@@ -40,12 +40,11 @@ import {
   snapshotPVCStorageClassAnnotation,
   snapshotPVCAccessModeAnnotation,
   snapshotPVCVolumeModeAnnotation,
-  getVolumeModeRadios,
 } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { AccessModeSelector } from '../../access-modes/access-mode';
+import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
+import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import './restore-pvc-modal.scss';
-import { RadioInput } from '@console/internal/components/radio';
 
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
   ({ close, cancel, resource, errorMessage, inProgress, handlePromise }) => {
@@ -80,9 +79,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       resource?.spec?.volumeSnapshotClassName,
     );
 
-    const [volumeMode, setVolumeMode] = React.useState(
-      volumeSnapshotAnnotations?.[snapshotPVCVolumeModeAnnotation] ?? 'Filesystem',
-    );
+    const [volumeMode, setVolumeMode] = React.useState('');
     const onlyPvcSCs = (scObj: StorageClassResourceKind) =>
       !snapshotClassResourceLoadError
         ? scObj.provisioner.includes(snapshotClassResource?.driver)
@@ -101,10 +98,6 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       setPVCStorageClass(updatedStorageClass?.metadata.name || '');
       setUpdatedProvisioner(updatedStorageClass?.provisioner);
     };
-
-    const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (event) =>
-      setVolumeMode(event.currentTarget.value);
-    const handleAccessMode = (value: string) => setRestoreAccessMode(value);
 
     const submit = (event: React.FormEvent<EventTarget>) => {
       event.preventDefault();
@@ -144,148 +137,138 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       );
     };
     return (
-      <div className="modal-content modal-content--no-inner-scroll">
+      <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('console-app~Restore as new PVC')}</ModalTitle>
-        <Form onSubmit={submit} name="form">
-          <ModalBody>
-            <p>
-              <Trans t={t} ns="console-app">
-                When restore action for snapshot <strong>{{ snapshotName }}</strong> is finished a
-                new crash-consistent PVC copy will be created.
-              </Trans>
-            </p>
-            <FormGroup
-              label={t('console-app~Name')}
+        <ModalBody>
+          <p>
+            <Trans t={t} ns="console-app">
+              When restore action for snapshot <strong>{{ snapshotName }}</strong> is finished a new
+              crash-consistent PVC copy will be created.
+            </Trans>
+          </p>
+          <FormGroup
+            label={t('console-app~Name')}
+            isRequired
+            fieldId="pvc-name"
+            className="co-restore-pvc-modal__input"
+          >
+            <TextInput
               isRequired
-              fieldId="pvc-name"
-              className="co-restore-pvc-modal__input"
-            >
-              <TextInput
-                isRequired
-                type="text"
-                id="pvc-name"
-                data-test="pvc-name"
-                name="restore-pvc-modal__name"
-                value={restorePVCName}
-                onChange={setPVCName}
-              />
-            </FormGroup>
-            <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
-              {!snapshotClassResourceLoaded ? (
-                <div className="skeleton-text" />
-              ) : (
-                <StorageClassDropdown
-                  onChange={handleStorageClass}
-                  filter={onlyPvcSCs}
-                  id="restore-storage-class"
-                  required
-                  selectedKey={volumeSnapshotAnnotations?.[snapshotPVCStorageClassAnnotation]}
-                />
-              )}
-            </FormGroup>
-            <AccessModeSelector
-              onChange={handleAccessMode}
-              formClassName="co-restore-pvc-modal__input"
-              provisioner={updatedProvisioner}
-              loaded={pvcResourceLoaded}
-              loadError={pvcResourceLoadError}
-              pvcResource={pvcResource}
-              availableAccessModes={volumeSnapshotAnnotations?.[
-                snapshotPVCAccessModeAnnotation
-              ]?.split(',')}
+              type="text"
+              id="pvc-name"
+              data-test="pvc-name"
+              name="restore-pvc-modal__name"
+              value={restorePVCName}
+              onChange={setPVCName}
             />
-            <FormGroup
-              fieldId="pvc-volume-mode"
-              className="co-restore-pvc-modal__input"
-              label={t('console-app~Volume Mode')}
-              isRequired
-            >
-              {getVolumeModeRadios().map((radio) => (
-                <RadioInput
-                  {...radio}
-                  key={radio.value}
-                  onChange={handleVolumeMode}
-                  inline
-                  checked={radio.value === volumeMode}
-                  name="volumeMode"
-                />
-              ))}
-            </FormGroup>
-            <FormGroup
-              label={t('console-app~Size')}
-              isRequired
-              fieldId="pvc-size"
-              className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
-              helperTextInvalid={t(
-                'console-app~Size should be equal or greater than the restore size of snapshot',
-              )}
-              validated={validSize ? 'default' : 'error'}
-            >
-              {snapshotClassResourceLoaded ? (
-                <RequestSizeInput
-                  name="requestSize"
-                  onChange={requestedSizeInputChange}
-                  defaultRequestSizeUnit={requestedUnit}
-                  defaultRequestSizeValue={requestedSize}
-                  dropdownUnits={dropdownUnits}
-                  isInputDisabled={
-                    snapshotClassResourceLoadError ||
-                    isCephProvisioner(snapshotClassResource?.driver)
-                  }
-                  required
-                />
-              ) : (
-                <div className="skeleton-text" />
-              )}
-            </FormGroup>
-            <div className="co-restore-pvc-modal__details-section">
-              <p className="text-muted">
-                {t('console-app~{{resourceKind}} details', {
-                  resourceKind: VolumeSnapshotModel.label,
-                })}
-              </p>
-              <Grid hasGutter>
-                <GridItem span={6}>
-                  <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{t('console-app~Created at')}</strong>
-                    <span>
-                      <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
-                    </span>
-                  </div>
-                  <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{t('console-app~Status')}</strong>
-                    <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
-                  </div>
-                  <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{t('console-app~Size')}</strong>
-                    <p>{pvcRequestedSize}</p>
-                  </div>
-                </GridItem>
-                <GridItem span={6}>
-                  <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{t('console-app~Namespace')}</strong>
-                    <div>
-                      <ResourceIcon kind={NamespaceModel.kind} />
-                      <span>{namespace}</span>
-                    </div>
-                  </div>
-                  <div className="co-restore-pvc-modal__pvc-details">
-                    <strong>{t('console-app~API version')}</strong>
-                    <p>{resource?.apiVersion}</p>
-                  </div>
-                </GridItem>
-              </Grid>
-            </div>
-          </ModalBody>
-          <ModalSubmitFooter
-            submitDisabled={!pvcSC || !validSize}
-            inProgress={inProgress}
-            errorMessage={errorMessage}
-            submitText={t('console-app~Restore')}
-            cancel={cancel}
+          </FormGroup>
+          <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
+            {!snapshotClassResourceLoaded ? (
+              <div className="skeleton-text" />
+            ) : (
+              <StorageClassDropdown
+                onChange={handleStorageClass}
+                filter={onlyPvcSCs}
+                id="restore-storage-class"
+                required
+                selectedKey={volumeSnapshotAnnotations?.[snapshotPVCStorageClassAnnotation]}
+              />
+            )}
+          </FormGroup>
+          <AccessModeSelector
+            onChange={setRestoreAccessMode}
+            className="co-restore-pvc-modal__input"
+            provisioner={updatedProvisioner}
+            loaded={pvcResourceLoaded}
+            loadError={pvcResourceLoadError}
+            pvcResource={pvcResource}
+            availableAccessModes={volumeSnapshotAnnotations?.[
+              snapshotPVCAccessModeAnnotation
+            ]?.split(',')}
           />
-        </Form>
-      </div>
+          <VolumeModeSelector
+            onChange={setVolumeMode}
+            className="co-restore-pvc-modal__input"
+            provisioner={updatedProvisioner}
+            pvcResource={pvcResource}
+            accessMode={restoreAccessMode}
+            storageClass={pvcSC}
+            loaded={pvcResourceLoaded}
+            availableVolumeMode={volumeSnapshotAnnotations?.[snapshotPVCVolumeModeAnnotation]}
+          />
+          <FormGroup
+            label={t('console-app~Size')}
+            isRequired
+            fieldId="pvc-size"
+            className="co-restore-pvc-modal__input co-restore-pvc-modal__ocs-size"
+            helperTextInvalid={t(
+              'console-app~Size should be equal or greater than the restore size of snapshot',
+            )}
+            validated={validSize ? 'default' : 'error'}
+          >
+            {snapshotClassResourceLoaded ? (
+              <RequestSizeInput
+                name="requestSize"
+                onChange={requestedSizeInputChange}
+                defaultRequestSizeUnit={requestedUnit}
+                defaultRequestSizeValue={requestedSize}
+                dropdownUnits={dropdownUnits}
+                isInputDisabled={
+                  snapshotClassResourceLoadError || isCephProvisioner(snapshotClassResource?.driver)
+                }
+                required
+              />
+            ) : (
+              <div className="skeleton-text" />
+            )}
+          </FormGroup>
+          <div className="co-restore-pvc-modal__details-section">
+            <p className="text-muted">
+              {t('console-app~{{resourceKind}} details', {
+                resourceKind: VolumeSnapshotModel.label,
+              })}
+            </p>
+            <Grid hasGutter>
+              <GridItem span={6}>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Created at')}</strong>
+                  <span>
+                    <Timestamp timestamp={resource?.metadata?.creationTimestamp} />
+                  </span>
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Status')}</strong>
+                  <Status status={resource?.status?.readyToUse ? 'Ready' : 'Not Ready'} />
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Size')}</strong>
+                  <p>{pvcRequestedSize}</p>
+                </div>
+              </GridItem>
+              <GridItem span={6}>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~Namespace')}</strong>
+                  <div>
+                    <ResourceIcon kind={NamespaceModel.kind} />
+                    <span>{namespace}</span>
+                  </div>
+                </div>
+                <div className="co-restore-pvc-modal__pvc-details">
+                  <strong>{t('console-app~API version')}</strong>
+                  <p>{resource?.apiVersion}</p>
+                </div>
+              </GridItem>
+            </Grid>
+          </div>
+        </ModalBody>
+        <ModalSubmitFooter
+          submitDisabled={!pvcSC || !validSize}
+          inProgress={inProgress}
+          errorMessage={errorMessage}
+          submitText={t('console-app~Restore')}
+          cancel={cancel}
+        />
+      </form>
     );
   },
 );
