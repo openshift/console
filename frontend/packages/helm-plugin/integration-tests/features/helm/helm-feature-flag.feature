@@ -1,4 +1,4 @@
-@helm @regression @manual
+@helm
 Feature: Feature flag for Helm
               As a user, I want to disable helm specific navigation items from console if there are no helm repositories configured in the console.
 
@@ -7,6 +7,7 @@ Feature: Feature flag for Helm
             Given user has created or selected namespace "aut-helm-feature-flag"
 
 
+        @regression @manual
         Scenario: Disable helm features in console: HR-03-TC01
             Given user is at Helm Chart Repositories page
               And user can see only the default "redhat-helm-repo" CR is available
@@ -19,6 +20,7 @@ Feature: Feature flag for Helm
               And user can not see Helm Charts filter in the Developer Catalog page
 
 
+        @regression @manual
         Scenario: Enable the disabled helm features in console: HR-03-TC02
             Given user has disabled helm features
               And the default "redhat-helm-repo" Helm Chart Repositories CR is available

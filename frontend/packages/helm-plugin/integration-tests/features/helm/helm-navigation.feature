@@ -60,6 +60,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Deployed" are listed
 
 
+        @manual
         Scenario: Filter out failed Helm Charts: HR-05-TC07
             Given user is at the Helm page
              When user clicks on the filter drop down
@@ -68,6 +69,7 @@ Feature: Navigations on Helm Chart
               And helm charts with status "Failed" are listed
 
 
+        @manual
         Scenario: Filter out other Helm charts: HR-05-TC08
             Given user is at the Helm page
              When user clicks on the filter drop down

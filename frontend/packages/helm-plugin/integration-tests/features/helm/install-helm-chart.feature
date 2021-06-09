@@ -61,17 +61,6 @@ Feature: Install the Helm Release
 
 
         @regression @manual
-        Scenario: Update the chart version to see the alert modal: HR-06-TC06
-            Given user is at the Install Helm Chart page
-             When user does some changes on the yaml editor
-              And user clicks on the Chart Versioon dropdown menu
-              And user selects the different chart version
-             Then modal will get popped up
-              And modal will have the old and new chart versions
-              And modal will have the warning of data lost
-
-
-        @regression @manual
         Scenario: README should be updated when chart version is updated: HR-06-TC07
             Given user is at Install Helm Chart page
              Then user will see the chart version dropdown

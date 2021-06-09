@@ -50,4 +50,4 @@ Feature: Perform Actions on Helm Releases
               And user clicks on the "Uninstall Helm Release" action
               And user enters the release name
               And user clicks on the Uninstall button
-             Then user will be redirected to Topology page with no workloads
+             Then user will be redirected to Topology page

@@ -19,6 +19,7 @@ export const topologyPage = {
   verifyTopologyPage: () => {
     app.waitForDocumentLoad();
     cy.url().should('include', 'topology');
+    cy.get(topologyPO.graph.emptyGraph).should('be.visible');
   },
   verifyTopologyGraphView: () => {
     return cy.get(topologyPO.graph.emptyGraph);

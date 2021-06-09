@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
 import { addOptions, buildConfigOptions, messages } from '../../constants';
+import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
 Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
@@ -58,6 +59,10 @@ When('user unselects the advanced option Create a route to the application', () 
 
 When('user enters name as {string} in General section', (name: string) => {
   gitPage.enterComponentName(name);
+});
+
+When('user enters Name as {string} in General section of Dockerfile page', (name: string) => {
+  dockerfilePage.enterName(name);
 });
 
 When('user clicks {string} link in Advanced Options section', (linkName: string) => {
