@@ -84,7 +84,7 @@ Feature: Provide quick search from topology/list views to add to project
 
 
         @odc-5010 @regression @to-do
-        Scenario: View all Quick Starts option for monitoring in topology graph view: T-02-TC10
+        Scenario: View all Quick Starts option for pipeline in topology graph view: T-02-TC10
             Given user is at topology graph view
              When user clicks Add to project button
               And user enters "pipeline" in Add to project search bar

@@ -32,7 +32,7 @@ Feature: Pipeline metrics
               And user selects option "Start" from Actions menu drop down
               And user navigates to Pipelines page
               And user clicks on pipeline "pipeline-metrics-two"
-             Then user can see Time Range with a default value of "1 day"
+             Then user can see Time Range with a default value of "1 week"
               And user can see and Refresh Interval with a default value of "30 seconds"
               And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
               And user can see message "No datapoints found" inside graphs

@@ -164,14 +164,11 @@ Feature: Create Application from git form
               And Name displays as "<name>"
 
         Examples:
-                  | git_url                                                   | app_name                  | name                  |
-                  | https://github.com/sclorg/dancer-ex.git                   | dancer-ex-git-app         | dancer-ex-git         |
-                  | https://github.com/sclorg/cakephp-ex.git                  | cakephp-ex-git-app        | cakephp-ex-git        |
-                  | https://github.com/sclorg/nginx-ex.git                    | nginx-ex-git-app          | nginx-ex-git          |
-                  | https://github.com/sclorg/httpd-ex.git                    | httpd-ex-git-app          | httpd-ex-git          |
-                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | s2i-dotnetcore-ex-git-app | s2i-dotnetcore-ex-git |
-                  | https://github.com/sclorg/golang-ex.git                   | golang-ex-git-app         | golang-ex-git         |
-                  | https://github.com/sclorg/ruby-ex.git                     | ruby-ex-git-app           | ruby-ex-git           |
-                  | https://github.com/sclorg/django-ex.git                   | django-ex-git-app         | django-ex-git         |
-                  | https://github.com/jboss-openshift/openshift-quickstarts  | openshift-quickstarts-app | openshift-quickstarts |
-                  | https://github.com/sclorg/nodejs-ex.git                   | nodejs-ex-git-app         | nodejs-ex-git         |
+                  | git_url                                        | app_name           | name                  |
+                  | https://github.com/sclorg/dancer-ex.git        | dancer-ex-git-app  | dancer-ex-git         |
+                  | https://github.com/sclorg/cakephp-ex.git       | cakephp-ex-git-app | cakephp-ex-git        |
+                  | https://github.com/sclorg/golang-ex.git        | golang-ex-git-app  | golang-ex-git         |
+                  | https://github.com/sclorg/ruby-ex.git          | ruby-ex-git-app    | ruby-ex-git           |
+                  | https://github.com/sclorg/django-ex.git        | django-ex-git-app  | django-ex-git         |
+                  | https://github.com/spring-projects/spring-boot | spring-bottom-app  | openshift-quickstarts |
+                  | https://github.com/sclorg/nodejs-ex.git        | nodejs-ex-git-app  | nodejs-ex-git         |

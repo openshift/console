@@ -310,7 +310,8 @@ Feature: Pipeline Runs
 
         @regression @to-do
         Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run: P-07-TC29
-            Given user has passed pipeline run for pipeline "new-pipeline"
+            #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
+            Given user has passed pipeline run for pipeline "sum-three-pipeline"
               And user is on Pipeline Run details page
              When user scrolls to the Pipeline Run results section
              Then user can see Name and Value column under Pipeline Run results
@@ -318,10 +319,10 @@ Feature: Pipeline Runs
 
         @regression @to-do
         Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run: P-07-TC30
-            Given user has failed pipeline run for pipeline "new-pipeline"
+            #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
+            Given user has failed pipeline run for pipeline "sum-three-pipeline-run"
               And user is on Pipeline Run details page
-             When user scrolls to the Pipeline Run results section
-             Then user can see message "No Pipeline Run results available due to failure."
+             Then user can not see Pipeline Run results section
 
 
         @regression @manual
