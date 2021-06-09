@@ -56,7 +56,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays list containing operands', () => {
     cy.visit(
-      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
   });
@@ -64,9 +64,9 @@ describe('Using OLM descriptor components', () => {
   it('displays detail view for operand', () => {
     const {
       group,
-      version,
       names: { kind },
     } = testCRD.spec;
+    const version = testCRD.spec.versions[0].name;
     cy.visit(
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
     );
@@ -105,7 +105,7 @@ describe('Using OLM descriptor components', () => {
       'Delete operand instance created in prior steps. Fixes a failure when trying to create a duplicate operand in the "successfully creates operand using form" step.',
     );
     cy.visit(
-      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
     cy.byLegacyTestID('kebab-button').click();
@@ -117,7 +117,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays form for creating operand', () => {
     cy.visit(
-      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.versions[0].name}~${testCRD.spec.names.kind}`,
     );
     cy.byTestID('item-create').click();
     cy.byLegacyTestID('resource-title').should('have.text', 'Create App');
