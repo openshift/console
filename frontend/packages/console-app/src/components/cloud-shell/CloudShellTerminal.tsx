@@ -7,7 +7,7 @@ import { UserKind } from '@console/internal/module/k8s';
 import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import { TerminalInitData, initTerminal } from './cloud-shell-utils';
+import { TerminalInitData, initTerminal, CheckV1alpha2CRDAvailability } from './cloud-shell-utils';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
@@ -15,6 +15,7 @@ import './CloudShellTerminal.scss';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
+import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 
 type StateProps = {
   user: UserKind;
@@ -40,7 +41,17 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     verb: 'create',
     resource: 'pods',
   });
-  const [workspace, loaded, loadError] = useCloudShellWorkspace(user, isAdmin, namespace);
+  const [isv1Alpha2Available, isv1alpha2CheckLoading] = CheckV1alpha2CRDAvailability();
+  let workspaceModel = WorkspaceModel;
+  if (!isv1Alpha2Available) {
+    workspaceModel = v1alpha1WorkspaceModel;
+  }
+  const [workspace, loaded, loadError] = useCloudShellWorkspace(
+    user,
+    isAdmin,
+    workspaceModel,
+    namespace,
+  );
 
   const workspacePhase = workspace?.status?.phase;
   const workspaceName = workspace?.metadata?.name;
@@ -119,7 +130,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   }
 
   // loading the workspace resource
-  if (!loaded || isAdminCheckLoading) {
+  if (!loaded || isAdminCheckLoading || isv1alpha2CheckLoading) {
     return <TerminalLoadingBox message="" />;
   }
 
@@ -140,6 +151,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         container={initData.container}
         podname={initData.pod}
         shcommand={initData.cmd || []}
+        workspaceModel={workspaceModel}
       />
     );
   }
@@ -150,6 +162,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         onInitialize={(ns: string) => {
           setNamespace(ns);
         }}
+        workspaceModel={workspaceModel}
       />
     );
   }
@@ -157,6 +170,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // show the form to let the user create a new workspace
   return (
     <CloudShellDeveloperSetup
+      workspaceModel={workspaceModel}
       onCancel={onCancel}
       onSubmit={(ns: string) => {
         setNamespace(ns);

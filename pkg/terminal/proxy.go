@@ -59,7 +59,7 @@ func NewProxy(serviceTLS *tls.Config, TLSClientConfig *tls.Config, clusterEndpoi
 var (
 	WorkspaceGroupVersionResource = schema.GroupVersionResource{
 		Group:    "workspace.devfile.io",
-		Version:  "v1alpha2",
+		Version:  "v1alpha1",
 		Resource: "devworkspaces",
 	}
 
@@ -252,24 +252,24 @@ func stripTerminalAPIPrefix(requestPath string) (ok bool, namespace string, work
 	}
 }
 
-// getBaseTerminalHost evaluates mainUrl from the specified workspace and extract host from it
+// getBaseTerminalHost evaluates ideUrl from the specified workspace and extract host from it
 func (p *Proxy) getBaseTerminalHost(ws *unstructured.Unstructured) (*url.URL, error) {
-	mainUrl, success, err := unstructured.NestedString(ws.UnstructuredContent(), "status", "mainUrl")
+	ideUrl, success, err := unstructured.NestedString(ws.UnstructuredContent(), "status", "ideUrl")
 	if !success {
-		return nil, errors.New("the specified workspace does not have mainUrl in its status")
+		return nil, errors.New("the specified workspace does not have ideUrl in its status")
 	}
 	if err != nil {
 		return nil, errors.New("failed to evaluate ide URL for the specified workspace. Cause: " + err.Error())
 	}
 
-	terminalUrl, err := url.Parse(mainUrl)
+	terminalUrl, err := url.Parse(ideUrl)
 	if err != nil {
-		return nil, errors.New("failed to parse workspace mainUrl " + mainUrl)
+		return nil, errors.New("failed to parse workspace ideUrl " + ideUrl)
 	}
 
 	terminalHost, err := url.Parse(terminalUrl.Scheme + "://" + terminalUrl.Host)
 	if err != nil {
-		return nil, errors.New("failed to parse workspace mainUrl host " + mainUrl)
+		return nil, errors.New("failed to parse workspace ideUrl host " + ideUrl)
 	}
 
 	return terminalHost, nil

@@ -6,7 +6,7 @@ import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/featu
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { FLAGS } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
-import { resourceURL } from '@console/internal/module/k8s';
+import { K8sKind, resourceURL } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
 import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
@@ -35,6 +35,7 @@ type Props = {
   podname: string;
   namespace: string;
   shcommand?: string[];
+  workspaceModel: K8sKind;
 };
 
 type StateProps = {
@@ -60,6 +61,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   shcommand,
   flags,
   impersonate,
+  workspaceModel,
   onActivate,
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
@@ -156,7 +158,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         setWsOpen(false);
 
         // Check the Cloud Shell to see if it has any hints as to why the terminal connection was closed
-        const cloudShellCR = getCloudShellCR(workspaceName, namespace);
+        const cloudShellCR = getCloudShellCR(workspaceModel, workspaceName, namespace);
         let stoppedByError;
         cloudShellCR
           .then((cr) => {

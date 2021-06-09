@@ -10,7 +10,7 @@ describe('CloudShell Utils', () => {
     const namespace = 'default';
     const kind = 'DevWorkspace';
 
-    const newResource = newCloudShellWorkSpace(name, namespace);
+    const newResource = newCloudShellWorkSpace(name, namespace, 'v1alpha2');
     expect(newResource.kind).toEqual(kind);
     expect(newResource.metadata.name).toEqual(name);
     expect(newResource.metadata.namespace).toEqual(namespace);

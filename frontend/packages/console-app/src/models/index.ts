@@ -13,6 +13,13 @@ export const WorkspaceModel: K8sKind = {
   propagationPolicy: 'Background',
 };
 
+export const v1alpha1WorkspaceModel: K8sKind = Object.assign(
+  { ...WorkspaceModel },
+  {
+    apiVersion: 'v1alpha1',
+  },
+);
+
 export const QuickStartModel: K8sKind = {
   kind: 'ConsoleQuickStart',
   label: 'ConsoleQuickStart',
