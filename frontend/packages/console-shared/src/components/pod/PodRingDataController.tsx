@@ -3,13 +3,11 @@ import { Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { PodRingResources, PodRingData } from '../../types';
 import { transformPodRingData, podRingFirehoseProps } from '../../utils';
 import {
-  DaemonSetModel,
   PodModel,
   ReplicaSetModel,
   ReplicationControllerModel,
   DeploymentModel,
   DeploymentConfigModel,
-  StatefulSetModel,
 } from '@console/internal/models';
 
 interface RenderPropsType {
@@ -46,21 +44,15 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
   const resources: FirehoseResource[] = [
     {
       isList: true,
+      kind,
+      namespace,
+      prop: podRingFirehoseProps[kind],
+    },
+    {
+      isList: true,
       kind: PodModel.kind,
       namespace,
       prop: podRingFirehoseProps[PodModel.kind],
-    },
-    {
-      isList: true,
-      kind: ReplicaSetModel.kind,
-      namespace,
-      prop: podRingFirehoseProps[ReplicaSetModel.kind],
-    },
-    {
-      isList: true,
-      kind: ReplicationControllerModel.kind,
-      namespace,
-      prop: podRingFirehoseProps[ReplicationControllerModel.kind],
     },
   ];
 
@@ -68,33 +60,17 @@ const PodRingController: React.FC<PodRingDataControllerProps> = ({ namespace, ki
     case DeploymentModel.kind:
       resources.push({
         isList: true,
-        kind,
+        kind: ReplicaSetModel.kind,
         namespace,
-        prop: podRingFirehoseProps[kind],
+        prop: podRingFirehoseProps[ReplicaSetModel.kind],
       });
       break;
     case DeploymentConfigModel.kind:
       resources.push({
         isList: true,
-        kind,
+        kind: ReplicationControllerModel.kind,
         namespace,
-        prop: podRingFirehoseProps[kind],
-      });
-      break;
-    case StatefulSetModel.kind:
-      resources.push({
-        isList: true,
-        kind,
-        namespace,
-        prop: podRingFirehoseProps[kind],
-      });
-      break;
-    case DaemonSetModel.kind:
-      resources.push({
-        isList: true,
-        kind,
-        namespace,
-        prop: podRingFirehoseProps[kind],
+        prop: podRingFirehoseProps[ReplicationControllerModel.kind],
       });
       break;
     default:
