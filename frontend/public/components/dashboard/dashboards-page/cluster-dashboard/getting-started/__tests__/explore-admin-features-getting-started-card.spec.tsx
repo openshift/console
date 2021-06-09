@@ -48,9 +48,9 @@ describe('ExploreAdminFeaturesGettingStartedCard', () => {
         href: '/api-explorer',
       },
       {
-        id: 'console-customizations',
-        title: 'Console customizations',
-        href: '/k8s/cluster/customresourcedefinitions?name=console',
+        id: 'operatorhub',
+        title: 'OperatorHub',
+        href: '/operatorhub',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({

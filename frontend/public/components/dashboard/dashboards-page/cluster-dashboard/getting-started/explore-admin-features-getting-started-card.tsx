@@ -22,9 +22,9 @@ export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
       href: '/api-explorer',
     },
     {
-      id: 'console-customizations',
-      title: t('public~Console customizations'),
-      href: '/k8s/cluster/customresourcedefinitions?name=console',
+      id: 'operatorhub',
+      title: t('public~OperatorHub'),
+      href: '/operatorhub',
     },
   ];
 
