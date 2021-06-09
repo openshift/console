@@ -53,6 +53,15 @@ const SubscriptionResource: FirehoseResource = {
   isList: true,
 };
 
+const ocsSubscriptionResource: FirehoseResource = {
+  kind: referenceForModel(SubscriptionModel),
+  namespaced: true,
+  namespace: 'openshift-storage',
+  prop: 'subscription',
+  isList: false,
+  name: 'ocs-operator',
+};
+
 const PackageManifestResource: FirehoseResource = {
   kind: referenceForModel(PackageManifestModel),
   namespaced: true,
@@ -74,12 +83,13 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   );
   const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sWatchResource<
     SubscriptionKind
-  >(SubscriptionResource);
+  >(ocsSubscriptionResource);
   const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sWatchResource<
     PackageManifestKind
   >(PackageManifestResource);
+
   const currentChannel =
-    ocsSubscription?.[0]?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
+    ocsSubscription?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
   const filteredVersions = packageManifest?.status?.channels?.filter(
     (channel) =>
       parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) >
@@ -113,7 +123,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     CEPH_STORAGE_NAMESPACE,
   )}`;
   const updateFunction = (...args) => k8sUpdate(...args);
-  const ocsChannelModal = () => {
+  const launchModal = () => {
     if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
       return createSubscriptionChannelModal({
         subscription: ocsSubscription,
@@ -155,8 +165,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             {infrastructurePlatform}
           </DetailItem>
           <DetailItem title={t('ceph-storage-plugin~Mode')}>Internal</DetailItem>
-          {!isEmpty(filteredVersions) &&
-          ocsSubscription?.[0]?.spec?.installPlanApproval === 'Manual' ? (
+          {!isEmpty(filteredVersions) && ocsSubscription?.spec?.installPlanApproval === 'Manual' ? (
             <DetailItem
               key="version"
               title={t('ceph-storage-plugin~Version')}
@@ -164,16 +173,12 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
               error={subscriptionLoaded && !ocsVersion}
             >
               {ocsVersion}
-              <Button
-                type="button"
-                isInline
-                onClick={ocsChannelModal}
-                variant="link"
-                isDisabled={!ocsSubscriptionLoaded || !packageManifest}
-              >
-                <BlueArrowCircleUpIcon className="co-icon-space-r" />
-                {ocsSubscriptionLoaded ? ocsSubscription?.[0].spec.channel : null}
-              </Button>
+              {ocsSubscriptionLoaded && packageManifestLoaded ? (
+                <Button type="button" isInline onClick={launchModal} variant="link">
+                  <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                  {ocsSubscriptionLoaded ? ocsSubscription?.spec?.channel : null}
+                </Button>
+              ) : null}
             </DetailItem>
           ) : (
             <DetailItem
