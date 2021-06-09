@@ -4,7 +4,7 @@ export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource(
     'URL',
     'Import via URL (creates PVC)',
-    'https://download.fedoraproject.org/pub/fedora/linux/releases/33/Cloud/x86_64/images/Fedora-Cloud-Base-33-1.2.x86_64.raw.xz',
+    'https://download.cirros-cloud.net/0.5.2/cirros-0.5.2-x86_64-disk.img',
   );
 
   static readonly REGISTRY = new ProvisionSource(

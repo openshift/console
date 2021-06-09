@@ -2,7 +2,7 @@ import { testName } from '../../support';
 import { TEMPLATE_NAME, VM_STATUS } from '../../const/index';
 import { virtualization } from '../../view/virtualization';
 import { VirtualMachineData } from '../../types/vm';
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { vm, waitForStatus } from '../../view/vm';
 
 const vmData: VirtualMachineData = {
