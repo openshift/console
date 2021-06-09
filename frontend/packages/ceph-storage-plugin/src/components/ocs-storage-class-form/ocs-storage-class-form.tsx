@@ -282,6 +282,7 @@ const KMSDetails: React.FC<KMSDetailsProps> = ({ setEditKMS, currentKMS }) => {
           onClick={() => {
             setEditKMS(true);
           }}
+          data-test="edit-kms-link"
         >
           {t('ceph-storage-plugin~Change connection details')}
         </Button>
@@ -468,6 +469,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
               aria-label={t('ceph-storage-plugin~StorageClass encryption')}
               onChange={setChecked}
               className="ocs-storage-class-encryption__form-checkbox"
+              data-test="storage-class-encryption"
             />
             <span className="help-block">
               {t(
@@ -493,7 +495,12 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
                       <div className="ocs-install-kms__save-button">
                         <ButtonBar errorMessage={errorMessage} inProgress={progress}>
                           <ActionGroup>
-                            <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
+                            <Button
+                              variant="secondary"
+                              onClick={updateKMS}
+                              isDisabled={!validSave}
+                              data-test="save-action"
+                            >
                               {t('ceph-storage-plugin~Save')}
                             </Button>
                             <Button variant="plain" onClick={cancelKMSUpdate}>

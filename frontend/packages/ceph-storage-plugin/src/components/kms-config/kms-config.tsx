@@ -129,6 +129,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           name="kms-service-name"
           isRequired
           validated={isValid(kms.name.valid)}
+          data-test="kms-service-name-text"
         />
       </FormGroup>
       <div className="ocs-install-kms__form-url">
@@ -149,6 +150,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
             name="kms-address"
             isRequired
             validated={isValid(kms.address.valid)}
+            data-test="kms-address-text"
           />
         </FormGroup>
         <FormGroup
@@ -170,6 +172,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
             name="kms-address-port"
             isRequired
             validated={isValid(kms.port.valid)}
+            data-test="kms-address-port-text"
           />
         </FormGroup>
       </div>
@@ -200,7 +203,12 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           </InputGroup>
         </FormGroup>
       )}
-      <Button variant="link" className={`${className}__form-body`} onClick={openAdvancedModal}>
+      <Button
+        variant="link"
+        className={`${className}__form-body`}
+        onClick={openAdvancedModal}
+        data-test="kms-advanced-settings-link"
+      >
         {t('ceph-storage-plugin~Advanced Settings')}{' '}
         {(kms.backend ||
           kms.caCert ||
