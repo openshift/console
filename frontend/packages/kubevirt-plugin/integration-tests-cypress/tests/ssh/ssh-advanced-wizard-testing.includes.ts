@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5971) Test if ssh service is present in advanced wizard', () => {

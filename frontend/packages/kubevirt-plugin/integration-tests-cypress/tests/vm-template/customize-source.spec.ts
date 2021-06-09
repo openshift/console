@@ -7,7 +7,7 @@ import {
   READY_FOR_CUSTOMIZATION,
   TEST_PROVIDER,
 } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { testName } from '../../support';
 import { addSource } from '../../view/add-source';
 import { customizeSource, PROVIDER } from '../../view/customize-source';

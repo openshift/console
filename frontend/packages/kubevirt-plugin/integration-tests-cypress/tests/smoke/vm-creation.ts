@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import { virtualization } from '../../view/virtualization';

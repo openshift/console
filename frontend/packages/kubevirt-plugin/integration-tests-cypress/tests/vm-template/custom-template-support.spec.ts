@@ -8,7 +8,7 @@ import {
   TEST_PROVIDER,
   VM_ACTION_TIMEOUT,
 } from '../../const';
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { addSource } from '../../view/add-source';
 import { virtualization } from '../../view/virtualization';
 import * as templateSupportModal from '../../view/vm-template/template-support-modal';
@@ -102,7 +102,7 @@ describe('test custom template creation support', () => {
     );
   });
 
-  xit('ID(CNV-5729) create custom template from common template with a boot source', () => {
+  it('ID(CNV-5729) create custom template from common template with a boot source', () => {
     const NEW_TEMPLATE_NAME = `foo-with-source-${testName}`;
     const VM_NAME_WITH_BOOT_SOURCE = `foo-vm-with-source-${testName}`;
 
@@ -144,6 +144,11 @@ describe('test custom template creation support', () => {
     cy.byTestID('success-list').click();
 
     // verify VM started
+    virtualization.vms.testStatus(
+      VM_NAME_WITH_BOOT_SOURCE,
+      'Starting',
+      VM_ACTION_TIMEOUT.VM_BOOTUP,
+    );
     virtualization.vms.testStatus(VM_NAME_WITH_BOOT_SOURCE, 'Running', VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 });

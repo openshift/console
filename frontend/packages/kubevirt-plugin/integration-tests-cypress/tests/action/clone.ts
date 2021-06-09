@@ -1,5 +1,5 @@
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
 import { selectActionFromDropdown } from '../../view/actions';

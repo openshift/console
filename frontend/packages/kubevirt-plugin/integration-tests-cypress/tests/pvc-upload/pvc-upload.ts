@@ -1,5 +1,5 @@
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { TEMPLATE_BASE_IMAGE, TEMPLATE_NAME, OS_IMAGES_NS } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import { pvc } from '../../view/pvc';

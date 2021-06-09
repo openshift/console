@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../enums/provisionSource';
+import { ProvisionSource } from '../const/enums/provisionSource';
 
 export const wizard = {
   vm: {

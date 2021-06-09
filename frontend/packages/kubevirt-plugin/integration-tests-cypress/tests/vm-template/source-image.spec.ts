@@ -1,3 +1,4 @@
+import { testName } from '../../support';
 import {
   ADD_SOURCE,
   IMPORTING,
@@ -7,8 +8,7 @@ import {
   TEST_PROVIDER,
   VM_STATUS,
 } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
-import { testName } from '../../support';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 import { addSource } from '../../view/add-source';
 import { virtualization } from '../../view/virtualization';
 
@@ -42,7 +42,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
-  xit('ID(CNV-5650) add URL image and delete', () => {
+  it('ID(CNV-5650) add URL image and delete', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.URL);
     virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
@@ -66,7 +66,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
-  xit('ID(CNV-5649) upload image and delete', () => {
+  it('ID(CNV-5649) upload image and delete', () => {
     cy.exec(
       `test -f ${Cypress.env(
         'UPLOAD_IMG',
@@ -75,7 +75,7 @@ describe('test vm template source image', () => {
     );
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.UPLOAD);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Uploading');
+    virtualization.templates.testSource(TEMPLATE_NAME, 'Source uploading');
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);

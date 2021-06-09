@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../../enums/provisionSource';
+import { ProvisionSource } from '../../const/enums/provisionSource';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5970) Test creating a vm using simple wizard and adding an ssh key', () => {
