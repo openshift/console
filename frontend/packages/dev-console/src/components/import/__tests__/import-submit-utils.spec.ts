@@ -297,6 +297,47 @@ describe('Import Submit Utils', () => {
       expect(models.includes(PipelineModel.kind)).toEqual(false);
       done();
     });
+
+    it('should add pipeline annotations to secret if present and update service account', async (done) => {
+      const mockData = _.cloneDeep(defaultData);
+      mockData.pipeline.enabled = true;
+      mockData.git.secret = 'sample-secret';
+
+      const k8sUpdateMock = jest
+        .spyOn(k8s, 'k8sUpdate')
+        .mockImplementation((_model, data) => Promise.resolve(data));
+      const k8sGetMock = jest.spyOn(k8s, 'k8sGet').mockImplementation((model) => {
+        if (model.kind === 'Secret') {
+          return Promise.resolve({ metadata: { annotations: {} } });
+        }
+        if (model.kind === 'ServiceAccount') {
+          return Promise.resolve({ secrets: [] });
+        }
+        return Promise.resolve({});
+      });
+
+      await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
+      expect(k8sGetMock).toHaveBeenCalledWith(
+        expect.anything(),
+        'sample-secret',
+        expect.anything(),
+      );
+      expect(k8sUpdateMock).toHaveBeenCalledWith(
+        expect.anything(),
+        { metadata: { annotations: { 'tekton.dev/git-0': 'https://github.com' } } },
+        expect.anything(),
+      );
+
+      mockData.git.url = 'git@github.com:sclorg/nodejs-ex.git';
+      await createOrUpdateResources(t, mockData, buildImage.obj, false, false, 'create');
+      expect(k8sUpdateMock).toHaveBeenCalledWith(
+        expect.anything(),
+        { metadata: { annotations: { 'tekton.dev/git-0': 'github.com' } } },
+        expect.anything(),
+      );
+
+      done();
+    });
   });
 
   describe('createDevfileResources', () => {
