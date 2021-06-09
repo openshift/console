@@ -218,7 +218,7 @@ describe('KSVC Route Data', () => {
       metadata: {
         ...knativeService.metadata,
         labels: {
-          'serving.knative.dev/visibility': 'cluster-local',
+          'networking.knative.dev/visibility': 'cluster-local',
         },
       },
       spec: {
