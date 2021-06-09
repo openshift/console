@@ -7,7 +7,10 @@ import {
   pipelineDetailsPage,
   pipelineRunsPage,
 } from '../../pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import {
+  devNavigationMenu,
+  pageTitle,
+} from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
   topologySidePane,
@@ -182,7 +185,7 @@ Then('page will be redirected to pipeline runs page', () => {
 
 Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
-  topologySidePane.verifySection('Pipeline Runs');
+  topologySidePane.verifySection(pageTitle.PipelineRuns);
 });
 
 Then('3 pipeline runs are displayed under pipelines section of topology page', () => {
@@ -192,24 +195,6 @@ Then('3 pipeline runs are displayed under pipelines section of topology page', (
 Then('View all link is displayed', () => {
   cy.get('a.sidebar__section-view-all').should('contain.text', 'View all');
 });
-
-Given(
-  'pipeline run is available with cancelled tasks for pipeline {string}',
-  (pipelineName: string) => {
-    // TODO: implement step
-    cy.log(pipelineName);
-  },
-);
-
-Given(
-  'pipeline run is available with failed tasks for pipeline {string}',
-  (pipelineName: string) => {
-    // TODO: implement step
-    cy.log(pipelineName);
-  },
-);
-
-Given('user is at the Pipeline Details page', () => {});
 
 Given('pipeline {string} is executed for 3 times', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
@@ -259,10 +244,6 @@ When('user navigates to Pipelines page', () => {
   navigateTo(devNavigationMenu.Pipelines);
 });
 
-Given('one pipeline run is completed with the workload', () => {
-  // TODO: implement step
-});
-
 Given('pipeline run is displayed for {string} in pipelines page', (name: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(name);
@@ -291,14 +272,6 @@ Then(
     topologyPage.verifyPipelineRunStatus(status);
   },
 );
-
-Given('pipeline run is available with cancelled tasks', () => {
-  // TODO: implement step
-});
-
-Given('pipeline run is available with failed tasks', () => {
-  // TODO: implement step
-});
 
 When('user clicks Actions menu on the top right corner of the page', () => {
   actionsDropdownMenu.clickActionMenu();

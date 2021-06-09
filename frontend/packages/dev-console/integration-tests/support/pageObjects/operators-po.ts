@@ -37,6 +37,7 @@ export const operatorsPO = {
     noOperatorFoundMessage: 'div.cos-status-box__title',
     knativeServingLink: '[title="knativeservings.operator.knative.dev"]',
     knativeEventingLink: '[title="knativeeventings.operator.knative.dev"]',
+    operatorStatus: '[data-test="status-text"]',
   },
   sidePane: {
     install: '[data-test-id="operator-install-btn"]',

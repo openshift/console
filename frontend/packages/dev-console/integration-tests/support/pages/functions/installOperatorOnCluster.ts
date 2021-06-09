@@ -18,6 +18,10 @@ export const installOperator = (operatorName: operators) => {
       app.waitForLoad();
       operatorsPage.navigateToInstallOperatorsPage();
       operatorsPage.verifyInstalledOperator(operatorName);
+      if (operatorName === operators.ServerlessOperator) {
+        createKnativeEventing();
+        createKnativeServing();
+      }
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
@@ -54,17 +58,5 @@ export const verifyAndInstallPipelinesOperator = () => {
 
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
-  operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperatorInInstallPage(operators.ServerlessOperator);
-  cy.get('body', {
-    timeout: 50000,
-  }).then(($ele) => {
-    if ($ele.find(operatorsPO.installOperators.noOperatorsFound).length) {
-      installOperator(operators.ServerlessOperator);
-    } else {
-      cy.log(`${operators.ServerlessOperator} operator is installed in cluster`);
-    }
-    createKnativeEventing();
-    createKnativeServing();
-  });
+  installOperator(operators.ServerlessOperator);
 };

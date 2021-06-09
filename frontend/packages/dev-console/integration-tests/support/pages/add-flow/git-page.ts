@@ -232,14 +232,8 @@ export const gitPage = {
     cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
     cy.get('body').then(($body) => {
       if (
-        $body
-          .find(gitPO.gitSection.validatedMessage)
-          .text()
-          .includes(messages.addFlow.privateGitRepoMessage) ||
-        $body
-          .find(gitPO.gitSection.validatedMessage)
-          .text()
-          .includes(messages.addFlow.rateLimitExceeded) ||
+        $body.text().includes(messages.addFlow.privateGitRepoMessage) ||
+        $body.text().includes(messages.addFlow.rateLimitExceeded) ||
         $body.find('[aria-label="Warning Alert"]').length
       ) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);

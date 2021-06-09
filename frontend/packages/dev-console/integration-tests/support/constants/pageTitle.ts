@@ -40,7 +40,9 @@ export const pageTitle = {
   PipelineRuns: 'PipelineRuns',
   Eventing: 'Eventing',
   RedHatOpenShiftServerless: 'Red Hat OpenShift Serverless',
-  CreateKnativeServing: 'Create Knative Serving',
-  CreateKnativeEventing: 'Create Knative Eventing',
+  CreateKnativeServing: 'Create KnativeServing',
+  CreateKnativeEventing: 'Create KnativeEventing',
   UploadJarFile: 'Upload JAR file',
+  KnativeServings: 'KnativeServings',
+  KnativeEventings: 'KnativeEventings',
 };

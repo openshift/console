@@ -2,6 +2,7 @@ import { topologyPO } from '@console/dev-console/integration-tests/support/pageO
 import { topologyActions } from './topology-actions-page';
 import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { app } from '@console/dev-console/integration-tests/support/pages';
 
 export const topologySidePane = {
   verify: () => cy.get(topologyPO.sidePane.dialog).should('be.visible'),
@@ -24,11 +25,12 @@ export const topologySidePane = {
       .get(topologyPO.sidePane.tabName)
       .contains(tabName)
       .click(),
-  verifySection: (sectionTitle: string) =>
-    cy
-      .get(topologyPO.sidePane.sectionTitle)
+  verifySection: (sectionTitle: string) => {
+    app.waitForLoad();
+    cy.get(topologyPO.sidePane.sectionTitle)
       .contains(sectionTitle)
-      .should('be.visible'),
+      .should('be.visible');
+  },
   verifyActions: (...actions: string[]) => {
     cy.byLegacyTestID('action-items')
       .find('li')

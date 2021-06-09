@@ -16,6 +16,7 @@ export const app = {
     cy.get('.co-m-loader', { timeout }).should('not.exist');
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
     cy.get('.skeleton-catalog--grid').should('not.exist');
+    cy.get('.loading-skeleton--table').should('not.exist');
     app.waitForDocumentLoad();
   },
   waitForNameSpacesToLoad: () => {
@@ -166,6 +167,7 @@ export const projectNameSpace = {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         projectNameSpace.enterProjectName(projectName);
         cy.byTestID('confirm-action').click();
+        app.waitForLoad();
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
@@ -182,6 +184,7 @@ export const projectNameSpace = {
             cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
             projectNameSpace.enterProjectName(projectName);
             cy.byTestID('confirm-action').click();
+            app.waitForLoad();
           }
         });
       }
