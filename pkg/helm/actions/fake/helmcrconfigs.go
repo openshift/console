@@ -59,6 +59,17 @@ func K8sDynamicClient(indexFiles ...string) dynamic.Interface {
 	return fake.NewSimpleDynamicClient(newScheme(), objs...)
 }
 
+func K8sDynamicClientWithRepoNames(repoNames []string, indexFiles ...string) dynamic.Interface {
+	var objs []runtime.Object
+
+	for i, indexFile := range indexFiles {
+		fakeCr := fakeHelmCR(indexFile, repoNames[i])
+		objs = append(objs, fakeCr)
+	}
+
+	return fake.NewSimpleDynamicClient(newScheme(), objs...)
+}
+
 func K8sDynamicClientFromCRs(crs ...*unstructured.Unstructured) dynamic.Interface {
 	var objs []runtime.Object
 

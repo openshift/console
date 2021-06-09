@@ -1,0 +1,66 @@
+apiVersion: v1
+entries:
+  ibm-mongodb-enterprise-helm:
+  - apiVersion: v2
+    appVersion: 4.4.0
+    created: "2021-05-20T17:02:54.533247-04:00"
+    description: 'IBM Helm Chart to deploy MongoDB Enterprise on OpenShift Container
+      Platform hosted on IBM Power systems.  Documentation For additional details
+      regarding install parameters see here https://docs.mongodb.com/manual/administration/install-enterprise/  License
+      By installing this product you accept the license terms. https://www.mongodb.com/community/licensing '
+    digest: 6727fe960ea49f9fa1e6c5c36f1d4190b1ca12ce82b11c290b6150f34a48560b
+    keywords:
+    - IBM
+    - ppc64le
+    - Enterprise MongoDB
+    - RHOCP
+    - Database
+    - Other
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - name: IBM
+    name: ibm-mongodb-enterprise-helm
+    urls:
+    - https://dperaza4dustbit.github.io/helm-chart/ibm-mongodb-enterprise-helm-0.2.0.tgz
+    version: 0.2.0
+  psql-service:
+  - annotations:
+      charts.openshift.io/archs: x86_64
+      charts.openshift.io/name: PSQL RedHat Demo Chart
+      charts.openshift.io/provider: RedHat
+      charts.openshift.io/supportURL: https://github.com/dperaza4dustbit/helm-chart
+    apiVersion: v2
+    appVersion: 10.0.0
+    created: "2021-05-20T17:02:54.537383-04:00"
+    description: A Helm chart for a RedHat Certified PSQL
+    digest: 7b62635ea789ce8e6c43b007228b5ed030868d92efb1ba8a66a47d27acd619a9
+    kubeVersion: 1.20.0
+    name: psql-service
+    type: application
+    urls:
+    - https://dperaza4dustbit.github.io/helm-chart/psql-service-0.1.8.tgz
+    version: 0.1.8
+  quarkus:
+  - apiVersion: v2
+    created: "2021-05-20T17:02:54.538296-04:00"
+    description: A Helm chart to build and deploy Quarkus applications
+    digest: 1d6a88bc9d9a7dfa6eb02b9dc70242a0fc292e48da5ef922c3ec9e61ebad3dec
+    keywords:
+    - runtimes
+    - quarkus
+    name: quarkus
+    urls:
+    - https://dperaza4dustbit.github.io/helm-chart/quarkus-0.0.3.tgz
+    version: 0.0.3
+  ssm-service:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2021-05-20T17:02:54.541213-04:00"
+    description: A Helm chart for a Software Security Module
+    digest: 787dae187f2bda7d20cb1c2fd50ad9ff5a8d8e4fb614a6b9aa4b25921d590b74
+    name: ssm-service
+    type: application
+    urls:
+    - https://dperaza4dustbit.github.io/helm-chart/ssm-service-0.1.2.tgz
+    version: 0.1.2
+generated: "2021-05-20T17:02:54.531906-04:00"
