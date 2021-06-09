@@ -14,7 +14,12 @@ $border-color: var(--pf-global--BorderColor--light-100);
   &.is-linked {
     cursor: pointer;
   }
+  &--icon-stop {
+    transform: rotate(0);
+  }
   &--icon-spin {
+    filter: blur(0);
+    -webkit-filter: blur(0);
     transform-origin: 16.7px 15.1px;
   }
 }
