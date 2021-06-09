@@ -14,6 +14,7 @@ const terminalOptions: ITerminalOptions = {
 
 type TerminalProps = {
   onData: (data: string) => void;
+  onResize: (cols: number, rows: number) => void;
 };
 
 export type ImperativeTerminalType = {
@@ -23,62 +24,73 @@ export type ImperativeTerminalType = {
   onConnectionClosed: (msg: string) => void;
 };
 
-const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onData }, ref) => {
-  const terminal = React.useRef<XTerminal>();
-  const terminalRef = React.useRef<HTMLDivElement>();
+const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(
+  ({ onData, onResize }, ref) => {
+    const terminal = React.useRef<XTerminal>();
+    const terminalRef = React.useRef<HTMLDivElement>();
 
-  React.useEffect(() => {
-    const term: XTerminal = new XTerminal(terminalOptions);
-    term.open(terminalRef.current);
-    term.focus();
+    React.useEffect(() => {
+      const term: XTerminal = new XTerminal(terminalOptions);
+      term.open(terminalRef.current);
+      term.focus();
 
-    const resizeObserver: ResizeObserver = new ResizeObserver(() => {
-      window.requestAnimationFrame(() => fit(term));
-    });
+      const resizeObserver: ResizeObserver = new ResizeObserver(() => {
+        window.requestAnimationFrame(() => fit(term));
+      });
 
-    resizeObserver.observe(terminalRef.current);
+      resizeObserver.observe(terminalRef.current);
 
-    if (terminal.current !== term) {
-      terminal.current && terminal.current.destroy();
-      terminal.current = term;
-    }
+      if (terminal.current !== term) {
+        terminal.current && terminal.current.destroy();
+        terminal.current = term;
+      }
 
-    return () => {
-      term.destroy();
-      resizeObserver.disconnect();
-    };
-  }, []);
+      return () => {
+        term.destroy();
+        resizeObserver.disconnect();
+      };
+    }, []);
 
-  React.useEffect(() => {
-    const term = terminal.current;
-    term.on('data', onData);
+    const handleResize = React.useCallback(
+      ({ cols, rows }: { cols: number; rows: number }) => {
+        onResize(cols, rows);
+      },
+      [onResize],
+    );
 
-    return () => {
-      term.off('data', onData);
-    };
-  }, [onData]);
+    React.useEffect(() => {
+      const term = terminal.current;
+      term.on('data', onData);
+      term.on('resize', handleResize);
 
-  React.useImperativeHandle(ref, () => ({
-    focus: () => {
-      terminal.current && terminal.current.focus();
-    },
-    reset: () => {
-      if (!terminal.current) return;
-      terminal.current.reset();
-      terminal.current.clear();
-      terminal.current.setOption('disableStdin', false);
-    },
-    onDataReceived: (data) => {
-      terminal.current && terminal.current.write(data);
-    },
-    onConnectionClosed: (msg) => {
-      if (!terminal.current) return;
-      terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
-      terminal.current.setOption('disableStdin', true);
-    },
-  }));
+      return () => {
+        term.off('data', onData);
+        term.off('resize', handleResize);
+      };
+    }, [onData, handleResize]);
 
-  return <div className="co-terminal" ref={terminalRef} />;
-});
+    React.useImperativeHandle(ref, () => ({
+      focus: () => {
+        terminal.current && terminal.current.focus();
+      },
+      reset: () => {
+        if (!terminal.current) return;
+        terminal.current.reset();
+        terminal.current.clear();
+        terminal.current.setOption('disableStdin', false);
+      },
+      onDataReceived: (data) => {
+        terminal.current && terminal.current.write(data);
+      },
+      onConnectionClosed: (msg) => {
+        if (!terminal.current) return;
+        terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
+        terminal.current.setOption('disableStdin', true);
+      },
+    }));
+
+    return <div className="co-terminal" ref={terminalRef} />;
+  },
+);
 
 export default Terminal;

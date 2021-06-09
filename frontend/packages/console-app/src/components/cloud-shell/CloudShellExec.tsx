@@ -79,6 +79,11 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     [tick],
   );
 
+  const handleResize = React.useCallback((cols: number, rows: number) => {
+    const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
+    ws.current?.send(`4${data}`);
+  }, []);
+
   React.useEffect(() => {
     onActivate(true);
     return () => {
@@ -239,7 +244,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   if (wsOpen) {
     return (
       <div className="co-cloudshell-terminal__container">
-        <Terminal onData={onData} ref={terminal} />
+        <Terminal onData={onData} onResize={handleResize} ref={terminal} />
       </div>
     );
   }
