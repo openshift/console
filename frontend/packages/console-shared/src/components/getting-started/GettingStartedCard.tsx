@@ -12,7 +12,6 @@ import {
   Skeleton,
   SimpleListItem,
 } from '@patternfly/react-core';
-import { ArrowRightIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import './GettingStartedCard.scss';
 
@@ -78,6 +77,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                 <SimpleListItem
                   key={link.id}
                   component={link.href ? (link.external ? 'a' : (Link as any)) : 'button'}
+                  componentClassName={link.external ? 'co-external-link' : 'co-goto-arrow'}
                   componentProps={
                     link.external
                       ? {
@@ -94,11 +94,7 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                   onClick={link.onClick}
                 >
                   {link.title}
-                  {link.external ? (
-                    <ExternalLinkAltIcon aria-hidden="true" />
-                  ) : (
-                    <ArrowRightIcon aria-hidden="true" />
-                  )}
+                  {link.external}
                 </SimpleListItem>
               ),
             )}
@@ -121,11 +117,11 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
             <a
               href={moreLink.href}
               target="_blank"
+              className="co-external-link"
               rel="noopener noreferrer"
               data-test={`item ${moreLink.id}`}
             >
               {moreLink.title}
-              <ExternalLinkAltIcon />
             </a>
           ) : (
             <Link to={moreLink.href} data-test={`item ${moreLink.id}`}>

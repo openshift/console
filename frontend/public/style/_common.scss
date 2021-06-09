@@ -253,7 +253,7 @@ dl.co-inline {
 
 // append external-link icon to <a> so that it doesn't wrap without text
 // there must be no white space between the text and the closing </a> tag holding the pseudo element
-.co-external-link:after {
+.co-external-link::after {
   @include font-awesome-free-solid;
   content: fa-content($fa-var-external-link-alt);
   font-size: 75%;
@@ -279,6 +279,18 @@ dl.co-inline {
 // Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
+}
+
+.co-goto-arrow::after {
+  @include font-awesome-free-solid;
+  content: fa-content($fa-var-arrow-right);
+  font-size: 75%;
+  height: 16px;
+  margin-left: 3px;
+  margin-right: -15px; // width + margin-left
+  position: relative;
+  top: 0;
+  width: 12px;
 }
 
 .co-icon-flex-child {
