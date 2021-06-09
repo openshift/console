@@ -256,7 +256,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                     variant="danger"
                     isInline
                     title={t(
-                      'kubevirt-plugin~No Storage classes found in cluster, adding source is disabled.',
+                      'kubevirt-plugin~Adding source is disabled because no storage classes were found in the cluster.',
                     )}
                   />
                 </StackItem>
