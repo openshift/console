@@ -20,10 +20,11 @@ Feature: Display task runs page
 
         @regression @to-do
         Scenario: Options in kebab menu of task runs: P-05-TC02
-            Given user is at pipeline details page with pipeline runs
-             When user clicks on Task Runs tab
+            Given user is at PipelineRuns tab with pipeline runs
+              And user clicks on a Pipeline Run
+              And user clicks on TaskRuns tab
               And user clicks kebab menu of a task run
-             Then user can see kebab menu options Edit labels, Edit annotations, Edit Task Run and Delete Task Run
+             Then user can see kebab menu option Delete TaskRun
 
 
         @regression @to-do

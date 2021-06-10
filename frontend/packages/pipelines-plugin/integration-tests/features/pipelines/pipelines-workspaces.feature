@@ -36,14 +36,11 @@ Feature: Workspaces
 
         @odc-3991
         Scenario: Start the pipeline with ConfigMap: P-10-TC04
-            Given user created pipeline "test-configmap-pipeline" with workspace
-              And user created Config Map using yaml "pipeline-configMap.yaml"
-             When user selects "Start" option from kebab menu for pipeline "test-configmap-pipeline"
-              And user selects volume type "Config Map" from workspaces dropdown
-              And user selects "sensitive-recipe-storage" from Config Map dropdown
-              And user selects Start button
-             Then user will be redirected to Pipeline Run Details page
-              And user will see Config Map Workspace "sensitive-recipe-storage" mentioned in the Workspace Resources section of Pipeline Run Details page
+            Given user created config map from "configMap-test-motd.yaml"
+              And user created pipeline run using yaml "pipelineRun-using-optional-workspaces-in-when-expressions.yaml"
+             When user opens pipeline run details page for "optional-workspace-when-"
+              And user selects "rerun" option from action menu for pipeline run "optional-workspace-when-"
+             Then user will see Config Map Workspace "test-motd" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
         @odc-3991

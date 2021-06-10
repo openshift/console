@@ -64,6 +64,8 @@ Feature: Create the pipeline from builder page
                   | p-three-1     | kn        |
 
 
+        @un-verified
+        #test data required
         Scenario Outline: Create pipeline with "<resource_type>" as resource type from pipeline builder page: P-02-TC05
             Given user is at Pipeline Builder page
              When user enters pipeline name as "<pipeline_name>"
@@ -73,11 +75,12 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "<pipeline_name>"
 
         Examples:
+        #For git and image resource apply ../../testData/pipelines-workspaces/demo-optional-resources.yaml
                   | pipeline_name | task_name        | resource_type | resource_name |
                   | p-git         | openshift-client | Git           | git repo      |
                   | p-img         | buildah          | Image         | image repo    |
-                  | p-storage     | task-storage     | Storage       | storage repo  |
-                  | p-cluster     | task-cluster     | Cluster       | cluster repo  |
+                  # | p-storage     | task-storage     | Storage       | storage repo  |
+                  # | p-cluster     | task-cluster     | Cluster       | cluster repo  |
 
 
         @regression
