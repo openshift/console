@@ -815,6 +815,8 @@
   "Error loading events": "Error loading events",
   "Loading Events...": "Loading Events...",
   "No warning events": "No warning events",
+  "IP Addresses ({{ips}})": "IP Addresses ({{ips}})",
+  "+{{ips}} more": "+{{ips}} more",
   "No additional support": "No additional support",
   "Support by template provider": "Support by template provider",
   "Tiny": "Tiny",

@@ -83,6 +83,7 @@ import { getVMWizardCreateLink } from '../../utils/url';
 import { VMStatus } from '../vm-status/vm-status';
 import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
 import { vmStatusFilter } from './table-filters';
+import VMIP from './VMIP';
 
 import './vm.scss';
 
@@ -190,7 +191,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
           <ResourceLink key="node-link" kind={NodeModel.kind} name={node} namespace={namespace} />
         )}
       </TableData>
-      <TableData className={dimensify()}>{vmi && getVmiIpAddresses(vmi).join(', ')}</TableData>
+      <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
       <TableData className={dimensify(true)}>
         <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
