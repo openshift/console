@@ -11,9 +11,11 @@ describe('ID(CNV-5654) test vm empty state', () => {
   });
 
   // CI does not have quickstarts
-  xit('Empty state has link to quick starts', () => {
-    virtualization.vms.emptyState.clickQuickStarts();
-    cy.get('.pf-c-search-input__text-input').should('have.value', 'virtual machine');
+  it('Empty state has link to quick starts', () => {
+    if (Cypress.env('DOWNSTREAM')) {
+      virtualization.vms.emptyState.clickQuickStarts();
+      cy.get('.pf-c-search-input__text-input').should('have.value', 'virtual machine');
+    }
   });
 
   it('Empty state has action to create VM', () => {

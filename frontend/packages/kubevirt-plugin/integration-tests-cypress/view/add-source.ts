@@ -1,4 +1,4 @@
-import { ProvisionSource } from '../enums/provisionSource';
+import { ProvisionSource } from '../const/enums/provisionSource';
 import { TEST_PROVIDER } from '../const';
 
 export const provisionSourceInputs = {
