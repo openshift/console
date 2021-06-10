@@ -207,6 +207,7 @@ const TaskComponent: React.FC<TaskProps> = ({
         <g
           className={cx({
             'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
+            'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
           })}
         >
           <svg
