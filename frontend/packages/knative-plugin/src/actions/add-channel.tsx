@@ -14,9 +14,12 @@ const EventChannelIcon: React.FC = () => (
   <img style={eventChannelStyles} src={channelIcon} alt="" />
 );
 
-export const addChannels: KebabAction = createKebabAction(
-  // t('knative-plugin~Channel')
-  'knative-plugin~Channel',
-  <EventChannelIcon />,
-  ImportOptions.EVENTCHANNEL,
-);
+export const addChannels: { id: string; action: KebabAction } = {
+  id: 'knative-eventing-channel',
+  action: createKebabAction(
+    // t('knative-plugin~Channel')
+    'knative-plugin~Channel',
+    <EventChannelIcon />,
+    ImportOptions.EVENTCHANNEL,
+  ),
+};

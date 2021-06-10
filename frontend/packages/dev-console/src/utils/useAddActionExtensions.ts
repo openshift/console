@@ -9,7 +9,7 @@ interface AddPage {
   disabledActions?: string[];
 }
 
-const getDisabledAddActions = (): string[] | undefined => {
+export const getDisabledAddActions = (): string[] | undefined => {
   if (window.SERVER_FLAGS.addPage) {
     const addPage: AddPage = JSON.parse(window.SERVER_FLAGS.addPage);
     const { disabledActions } = addPage;

@@ -5,6 +5,8 @@ import {
   addResourceMenuWithoutCatalog,
   addResourceMenu,
   addGroupResourceMenu,
+  disabledFilter,
+  actionMapper,
 } from '@console/dev-console/src/actions/add-resources';
 import { GraphData } from '@console/topology/src/topology-types';
 import { getResource } from '@console/topology/src/utils';
@@ -34,14 +36,17 @@ export const getKnativeContextMenuAction = (
   if (connectorSource?.getData().type === TYPE_EVENT_SOURCE_KAFKA) {
     return [];
   }
+  const knativeActions = [addEventSource, addChannels].filter(disabledFilter).map(actionMapper);
+  const knativeConnectorActions = [addEventSource].filter(disabledFilter).map(actionMapper);
+
   if (!connectorSource && isGroupActions) {
     if (graphData.eventSourceEnabled) {
-      return [...addGroupResourceMenu, addEventSource, addChannels];
+      return [...addGroupResourceMenu, ...knativeActions];
     }
   }
   if (!connectorSource) {
     if (graphData.eventSourceEnabled) {
-      return [...addResourceMenu, addEventSource, addChannels];
+      return [...addResourceMenu, ...knativeActions];
     }
     return menu;
   }
@@ -52,9 +57,10 @@ export const getKnativeContextMenuAction = (
   switch (sourceKind) {
     case referenceForModel(ServiceModel):
       return graphData.eventSourceEnabled
-        ? isGroupActions
-          ? [...addGroupResourceMenu, addEventSource]
-          : [...addResourceMenuWithoutCatalog, addEventSource]
+        ? [
+            ...(isGroupActions ? addGroupResourceMenu : addResourceMenuWithoutCatalog),
+            ...knativeConnectorActions,
+          ]
         : menu;
     case referenceForModel(EventingBrokerModel):
       return [addTrigger(EventingTriggerModel, connectorSource.getData().resource)];
