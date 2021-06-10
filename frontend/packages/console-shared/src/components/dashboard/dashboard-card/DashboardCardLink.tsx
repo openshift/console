@@ -32,7 +32,7 @@ export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = Rea
     onHide,
     position = PopoverPosition.top,
   }) => {
-    if (React.Children.count(children) === 0) {
+    if (React.Children.count(children) === 0 || !linkTitle) {
       return null;
     }
 
