@@ -48,7 +48,8 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
       <Text>
         <Trans t={t} ns="ceph-storage-plugin">
           If not labeled, the selected nodes are labeled <Label color="blue">{{ label }}</Label> to
-          make them target hosts for OpenShift Container Storage&apos;s components.
+          make them target hosts for OpenShift Container Storage
+          {/* eslint-disable react/no-unescaped-entities */}'s components.
         </Trans>
       </Text>
     </TextContent>
