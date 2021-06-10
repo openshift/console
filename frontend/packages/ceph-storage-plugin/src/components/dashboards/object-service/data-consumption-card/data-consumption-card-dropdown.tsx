@@ -142,6 +142,7 @@ export const DataConsumptionDropdown: React.FC<DataConsumptionDropdownProps> = (
           placeholderText={t('ceph-storage-plugin~Type: {{selectedService}}', {
             selectedService,
           })}
+          aria-label={t('ceph-storage-plugin~Break By Dropdown')}
           isCheckboxSelectionBadgeHidden
         >
           {serviceDropdownItems}

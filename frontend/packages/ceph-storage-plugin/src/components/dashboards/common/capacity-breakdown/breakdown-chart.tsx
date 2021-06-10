@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   Chart,
@@ -60,63 +61,67 @@ export const BreakdownChart: React.FC<BreakdownChartProps> = ({
   metricModel,
   ocsVersion,
   labelPadding,
-}) => (
-  <>
-    <Chart
-      legendPosition="bottom-left"
-      legendComponent={
-        <ChartLegend
-          themeColor={ChartThemeColor.multiOrdered}
-          data={legends}
-          y={40}
-          labelComponent={<LinkableLegend metricModel={metricModel} ocsVersion={ocsVersion} />}
-          orientation="horizontal"
-          symbolSpacer={7}
-          gutter={10}
-          height={50}
-          style={{
-            labels: Object.assign(
-              { fontSize: 10 },
-              labelPadding
-                ? {
-                    paddingRight: labelPadding.right,
-                    paddingTop: labelPadding.top,
-                    paddingBottom: labelPadding.bottom,
-                    paddingLeft: labelPadding.left,
-                  }
-                : {},
-            ),
-          }}
-        />
-      }
-      height={60}
-      padding={{
-        bottom: 35,
-        top: 0,
-        right: 0,
-        left: 0,
-      }}
-    >
-      <ChartAxis
-        style={{ axis: { stroke: 'none' }, ticks: { stroke: 'none' } }}
-        tickFormat={() => ''}
-      />
-      <ChartStack horizontal>
-        {data.map((d: StackDataPoint, index) => (
-          <ChartBar
-            key={d.id}
-            style={{ data: { stroke: 'white', strokeWidth: 0.7, fill: d.fill } }}
-            cornerRadius={getBarRadius(index, data.length)}
-            barWidth={12}
-            padding={0}
-            data={[d]}
-            labelComponent={<ChartTooltip dx={0} style={{ fontSize: 8, padding: 5 }} />}
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Chart
+        ariaTitle={t('ceph-storage-plugin~Breakdown Chart')}
+        legendPosition="bottom-left"
+        legendComponent={
+          <ChartLegend
+            themeColor={ChartThemeColor.multiOrdered}
+            data={legends}
+            y={40}
+            labelComponent={<LinkableLegend metricModel={metricModel} ocsVersion={ocsVersion} />}
+            orientation="horizontal"
+            symbolSpacer={7}
+            gutter={10}
+            height={50}
+            style={{
+              labels: Object.assign(
+                { fontSize: 10 },
+                labelPadding
+                  ? {
+                      paddingRight: labelPadding.right,
+                      paddingTop: labelPadding.top,
+                      paddingBottom: labelPadding.bottom,
+                      paddingLeft: labelPadding.left,
+                    }
+                  : {},
+              ),
+            }}
           />
-        ))}
-      </ChartStack>
-    </Chart>
-  </>
-);
+        }
+        height={60}
+        padding={{
+          bottom: 35,
+          top: 0,
+          right: 0,
+          left: 0,
+        }}
+      >
+        <ChartAxis
+          style={{ axis: { stroke: 'none' }, ticks: { stroke: 'none' } }}
+          tickFormat={() => ''}
+        />
+        <ChartStack horizontal>
+          {data.map((d: StackDataPoint, index) => (
+            <ChartBar
+              key={d.id}
+              style={{ data: { stroke: 'white', strokeWidth: 0.7, fill: d.fill } }}
+              cornerRadius={getBarRadius(index, data.length)}
+              barWidth={12}
+              padding={0}
+              data={[d]}
+              labelComponent={<ChartTooltip dx={0} style={{ fontSize: 8, padding: 5 }} />}
+            />
+          ))}
+        </ChartStack>
+      </Chart>
+    </>
+  );
+};
 
 export type BreakdownChartProps = {
   data: StackDataPoint[];
