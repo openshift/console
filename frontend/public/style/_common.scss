@@ -230,7 +230,7 @@ dl.co-inline {
 }
 
 .error-message {
-  color: #fff;
+  color: var(--pf-global--palette--white);
   padding: 2px 12px;
   background-color: #d64456;
 }

@@ -20,7 +20,7 @@ $color-row-filter-border--active: $color-pf-blue-300;
 }
 
 .row-filter {
-  background-color: #fff;
+  background-color: var(--pf-global--BackgroundColor--100);
   display: flex;
   flex-wrap: wrap;
   margin-bottom: $grid-gutter-width;

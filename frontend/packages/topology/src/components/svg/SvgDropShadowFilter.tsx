@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SVGDefs } from '@patternfly/react-topology';
+import { global_palette_black_1000 as globalBlack1000 } from '@patternfly/react-tokens/dist/js/global_palette_black_1000';
 
 interface SvgDropShadowFilterProps {
   // The unique ID that identifies the filter.
@@ -17,7 +18,7 @@ const SvgDropShadowFilter: React.FC<SvgDropShadowFilterProps> = ({
   dx = 0,
   dy = 1,
   stdDeviation = 2,
-  floodColor = '#030303',
+  floodColor = globalBlack1000.value,
   floodOpacity = 0.2,
 }) => {
   if (window.navigator.userAgent.includes('Edge')) {

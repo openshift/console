@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import { compose } from 'redux';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
+import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
+import { global_danger_color_100 as globalDanger100 } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -20,8 +22,8 @@ import './raw-capacity-card.scss';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
 const generalColorScale = ['#0166cc', '#d6d6d6'];
-const warningColorScale = ['#f0ab00', '#d6d6d6'];
-const dangerColorScale = ['#c9190b', '#d6d6d6'];
+const warningColorScale = [globalWarning100.value, '#d6d6d6'];
+const dangerColorScale = [globalDanger100.value, '#d6d6d6'];
 
 // Enchance instantVectorStats to directly parse the values (else loading state won't be accurate)
 const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);

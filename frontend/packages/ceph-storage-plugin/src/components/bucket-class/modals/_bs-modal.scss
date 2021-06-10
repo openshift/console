@@ -3,7 +3,7 @@
   overflow-y: scroll;
 
   .modal-body {
-    background-color: #fff;
+    background-color: var(--pf-global--BackgroundColor--100);
   }
 
   @media screen and (max-width: 426px) {
