@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useAnchor, AnchorEnd, Node, observer } from '@patternfly/react-topology';
 import { getTopologyResourceObject } from '@console/topology/src/utils';
-import { useRoutesURL } from '@console/topology/src/data-transforms/useRoutesURL';
 import { WorkloadPodsNode } from '@console/topology/src/components/graph-view';
 import RevisionTrafficTargetAnchor from '../anchors/RevisionTrafficTargetAnchor';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import { useRoutesURL } from '../../../utils/useRoutesURL';
 
 const DECORATOR_RADIUS = 13;
 const RevisionNode: React.FC<React.ComponentProps<typeof WorkloadPodsNode>> = (props) => {
