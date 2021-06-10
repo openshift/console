@@ -322,3 +322,15 @@ export const getModelReferenceFromTaskKind = (kind: string): GroupVersionKind =>
   const model = getResourceModelFromTaskKind(kind);
   return referenceForModel(model);
 };
+
+export const countRunningTasks = (pipelineRun: PipelineRunKind): number => {
+  const taskStatuses = getTaskStatus(pipelineRun, undefined);
+  return taskStatuses.Running;
+};
+
+export const shouldHidePipelineRunStop = (pipelineRun: PipelineRunKind): boolean =>
+  !(
+    pipelineRun &&
+    (countRunningTasks(pipelineRun) > 0 ||
+      pipelineRunFilterReducer(pipelineRun) === runStatus.Running)
+  );

@@ -17,7 +17,7 @@ import { getPipelineRunData } from '../components/pipelines/modals/common/utils'
 import { StartedByAnnotation } from '../components/pipelines/const';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
-import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
+import { shouldHidePipelineRunStop } from './pipeline-augment';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
@@ -197,7 +197,7 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
         ],
       );
     },
-    hidden: !(pipelineRun && pipelineRunFilterReducer(pipelineRun) === 'Running'),
+    hidden: shouldHidePipelineRunStop(pipelineRun),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
