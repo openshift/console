@@ -4,9 +4,10 @@ import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   poolName,
   populateBlockPoolForm,
-  blockPoolFooter,
+  verifyFooterActions,
   deleteBlockPoolFromCli,
   verifyBlockPoolJSON,
+  poolMessage,
 } from '../views/block-pool';
 
 const prepareStorageClassForm = () => {
@@ -26,10 +27,11 @@ const createBlockPool = (poolCreationAction: string) => {
   modal.shouldBeOpened();
   modal.modalTitleShouldContain('Create BlockPool');
   populateBlockPoolForm();
-  blockPoolFooter('create');
+  verifyFooterActions('create');
 
   cy.log('Verify a new block pool creation');
-  blockPoolFooter(poolCreationAction);
+  cy.byTestID('empty-state-body').contains(poolMessage[poolCreationAction]);
+  verifyFooterActions(poolCreationAction);
   cy.byTestID('pool-dropdown-toggle').contains(poolName);
   verifyBlockPoolJSON();
 };
