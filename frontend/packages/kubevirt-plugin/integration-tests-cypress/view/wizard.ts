@@ -18,18 +18,46 @@ export const wizard = {
         }
       });
     },
-    processBootSource: (source: ProvisionSource, cdrom: boolean, size: string) => {
+    processBootSource: (
+      source: ProvisionSource,
+      cdrom: boolean,
+      size: string,
+      pvcName: string,
+      pvcNS: string,
+    ) => {
       cy.get('#image-source-type-dropdown').click();
       cy.get('.pf-c-select__menu')
         .contains(source.getDescription())
         .click();
-      cy.get('input[id="provision-source-container"]').type(source.getSource());
+      switch (source) {
+        case ProvisionSource.URL: {
+          cy.get('input[id="provision-source-url"]').type(source.getSource());
+          cy.get('#request-size-input')
+            .clear()
+            .type(size);
+          break;
+        }
+        case ProvisionSource.CLONE_PVC: {
+          cy.get('button[id="pvc-ns-dropdown"]').click();
+          cy.get(`a[id="${pvcNS}-Project-link"]`).click();
+          cy.get('button[id="pvc-name-dropdown"]').click();
+          cy.get(`a[id="${pvcName}-PersistentVolumeClaim-link"]`).click();
+          break;
+        }
+        case ProvisionSource.REGISTRY: {
+          cy.get('input[id="provision-source-container"]').type(source.getSource());
+          cy.get('#request-size-input')
+            .clear()
+            .type(size);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
       if (cdrom) {
         cy.get('#cdrom').click();
       }
-      cy.get('#request-size-input')
-        .clear()
-        .type(size);
       if (Cypress.env('STORAGE_CLASS')) {
         cy.byTestID('advanced-section').within(() =>
           cy
