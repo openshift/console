@@ -9,7 +9,7 @@ import ImageSearchSection from '../../import/image-search/ImageSearchSection';
 import IconSection from '../../import/section/IconSection';
 import AppSection from '../../import/app/AppSection';
 import AdvancedSection from '../../import/advanced/AdvancedSection';
-import { CreateApplicationFlow } from '../edit-application-utils';
+import { ApplicationFlowType } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
 import JarSection from '../../import/jar/section/JarSection';
 
@@ -29,7 +29,7 @@ describe('EditApplicationForm', () => {
 
   it('should hide git & pipeline sections for container edit form', () => {
     const wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Container} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Container} />,
     );
     expect(wrapper.find(GitSection).exists()).toBe(false);
     expect(wrapper.find(PipelineSection).exists()).toBe(false);
@@ -39,7 +39,7 @@ describe('EditApplicationForm', () => {
     let wrapper = shallow(
       <EditApplicationForm
         {...componentProps}
-        createFlowType={CreateApplicationFlow.Dockerfile}
+        flowType={ApplicationFlowType.Dockerfile}
         values={{ build: { strategy: 'Docker' } }}
       />,
     );
@@ -47,7 +47,7 @@ describe('EditApplicationForm', () => {
     expect(wrapper.find(PipelineSection).exists()).toBe(true);
 
     wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Git} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Git} />,
     );
     expect(wrapper.find(GitSection).exists()).toBe(true);
     expect(wrapper.find(PipelineSection).exists()).toBe(true);
@@ -55,7 +55,7 @@ describe('EditApplicationForm', () => {
 
   it('should show image search & icon sections only for container edit form', () => {
     const wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Container} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Container} />,
     );
     expect(wrapper.find(ImageSearchSection).exists()).toBe(true);
     expect(wrapper.find(IconSection).exists()).toBe(true);
@@ -63,7 +63,7 @@ describe('EditApplicationForm', () => {
 
   it('should hide image search & icon sections for git and docker edit forms', () => {
     let wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Git} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Git} />,
     );
     expect(wrapper.find(ImageSearchSection).exists()).toBe(false);
     expect(wrapper.find(IconSection).exists()).toBe(false);
@@ -71,7 +71,7 @@ describe('EditApplicationForm', () => {
     wrapper = shallow(
       <EditApplicationForm
         {...componentProps}
-        createFlowType={CreateApplicationFlow.Dockerfile}
+        flowType={ApplicationFlowType.Dockerfile}
         values={{ build: { strategy: 'Docker' } }}
       />,
     );
@@ -81,21 +81,21 @@ describe('EditApplicationForm', () => {
 
   it('should show builder section only for git edit form', () => {
     const wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Git} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Git} />,
     );
     expect(wrapper.find(BuilderSection).exists()).toBe(true);
   });
 
   it('should hide builder section for container docker edit forms', () => {
     let wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Container} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Container} />,
     );
     expect(wrapper.find(BuilderSection).exists()).toBe(false);
 
     wrapper = shallow(
       <EditApplicationForm
         {...componentProps}
-        createFlowType={CreateApplicationFlow.Dockerfile}
+        flowType={ApplicationFlowType.Dockerfile}
         values={{ build: { strategy: 'Docker' } }}
       />,
     );
@@ -106,7 +106,7 @@ describe('EditApplicationForm', () => {
     const wrapper = shallow(
       <EditApplicationForm
         {...componentProps}
-        createFlowType={CreateApplicationFlow.Dockerfile}
+        flowType={ApplicationFlowType.Dockerfile}
         values={{ build: { strategy: 'Docker' } }}
       />,
     );
@@ -115,12 +115,12 @@ describe('EditApplicationForm', () => {
 
   it('should hide docker section for git and container edit forms', () => {
     let wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Git} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Git} />,
     );
     expect(wrapper.find(DockerSection).exists()).toBe(false);
 
     wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Container} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Container} />,
     );
     expect(wrapper.find(DockerSection).exists()).toBe(false);
   });
@@ -129,7 +129,7 @@ describe('EditApplicationForm', () => {
     let wrapper = shallow(
       <EditApplicationForm
         {...componentProps}
-        createFlowType={CreateApplicationFlow.Dockerfile}
+        flowType={ApplicationFlowType.Dockerfile}
         values={{ build: { strategy: 'Docker' } }}
       />,
     );
@@ -137,13 +137,13 @@ describe('EditApplicationForm', () => {
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
 
     wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Git} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Git} />,
     );
     expect(wrapper.find(AppSection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
 
     wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.Container} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.Container} />,
     );
     expect(wrapper.find(AppSection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
@@ -151,7 +151,7 @@ describe('EditApplicationForm', () => {
 
   it('should show JarSection, AppSection, AdvancedSection, for Upload Jar Form', () => {
     const wrapper = shallow(
-      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.JarUpload} />,
+      <EditApplicationForm {...componentProps} flowType={ApplicationFlowType.JarUpload} />,
     );
 
     expect(wrapper.find(AppSection).exists()).toBe(true);

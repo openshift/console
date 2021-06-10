@@ -3,8 +3,8 @@ import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getResourcesType,
-  getPageHeading,
-  CreateApplicationFlow,
+  getFlowType,
+  ApplicationFlowType,
   getInitialValues,
   getExternalImagelValues,
   getServerlessData,
@@ -29,13 +29,13 @@ describe('Edit Application Utils', () => {
     expect(getResourcesType(knativeService)).toEqual(Resources.KnativeService);
   });
 
-  it('getPageHeading should return page heading based on the create flow used to create the application', () => {
-    expect(getPageHeading(BuildStrategyType.Source)).toEqual(CreateApplicationFlow.Git);
+  it('getFlowType should return page heading based on the create flow used to create the application', () => {
+    expect(getFlowType(BuildStrategyType.Source)).toEqual(ApplicationFlowType.Git);
   });
 
-  it('getPageHeading should return JarUpload based on the build type of resource', () => {
-    expect(getPageHeading(BuildStrategyType.Source, BuildSourceType.Binary)).toEqual(
-      CreateApplicationFlow.JarUpload,
+  it('getFlowType should return JarUpload based on the build type of resource', () => {
+    expect(getFlowType(BuildStrategyType.Source, BuildSourceType.Binary)).toEqual(
+      ApplicationFlowType.JarUpload,
     );
   });
 
