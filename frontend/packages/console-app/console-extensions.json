@@ -11,6 +11,17 @@
     }
   },
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "v1alpha2DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha2",
+        "kind": "DevWorkspace"
+      }
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "tourContext.TourContextProvider" },

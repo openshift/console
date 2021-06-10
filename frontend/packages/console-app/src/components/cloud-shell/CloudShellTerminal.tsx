@@ -4,10 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { RootState } from '@console/internal/redux';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
-import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
+import {
+  withUserSettingsCompatibility,
+  WithUserSettingsCompatibilityProps,
+  useFlag,
+} from '@console/shared';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import { TerminalInitData, initTerminal, useV1alpha2CRDAvailability } from './cloud-shell-utils';
+import { TerminalInitData, initTerminal } from './cloud-shell-utils';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
@@ -16,6 +20,7 @@ import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
+import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
 
 type StateProps = {
   user: UserKind;
@@ -41,11 +46,8 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     verb: 'create',
     resource: 'pods',
   });
-  const [isv1Alpha2Available, isv1alpha2CheckLoading] = useV1alpha2CRDAvailability();
-  const workspaceModel = React.useMemo(
-    () => (!isv1Alpha2Available ? v1alpha1WorkspaceModel : WorkspaceModel),
-    [isv1Alpha2Available],
-  );
+  const isv1Alpha2Available = useFlag(FLAG_V1ALPHA2DEVWORKSPACE);
+  const workspaceModel = !isv1Alpha2Available ? v1alpha1WorkspaceModel : WorkspaceModel;
   const [workspace, loaded, loadError] = useCloudShellWorkspace(
     user,
     isAdmin,
@@ -130,7 +132,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   }
 
   // loading the workspace resource
-  if (!loaded || isAdminCheckLoading || isv1alpha2CheckLoading) {
+  if (!loaded || isAdminCheckLoading) {
     return <TerminalLoadingBox message="" />;
   }
 
