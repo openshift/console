@@ -12,8 +12,8 @@ Feature: Add ability to filter Quick Starts catalog
 
         @regression @to-do
         Scenario: Quick Starts Catalog Page: QS-01-TC01
-            Given user is in Add page
-             When user clicks on "View all Quick Starts" on Quick Starts card
+            Given user is at Add page
+             When user clicks on "View all quick starts" on Build with guided documentation card
              Then user can see Quick Starts catalog page
               And user can see filter toolbar
               And user can see filter by keyword search bar
@@ -38,10 +38,10 @@ Feature: Add ability to filter Quick Starts catalog
         @regression @to-do
         Scenario: Apply Filter based on status: QS-01-TC04
             Given user is at Quick Starts catalog page
-              And user has completed "Getting started with a sample" Quick Start
+              And user has completed "Getting started with a sample application" Quick Start
              When user clicks on Status filter menu
               And user clicks see completed
-             Then user can see only the "Getting started with a sample" Quick Start is present
+             Then user can see only the "Getting started with a sample application" Quick Start is present
 
 
         @regression @to-do
