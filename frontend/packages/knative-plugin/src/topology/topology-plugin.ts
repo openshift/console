@@ -41,7 +41,7 @@ import {
   fetchEventSourcesCrd,
   fetchChannelsCrd,
 } from '../utils/fetch-dynamic-eventsources-utils';
-import { getServiceRouteDecorator } from './components/decorators';
+import { getRevisionRouteDecorator, getServiceRouteDecorator } from './components/decorators';
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();
@@ -141,6 +141,15 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
         FLAG_KNATIVE_SERVING_SERVICE,
         FLAG_KNATIVE_EVENTING,
       ],
+    },
+  },
+  {
+    type: 'Topology/Decorator',
+    properties: {
+      id: 'revision-url-decorator',
+      priority: 100,
+      quadrant: TopologyDecoratorQuadrant.upperRight,
+      decorator: applyCodeRefSymbol(getRevisionRouteDecorator),
     },
   },
 ];
