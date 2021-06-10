@@ -8,7 +8,7 @@ Feature: Project Access page
               And user has created or selected namespace "aut-project-access"
 
 
-        @regression @odc-4650 @manual
+        @regression @manual
         Scenario: Adding Custom role in project membership: PA-01-TC01
             Given user has cluster role basic-user created
              When user clicks on Search tab in navigation menu
@@ -27,7 +27,7 @@ Feature: Project Access page
 
 
 
-        @regression @odc-4650 @manual
+        @regression @manual
         Scenario: Removing Custom role in project membership: PA-01-TC02
             Given user has added custom role "basic-user" in console YAML
               And user is at cluster YAML of "operator.openshift.io/v1" console

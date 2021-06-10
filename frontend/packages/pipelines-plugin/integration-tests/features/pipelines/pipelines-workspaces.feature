@@ -24,7 +24,7 @@ Feature: Workspaces
              Then user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC
 
 
-        @regression @odc-3991
+        @regression
         Scenario: Start the pipeline with "Empty Directory": P-10-TC03
             Given pipeline "test-wp-pipeline" is created with workspace
              When user selects "Start" option from kebab menu for pipeline "test-wp-pipeline"
@@ -34,7 +34,6 @@ Feature: Workspaces
               And user will see "Empty Directory" in the Workspace Resources section of Pipeline Run Details page
 
 
-        @odc-3991
         Scenario: Start the pipeline with ConfigMap: P-10-TC04
             Given user created config map from "configMap-test-motd.yaml"
               And user created pipeline run using yaml "pipelineRun-using-optional-workspaces-in-when-expressions.yaml"
@@ -43,7 +42,6 @@ Feature: Workspaces
              Then user will see Config Map Workspace "test-motd" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
-        @odc-3991
         Scenario: Start the pipeline with Secret: P-10-TC05
             Given user created pipeline "test-secret-pipeline" with workspace
               And user created Secret using yaml "pipeline-secret.yaml"
@@ -55,7 +53,6 @@ Feature: Workspaces
               And user will see Secret Workspace "secret-password" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
-        @odc-3991
         Scenario: Start the pipeline with PVC: P-10-TC06
             Given user created pipeline "test-pvc-pipeline" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"

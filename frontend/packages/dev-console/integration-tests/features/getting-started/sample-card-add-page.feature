@@ -44,7 +44,7 @@ Feature: Create Sample Application
              Then user is taken to topology with a node deployment workload created inside sample application
 
 
-        @odc-22 @regression @to-do
+        @regression @to-do
         Scenario: Create Basic NodeJS Devfile Sample Appliation: GS-03-TC04
             Given user is at Samples page
              When user clicks on Basic NodeJS card

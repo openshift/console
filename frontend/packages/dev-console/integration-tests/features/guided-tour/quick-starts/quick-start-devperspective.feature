@@ -71,7 +71,7 @@ Feature: Build with guided documentation card in developer console
              Then user can see Build with guided documentation card is removed from the Add page
 
 
-        @odc-5010 @to-do
+        @to-do
         Scenario: Visiting a Quick Start: QS-03-TC08
             Given user is at Quick Start catalog page
              When user clicks "Get started with a sample application" card
@@ -92,7 +92,7 @@ Feature: Build with guided documentation card in developer console
               And user can see 5 Steps visible with checkmark in Green color
 
 
-        @odc-5010 @to-do
+        @to-do
         Scenario: Restart action on Quick Start card: QS-03-TC09
             Given user is at Quick Start catalog page
              When user clicks "Get started with a sample application" Quick Start
@@ -103,7 +103,7 @@ Feature: Build with guided documentation card in developer console
               And user can see 5 Steps visible for the Quick Start
 
 
-        @odc-5010 @manual
+        @manual
         Scenario: Resizing Quick Start drawer: QS-03-TC10
             Given user is at Quick Start catalog page
              When user clicks "Get started with a sample application" Quick Start

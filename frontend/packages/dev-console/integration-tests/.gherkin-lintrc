@@ -12,7 +12,7 @@
   "no-empty-file": "on",
   "no-scenario-outlines-without-examples": "on",
   "name-length": "off",
-  "allowed-tags": ["on", {"tags": ["un-verified", "@knative-admin", "@service-mesh", "@cnv", "@knative-camelk", "@getting-started", "@health-checks", "@e2e", "@to-do", "@manual", "@regression", "@smoke", "@add-flow", "@topology", "@knative", "@guided-tour", "@gitops", "@helm", "@monitoring", "@pipelines", "@virtualization", "@web-terminal", "@vulnerability", "@knative-eventing", "@knative-camelK", "@kafka"]}],
+  "allowed-tags": ["on", {"tags": ["@un-verified", "@knative-admin", "@service-mesh", "@cnv", "@knative-camelk", "@getting-started", "@health-checks", "@e2e", "@to-do", "@manual", "@regression", "@smoke", "@add-flow", "@topology", "@knative", "@guided-tour", "@gitops", "@helm", "@monitoring", "@pipelines", "@virtualization", "@web-terminal", "@vulnerability", "@knative-eventing", "@knative-camelK", "@kafka"]}],
   "no-restricted-tags": ["on", {"tags": ["@watch", "@wip", "@debug"]}],
   "use-and": "off",
   "no-duplicate-tags": "on",

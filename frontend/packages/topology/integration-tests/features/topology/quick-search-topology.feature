@@ -73,7 +73,7 @@ Feature: Provide quick search from topology/list views to add to project
               And user will see No results
 
 
-        @odc-5010 @regression @to-do
+        @regression @to-do
         Scenario: Quick Add of Quick Starts in topology graph view: T-02-TC09
             Given user is at topology graph view
              When user clicks Add to project button
@@ -83,7 +83,7 @@ Feature: Provide quick search from topology/list views to add to project
              Then Monitor your sample application quick start displays in the Topology
 
 
-        @odc-5010 @regression @to-do
+        @regression @to-do
         Scenario: View all Quick Starts option for pipeline in topology graph view: T-02-TC10
             Given user is at topology graph view
              When user clicks Add to project button
@@ -92,7 +92,7 @@ Feature: Provide quick search from topology/list views to add to project
              Then user will be redirected to the search results of the Quick Starts Catalog
 
 
-        @odc-22 @to-do
+        @to-do
         Scenario: Quick Add of Devfile in topology graph view: T-02-TC011
             Given user is at topology graph view
              When user clicks Add to project button
@@ -103,7 +103,7 @@ Feature: Provide quick search from topology/list views to add to project
              Then user is taken to the Topology page with "devfile-sample-git" workload created
 
 
-        @odc-22 @to-do
+        @to-do
         Scenario: Quick Add of Devfile Sample in topology graph view: T-02-TC012
             Given user is at topology graph view
              When user clicks Add to project button
@@ -115,7 +115,7 @@ Feature: Provide quick search from topology/list views to add to project
              Then user is taken to the Topology page with workload "basic-nodejs-sample-ex1" created
 
 
-        @odc-22, @to-do
+        @to-do
         Scenario: View all Samples option for node in topology graph view: T-02-TC13
             Given user is at topology graph view
              When user clicks Add to project button

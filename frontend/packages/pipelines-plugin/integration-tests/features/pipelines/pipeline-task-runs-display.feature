@@ -51,7 +51,7 @@ Feature: Display task runs page
               And user can see Status, Message and Log snippet in "Details" tab
 
 
-        @regression @manual @odc-3991
+        @regression @manual
         Scenario Outline: Task Runs Details page with Workspaces: P-05-TC05
             Given pipeline "<pipeline_name>" is created with "<workspace_name>" workspace
               And pipeline "<pipeline_name>" is executed with workspace type "<workspace_type>"
