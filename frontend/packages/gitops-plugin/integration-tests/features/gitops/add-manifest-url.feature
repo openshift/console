@@ -26,13 +26,13 @@ Feature: Applications managed by GitOps and Create secret
         Scenario: Application Details page for Applications: GO-01-TC04
             Given user is on the Environments page
               And user can see the Applications on the page
-             Then user can add new environments
+             Then user can add new environments using kam cli
 
         @regression @manual
         Scenario: Application Details page for Applications: GO-01-TC03
             Given user is on the Environments page
               And user can see the Applications on the page
-             Then user can see the columns "Application Name", "Git repository", "Environments" and "Last deployment"
+             Then user can see the columns attributes depending upon the GitOps "version"
               And user can see various environments for that application
               And user can see how many application or workloads are deployed in each environment
               And user can see status of the application or workloads
