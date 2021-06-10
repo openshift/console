@@ -39,7 +39,7 @@ Object {
   "kind": "Route",
   "metadata": Object {
     "defaultAnnotations": Object {
-      "app.openshift.io/vcs-ref": "master",
+      "app.openshift.io/vcs-ref": "",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },
@@ -102,7 +102,7 @@ Object {
   "kind": "Service",
   "metadata": Object {
     "annotations": Object {
-      "app.openshift.io/vcs-ref": "master",
+      "app.openshift.io/vcs-ref": "",
       "app.openshift.io/vcs-uri": "https://github.com/test/repo",
       "openshift.io/generated-by": "OpenShiftWebConsole",
     },

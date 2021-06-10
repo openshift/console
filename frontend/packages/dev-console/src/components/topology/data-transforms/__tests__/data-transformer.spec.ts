@@ -23,10 +23,6 @@ import { getWorkloadResources } from '../transform-utils';
 
 const namespace = 'test-project';
 
-jest.mock('git-url-parse', () => ({
-  default: jest.fn(() => ({ resource: 'github.com', owner: 'openshift', name: 'console' })),
-}));
-
 function getTransformedTopologyData(
   mockData: TopologyDataResources,
   transformByProp: string[] = WORKLOAD_TYPES,
@@ -239,6 +235,39 @@ describe('data transformer ', () => {
     const mockGitURI = 'git@github.com:openshift/console';
     const editUrl = getEditURL(mockGitURI, '', '');
     expect(editUrl).toBe('https://github.com/openshift/console');
+  });
+
+  it('should return full git url for GitHub URI', () => {
+    const mockGitURI = 'https://github.com/openshift/console';
+    const editUrl = getEditURL(mockGitURI, 'branch1');
+    expect(editUrl).toBe('https://github.com/openshift/console/tree/branch1');
+  });
+
+  it('should return full git url for GitLab URI', () => {
+    const mockGitURI = 'https://gitlab.com/example/reponame';
+    const editUrl = getEditURL(mockGitURI, 'branch1');
+    expect(editUrl).toBe('https://gitlab.com/example/reponame/-/tree/branch1');
+  });
+
+  it('should return full git url for Bitbucket URI', () => {
+    const mockGitURI = 'https://bitbucket.org/username/examplerepo';
+    const editUrl = getEditURL(mockGitURI, 'branch1');
+    expect(editUrl).toBe('https://bitbucket.org/username/examplerepo/src/branch1');
+  });
+
+  it('should return only git url for repo from non-supported git provider', () => {
+    const mockGitURI = 'https://example.com/username/examplerepo';
+    const editUrl = getEditURL(mockGitURI, 'branch1');
+    expect(editUrl).toBe('https://example.com/username/examplerepo');
+  });
+
+  it('should return full git url for supported providers with custom domains', () => {
+    let editUrl = getEditURL('https://github.example.com/uname/repo', 'branch1');
+    expect(editUrl).toBe('https://github.example.com/uname/repo/tree/branch1');
+    editUrl = getEditURL('https://gitlab.example.com/uname/repo', 'branch1');
+    expect(editUrl).toBe('https://gitlab.example.com/uname/repo/-/tree/branch1');
+    editUrl = getEditURL('https://bitbucket.example.com/uname/repo', 'branch1');
+    expect(editUrl).toBe('https://bitbucket.example.com/uname/repo/src/branch1');
   });
 
   it('should return builder image icon for nodejs', () => {

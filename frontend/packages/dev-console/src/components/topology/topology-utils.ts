@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import GitUrlParse from 'git-url-parse';
+import * as GitUrlParse from 'git-url-parse';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -36,13 +36,28 @@ export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
 export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
   _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
 
+const getFullGitURL = (gitUrl: GitUrlParse.GitUrl, branch?: string) => {
+  const baseUrl = `https://${gitUrl.resource}/${gitUrl.owner}/${gitUrl.name}`;
+  if (!branch) {
+    return baseUrl;
+  }
+  if (gitUrl.resource.includes('github')) {
+    return `${baseUrl}/tree/${branch}`;
+  }
+  if (gitUrl.resource.includes('gitlab')) {
+    return `${baseUrl}/-/tree/${branch}`;
+  }
+  if (gitUrl.resource.includes('bitbucket')) {
+    return `${baseUrl}/src/${branch}`;
+  }
+  return baseUrl;
+};
+
 export const getEditURL = (vcsURI?: string, gitBranch?: string, cheURL?: string) => {
   if (!vcsURI) {
     return null;
   }
-  const parsedURL = GitUrlParse(vcsURI);
-  const gitURL = `https://${parsedURL.resource}/${parsedURL.owner}/${parsedURL.name}`;
-  const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
+  const fullGitURL = getFullGitURL(GitUrlParse(vcsURI), gitBranch);
   return cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
 
