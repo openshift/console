@@ -43,6 +43,7 @@ import SSHDetailsPage from '../ssh-service/SSHDetailsPage/SSHDetailsPage';
 import { VMStatus } from '../vm-status/vm-status';
 import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
+import VMIP from './VMIP';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -127,7 +128,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const id = getBasicID(vmiLike);
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
-  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
+  const ipAddrs = getVmiIpAddresses(vmi);
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
 
   return (
@@ -176,7 +177,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         idValue={prefixedID(id, 'ip-addresses')}
         isNotAvail={!launcherPod || !ipAddrs}
       >
-        {launcherPod && ipAddrs}
+        {launcherPod && ipAddrs && <VMIP data={ipAddrs} />}
       </VMDetailsItem>
 
       <VMDetailsItem

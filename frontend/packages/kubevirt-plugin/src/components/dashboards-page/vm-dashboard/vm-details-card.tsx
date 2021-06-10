@@ -31,6 +31,7 @@ import {
 } from '../../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../../utils/guest-agent-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import VMIP from '../../vms/VMIP';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
 
   const launcherPod = findVMIPod(vmi, pods);
 
-  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
+  const ipAddrs = getVmiIpAddresses(vmi);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
   const name = getName(vmiLike);
@@ -117,7 +118,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
-            {launcherPod && ipAddrs}
+            {launcherPod && ipAddrs && <VMIP data={ipAddrs} />}
           </DetailItem>
           <DetailItem
             title={t('kubevirt-plugin~Operating System')}
