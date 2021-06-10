@@ -29,7 +29,9 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
     <FallbackImg
       className="co-catalog-item-icon__img--large"
       src={icon}
+      alt={displayName}
       fallback={<RocketIcon />}
+      aria-hidden
     />
   );
 

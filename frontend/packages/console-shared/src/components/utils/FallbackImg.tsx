@@ -2,16 +2,16 @@ import * as React from 'react';
 
 type FallbackImgProps = {
   src: string;
-  alt?: string;
-  className?: string;
+  alt: string;
   fallback?: React.ReactNode;
-};
+} & React.ImgHTMLAttributes<HTMLImageElement>;
 
-const FallbackImg: React.FC<FallbackImgProps> = ({ src, alt, className, fallback }) => {
+const FallbackImg: React.FC<FallbackImgProps> = ({ src, alt, fallback, ...props }) => {
   const [isSrcValid, setIsSrcValid] = React.useState<boolean>(true);
 
-  if (src && isSrcValid)
-    return <img className={className} src={src} alt={alt} onError={() => setIsSrcValid(false)} />;
+  if (src && isSrcValid) {
+    return <img {...props} src={src} alt={alt} onError={() => setIsSrcValid(false)} />;
+  }
 
   return <>{fallback}</>;
 };
