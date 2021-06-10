@@ -30,7 +30,7 @@ const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required
         id={fieldId}
         selectedKey={field.value}
         dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
         onChange={(value: string) => {
           props.onChange && props.onChange(value);
           // Validation is automatically done by the useFormikValidationFix above

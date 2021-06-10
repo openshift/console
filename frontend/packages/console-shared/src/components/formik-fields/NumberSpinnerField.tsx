@@ -34,7 +34,7 @@ const NumberSpinnerField: React.FC<FieldProps> = ({ label, helpText, required, .
           setFieldValue(props.name, _.toInteger(field.value) + operation);
           setFieldTouched(props.name, true);
         }}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
     </FormGroup>
   );
