@@ -23,7 +23,7 @@ type v1alpha2Component = {
 };
 
 type DevWorkspaceTemplateSpec = {
-  components: v1alpha1Component | v1alpha2Component[];
+  components: v1alpha1Component[] | v1alpha2Component[];
 };
 
 export type CloudShellResource = K8sResourceKind & {
@@ -55,83 +55,72 @@ export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
-const v1alpha1DevworkspaceComponent = () => {
-  return [
-    {
-      plugin: {
-        name: 'web-terminal',
-        id: 'redhat-developer/web-terminal/latest',
-      },
+const v1alpha1DevworkspaceComponent = [
+  {
+    plugin: {
+      name: 'web-terminal',
+      id: 'redhat-developer/web-terminal/latest',
     },
-  ];
-};
+  },
+];
 
-const devWorkspaceComponent = () => {
-  return [
-    {
-      name: 'web-terminal-tooling',
-      plugin: {
-        kubernetes: {
-          name: 'web-terminal-tooling',
-          namespace: 'openshift-operators',
-        },
+const devWorkspaceComponent = [
+  {
+    name: 'web-terminal-tooling',
+    plugin: {
+      kubernetes: {
+        name: 'web-terminal-tooling',
+        namespace: 'openshift-operators',
       },
     },
-    {
-      name: 'web-terminal-exec',
-      plugin: {
-        kubernetes: {
-          name: 'web-terminal-exec',
-          namespace: 'openshift-operators',
-        },
+  },
+  {
+    name: 'web-terminal-exec',
+    plugin: {
+      kubernetes: {
+        name: 'web-terminal-exec',
+        namespace: 'openshift-operators',
       },
     },
-  ];
-};
+  },
+];
 
 export const newCloudShellWorkSpace = (
   name: string,
   namespace: string,
   version: string,
-): CloudShellResource => {
-  const devworkspace = {
-    apiVersion: `workspace.devfile.io/${version}`,
-    kind: 'DevWorkspace',
-    metadata: {
-      name,
-      namespace,
-      labels: {
-        [CLOUD_SHELL_LABEL]: 'true',
-      },
-      annotations: {
-        [CLOUD_SHELL_RESTRICTED_ANNOTATION]: 'true',
-      },
+): CloudShellResource => ({
+  apiVersion: `workspace.devfile.io/${version}`,
+  kind: 'DevWorkspace',
+  metadata: {
+    name,
+    namespace,
+    labels: {
+      [CLOUD_SHELL_LABEL]: 'true',
     },
-    spec: {
-      started: true,
-      routingClass: 'web-terminal',
-      template: {
-        components: [],
-      },
+    annotations: {
+      [CLOUD_SHELL_RESTRICTED_ANNOTATION]: 'true',
     },
-  };
-  if (version === 'v1alpha1') {
-    devworkspace.spec.template.components = v1alpha1DevworkspaceComponent();
-  } else {
-    devworkspace.spec.template.components = devWorkspaceComponent();
-  }
-  return devworkspace;
-};
+  },
+  spec: {
+    started: true,
+    routingClass: 'web-terminal',
+    template: {
+      components:
+        version === v1alpha1WorkspaceModel.apiVersion
+          ? v1alpha1DevworkspaceComponent
+          : devWorkspaceComponent,
+    },
+  },
+});
 
 export const startWorkspace = (workspace: CloudShellResource) => {
   // Check the version so we know what workspace model to use for starting the workspace
   const groupVersion = workspace.apiVersion.split('/');
   const version = groupVersion[1];
 
-  let workspaceModel = WorkspaceModel;
-  if (version === 'v1alpha1') {
-    workspaceModel = v1alpha1WorkspaceModel;
-  }
+  const workspaceModel =
+    version === v1alpha1WorkspaceModel.apiVersion ? v1alpha1WorkspaceModel : WorkspaceModel;
 
   return k8sPatch(workspaceModel, workspace, [
     {
@@ -169,7 +158,7 @@ export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: strin
 
 // Check to see if v1alpha2 devworkspace crds are available on the cluster.
 // If they are not available or if an error occurs when finding them then report that they aren't available
-export const CheckV1alpha2CRDAvailability = () => {
+export const useV1alpha2CRDAvailability = () => {
   const [loading, setLoading] = useSafetyFirst(true);
   const [isAvailable, setAvailable] = useSafetyFirst(false);
 

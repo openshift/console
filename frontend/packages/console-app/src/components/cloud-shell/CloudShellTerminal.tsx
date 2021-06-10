@@ -7,7 +7,7 @@ import { UserKind } from '@console/internal/module/k8s';
 import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
-import { TerminalInitData, initTerminal, CheckV1alpha2CRDAvailability } from './cloud-shell-utils';
+import { TerminalInitData, initTerminal, useV1alpha2CRDAvailability } from './cloud-shell-utils';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
@@ -41,11 +41,11 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     verb: 'create',
     resource: 'pods',
   });
-  const [isv1Alpha2Available, isv1alpha2CheckLoading] = CheckV1alpha2CRDAvailability();
-  let workspaceModel = WorkspaceModel;
-  if (!isv1Alpha2Available) {
-    workspaceModel = v1alpha1WorkspaceModel;
-  }
+  const [isv1Alpha2Available, isv1alpha2CheckLoading] = useV1alpha2CRDAvailability();
+  const workspaceModel = React.useMemo(
+    () => (!isv1Alpha2Available ? v1alpha1WorkspaceModel : WorkspaceModel),
+    [isv1Alpha2Available],
+  );
   const [workspace, loaded, loadError] = useCloudShellWorkspace(
     user,
     isAdmin,

@@ -6,6 +6,7 @@ import TerminalLoadingBox from '../TerminalLoadingBox';
 import { user } from './cloud-shell-test-data';
 import useCloudShellWorkspace from '../useCloudShellWorkspace';
 import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
+import * as cloudShellUtils from '../cloud-shell-utils';
 
 jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),
@@ -30,6 +31,16 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
 });
 
 describe('CloudShellTerminal', () => {
+  beforeEach(() => {
+    jest
+      .spyOn(cloudShellUtils, 'useV1alpha2CRDAvailability')
+      .mockImplementation(() => [true, false]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('should display loading box', () => {
     (useCloudShellWorkspace as jest.Mock).mockReturnValueOnce([null, false]);
     const wrapper = shallow(
