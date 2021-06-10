@@ -1,9 +1,7 @@
-import * as React from 'react';
 import { K8sResourceKind, k8sPatch, k8sGet, K8sKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 
 type v1alpha1Component = {
   plugin: {
@@ -154,27 +152,4 @@ export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
 
 export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
   return k8sGet(workspaceModel, name, ns);
-};
-
-// Check to see if v1alpha2 devworkspace crds are available on the cluster.
-// If they are not available or if an error occurs when finding them then report that they aren't available
-export const useV1alpha2CRDAvailability = () => {
-  const [loading, setLoading] = useSafetyFirst(true);
-  const [isAvailable, setAvailable] = useSafetyFirst(false);
-
-  React.useEffect(() => {
-    k8sGet(WorkspaceModel)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .then((_) => {
-        setLoading(false);
-        setAvailable(true);
-      })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((_) => {
-        setLoading(false);
-        setAvailable(false);
-      });
-  }, [setLoading, setAvailable]);
-
-  return [isAvailable, loading];
 };
