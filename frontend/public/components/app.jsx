@@ -16,7 +16,7 @@ import { getBrandingDetails, Masthead } from './masthead';
 import { ConsoleNotifier } from './console-notifier';
 import { ConnectedNotificationDrawer } from './notification-drawer';
 import { Navigation } from './nav';
-import { history, AsyncComponent, LoadingBox } from './utils';
+import { history, AsyncComponent, LoadingBoxWithoutAccessibility } from './utils';
 import * as UIActions from '../actions/ui';
 import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { receivedResources, watchAPIServices } from '../actions/k8s';
@@ -223,12 +223,12 @@ const AppWithExtensions = withTranslation()((props) => {
     return <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
   }
 
-  return <LoadingBox />;
+  return <LoadingBoxWithoutAccessibility />;
 });
 
 initConsolePlugins(pluginStore, store);
 
-render(<LoadingBox />, document.getElementById('app'));
+render(<LoadingBoxWithoutAccessibility />, document.getElementById('app'));
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -356,7 +356,7 @@ graphQLReady.onReady(() => {
   }
 
   render(
-    <React.Suspense fallback={<LoadingBox />}>
+    <React.Suspense fallback={<LoadingBoxWithoutAccessibility />}>
       <Provider store={store}>
         <CaptureTelemetry />
         <ToastProvider>

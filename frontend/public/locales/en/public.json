@@ -1522,6 +1522,7 @@
   "The logs for this {{resourceKind}} may be stale.": "The logs for this {{resourceKind}} may be stale.",
   "Refresh": "Refresh",
   "No selector": "No selector",
+  "Loading...": "Loading...",
   "No {{label}} found": "No {{label}} found",
   "Not found": "Not found",
   "Restricted Access": "Restricted Access",

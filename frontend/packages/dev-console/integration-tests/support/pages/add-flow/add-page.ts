@@ -86,14 +86,12 @@ export const addPage = {
       case addOptions.DevFile:
         cy.byTestID('item import-from-devfile').click();
         detailsPage.titleShouldContain(pageTitle.DevFile);
-        // Below line is commented due to Bug: ODC-5832
-        // cy.testA11y(pageTitle.DevFile);
+        cy.testA11y(pageTitle.DevFile);
         break;
       case addOptions.UploadJARFile:
         cy.byTestID('item upload-jar').click();
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
-        // Below line is commented due to Bug: ODC-5832
-        // cy.testA11y(pageTitle.UploadJarFile);
+        cy.testA11y(pageTitle.UploadJarFile);
         break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);

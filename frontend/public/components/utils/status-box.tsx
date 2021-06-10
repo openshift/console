@@ -40,16 +40,20 @@ export const LoadError: React.FC<LoadErrorProps> = ({
 );
 LoadError.displayName = 'LoadError';
 
-export const Loading: React.FC<LoadingProps> = ({ className }) => (
-  <div
-    className={classNames('co-m-loader co-an-fade-in-out', className)}
-    data-test="loading-indicator"
-  >
-    <div className="co-m-loader-dot__one" />
-    <div className="co-m-loader-dot__two" />
-    <div className="co-m-loader-dot__three" />
-  </div>
-);
+export const Loading: React.FC<LoadingProps> = ({ className }) => {
+  const { t } = useTranslation();
+  return (
+    <div
+      className={classNames('co-m-loader co-an-fade-in-out', className)}
+      data-test="loading-indicator"
+      aria-label={t && t('public~Loading...')}
+    >
+      <div className="co-m-loader-dot__one" />
+      <div className="co-m-loader-dot__two" />
+      <div className="co-m-loader-dot__three" />
+    </div>
+  );
+};
 Loading.displayName = 'Loading';
 
 export const LoadingInline: React.FC<{}> = () => <Loading className="co-m-loader--inline" />;
@@ -62,6 +66,27 @@ export const LoadingBox: React.FC<LoadingBoxProps> = ({ className, message }) =>
   </Box>
 );
 LoadingBox.displayName = 'LoadingBox';
+
+/**
+ * Similar to LoadingBox but doesn't use useTranslation() to add an accessibility label.
+ * useTranslation requires a wrapping React.Suspense and could not be used as fallback
+ * in a suspense block. So it could not be used as initial loading indicator in app.jsx.
+ */
+export const LoadingBoxWithoutAccessibility: React.FC = () => (
+  <Box className="cos-status-box--loading">
+    <div
+      className="co-m-loader co-an-fade-in-out"
+      data-test="loading-indicator"
+      // Not translated as mentioned above.
+      aria-label="Loading..."
+    >
+      <div className="co-m-loader-dot__one" />
+      <div className="co-m-loader-dot__two" />
+      <div className="co-m-loader-dot__three" />
+    </div>
+  </Box>
+);
+LoadingBoxWithoutAccessibility.displayName = 'LoadingBoxWithoutAccessibility';
 
 export const EmptyBox: React.FC<EmptyBoxProps> = ({ label }) => {
   const { t } = useTranslation();
