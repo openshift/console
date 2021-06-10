@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { DatePicker, TimePicker } from '@patternfly/react-core';
 
@@ -10,6 +10,7 @@ import {
   monitoringDashboardsSetEndTime,
   monitoringDashboardsSetTimespan,
 } from '../../../actions/ui';
+import { RootState } from '../../../redux';
 import {
   createModalLauncher,
   ModalBody,
@@ -17,27 +18,34 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../../factory/modal';
-import { dateFormatter } from '../../utils/datetime';
-
-// Get YYYY-MM-DD date string for a date object
-const toISODate = (date: Date): string => date.toISOString().split('T')[0];
+import { dateFormatter, toISODateString, twentyFourHourTime } from '../../utils/datetime';
 
 const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
+  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
+  const timespan = useSelector(({ UI }: RootState) =>
+    UI.getIn(['monitoringDashboards', 'timespan']),
+  );
 
-  // Default to a time range that covers all of today
+  // If a time is already set in Redux, default to that, otherwise default to a time range that
+  // covers all of today
   const now = new Date();
-  const [fromDate, setFromDate] = React.useState(now);
-  const [fromTime, setFromTime] = React.useState('00:00');
-  const [toDate, setToDate] = React.useState(now);
-  const [toTime, setToTime] = React.useState('23:59');
+  const defaultFrom = endTime && timespan ? new Date(endTime - timespan) : undefined;
+  const [fromDate, setFromDate] = React.useState(defaultFrom ?? now);
+  const [fromTime, setFromTime] = React.useState(
+    defaultFrom ? twentyFourHourTime(defaultFrom) : '00:00',
+  );
+  const [toDate, setToDate] = React.useState(endTime ? new Date(endTime) : now);
+  const [toTime, setToTime] = React.useState(
+    endTime ? twentyFourHourTime(new Date(endTime)) : '23:59',
+  );
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const from = Date.parse(`${toISODate(fromDate)} ${fromTime}`);
-    const to = Date.parse(`${toISODate(toDate)} ${toTime}`);
+    const from = Date.parse(`${toISODateString(fromDate)} ${fromTime}`);
+    const to = Date.parse(`${toISODateString(toDate)} ${toTime}`);
     dispatch(monitoringDashboardsSetEndTime(to));
     dispatch(monitoringDashboardsSetTimespan(to - from));
     close();
