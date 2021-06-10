@@ -103,7 +103,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
-          title={t('kubevirt-plugin~Memory')}
+          title={t('kubevirt-plugin~Memory (RSS)')}
           utilizationQuery={queries[VMQueries.MEMORY_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -112,9 +112,9 @@ export const VMUtilizationCard: React.FC = () => {
           adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
         />
-        <PrometheusUtilizationItem
-          title={t('kubevirt-plugin~Filesystem')}
-          utilizationQuery={queries[VMQueries.FILESYSTEM_USAGE]}
+        <PrometheusMultilineUtilizationItem
+          title={t('kubevirt-plugin~Storage')}
+          queries={multilineQueries[VMQueries.FILESYSTEM_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}

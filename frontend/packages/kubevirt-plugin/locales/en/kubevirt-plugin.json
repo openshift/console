@@ -376,7 +376,7 @@
   "Status": "Status",
   "Utilization": "Utilization",
   "CPU": "CPU",
-  "Filesystem": "Filesystem",
+  "Memory (RSS)": "Memory (RSS)",
   "Network Transfer": "Network Transfer",
   "Source uploading": "Source uploading",
   "View details": "View details",
