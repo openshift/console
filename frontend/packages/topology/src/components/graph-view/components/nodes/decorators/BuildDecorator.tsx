@@ -25,6 +25,8 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
     return null;
   }
 
+  const label = t('topology~Build {{status}}', { status: build.status?.phase });
+
   const link = `${resourcePathFromModel(
     BuildModel,
     build.metadata.name,
@@ -32,11 +34,8 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
   )}/logs`;
 
   return (
-    <Tooltip
-      content={t('topology~Build {{status}}', { status: build.status && build.status.phase })}
-      position={TooltipPosition.left}
-    >
-      <BuildDecoratorBubble x={x} y={y} radius={radius} href={link}>
+    <Tooltip content={label} position={TooltipPosition.left}>
+      <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label} href={link}>
         <Status status={build.status.phase} iconOnly noTooltip />
       </BuildDecoratorBubble>
     </Tooltip>

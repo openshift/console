@@ -176,9 +176,10 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
                     <div className="co-catalog-item-details">
                       <span className="co-catalog-item-icon">
                         <img
-                          alt=""
                           className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
                           src={getTemplateOSIcon(template)}
+                          alt={getTemplateName(template)}
+                          aria-hidden
                         />
                       </span>
                       <div>

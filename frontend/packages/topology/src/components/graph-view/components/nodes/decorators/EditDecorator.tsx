@@ -33,9 +33,10 @@ const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y 
   if (!repoIcon) {
     return null;
   }
+  const label = t('topology~Edit source code');
   return (
-    <Tooltip content={t('topology~Edit source code')} position={TooltipPosition.right}>
-      <Decorator x={x} y={y} radius={radius} href={editUrl} external>
+    <Tooltip content={label} position={TooltipPosition.right}>
+      <Decorator x={x} y={y} radius={radius} href={editUrl} external ariaLabel={label}>
         <g transform={`translate(-${radius / 2}, -${radius / 2})`}>{repoIcon}</g>
       </Decorator>
     </Tooltip>

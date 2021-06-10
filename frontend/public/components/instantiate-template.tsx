@@ -70,6 +70,8 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
             <img
               className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
               src={imgURL}
+              alt={displayName}
+              aria-hidden
             />
           ) : (
             <span
@@ -77,6 +79,7 @@ const TemplateInfo: React.FC<TemplateInfoProps> = ({ template }) => {
                 'co-catalog-item-icon__icon co-catalog-item-icon__icon--large',
                 normalizeIconClass(iconClass),
               )}
+              aria-hidden
             />
           )}
         </span>

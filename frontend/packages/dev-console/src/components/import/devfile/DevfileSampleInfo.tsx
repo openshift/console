@@ -21,6 +21,7 @@ const DevfileSampleInfo: React.FC<DevfileSampleInfoProps> = ({ devfileSample }) 
             className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
             src={iconUrl}
             alt={displayName}
+            aria-hidden
           />
         )}
         <div>

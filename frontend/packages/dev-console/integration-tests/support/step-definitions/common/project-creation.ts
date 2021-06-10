@@ -23,6 +23,5 @@ Then('topology page displays with the empty state', () => {
 
 When('user selects the Create Project option from Projects dropdown on top navigation bar', () => {
   projectNameSpace.selectCreateProjectOption();
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Create Project Modal');
+  cy.testA11y('Create Project Modal');
 });

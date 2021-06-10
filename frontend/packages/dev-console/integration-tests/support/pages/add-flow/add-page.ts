@@ -11,22 +11,19 @@ export const addPage = {
       case 'Git':
       case addOptions.Git:
         cy.byTestID('item import-from-git').click();
-        // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-        // cy.testA11y('Import from Git Page');
+        cy.testA11y('Import from Git Page');
         detailsPage.titleShouldContain(pageTitle.Git);
         break;
       case 'Deploy Image':
       case addOptions.ContainerImage:
         cy.byTestID('item deploy-image').click();
-        // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-        // cy.testA11y('Deploy Page');
+        cy.testA11y('Deploy Page');
         detailsPage.titleShouldContain(pageTitle.ContainerImage);
         break;
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byTestID('item import-from-dockerfile').click();
-        // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-        // cy.testA11y('Import from Docker file');
+        cy.testA11y('Import from Docker file');
         detailsPage.titleShouldContain(pageTitle.DockerFile);
         break;
       case 'Developer Catalog':

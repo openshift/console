@@ -12,6 +12,7 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
+  cy.testA11y('Developer perspective with guider tour modal');
 });
 
 Given('user is at administrator perspective', () => {

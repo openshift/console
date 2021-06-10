@@ -116,7 +116,8 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
         <img
           className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
           src={imgSrc}
-          alt=""
+          alt={displayName}
+          aria-hidden
         />
       </div>
       <div className="co-clusterserviceversion-logo__name">

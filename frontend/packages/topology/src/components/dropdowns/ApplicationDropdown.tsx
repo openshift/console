@@ -8,6 +8,7 @@ import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
 
 interface ApplicationDropdownProps {
   id?: string;
+  ariaLabel?: string;
   className?: string;
   dropDownClassName?: string;
   menuClassName?: string;

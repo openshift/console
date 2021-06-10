@@ -40,7 +40,7 @@ const Cell: React.FC<CellProps> = ({
       parent={parent}
       rowIndex={rowIndex}
     >
-      <div style={cellStyle}>
+      <div role="gridcell" style={cellStyle}>
         {isItemString ? renderHeader(item as string) : renderCell(item as Item)}
       </div>
     </CellMeasurer>

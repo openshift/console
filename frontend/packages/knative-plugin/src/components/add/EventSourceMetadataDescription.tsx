@@ -24,7 +24,8 @@ const EventSourceMetaDescription: React.FC<EventSourceMetaDescriptionProps> = ({
           <img
             className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
             src={iconUrl}
-            alt=""
+            alt={name}
+            aria-hidden
           />
         </div>
         <div className="co-clusterserviceversion-logo__name">

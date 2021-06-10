@@ -72,6 +72,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
     setApplicationExists(availableApplications.current.includes(event.target.value));
   };
 
+  const label = t('topology~Application');
   const inputHelpText = applicationExists
     ? t('topology~Warning: the Application grouping already exists.')
     : t('topology~A unique name given to the Application grouping to label your resources.');
@@ -81,7 +82,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
       {projectsAvailable && applicationsAvailable && (
         <FormGroup
           fieldId={fieldId}
-          label={t('topology~Application')}
+          label={label}
           helperTextInvalid={errorMessage}
           validated={isValid ? 'default' : 'error'}
           helperText={t(
@@ -89,9 +90,10 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
           )}
         >
           <ApplicationDropdown
+            id={fieldId}
+            ariaLabel={label}
             dropDownClassName="dropdown--full-width"
             menuClassName="dropdown-menu--text-wrap"
-            id={fieldId}
             namespace={namespace}
             actionItems={actionItems}
             autoSelect

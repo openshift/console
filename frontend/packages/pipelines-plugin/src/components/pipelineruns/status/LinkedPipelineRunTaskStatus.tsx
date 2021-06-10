@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
@@ -16,6 +17,8 @@ export interface LinkedPipelineRunTaskStatusProps {
 const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = ({
   pipelineRun,
 }) => {
+  const { t } = useTranslation();
+
   const pipelineStatus = (
     <PipelineBars key={pipelineRun.metadata?.name} pipelinerun={pipelineRun} />
   );
@@ -28,6 +31,8 @@ const LinkedPipelineRunTaskStatus: React.FC<LinkedPipelineRunTaskStatusProps> = 
           pipelineRun.metadata.name,
           pipelineRun.metadata.namespace,
         )}/logs`}
+        role="button"
+        aria-label={t('pipelines-plugin~View logs')}
       >
         {pipelineStatus}
       </Link>
