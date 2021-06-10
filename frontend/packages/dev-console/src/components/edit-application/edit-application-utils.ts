@@ -316,7 +316,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
     'app.openshift.io/runtime-namespace',
-    'serving.knative.dev/visibility',
+    'networking.knative.dev/visibility',
   ];
   const allLabels = _.get(resource, 'metadata.labels', {});
   const userLabels = _.omit(allLabels, defaultLabels);

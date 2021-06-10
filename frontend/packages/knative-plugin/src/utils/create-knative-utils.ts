@@ -91,7 +91,7 @@ export const getKnativeServiceDepResource = (
       labels: {
         ...defaultLabel,
         ...labels,
-        ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
+        ...(!create && { 'networking.knative.dev/visibility': `cluster-local` }),
         ...((formData as GitImportFormData).pipeline?.enabled && {
           'app.kubernetes.io/name': name,
         }),

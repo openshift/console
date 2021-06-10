@@ -63,7 +63,7 @@ describe('Create knative Utils', () => {
         'imgStream',
       );
       expect(
-        knDeploymentResource.metadata.labels['serving.knative.dev/visibility'],
+        knDeploymentResource.metadata.labels['networking.knative.dev/visibility'],
       ).toBeUndefined();
     });
 
@@ -73,8 +73,10 @@ describe('Create knative Utils', () => {
         defaultData,
         'imgStream',
       );
-      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toBeDefined();
-      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toEqual(
+      expect(
+        knDeploymentResource.metadata.labels['networking.knative.dev/visibility'],
+      ).toBeDefined();
+      expect(knDeploymentResource.metadata.labels['networking.knative.dev/visibility']).toEqual(
         'cluster-local',
       );
     });
