@@ -29,11 +29,13 @@ describe('Spotlight', () => {
     expect(wrapper.find(InteractiveSpotlight).exists()).toBe(true);
   });
 
-  it('should render nothing when element is hidden', () => {
+  it('should render nothing when element is hidden for interactive Spotlight', () => {
     const childEl = document.createElement('a');
     childEl.setAttribute('aria-hidden', 'true');
     jest.spyOn(document, 'querySelector').mockImplementation(() => childEl);
     wrapper = shallow(<Spotlight selector="selector" />);
+    expect(wrapper.find(StaticSpotlight).exists()).toBe(true);
+    wrapper = shallow(<Spotlight selector="selector" interactive />);
     expect(wrapper.find(StaticSpotlight).exists()).toBe(false);
   });
 
@@ -45,7 +47,7 @@ describe('Spotlight', () => {
     parentEl.appendChild(childEl);
     ancestorEl.appendChild(parentEl);
     jest.spyOn(document, 'querySelector').mockImplementation(() => childEl);
-    wrapper = shallow(<Spotlight selector="selector" />);
+    wrapper = shallow(<Spotlight selector="selector" interactive />);
     expect(wrapper.find(StaticSpotlight).exists()).toBe(false);
   });
 });
