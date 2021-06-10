@@ -89,7 +89,10 @@ Feature: Create the pipeline from builder page
              When user enters pipeline name as "pipeline-params"
               And user selects "s2i-nodejs" from Task drop down
               And user adds the parameter details like Name, Description and Default Value
+              And user clicks on Add workspace
+              And user adds the Workspace name as "empty"
               And user adds the image name to the pipeline task "s2i-nodejs"
+              And user adds the workspace "empty" to the pipeline task "s2i-nodejs"
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-params"
 

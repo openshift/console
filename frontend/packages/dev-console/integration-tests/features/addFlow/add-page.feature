@@ -9,7 +9,7 @@ Feature: Add page on Developer Console
               And user is at Add page
 
 
-        @regression
+        @regression @to-do
         Scenario: Getting started resources on Developer perspective: A-11-TC01
              Then user will see Getting started resources
               And user will see Create Application using Samples
@@ -26,7 +26,7 @@ Feature: Add page on Developer Console
               And user will see "From Local Machine" card
 
 
-        @regression
+        @regression @to-do
         Scenario: Developer Catalog option to create an Application, Component or Service: A-11-TC03
              Then user will see "All services" option
               And user will see "Database" option
@@ -34,14 +34,14 @@ Feature: Add page on Developer Console
               And user will see "Helm Chart" option
 
 
-        @regression
+        @regression @to-do
         Scenario: Git Repository option to create an Application, Component or Service: A-11-TC04
              Then user will see "From Git" option
               And user will see "From Devfile" option
               And user will see "From Dockerfile" option
 
 
-        @regression
+        @regression @to-do
         Scenario: From Local Machine option to create an Application, Component or Service: A-11-TC05
              Then user will see "Import YAML" option
               And user will see "Upload JAR file" option
