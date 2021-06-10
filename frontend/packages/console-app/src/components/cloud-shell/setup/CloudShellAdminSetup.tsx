@@ -46,7 +46,11 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize, wo
         }
         await k8sCreate(
           workspaceModel,
-          newCloudShellWorkSpace(createCloudShellResourceName(), CLOUD_SHELL_PROTECTED_NAMESPACE, workspaceModel.apiVersion),
+          newCloudShellWorkSpace(
+            createCloudShellResourceName(),
+            CLOUD_SHELL_PROTECTED_NAMESPACE,
+            workspaceModel.apiVersion,
+          ),
         );
         onInitialize(CLOUD_SHELL_PROTECTED_NAMESPACE);
       } catch (error) {

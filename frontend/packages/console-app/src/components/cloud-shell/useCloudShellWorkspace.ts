@@ -76,7 +76,15 @@ const useCloudShellWorkspace = (
     }
 
     return result;
-  }, [loadingAccessReview, canListWorkspaces, namespace, isKubeAdmin, uid, isClusterAdmin]);
+  }, [
+    loadingAccessReview,
+    canListWorkspaces,
+    namespace,
+    isKubeAdmin,
+    uid,
+    isClusterAdmin,
+    workspaceModel,
+  ]);
 
   // call k8s api to fetch workspace
   const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
@@ -143,7 +151,15 @@ const useCloudShellWorkspace = (
     return () => {
       unmounted = true;
     };
-  }, [isKubeAdmin, searchNamespaces, setNamespace, uid, setNoNamespaceFound, setSearching]);
+  }, [
+    isKubeAdmin,
+    searchNamespaces,
+    setNamespace,
+    uid,
+    setNoNamespaceFound,
+    setSearching,
+    workspaceModel,
+  ]);
 
   React.useEffect(() => {
     if (workspace?.spec && !workspace.spec.started) {

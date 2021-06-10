@@ -52,7 +52,11 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
       }
       await k8sCreate(
         workspaceModel,
-        newCloudShellWorkSpace(createCloudShellResourceName(), namespace, workspaceModel.apiVersion),
+        newCloudShellWorkSpace(
+          createCloudShellResourceName(),
+          namespace,
+          workspaceModel.apiVersion,
+        ),
       );
       onSubmit && onSubmit(namespace);
     } catch (err) {

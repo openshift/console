@@ -215,6 +215,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     shcommand,
     t,
     workspaceName,
+    workspaceModel,
     wsReopening,
   ]);
 
