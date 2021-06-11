@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'redux';
 import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import { FormGroup, TextInput, TextContent } from '@patternfly/react-core';
 import {
@@ -47,6 +48,55 @@ const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
 const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
+const CurrentlyUsedCapacity: React.FC<CurrentlyUsedCapacityProps> = ({ currentCapacity, t }) => (
+  <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
+    {t('ceph-storage-plugin~Currently Used:')}&nbsp;
+    {currentCapacity}
+  </TextContent>
+);
+
+type CurrentlyUsedCapacityProps = {
+  currentCapacity: React.ReactNode;
+  t: TFunction;
+};
+
+const RawCapacity: React.FC<RawCapacityProps> = ({ t, osdSizeWithoutUnit, replica }) => {
+  const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
+  return (
+    <>
+      <FormGroup
+        fieldId="request-size"
+        label={t('ceph-storage-plugin~Raw Capacity')}
+        labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
+      >
+        <TextInput
+          isDisabled
+          id="request-size"
+          className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+          type="number"
+          name="requestSize"
+          value={osdSizeWithoutUnit}
+          aria-label="requestSize"
+          data-test-id="requestSize"
+        />
+        <TextContent className="ceph-add-capacity__provisioned-capacity">
+          {' '}
+          {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
+            replica,
+          })}{' '}
+          <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
+        </TextContent>
+      </FormGroup>
+    </>
+  );
+};
+
+type RawCapacityProps = {
+  osdSizeWithoutUnit: number;
+  replica: number;
+  t: TFunction;
+};
+
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { t } = useTranslation();
 
@@ -62,7 +112,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
   const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
-  const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
@@ -211,37 +260,10 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
             />
           ) : (
             <>
-              <FormGroup
-                className="pf-u-py-sm"
-                fieldId="request-size"
-                id="requestSize__FormGroup"
-                label={t('ceph-storage-plugin~Raw Capacity')}
-                labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
-              >
-                <TextInput
-                  isDisabled
-                  id="request-size"
-                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-                  type="number"
-                  name="requestSize"
-                  value={osdSizeWithoutUnit}
-                  aria-label="requestSize"
-                  data-test-id="requestSize"
-                />
-                {provisionedCapacity && (
-                  <TextContent className="ceph-add-capacity__provisioned-capacity">
-                    {' '}
-                    {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
-                      replica,
-                    })}{' '}
-                    <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
-                  </TextContent>
-                )}
-                <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
-                  {t('ceph-storage-plugin~Currently Used:')}&nbsp;
-                  {currentCapacity}
-                </TextContent>
-              </FormGroup>
+              {!!osdSizeWithoutUnit && (
+                <RawCapacity t={t} replica={replica} osdSizeWithoutUnit={osdSizeWithoutUnit} />
+              )}
+              <CurrentlyUsedCapacity t={t} currentCapacity={currentCapacity} />
             </>
           )}
         </ModalBody>
