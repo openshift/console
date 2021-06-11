@@ -2,8 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isEmpty } from 'lodash';
-import { BlueArrowCircleUpIcon, getInfrastructurePlatform } from '@console/shared';
+import {
+  BlueArrowCircleUpIcon,
+  getInfrastructurePlatform,
+  useDeepCompareMemoize,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -87,15 +90,22 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sWatchResource<
     PackageManifestKind
   >(PackageManifestResource);
-
-  const currentChannel =
-    ocsSubscription?.spec?.channel ?? packageManifest?.status?.channels?.[0]?.name;
-  const filteredVersions = packageManifest?.status?.channels?.filter(
+  const memoizedPackageManifest = useDeepCompareMemoize(packageManifest, true);
+  const memoizedOcsSubscription = useDeepCompareMemoize(ocsSubscription, true);
+  let currentChannel;
+  let currentChannelVersion;
+  if (ocsSubscriptionLoaded) {
+    currentChannel =
+      memoizedOcsSubscription?.spec?.channel ??
+      memoizedPackageManifest?.status?.channels?.[0]?.name;
+    currentChannelVersion = parseFloat(currentChannel.substring(currentChannel.indexOf('-') + 1));
+  }
+  const filteredVersions = memoizedPackageManifest?.status?.channels?.filter(
     (channel) =>
-      parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) >
-      parseFloat(currentChannel.substring(currentChannel.indexOf('-') + 1)),
+      parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) > currentChannelVersion,
   );
-  _.set(packageManifest, 'status.channels', filteredVersions);
+  _.set(memoizedPackageManifest, 'status.channels', filteredVersions);
+  const ocsChannelsList = memoizedPackageManifest?.status?.channels;
 
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
@@ -126,12 +136,12 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const launchModal = () => {
     if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
       return createSubscriptionChannelModal({
-        subscription: ocsSubscription,
-        pkg: packageManifest,
+        subscription: memoizedOcsSubscription,
+        pkg: memoizedPackageManifest,
         k8sUpdate: updateFunction,
       });
     }
-    return 0;
+    return null;
   };
   return (
     <DashboardCard>
@@ -165,31 +175,32 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             {infrastructurePlatform}
           </DetailItem>
           <DetailItem title={t('ceph-storage-plugin~Mode')}>Internal</DetailItem>
-          {!isEmpty(filteredVersions) && ocsSubscription?.spec?.installPlanApproval === 'Manual' ? (
-            <DetailItem
-              key="version"
-              title={t('ceph-storage-plugin~Version')}
-              isLoading={!subscriptionLoaded}
-              error={subscriptionLoaded && !ocsVersion}
-            >
-              {ocsVersion}
-              {ocsSubscriptionLoaded && packageManifestLoaded ? (
-                <Button type="button" isInline onClick={launchModal} variant="link">
-                  <BlueArrowCircleUpIcon className="co-icon-space-r" />
-                  {ocsSubscriptionLoaded ? ocsSubscription?.spec?.channel : null}
-                </Button>
-              ) : null}
-            </DetailItem>
-          ) : (
-            <DetailItem
-              key="version"
-              title={t('ceph-storage-plugin~Version')}
-              isLoading={!subscriptionLoaded}
-              error={subscriptionLoaded && !ocsVersion}
-            >
-              {ocsVersion}
-            </DetailItem>
-          )}
+          <DetailItem
+            key="version"
+            title={t('ceph-storage-plugin~Version')}
+            isLoading={!subscriptionLoaded}
+            error={subscriptionLoaded && !ocsVersion}
+          >
+            {ocsVersion}
+            {!_.isEmpty(filteredVersions) &&
+              memoizedOcsSubscription?.spec?.installPlanApproval === 'Manual' && (
+                <>
+                  {ocsSubscriptionLoaded && packageManifestLoaded && (
+                    <Button
+                      type="button"
+                      isInline
+                      onClick={launchModal}
+                      variant="link"
+                      className="pf-u-ml-xl"
+                    >
+                      <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                      {t('ceph-storage-plugin~Update to ')}
+                      {ocsChannelsList[ocsChannelsList.length - 1].name}
+                    </Button>
+                  )}
+                </>
+              )}
+          </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>

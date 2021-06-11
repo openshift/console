@@ -230,6 +230,7 @@
   "Upgrading OCS Operator": "Upgrading OCS Operator",
   "Used Capacity Breakdown": "Used Capacity Breakdown",
   "This card shows the used capacity for different Kubernetes resources. The figures shown represent the Usable storage, meaning that data replication is not taken into consideration.": "This card shows the used capacity for different Kubernetes resources. The figures shown represent the Usable storage, meaning that data replication is not taken into consideration.",
+  "Update to ": "Update to ",
   "Inventory": "Inventory",
   "Error": "Error",
   "Warning": "Warning",
