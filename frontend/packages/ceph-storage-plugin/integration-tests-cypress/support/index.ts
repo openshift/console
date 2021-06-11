@@ -11,6 +11,7 @@ import {
   verifyMonitoring,
   verifyNodeLabels,
   verifyClusterReadiness,
+  verifyOCSTaint,
 } from '../views/install';
 
 declare global {
@@ -46,6 +47,7 @@ Cypress.Commands.add('install', (encrypted = false) => {
       cy.byTestID('success-icon', { timeout: 180000 }).should('be.visible');
       createInternalStorageCluster(encrypted);
       verifyNodeLabels();
+      verifyOCSTaint();
       verifyMonitoring();
       verifyClusterReadiness();
     } else {
