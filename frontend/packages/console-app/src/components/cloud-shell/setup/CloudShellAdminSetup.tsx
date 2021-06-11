@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { k8sCreate, k8sGet } from '@console/internal/module/k8s';
-import { WorkspaceModel } from '../../../models';
+import { k8sCreate, k8sGet, K8sKind } from '@console/internal/module/k8s';
 import {
   newCloudShellWorkSpace,
   createCloudShellResourceName,
@@ -15,9 +14,10 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
   onInitialize: (namespace: string) => void;
+  workspaceModel: K8sKind;
 };
 
-const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize }) => {
+const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize, workspaceModel }) => {
   const { t } = useTranslation();
 
   const [initError, setInitError] = React.useState<string>();
@@ -45,8 +45,12 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize }) 
           });
         }
         await k8sCreate(
-          WorkspaceModel,
-          newCloudShellWorkSpace(createCloudShellResourceName(), CLOUD_SHELL_PROTECTED_NAMESPACE),
+          workspaceModel,
+          newCloudShellWorkSpace(
+            createCloudShellResourceName(),
+            CLOUD_SHELL_PROTECTED_NAMESPACE,
+            workspaceModel.apiVersion,
+          ),
         );
         onInitialize(CLOUD_SHELL_PROTECTED_NAMESPACE);
       } catch (error) {

@@ -6,14 +6,13 @@ import { ProjectRequestModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import {
   CloudShellSetupFormData,
   CREATE_NAMESPACE_KEY,
   cloudShellSetupValidation,
 } from './cloud-shell-setup-utils';
 import CloudSehellSetupForm from './CloudShellSetupForm';
-import { WorkspaceModel } from '../../../models';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 
 interface StateProps {
@@ -24,10 +23,12 @@ interface StateProps {
 type Props = StateProps & {
   onSubmit?: (namespace: string) => void;
   onCancel?: () => void;
+  workspaceModel: K8sKind;
 };
 
 const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   activeNamespace,
+  workspaceModel,
   onSubmit,
   onCancel,
 }) => {
@@ -49,8 +50,12 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
         });
       }
       await k8sCreate(
-        WorkspaceModel,
-        newCloudShellWorkSpace(createCloudShellResourceName(), namespace),
+        workspaceModel,
+        newCloudShellWorkSpace(
+          createCloudShellResourceName(),
+          namespace,
+          workspaceModel.apiVersion,
+        ),
       );
       onSubmit && onSubmit(namespace);
     } catch (err) {

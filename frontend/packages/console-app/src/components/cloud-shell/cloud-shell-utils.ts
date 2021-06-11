@@ -1,29 +1,46 @@
-import { K8sResourceKind, k8sPatch, k8sGet } from '@console/internal/module/k8s';
+import { K8sResourceKind, k8sPatch, k8sGet, K8sKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
-import { WorkspaceModel } from '../../models';
+import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 
-type DevWorkspaceTemplateSpec = {
-  components: Component[];
-};
-
-type Component = {
+type v1alpha1Component = {
   plugin: {
     name?: string;
     id: string;
   };
 };
 
-export type CloudShellResource = K8sResourceKind & {
-  status?: {
-    phase: string;
-    ideUrl: string;
+type v1alpha2Component = {
+  name: string;
+  plugin: {
+    kubernetes: {
+      name: string;
+      namespace?: string;
+    };
   };
+};
+
+type DevWorkspaceTemplateSpec = {
+  components: v1alpha1Component[] | v1alpha2Component[];
+};
+
+export type CloudShellResource = K8sResourceKind & {
+  status?: v1alpha1CloudShellStatusResource | v1alpha2CloudShellStatusResource;
   spec?: {
     started?: boolean;
     routingClass?: string;
     template?: DevWorkspaceTemplateSpec;
   };
+};
+
+type v1alpha1CloudShellStatusResource = {
+  phase: string;
+  ideUrl: string;
+};
+
+type v1alpha2CloudShellStatusResource = {
+  phase: string;
+  mainUrl: string;
 };
 
 export type TerminalInitData = { pod: string; container: string; cmd: string[] };
@@ -36,8 +53,42 @@ export const CLOUD_SHELL_PROTECTED_NAMESPACE = 'openshift-terminal';
 
 export const createCloudShellResourceName = () => `terminal-${getRandomChars(6)}`;
 
-export const newCloudShellWorkSpace = (name: string, namespace: string): CloudShellResource => ({
-  apiVersion: 'workspace.devfile.io/v1alpha1',
+const v1alpha1DevworkspaceComponent = [
+  {
+    plugin: {
+      name: 'web-terminal',
+      id: 'redhat-developer/web-terminal/latest',
+    },
+  },
+];
+
+const devWorkspaceComponent = [
+  {
+    name: 'web-terminal-tooling',
+    plugin: {
+      kubernetes: {
+        name: 'web-terminal-tooling',
+        namespace: 'openshift-operators',
+      },
+    },
+  },
+  {
+    name: 'web-terminal-exec',
+    plugin: {
+      kubernetes: {
+        name: 'web-terminal-exec',
+        namespace: 'openshift-operators',
+      },
+    },
+  },
+];
+
+export const newCloudShellWorkSpace = (
+  name: string,
+  namespace: string,
+  version: string,
+): CloudShellResource => ({
+  apiVersion: `workspace.devfile.io/${version}`,
   kind: 'DevWorkspace',
   metadata: {
     name,
@@ -53,20 +104,23 @@ export const newCloudShellWorkSpace = (name: string, namespace: string): CloudSh
     started: true,
     routingClass: 'web-terminal',
     template: {
-      components: [
-        {
-          plugin: {
-            name: 'web-terminal',
-            id: 'redhat-developer/web-terminal/latest',
-          },
-        },
-      ],
+      components:
+        version === v1alpha1WorkspaceModel.apiVersion
+          ? v1alpha1DevworkspaceComponent
+          : devWorkspaceComponent,
     },
   },
 });
 
 export const startWorkspace = (workspace: CloudShellResource) => {
-  return k8sPatch(WorkspaceModel, workspace, [
+  // Check the version so we know what workspace model to use for starting the workspace
+  const groupVersion = workspace.apiVersion.split('/');
+  const version = groupVersion[1];
+
+  const workspaceModel =
+    version === v1alpha1WorkspaceModel.apiVersion ? v1alpha1WorkspaceModel : WorkspaceModel;
+
+  return k8sPatch(workspaceModel, workspace, [
     {
       path: '/spec/started',
       op: 'replace',
@@ -96,6 +150,6 @@ export const sendActivityTick = (workspaceName: string, namespace: string): void
 
 export const checkTerminalAvailable = () => coFetch('/api/terminal/available');
 
-export const getCloudShellCR = (name: string, ns: string) => {
-  return k8sGet(WorkspaceModel, name, ns);
+export const getCloudShellCR = (workspaceModel: K8sKind, name: string, ns: string) => {
+  return k8sGet(workspaceModel, name, ns);
 };

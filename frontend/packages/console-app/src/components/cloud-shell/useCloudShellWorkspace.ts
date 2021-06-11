@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UserKind, referenceForModel, k8sList } from '@console/internal/module/k8s';
+import { UserKind, referenceForModel, k8sList, K8sKind } from '@console/internal/module/k8s';
 import {
   WatchK8sResource,
   useK8sWatchResource,
@@ -16,7 +16,6 @@ import {
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { ProjectModel } from '@console/internal/models';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { WorkspaceModel } from '../../models';
 
 const findWorkspace = (data?: CloudShellResource[]): CloudShellResource | undefined => {
   if (Array.isArray(data)) {
@@ -32,6 +31,7 @@ const findWorkspace = (data?: CloudShellResource[]): CloudShellResource | undefi
 const useCloudShellWorkspace = (
   user: UserKind,
   isClusterAdmin: boolean,
+  workspaceModel: K8sKind,
   defaultNamespace: string = null,
 ): WatchK8sResult<CloudShellResource> => {
   const [namespace, setNamespace] = useSafetyFirst(defaultNamespace);
@@ -46,8 +46,8 @@ const useCloudShellWorkspace = (
   }, [defaultNamespace, setNamespace, setNoNamespaceFound]);
 
   const [canListWorkspaces, loadingAccessReview] = useAccessReview2({
-    group: WorkspaceModel.apiGroup,
-    resource: WorkspaceModel.plural,
+    group: workspaceModel.apiGroup,
+    resource: workspaceModel.plural,
     verb: 'list',
   });
 
@@ -59,7 +59,7 @@ const useCloudShellWorkspace = (
       return undefined;
     }
     const result: WatchK8sResource = {
-      kind: referenceForModel(WorkspaceModel),
+      kind: referenceForModel(workspaceModel),
       isList: true,
       selector: {
         matchLabels: {
@@ -76,7 +76,15 @@ const useCloudShellWorkspace = (
     }
 
     return result;
-  }, [loadingAccessReview, canListWorkspaces, namespace, isKubeAdmin, uid, isClusterAdmin]);
+  }, [
+    loadingAccessReview,
+    canListWorkspaces,
+    namespace,
+    isKubeAdmin,
+    uid,
+    isClusterAdmin,
+    workspaceModel,
+  ]);
 
   // call k8s api to fetch workspace
   const [data, loaded, loadError] = useK8sWatchResource<CloudShellResource[]>(resource);
@@ -112,7 +120,7 @@ const useCloudShellWorkspace = (
               try {
                 // search each project sequentially
                 // eslint-disable-next-line no-await-in-loop
-                const workspaceList = await k8sList(WorkspaceModel, {
+                const workspaceList = await k8sList(workspaceModel, {
                   ns: projectName,
                   labelSelector: {
                     matchLabels: {
@@ -143,7 +151,15 @@ const useCloudShellWorkspace = (
     return () => {
       unmounted = true;
     };
-  }, [isKubeAdmin, searchNamespaces, setNamespace, uid, setNoNamespaceFound, setSearching]);
+  }, [
+    isKubeAdmin,
+    searchNamespaces,
+    setNamespace,
+    uid,
+    setNoNamespaceFound,
+    setSearching,
+    workspaceModel,
+  ]);
 
   React.useEffect(() => {
     if (workspace?.spec && !workspace.spec.started) {
