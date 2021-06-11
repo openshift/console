@@ -63,6 +63,7 @@ export const GettingStartedGrid: React.FC<GettingStartedGridProps> = ({ onHide, 
             {title}{' '}
             <Popover bodyContent={titleTooltip}>
               <span
+                role="button"
                 aria-label={t('console-shared~More info')}
                 className="ocs-getting-started-grid__tooltip-icon"
               >
