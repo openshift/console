@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'redux';
 import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import { FormGroup, TextInput, TextContent } from '@patternfly/react-core';
 import {
@@ -47,11 +48,47 @@ const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
 const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
+const RawCapacity: React.FC<RawCapacityProps> = ({ t, osdSizeWithoutUnit, replica }) => {
+  const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
+  return (
+    <>
+      <FormGroup
+        fieldId="request-size"
+        label={t('ceph-storage-plugin~Raw Capacity')}
+        labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
+      >
+        <TextInput
+          isDisabled
+          id="request-size"
+          className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+          type="number"
+          name="requestSize"
+          value={osdSizeWithoutUnit}
+          aria-label="requestSize"
+          data-test-id="requestSize"
+        />
+        <TextContent className="ceph-add-capacity__provisioned-capacity">
+          {' '}
+          {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
+            replica,
+          })}{' '}
+          <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
+        </TextContent>
+      </FormGroup>
+    </>
+  );
+};
+
+type RawCapacityProps = {
+  osdSizeWithoutUnit: number;
+  replica: number;
+  t: TFunction;
+};
+
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const { t } = useTranslation();
 
   const { ocsConfig, close, cancel } = props;
-  const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
 
   const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
@@ -60,9 +97,9 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
+  const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
   const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
-  const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
@@ -76,7 +113,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
   /** Name of the installation storageClass which will be the pre-selected value for the dropdown */
   const installStorageClass = deviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
-  const nodesError = nodesLoadError || !nodesData.length || !nodesLoaded;
+  const nodesError: boolean = nodesLoadError || !nodesData.length || !nodesLoaded;
 
   const validateSC = React.useCallback(() => {
     if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
@@ -200,58 +237,38 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                 data-test="add-cap-sc-dropdown"
               />
             </div>
+            {!selectedSCName && (
+              <div className="skeleton-text ceph-add-capacity__storage-class-dropdown--loading" />
+            )}
           </FormGroup>
-          {isNoProvionerSC ? (
-            <PVsAvailableCapacity
-              replica={replica}
-              data-test-id="ceph-add-capacity-pvs-available-capacity"
-              storageClass={storageClass}
-              data={pvData}
-              loaded={pvLoaded}
-              loadError={pvLoadError}
-            />
-          ) : (
-            <>
-              <FormGroup
-                className="pf-u-py-sm"
-                fieldId="request-size"
-                id="requestSize__FormGroup"
-                label={t('ceph-storage-plugin~Raw Capacity')}
-                labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
-              >
-                <TextInput
-                  isDisabled
-                  id="request-size"
-                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-                  type="number"
-                  name="requestSize"
-                  value={osdSizeWithoutUnit}
-                  aria-label="requestSize"
-                  data-test-id="requestSize"
-                />
-                {provisionedCapacity && (
-                  <TextContent className="ceph-add-capacity__provisioned-capacity">
-                    {' '}
-                    {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
-                      replica,
-                    })}{' '}
-                    <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
-                  </TextContent>
+          {!!selectedSCName &&
+            (isNoProvionerSC ? (
+              <PVsAvailableCapacity
+                replica={replica}
+                data-test-id="ceph-add-capacity-pvs-available-capacity"
+                storageClass={storageClass}
+                data={pvData}
+                loaded={pvLoaded}
+                loadError={pvLoadError}
+              />
+            ) : (
+              <>
+                {!!osdSizeWithoutUnit && (
+                  <RawCapacity t={t} replica={replica} osdSizeWithoutUnit={osdSizeWithoutUnit} />
                 )}
                 <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
                   {t('ceph-storage-plugin~Currently Used:')}&nbsp;
                   {currentCapacity}
                 </TextContent>
-              </FormGroup>
-            </>
-          )}
+              </>
+            ))}
         </ModalBody>
         <ModalSubmitFooter
           inProgress={inProgress}
           errorMessage={errorMessage}
           submitText={t('ceph-storage-plugin~Add')}
           cancel={cancel}
-          submitDisabled={isNoProvionerSC && (!availablePvsCount || nodesError)}
+          submitDisabled={isNoProvionerSC ? !availablePvsCount || nodesError : !osdSizeWithoutUnit}
         />
       </div>
     </form>
