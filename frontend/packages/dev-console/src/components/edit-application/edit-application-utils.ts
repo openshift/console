@@ -98,10 +98,10 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     routeData = {
       ...routeData,
       disable:
-        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
+        _.get(resource, 'metadata.labels["networking.knative.dev/visibility"]', '') !==
         'cluster-local',
       create:
-        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
+        _.get(resource, 'metadata.labels["networking.knative.dev/visibility"]', '') !==
         'cluster-local',
       unknownTargetPort: _.toString(port),
       targetPort: _.toString(port),
@@ -245,7 +245,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
     'app.openshift.io/runtime-namespace',
-    'serving.knative.dev/visibility',
+    'networking.knative.dev/visibility',
   ];
   const allLabels = _.get(resource, 'metadata.labels', {});
   const userLabels = _.omit(allLabels, defaultLabels);
