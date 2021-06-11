@@ -5,8 +5,8 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { PipelineModel, TaskModel } from '../../../models';
 import {
   Pipeline,
+  PipelineParam,
   PipelineResourceTask,
-  PipelineResourceTaskParam,
   PipelineTask,
 } from '../../../utils/pipeline-augment';
 import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs/utils';
@@ -28,7 +28,7 @@ export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskError
   return hasRequestedError.length > 0 ? TASK_ERROR_STRINGS[hasRequestedError[0]] : null;
 };
 
-export const taskParamIsRequired = (param: PipelineResourceTaskParam): boolean => {
+export const taskParamIsRequired = (param: PipelineParam): boolean => {
   return !('default' in param);
 };
 

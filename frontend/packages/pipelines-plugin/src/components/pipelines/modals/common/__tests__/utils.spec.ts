@@ -247,6 +247,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
           name: 'ParameterA',
           default: 'Default value',
           description: 'Description',
+          value: 'Updated value',
         },
       ],
       resources: [],
@@ -267,7 +268,7 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         params: [
           {
             name: 'ParameterA',
-            value: 'Default value',
+            value: 'Updated value',
           },
         ],
         resources: [],
