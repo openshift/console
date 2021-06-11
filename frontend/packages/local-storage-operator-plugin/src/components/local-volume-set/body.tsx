@@ -31,6 +31,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   taintsFilter,
   diskModeOptions = diskModeDropdownItems,
   allNodesHelpTxt,
+  lvsNameHelpTxt,
   deviceTypeOptions = deviceTypeDropdownItems,
 }) => {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   return (
     <>
       <FormGroup
-        label={t('lso-plugin~Volume Set Name')}
+        label={t('lso-plugin~Local Volume Set Name')}
         isRequired
         fieldId="create-lvs-volume-set-name"
       >
@@ -74,6 +75,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           onChange={(name: string) => dispatch({ type: 'setVolumeSetName', name })}
           isRequired
         />
+        {lvsNameHelpTxt ? <p className="help-block">{lvsNameHelpTxt}</p> : null}
       </FormGroup>
       <FormGroup label={t('lso-plugin~StorageClass Name')} fieldId="create-lvs-storage-class-name">
         <TextInput
@@ -85,17 +87,15 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         />
       </FormGroup>
       <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
-        {t('lso-plugin~Filter Disks')}
+        {t('lso-plugin~Filter Disks By')}
       </Text>
-      <FormGroup
-        label={t('lso-plugin~Node Selector')}
-        fieldId="create-lvs-radio-group-node-selector"
-      >
+      <FormGroup fieldId="create-lvs-radio-group-node-selector">
         <div id="create-lvs-radio-group-node-selector">
           <Radio
             label={
               <>
-                {t('lso-plugin~All nodes')} {'('}
+                {t('lso-plugin~Disks on all nodes')}
+                {' ('}
                 {t('lso-plugin~{{nodes, number}} node', {
                   nodes: state.lvsAllNodes.length,
                   count: state.lvsAllNodes.length,
@@ -112,13 +112,13 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
             checked={!state.lvsIsSelectNodes}
           />
           <Radio
-            label={t('lso-plugin~Select nodes')}
+            label={t('lso-plugin~Disks on selected nodes')}
             name="nodes-selection"
             id="create-lvs-radio-select-nodes"
             value="selectedNodes"
             onChange={toggleShowNodesList}
             description={t(
-              'lso-plugin~Selecting all nodes will use the available disks that match the selected filters only on selected nodes.',
+              'lso-plugin~Uses the available disks that match the selected filters only on selected nodes.',
             )}
             checked={state.lvsIsSelectNodes}
           />
@@ -267,10 +267,10 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
             />
           </div>
         </FormGroup>
-        <FormGroup label={t('lso-plugin~Max Disk Limit')} fieldId="create-lvs-max-disk-limit">
+        <FormGroup label={t('lso-plugin~Maximum Disks Limit')} fieldId="create-lvs-max-disk-limit">
           <p className="help-block lso-create-lvs__max-disk-limit-help-text--margin">
             {t(
-              'lso-plugin~Disk limit will set the maximum number of PVs to create on a node. If the field is empty will create PVs for all available disks on the matching nodes.',
+              'lso-plugin~Disks limit will set the maximum number of PVs to create on a node. If the field is empty we will create PVs for all available disks on the matching nodes.',
             )}
           </p>
           <Tooltip
@@ -300,5 +300,6 @@ type LocalVolumeSetBodyProps = {
   diskModeOptions?: { [key: string]: string };
   deviceTypeOptions?: { [key: string]: string };
   allNodesHelpTxt?: string;
+  lvsNameHelpTxt?: string;
   taintsFilter?: (node: NodeKind) => boolean;
 };
