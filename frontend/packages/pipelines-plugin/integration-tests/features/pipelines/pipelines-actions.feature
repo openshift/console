@@ -147,7 +147,6 @@ Feature: Perform the actions on Pipelines page
              Then user will be redirected to Pipeline Run Details page
 
 
-        @odc-3991
         Scenario: Edit the workspace name for pipeline from pipelines page: P-06-TC14
             Given pipeline "pipe-edit-wp" is created with "git-wp" workspace
              When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp"
@@ -159,7 +158,6 @@ Feature: Perform the actions on Pipelines page
               And user will see workspace mentioned as "git-opt" in the Workspaces section of Pipeline Details page
 
 
-        @odc-3991
         Scenario: Update the pipeline workspace as optional from pipelines page: P-06-TC15
             Given pipeline "pipe-edit-wp-op" is created with "git-wp" workspace
              When user selects "Edit Pipeline" from the kebab menu for "pipe-edit-wp-op"

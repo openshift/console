@@ -137,7 +137,7 @@ Feature: Triggers
              Then user is able to see new pipeline run for "trigger-seven" in pipelines page
 
 
-        @smoke @odc-3991
+        @smoke
         Scenario Outline: Add the trigger to the pipeline with workspace from pipelines page: P-09-TC11
             Given user created pipeline "<pipeline_name>" with workspace
               And user created PVC using yaml "pipeline-persistentVolumeClaim.yaml"

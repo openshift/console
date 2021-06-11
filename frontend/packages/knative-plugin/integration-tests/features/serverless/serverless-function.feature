@@ -1,4 +1,4 @@
-@knative @odc-5399
+@knative
 Feature: Visualisation of serverless fuctions
               As a user, I should be able to differentiate between a plain Knative Service and a Serverless Function when looking at the Details page of the KSVC and the details tab of the side panel in Topology
 

@@ -1,4 +1,4 @@
-@guided-tour @odc-5010
+@guided-tour
 Feature: Access a code snippet from a quick start
               As a user, I want to be able to visualize seeing a CLI snippet in Quick Starts differently, able to copy it and if Web Terminal is installed, I should have an option to execute the command directly without having to copy/paste
 

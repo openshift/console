@@ -41,7 +41,7 @@ Feature: Create Application from Devfile
               And user is able to see workload "devfile-sample" in topology page
 
 
-        @odc-22 @regression @to-do
+        @regression @to-do
         Scenario: Create the Devfiles workload from Developer Catalog: A-04-TC04
             Given user is at Developer Catalog page
              When user clicks on Devfiles type

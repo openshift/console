@@ -19,7 +19,7 @@
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "env": {
-    "TAGS": "@smoke and not @manual and not @to-do",
+    "TAGS": "@smoke and not (@manual or @to-do or @un-verified)",
     "NAMESPACE": "aut-pipelines"
   },
   "retries": {

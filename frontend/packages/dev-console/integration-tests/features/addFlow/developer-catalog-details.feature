@@ -10,7 +10,7 @@ Feature: Developer Catalog Page
               And user has created or selected namespace "aut-addflow-pagedetails"
 
 
-        @regression, @odc-22, @to-do
+        @regression @to-do
         Scenario: Developer Catalog page - Default view: A-09-TC01
              When user clicks on All Services card in Developer Catalog section
              Then user will see All Items already selected
@@ -110,7 +110,7 @@ Feature: Developer Catalog Page
               And user will see all the categories except Languages on Developer Catalog page
 
 
-        @regression @manual @odc-22
+        @regression @manual
         Scenario: Devfiles on Developer Catalog: A-09-TC011
             Given user is at Developer Catalog page
              When user clicks on Devfiles type
