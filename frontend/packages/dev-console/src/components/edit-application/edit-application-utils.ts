@@ -43,12 +43,31 @@ import { getAutoscaleWindow } from '../import/serverless/serverless-utils';
 import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import { validationSchema as jarValidationSchema } from '../import/upload-jar-validation-utils';
 
-export enum CreateApplicationFlow {
+export enum ApplicationFlowType {
   Git = 'Import from Git',
   Dockerfile = 'Import from Dockerfile',
   Container = 'Deploy Image',
   JarUpload = 'Upload JAR file',
 }
+
+export const getFlowTypePageTitle = (flowType: ApplicationFlowType): string => {
+  switch (flowType) {
+    case ApplicationFlowType.Git:
+      // t('devconsole~Import from Git')
+      return 'devconsole~Import from Git';
+    case ApplicationFlowType.Dockerfile:
+      // t('devconsole~Import from Dockerfile')
+      return 'devconsole~Import from Dockerfile';
+    case ApplicationFlowType.Container:
+      // t('devconsole~Deploy Image')
+      return 'devconsole~Deploy Image';
+    case ApplicationFlowType.JarUpload:
+      // t('devconsole~Upload JAR file')
+      return 'devconsole~Upload JAR file';
+    default:
+      return flowType;
+  }
+};
 
 export enum BuildSourceType {
   Git = 'Git',
@@ -73,16 +92,16 @@ export const getResourcesType = (resource: K8sResourceKind): Resources => {
   }
 };
 
-export const getPageHeading = (buildStrategy: string, buildType?: string): string => {
+export const getFlowType = (buildStrategy: string, buildType?: string): ApplicationFlowType => {
   switch (buildStrategy) {
     case BuildStrategyType.Source:
       return buildType === BuildSourceType.Binary
-        ? CreateApplicationFlow.JarUpload
-        : CreateApplicationFlow.Git;
+        ? ApplicationFlowType.JarUpload
+        : ApplicationFlowType.Git;
     case BuildStrategyType.Docker:
-      return CreateApplicationFlow.Dockerfile;
+      return ApplicationFlowType.Dockerfile;
     default:
-      return CreateApplicationFlow.Container;
+      return ApplicationFlowType.Container;
   }
 };
 

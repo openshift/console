@@ -16,9 +16,9 @@ import { createOrUpdateDeployImageResources } from '../import/deployImage-submit
 import EditApplicationForm from './EditApplicationForm';
 import { EditApplicationProps } from './edit-application-types';
 import {
-  getPageHeading,
+  getFlowType,
   getInitialValues,
-  CreateApplicationFlow,
+  ApplicationFlowType,
   getValidationSchema,
 } from './edit-application-utils';
 import { createOrUpdateJarFile } from '../import/upload-jar-submit-utils';
@@ -40,7 +40,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const initialValues = getInitialValues(appResources, appName, namespace);
   const buildStrategy = _.get(initialValues, 'build.strategy', '');
   const buildSourceType = _.get(initialValues, 'build.source.type', undefined);
-  const pageHeading = getPageHeading(buildStrategy, buildSourceType);
+  const flowType = getFlowType(buildStrategy, buildSourceType);
   const validationSchema = getValidationSchema(buildStrategy, buildSourceType);
   const imageStreamsData =
     appResources.imageStreams && appResources.imageStreams.loaded
@@ -53,7 +53,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     if (values.build.strategy) {
       const imageStream =
         values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
-      if (pageHeading === CreateApplicationFlow.JarUpload) {
+      if (flowType === ApplicationFlowType.JarUpload) {
         const isNewFileUploaded = values.fileUpload.value !== '';
         return createOrUpdateJarFile(
           values,
@@ -123,29 +123,21 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       setBuilderImages(!_.isEmpty(allBuilderImages) ? allBuilderImages : null);
     };
 
-    if (
-      pageHeading === CreateApplicationFlow.Git ||
-      pageHeading === CreateApplicationFlow.JarUpload
-    ) {
+    if (flowType === ApplicationFlowType.Git || flowType === ApplicationFlowType.JarUpload) {
       getBuilderImages();
     }
 
     return () => {
       ignore = true;
     };
-  }, [
-    appResources.buildConfig.data,
-    appResources.buildConfig.loaded,
-    imageStreamsData,
-    pageHeading,
-  ]);
+  }, [appResources.buildConfig.data, appResources.buildConfig.loaded, imageStreamsData, flowType]);
 
   const renderForm = (formikProps: FormikProps<any>) => (
     <EditApplicationForm
       {...formikProps}
       appResources={appResources}
       enableReinitialize
-      createFlowType={pageHeading}
+      flowType={flowType}
       builderImages={builderImages}
     />
   );
