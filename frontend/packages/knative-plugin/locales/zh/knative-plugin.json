@@ -161,7 +161,7 @@
   "An error occurred. Please try again": "发生错误。请再试一次",
   "Add {{kind}}": "添加 {{kind}}",
   "Add": "添加",
-  "Delete {{revlabel}}?": "删除 {{revlabel}}?",
+  "Delete {{revlabel}}?": "删除{{revlabel}}?",
   "Are you sure you want to delete ": "您确定要删除 ",
   "from ": "从 ",
   "in namespace ": "在命名空间中 ",
@@ -194,5 +194,6 @@
   "Move sink to {{resourceObjKind}}": "将 sink 移到 {{resourceObjKind}}",
   "Move sink to URI": "将 sink 移到 URI",
   "Open URI": "打开 URI",
+  "Unable to create kafka connector as bootstrapServerHost or secret is not available in target resource.": "无法将 kafka 连接器创建为 bootstrapServerHost 或在目标资源中没有可用的 secret。",
   "Knative Services": "Knative 服务"
 }

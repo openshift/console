@@ -194,6 +194,7 @@
   "Move sink to {{resourceObjKind}}": "シンクを {{resourceObjKind}} に移動",
   "Move sink to URI": "シンクを URI に移動",
   "Open URI": "URI を開く",
+  "Unable to create kafka connector as bootstrapServerHost or secret is not available in target resource.": "bootstrapServerHost またはシークレットがターゲットリソースで利用できないため、kafka コネクターを作成できません。",
   "Knative Services": "Knative サービス",
   "Create Knative service": "Knative サービスの作成",
   "namespace": "namespace",

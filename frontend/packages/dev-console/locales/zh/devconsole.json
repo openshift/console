@@ -165,7 +165,7 @@
   "Pause rollouts for this {{resourceLabel}}": "暂停推出这个 {{resourceLabel}}",
   "Pausing lets you make changes without triggering a rollout. You can resume rollouts at any time.": "暂停可让您在不触发推出部署的情况下进行更改。您可以随时恢复推出部署。",
   "Required": "必需",
-  "Get started with a tour of some of the key areas in OpenShift {{version}} Developer perspective that can help you complete workflows and be more productive.": "开始介绍 OpenShift {{version}} 开发者视角中的一些主要区域的课程，以帮助您完成工作流并更加高效。",
+  "Get started with a tour of some of the key areas in OpenShift {{version}}'s Developer perspective that can help you complete workflows and be more productive.": "开始介绍 OpenShift {{version}} 开发者视角中的一些主要区域的课程，以帮助您完成工作流并更加高效。",
   "Switch between the Developer and Administrator perspectives.": "在开发者和管理员视角间进行切换。",
   "Use the Administrator perspective to manage workload storage, networking, cluster settings, and more. This may require additional user access.": "使用管理员视角管理工作负载存储、联网、集群设置等。这可能需要额外的用户访问权限。",
   "Use the Developer perspective to build applications and associated components and services, define how they work together, and monitor their health over time.": "使用开发者视角构建应用程序及关联的组件和服务，定义它们如何一起工作，并监控其健康状况。",
