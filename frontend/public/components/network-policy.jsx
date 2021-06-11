@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
@@ -198,14 +198,17 @@ const Details_ = ({ obj: np, flags }) => {
       <div className="co-m-pane__body">
         <SectionHeading text={t('network-policy~Ingress rules')} />
         <p className="co-m-pane__explanation">
-          {t(
-            'network-policy~Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:',
-          )}
-          <ExternalLink
-            href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-            text={t('network-policy~Network Policies documentation')}
-          />
-          .
+          <Trans ns="network-policy">
+            Pods accept all traffic by default. They can be isolated via Network Policies which
+            specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it
+            will reject all traffic not explicitly allowed via a Network Policy. See more details
+            in:{' '}
+            <ExternalLink
+              href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+              text={t('network-policy~Network Policies documentation')}
+            />
+            .
+          </Trans>
         </p>
         {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
           t('network-policy~All traffic is allowed to Pods in {{namespace}}', {
