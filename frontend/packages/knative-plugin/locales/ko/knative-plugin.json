@@ -1,4 +1,5 @@
 {
+  "Serverless": "서버리스",
   "Event Source": "이벤트 소스",
   "Create an Event source to register interest in a class of events from a particular system": "이벤트 소스를 생성하여 특정 시스템에서 관심있는 이벤트 클래스에 등록합니다.",
   "Channel": "채널",
@@ -7,7 +8,6 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "이벤트 소스는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다. 클러스터 관리자는 카탈로그에서 사용 가능한 콘텐츠를 사용자 지정할 수 있습니다.",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "** 이벤트 소스 **는 이벤트 생성자 및 이벤트 싱크 또는 소비자에 연결되는 개체입니다.",
   "Provider": "공급자",
-  "Serverless": "서버리스",
   "Serving": "제공",
   "Eventing": "이벤트",
   "Add Subscription": "서브스크립션 추가",

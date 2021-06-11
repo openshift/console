@@ -1,4 +1,5 @@
 {
+  "Serverless": "无服务器",
   "Event Source": "事件源",
   "Create an Event source to register interest in a class of events from a particular system": "创建一个事件源以注册对特定系统中的一类事件的兴趣",
   "Channel": "频道",
@@ -7,7 +8,6 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "事件源是链接到事件生成器和事件接收器或消费者的对象。集群管理员可以自定义目录中提供的内容。",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "**事件源**是链接到事件生成器和事件接收器或消费者的对象。",
   "Provider": "供应商",
-  "Serverless": "无服务器",
   "Serving": "服务",
   "Eventing": "事件",
   "Add Subscription": "添加订阅",

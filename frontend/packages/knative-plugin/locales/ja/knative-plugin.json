@@ -1,4 +1,5 @@
 {
+  "Serverless": "Serverless",
   "Event Source": "イベントソース",
   "Create an Event source to register interest in a class of events from a particular system": "特定のシステムから興味のあるイベント分野を登録するためにイベントソースを作成します",
   "Channel": "チャネル",
@@ -7,7 +8,6 @@
   "Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.": "イベントソースは、イベントプロデューサーとイベントシンクまたはコンシューマーにリンクするオブジェクトです。クラスター管理者は、カタログで利用可能にされるコンテンツをカスタマイズできます。",
   "**Event sources** are objects that link to an event producer and an event sink or consumer.": "**イベントソース** は、イベントプロデューサーとイベントシンクまたはコンシューマーにリンクするオブジェクトです。",
   "Provider": "プロバイダー",
-  "Serverless": "Serverless",
   "Serving": "サービス",
   "Eventing": "イベント",
   "Add Subscription": "サブスクリプションの追加",

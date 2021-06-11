@@ -7,6 +7,7 @@
   "Edit HorizontalPodAutoscaler": "Horizontal Pod Autoscaler の編集",
   "Remove HorizontalPodAutoscaler": "Horizontal Pod Autoscaler の削除",
   "Access Mode": "アクセスモード",
+  "Updating cluster to {{version}}": "クラスターの {{version}} への更新",
   "API Servers": "API サーバー",
   "Controller Managers": "コントローラーマネージャー",
   "Schedulers": "スケジューラー",
@@ -43,7 +44,7 @@
   "PersistentVolumeClaim details": "永続ボリューム要求の詳細",
   "StorageClass": "ストレージクラス",
   "Create VolumeSnapshot": "ボリュームスナップショットの作成",
-  "Creating snapshot for claim <1>{resourceName}</1>": "要求 <1>{resourceName}</1> のスナップショットの作成",
+  "Creating snapshot for claim <1>{pvcName}</1>": "要求 <1>{pvcName}</1> のスナップショットの作成",
   "PersistentVolumeClaim": "永続ボリューム要求",
   "Snapshot Class": "スナップショットクラス",
   "Create": "作成",
@@ -67,5 +68,6 @@
   "Cluster": "クラスター",
   "Control Plane": "コントロールプレーン",
   "Control Plane status": "コントロールプレーンのステータス",
-  "Cluster operators": "クラスター Operator "
+  "Cluster operators": "クラスター Operator ",
+  "Creating snapshot for claim <1>{resourceName}</1>": "要求 <1>{resourceName}</1> のスナップショットの作成"
 }
