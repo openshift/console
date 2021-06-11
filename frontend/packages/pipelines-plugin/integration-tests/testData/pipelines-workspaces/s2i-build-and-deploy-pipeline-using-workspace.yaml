@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: s2i-build-and-deploy
+  name: s2i-build-and-deploy-workspace
 spec:
   params:
     - name: IMAGE_NAME

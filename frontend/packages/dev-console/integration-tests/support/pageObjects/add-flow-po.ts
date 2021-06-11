@@ -269,7 +269,7 @@ export const channelPO = {
 };
 
 export const yamlPO = {
-  yamlEditor: '.yaml-editor',
+  yamlEditor: '.react-monaco-editor-container',
 };
 
 export const uploadJarFilePO = {

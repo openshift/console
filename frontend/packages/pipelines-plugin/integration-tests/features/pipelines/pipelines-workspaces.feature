@@ -3,7 +3,7 @@ Feature: Workspaces
               As a user, I want to add or remove secrets details to pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipelines"
+            Given user has created or selected namespace "aut-pipelines-workpsaces"
               And user is at pipelines page
 
 
@@ -17,16 +17,16 @@ Feature: Workspaces
 
         @regression
         Scenario: Types of volume present in shared workspace: P-10-TC02
-            Given user created pipeline with workspace
+            Given user created pipeline with workspace using yaml "testData/pipelines-workspaces/s2i-build-and-deploy-pipeline-using-workspace.yaml"
               And user is at pipelines page
-             When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
+             When user selects "Start" option from kebab menu for pipeline "s2i-build-and-deploy-workspace"
               And user selects shared workspaces dropdown
-             Then user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC
+             Then user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC, VolumeClaimTemplate
 
 
         @regression
         Scenario: Start the pipeline with "Empty Directory": P-10-TC03
-            Given pipeline "test-wp-pipeline" is created with workspace
+            Given user created pipeline "test-wp-pipeline" with workspace
              When user selects "Start" option from kebab menu for pipeline "test-wp-pipeline"
               And user selects volume type "Empty Directory" from workspaces dropdown
               And user clicks on Start
@@ -34,6 +34,7 @@ Feature: Workspaces
               And user will see "Empty Directory" in the Workspace Resources section of Pipeline Run Details page
 
 
+        @to-do
         Scenario: Start the pipeline with ConfigMap: P-10-TC04
             Given user created config map from "configMap-test-motd.yaml"
               And user created pipeline run using yaml "pipelineRun-using-optional-workspaces-in-when-expressions.yaml"
