@@ -14,9 +14,12 @@ const EventSourceIcon: React.FC = () => {
   return <img style={eventSourceIconStyle} src={eventSourceImg} alt="" />;
 };
 
-export const addEventSource: KebabAction = createKebabAction(
-  // t('knative-plugin~Event Source')
-  'knative-plugin~Event Source',
-  <EventSourceIcon />,
-  ImportOptions.EVENTSOURCE,
-);
+export const addEventSource: { id: string; action: KebabAction } = {
+  id: 'knative-event-source',
+  action: createKebabAction(
+    // t('knative-plugin~Event Source')
+    'knative-plugin~Event Source',
+    <EventSourceIcon />,
+    ImportOptions.EVENTSOURCE,
+  ),
+};
