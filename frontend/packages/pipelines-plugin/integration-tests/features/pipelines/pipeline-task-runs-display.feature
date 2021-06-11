@@ -58,7 +58,7 @@ Feature: Display task runs page
               And user is at Task Runs tab of pipeline run with all kind of Workspaces
              When user clicks on a task run associated with "<workspace_name>" "<resource>" Resources
              Then user is redirected to Task Run Details tab
-              And user will see "<workspace_type>" label with "<workspace_name>" Workspace "shared-task-storage" mentioned in the "<resource>" Resources section of Task Run Details page
+              And user will see "<workspace_type>" label with "<workspace_name>" Workspace mentioned in the "<resource>" Resources section of Task Run Details page
 
         Examples:
                   | pipeline_name | workspace_type        | workspace_name      | resource            |

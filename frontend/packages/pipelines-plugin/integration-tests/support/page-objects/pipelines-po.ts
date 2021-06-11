@@ -29,7 +29,7 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: 'select[id*="tasks-0-resources-inputs-0-resource-field"]',
+      inputResource: 'select[id*="resources-inputs-0-resource-field"]',
       workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
       parameterUrl: '[id$="tasks-0-params-0-value-field"]',
       parameterUrlHelper: '[id$="tasks-0-params-0-value-field-helper"]',

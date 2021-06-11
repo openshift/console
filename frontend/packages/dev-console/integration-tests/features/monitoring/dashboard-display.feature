@@ -19,10 +19,10 @@ Feature: Monitoring Page
         Scenario: Dashboard tab on the Monitoring page for particular workload: M-02-TC02
             Given user is at Add page
               And user has created workload "parks-test" with resource type "Deployment"
-              And user opened the url of the workload "national-parks-test" in topology page
+              And user opened the url of the workload "parks-test" in topology page
               And user is on Monitoring page
              When user clicks on "Dashboard" tab
-              And user selects the workload "national-parks-test" from the dropdown
+              And user selects the workload "parks-test" from the dropdown
              Then user will see the CPU Usage on Dashboard tab
               And user will see the Memory Usage on Dashboard tab
               And user will see Receive Bandwidth on Dashboard tab
@@ -36,8 +36,8 @@ Feature: Monitoring Page
         @regression
         Scenario: Dashboard tab on the Monitoring page for all workloads: M-02-TC03
             Given user is at Add page
-              And user has created workload "national-parks-test-1" with resource type "Deployment"
-              And user opened the url of the workload "national-parks-test-1" in topology page
+              And user has created workload "parks-test-1" with resource type "Deployment"
+              And user opened the url of the workload "parks-test-1" in topology page
               And user is on Monitoring page
              When user clicks on "Dashboard" tab
              Then user will see the dropdown selected with All Workloads by default

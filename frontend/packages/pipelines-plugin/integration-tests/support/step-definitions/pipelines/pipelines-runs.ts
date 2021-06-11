@@ -55,6 +55,7 @@ Then('page will be redirected to pipeline Run details page', () => {
 
 Then('user is able to see the pipelineRuns with status as {string}', (PipelineStatus: string) => {
   cy.contains('Running').should('not.exist');
+  app.waitForLoad();
   pipelineRunDetailsPage.fieldDetails('Status', PipelineStatus);
 });
 
