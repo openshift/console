@@ -229,11 +229,11 @@ export const checkRequiredValues = (
   isPoolManagementSupported: boolean,
 ): boolean => !poolName || !replicaSize || (isPoolManagementSupported && !volumeType);
 
-export enum FooterPrimaryActions {
-  CREATE = 'Create',
-  DELETE = 'Delete',
-  UPDATE = 'Save',
-}
+export const FooterPrimaryActions = (t: TFunction) => ({
+  CREATE: t('ceph-storage-plugin~Create'),
+  DELETE: t('ceph-storage-plugin~Delete'),
+  UPDATE: t('ceph-storage-plugin~Save'),
+});
 
 export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
   !!blockPoolConfig?.metadata.ownerReferences?.find(

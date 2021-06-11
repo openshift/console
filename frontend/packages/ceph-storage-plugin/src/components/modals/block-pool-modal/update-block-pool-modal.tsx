@@ -131,7 +131,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
               onSubmit={updatePool}
               cancel={cancel}
               close={close}
-              primaryAction={FooterPrimaryActions.UPDATE}
+              primaryAction={FooterPrimaryActions(t).UPDATE}
             />
           </ModalFooter>
         </>

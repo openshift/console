@@ -135,12 +135,12 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         label: t(`ceph-storage-plugin~${primaryAction}`),
         type: ButtonType.submit,
         variant:
-          primaryAction === FooterPrimaryActions.DELETE
+          primaryAction === FooterPrimaryActions(t).DELETE
             ? ButtonVariant.danger
             : ButtonVariant.primary,
         onClick: onSubmit,
         disable:
-          primaryAction !== FooterPrimaryActions.DELETE &&
+          primaryAction !== FooterPrimaryActions(t).DELETE &&
           checkRequiredValues(
             state.poolName,
             state.replicaSize,
@@ -174,7 +174,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
 type BlockPoolModalFooterProps = {
   state: BlockPoolState;
   dispatch: React.Dispatch<BlockPoolAction>;
-  primaryAction: FooterPrimaryActions;
+  primaryAction: string;
   onSubmit: () => void;
   cancel: () => void;
   close: () => void;

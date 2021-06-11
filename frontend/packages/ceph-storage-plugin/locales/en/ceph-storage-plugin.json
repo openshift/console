@@ -543,6 +543,7 @@
   "The creation of a StorageCluster is still in progress or has failed. Try again after the StorageCuster is ready to use.": "The creation of a StorageCluster is still in progress or has failed. Try again after the StorageCuster is ready to use.",
   "Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.": "Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.",
   "Pool {{name}} was created with errors.": "Pool {{name}} was created with errors.",
+  "Delete": "Delete",
   "hr": "hr",
   "min": "min",
   "A minimal cluster deployment will be performed.": "A minimal cluster deployment will be performed.",

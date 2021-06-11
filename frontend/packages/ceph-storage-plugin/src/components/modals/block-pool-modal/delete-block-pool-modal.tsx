@@ -106,7 +106,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
               </div>
             ) : state.poolStatus === POOL_PROGRESS.BOUNDED ? (
               <Trans t={t} ns="ceph-storage-plugin">
-                <p>
+                <p data-test="pool-bound-message">
                   <strong>{{ poolName }}</strong> cannot be deleted. When a pool is bounded to PVC
                   it cannot be deleted. Please detach all the resources from StorageClass(es):{' '}
                   <strong>{{ scNames }}</strong>.{' '}
@@ -128,7 +128,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
               onSubmit={deletePool}
               cancel={cancel}
               close={close}
-              primaryAction={FooterPrimaryActions.DELETE}
+              primaryAction={FooterPrimaryActions(t).DELETE}
             />
           </ModalFooter>
         </>
