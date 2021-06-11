@@ -792,7 +792,7 @@ export const Table = connect<
               role={virtualize ? 'presentation' : 'grid'}
               aria-label={virtualize ? null : ariaLabel}
             >
-              <TableHeader />
+              <TableHeader role="rowgroup" />
               {!virtualize && <TableBody />}
             </PfTable>
             {virtualize &&
