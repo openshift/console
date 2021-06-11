@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
-import { Button, Popover } from '@patternfly/react-core';
+import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
 import { Status, TableColumnsType } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -68,6 +68,11 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 
 // Key translations for oauth login templates
 // t('public~Log in to your account')
@@ -508,86 +513,97 @@ const getNetworkName = (result: PrometheusResult) =>
   // eslint-disable-next-line camelcase
   result?.metric?.network_name || 'unnamed interface';
 
-const PodGraphs = requirePrometheus(({ pod }) => {
+// TODO update to use QueryBrowser for each graph
+const PodMetrics = requirePrometheus(({ obj }) => {
   const { t } = useTranslation();
-  const chartTitles = {
-    memory: t('public~Memory usage'),
-    cpu: t('public~CPU usage'),
-    fs: t('public~Filesystem'),
-    networkIn: t('public~Network in'),
-    networkOut: t('public~Network out'),
-  };
   return (
-    <>
-      <div className="row">
-        <div className="col-md-12 col-lg-4">
-          <Area
-            title={chartTitles.memory}
-            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
-              title: chartTitles.memory,
-            })}
-            humanize={humanizeBinaryBytes}
-            byteDataType={ByteDataTypes.BinaryBytes}
-            namespace={pod.metadata.namespace}
-            query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
-            limitQuery={`sum(kube_pod_resource_limit{resource='memory',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'})`}
-            requestedQuery={`sum(kube_pod_resource_request{resource='memory',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-          />
-        </div>
-        <div className="col-md-12 col-lg-4">
-          <Area
-            title={chartTitles.cpu}
-            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
-              title: chartTitles.cpu,
-            })}
-            humanize={humanizeCpuCores}
-            namespace={pod.metadata.namespace}
-            query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-            limitQuery={`sum(kube_pod_resource_limit{resource='cpu',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'})`}
-            requestedQuery={`sum(kube_pod_resource_request{resource='cpu',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-          />
-        </div>
-        <div className="col-md-12 col-lg-4">
-          <Area
-            title={chartTitles.fs}
-            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
-              title: chartTitles.fs,
-            })}
-            humanize={humanizeBinaryBytes}
-            byteDataType={ByteDataTypes.BinaryBytes}
-            namespace={pod.metadata.namespace}
-            query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-          />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12 col-lg-4">
-          <Stack
-            title={chartTitles.networkIn}
-            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
-              title: chartTitles.networkIn,
-            })}
-            humanize={humanizeDecimalBytesPerSec}
-            namespace={pod.metadata.namespace}
-            query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-            description={getNetworkName}
-          />
-        </div>
-        <div className="col-md-12 col-lg-4">
-          <Stack
-            title={chartTitles.networkOut}
-            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
-              title: chartTitles.networkOut,
-            })}
-            humanize={humanizeDecimalBytesPerSec}
-            namespace={pod.metadata.namespace}
-            query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
-            description={getNetworkName}
-          />
-        </div>
-      </div>
-      <br />
-    </>
+    <Dashboard>
+      <Grid hasGutter>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Memory usage')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                ariaChartLinkLabel={t('public~View in query browser')}
+                humanize={humanizeBinaryBytes}
+                byteDataType={ByteDataTypes.BinaryBytes}
+                namespace={obj.metadata.namespace}
+                query={`sum(container_memory_working_set_bytes{pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}',container='',}) BY (pod, namespace)`}
+                limitQuery={`sum(kube_pod_resource_limit{resource='memory',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'})`}
+                requestedQuery={`sum(kube_pod_resource_request{resource='memory',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}) BY (pod, namespace)`}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~CPU usage')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                ariaChartLinkLabel={t('public~View in query browser')}
+                humanize={humanizeCpuCores}
+                namespace={obj.metadata.namespace}
+                query={`pod:container_cpu_usage:sum{pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}`}
+                limitQuery={`sum(kube_pod_resource_limit{resource='cpu',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'})`}
+                requestedQuery={`sum(kube_pod_resource_request{resource='cpu',pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}) BY (pod, namespace)`}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Filesystem')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                ariaChartLinkLabel={t('public~View in query browser')}
+                humanize={humanizeBinaryBytes}
+                byteDataType={ByteDataTypes.BinaryBytes}
+                namespace={obj.metadata.namespace}
+                query={`pod:container_fs_usage_bytes:sum{pod='${obj.metadata.name}',namespace='${obj.metadata.namespace}'}`}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Network in')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Stack
+                ariaChartLinkLabel={t('public~View in query browser')}
+                humanize={humanizeDecimalBytesPerSec}
+                namespace={obj.metadata.namespace}
+                query={`(sum(irate(container_network_receive_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+                description={getNetworkName}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Network out')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Stack
+                ariaChartLinkLabel={t('public~View in query browser')}
+                humanize={humanizeDecimalBytesPerSec}
+                namespace={obj.metadata.namespace}
+                query={`(sum(irate(container_network_transmit_bytes_total{pod='${obj.metadata.name}', namespace='${obj.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
+                description={getNetworkName}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+      </Grid>
+    </Dashboard>
   );
 });
 
@@ -707,7 +723,6 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Pod details')} />
-        <PodGraphs pod={pod} />
         <div className="row">
           <div className="col-sm-6">
             <PodResourceSummary pod={pod} />
@@ -776,6 +791,7 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
 
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
   // t('public~Terminal')
+  // t('public~Metrics')
   return (
     <DetailsPage
       {...props}
@@ -783,6 +799,11 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
       menuActions={menuActions}
       pages={[
         navFactory.details(Details),
+        {
+          href: 'metrics',
+          nameKey: 'public~Metrics',
+          component: PodMetrics,
+        },
         navFactory.editYaml(),
         navFactory.envEditor(PodEnvironmentComponent),
         navFactory.logs(PodLogs),

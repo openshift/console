@@ -526,6 +526,12 @@ $monitoring-line-height: 18px;
     padding-bottom: 0;
     padding-top: 0;
   }
+
+  &.query-browser__resource-metrics-wrapper {
+    border: none;
+    margin: var(--pf-global--spacer--lg) 0 0 0;
+    padding: 0;
+  }
 }
 
 .query-browser__zoom {

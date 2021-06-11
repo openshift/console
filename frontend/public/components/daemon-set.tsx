@@ -124,7 +124,7 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
     readOnly={false}
   />
 );
-const { details, pods, editYaml, envEditor, events } = navFactory;
+const { details, pods, editYaml, envEditor, events, metrics } = navFactory;
 export const DaemonSets: React.FC = (props) => {
   const { t } = useTranslation();
   const DaemonSetTableHeader = () => [
@@ -241,6 +241,7 @@ export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (prop
     menuActions={menuActions}
     pages={[
       details(detailsPage(DaemonSetDetails)),
+      metrics(),
       editYaml(),
       pods(DaemonSetPods),
       envEditor(EnvironmentTab),

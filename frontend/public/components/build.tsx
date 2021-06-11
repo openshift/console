@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Grid, GridItem } from '@patternfly/react-core';
 
 import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -44,6 +44,11 @@ import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
 import { BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -136,19 +141,20 @@ export const BuildNumberLink = ({ build }) => {
   return <Link to={resourcePath('Build', name, namespace)}>{title}</Link>;
 };
 
-const BuildGraphs = requirePrometheus(({ build }) => {
-  const podName = build.metadata.annotations?.['openshift.io/build.pod-name'];
+// TODO update to use QueryBrowser for each graph
+const BuildMetrics = requirePrometheus(({ obj }) => {
+  const podName = obj.metadata.annotations?.['openshift.io/build.pod-name'];
   if (!podName) {
     return null;
   }
-  const endTime = build.status.completionTimestamp
-    ? new Date(build.status.completionTimestamp).getTime()
+  const endTime = obj.status.completionTimestamp
+    ? new Date(obj.status.completionTimestamp).getTime()
     : Date.now();
-  const runTime = build.status.startTimestamp
-    ? endTime - new Date(build.status.startTimestamp).getTime()
+  const runTime = obj.status.startTimestamp
+    ? endTime - new Date(obj.status.startTimestamp).getTime()
     : ONE_HOUR;
   const timespan = Math.max(runTime, ONE_MINUTE); // Minimum timespan of one minute
-  const namespace = build.metadata.namespace;
+  const namespace = obj.metadata.namespace;
   const domain = React.useMemo(() => ({ x: [endTime - timespan, endTime] }), [endTime, timespan]);
   const areaProps = React.useMemo(
     () => ({
@@ -164,37 +170,55 @@ const BuildGraphs = requirePrometheus(({ build }) => {
 
   const { t } = useTranslation();
   return (
-    <>
-      <div className="row">
-        <div className="col-md-12 col-lg-4">
-          <Area
-            byteDataType={ByteDataTypes.BinaryBytes}
-            humanize={humanizeBinaryBytes}
-            query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
-            title={t('public~Memory usage')}
-            {...areaProps}
-          />
-        </div>
-        <div className="col-md-12 col-lg-4">
-          <Area
-            humanize={humanizeCpuCores}
-            query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
-            title={t('public~CPU usage')}
-            {...areaProps}
-          />
-        </div>
-        <div className="col-md-12 col-lg-4">
-          <Area
-            byteDataType={ByteDataTypes.BinaryBytes}
-            humanize={humanizeBinaryBytes}
-            query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
-            title={t('public~Filesystem')}
-            {...areaProps}
-          />
-        </div>
-      </div>
+    <Dashboard>
+      <Grid hasGutter>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Memory usage')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                byteDataType={ByteDataTypes.BinaryBytes}
+                humanize={humanizeBinaryBytes}
+                query={`sum(container_memory_working_set_bytes{pod='${podName}',namespace='${namespace}',container=''}) BY (pod, namespace)`}
+                {...areaProps}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~CPU usage')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                humanize={humanizeCpuCores}
+                query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
+                {...areaProps}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+        <GridItem xl={6} lg={12}>
+          <DashboardCard>
+            <DashboardCardHeader>
+              <DashboardCardTitle>{t('public~Filesystem')}</DashboardCardTitle>
+            </DashboardCardHeader>
+            <DashboardCardBody>
+              <Area
+                byteDataType={ByteDataTypes.BinaryBytes}
+                humanize={humanizeBinaryBytes}
+                query={`pod:container_fs_usage_bytes:sum{pod='${podName}',container='',namespace='${namespace}'}`}
+                {...areaProps}
+              />
+            </DashboardCardBody>
+          </DashboardCard>
+        </GridItem>
+      </Grid>
       <br />
-    </>
+    </Dashboard>
   );
 });
 
@@ -235,7 +259,6 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={build} />}
         <SectionHeading text={t('public~Build details')} />
-        <BuildGraphs build={build} />
         {hasPipeline && (
           <div className="row">
             <div className="col-xs-12">
@@ -355,6 +378,12 @@ export const BuildEnvironmentComponent = (props) => {
 
 const pages = [
   navFactory.details(BuildsDetails),
+  {
+    href: 'metrics',
+    // t('public~Metrics')
+    nameKey: 'public~Metrics',
+    component: BuildMetrics,
+  },
   navFactory.editYaml(),
   navFactory.envEditor(BuildEnvironmentComponent),
   navFactory.logs(BuildLogs),
