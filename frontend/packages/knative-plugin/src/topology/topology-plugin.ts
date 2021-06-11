@@ -151,5 +151,15 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       quadrant: TopologyDecoratorQuadrant.upperRight,
       decorator: applyCodeRefSymbol(getRevisionRouteDecorator),
     },
+    flags: {
+      required: [
+        FLAG_KNATIVE_SERVING_CONFIGURATION,
+        FLAG_KNATIVE_SERVING,
+        FLAG_KNATIVE_SERVING_REVISION,
+        FLAG_KNATIVE_SERVING_ROUTE,
+        FLAG_KNATIVE_SERVING_SERVICE,
+        FLAG_KNATIVE_EVENTING,
+      ],
+    },
   },
 ];
