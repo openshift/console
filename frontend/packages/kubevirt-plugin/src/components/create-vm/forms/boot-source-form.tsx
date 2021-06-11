@@ -42,6 +42,7 @@ import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
 import { BOOT_ACTION_TYPE, BootSourceAction, BootSourceState } from './boot-source-form-reducer';
+import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 
 type AdvancedSectionProps = {
   state: BootSourceState;
@@ -294,12 +295,16 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             id="file-upload"
             value={state.file?.value.value}
             filename={state.file?.value.name}
-            onChange={(file: File, name: string) =>
+            onChange={(file: File, name: string) => {
               dispatch({
                 type: BOOT_ACTION_TYPE.SET_FILE,
                 payload: { value: file, name },
-              })
-            }
+              });
+              dispatch({
+                type: BOOT_ACTION_TYPE.SET_PVC_SIZE,
+                payload: getGiBUploadPVCSizeByImage(state.file?.value?.value?.size).toString(),
+              });
+            }}
             hideDefaultPreview
             isRequired
             isDisabled={disabled}

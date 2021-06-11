@@ -55,6 +55,8 @@
   "Upload Data to Persistent Volume Claim": "Upload Data to Persistent Volume Claim",
   "detected file extension is {{fileNameExtension}}": "detected file extension is {{fileNameExtension}}",
   "no file extention detected": "no file extention detected",
+  "PVC size warning": "PVC size warning",
+  "PVC size is smaller than double the provided image, Please ensure your PVC size covers the requirements of the uncompressed image and any other space requirements": "PVC size is smaller than double the provided image, Please ensure your PVC size covers the requirements of the uncompressed image and any other space requirements",
   "File type extension": "File type extension",
   "Based on the file extension it seems like you are trying to upload a file which is not supported ({{fileNameExtText}}).": "Based on the file extension it seems like you are trying to upload a file which is not supported ({{fileNameExtText}}).",
   "Learn more about supported formats": "Learn more about supported formats",

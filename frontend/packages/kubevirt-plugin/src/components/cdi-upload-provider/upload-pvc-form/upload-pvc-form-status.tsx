@@ -37,6 +37,7 @@ export enum uploadErrorType {
   ALLOCATE = 'allocate',
   CERT = 'cert',
   CDI_INIT = 'cdi_init',
+  PVC_SIZE = 'pvc_size',
 }
 
 export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
