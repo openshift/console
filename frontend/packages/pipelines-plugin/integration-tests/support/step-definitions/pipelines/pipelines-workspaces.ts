@@ -8,6 +8,7 @@ import {
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
+import { yamlEditor } from '@console/dev-console/integration-tests/support/pages';
 
 When('user enters yaml content {string} in editor', (pipelineYamlFile: string) => {
   cy.fixture(`pipelines/pipelines-workspaces/${pipelineYamlFile}`).then((yaml) => {
@@ -26,12 +27,12 @@ Given('user is at Edit Yaml page', () => {
 
 Given('user created pipeline with workspace', () => {
   pipelineBuilderPage.clickYaml();
-  pipelineBuilderPage.selectSampleInYamlView('s2i-build-and-deploy-pipeline-using-workspace');
-  // Instead of copy parseTwoDigitYear, we are using samples
-  // cy.fixture(`pipelines/pipelines-workspaces/pipeline-with-workspace.yaml`).then((yaml) => {
-  //   cy.log(yaml);
-  //   pipelineBuilderPage.enterYaml(yaml);
-  // });
+  yamlEditor.isLoaded();
+  pipelinesPage.clearYAMLEditor();
+  pipelinesPage.setEditorContent(
+    `testData/pipeline-workspaces/s2i-build-and-deploy-pipeline-using-workspace.yaml`,
+  );
+  cy.get(pipelineBuilderPO.create).click();
   cy.get(pipelineBuilderPO.yamlCreatePipeline.create).click();
 });
 

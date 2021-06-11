@@ -85,8 +85,7 @@ When('user adds another task {string} in series', (taskName: string) => {
   pipelineBuilderPage.selectSeriesTask(taskName);
   pipelineBuilderPage.addResource('git resource');
   pipelineBuilderPage.clickOnTask(taskName);
-  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
-  cy.byTestDropDownMenu('git resource').click();
+  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select('git resource');
   pipelineBuilderPage.clickCreateButton();
 });
 
@@ -106,6 +105,15 @@ When('user adds the image name to the pipeline task {string}', (pipelineTaskName
   cy.get(pipelineBuilderPO.formView.sidePane.imageName).type('openshift/hello-openshift');
   sidePane.close();
 });
+
+When(
+  'user adds the workspace {string} to the pipeline task {string}',
+  (workspaceName: string, pipelineTaskName: string) => {
+    pipelineBuilderPage.clickOnTask(pipelineTaskName);
+    pipelineBuilderSidePane.selectWorkspace(workspaceName);
+    sidePane.close();
+  },
+);
 
 When('user selects YAML view', () => {
   pipelineBuilderPage.clickYaml();
