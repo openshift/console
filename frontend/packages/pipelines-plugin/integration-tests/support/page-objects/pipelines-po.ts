@@ -174,7 +174,7 @@ export const pipelineRunDetailsPO = {
   detailsTab: '[data-test-id$="Details"]',
   taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
   eventsTab: '[data-test-id$="Events"]',
-  pipelineRunStatus: 'h1 [data-test="status-text"]',
+  pipelineRunStatus: '[data-test="resource-status"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
     sectionTitle: '[data-test-section-heading="PipelineRun details"]',
@@ -183,6 +183,7 @@ export const pipelineRunDetailsPO = {
     workspacesResources: {
       volumeClaimTemplateResources: '[data-test-id="volumeClaimTemplate-resources-section"]',
       emptyDirectory: '[data-test-id="empty-directory-workspace"]',
+      pvcIcon: '[title="PersistentVolumeClaim"]',
     },
   },
   yaml: {
@@ -224,6 +225,7 @@ export const pipelinesPO = {
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',
+    lastRunStatus: '[data-test="status-text"]',
   },
   addTrigger: {
     add: '#confirm-action',

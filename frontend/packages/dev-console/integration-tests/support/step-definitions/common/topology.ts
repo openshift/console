@@ -3,6 +3,7 @@ import { topologyPage } from '@console/topology/integration-tests/support/pages/
 import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
+import { pageTitle } from '../../constants';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -37,5 +38,5 @@ Then('user can see sidebar opens with Resources tab selected by default', () => 
 
 Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
-  topologySidePane.verifySection('Pipeline Runs');
+  topologySidePane.verifySection(pageTitle.PipelineRuns);
 });

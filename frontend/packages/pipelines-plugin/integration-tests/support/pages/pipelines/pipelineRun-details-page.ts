@@ -11,10 +11,7 @@ import { pipelineActions } from '../../constants';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {
-    cy.get(pipelineRunDetailsPO.details.sectionTitle).should(
-      'have.text',
-      pageTitle.PipelineRunDetails,
-    );
+    cy.contains(pageTitle.PipelineRunDetails).should('be.visible');
     cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
   verifyPipelineRunStatus: (status: string) =>
@@ -44,11 +41,11 @@ export const pipelineRunDetailsPage = {
     }
   },
   verifyTabs: () => {
-    cy.get(pipelineRunDetailsPO.detailsTab).should('have.text', 'Details');
-    cy.get(pipelineRunDetailsPO.yamlTab).should('have.text', 'YAML');
-    cy.get(pipelineRunDetailsPO.taskRunsTab).should('have.text', 'Task Runs');
-    cy.get(pipelineRunDetailsPO.logsTab).should('have.text', 'Logs');
-    cy.get(pipelineRunDetailsPO.eventsTab).should('have.text', 'Events');
+    cy.get(pipelineRunDetailsPO.detailsTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.yamlTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.taskRunsTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.logsTab).should('be.visible');
+    cy.get(pipelineRunDetailsPO.eventsTab).should('be.visible');
   },
   verifyFields: () => {
     cy.get('[data-test-id="resource-summary"]').within(() => {
@@ -155,7 +152,9 @@ export const pipelineRunsPage = {
         throw new Error('operator is not available');
       }
     }
-    cy.byButtonText('Clear all filters').should('be.visible');
+    cy.byLegacyTestID('filter-dropdown-toggle')
+      .find('button')
+      .click();
   },
   verifyStatusInPipelineRunsTable: (status: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.status).should('have.text', status);

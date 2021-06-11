@@ -1,5 +1,7 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
+import { app } from '../pages';
+
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 
 declare global {
@@ -79,7 +81,10 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
-  cy.byLegacyTestID('actions-menu-button').click();
+  cy.byLegacyTestID('actions-menu-button')
+    .should('be.visible')
+    .click();
+  app.waitForLoad();
   cy.byTestActionID(actionsMenuOption)
     .should('be.visible')
     .click();

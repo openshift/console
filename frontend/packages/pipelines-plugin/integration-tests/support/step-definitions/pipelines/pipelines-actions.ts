@@ -6,12 +6,13 @@ import {
 } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import {
-  pipelineBuilderPO,
-  pipelineRunDetailsPO,
-  pipelinesPO,
-} from '../../page-objects/pipelines-po';
-import { pipelinesPage, pipelineBuilderPage, pipelineDetailsPage } from '../../pages';
+  pipelinesPage,
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  pipelineRunDetailsPage,
+} from '../../pages';
 import { pipelineActions } from '../../constants';
 import { actionsDropdownMenu } from '../../pages/functions/common';
 
@@ -29,8 +30,7 @@ Given('pipeline with task {string} is present on Pipelines page', (pipelineName:
 When(
   'user selects {string} option from kebab menu of {string}',
   (kebabMenuOption: string, pipelineName: string) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(kebabMenuOption).click();
+    pipelinesPage.selectActionForPipeline(pipelineName, kebabMenuOption);
   },
 );
 
@@ -226,7 +226,8 @@ Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {
-  cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
+  pipelineRunDetailsPage.verifyTitle();
+  pipelineRunDetailsPage.selectTab('Details');
 });
 
 Then('user is able to see pipeline run in topology side bar', () => {

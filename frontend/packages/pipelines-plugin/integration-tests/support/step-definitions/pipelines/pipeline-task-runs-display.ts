@@ -2,6 +2,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { When, Then, Given } from 'cypress-cucumber-preprocessor/steps';
+import { pipelineActions } from '../../constants';
 import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages';
 import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
@@ -35,8 +36,7 @@ Then('user can see Name, Task, Pod, Status and Started columns', () => {
 Given(
   'pipeline {string} is executed with workspace type {string}',
   (pipelineName: string, workspaceType: string) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID('Start').click();
+    pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
     modal.modalTitleShouldContain('Start Pipeline');
     startPipelineInPipelinesPage.selectWorkSpace(workspaceType);
     switch (workspaceType) {

@@ -18,6 +18,7 @@ import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
 import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { pipelineActions } from '../../constants';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -88,17 +89,16 @@ Then('Add pipeline section is displayed', () => {
 
 Given('pipeline {string} is executed for 5 times', (pipelineName: string) => {
   pipelinesPage.search(pipelineName);
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   pipelineRunDetailsPage.verifyTitle();
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
-  cy.selectActionsMenuOption('Rerun');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
-  cy.selectActionsMenuOption('Rerun');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
-  cy.selectActionsMenuOption('Rerun');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
-  cy.selectActionsMenuOption('Rerun');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
 });
 

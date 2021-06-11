@@ -3,7 +3,7 @@ Feature: Pipeline Runs
               As a user, I want to start pipeline, rerun, delete pipeline run
 
         Background:
-            Given user has created or selected namespace "aut-pipelines"
+            Given user has created or selected namespace "aut-pipelines-runs"
               And user is at pipelines page
 
 
@@ -17,7 +17,7 @@ Feature: Pipeline Runs
 
         Examples:
                   | pipeline_name         | task_name        |
-                  | pipeline-git-resoruce | openshift-client |
+                  | pipeline-git-resource | openshift-client |
 
 
         @smoke
@@ -29,24 +29,13 @@ Feature: Pipeline Runs
               And user enters revision as "master" in start pipeline modal
               And user clicks Start button in start pipeline modal
              Then user will be redirected to Pipeline Run Details page
-              And user is able to see the pipelineRuns with status as "Running"
+              And user is able to see the pipelineRuns with status as Running
               And pipeline run details for "<pipeline_name>" display in Pipelines page
+              And Last Run status of the "<pipeline_name>" displays as "Succeeded"
 
         Examples:
                   | pipeline_name | task_name        |
                   | pipe-task     | openshift-client |
-
-
-        @regression
-        Scenario Outline: Last Run Status of pipeline in pipelines page after starting pipeline Run: P-07-TC03
-            Given pipeline run is displayed for "<pipeline_name>" with resource
-              And user is at pipelines page
-             When user navigates to Pipelines page
-             Then Last Run status of the "<pipeline_name>" displays as "Running"
-
-        Examples:
-                  | pipeline_name |
-                  | pipe-task-1   |
 
 
         @smoke
@@ -69,7 +58,7 @@ Feature: Pipeline Runs
             Given pipeline run is displayed for "pipeline-rerun-0" without resource
               And user is at the Pipeline Run Details page of pipeline "pipeline-rerun-0"
              When user clicks Actions menu on the top right corner of the page
-             Then Actions menu display with the options "Rerun", "Delete Pipeline Run"
+             Then Actions menu display with the options "Rerun", "Delete PipelineRun"
 
 
         @regression
@@ -108,18 +97,20 @@ Feature: Pipeline Runs
 
         Examples:
                   | pipeline_name          |
-                  | pipeline-with-resoruce |
+                  | pipeline-with-resource |
 
 
+        @to-do
+        # Marking it as to-do due to flakiness
         Scenario Outline: Filter the pipeline runs based on status: P-07-TC09
             Given pipeline "<pipeline_name>" is executed for 3 times
               And user is at pipelines page
              When user filters the pipeline runs of pipeline "<pipeline_name>" based on the "<status>"
-             Then user is able to see the pipelineRuns with status as "<status>"
+             Then user is able to see the filtered results with pipelineRuns status "<status>"
 
         Examples:
                   | pipeline_name             | status    |
-                  | pipeline-without-resoruce | Succeeded |
+                  | pipeline-without-resource | Succeeded |
 
 
         @smoke
@@ -140,7 +131,7 @@ Feature: Pipeline Runs
 
         @regression @manual
         Scenario: Download the logs from Pipeline Details page: P-07-TC12
-            Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
+            Given pipeline run is displayed for "pipe-task-with-resource" with resource
              When user navigates to pipelineRun logs tab
               And user clicks on Download button
              Then user is able to see the downloaded file
@@ -149,7 +140,7 @@ Feature: Pipeline Runs
 
         @regression @manual
         Scenario: Expand the logs page: P-07-TC13
-            Given pipeline run is displayed for "pipe-task-with-resoruce" with resource
+            Given pipeline run is displayed for "pipe-task-with-resource" with resource
              When user navigates to pipelineRun logs tab
               And user clicks on Expand button
              Then user is able to see expanded logs page
@@ -174,16 +165,18 @@ Feature: Pipeline Runs
              Then user is able to see pipeline run in topology side bar
 
 
+        @manual
         Scenario: Maximum pipeline runs display in topology page: P-07-TC16
-            Given user created workload "nodejs-last-run" from add page with pipeline
+            Given user created workload "nodejs-last-run-1" from add page with pipeline
               And user is at pipelines page
-              And pipeline "nodejs-ex-git-1" is executed for 5 times
-             When user clicks node "nodejs-ex-git-1" to open the side bar
+              And pipeline "nodejs-last-run-1" is executed for 5 times
+             When user clicks node "nodejs-last-run-1" to open the side bar
              Then side bar is displayed with the pipelines section
               And 3 pipeline runs are displayed under pipelines section of topology page
               And View all link is displayed
 
 
+        @manual
         Scenario: Start the pipeline with cancelled tasks: P-07-TC17
             Given pipeline "pipeline-three" is present on Pipeline Details page
               And pipeline run is available with cancelled tasks for pipeline "pipeline-three"
@@ -192,6 +185,7 @@ Feature: Pipeline Runs
               And user is able to see the pipelineRuns with status as "Running"
 
 
+        @manual
         Scenario: Start the pipeline with failed tasks: P-07-TC18
             Given pipeline "pipeline-four" is present on Pipeline Details page
               And pipeline run is available with failed tasks for pipeline "pipeline-four"
@@ -200,26 +194,13 @@ Feature: Pipeline Runs
               And user is able to see the pipelineRuns with status as "Running"
 
 
+        @manual
         Scenario: Start the pipeline with successful tasks: P-07-TC19
             Given pipeline "pipeline-five" is present on Pipeline Details page
-              And pipeline run is available with failed tasks for pipeline "pipeline-five"
+              And pipeline run is available with successful tasks for pipeline "pipeline-five"
              When user selects "Start" option from kebab menu for pipeline "pipeline-five"
              Then user will be redirected to Pipeline Run Details page
               And user is able to see the pipelineRuns with status as "Running"
-
-
-        @regression
-        Scenario Outline: Pipeline status display in topology side bar: P-07-TC20
-            Given user created workload "<pipeline_name>" from add page with pipeline
-              And user is at pipelines page
-             When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
-              And user starts the pipeline from start pipeline modal
-              And user navigates to Topology page
-             Then Last Run status of the "<pipeline_name>" displays as "Succeeded" in topology page
-
-        Examples:
-                  | pipeline_name |
-                  | p-sidebar     |
 
 
         @regression @manual
@@ -257,7 +238,7 @@ Feature: Pipeline Runs
               And user will also see the log snippet
 
 
-        @regression @odc-3991
+        @regression
         Scenario: Start pipeline modal with different Workspaces: P-07-TC24
             Given pipeline "pipeline-workspace" is created with "git-PVC" workspace
              When user selects "Start" option from kebab menu for pipeline "pipeline-workspace"
@@ -266,9 +247,9 @@ Feature: Pipeline Runs
              Then user sees option Empty Directory, Config Map, Secret, PersistentVolumeClaim, VolumeClaimTemplate
 
 
-        @regression @manual @odc-3991
+        @regression @manual
         Scenario: Show VolumeClaimTemplate options: P-07-TC25
-            Given pipeline "pipevc-no-workspace" with at least one workspace and no previous Pipeline Runs
+            Given pipeline "pipevc-no-workspace" with at least one workspace "vct" and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipevc-no-workspace"
               And user navigates to Workspaces section
               And user clicks Show VolumeClaimTemplate options
@@ -278,16 +259,17 @@ Feature: Pipeline Runs
               And user can see Volume Mode
 
 
-        @regression @odc-3991
-        Scenario: Create PVC workspace in Start pipeline modal: P-07-TC26
-            Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
-             When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
+        @regression
+        Scenario: Create VolumeClaimTemplate workspace in Start pipeline modal: P-07-TC26
+            Given pipeline "new-pipeline-vc" with at least one workspace "vct" and no previous Pipeline Runs
+             When user selects "Start" option from kebab menu for pipeline "new-pipeline-vc"
               And user navigates to Workspaces section
               And user selects "VolumeClaimTemplate" option from workspace dropdown
               And user clicks Show VolumeClaimTemplate options
+              And user selects StorageClass as "gp2"
               And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
-              And user will see PVC Workspace "workspace-ex" mentioned in the VolumeClaimTemplate Resources section of Pipeline Run Details page
+              And user will see VolumeClaimTemplate Workspace in Pipeline Run Details page
 
 
         @regression @manual
@@ -317,7 +299,7 @@ Feature: Pipeline Runs
              Then user can see Name and Value column under Pipeline Run results
 
 
-        @regression @to-do
+        @regression @manual
         Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run: P-07-TC30
             #Run oc apply -f ../../testData/pipelines-workspaces/sum-three-pipeline.yaml
             Given user has failed pipeline run for pipeline "sum-three-pipeline-run"
