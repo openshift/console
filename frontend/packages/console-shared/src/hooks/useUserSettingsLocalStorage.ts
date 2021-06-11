@@ -76,8 +76,13 @@ export const useUserSettingsLocalStorage = <T>(
           url: window.location.toString(),
         });
 
-        // update storage
-        storage.setItem(storageKey, newValue);
+        try {
+          // update storage
+          storage.setItem(storageKey, newValue);
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.error(`Error while updating local storage for key ${storageKey}`, err);
+        }
 
         // dispatch storage event
         window.dispatchEvent(event);
