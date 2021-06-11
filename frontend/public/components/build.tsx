@@ -231,7 +231,7 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
       variant="info"
       title={t('public~Pipeline build strategy deprecation')}
     >
-      <Trans i18nKey="public~pipelineBuildStrategyAlert">
+      <Trans t={t} ns="public">
         With the release of{' '}
         <ExternalLink
           href="https://openshift.github.io/pipelines-docs/"

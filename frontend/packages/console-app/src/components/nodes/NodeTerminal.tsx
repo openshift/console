@@ -97,7 +97,7 @@ const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
 const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
-    <Trans i18nKey="host binaries" ns="nodes">
+    <Trans t={t} ns="nodes">
       <p>
         To use host binaries, run <code>chroot /host</code>
       </p>

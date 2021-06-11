@@ -122,7 +122,7 @@ export const NSModal = withHandlePromise(
             t('kubevirt-plugin~Node Selector has been updated outside this flow.')
           }
           infoMessage={
-            <Trans t={t} i18nKey="nodeSelectorModal" ns="kubevirt-plugin">
+            <Trans t={t} ns="kubevirt-plugin">
               Saving these changes will override any Node Selector previously saved.
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>

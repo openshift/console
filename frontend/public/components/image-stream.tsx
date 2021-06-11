@@ -181,7 +181,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
-            <Trans i18nKey="public~use the equivalent podman commands">
+            <Trans t={t} ns="public">
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>

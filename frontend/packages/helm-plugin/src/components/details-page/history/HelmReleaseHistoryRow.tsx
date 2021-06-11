@@ -22,7 +22,7 @@ const confirmModalRollbackHelmRelease = (
   t: TFunction,
 ) => {
   const message = (
-    <Trans i18nKey="confirmModalRollbackHelmReleaseKey" ns="helm-plugin">
+    <Trans t={t} ns="helm-plugin">
       Are you sure you want to rollback <strong>{{ releaseName }}</strong> to{' '}
       <strong>Revision {{ revision }}</strong>?
     </Trans>
