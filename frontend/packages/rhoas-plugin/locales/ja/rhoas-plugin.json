@@ -50,9 +50,9 @@
   "Create a Kafka connector": "Kafka コネクターの作成",
   "Create a binding connector": "バインディングコネクターの作成",
   "No data": "データなし",
-  "Kafka Connection": "Kafka 接続",
   "Cloud Service": "クラウドサービス",
   "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。",
   "Details": "詳細",
-  "Resources": "リソース"
+  "Resources": "リソース",
+  "Kafka Connection": "Kafka 接続"
 }

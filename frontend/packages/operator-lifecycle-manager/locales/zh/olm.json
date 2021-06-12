@@ -1,7 +1,7 @@
 {
   "Operator Backed": "Operator 支持的",
   "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "查看集群管理员安装的各种受管服务。集群管理员可以自定义目录中提供的内容。",
-  "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Ooperator 支持的** 包括由 Kubernetes 控制器管理的各种服务。",
+  "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Operator 支持的** 包括由 Kubernetes 控制器管理的各种服务。",
   "OperatorHub": "OperatorHub",
   "Installed Operators": "安装的 Operators",
   "Disable": "禁用",

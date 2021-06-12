@@ -50,7 +50,6 @@
   "Create a Kafka connector": "创建一个 Kafka 连接器",
   "Create a binding connector": "创建一个绑定连接器",
   "No data": "没有数据",
-  "Kafka Connection": "Kafka 连接",
   "Cloud Service": "云服务",
   "This resource represents service that exist outside your cluster": "此资源代表集群外存在的服务",
   "Details": "详情",

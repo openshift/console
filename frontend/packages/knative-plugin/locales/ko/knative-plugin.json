@@ -146,7 +146,7 @@
   "Revisions": "개정 버전",
   "View all ({{revLength}})": "모두보기 ({{revLength}})",
   "No Revisions found for this resource.": "이 리소스에 대한 개정 버전이 없습니다.",
-  "Routes": "라우팅",
+  "Routes": "경로",
   "No Routes found for this resource.": "이 리소스의 경로를 찾을 수 없습니다.",
   "Location": "위치",
   "Unique Route": "고유 라우팅",

@@ -1,5 +1,5 @@
 {
-  "VolumeSnapshotContents": "볼륨 스냅샷 내용",
+  "VolumeSnapshotContents": "볼륨 스냅샷 컨텐츠",
   "Edit resource limits": "리소스 제한 편집",
   "Add Health Checks": "상태 검사 추가",
   "Edit Health Checks": "상태 검사 편집",
@@ -41,6 +41,7 @@
   "API version": "API 버전",
   "Restore": "복원",
   "VolumeSnapshotClass with same provisioner as claim": "클레임과 동일한 프로비저너를 사용하는 볼륨 스냅샷 클래스",
+  "Select volume snapshot class": "볼륨 스냅 샷 클래스 선택",
   "PersistentVolumeClaim details": "영구 볼륨 클레임 세부 정보",
   "StorageClass": "스토리지 클래스",
   "Create VolumeSnapshot": "볼륨 스냅샷 만들기",
@@ -61,7 +62,7 @@
   "SnapshotClass": "스냅샷 클래스",
   "VolumeSnapshot details": "볼륨 스냅샷 세부 정보",
   "Source": "소스",
-  "VolumeSnapshotContent": "볼륨 스냅샷 내용",
+  "VolumeSnapshotContent": "볼륨 스냅샷 컨텐츠",
   "Snapshot content": "스냅샷 내용",
   "VolumeSnapshots": "볼륨 스냅샷",
   "Administrator": "관리자",

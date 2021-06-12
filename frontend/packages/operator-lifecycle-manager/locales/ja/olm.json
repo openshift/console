@@ -304,7 +304,7 @@
   "Each Namespace can subscribe to a single channel of a package for automatic updates.": "各 namespace は、自動更新を行うためにパッケージの単一チャネルにサブスクライブできます。",
   "Create Subscription": "サブスクリプションの作成",
   "Subscriptions by package": "パッケージ別のサブスクリプション",
-  "InstallPlan failed": "InstalPlan に失敗しました",
+  "InstallPlan failed": "InstallPlan に失敗しました",
   "CatalogSource removed": "カタログソースが削除されました",
   "The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.": "この Operator のカタログソースは削除されました。この Operator がすべての更新を受け取るには、カタログソースを再び追加する必要があります。",
   "Subscription details": "サブスクリプションの詳細",
