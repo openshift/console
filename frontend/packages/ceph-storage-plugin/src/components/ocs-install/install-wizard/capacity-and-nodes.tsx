@@ -90,9 +90,20 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispa
 
   return (
     <Checkbox
-      label={t('ceph-storage-plugin~Enable taint nodes')}
+      label={
+        <>
+          {t('ceph-storage-plugin~Mark nodes as dedicated')}{' '}
+          <FieldLevelHelp>
+            <Trans t={t} ns="ceph-storage-plugin">
+              This will taint the nodes with the
+              <code>key: node.ocs.openshift.io/storage</code>, <code>value: true</code>, and{' '}
+              <code>effect: NoSchedule</code>
+            </Trans>
+          </FieldLevelHelp>
+        </>
+      }
       description={t(
-        "ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Container Storage's use only",
+        'ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Container Storage use only',
       )}
       className="ocs-enable-taint"
       id="taint-nodes"
