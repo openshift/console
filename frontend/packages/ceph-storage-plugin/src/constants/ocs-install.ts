@@ -23,6 +23,7 @@ export const OCS_PROVISIONERS = [
   'cephfs.csi.ceph.com',
   'rbd.csi.ceph.com',
   'noobaa.io/obc',
+  'ceph.rook.io/bucket',
 ];
 
 export enum CLUSTER_STATUS {
