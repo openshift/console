@@ -26,18 +26,6 @@
     font-size: var(--pf-global--spacer--md) !important;
   }
 
-  a.pf-c-simple-list__item-link {
-    &:hover .odc-add-card-item__title {
-      color: var(--pf-c-simple-list__item-link--hover--Color);
-    }
-    &:focus .odc-add-card-item__title {
-      color: var(--pf-c-simple-list__item-link--focus--Color);
-    }
-    &:active .odc-add-card-item__title {
-      color: var(--pf-c-simple-list__item-link--active--Color);
-    }
-  }
-
   &__description {
     margin: var(--pf-global--spacer--sm) 0 0 var(--pf-global--spacer--sm);
     color: var(--pf-global--Color--200);

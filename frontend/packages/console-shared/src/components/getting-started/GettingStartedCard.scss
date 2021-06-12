@@ -34,15 +34,14 @@
           text-decoration: none;
         }
 
-        // Override default style for a:hover, a:focus from scaffolding.scss
-        a.pf-c-simple-list__item-link:hover {
-          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--hover--Color);
-        }
-        a.pf-c-simple-list__item-link:focus {
-          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--focus--Color);
-        }
-        a.pf-c-simple-list__item-link:active {
-          --pf-global--link--Color--hover: var(--pf-c-simple-list__item-link--active--Color);
+        // Override default style for button and a:hover, focus from scaffolding.scss
+        a.pf-c-simple-list__item-link:hover,
+        a.pf-c-simple-list__item-link:focus,
+        a.pf-c-simple-list__item-link:active,
+        button.pf-c-simple-list__item-link:hover,
+        button.pf-c-simple-list__item-link:focus,
+        button.pf-c-simple-list__item-link:active {
+          color: var(--pf-global--Color--100);
         }
       }
     }
