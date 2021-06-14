@@ -6,8 +6,8 @@ import { HealthCheckProbeData, RequestType, HealthChecksProbeType } from './heal
 
 export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Resources) => {
   const probeData = {
-    ...(data.failureThreshold && { failureThreshold: data.failureThreshold }),
-    ...(data.successThreshold && { successThreshold: data.successThreshold }),
+    ...(data.failureThreshold && { failureThreshold: _.toInteger(data.failureThreshold) }),
+    ...(data.successThreshold && { successThreshold: _.toInteger(data.successThreshold) }),
     ...(data.requestType === RequestType.ContainerCommand && {
       exec: data.exec,
     }),
@@ -26,10 +26,10 @@ export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Re
       },
     }),
     ...(data.initialDelaySeconds && {
-      initialDelaySeconds: data.initialDelaySeconds,
+      initialDelaySeconds: _.toInteger(data.initialDelaySeconds),
     }),
-    ...(data.periodSeconds && { periodSeconds: data.periodSeconds }),
-    ...(data.timeoutSeconds && { timeoutSeconds: data.timeoutSeconds }),
+    ...(data.periodSeconds && { periodSeconds: _.toInteger(data.periodSeconds) }),
+    ...(data.timeoutSeconds && { timeoutSeconds: _.toInteger(data.timeoutSeconds) }),
   };
   return probeData;
 };
