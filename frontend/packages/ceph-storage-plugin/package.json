@@ -26,7 +26,9 @@
     },
     "exposedModules": {
       "alert": "./src/utils/alert-action-path.tsx",
-      "storageProvider": "./src/components/attach-obc/attach-obc-deployment.tsx"
+      "storageProvider": "./src/components/attach-obc/attach-obc-deployment.tsx",
+      "storageClass": "src/components/ocs-storage-class-form/ocs-storage-class-form.tsx",
+      "thickProvisioner": "src/components/ocs-storage-class-form/ocs-thick-provisioner.tsx"
     }
   }
 }

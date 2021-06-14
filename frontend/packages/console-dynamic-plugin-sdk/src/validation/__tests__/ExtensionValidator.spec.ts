@@ -25,11 +25,16 @@ describe('collectCodeRefData', () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
-        properties: { test: true },
+        properties: {
+          test: true,
+        },
       },
       {
         type: 'Bar',
-        properties: { baz: 1, qux: { $codeRef: 'a.b' } },
+        properties: {
+          qux: { $codeRef: 'mod.a' },
+          baz: { test: { $codeRef: 'mod.b' } },
+        },
       },
     ];
 
@@ -37,7 +42,8 @@ describe('collectCodeRefData', () => {
       {
         index: 1,
         propToCodeRefValue: {
-          qux: 'a.b',
+          qux: 'mod.a',
+          test: 'mod.b',
         },
       },
     ]);

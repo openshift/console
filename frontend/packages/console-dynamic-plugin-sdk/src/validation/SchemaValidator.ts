@@ -12,7 +12,7 @@ export class SchemaValidator {
     this.assert = new ValidationAssertions(this.result);
   }
 
-  validate(schema: object, data: any, dataVar: string = 'obj') {
+  validate(schema: {}, data: any, dataVar: string = 'obj') {
     if (!this.ajv.validate(schema, data)) {
       this.ajv.errors.forEach((error) => {
         // This format is consistent with ajv.errorsText() implementation

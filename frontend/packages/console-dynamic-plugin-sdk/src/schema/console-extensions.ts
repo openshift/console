@@ -45,6 +45,7 @@ import {
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
 } from '../extensions/topology';
+import { StorageClassProvisioner } from '../extensions/storage-class-provisioner';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -90,7 +91,8 @@ export type SupportedExtension =
   | TopologyCreateConnector
   | TopologyDataModelFactory
   | TopologyDisplayFilters
-  | TopologyDecoratorProvider;
+  | TopologyDecoratorProvider
+  | StorageClassProvisioner;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

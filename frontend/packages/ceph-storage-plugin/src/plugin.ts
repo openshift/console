@@ -14,7 +14,6 @@ import {
   ResourceDetailsPage,
   DashboardsOverviewResourceActivity,
   CustomFeatureFlag,
-  StorageClassProvisioner,
   ProjectDashboardInventoryItem,
   ResourceListPage,
 } from '@console/plugin-sdk';
@@ -27,7 +26,6 @@ import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugi
 import * as models from './models';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboards/persistent-internal/activity-card/cluster-expand-activity';
-import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
 import { WatchCephResource } from './types';
 import {
   detectOCS,
@@ -57,7 +55,6 @@ type ConsumedExtensions =
   | ResourceTabPage
   | ClusterServiceVersionAction
   | DashboardsOverviewResourceActivity
-  | StorageClassProvisioner
   | ProjectDashboardInventoryItem
   | ResourceListPage;
 
@@ -114,12 +111,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_FLAG],
-    },
-  },
-  {
-    type: 'StorageClass/Provisioner',
-    properties: {
-      getStorageClassProvisioner: StorageClassFormProvisoners,
     },
   },
   {

@@ -2,12 +2,7 @@ import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 import { TFunction } from 'i18next';
-
-import {
-  StorageClassProvisioner,
-  ExtensionSCProvisionerProp,
-} from '@console/plugin-sdk/src/typings/storage-class-params';
-
+import { StorageClassProvisioner } from '@console/dynamic-plugin-sdk/src/extensions/storage-class-provisioner';
 import {
   ConnectedStorageClassForm,
   StorageClassFormProps,
@@ -36,22 +31,31 @@ describe(ConnectedStorageClassForm.displayName, () => {
   let watchK8sList: Spy;
   let stopK8sWatch: Spy;
   let k8s: Spy;
-  let params: StorageClassProvisioner[];
-  let extensionFunction: ExtensionSCProvisionerProp;
+  let extensionFunction: StorageClassProvisioner;
 
   beforeEach(() => {
     onClose = jasmine.createSpy('onClose');
     watchK8sList = jasmine.createSpy('watchK8sList');
     stopK8sWatch = jasmine.createSpy('stopK8sWatch');
     k8s = jasmine.createSpy('k8s');
-    params = [
-      {
-        type: 'StorageClass/Provisioner',
-        properties: {
-          getStorageClassProvisioner: extensionFunction,
+    extensionFunction = {
+      type: 'console.storage-class/provisioner',
+      properties: {
+        foo: {
+          bar: {
+            title: 'apple',
+            provisioner: 'keeps the doctor away',
+            allowVolumeExpansion: () => Promise.resolve(() => false),
+            parameters: {
+              foo: {
+                name: 'bar',
+                hintText: 'bar',
+              },
+            },
+          },
         },
       },
-    ];
+    };
 
     wrapper = shallow(
       <Component
@@ -62,7 +66,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
         t={((key) => key) as TFunction}
         i18n={null}
         tReady={true}
-        params={params}
+        extensions={[[extensionFunction], true, null]}
       />,
     );
   });

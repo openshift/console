@@ -262,7 +262,7 @@ describe('mergeExtensionProperties', () => {
       type: 'Foo/Bar',
       properties: {
         test: false,
-        qux: { baz: 2 },
+        qux: { foo: ['value'], baz: 2 },
       },
     });
   });

@@ -111,5 +111,160 @@
       "required": ["MCG"],
       "disallowed": ["OCS"]
     }
+  },
+  {
+    "type": "console.storage-class/provisioner",
+    "properties": {
+      "csi": {
+        "openshift-storage.rbd.csi.ceph.com": {
+          "title": "%ceph-storage-plugin~Ceph RBD%",
+          "provisioner": "rbd.csi.ceph.com",
+          "allowVolumeExpansion": { "$codeRef": "storageClass.trueFunction" },
+          "parameters": {
+            "clusterID": {
+              "name": "%ceph-storage-plugin~Cluster ID%",
+              "hintText": "%ceph-storage-plugin~The namespace where Ceph is deployed%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "pool": {
+              "name": "%ceph-storage-plugin~Pool%",
+              "hintText": "%ceph-storage-plugin~Ceph pool into which volume data shall be stored%",
+              "required": { "$codeRef": "storageClass.trueFunction" },
+              "Component": { "$codeRef": "storageClass.PoolResourceComponent" }
+            },
+            "imageFormat": {
+              "name": "%ceph-storage-plugin~Image Format%",
+              "hintText": "%ceph-storage-plugin~RBD image format. Defaults to \"2\"%",
+              "value": "2",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "imageFeatures": {
+              "name": "%ceph-storage-plugin~Image Features%",
+              "hintText": "%ceph-storage-plugin~Ceph RBD image features%",
+              "value": "layering",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/provisioner-secret-name": {
+              "name": "%ceph-storage-plugin~Provisioner Secret Name%",
+              "hintText": "%ceph-storage-plugin~The name of provisioner secret%",
+              "value": "rook-csi-rbd-provisioner",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/provisioner-secret-namespace": {
+              "name": "%ceph-storage-plugin~Provisioner Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/node-stage-secret-name": {
+              "name": "%ceph-storage-plugin~Node Stage Secret Name%",
+              "hintText": "%ceph-storage-plugin~The name of Node Stage secret%",
+              "value": "rook-csi-rbd-node",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/node-stage-secret-namespace": {
+              "name": "%ceph-storage-plugin~Node Stage Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/fstype": {
+              "name": "%ceph-storage-plugin~Filesystem Type%",
+              "hintText": "%ceph-storage-plugin~Ceph RBD filesystem type. Default set to ext4%",
+              "value": "ext4",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/controller-expand-secret-name": {
+              "name": "%ceph-storage-plugin~Expand Secret Name%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "rook-csi-rbd-provisioner",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/controller-expand-secret-namespace": {
+              "name": "%ceph-storage-plugin~Expand Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "encrypted": {
+              "name": "%ceph-storage-plugin~Enable Encryption%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "Component": { "$codeRef": "storageClass.StorageClassEncryption" }
+            },
+            "encryptionKMSID": {
+              "name": "%ceph-storage-plugin~Encryption ID%",
+              "hintText": "%ceph-storage-plugin~A unique ID matching KMS ConfigMap%",
+              "Component": {
+                "$codeRef": "storageClass.StorageClassEncryptionKMSID"
+              }
+            },
+            "thickProvision": {
+              "name": "%ceph-storage-plugin~Enable Thick Provisioning%",
+              "hintText": "%ceph-storage-plugin~Volumes will allocate the requested capacity upon volume creation.%",
+              "Component": { "$codeRef": "thickProvisioner.ThickProvision" }
+            }
+          }
+        },
+        "openshift-storage.cephfs.csi.ceph.com": {
+          "title": "%ceph-storage-plugin~Ceph FS%",
+          "provisioner": "cephfs.csi.ceph.com",
+          "allowVolumeExpansion": { "$codeRef": "storageClass.trueFunction" },
+          "parameters": {
+            "clusterID": {
+              "name": "%ceph-storage-plugin~Cluster ID%",
+              "hintText": "%ceph-storage-plugin~The namespace where Ceph is deployed%",
+              "value": "%ceph-storage-plugin~openshift-storage%",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "fsName": {
+              "name": "%ceph-storage-plugin~Filesystem Name%",
+              "hintText": "%ceph-storage-plugin~CephFS filesystem name into which the volume shall be created%",
+              "required": { "$codeRef": "storageClass.trueFunction" },
+              "Component": { "$codeRef": "storageClass.CephFsNameComponent" }
+            },
+            "csi.storage.k8s.io/provisioner-secret-name": {
+              "name": "%ceph-storage-plugin~Provisioner Secret Name%",
+              "hintText": "%ceph-storage-plugin~The name of provisioner secret%",
+              "value": "rook-csi-cephfs-provisioner",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/provisioner-secret-namespace": {
+              "name": "%ceph-storage-plugin~Provisioner Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/node-stage-secret-name": {
+              "name": "%ceph-storage-plugin~Node Stage Secret Name%",
+              "hintText": "%ceph-storage-plugin~The name of Node Stage secret%",
+              "value": "rook-csi-cephfs-node",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/node-stage-secret-namespace": {
+              "name": "%ceph-storage-plugin~Node Stage Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/controller-expand-secret-name": {
+              "name": "%ceph-storage-plugin~Expand Secret Name%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            },
+            "csi.storage.k8s.io/controller-expand-secret-namespace": {
+              "name": "%ceph-storage-plugin~Expand Secret Namespace%",
+              "hintText": "%ceph-storage-plugin~The namespace where provisioner secret is created%",
+              "value": "openshift-storage",
+              "visible": { "$codeRef": "storageClass.falseFunction" }
+            }
+          }
+        }
+      }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
   }
 ]

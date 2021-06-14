@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ProvisionerProps } from '@console/plugin-sdk';
+import { ProvisionerProps } from '@console/dynamic-plugin-sdk/src/extensions/storage-class-provisioner';
 import { Checkbox } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
 

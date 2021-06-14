@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { Extension, ExtensionTypeGuard } from '@console/plugin-sdk/src/typings/base';
 import { resolveExtension } from '../coderefs/coderef-resolver';
-import { unwrapPromiseSettledResults } from '../utils/promise';
+import { settleAllPromises } from '../utils/promise';
 import { ResolvedExtension } from '../types';
 
 /**
@@ -47,13 +47,11 @@ export const useResolvedExtensions = <E extends Extension>(
   React.useEffect(() => {
     let disposed = false;
 
-    // The promise returned by Promise.allSettled() never rejects; no need for catch-or-return.
     // eslint-disable-next-line promise/catch-or-return
-    Promise.allSettled(
+    settleAllPromises(
       extensions.map((e) => resolveExtension<typeof e, any, ResolvedExtension<E>>(e)),
-    ).then((results) => {
+    ).then(([fulfilledValues, rejectedReasons]) => {
       if (!disposed) {
-        const [fulfilledValues, rejectedReasons] = unwrapPromiseSettledResults(results);
         setResolvedExtensions(fulfilledValues);
         setErrors(rejectedReasons);
         setResolved(true);
