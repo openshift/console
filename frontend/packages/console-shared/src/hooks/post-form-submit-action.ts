@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   isPostFormSubmissionAction,
   PostFormSubmissionAction,
   useExtensions,
 } from '@console/plugin-sdk';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { useQueryParams } from './useQueryParams';
 
 export const usePostFormSubmitAction = <R = K8sResourceCommon[]>(

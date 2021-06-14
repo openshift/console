@@ -1,5 +1,5 @@
-import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '@console/app/src/status/node';
+import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { StatusProps } from '../components/types';
 import { isHostPoweredOn, hasPowerManagement } from '../selectors';

@@ -1,6 +1,6 @@
+import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { K8sResourceKind, k8sPatch, k8sGet, K8sKind } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
-import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 
 type v1alpha1Component = {

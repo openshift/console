@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { shallow } from 'enzyme';
+import * as _ from 'lodash';
 import { testOperatorGroup, testSubscription } from '../../mocks';
 import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
 import {

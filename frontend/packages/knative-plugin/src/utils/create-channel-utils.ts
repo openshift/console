@@ -1,9 +1,14 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
-import { checkAccess } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import {
+  getCommonAnnotations,
+  getAppLabels,
+} from '@console/dev-console/src/utils/resource-label-utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
+import { checkAccess } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { ConfigMapModel } from '@console/internal/models';
 import {
   getGroupVersionKind,
   modelFor,
@@ -16,12 +21,7 @@ import {
   AddChannelFormData,
 } from '../components/add/import-types';
 import { EventingIMCModel, EventingKafkaChannelModel } from '../models';
-import {
-  getCommonAnnotations,
-  getAppLabels,
-} from '@console/dev-console/src/utils/resource-label-utils';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ConfigMapModel } from '@console/internal/models';
+import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
 
 export const isDefaultChannel = (channel: string): boolean =>
   Object.keys(defaultChannels).includes(channel);

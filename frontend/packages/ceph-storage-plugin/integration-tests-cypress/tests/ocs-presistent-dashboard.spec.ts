@@ -1,5 +1,5 @@
-import { getPVCJSON } from '../helpers/pvc';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { getPVCJSON } from '../helpers/pvc';
 
 describe('Check OCS Dashboards', () => {
   before(() => {

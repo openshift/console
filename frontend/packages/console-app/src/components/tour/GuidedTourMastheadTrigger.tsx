@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TourContext } from './tour-context';
 import { TourActions } from './const';
+import { TourContext } from './tour-context';
 
 type GuidedTourMastheadTriggerProps = {
   className?: string;

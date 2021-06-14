@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import {
   K8sResourceKind,
   modelFor,
@@ -14,11 +11,14 @@ import {
   k8sCreate,
   getGroupVersionKind,
 } from '@console/internal/module/k8s';
-import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { eventSourceValidationSchema } from './eventSource-validation-utils';
-import EventSourceForm from './EventSourceForm';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
+import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
+import { CamelKameletBindingModel } from '../../models';
 import {
   getCatalogEventSourceResource,
   isKnownEventSource,
@@ -27,15 +27,15 @@ import {
   getKameletSourceData,
 } from '../../utils/create-eventsources-utils';
 import { getEventSourceModels } from '../../utils/fetch-dynamic-eventsources-utils';
-import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
+import { eventSourceValidationSchema } from './eventSource-validation-utils';
+import EventSourceForm from './EventSourceForm';
+import EventSourceMetaDescription from './EventSourceMetadataDescription';
 import {
   EventSourceSyncFormData,
   SinkType,
   EVENT_SOURCES_APP,
   EventSourceMetaData,
 } from './import-types';
-import { CamelKameletBindingModel } from '../../models';
-import EventSourceMetaDescription from './EventSourceMetadataDescription';
 
 interface EventSourceProps {
   namespace: string;

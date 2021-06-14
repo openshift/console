@@ -1,5 +1,5 @@
-import { JSONSchema6 } from 'json-schema';
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
+import { JSONSchema6 } from 'json-schema';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 

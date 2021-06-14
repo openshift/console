@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@patternfly/react-core';
+import { coFetchText } from '@console/internal/co-fetch';
+import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
 import { resourceURL, modelFor, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
-import { LOG_SOURCE_TERMINATED } from '@console/internal/components/utils';
-import { coFetchText } from '@console/internal/co-fetch';
 import './Logs.scss';
 
 type LogsProps = {

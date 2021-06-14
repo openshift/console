@@ -1,13 +1,13 @@
-import * as yup from 'yup';
 import { TFunction } from 'i18next';
-import { isValidUrl, nameValidationSchema } from '@console/shared';
+import * as yup from 'yup';
 import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
+import { isValidUrl, nameValidationSchema } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { EventSources, SinkType } from './import-types';
 import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
+import { EventSources, SinkType } from './import-types';
 
 export const sinkTypeUriValidation = (t: TFunction) =>
   yup.object().shape({

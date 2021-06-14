@@ -1,7 +1,7 @@
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { NodeKind } from '@console/internal/module/k8s';
 import { NodeAddress, NodeCondition } from '../types';
-import i18next from 'i18next';
 
 const NODE_ROLE_PREFIX = 'node-role.kubernetes.io/';
 

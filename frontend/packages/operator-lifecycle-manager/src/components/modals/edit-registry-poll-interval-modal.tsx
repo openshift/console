@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { Form, FormGroup } from '@patternfly/react-core';
 import {
   ModalTitle,
   ModalBody,
@@ -12,9 +12,9 @@ import {
   HandlePromiseProps,
   Dropdown,
 } from '@console/internal/components/utils';
-import { CatalogSourceKind } from '../../types';
+import { k8sPatch } from '@console/internal/module/k8s';
 import { CatalogSourceModel } from '../../models';
-import { Form, FormGroup } from '@patternfly/react-core';
+import { CatalogSourceKind } from '../../types';
 
 const availablePollIntervals = {
   '10m0s': '10m',

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateBody,
@@ -8,6 +7,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, LockIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 type AddCardSectionEmptyStateProps = {
   accessCheckFailed?: boolean;

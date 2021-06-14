@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { WarningStatus } from './statuses';
 import { StatusComponentProps } from './types';
 

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   ConfigMapModel,
   PersistentVolumeClaimModel,
@@ -7,7 +6,6 @@ import {
   ServiceAccountModel,
 } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
-
 import { VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
 import {

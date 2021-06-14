@@ -1,6 +1,6 @@
+import { checkErrors } from '../../../integration-tests-cypress/support';
 import { commonFlows } from '../views/common';
 import { createStore, Providers, testName } from '../views/store';
-import { checkErrors } from '../../../integration-tests-cypress/support';
 
 describe('Tests creation of Backing Stores', () => {
   before(() => {

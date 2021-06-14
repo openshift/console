@@ -1,6 +1,8 @@
-import * as _ from 'lodash';
+import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import * as GitUrlParse from 'git-url-parse';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { getRouteWebURL } from '@console/internal/components/routes';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -9,14 +11,12 @@ import {
   RouteKind,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { getRouteWebURL } from '@console/internal/components/routes';
-import { Node, Edge, GraphElement } from '@patternfly/react-topology';
 import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
+import OdcBaseNode from '../elements/OdcBaseNode';
+import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
+import { TopologyDataObject } from '../topology-types';
 import { updateResourceApplication } from './application-utils';
 import { createResourceConnection, removeResourceConnection } from './connector-utils';
-import { TopologyDataObject } from '../topology-types';
-import { TYPE_OPERATOR_BACKED_SERVICE } from '../operators/components/const';
-import OdcBaseNode from '../elements/OdcBaseNode';
 
 export const WORKLOAD_TYPES = [
   'deployments',

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import { DropdownFieldProps, useFormikValidationFix } from '@console/shared';
 import PipelineResourceParam from '../../pipeline-resource/PipelineResourceParam';
 import { CREATE_PIPELINE_RESOURCE } from './const';
-import { PipelineModalFormResource } from './types';
 import PipelineResourceDropdown from './PipelineResourceDropdown';
+import { PipelineModalFormResource } from './types';
 
 type PipelineResourceDropdownFieldProps = DropdownFieldProps & {
   filterType?: string;

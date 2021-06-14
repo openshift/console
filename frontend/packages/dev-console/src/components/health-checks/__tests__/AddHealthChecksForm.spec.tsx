@@ -1,9 +1,9 @@
 import * as React from 'react';
-import AddHealthChecksForm from '../AddHealthChecksForm';
 import { shallow } from 'enzyme';
+import { Formik } from 'formik';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
-import { Formik } from 'formik';
+import AddHealthChecksForm from '../AddHealthChecksForm';
 
 let addHealthCheckWrapperProps: React.ComponentProps<typeof AddHealthChecksForm>;
 

@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useAccessReview } from '@console/internal/components/utils';
-import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
-import {
-  K8sResourceKind,
-  referenceForModel,
-  referenceFor,
-  modelFor,
-} from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  referenceForModel,
+  referenceFor,
+  modelFor,
+} from '@console/internal/module/k8s';
+import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
 import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
 import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
 

@@ -1,8 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { catalogPage, addPage, topologyPage } from '../../pages';
 import { catalogTypes, addOptions, pageTitle, catalogCards } from '../../constants';
 import { catalogPO } from '../../pageObjects';
+import { catalogPage, addPage, topologyPage } from '../../pages';
 
 const d = new Date();
 const timestamp = d.getTime();

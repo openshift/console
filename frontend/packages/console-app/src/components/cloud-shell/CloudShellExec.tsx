@@ -1,25 +1,25 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
+import { connect, Dispatch } from 'react-redux';
+import { PodModel } from '@console/internal/models';
+import { resourceURL, K8sKind } from '@console/internal/module/k8s';
+import { WSFactory } from '@console/internal/module/ws-factory';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { FLAGS } from '@console/shared';
-import { WSFactory } from '@console/internal/module/ws-factory';
-import { K8sKind, resourceURL } from '@console/internal/module/k8s';
-import { PodModel } from '@console/internal/models';
-import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
-import Terminal, { ImperativeTerminalType } from './Terminal';
-import TerminalLoadingBox from './TerminalLoadingBox';
-import useActivityTick from './useActivityTick';
-import ExecuteCommand from './ExecuteCommand';
 import {
   getCloudShellCR,
   CLOUD_SHELL_STOPPED_BY_ANNOTATION,
   startWorkspace,
   CloudShellResource,
 } from './cloud-shell-utils';
+import ExecuteCommand from './ExecuteCommand';
+import Terminal, { ImperativeTerminalType } from './Terminal';
+import TerminalLoadingBox from './TerminalLoadingBox';
+import useActivityTick from './useActivityTick';
 
 import './CloudShellExec.scss';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useField } from 'formik';
 import { FormGroup, TextArea } from '@patternfly/react-core';
+import { useField } from 'formik';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 

@@ -1,20 +1,20 @@
 import * as React from 'react';
+import { ChartLabel } from '@patternfly/react-charts';
+import * as classNames from 'classnames';
 import i18next, { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import * as classNames from 'classnames';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { DaemonSetModel, PodModel, JobModel, CronJobModel } from '@console/internal/models';
-import { ChartLabel } from '@patternfly/react-charts';
 import {
   K8sResourceKind,
   K8sKind,
   SelfSubjectAccessReviewKind,
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { ExtPodKind } from '../types';
-import { checkPodEditAccess, getPodStatus } from './pod-utils';
 import { RevisionModel } from '@console/knative-plugin';
 import { AllPodStatus } from '../constants';
+import { ExtPodKind } from '../types';
+import { checkPodEditAccess, getPodStatus } from './pod-utils';
 
 import './pod-ring-text.scss';
 

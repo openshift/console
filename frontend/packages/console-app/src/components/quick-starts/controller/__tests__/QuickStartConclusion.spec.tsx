@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
-import { getQuickStartByName } from '../../utils/quick-start-utils';
-import { QuickStartTaskStatus } from '../../utils/quick-start-types';
-import QuickStartConclusion from '../QuickStartConclusion';
+import { shallow, ShallowWrapper } from 'enzyme';
 import QuickStartMarkdownView from '../../QuickStartMarkdownView';
+import { QuickStartTaskStatus } from '../../utils/quick-start-types';
+import { getQuickStartByName } from '../../utils/quick-start-utils';
+import QuickStartConclusion from '../QuickStartConclusion';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

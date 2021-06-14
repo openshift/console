@@ -1,19 +1,4 @@
-import { TFunction } from 'i18next';
-import { isEmpty } from 'lodash';
 import * as React from 'react';
-import Helmet from 'react-helmet';
-import { Trans, useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
-
-import {
-  ButtonBar,
-  ExternalLink,
-  history,
-  setQueryArgument,
-  StatusBox,
-} from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ALL_NAMESPACES_KEY, getNamespace, getUID } from '@console/shared';
 import {
   ActionGroup,
   Button,
@@ -23,7 +8,20 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
-
+import { TFunction } from 'i18next';
+import { isEmpty } from 'lodash';
+import Helmet from 'react-helmet';
+import { Trans, useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+import {
+  ButtonBar,
+  ExternalLink,
+  history,
+  setQueryArgument,
+  StatusBox,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ALL_NAMESPACES_KEY, getNamespace, getUID } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';

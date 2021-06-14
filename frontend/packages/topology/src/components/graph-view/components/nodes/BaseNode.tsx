@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   Node,
   useAnchor,
@@ -14,10 +13,9 @@ import {
   observer,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
-import SvgBoxedText from '../../../svg/SvgBoxedText';
-import { getTopologyResourceObject } from '../../../../utils/topology-utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
   getFilterById,
   useDisplayFilters,
@@ -25,6 +23,8 @@ import {
   useAllowEdgeCreation,
   SHOW_LABELS_FILTER_ID,
 } from '../../../../filters';
+import { getTopologyResourceObject } from '../../../../utils/topology-utils';
+import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../NodeShadows';
 
 import './BaseNode.scss';

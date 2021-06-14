@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { modelFor, pluralizeKind, referenceForModel } from '@console/internal/module/k8s';
 import { OdcNodeModel } from '../../../../topology-types';
 
 import './ResourceKindsInfo.scss';

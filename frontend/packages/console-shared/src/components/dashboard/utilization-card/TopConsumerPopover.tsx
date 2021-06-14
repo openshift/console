@@ -1,28 +1,28 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { PopoverPosition } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { DataPoint } from '@console/internal/components/graphs';
-import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
-import { Dropdown } from '@console/internal/components/utils/dropdown';
-import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
+import { Link } from 'react-router-dom';
+import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
+import { DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import { Humanize, resourcePathFromModel } from '@console/internal/components/utils';
+import { Dropdown } from '@console/internal/components/utils/dropdown';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
-import { PopoverPosition } from '@patternfly/react-core';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
-import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import { useActivePerspective } from '../../../hooks';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import Status from '../status-card/StatusPopup';
 import { LIMIT_STATE } from './UtilizationItem';
 

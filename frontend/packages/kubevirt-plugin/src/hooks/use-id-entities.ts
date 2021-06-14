@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { IDEntity } from '../types';
 
 export const useIDEntities = <T extends IDEntity = IDEntity>(

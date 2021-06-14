@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import Helmet from 'react-helmet';
-import { navFactory, FirehoseResource } from '@console/internal/components/utils';
-import { PodsPage } from '@console/internal/components/pod';
+import { useTranslation } from 'react-i18next';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
-import { connectToPlural } from '@console/internal/kinds';
+import { PodsPage } from '@console/internal/components/pod';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
+import { navFactory, FirehoseResource } from '@console/internal/components/utils';
+import { connectToPlural } from '@console/internal/kinds';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { menuActionsCreator } from './menu-actions';
 import BareMetalNodeDetails from './BareMetalNodeDetails';
 import BareMetalNodeDashboard from './dashboard/BareMetalNodeDashboard';
-import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { menuActionsCreator } from './menu-actions';
 
 const { editYaml, events, pods } = navFactory;
 

@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
-import * as _ from 'lodash';
-import { safeDump } from 'js-yaml';
 import { Alert, Button } from '@patternfly/react-core';
-import { Firehose } from '@console/internal/components/utils/firehose';
-import * as k8s from '@console/internal/module/k8s';
-import { CustomResourceDefinitionModel } from '@console/internal/models';
+import { shallow, ShallowWrapper } from 'enzyme';
+import { safeDump } from 'js-yaml';
+import * as _ from 'lodash';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
+import { CustomResourceDefinitionModel } from '@console/internal/models';
+import * as k8s from '@console/internal/module/k8s';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { referenceForProvidedAPI } from '..';
 import {
   testClusterServiceVersion,
   testResourceInstance,
@@ -16,11 +18,8 @@ import {
 } from '../../../mocks';
 import { ClusterServiceVersionModel } from '../../models';
 import { CreateOperandPage, CreateOperand, CreateOperandProps } from './create-operand';
-import { OperandYAML, OperandYAMLProps } from './operand-yaml';
 import { OperandForm, OperandFormProps } from './operand-form';
-import { referenceForProvidedAPI } from '..';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-
+import { OperandYAML, OperandYAMLProps } from './operand-yaml';
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

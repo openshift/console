@@ -1,5 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
@@ -16,7 +17,6 @@ import {
   projectNameSpace,
   verifyAndInstallKnativeOperator,
 } from '@console/dev-console/integration-tests/support/pages';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();

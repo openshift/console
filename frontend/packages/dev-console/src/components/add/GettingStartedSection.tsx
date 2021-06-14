@@ -1,17 +1,15 @@
 import * as React from 'react';
-
 import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
   QuickStartGettingStartedCard,
 } from '@console/shared/src/components/getting-started';
-
-import { SampleGettingStartedCard } from './SampleGettingStartedCard';
-import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
+import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
+import { SampleGettingStartedCard } from './SampleGettingStartedCard';
 
 import './GettingStartedSection.scss';
 

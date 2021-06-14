@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useFormikContext, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { DropdownField, getFieldId } from '@console/shared';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 import { EventSources } from '../import-types';
 

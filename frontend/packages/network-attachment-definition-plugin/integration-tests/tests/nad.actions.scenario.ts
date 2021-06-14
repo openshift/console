@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { safeDump, safeLoad } from 'js-yaml';
+import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -8,10 +8,10 @@ import {
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { click, createResource } from '@console/shared/src/test-utils/utils';
-import { NetworkAttachmentDefinition } from './models/nad';
-import { getNADManifest } from './utils/mocks';
-import { CNV_BRIDGE, NAD_ACTION } from './utils/constants';
 import * as nadDetailView from '../views/nad.detail.view';
+import { NetworkAttachmentDefinition } from './models/nad';
+import { CNV_BRIDGE, NAD_ACTION } from './utils/constants';
+import { getNADManifest } from './utils/mocks';
 
 describe('Test NAD actions', () => {
   const nadName = `nad-${testName}`;

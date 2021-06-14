@@ -1,6 +1,6 @@
-import * as ts from 'typescript';
-import * as tsj from 'ts-json-schema-generator';
 import * as _ from 'lodash';
+import * as tsj from 'ts-json-schema-generator';
+import * as ts from 'typescript';
 import { ConsoleTypeDeclarations } from '../utils/type-resolver';
 
 /**

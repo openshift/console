@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Form, Button } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { Form, Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import {
   ContainerDropdown,
   history,
@@ -17,10 +17,11 @@ import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { FormFooter } from '@console/shared';
 import { getResourcesType } from '../edit-application/edit-application-utils';
-import HealthChecks from './HealthChecks';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
-import './AddHealthChecks.scss';
 import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';
+import HealthChecks from './HealthChecks';
+
+import './AddHealthChecks.scss';
 
 type AddHealthChecksProps = {
   resource?: K8sResourceKind;

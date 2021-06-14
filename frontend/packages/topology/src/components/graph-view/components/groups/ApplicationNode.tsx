@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   observer,
   Node,
@@ -13,11 +12,12 @@ import {
   createSvgIdUrl,
   useSize,
 } from '@patternfly/react-topology';
-import { ApplicationModel } from '../../../../models';
+import * as classNames from 'classnames';
 import { useSearchFilter } from '../../../../filters/useSearchFilter';
+import { ApplicationModel } from '../../../../models';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
-import GroupNodeAnchor from './GroupNodeAnchor';
 import GroupNode from './GroupNode';
+import GroupNodeAnchor from './GroupNodeAnchor';
 
 type ApplicationGroupProps = {
   element: Node;

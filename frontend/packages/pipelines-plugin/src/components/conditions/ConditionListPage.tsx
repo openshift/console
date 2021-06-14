@@ -2,8 +2,8 @@ import * as React from 'react';
 import { DefaultList } from '@console/internal/components/default-resource';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { ConditionModel } from '../../models';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 interface ConditionListPageProps {
   hideBadge?: boolean;

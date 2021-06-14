@@ -1,18 +1,18 @@
 import * as React from 'react';
+import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@patternfly/react-core';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { RevisionModel } from '../../models';
-import TrafficSplittingFields from '../traffic-splitting/TrafficSplittingFields';
-import { RevisionItems } from '../../utils/traffic-splitting-utils';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
+import { RevisionModel } from '../../models';
+import { RevisionItems } from '../../utils/traffic-splitting-utils';
+import TrafficSplittingFields from '../traffic-splitting/TrafficSplittingFields';
 
 interface TrafficSplittingDeleteModalProps {
   revisionItems: RevisionItems;

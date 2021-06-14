@@ -1,8 +1,6 @@
 import * as React from 'react';
-
 import { ResourcesEventStream } from '@console/internal/components/events';
 import { getNamespace } from '@console/shared';
-
 import { getVmEventsFilters } from '../../selectors/event';
 import { VMTabProps } from './types';
 

@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { ActionGroup, Button } from '@patternfly/react-core';
 import { safeDump } from 'js-yaml';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalFooter,
 } from '@console/internal/components/factory/modal';
-import { ActionGroup, Button } from '@patternfly/react-core';
 import { ResourceLink, CopyToClipboard } from '@console/internal/components/utils';
-import { referenceForStepResource } from '../index';
 import { StepResource } from '../../types';
-import { useTranslation } from 'react-i18next';
+import { referenceForStepResource } from '../index';
 
 const InstallPlanPreview: React.FC<InstallPlanPreviewModalProps> = ({ cancel, stepResource }) => {
   const { t } = useTranslation();

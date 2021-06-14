@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Radio } from '@patternfly/react-core';
-import { getName } from '@console/shared/src/selectors/common';
-import { NodeKind } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
+import { NodeKind } from '@console/internal/module/k8s';
+import { getName } from '@console/shared/src/selectors/common';
 import { NodesTable } from '../tables/nodes-table';
+
 import './body.scss';
 
 export const LocalVolumeDiscoveryBody: React.FC<LocalVolumeDiscoveryBodyProps> = ({

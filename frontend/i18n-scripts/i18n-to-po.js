@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const minimist = require('minimist');
 const { i18nextToPo } = require('i18next-conv');
+const minimist = require('minimist');
 const common = require('./common.js');
 
 function save(target) {

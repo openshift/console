@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionToggle,
 } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
 import { CLOUD, SSH } from '../../../../utils/strings';
 import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
 import { CloudInitInfoHelper } from './cloud-init/cloud-init-info-helper';

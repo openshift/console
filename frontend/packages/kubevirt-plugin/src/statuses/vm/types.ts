@@ -1,5 +1,4 @@
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-
 import { VMStatus } from '../../constants/vm/vm-status';
 import { V1alpha1DataVolume } from '../../types/api';
 import { StatusBundle } from '../../types/status-bundle';

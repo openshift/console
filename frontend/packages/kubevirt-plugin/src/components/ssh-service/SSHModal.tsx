@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -8,7 +7,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
-
 import useSSHService from '../../hooks/use-ssh-service';
 import { ModalFooter } from '../modals/modal/modal-footer';
 import SSHCreateService from './SSHCreateService/SSHCreateService';

@@ -1,19 +1,19 @@
 import * as React from 'react';
+import { Title } from '@patternfly/react-core';
+import { Formik, FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { Title } from '@patternfly/react-core';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { PromiseComponent } from '@console/internal/components/utils';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Formik, FormikProps, FormikValues } from 'formik';
+import { PromiseComponent } from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { UNASSIGNED_KEY } from '../../const';
-import ApplicationSelector from '../dropdowns/ApplicationSelector';
 import { updateResourceApplication } from '../../utils/application-utils';
+import ApplicationSelector from '../dropdowns/ApplicationSelector';
 
 type EditApplicationFormProps = {
   resource: K8sResourceKind;

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { StatusIcon } from '@console/shared';
 import { Label, Title } from '@patternfly/react-core';
 import { OutlinedClockIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { StatusIcon } from '@console/shared';
 import { QuickStartStatus } from '../utils/quick-start-types';
 import './QuickStartTileHeader.scss';
 

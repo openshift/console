@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   StackItem,
   Card,
@@ -10,6 +8,8 @@ import {
   Split,
   SplitItem,
 } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { GitOpsEnvironmentService } from '../utils/gitops-types';
 import './GitOpsServiceDetailsSection.scss';

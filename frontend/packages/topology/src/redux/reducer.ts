@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
-import { TopologyAction, Actions } from './action';
 import { DEFAULT_TOPOLOGY_FILTERS } from '../filters/const';
+import { TopologyAction, Actions } from './action';
 
 type State = Map<string, any>;
 

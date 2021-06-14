@@ -1,47 +1,46 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { PopoverPosition } from '@patternfly/react-core';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import { useTranslation } from 'react-i18next';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
-import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import {
-  LIMIT_STATE,
-  LimitRequested,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import {
   getUtilizationQueries,
   getResourceQutoaQueries,
   NodeQueries,
 } from '@console/app/src/components/nodes/node-dashboard/queries';
 import {
-  getNodeAddresses,
-  getNodeMachineNameAndNamespace,
-} from '@console/shared/src/selectors/node';
-import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import {
-  humanizeCpuCores,
-  humanizeBinaryBytes,
-  Humanize,
-} from '@console/internal/components/utils';
-import {
   CPUPopover,
   PopoverProps,
   MemoryPopover,
 } from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import {
-  YellowResourcesAlmostFullIcon,
-  RedResourcesFullIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+  humanizeCpuCores,
+  humanizeBinaryBytes,
+  Humanize,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { MachineModel } from '@console/internal/models';
 import {
   referenceForModel,
   MachineKind,
   MachineHealthCheckKind,
 } from '@console/internal/module/k8s';
-import { MachineModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
+import {
+  LIMIT_STATE,
+  LimitRequested,
+} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import {
+  YellowResourcesAlmostFullIcon,
+  RedResourcesFullIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
+import {
+  getNodeAddresses,
+  getNodeMachineNameAndNamespace,
+} from '@console/shared/src/selectors/node';
 import * as msg from './messages';
 import { getMachineHealth, HealthChecksPopup, machineHealthChecksResource } from './NodeHealth';
 

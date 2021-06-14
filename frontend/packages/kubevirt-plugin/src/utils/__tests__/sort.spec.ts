@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { OperatingSystemRecord } from '../../types/types';
 import { compareVersions, removeOSDups } from '../sort';
 

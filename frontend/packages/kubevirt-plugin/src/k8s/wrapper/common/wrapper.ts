@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { omitEmpty } from '../../../utils/common';
 import { ensurePath } from '../utils/utils';
 

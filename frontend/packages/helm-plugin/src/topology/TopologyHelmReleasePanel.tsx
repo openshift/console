@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import * as UIActions from '@console/internal/actions/ui';
 import {
   navFactory,
   ResourceIcon,
@@ -9,8 +11,6 @@ import {
   StatusBox,
   ActionsMenu,
 } from '@console/internal/components/utils';
-import * as UIActions from '@console/internal/actions/ui';
-import { Node } from '@patternfly/react-topology';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import HelmReleaseOverview from '../components/details-page/overview/HelmReleaseOverview';

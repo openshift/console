@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Button } from '@patternfly/react-core';
 import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';

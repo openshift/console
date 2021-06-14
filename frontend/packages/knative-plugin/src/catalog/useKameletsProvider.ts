@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
-import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
 
 const normalizeKamelets = (
   kamelets: K8sResourceKind[],

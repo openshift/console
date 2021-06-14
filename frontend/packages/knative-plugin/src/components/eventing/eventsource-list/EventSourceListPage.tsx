@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFlag } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   K8sResourceKind,
   modelFor,
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import EventSourceList from './EventSourceList';
+import { useFlag } from '@console/shared';
+import { FLAG_CAMEL_KAMELETS } from '../../../const';
+import { CamelKameletBindingModel } from '../../../models';
 import {
   getDynamicEventSourceModel,
   useEventSourceModels,
 } from '../../../utils/fetch-dynamic-eventsources-utils';
-import { CamelKameletBindingModel } from '../../../models';
-import { FLAG_CAMEL_KAMELETS } from '../../../const';
+import EventSourceList from './EventSourceList';
 
 const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation();

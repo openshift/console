@@ -1,6 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal/module/k8s';
-
 import { CloudInitConfig, Disk } from '../types/types';
 import {
   COMMON_TEMPLATES_NAMESPACE,

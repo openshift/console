@@ -1,5 +1,5 @@
-import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const helmDetailsPage = {
   verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),

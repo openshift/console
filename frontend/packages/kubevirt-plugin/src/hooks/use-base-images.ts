@@ -1,12 +1,10 @@
 import * as React from 'react';
-
 import {
   useK8sWatchResources,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-
 import { TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER } from '../constants';
 import { DataVolumeModel } from '../models';
 import { getParameterValue } from '../selectors/selectors';

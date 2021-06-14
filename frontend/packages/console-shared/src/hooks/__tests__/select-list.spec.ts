@@ -1,7 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
-import { useSelectList } from '../select-list';
 import { data, visibleRows, onRowSelected } from '../__mocks__/select-list-data';
+import { useSelectList } from '../select-list';
 
 describe('useSelectList', () => {
   let onSelect;

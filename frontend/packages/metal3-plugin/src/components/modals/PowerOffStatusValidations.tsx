@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Alert, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
-import { DaemonSetModel, PodModel } from '@console/internal/models';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
+import { DaemonSetModel, PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import {

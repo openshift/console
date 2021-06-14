@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addPage, gitPage, topologyPage, devFilePage } from '../../pages';
 import { addOptions } from '../../constants';
 import { gitPO, topologyPO } from '../../pageObjects';
+import { addPage, gitPage, topologyPage, devFilePage } from '../../pages';
 
 Given('user is at Import from Devfile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);

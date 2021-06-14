@@ -1,13 +1,13 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nodeActions } from '@console/dev-console/integration-tests/support/constants/topology';
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
+import { moveSink } from '@console/dev-console/integration-tests/support/pages/modal';
 import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
-import { moveSink } from '@console/dev-console/integration-tests/support/pages/modal';
-import { modal } from '@console/cypress-integration-tests/views/modal';
-import { app } from '@console/dev-console/integration-tests/support/pages/app';
-import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { nodeActions } from '@console/dev-console/integration-tests/support/constants/topology';
 
 Given('knative service, event source and sink connector are present in topology page', () => {
   cy.get(topologyPO.graph.eventSourceWorkload).should('be.visible');

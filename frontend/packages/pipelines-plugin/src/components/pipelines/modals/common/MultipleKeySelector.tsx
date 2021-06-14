@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { FieldArray, useFormikContext, FormikValues } from 'formik';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
 import { TextInputTypes, Button, FormGroup, Tooltip, Flex, FlexItem } from '@patternfly/react-core';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+import { FieldArray, useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
 import './MultipleKeySelector.scss';
 
 interface MultipleKeySelectorProps {

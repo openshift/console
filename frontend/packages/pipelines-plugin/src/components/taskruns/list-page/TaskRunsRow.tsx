@@ -2,14 +2,14 @@ import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskRunKind } from '../../../types';
-import { getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
-import { getTaskRunKebabActions } from '../../../utils/pipeline-actions';
 import { TaskRunModel, PipelineModel } from '../../../models';
-import { tableColumnClasses } from './taskruns-table';
+import { TaskRunKind } from '../../../types';
+import { getTaskRunKebabActions } from '../../../utils/pipeline-actions';
+import { getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { TektonResourceLabel } from '../../pipelines/const';
 import TaskRunStatus from '../status/TaskRunStatus';
+import { tableColumnClasses } from './taskruns-table';
 
 const taskRunsReference = referenceForModel(TaskRunModel);
 const pipelineReference = referenceForModel(PipelineModel);

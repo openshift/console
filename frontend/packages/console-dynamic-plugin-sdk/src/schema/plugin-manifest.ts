@@ -1,5 +1,5 @@
-import { ConsolePluginMetadata } from './plugin-package';
 import { SupportedExtension } from './console-extensions';
+import { ConsolePluginMetadata } from './plugin-package';
 
 /**
  * Schema of Console plugin's `plugin-manifest.json` file.

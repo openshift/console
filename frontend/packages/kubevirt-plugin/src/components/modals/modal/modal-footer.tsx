@@ -1,7 +1,4 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import {
   ActionGroup,
   Alert,
@@ -10,6 +7,8 @@ import {
   ButtonVariant,
   Spinner,
 } from '@patternfly/react-core';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import './modal-footer.scss';
 

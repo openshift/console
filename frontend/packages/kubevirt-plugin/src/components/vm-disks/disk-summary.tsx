@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { winToolsContainerNames } from '../../constants/vm/wintools';
 import {
   getContainerImageByDisk,

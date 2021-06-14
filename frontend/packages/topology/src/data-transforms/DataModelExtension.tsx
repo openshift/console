@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDeepCompareMemoize } from '@console/shared';
-import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 import { TopologyDataModelFactory } from '../extensions/topology';
+import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
   dataModelFactory: TopologyDataModelFactory;

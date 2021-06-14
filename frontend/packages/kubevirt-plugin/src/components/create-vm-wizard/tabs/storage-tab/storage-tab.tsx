@@ -1,10 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
-import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { createLookup, getName } from '@console/shared/src';
 import {
   Alert,
   AlertVariant,
@@ -20,17 +14,26 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { createLookup, getName } from '@console/shared/src';
 import { DeviceType } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { isLoaded } from '../../../../utils';
+import {
+  STORAGE_CLASS_SUPPORTED_RHV_LINK,
+  STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
+} from '../../../../utils/strings';
 import { wrapWithProgress } from '../../../../utils/utils';
 import { diskTableColumnClasses } from '../../../vm-disks/utils';
 import { VMDisksTable } from '../../../vm-disks/vm-disks';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
+import { iGetImportProvidersValue } from '../../selectors/immutable/import-providers';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import {
@@ -51,11 +54,6 @@ import { StorageBootSource } from './storage-boot-source';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 import { VmWizardStorageRow } from './vm-wizard-storage-row';
-import { iGetImportProvidersValue } from '../../selectors/immutable/import-providers';
-import {
-  STORAGE_CLASS_SUPPORTED_RHV_LINK,
-  STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
-} from '../../../../utils/strings';
 
 import './storage-tab.scss';
 

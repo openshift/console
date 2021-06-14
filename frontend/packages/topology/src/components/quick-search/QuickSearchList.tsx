@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import cx from 'classnames';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   DataList,
   DataListItem,
@@ -15,14 +12,18 @@ import {
   Text,
   TextVariants,
 } from '@patternfly/react-core';
+import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { getIconProps } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import './QuickSearchList.scss';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
-import { Link } from 'react-router-dom';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+
+import './QuickSearchList.scss';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];

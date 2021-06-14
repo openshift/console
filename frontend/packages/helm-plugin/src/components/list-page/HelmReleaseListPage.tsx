@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { Button } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
-import { PageHeading } from '@console/internal/components/utils';
-import { withStartGuide } from '@console/internal/components/start-guide';
-import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { RouteComponentProps } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { PageHeading } from '@console/internal/components/utils';
 import HelmReleaseList from './HelmReleaseList';
 
 type HelmReleaseListPageProps = RouteComponentProps<{ ns: string }>;

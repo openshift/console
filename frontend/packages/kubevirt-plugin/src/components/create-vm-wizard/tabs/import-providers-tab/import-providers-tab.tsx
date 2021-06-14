@@ -1,9 +1,7 @@
 import * as React from 'react';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { WithTranslation, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
-import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
-
 import { iGet, iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
 import { FormField, FormFieldType } from '../../form/form-field';

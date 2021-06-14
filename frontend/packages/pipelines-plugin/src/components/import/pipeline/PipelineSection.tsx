@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { Alert, Split, SplitItem } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
+import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { TechPreviewBadge } from '@console/shared';
-import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
-import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import { PipelineKind } from '../../../types';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import PipelineTemplate from './PipelineTemplate';
 
 import './PipelineSection.scss';

@@ -1,5 +1,4 @@
 import { OrderedSet } from 'immutable';
-
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CommonData, VMSettingsField, VMWizardProps } from '../../types';

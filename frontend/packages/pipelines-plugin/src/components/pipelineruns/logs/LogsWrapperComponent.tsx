@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { MultiStreamLogs } from './MultiStreamLogs';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
+import { MultiStreamLogs } from './MultiStreamLogs';
 
 type LogsWrapperComponentProps = {
   obj?: FirehoseResult<PodKind>;

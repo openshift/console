@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { Status } from '@console/shared';
+import { TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import RunDetailsErrorLog from '../pipelineruns/logs/RunDetailsErrorLog';
-import { getTRLogSnippet } from './logs/taskRunLogSnippet';
-import { TaskRunKind } from '../../types';
 import WorkspaceResourceLinkList from '../shared/workspaces/WorkspaceResourceLinkList';
+import { getTRLogSnippet } from './logs/taskRunLogSnippet';
 
 export interface TaskRunDetailsStatusProps {
   taskRun: TaskRunKind;

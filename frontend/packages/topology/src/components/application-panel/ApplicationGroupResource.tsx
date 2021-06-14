@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import { SidebarSectionHeading } from '@console/internal/components/utils';
+import { Link } from 'react-router-dom';
 import { getActiveNamespace } from '@console/internal/actions/ui';
+import { SidebarSectionHeading } from '@console/internal/components/utils';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import TopologyApplicationResourceList from './TopologyApplicationList';
 
 const MAX_RESOURCES = 5;

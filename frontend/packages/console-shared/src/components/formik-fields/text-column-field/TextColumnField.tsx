@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { FieldArray, useField } from 'formik';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '@console/shared';
-import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import { getFieldId } from '../field-utils';
+import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
+import DragAndDrop from './DragAndDrop';
+import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
 import TextColumnItem from './TextColumnItem';
 import TextColumnItemWithDnd from './TextColumnItemWithDnd';
-import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
-import DragAndDrop from './DragAndDrop';
 
 const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
   const {

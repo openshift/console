@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { Dropdown } from '@console/internal/components/utils';
-import { FormGroup } from '@patternfly/react-core';
+import { useFormikValidationFix } from '../../hooks';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import { useFormikValidationFix } from '../../hooks';
 
 const DropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, required, ...props }) => {
   const [field, { touched, error }] = useField(props.name);

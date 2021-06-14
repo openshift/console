@@ -1,11 +1,11 @@
-import { testName, checkErrors } from '../../support';
-import { SnapshotDetails, dropdownFirstItem } from '../../views/storage/snapshot';
-import { listPage } from '../../views/list-page';
 import { PVC, testerDeployment, SnapshotClass, patchForVolume } from '../../mocks/snapshot';
+import { testName, checkErrors } from '../../support';
+import { resourceStatusShouldContain } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
+import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
-import { resourceStatusShouldContain } from '../../views/common';
+import { SnapshotDetails, dropdownFirstItem } from '../../views/storage/snapshot';
 
 const snapshotName = `${PVC.metadata.name}-snapshot`;
 

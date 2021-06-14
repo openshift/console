@@ -1,10 +1,8 @@
 import * as React from 'react';
-
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
-
 import { PENDING_RESTART_LABEL } from '../../constants';
 import { VirtualMachineModel } from '../../models';
 import { isVM, isVMI } from '../../selectors/check-type';

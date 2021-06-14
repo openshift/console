@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
+import { RadioInput } from '@console/internal/components/radio';
 import {
   K8sKind,
   K8sResourceKind,
@@ -13,11 +15,9 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RadioInput } from '@console/internal/components/radio';
-import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../../types';
-import { SubscriptionModel, InstallPlanModel } from '../../models';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
-import { useTranslation } from 'react-i18next';
+import { SubscriptionModel, InstallPlanModel } from '../../models';
+import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../../types';
 
 const getApprovalStrategy = (obj: InstallPlanKind | SubscriptionKind): InstallPlanApproval =>
   (obj as SubscriptionKind)?.spec?.installPlanApproval ??

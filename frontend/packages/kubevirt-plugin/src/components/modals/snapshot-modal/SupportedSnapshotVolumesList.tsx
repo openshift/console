@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 const SupportedSnapshotVolumesList = ({ supportedVolumes }: SupportedSnapshotVolumesListProps) => {
   const { t } = useTranslation();

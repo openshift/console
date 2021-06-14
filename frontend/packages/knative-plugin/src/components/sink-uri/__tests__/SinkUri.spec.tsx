@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
-import SinkUri from '../SinkUri';
 import { sampleEventSourceSinkbinding } from '../../../topology/__tests__/topology-knative-test-data';
+import SinkUri from '../SinkUri';
 
 type SinkUriProps = React.ComponentProps<typeof SinkUri>;
 

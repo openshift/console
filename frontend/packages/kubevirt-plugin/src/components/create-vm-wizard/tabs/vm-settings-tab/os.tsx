@@ -1,12 +1,10 @@
 import * as React from 'react';
+import { Button, ButtonVariant, Checkbox, SelectOption, Text } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { asValidationObject, ValidationErrorType } from '@console/shared/src/utils/validation';
-import { Button, ButtonVariant, Checkbox, SelectOption, Text } from '@patternfly/react-core';
-
 import { getPVCUploadURL } from '../../../../constants';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';

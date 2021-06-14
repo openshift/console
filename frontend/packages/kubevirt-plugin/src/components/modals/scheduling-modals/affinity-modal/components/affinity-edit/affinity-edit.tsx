@@ -1,10 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ModalBody } from '@console/internal/components/factory';
-import { FirehoseResult } from '@console/internal/components/utils';
-import { NodeKind } from '@console/internal/module/k8s';
-import { ValidationErrorType } from '@console/shared';
 import {
   Divider,
   Form,
@@ -14,7 +8,11 @@ import {
   TextInput,
   TextVariants,
 } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { ModalBody } from '@console/internal/components/factory';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
+import { ValidationErrorType } from '@console/shared';
 import { useIDEntities } from '../../../../../../hooks/use-id-entities';
 import { isLoaded } from '../../../../../../utils';
 import { FormRow } from '../../../../../form/form-row';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { Button, Text, TextVariants } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 

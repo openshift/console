@@ -1,4 +1,4 @@
-import * as k8s from '@console/internal/module/k8s';
+import * as utils from '@console/internal/components/utils';
 import {
   ImageStreamModel,
   ServiceModel,
@@ -8,20 +8,19 @@ import {
   DaemonSetModel,
   StatefulSetModel,
 } from '@console/internal/models';
-import * as utils from '@console/internal/components/utils';
+import * as k8s from '@console/internal/module/k8s';
 import {
   MockResources,
   sampleBuildConfigs,
   sampleBuilds,
   sampleSecrets,
 } from '@console/shared/src/utils/__tests__/test-resource-data';
-import { OdcNodeModel, TopologyDataResources } from '../../topology-types';
-import { WORKLOAD_TYPES } from '../topology-utils';
-import { cleanUpWorkload } from '../application-utils';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { baseDataModelGetter } from '../../data-transforms/data-transformer';
 import { getWorkloadResources } from '../../data-transforms/transform-utils';
-
+import { OdcNodeModel, TopologyDataResources } from '../../topology-types';
+import { cleanUpWorkload } from '../application-utils';
+import { WORKLOAD_TYPES } from '../topology-utils';
 import Spy = jasmine.Spy;
 
 const spyAndReturn = (spy: Spy) => (returnValue: any) =>

@@ -1,15 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import {
-  ResourceLink,
-  ResourceKebab,
-  Timestamp,
-  Kebab,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
 import {
   TableRow,
   TableData,
@@ -18,10 +10,18 @@ import {
   RowFunction,
 } from '@console/internal/components/factory';
 import {
+  ResourceLink,
+  ResourceKebab,
+  Timestamp,
+  Kebab,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils';
+import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
+import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 

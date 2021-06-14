@@ -1,12 +1,12 @@
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { getEventSourceMetadata, getKameletMetadata } from '../utils/create-eventsources-utils';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { EventSourceMetaData } from '../components/add/import-types';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
+import { getEventSourceMetadata, getKameletMetadata } from '../utils/create-eventsources-utils';
 import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
-import * as React from 'react';
 
 export const useEventSourceStatus = (
   namespace: string,

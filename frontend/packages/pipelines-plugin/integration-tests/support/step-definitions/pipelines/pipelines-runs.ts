@@ -1,13 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
-  pipelinesPage,
-  startPipelineInPipelinesPage,
-  pipelineBuilderPage,
-  pipelineRunDetailsPage,
-  pipelineDetailsPage,
-  pipelineRunsPage,
-} from '../../pages';
-import {
   devNavigationMenu,
   pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
@@ -18,9 +10,17 @@ import {
   app,
 } from '@console/dev-console/integration-tests/support/pages';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineRunDetailsPO, pipelineRunsPO, pipelinesPO } from '../../page-objects/pipelines-po';
-import { actionsDropdownMenu } from '../../pages/functions/common';
 import { pipelineActions, pipelineBuilderText } from '../../constants';
+import { pipelineRunDetailsPO, pipelineRunsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import {
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
+  pipelineRunDetailsPage,
+  pipelineDetailsPage,
+  pipelineRunsPage,
+} from '../../pages';
+import { actionsDropdownMenu } from '../../pages/functions/common';
 
 Given(
   'pipeline {string} consists of task {string} with one git resource',

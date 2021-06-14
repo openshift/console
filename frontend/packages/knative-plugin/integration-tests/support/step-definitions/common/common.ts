@@ -1,4 +1,12 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import {
+  switchPerspective,
+  devNavigationMenu,
+  operators,
+  resourceTypes,
+} from '@console/dev-console/integration-tests/support/constants';
+import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   perspective,
   projectNameSpace,
@@ -10,14 +18,6 @@ import {
   createEventSourcePage,
   verifyAndInstallKnativeOperator,
 } from '@console/dev-console/integration-tests/support/pages';
-import {
-  switchPerspective,
-  devNavigationMenu,
-  operators,
-  resourceTypes,
-} from '@console/dev-console/integration-tests/support/constants';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);

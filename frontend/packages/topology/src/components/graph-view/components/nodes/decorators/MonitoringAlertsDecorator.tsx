@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getSeverityAlertType,

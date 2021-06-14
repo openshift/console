@@ -1,5 +1,4 @@
 import { plural } from 'pluralize';
-
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 export {};

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { TextInputTypes } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { InputField } from '@console/shared';
 import PageBody from '../PageBody';
 

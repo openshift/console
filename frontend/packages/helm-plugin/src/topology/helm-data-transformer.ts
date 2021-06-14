@@ -1,9 +1,8 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { SecretModel } from '@console/internal/models';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { SecretModel } from '@console/internal/models';
+import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/shared';
-import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,
@@ -13,6 +12,9 @@ import {
   mergeGroups,
   WorkloadModelProps,
 } from '@console/topology/src/data-transforms/transform-utils';
+import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
+import { HelmReleaseResourcesMap } from '../types/helm-types';
+import { fetchHelmReleases, loadHelmManifestResources } from '../utils/helm-utils';
 import {
   HELM_GROUP_HEIGHT,
   HELM_GROUP_WIDTH,
@@ -20,8 +22,6 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
 } from './components/const';
-import { HelmReleaseResourcesMap } from '../types/helm-types';
-import { fetchHelmReleases, loadHelmManifestResources } from '../utils/helm-utils';
 
 const getHelmReleaseKey = (resource) => `${resource.kind}---${resource.metadata.name}`;
 

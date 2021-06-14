@@ -1,9 +1,7 @@
-import { isEmpty } from 'lodash';
 import * as React from 'react';
+import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-
 import { VMStatusBundle } from '../../../../statuses/vm/types';
 import { ImporterPods } from '../../../vm-status/vm-status';
 

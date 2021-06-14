@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { ConsoleType } from '../../../constants/vm/console-type';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';

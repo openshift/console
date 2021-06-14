@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PopoverStatus, StatusIconAndText } from '@console/shared';
-import { InProgressIcon, MaintenanceIcon } from '@patternfly/react-icons';
 import { getNodeMaintenancePhase } from '../../selectors';
-import UnderMaintenancePopoverContent from './UnderMaintenancePopoverContent';
 import StartingMaintenancePopoverContent from './StartingMaintenancePopoverContent';
+import UnderMaintenancePopoverContent from './UnderMaintenancePopoverContent';
 
 type MaintenancePopoverProps = {
   title: string;

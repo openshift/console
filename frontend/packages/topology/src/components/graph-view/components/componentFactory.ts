@@ -15,15 +15,15 @@ import {
 } from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import { edgeActions } from '../../../actions/edgeActions';
-import { Application } from './groups';
-import { WorkloadNode } from './nodes';
-import GraphComponent from './GraphComponent';
 import {
-  workloadContextMenu,
-  groupContextMenu,
-  graphContextMenu,
-  createMenuItems,
-} from './nodeContextMenu';
+  TYPE_WORKLOAD,
+  TYPE_CONNECTS_TO,
+  TYPE_APPLICATION_GROUP,
+  TYPE_AGGREGATE_EDGE,
+  TYPE_TRAFFIC_CONNECTOR,
+} from '../../../const';
+import { createConnection } from '../../../utils/createConnection';
+import { withEditReviewAccess } from '../../../utils/withEditReviewAccess';
 import {
   NodeComponentProps,
   graphDropTargetSpec,
@@ -35,16 +35,16 @@ import {
   withContextMenu,
   createConnectorCallback,
 } from './componentUtils';
-import {
-  TYPE_WORKLOAD,
-  TYPE_CONNECTS_TO,
-  TYPE_APPLICATION_GROUP,
-  TYPE_AGGREGATE_EDGE,
-  TYPE_TRAFFIC_CONNECTOR,
-} from '../../../const';
-import { createConnection } from '../../../utils/createConnection';
-import { withEditReviewAccess } from '../../../utils/withEditReviewAccess';
 import { AggregateEdge, ConnectsTo, CreateConnector, TrafficConnector } from './edges';
+import GraphComponent from './GraphComponent';
+import { Application } from './groups';
+import {
+  workloadContextMenu,
+  groupContextMenu,
+  graphContextMenu,
+  createMenuItems,
+} from './nodeContextMenu';
+import { WorkloadNode } from './nodes';
 
 import './ContextMenu.scss';
 

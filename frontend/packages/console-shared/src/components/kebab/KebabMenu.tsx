@@ -1,13 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
-import { checkAccess, history } from '@console/internal/components/utils';
-import { EllipsisVIcon } from '@patternfly/react-icons';
 import { FocusTrap } from '@patternfly/react-core';
+import { EllipsisVIcon } from '@patternfly/react-icons';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
-import { kebabActionsToMenu } from './kebab-utils';
+import { checkAccess, history } from '@console/internal/components/utils';
 import { Popper } from '../popper';
+import { kebabActionsToMenu } from './kebab-utils';
 import KebabMenuItems from './KebabMenuItems';
 
 type KebabMenuProps = {

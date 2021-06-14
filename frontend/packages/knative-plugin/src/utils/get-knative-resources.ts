@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
+import { KNATIVE_SERVING_LABEL } from '../const';
 import {
   ServiceModel,
   RevisionModel,
@@ -16,7 +17,6 @@ import {
   CamelIntegrationModel,
   CamelKameletBindingModel,
 } from '../models';
-import { KNATIVE_SERVING_LABEL } from '../const';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];

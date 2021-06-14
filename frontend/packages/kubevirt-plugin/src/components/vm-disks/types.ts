@@ -1,5 +1,4 @@
 import { ValidationObject } from '@console/shared';
-
 import { DiskType } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VMIKind } from '../../types';

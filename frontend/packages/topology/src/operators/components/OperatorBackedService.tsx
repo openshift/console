@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import {
   Node,
   observer,
@@ -11,6 +10,7 @@ import {
   isEdge,
   useDndDrop,
 } from '@patternfly/react-topology';
+import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import {
   canDropEdgeOnNode,

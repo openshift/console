@@ -1,5 +1,5 @@
-import { Store } from 'redux';
 import * as _ from 'lodash';
+import { Store } from 'redux';
 import { RootState } from '@console/internal/redux';
 import { isExtensionInUse, PluginStore } from '../store';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';

@@ -1,7 +1,7 @@
 import { GitSource, GitProvider } from '../types';
-import { GithubService } from './github-service';
-import { BitbucketService } from './bitbucket-service';
 import { BaseService } from './base-service';
+import { BitbucketService } from './bitbucket-service';
+import { GithubService } from './github-service';
 import { GitlabService } from './gitlab-service';
 
 export function getGitService(gitSource: GitSource, gitProvider: GitProvider): BaseService {

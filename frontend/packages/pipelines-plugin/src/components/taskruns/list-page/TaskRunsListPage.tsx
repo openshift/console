@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { getURLSearchParams } from '@console/internal/components/utils';
-import TaskRunsList from './TaskRunsList';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunModel } from '../../../models';
-import { runFilters as taskRunFilters } from '../../pipelines/detail-page-tabs/PipelineRuns';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
+import { runFilters as taskRunFilters } from '../../pipelines/detail-page-tabs/PipelineRuns';
+import TaskRunsList from './TaskRunsList';
 
 interface TaskRunsListPageProps {
   hideBadge?: boolean;

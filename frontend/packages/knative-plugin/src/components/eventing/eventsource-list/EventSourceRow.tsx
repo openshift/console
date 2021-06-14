@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { NamespaceModel } from '@console/internal/models';
-import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
+import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 const EventSourceRow: RowFunction<EventSourceKind> = ({ obj, index, key, style }) => {
   const {

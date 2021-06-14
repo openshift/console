@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, Select, SelectVariant, SelectOption } from '@patternfly/react-core';
+import { useField, useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { useFormikValidationFix, getFieldId } from '@console/shared';
 
 interface RouteInputFieldProps {

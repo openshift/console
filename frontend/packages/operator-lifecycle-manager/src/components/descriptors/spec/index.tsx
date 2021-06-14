@@ -1,7 +1,9 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { Button, Switch, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import {
   LoadingInline,
   ResourceLink,
@@ -11,15 +13,13 @@ import {
 } from '@console/internal/components/utils';
 import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
+import { DefaultCapability, K8sResourceLinkCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
-import { ResourceRequirementsModalLink } from './resource-requirements';
-import { EndpointList } from './endpoint';
+import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
-import { DefaultCapability, K8sResourceLinkCapability } from '../common';
-import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
-import { useTranslation } from 'react-i18next';
+import { EndpointList } from './endpoint';
+import { ResourceRequirementsModalLink } from './resource-requirements';
 
 const PodCount: React.FC<SpecCapabilityProps> = ({
   description,

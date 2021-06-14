@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Button, ButtonProps, Popover, PopoverPosition } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
-import { Button, ButtonProps, Popover, PopoverPosition } from '@patternfly/react-core';
 
 export const DashboardCardButtonLink: React.FC<DashboardCardButtonLinkProps> = React.memo(
   ({ children, className, ...rest }) => (

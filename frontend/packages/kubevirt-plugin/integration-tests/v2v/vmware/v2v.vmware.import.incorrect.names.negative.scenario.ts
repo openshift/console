@@ -4,7 +4,6 @@ import {
   deleteResources,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-
 import { VirtualMachineModel } from '../../../src/models';
 import { DiskDialog } from '../../tests/dialogs/diskDialog';
 import { NetworkInterfaceDialog } from '../../tests/dialogs/networkInterfaceDialog';

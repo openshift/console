@@ -1,5 +1,5 @@
-import { QuickStart, QuickStartStatus, AllQuickStartStates } from './quick-start-types';
 import { allQuickStarts } from '../data/quick-start-test-data';
+import { QuickStart, QuickStartStatus, AllQuickStartStates } from './quick-start-types';
 
 export const QUICK_START_NAME = 'console.openshift.io/name';
 export const getQuickStarts = (): QuickStart[] => allQuickStarts;

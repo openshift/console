@@ -1,12 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
-import { match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { JSONSchema6 } from 'json-schema';
-import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match } from 'react-router-dom';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
+import { ResourceEventStream } from '@console/internal/components/events';
 import {
   MultiListPage,
   ListPage,
@@ -16,6 +17,7 @@ import {
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
+import { deleteModal } from '@console/internal/components/modals';
 import {
   Kebab,
   KebabAction,
@@ -30,6 +32,7 @@ import {
   navFactory,
 } from '@console/internal/components/utils';
 import { connectToModel } from '@console/internal/kinds';
+import { CustomResourceDefinitionModel } from '@console/internal/models';
 import {
   GroupVersionKind,
   K8sKind,
@@ -46,27 +49,24 @@ import {
   CustomResourceDefinitionKind,
   definitionFor,
 } from '@console/internal/module/k8s';
-import { ResourceEventStream } from '@console/internal/components/events';
-import { deleteModal } from '@console/internal/components/modals';
-import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind } from '../../types';
-import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
-import { Resources } from '../k8s-resource';
-import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
-import { csvNameFromWindow, OperandLink } from './operand-link';
-import ErrorAlert from '@console/shared/src/components/alerts/error';
 import {
   ClusterServiceVersionAction,
   useExtensions,
   isClusterServiceVersionAction,
 } from '@console/plugin-sdk';
-import { CustomResourceDefinitionModel } from '@console/internal/models';
+import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
+import ErrorAlert from '@console/shared/src/components/alerts/error';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
+import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionKind } from '../../types';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
-import { useTranslation } from 'react-i18next';
-import { isMainStatusDescriptor } from '../descriptors/utils';
 import { DescriptorConditions } from '../descriptors/status/conditions';
+import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
+import { isMainStatusDescriptor } from '../descriptors/utils';
+import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
+import { Resources } from '../k8s-resource';
+import { csvNameFromWindow, OperandLink } from './operand-link';
 
 export const getOperandActions = (
   ref: K8sResourceKindReference,

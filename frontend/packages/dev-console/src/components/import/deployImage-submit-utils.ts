@@ -16,6 +16,7 @@ import {
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
+import { RegistryType } from '../../utils/imagestream-utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -24,9 +25,8 @@ import {
   getTriggerAnnotation,
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
-import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
+import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { DeployImageFormData, Resources } from './import-types';
 
 const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;

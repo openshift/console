@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Node, observer } from '@patternfly/react-topology';
-import { getResourceKind } from '@console/topology/src/utils/topology-utils';
-import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
 import TypedResourceBadgeCell from '@console/topology/src/components/list-view/cells/TypedResourceBadgeCell';
+import TopologyListViewNode from '@console/topology/src/components/list-view/TopologyListViewNode';
+import { getResourceKind } from '@console/topology/src/utils/topology-utils';
 
 interface HelmReleaseListViewNodeProps {
   item: Node;

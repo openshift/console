@@ -1,6 +1,6 @@
 import { by, element, browser, ExpectedConditions as until } from 'protractor';
-import { click, selectByVisibleText } from '../utilities/elementInteractions';
 import { ELEMENT_WAIT } from '../utilities/appFunctions';
+import { click, selectByVisibleText } from '../utilities/elementInteractions';
 
 const WAIT = ELEMENT_WAIT;
 

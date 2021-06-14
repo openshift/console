@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { toTitleCase } from '@console/shared';
-import { ExternalLink } from '@console/internal/components/utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { toTitleCase } from '@console/shared';
 import * as certifiedIcon from '../../../icons/certified.svg';
 import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';

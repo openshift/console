@@ -1,5 +1,13 @@
 import * as React from 'react';
-
+import {
+  ComponentFactory,
+  GraphElement,
+  Node,
+  withCreateConnector,
+  withDndDrop,
+  withDragNode,
+  withSelection,
+} from '@patternfly/react-topology';
 import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { ModifyApplication } from '@console/topology/src/actions';
@@ -14,16 +22,6 @@ import {
 } from '@console/topology/src/components/graph-view';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { getResource, withEditReviewAccess } from '@console/topology/src/utils';
-import {
-  ComponentFactory,
-  GraphElement,
-  Node,
-  withCreateConnector,
-  withDndDrop,
-  withDragNode,
-  withSelection,
-} from '@patternfly/react-topology';
-
 import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VMNodeData } from '../types';
 import { TYPE_VIRTUAL_MACHINE } from './const';

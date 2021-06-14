@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { referenceFor } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 import { SidebarSectionHeading, ResourceLink } from '@console/internal/components/utils';
+import { referenceFor } from '@console/internal/module/k8s';
 import { Subscriber } from '../../topology/topology-types';
-import FilterTable from './FilterTable';
 import EventPubSubExpandButton from './EventPubSubExpandButton';
+import FilterTable from './FilterTable';
 
 import './EventPubSubSubscribers.scss';
 

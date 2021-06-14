@@ -1,7 +1,7 @@
-import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { ServiceAccountModel } from '@console/internal/models';
-import { capabilitiesToUISchema } from './utils';
+import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import { SpecCapability } from '../descriptors/types';
+import { capabilitiesToUISchema } from './utils';
 
 describe('getJSONSchemaOrder', () => {
   it('Accurately converts descriptors to a uiSchema with correct "ui:order" properties:', () => {

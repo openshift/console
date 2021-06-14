@@ -3,8 +3,8 @@ import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
-import TopologyApplicationResourceList from '../TopologyApplicationList';
 import ApplicationGroupResource from '../ApplicationGroupResource';
+import TopologyApplicationResourceList from '../TopologyApplicationList';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

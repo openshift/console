@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { TFunction } from 'i18next';
-import { withTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
+import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { withTranslation } from 'react-i18next';
 import {
   Dropdown,
   FirehoseResult,

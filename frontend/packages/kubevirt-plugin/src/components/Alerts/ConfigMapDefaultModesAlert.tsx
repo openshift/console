@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ExternalLink } from '@console/internal/components/utils';
 import { Alert, Stack, StackItem } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { ExternalLink } from '@console/internal/components/utils';
 import { STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK } from '../../utils/strings';
 
 export const ConfigMapDefaultModesAlert: React.FC<{ isScModesKnown: boolean }> = ({

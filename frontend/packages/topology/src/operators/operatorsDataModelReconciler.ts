@@ -1,8 +1,10 @@
 import { Model, NodeShape } from '@patternfly/react-topology';
-import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
+import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
+import { TYPE_APPLICATION_GROUP } from '../const';
+import { getTopologyNodeItem } from '../data-transforms/transform-utils';
 import { OdcNodeModel, TopologyDataResources } from '../topology-types';
 import {
   OPERATOR_GROUP_HEIGHT,
@@ -10,9 +12,7 @@ import {
   OPERATOR_GROUP_WIDTH,
   TYPE_OPERATOR_BACKED_SERVICE,
 } from './components/const';
-import { getTopologyNodeItem } from '../data-transforms/transform-utils';
 import { getOperatorGroupResource } from './operators-data-transformer';
-import { TYPE_APPLICATION_GROUP } from '../const';
 
 const topLevelParent = (node: OdcNodeModel, model: Model): OdcNodeModel => {
   const parent = model.nodes.find((n) => n.children?.includes(node.id));

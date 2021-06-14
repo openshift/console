@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { K8sKind } from '@console/internal/module/k8s';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { K8sKind } from '@console/internal/module/k8s';
+import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
 import { RadioGroupField, RadioGroupOption } from '@console/shared';
-import { useAccessReview } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import './ResourceSection.scss';

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Kebab, navFactory } from '@console/internal/components/utils';
-import { DetailsPage } from '@console/internal/components/factory';
 import { DetailsForKind } from '@console/internal/components/default-resource';
+import { DetailsPage } from '@console/internal/components/factory';
+import { Kebab, navFactory } from '@console/internal/components/utils';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { RouteModel } from '../../models';
 import { serverlessTab } from '../../utils/serverless-tab-utils';

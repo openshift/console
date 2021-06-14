@@ -1,6 +1,6 @@
+import * as React from 'react';
 import yamlParser from 'js-yaml';
 import { cloneDeep, get, isEmpty, set } from 'lodash';
-import * as React from 'react';
 
 export enum EditorPosition {
   top = 'top',

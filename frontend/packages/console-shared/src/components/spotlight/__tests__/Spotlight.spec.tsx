@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import InteractiveSpotlight from '../InteractiveSpotlight';
 import Spotlight from '../Spotlight';
 import StaticSpotlight from '../StaticSpotlight';
-import InteractiveSpotlight from '../InteractiveSpotlight';
 
 describe('Spotlight', () => {
   type SpotlightProps = React.ComponentProps<typeof Spotlight>;

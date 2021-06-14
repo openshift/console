@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { PodStatus } from '@console/shared';
 import { ChartLabel } from '@patternfly/react-charts';
-import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { Traffic } from '../../types';
+import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
+import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../models';
+import { Traffic } from '../../types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import RoutesUrlLink from './RoutesUrlLink';
 

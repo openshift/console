@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
-import { getKnativeRoutesLinks, groupTrafficByRevision } from '../../utils/resource-overview-utils';
-import RoutesOverviewListItem from './RoutesOverviewListItem';
-import { RoutesOverviewListItem as routeLinkProps } from '../../types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
+import { RoutesOverviewListItem as routeLinkProps } from '../../types';
+import { getKnativeRoutesLinks, groupTrafficByRevision } from '../../utils/resource-overview-utils';
 import KSRoutes from './KSRoutes';
+import RoutesOverviewListItem from './RoutesOverviewListItem';
 
 export type RoutesOverviewListProps = {
   ksroutes: K8sResourceKind[];

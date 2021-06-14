@@ -1,14 +1,12 @@
 import * as React from 'react';
+import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import { SectionHeading } from '@console/internal/components/utils/headings';
 import { asAccessReview, useAccessReview } from '@console/internal/components/utils/rbac';
 import { history } from '@console/internal/components/utils/router';
 import { ScrollToTopOnMount } from '@console/internal/components/utils/scroll-to-top-on-mount';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s/types';
-import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
-
 import { VMWizardMode, VMWizardName } from '../../constants';
 import {
   getTemplateName,

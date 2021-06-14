@@ -4,7 +4,6 @@ import {
   ignoreRoleBindingName,
 } from '../project-access-form-utils';
 import { UserRoleBinding } from '../project-access-form-utils-types';
-
 import {
   roleBindingsResourceData,
   roleBindingsWithRequiredRolesResult,

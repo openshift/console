@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as k8s from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -7,13 +6,14 @@ import {
   ServiceModel,
   RouteModel,
 } from '@console/internal/models';
-import { DeployImageFormData, Resources } from '../import-types';
+import * as k8s from '@console/internal/module/k8s';
 import { getSuggestedName } from '../../../utils/imagestream-utils';
-import * as submitUtils from '../deployImage-submit-utils';
 import {
   mockDeployImageFormData,
   mockImageStreamData,
 } from '../__mocks__/deployImage-validation-mock';
+import * as submitUtils from '../deployImage-submit-utils';
+import { DeployImageFormData, Resources } from '../import-types';
 import {
   dataWithoutPorts,
   dataWithPorts,

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { CSSTransition } from 'react-transition-group';
 import { DraggableEvent } from 'react-draggable';
+import { CSSTransition } from 'react-transition-group';
 import DraggableCoreIFrameFix from './DraggableCoreIFrameFix';
 import './Drawer.scss';
 

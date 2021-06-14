@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PipelineRunKind } from '../../../types';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import ResultsList from '../../shared/results/ResultsList';
 import PipelineRunDetailsSection from './PipelineRunDetailsSection';

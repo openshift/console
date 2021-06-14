@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-
 import { Kebab } from '@console/internal/components/utils';
 
 export const nicTableColumnClasses = [

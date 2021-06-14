@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import JarSection from '../JarSection';
 import { FileUploadField, InputField } from '@console/shared/src';
+import JarSection from '../JarSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

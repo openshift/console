@@ -1,10 +1,10 @@
 import * as React from 'react';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { PipelineResourceType } from '../const';
+import PipelineClusterOptions from './PipelineClusterOptions';
 import PipelineGitOptions from './PipelineGitOptions';
 import PipelineImageOptions from './PipelineImageOptions';
-import PipelineClusterOptions from './PipelineClusterOptions';
 import PipelineStorageOptions from './PipelineStorageOptions';
-import { PipelineResourceType } from '../const';
 
 export interface PipelineResourceParamProps {
   name: string;

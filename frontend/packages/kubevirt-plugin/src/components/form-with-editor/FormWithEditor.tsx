@@ -1,10 +1,8 @@
+import * as React from 'react';
 import cn from 'classnames';
 import yamlParser from 'js-yaml';
-import * as React from 'react';
 import { MonacoEditorProps } from 'react-monaco-editor';
-
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
-
 import {
   EditorPosition,
   FieldsMapper,

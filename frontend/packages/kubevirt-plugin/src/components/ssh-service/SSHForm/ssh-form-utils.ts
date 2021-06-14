@@ -1,7 +1,6 @@
 import { ServiceModel } from '@console/internal/models';
 import { k8sCreate, k8sKill } from '@console/internal/module/k8s';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
-
 import {
   CLOUD_INIT_CONFIG_DRIVE,
   CLOUD_INIT_NO_CLOUD,

@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { browser } from 'protractor';
-
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
@@ -12,7 +11,6 @@ import {
   deleteResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-
 import { getInterfaces } from '../../src/selectors/vm/selectors';
 import { getVMIDisks } from '../../src/selectors/vmi/basic';
 import { nicModel, nicType } from '../views/dialogs/networkInterface.view';

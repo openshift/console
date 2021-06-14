@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { TemplateModel } from '@console/internal/models';
 import {
   k8sCreate,
@@ -8,7 +7,6 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
-
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
   AccessMode,

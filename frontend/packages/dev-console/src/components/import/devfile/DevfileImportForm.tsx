@@ -1,19 +1,19 @@
 import * as React from 'react';
+import { Alert, TextInputTypes } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { InputField, FormFooter, FormBody } from '@console/shared';
-import { DevfileImportFormProps } from '../import-types';
-import GitSection from '../git/GitSection';
 import AppSection from '../app/AppSection';
+import GitSection from '../git/GitSection';
+import { DevfileImportFormProps } from '../import-types';
+import FormSection from '../section/FormSection';
 import {
   useDevfileServer,
   useDevfileDirectoryWatcher,
   useDevfileSource,
   useSelectedDevfileSample,
 } from './devfileHooks';
-import FormSection from '../section/FormSection';
 import DevfileSampleInfo from './DevfileSampleInfo';
 
 const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormProps> = ({

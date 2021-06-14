@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import { Formik } from 'formik';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import CreateKnatifyPage from '../CreateKnatifyPage';
-import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
+import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
+import CreateKnatifyPage from '../CreateKnatifyPage';
 
 let createKnatifyPageProps: React.ComponentProps<typeof CreateKnatifyPage>;
 

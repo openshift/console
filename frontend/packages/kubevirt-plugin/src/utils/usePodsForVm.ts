@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {
@@ -8,7 +7,6 @@ import {
   useDebounceCallback,
   useDeepCompareMemoize,
 } from '@console/shared';
-
 import * as models from '../models';
 import { findVMIPod } from '../selectors/pod/selectors';
 import { VMIKind } from '../types/vm';

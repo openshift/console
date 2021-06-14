@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import { useEffect } from 'react';
+import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
+import * as _ from 'lodash';
 import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
@@ -8,7 +9,6 @@ import {
   referenceForModel,
   getLatestVersionForCRD,
 } from '@console/internal/module/k8s';
-import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
 interface EventSourcetData {

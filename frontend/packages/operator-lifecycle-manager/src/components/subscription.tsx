@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { match, Link } from 'react-router-dom';
-import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match, Link } from 'react-router-dom';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -66,10 +66,10 @@ import {
   InstallPlanPhase,
   CatalogSourceKind,
 } from '../types';
-import { requireOperatorGroup } from './operator-group';
-import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
-import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
+import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
+import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
 export const catalogSourceForSubscription = (

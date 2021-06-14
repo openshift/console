@@ -5,10 +5,9 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
-import { Dropdown, LoadingInline } from '@console/internal/components/utils';
-import { RootState } from '@console/internal/redux';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+import { monitoringSetRules } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   AlertStates,
   Rule,
@@ -16,9 +15,10 @@ import {
   SilenceStates,
 } from '@console/internal/components/monitoring/types';
 import { isSilenced } from '@console/internal/components/monitoring/utils';
-import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
-import { monitoringSetRules } from '@console/internal/actions/ui';
 import { refreshNotificationPollers } from '@console/internal/components/notification-drawer';
+import { Dropdown, LoadingInline } from '@console/internal/components/utils';
+import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+import { RootState } from '@console/internal/redux';
 import './SilenceDurationDropdown.scss';
 
 type SilenceDurationDropDownProps = {

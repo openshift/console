@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { TableRow, RowFunction } from '@console/internal/components/factory';
 import * as UIActions from '@console/internal/actions/ui';
+import { TableRow, RowFunction } from '@console/internal/components/factory';
+import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { testPackageManifest, testCatalogSource } from '../../mocks';
+import { PackageManifestKind, CatalogSourceKind } from '../types';
 import {
   PackageManifestTableRow,
   PackageManifestTableHeader,
   PackageManifestTableHeaderWithCatalogSource,
 } from './package-manifest';
 import { ClusterServiceVersionLogo } from '.';
-import { ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { PackageManifestKind, CatalogSourceKind } from '../types';
 
 describe(PackageManifestTableHeader.displayName, () => {
   it('renders column header for package name', () => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
-import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import { PipelineKind, PipelineRunKind } from '../../../types';
+import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import { usePipelineFromPipelineRun } from '../hooks/usePipelineFromPipelineRun';
 import './PipelineRunVisualization.scss';
 

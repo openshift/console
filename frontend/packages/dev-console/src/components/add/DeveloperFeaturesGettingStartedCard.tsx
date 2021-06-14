@@ -1,16 +1,14 @@
 import * as React from 'react';
-import * as semver from 'semver';
-import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
 import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
-
-import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 import { fromHelmCharts } from '../../actions/add-resources';
+import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 
 export const DeveloperFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();

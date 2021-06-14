@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { ConsoleLinkModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { getCheDecoratorData, getEditURL } from '../../../../../utils';
 import Decorator from './Decorator';
 

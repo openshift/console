@@ -1,6 +1,5 @@
 import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s/types';
-
 import { omitEmpty } from '../../../../utils/common';
 import { ensurePath } from '../../utils/utils';
 

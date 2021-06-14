@@ -1,18 +1,17 @@
-import i18next from 'i18next';
-
-import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
-import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
-import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
 import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
 import { chart_color_black_500 as cancelledColor } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
-
+import { chart_color_blue_100 as pendingColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_100';
+import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import { global_danger_color_100 as failureColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import i18next from 'i18next';
 import {
   K8sKind,
   referenceForModel,
   GroupVersionKind,
   apiVersionForModel,
 } from '@console/internal/module/k8s';
+import { TektonResourceLabel } from '../components/pipelines/const';
 import {
   ClusterTaskModel,
   ClusterTriggerBindingModel,
@@ -21,9 +20,8 @@ import {
   TriggerBindingModel,
   PipelineModel,
 } from '../models';
-import { pipelineRunFilterReducer, SucceedConditionReason } from './pipeline-filter-reducer';
-import { TektonResourceLabel } from '../components/pipelines/const';
 import { PipelineKind, PipelineRunKind, PipelineTask } from '../types';
+import { pipelineRunFilterReducer, SucceedConditionReason } from './pipeline-filter-reducer';
 
 interface Metadata {
   name: string;

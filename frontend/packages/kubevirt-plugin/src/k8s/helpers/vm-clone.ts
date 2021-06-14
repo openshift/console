@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared';
-
 import {
   ANNOTATION_DESCRIPTION,
   TEMPLATE_OS_NAME_ANNOTATION,

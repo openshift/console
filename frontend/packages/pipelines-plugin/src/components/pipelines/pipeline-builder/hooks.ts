@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { getRandomChars } from '@console/shared';
 import { useFormikContext, FormikTouched } from 'formik';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { getRandomChars } from '@console/shared';
 import { ClusterTaskModel, TaskModel } from '../../../models';
 import { PipelineTask, TaskKind } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
@@ -22,6 +22,7 @@ import {
   handleParallelToParallelNodes,
   tasksToBuilderNodes,
 } from '../pipeline-topology/utils';
+import { UpdateOperationType } from './const';
 import {
   PipelineBuilderFormikValues,
   PipelineBuilderTaskResources,
@@ -35,7 +36,6 @@ import {
   BuilderTasksErrorGroup,
   TaskErrors,
 } from './types';
-import { UpdateOperationType } from './const';
 import { findTask, getTopLevelErrorMessage } from './utils';
 
 export const useFormikFetchAndSaveTasks = (namespace: string, validateForm: () => void) => {

@@ -1,10 +1,10 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { nav } from '@console/cypress-integration-tests/views/nav';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
 import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
-import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 
 export const app = {
   waitForDocumentLoad: () => {

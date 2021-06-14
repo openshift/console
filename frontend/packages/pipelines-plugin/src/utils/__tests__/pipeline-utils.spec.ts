@@ -8,9 +8,9 @@ import {
 import * as k8s from '@console/internal/module/k8s';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
+import { PipelineRunModel } from '../../models';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { runStatus } from '../pipeline-augment';
-import { PipelineRunModel } from '../../models';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -24,13 +24,13 @@ import {
   appendPipelineRunStatus,
   getMatchedPVCs,
 } from '../pipeline-utils';
+import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 import {
   constructPipelineData,
   mockPipelinesJSON,
   mockRunDurationTest,
   pvcWithPipelineOwnerRef,
 } from './pipeline-test-data';
-import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 
 beforeAll(() => {
   jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);

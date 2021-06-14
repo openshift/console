@@ -1,5 +1,4 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-
 import { PVCData } from '../../types/pvc';
 import { STORAGE_CLASS } from './common';
 import { OperatingSystem } from './wizard';

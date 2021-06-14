@@ -1,18 +1,18 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import {
-  navigateTo,
-  addPage,
-  catalogPage,
-} from '@console/dev-console/integration-tests/support/pages';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
   devNavigationMenu,
   addOptions,
   pageTitle,
 } from '@console/dev-console/integration-tests/support/constants';
-import { helmPage, helmDetailsPage } from '../../pages';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import {
+  navigateTo,
+  addPage,
+  catalogPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { helmPage, helmDetailsPage } from '../../pages';
 
 When('user clicks on the Helm tab', () => {
   navigateTo(devNavigationMenu.Helm);

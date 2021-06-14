@@ -1,12 +1,12 @@
-import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import {
   allCatalogImageResourceAccess,
   allImportResourceAccess,
 } from '@console/dev-console/src/actions/add-resources';
-import { GraphData, OdcNodeModel, TopologyApplicationObject } from '../../topology-types';
-import OdcBaseNode from '../../elements/OdcBaseNode';
-import { groupActions } from '../groupActions';
+import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { topologyDataModel } from '../../__tests__/topology-test-data';
+import OdcBaseNode from '../../elements/OdcBaseNode';
+import { GraphData, OdcNodeModel, TopologyApplicationObject } from '../../topology-types';
+import { groupActions } from '../groupActions';
 
 describe('groupActions: ', () => {
   const connectorSource = new OdcBaseNode();

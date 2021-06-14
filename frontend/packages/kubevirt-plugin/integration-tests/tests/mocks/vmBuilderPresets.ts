@@ -1,7 +1,5 @@
 import * as Combinatorics from 'js-combinatorics';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-
 import { VirtualMachine } from '../models/virtualMachine';
 import { VirtualMachineTemplate } from '../models/virtualMachineTemplate';
 import { VMBuilder } from '../models/vmBuilder';

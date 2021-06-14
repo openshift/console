@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import { Node } from '@patternfly/react-topology';
-import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
+import * as _ from 'lodash';
 import {
   addResourceMenu,
   addResourceMenuWithoutCatalog,
 } from '@console/dev-console/src/actions/add-resources';
 import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
+import { getKnativeContextMenuAction } from '@console/knative-plugin/src/topology/create-connector-utils';
 import { GraphData } from '../topology-types';
 import { getResource } from '../utils/topology-utils';
 

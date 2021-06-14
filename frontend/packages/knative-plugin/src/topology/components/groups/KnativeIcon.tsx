@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
 import { global_palette_white as globalWhite } from '@patternfly/react-tokens/dist/js/global_palette_white';
+import { createSvgIdUrl, SVGDefs } from '@patternfly/react-topology';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 
 type KnativeIconProps = {
   x: number;

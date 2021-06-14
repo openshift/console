@@ -1,9 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { SubscriptionKind } from '../../types';
-import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import {
   createModalLauncher,
   ModalTitle,
@@ -11,9 +7,12 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
+import { ConsoleOperatorConfigModel } from '@console/internal/models';
+import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
+import { SubscriptionKind } from '../../types';
 import { getPluginPatch, isCatalogSourceTrusted, isPluginEnabled } from '../../utils';
-import { ConsolePluginWarning } from '../../utils/console-plugin-warning';
 import { ConsolePluginRadioInputs } from '../../utils/console-plugin-radio-inputs';
+import { ConsolePluginWarning } from '../../utils/console-plugin-warning';
 
 export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalProps) => {
   const {

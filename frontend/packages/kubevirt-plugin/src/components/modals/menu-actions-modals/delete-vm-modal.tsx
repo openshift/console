@@ -1,7 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -17,7 +16,6 @@ import {
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';

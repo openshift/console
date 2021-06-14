@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useSize } from '@patternfly/react-topology';
 import cx from 'classnames';
 import { get } from 'lodash';
-import { useSize } from '@patternfly/react-topology';
 import { modelFor, kindToAbbr } from '@console/internal/module/k8s';
 import './SvgResourceIcon.scss';
 

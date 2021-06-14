@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Formik } from 'formik';
 import { LoadingBox, StatusBox } from '@console/internal/components/utils';
-import ProjectAccess from '../ProjectAccess';
 import { defaultAccessRoles } from '../project-access-form-utils';
+import ProjectAccess from '../ProjectAccess';
 
 type ProjectAccessProps = React.ComponentProps<typeof ProjectAccess>;
 let projectAccessProps: ProjectAccessProps;

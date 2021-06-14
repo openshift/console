@@ -1,17 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import {
   getNodeSecondaryStatus,
   NodeUnschedulableStatus,
   Status,
   SecondaryStatus,
 } from '@console/shared';
-import { NodeKind } from '@console/internal/module/k8s';
-import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
-import { nodeStatus } from '../../status/node';
+import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PressureQueries, Condition } from '../../queries';
+import { nodeStatus } from '../../status/node';
 
 const conditionDescriptionMap = Object.freeze({
   [Condition.DISK_PRESSURE]: 'available disk capacity is low',

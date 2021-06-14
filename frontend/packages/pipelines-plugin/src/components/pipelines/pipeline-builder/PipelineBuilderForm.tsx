@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
+import { FormikProps } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   FormFooter,
   SyncedEditorField,
@@ -12,10 +12,12 @@ import {
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import { PipelineModel } from '../../../models';
-import { useFormikFetchAndSaveTasks, useExplicitPipelineTaskTouch } from './hooks';
+import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
+import { initialPipelineFormData, UpdateOperationType } from './const';
+import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hooks';
 import { removeTaskModal } from './modals';
+import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
 import PipelineBuilderHeader from './PipelineBuilderHeader';
 import Sidebar from './task-sidebar/Sidebar';
 import TaskSidebar from './task-sidebar/TaskSidebar';
@@ -29,8 +31,6 @@ import {
 } from './types';
 import { applyChange } from './update-utils';
 import { convertBuilderFormToPipeline } from './utils';
-import { initialPipelineFormData, UpdateOperationType } from './const';
-import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
 
 import './PipelineBuilderForm.scss';
 

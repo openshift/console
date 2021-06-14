@@ -1,13 +1,11 @@
+import * as React from 'react';
+import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { Table, TableData, TableRow } from '@console/internal/components/factory';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { sortable } from '@patternfly/react-table';
-
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';

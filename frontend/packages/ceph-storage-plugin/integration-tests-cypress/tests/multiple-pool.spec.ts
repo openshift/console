@@ -1,5 +1,5 @@
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { modal } from '../../../integration-tests-cypress/views/modal';
 import { POOL_PROGRESS } from '../../src/constants/storage-pool-const';
 import {
   poolName,

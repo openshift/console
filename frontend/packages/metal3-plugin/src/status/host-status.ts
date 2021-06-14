@@ -1,5 +1,5 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
+import { StatusProps } from '../components/types';
 import {
   HOST_STATUS_TITLE_KEYS,
   HOST_STATUS_DESCRIPTION_KEYS,
@@ -8,7 +8,7 @@ import {
   HOST_STATUS_DEPROVISIONING,
   HOST_STATUS_UNKNOWN,
 } from '../constants';
-import { StatusProps } from '../components/types';
+import { getHostOperationalStatus, getHostProvisioningState, getHostErrorType } from '../selectors';
 import { BareMetalHostKind } from '../types';
 import { getNodeMaintenanceStatus } from './node-maintenance-status';
 

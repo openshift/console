@@ -1,6 +1,6 @@
+import { checkErrors } from '../../../integration-tests-cypress/support';
 import { commonFlows } from '../views/common';
 import { createStore, Providers, testName, StoreType } from '../views/store';
-import { checkErrors } from '../../../integration-tests-cypress/support';
 
 describe('Tests creation of Namespace Stores', () => {
   before(() => {

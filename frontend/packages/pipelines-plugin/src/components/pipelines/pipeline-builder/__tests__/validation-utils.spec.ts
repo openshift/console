@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { validationSchema } from '../validation-utils';
 import { initialPipelineFormData, TASK_ERROR_STRINGS, TaskErrorType } from '../const';
+import { validationSchema } from '../validation-utils';
 import {
   createSafeTask,
   embeddedTaskSpec,

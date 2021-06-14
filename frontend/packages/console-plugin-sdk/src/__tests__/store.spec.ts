@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import * as Combinatorics from 'js-combinatorics';
-import { PodModel } from '@console/internal/models';
+import * as _ from 'lodash';
+import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
 } from '@console/dynamic-plugin-sdk/src/utils/test-utils';
-import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
+import { PodModel } from '@console/internal/models';
 import {
   sanitizeExtension,
   augmentExtension,

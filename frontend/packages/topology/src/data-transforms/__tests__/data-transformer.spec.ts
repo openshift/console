@@ -1,9 +1,5 @@
 import * as _ from 'lodash';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
-import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
-import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
-import { getEditURL, WORKLOAD_TYPES } from '../../utils/topology-utils';
 import {
   MockBaseResources,
   sampleDeployments,
@@ -14,6 +10,10 @@ import {
   MockKialiGraphData,
   TEST_KINDS_MAP,
 } from '../../__tests__/topology-test-data';
+import { TYPE_TRAFFIC_CONNECTOR } from '../../const';
+import { WorkloadData, TopologyDataResources, TrafficData } from '../../topology-types';
+import { getEditURL, WORKLOAD_TYPES } from '../../utils/topology-utils';
+import { getTrafficConnectors, baseDataModelGetter } from '../data-transformer';
 import { getWorkloadResources } from '../transform-utils';
 
 const namespace = 'test-project';

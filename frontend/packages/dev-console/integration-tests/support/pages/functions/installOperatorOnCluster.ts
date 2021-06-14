@@ -1,7 +1,7 @@
-import { operatorsPage } from '../operators-page';
 import { pageTitle, operators, switchPerspective } from '../../constants';
 import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
 import { app, perspective, sidePane } from '../app';
+import { operatorsPage } from '../operators-page';
 import { createKnativeEventing, createKnativeServing } from './knativeSubscriptions';
 
 export const installOperator = (operatorName: operators) => {

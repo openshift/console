@@ -2,10 +2,10 @@
 
 import * as _ from 'lodash';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { overrideSharedModules } from '../shared-modules';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
+import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
+import { overrideSharedModules } from '../shared-modules';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
 import { fetchPluginManifest } from './plugin-manifest';

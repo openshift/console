@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
-
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getLabel } from '@console/shared';
-
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_DEFAULT_LABEL,

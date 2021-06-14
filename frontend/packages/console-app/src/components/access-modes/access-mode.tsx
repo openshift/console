@@ -1,14 +1,13 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { RadioInput } from '@console/internal/components/radio';
 import { FormGroup } from '@patternfly/react-core';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { RadioInput } from '@console/internal/components/radio';
 import {
   getAccessModeForProvisioner,
   getAccessModeRadios,
 } from '@console/internal/components/storage/shared';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: string) =>
   _.reduce(

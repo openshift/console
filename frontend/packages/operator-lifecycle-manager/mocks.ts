@@ -3,6 +3,8 @@ import {
   K8sKind,
   CustomResourceDefinitionKind,
 } from '@console/internal/module/k8s';
+import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
+import { OperatorHubItem } from './src/components/operator-hub';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -15,8 +17,6 @@ import {
   InstallPlanApproval,
   InstallPlanPhase,
 } from './src/types';
-import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
-import { OperatorHubItem } from './src/components/operator-hub';
 
 const prefixedCapabilities = new Set([
   SpecCapability.selector,

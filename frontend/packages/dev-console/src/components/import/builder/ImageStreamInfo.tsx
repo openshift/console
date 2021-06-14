@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getAnnotationTags } from '@console/internal/components/image-stream';
 import { ImageStreamIcon } from '@console/internal/components/catalog/catalog-item-icon';
+import { getAnnotationTags } from '@console/internal/components/image-stream';
 import { ExternalLink } from '@console/internal/components/utils';
 import { getSampleRepo } from '../../../utils/imagestream-utils';
 

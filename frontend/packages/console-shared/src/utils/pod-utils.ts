@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
+import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   K8sResourceKind,
   K8sKind,
   SelfSubjectAccessReviewKind,
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
-import { checkAccess } from '@console/internal/components/utils/rbac';
 import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
-import { ExtPodKind, PodRCData } from '../types/pod';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
+import { ExtPodKind, PodRCData } from '../types/pod';
 
 export const podStatus = Object.keys(podColor);
 

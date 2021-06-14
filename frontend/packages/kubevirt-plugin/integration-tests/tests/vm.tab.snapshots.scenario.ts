@@ -1,5 +1,4 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   addLeakableResource,
@@ -7,7 +6,6 @@ import {
   createResource,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-
 import { READY } from '../../src/utils/strings';
 import { listViewAction } from '../views/actions.view';
 import { saveButton } from '../views/kubevirtUIResource.view';

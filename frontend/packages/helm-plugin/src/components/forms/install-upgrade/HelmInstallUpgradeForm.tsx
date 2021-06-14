@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react-core';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
   InputField,
   FormFooter,
@@ -14,11 +15,10 @@ import {
   FlexForm,
 } from '@console/shared';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { helmReadmeModalLauncher } from './HelmReadmeModal';
 import { HelmActionType, HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
+import { helmReadmeModalLauncher } from './HelmReadmeModal';
 
 export interface HelmInstallUpgradeFormProps {
   chartHasValues: boolean;

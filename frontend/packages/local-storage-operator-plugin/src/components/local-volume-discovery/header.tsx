@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Text, TextContent } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const LocalVolumeDiscoveryHeader: React.FC<LocalVolumeDiscoveryHeaderProps> = ({
   className,

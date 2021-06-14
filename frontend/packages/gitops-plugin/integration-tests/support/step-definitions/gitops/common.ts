@@ -1,14 +1,14 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
-import { navigateTo, perspective } from '@console/dev-console/integration-tests/support/pages/app';
 import {
   devNavigationMenu,
   switchPerspective,
   operators,
 } from '@console/dev-console/integration-tests/support/constants/global';
-import { environmentsPage } from '../../pages/environments-page';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
+import { navigateTo, perspective } from '@console/dev-console/integration-tests/support/pages/app';
 import { installOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
 import { operatorsPage } from '@console/dev-console/integration-tests/support/pages/operators-page';
+import { environmentsPage } from '../../pages/environments-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);

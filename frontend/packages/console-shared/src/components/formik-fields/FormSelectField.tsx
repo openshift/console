@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import { useFormikValidationFix } from '../../hooks';
 import { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';

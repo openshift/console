@@ -1,9 +1,7 @@
 import * as React from 'react';
-
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-
 import {
   CDI_APP_LABEL,
   TEMPLATE_TYPE_BASE,

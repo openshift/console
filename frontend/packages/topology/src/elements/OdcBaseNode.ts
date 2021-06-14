@@ -1,5 +1,5 @@
-import { observable } from 'mobx';
 import { BaseNode } from '@patternfly/react-topology';
+import { observable } from 'mobx';
 import {
   K8sResourceKind,
   K8sResourceKindReference,

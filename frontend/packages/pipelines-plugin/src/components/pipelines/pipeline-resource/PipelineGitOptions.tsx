@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
 
 type PipelineGitOptionsProps = { prefixName: string };

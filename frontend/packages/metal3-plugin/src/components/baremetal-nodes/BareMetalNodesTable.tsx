@@ -1,25 +1,24 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
-import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
-import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
+import * as classNames from 'classnames';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
+import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { MachineModel, NodeModel } from '@console/internal/models';
-
-import { BareMetalNodeBundle, BareMetalNodeListBundle, isCSRBundle, CSRBundle } from '../types';
-import { getHostBMCAddress } from '../../selectors';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
+import { getHostBMCAddress } from '../../selectors';
 import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status';
-import { menuActions } from './menu-actions';
+import { BareMetalNodeBundle, BareMetalNodeListBundle, isCSRBundle, CSRBundle } from '../types';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
+import CSRStatus from './CSRStatus';
+import { menuActions } from './menu-actions';
 
 import './baremetal-nodes-table.scss';
-import CSRStatus from './CSRStatus';
-import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),

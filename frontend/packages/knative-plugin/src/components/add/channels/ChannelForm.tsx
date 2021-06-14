@@ -1,9 +1,10 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
-import { FormFooter, FlexForm, useFormikValidationFix, FormBody } from '@console/shared';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
+import { FormFooter, FlexForm, useFormikValidationFix, FormBody } from '@console/shared';
 import {
   isDefaultChannel,
   getChannelKind,
@@ -11,10 +12,9 @@ import {
   useDefaultChannelConfiguration,
 } from '../../../utils/create-channel-utils';
 import { ChannelListProps } from '../import-types';
-import FormViewSection from './sections/FormViewSection';
 import ChannelSelector from './form-fields/ChannelSelector';
 import ChannelYamlEditor from './form-fields/ChannelYamlEditor';
-import { useTranslation } from 'react-i18next';
+import FormViewSection from './sections/FormViewSection';
 
 interface OwnProps {
   namespace: string;

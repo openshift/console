@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { useField } from 'formik';
-import { FormGroup } from '@patternfly/react-core';
 import { RadioGroupFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 import RadioButtonField from './RadioButtonField';

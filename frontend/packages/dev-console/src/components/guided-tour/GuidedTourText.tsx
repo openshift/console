@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as semver from 'semver';
-import { Trans, useTranslation } from 'react-i18next';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
+import { Trans, useTranslation } from 'react-i18next';
+import * as semver from 'semver';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 
 const DevPerspectiveTourText: React.FC = () => {
   const { t } = useTranslation();

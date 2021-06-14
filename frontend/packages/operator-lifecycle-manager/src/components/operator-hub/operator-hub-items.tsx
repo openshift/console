@@ -1,10 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import * as _ from 'lodash';
 import { CatalogItemHeader, CatalogTile } from '@patternfly/react-catalog-view-extension';
-import * as classNames from 'classnames';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ExternalLink } from '@console/internal/components/utils';
 import {
   Button,
   EmptyState,
@@ -12,6 +7,14 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ExternalLink } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
+import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import {
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
@@ -19,14 +22,11 @@ import {
   Modal,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { history } from '@console/internal/components/utils/router';
-import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
-import { SubscriptionModel } from '../../models';
-import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
-import { OperatorHubItem, InstalledState, CapabilityLevel, InfraFeatures } from './index';
-import { useTranslation } from 'react-i18next';
 import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
+import { SubscriptionModel } from '../../models';
+import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
+import { OperatorHubItemDetails } from './operator-hub-item-details';
+import { OperatorHubItem, InstalledState, CapabilityLevel, InfraFeatures } from './index';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';

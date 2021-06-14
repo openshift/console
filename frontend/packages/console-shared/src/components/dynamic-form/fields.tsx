@@ -1,24 +1,24 @@
-import * as _ from 'lodash';
-import * as classnames from 'classnames';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
+import * as classnames from 'classnames';
 import { JSONSchema6 } from 'json-schema';
-import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { FieldProps, UiSchema } from 'react-jsonschema-form';
 import SchemaField, {
   SchemaFieldProps,
 } from 'react-jsonschema-form/lib/components/fields/SchemaField';
-import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
-import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
-import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
-import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
+import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
+import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
 import {
   NodeAffinity,
   PodAffinity,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
-import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
+import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
+import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
 import { JSONSchemaType } from './types';
+import { hasNoFields, useSchemaDescription, useSchemaLabel } from './utils';
 
 const Description = ({ id, description }) =>
   description ? (

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 import {
   EventSubscriptionObj,
   EventIMCObj,
@@ -11,7 +12,6 @@ import {
 } from '../../../topology/__tests__/topology-knative-test-data';
 import EventPubSubResources, { PubSubResourceOverviewList } from '../EventPubSubResources';
 import PubSubSubscribers from '../EventPubSubSubscribers';
-import { Subscriber } from 'packages/knative-plugin/src/topology/topology-types';
 
 type EventPubSubResourcesProps = React.ComponentProps<typeof EventPubSubResources>;
 type PubSubResourceOverviewListProps = React.ComponentProps<typeof PubSubResourceOverviewList>;

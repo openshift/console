@@ -1,8 +1,8 @@
 import * as webpack from 'webpack';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { SupportedExtension } from '../../schema/console-extensions';
 import { collectCodeRefData, findWebpackModules, ExtensionValidator } from '../ExtensionValidator';
 import { ValidationResult } from '../ValidationResult';
-import { SupportedExtension } from '../../schema/console-extensions';
 
 const getWebpackCompilationMocks = (
   webpackModules: {}[],

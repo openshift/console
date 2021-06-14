@@ -1,6 +1,7 @@
-import * as _ from 'lodash';
 import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { getSchemaAtPath } from '@console/shared';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
   DEPRECATED_CAPABILITIES,
@@ -11,7 +12,6 @@ import {
   REGEXP_NESTED_ARRAY_PATH,
 } from './const';
 import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
-import { getSchemaAtPath } from '@console/shared';
 
 export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
   const propertySchema = getSchemaAtPath(schema, `${descriptorType}.${descriptor.path}`);

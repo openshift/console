@@ -1,8 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
 import { Grid, GridItem } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
 import { Integer } from '../../../form/integer/integer';
 import { SizeUnitFormRow } from '../../../form/size-unit-form-row';
 import {

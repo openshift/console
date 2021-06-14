@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { LoadingInline } from '@console/internal/components/utils';
 import { Button } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { LoadingInline } from '@console/internal/components/utils';
 import { EditButton } from '../edit-button';
 
 const VMDetailsItem: React.FC<VMDetailsItemProps> = ({

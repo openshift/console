@@ -2,9 +2,9 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { EventSource } from '../EventSource';
-import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { EventSourceContainerModel } from '../../../models';
+import { getEventSourceIcon } from '../../../utils/get-knative-icon';
+import { EventSource } from '../EventSource';
 
 type EventSourceProps = React.ComponentProps<typeof EventSource>;
 

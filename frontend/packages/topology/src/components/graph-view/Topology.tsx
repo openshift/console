@@ -1,7 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { action } from 'mobx';
 import {
   ComponentFactory,
   Visualization,
@@ -22,23 +19,26 @@ import {
   NODE_POSITIONED_EVENT,
   GRAPH_POSITION_CHANGE_EVENT,
 } from '@patternfly/react-topology';
+import * as _ from 'lodash';
+import { action } from 'mobx';
+import { connect } from 'react-redux';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { RootState } from '@console/internal/redux';
+import { useExtensions } from '@console/plugin-sdk';
 import {
   useQueryParams,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
 } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
-import { useExtensions } from '@console/plugin-sdk';
-import { RootState } from '@console/internal/redux';
-import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
-import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
-import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
-import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
-import { componentFactory } from './components';
-import { odcElementFactory } from '../../elements';
-import TopologyControlBar from './TopologyControlBar';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
+import { odcElementFactory } from '../../elements';
+import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
+import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
+import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
+import { componentFactory } from './components';
+import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
+import TopologyControlBar from './TopologyControlBar';
 
 import './Topology.scss';
 

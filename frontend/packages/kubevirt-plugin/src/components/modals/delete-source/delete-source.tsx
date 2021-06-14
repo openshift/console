@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -10,7 +9,6 @@ import {
 } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { k8sKill } from '@console/internal/module/k8s';
-
 import { DataVolumeModel } from '../../../models';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 

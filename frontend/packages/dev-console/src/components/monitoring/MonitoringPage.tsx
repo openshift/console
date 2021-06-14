@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
-import { Button } from '@patternfly/react-core';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import {
   HorizontalNav,
   PageHeading,
@@ -10,13 +11,12 @@ import {
   useAccessReview,
 } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
-import { withStartGuide } from '@console/internal/components/start-guide';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
-import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
-import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
-import MonitoringEvents from './events/MonitoringEvents';
 import ConnectedMonitoringAlerts from './alerts/MonitoringAlerts';
+import ConnectedMonitoringDashboard from './dashboard/MonitoringDashboard';
+import MonitoringEvents from './events/MonitoringEvents';
+import ConnectedMonitoringMetrics from './metrics/MonitoringMetrics';
 
 export const MONITORING_ALL_NS_PAGE_URI = '/dev-monitoring/all-namespaces';
 

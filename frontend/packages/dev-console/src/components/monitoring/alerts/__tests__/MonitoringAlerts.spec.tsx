@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { Table, TableHeader, TableBody } from '@patternfly/react-table';
+import { shallow } from 'enzyme';
 import { Map } from 'immutable';
 import * as redux from 'react-redux';
-import { shallow } from 'enzyme';
-import { Table, TableHeader, TableBody } from '@patternfly/react-table';
-import * as prometheusHook from '@console/internal/components/graphs/prometheus-rules-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
-import { MonitoringAlerts } from '../MonitoringAlerts';
+import * as prometheusHook from '@console/internal/components/graphs/prometheus-rules-hook';
 import { EmptyBox } from '@console/internal/components/utils';
+import { MonitoringAlerts } from '../MonitoringAlerts';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

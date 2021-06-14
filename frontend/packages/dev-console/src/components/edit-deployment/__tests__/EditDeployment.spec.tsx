@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
-import EditDeployment from '../EditDeployment';
 import { mockDeploymentConfig } from '../__mocks__/edit-deployment-data';
+import EditDeployment from '../EditDeployment';
 
 type EditDeploymentProps = React.ComponentProps<typeof EditDeployment>;
 type FormProps = React.ComponentProps<typeof Formik>;

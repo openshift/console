@@ -1,5 +1,4 @@
 import { by, element } from 'protractor';
-
 import { rowForUID } from './vms.list.view';
 
 export const templateCreateVMLink = (templateUID: string) =>

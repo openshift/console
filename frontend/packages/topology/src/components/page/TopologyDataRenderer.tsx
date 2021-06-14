@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
-import { TopologyViewType } from '../../topology-types';
 import { FilterProvider } from '../../filters/FilterProvider';
+import { TopologyViewType } from '../../topology-types';
 import { DroppableTopologyComponent } from './DroppableTopologyComponent';
 
 interface TopologyDataRendererProps {

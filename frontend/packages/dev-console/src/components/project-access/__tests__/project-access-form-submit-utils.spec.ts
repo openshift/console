@@ -4,6 +4,7 @@ import {
   getRemovedRoles,
   getGroupedRole,
 } from '../project-access-form-submit-utils';
+import { UserRoleBinding } from '../project-access-form-utils-types';
 import {
   roleBindingsToBeCreated1,
   rolesBindingsToBeRemoved1,
@@ -16,7 +17,6 @@ import {
   roleBindingsWithRequiredRoles,
   getGroupedRoleResult,
 } from './project-access-form-data';
-import { UserRoleBinding } from '../project-access-form-utils-types';
 
 describe('Project Access handleSubmit Utils', () => {
   it('should get roles removed by the user', async () => {

@@ -1,7 +1,7 @@
 import { testName, checkErrors } from '../../support';
-import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
 import { errorMessage, submitButton } from '../../views/form';
+import { listPage } from '../../views/list-page';
 
 const k8sWorkloads = [
   'replicationcontrollers',

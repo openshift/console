@@ -1,8 +1,7 @@
-import * as readPkg from 'read-pkg';
+import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
-import chalk from 'chalk';
-
+import * as readPkg from 'read-pkg';
 import { resolvePath, relativePath } from './utils/path';
 
 const createPackageJson = (packagePath: string) => {

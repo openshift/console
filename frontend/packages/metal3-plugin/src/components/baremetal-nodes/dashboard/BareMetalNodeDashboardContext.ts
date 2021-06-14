@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { BareMetalHostKind, CertificateSigningRequestKind } from '../../../types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { BareMetalHostKind, CertificateSigningRequestKind } from '../../../types';
 
 export const BareMetalNodeDashboardContext = React.createContext<BareMetalNodeDashboardContext>({});
 

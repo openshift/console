@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useRoutesWatcher } from '@console/shared';
 import { getRoutesURL } from '../utils/topology-utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const useRoutesURL = (resource: K8sResourceKind): string => {
   const routeResources = useRoutesWatcher(resource);

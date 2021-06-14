@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   DataListCell,
   DataListContent,
@@ -8,12 +7,13 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { showKind, useDisplayFilters, useSearchFilter } from '../../filters';
 import { ApplicationModel } from '../../models';
+import GroupResourcesCell from './cells/GroupResourcesCell';
 import { getChildKinds } from './list-view-utils';
 import TopologyListViewKindGroup from './TopologyListViewKindGroup';
-import GroupResourcesCell from './cells/GroupResourcesCell';
-import { showKind, useDisplayFilters, useSearchFilter } from '../../filters';
 
 interface TopologyListViewAppGroupProps {
   appGroup: Node;

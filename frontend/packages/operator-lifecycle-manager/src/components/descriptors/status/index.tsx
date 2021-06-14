@@ -1,16 +1,16 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Button } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
-import { Status, SuccessStatus } from '@console/shared';
-import { DetailsItem } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
+import { DetailsItem } from '@console/internal/components/utils';
+import { Status, SuccessStatus } from '@console/shared';
+import { DefaultCapability, Invalid, K8sResourceLinkCapability } from '../common';
 import { CapabilityProps, StatusCapability } from '../types';
+import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
-import { DefaultCapability, Invalid, K8sResourceLinkCapability } from '../common';
-import { useTranslation } from 'react-i18next';
-import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 
 const PodStatuses: React.FC<StatusCapabilityProps> = ({
   description,

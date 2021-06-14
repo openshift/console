@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import { LoadingBox } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';

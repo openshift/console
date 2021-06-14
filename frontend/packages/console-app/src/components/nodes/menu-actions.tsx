@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { K8sKind, NodeKind } from '@console/internal/module/k8s';
+import { deleteModal } from '@console/internal/components/modals/delete-modal';
 import { Kebab, KebabAction, asAccessReview } from '@console/internal/components/utils';
+import { NodeModel } from '@console/internal/models';
+import { K8sKind, NodeKind } from '@console/internal/module/k8s';
 import { isNodeUnschedulable } from '@console/shared';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
-import { NodeModel } from '@console/internal/models';
-import { deleteModal } from '@console/internal/components/modals/delete-modal';
 
 export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
   labelKey: 'nodes~Mark as unschedulable',

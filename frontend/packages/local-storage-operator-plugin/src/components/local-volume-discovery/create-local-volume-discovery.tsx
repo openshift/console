@@ -1,21 +1,22 @@
 import * as React from 'react';
-import { match as RouterMatch } from 'react-router';
 import { FormGroup, Form, TextVariants } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { match as RouterMatch } from 'react-router';
 import { resourcePathFromModel, BreadCrumbs } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history } from '@console/internal/components/utils/router';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { getNodesByHostNameLabel, hasNoTaints } from '../../utils';
-import { updateLocalVolumeDiscovery, createLocalVolumeDiscovery } from './request';
-import { LocalVolumeDiscovery as AutoDetectVolumeModel } from '../../models';
 import { DISCOVERY_CR_NAME } from '../../constants';
-import { LocalVolumeDiscoveryBody } from './body';
-import { FormFooter } from '../common/form-footer';
-import { LocalVolumeDiscoveryHeader } from './header';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import '../../common.scss';
+import { LocalVolumeDiscovery as AutoDetectVolumeModel } from '../../models';
 import { nodeResource } from '../../resources';
-import { useTranslation } from 'react-i18next';
+import { getNodesByHostNameLabel, hasNoTaints } from '../../utils';
+import { FormFooter } from '../common/form-footer';
+import { LocalVolumeDiscoveryBody } from './body';
+import { LocalVolumeDiscoveryHeader } from './header';
+import { updateLocalVolumeDiscovery, createLocalVolumeDiscovery } from './request';
+
+import '../../common.scss';
 
 const makeLocalVolumeDiscoverRequest = async (
   nodes: string[],

@@ -9,7 +9,6 @@ import {
   withCreateConnector,
 } from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
-import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
   WorkloadNode,
   noRegroupWorkloadContextMenu,
@@ -22,6 +21,7 @@ import {
   withNoDrop,
   CreateConnector,
 } from '@console/topology/src/components/graph-view';
+import { withEditReviewAccess } from '@console/topology/src/utils';
 import { helmReleaseActions } from '../actions/helmReleaseActions';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
 import HelmRelease from './HelmRelease';

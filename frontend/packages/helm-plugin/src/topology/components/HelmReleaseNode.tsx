@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   useAnchor,
   useHover,
@@ -13,6 +12,7 @@ import {
   useCombineRefs,
   useSize,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,

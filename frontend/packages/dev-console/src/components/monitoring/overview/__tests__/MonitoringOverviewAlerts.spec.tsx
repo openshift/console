@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
+import { sortMonitoringAlerts } from '@console/shared';
 import {
   mockAlerts,
   expectedSortedAlerts,
 } from '@console/shared/src/utils/__mocks__/alerts-and-rules-data';
-import { sortMonitoringAlerts } from '@console/shared';
 import { InternalMonitoringOverviewAlerts as MonitoringOverviewAlerts } from '../MonitoringOverviewAlerts';
 
 describe('Monitoring Alerts Section', () => {

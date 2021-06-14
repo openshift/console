@@ -2,11 +2,33 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect } from 'react-redux';
-import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
+import { coFetchJSON } from '@console/internal/co-fetch';
+import {
+  Table,
+  TableRow,
+  TableData,
+  ListPage,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import {
+  Kebab,
+  ResourceKebab,
+  ResourceLink,
+  Timestamp,
+  humanizeBinaryBytes,
+  formatCores,
+  LabelList,
+} from '@console/internal/components/utils';
+import { NodeModel, MachineModel } from '@console/internal/models';
+import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   getName,
   getUID,
@@ -19,31 +41,9 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared';
-import { NodeModel, MachineModel } from '@console/internal/models';
-import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import {
-  Table,
-  TableRow,
-  TableData,
-  ListPage,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceKebab,
-  ResourceLink,
-  Timestamp,
-  humanizeBinaryBytes,
-  formatCores,
-  LabelList,
-} from '@console/internal/components/utils';
-import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
-import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { nodeStatus } from '../../status/node';
-import NodeRoles from './NodeRoles';
 import { menuActions } from './menu-actions';
+import NodeRoles from './NodeRoles';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 

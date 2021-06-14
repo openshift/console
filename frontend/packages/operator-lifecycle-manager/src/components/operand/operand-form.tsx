@@ -1,18 +1,18 @@
+import * as React from 'react';
 import { JSONSchema6 } from 'json-schema';
-import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,
   resourcePathFromModel,
   useScrollToTopOnMount,
 } from '@console/internal/components/utils';
-import * as _ from 'lodash';
-import * as React from 'react';
+import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { usePostFormSubmitAction } from '@console/shared';
+import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';
-import { DynamicForm } from '@console/shared/src/components/dynamic-form';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { getUISchema } from './utils';
 
 export const OperandForm: React.FC<OperandFormProps> = ({

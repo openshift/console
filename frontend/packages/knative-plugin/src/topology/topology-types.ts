@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { KnativeItem } from '../utils/get-knative-resources';
 import { OverviewItem, PodControllerOverviewItem } from '@console/shared/src';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
+import { KnativeItem } from '../utils/get-knative-resources';
 
 export enum NodeType {
   EventSource = 'event-source',

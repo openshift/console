@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, LoadingBox } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { getPipelineKebabActions } from '../../utils/pipeline-actions';
-import { PipelineKind } from '../../types';
 import { PipelineModel } from '../../models';
+import { PipelineKind } from '../../types';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { getPipelineKebabActions } from '../../utils/pipeline-actions';
 import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
@@ -17,13 +18,12 @@ import {
   parametersValidationSchema,
   resourcesValidationSchema,
 } from './detail-page-tabs';
-import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
-import { usePipelineTriggerTemplateNames } from './utils/triggers';
-import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeline-operator';
-import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
-import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
-import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
+import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
+import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
+import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeline-operator';
+import { usePipelineTriggerTemplateNames } from './utils/triggers';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();

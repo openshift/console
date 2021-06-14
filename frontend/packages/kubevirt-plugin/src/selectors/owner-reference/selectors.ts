@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { OwnerReference } from '@console/internal/module/k8s';
 
 export const getAPIVersion = (ownerReference: OwnerReference) =>

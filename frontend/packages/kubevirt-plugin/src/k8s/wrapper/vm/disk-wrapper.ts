@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { DiskBus, DiskType } from '../../../constants/vm/storage';
 import { V1Disk } from '../../../types/api';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';

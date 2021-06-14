@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { navFactory } from '@console/internal/components/utils';
-import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { NodeKind } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
+import { PodsPage } from '@console/internal/components/pod';
+import { navFactory } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '../../status/node';
-import NodeDetails from './NodeDetails';
-import NodeTerminal from './NodeTerminal';
 import { menuActions } from './menu-actions';
 import NodeDashboard from './node-dashboard/NodeDashboard';
+import NodeDetails from './NodeDetails';
+import NodeTerminal from './NodeTerminal';
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { editYaml, events, pods } = navFactory;

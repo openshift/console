@@ -9,8 +9,8 @@ import {
   FINALLY_NODE_VERTICAL_SPACING,
   WHEN_EXPRESSION_SPACING,
 } from './const';
-import { FinallyNodeModel } from './types';
 import { integralShapePath, straightPath } from './draw-utils';
+import { FinallyNodeModel } from './types';
 
 import './FinallyNode.scss';
 

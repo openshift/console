@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FormikValues, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
 import { StrategyFieldProps } from './utils/types';
 

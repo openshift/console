@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import MonitoringTab from '../MonitoringTab';
 import MonitoringOverview from '../MonitoringOverview';
+import MonitoringTab from '../MonitoringTab';
 
 jest.mock('@console/shared', () => {
   const ActualShared = require.requireActual('@console/shared');

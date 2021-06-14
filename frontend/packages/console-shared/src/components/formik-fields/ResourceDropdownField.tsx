@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { FormGroup } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useFormikValidationFix } from '../../hooks';
 import ResourceDropdown, { ResourceDropdownItems } from '../dropdown/ResourceDropdown';
 import { DropdownFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import { useFormikValidationFix } from '../../hooks';
 
 export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   dataSelector: string[] | number[] | symbol[];

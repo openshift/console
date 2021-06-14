@@ -1,5 +1,4 @@
 import { ImagePullPolicy } from '@console/internal/module/k8s';
-
 import {
   CONVERSION_BASE_NAME,
   CONVERSION_GENERATE_NAME,

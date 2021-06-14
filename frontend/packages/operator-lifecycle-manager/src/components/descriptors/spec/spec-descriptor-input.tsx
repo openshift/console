@@ -1,5 +1,4 @@
 import * as Immutable from 'immutable';
-import { SpecCapability } from '../types';
 import {
   NodeAffinityField,
   PodAffinityField,
@@ -16,6 +15,7 @@ import {
   PodCountWidget,
   SelectWidget,
 } from '@console/shared/src/components/dynamic-form/widgets';
+import { SpecCapability } from '../types';
 
 export const capabilityFieldMap = Immutable.Map({
   [SpecCapability.nodeAffinity]: NodeAffinityField,

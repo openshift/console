@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { ActionsLoader, Status } from '@console/shared';
+import { Link } from 'react-router-dom';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp, ResourceIcon } from '@console/internal/components/utils';
-import { Link } from 'react-router-dom';
+import { ActionsLoader, Status } from '@console/shared';
 import KebabMenu from '@console/shared/src/components/kebab/KebabMenu';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseListHeader';

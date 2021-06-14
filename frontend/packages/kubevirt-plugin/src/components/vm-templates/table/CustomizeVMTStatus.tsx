@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-
 import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';

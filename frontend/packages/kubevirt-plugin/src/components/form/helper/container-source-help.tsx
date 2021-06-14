@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { isUpstream } from '../../../utils/common';
-
 import { EXAMPLE_CONTAINER, FEDORA_EXAMPLE_CONTAINER } from '../../../utils/strings';
 
 export const ContainerSourceHelp: React.FC = () => {

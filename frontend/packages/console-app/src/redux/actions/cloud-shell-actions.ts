@@ -1,6 +1,6 @@
 import { Dispatch } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import { action, ActionType } from 'typesafe-actions';
+import { RootState } from '@console/internal/redux';
 import { isCloudShellExpanded, isCloudShellActive } from '../reducers/cloud-shell-selectors';
 
 export enum Actions {

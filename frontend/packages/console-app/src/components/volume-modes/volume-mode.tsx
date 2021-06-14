@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-
-import { RadioInput } from '@console/internal/components/radio';
 import { FormGroup } from '@patternfly/react-core';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { FieldLevelHelp } from '@console/internal/components/utils';
-
+import { useTranslation, Trans } from 'react-i18next';
+import { RadioInput } from '@console/internal/components/radio';
 import {
   getVolumeModeRadios,
   getVolumeModeForProvisioner,
   initialVolumeModes,
 } from '@console/internal/components/storage/shared';
+import { FieldLevelHelp } from '@console/internal/components/utils';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => {
   const {

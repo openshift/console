@@ -9,8 +9,8 @@ import {
   modelFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import { HelmRelease } from '../../../types/helm-types';
+import { flattenReleaseResources, loadHelmManifestResources } from '../../../utils/helm-utils';
 import HelmReleaseResourcesList from './HelmReleaseResourcesList';
 
 export interface HelmReleaseResourcesProps {

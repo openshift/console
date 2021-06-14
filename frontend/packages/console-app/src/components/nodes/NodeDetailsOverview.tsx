@@ -1,7 +1,8 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useAccessReview,
   SectionHeading,
@@ -13,8 +14,7 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
-import { Button } from '@patternfly/react-core';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';

@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
   history,
 } from '@console/internal/components/utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
-import './QuickSearchButton.scss';
-
-import './QuickSearchModalBody.scss';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+
+import './QuickSearchButton.scss';
+import './QuickSearchModalBody.scss';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;

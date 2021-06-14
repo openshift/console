@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/shared';
 import { ResourceSummary } from '@console/internal/components/utils';
+import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/shared';
+import { RevisionModel } from '../../../models';
 import {
   revisionObj,
   knativeServiceObj,
   serverlessFunctionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import { RevisionModel } from '../../../models';
-import KnativeOverview, { KnativeOverviewRevisionPodsRing } from '../KnativeOverview';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import KnativeOverview, { KnativeOverviewRevisionPodsRing } from '../KnativeOverview';
 import ServerlessFunctionType from '../ServerlessFunctionType';
 
 jest.mock('@console/shared', () => {

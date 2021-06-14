@@ -1,5 +1,4 @@
 import { Map } from 'immutable';
-
 import { TemplateKind } from '@console/internal/module/k8s';
 
 enum commonTemplatesValidationRules {

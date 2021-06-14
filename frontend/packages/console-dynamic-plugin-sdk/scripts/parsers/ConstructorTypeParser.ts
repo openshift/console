@@ -1,5 +1,5 @@
-import * as ts from 'typescript';
 import * as tsj from 'ts-json-schema-generator';
+import * as ts from 'typescript';
 
 class ConstructorType extends tsj.BaseType {
   getId() {

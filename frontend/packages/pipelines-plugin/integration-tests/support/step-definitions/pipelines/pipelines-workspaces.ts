@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
+import { yamlEditor } from '@console/dev-console/integration-tests/support/pages';
 import { pipelinesPO, pipelineBuilderPO, pipelineRunDetailsPO } from '../../page-objects';
 import {
   pipelineDetailsPage,
@@ -8,8 +9,7 @@ import {
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
-import { yamlEditor } from '@console/dev-console/integration-tests/support/pages';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 
 When('user enters yaml content {string} in editor', (pipelineYamlFile: string) => {
   cy.fixture(`pipelines/pipelines-workspaces/${pipelineYamlFile}`).then((yaml) => {

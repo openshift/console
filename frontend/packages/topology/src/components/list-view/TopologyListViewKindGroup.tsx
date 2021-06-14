@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   DataList,
   DataListCell,
@@ -9,6 +8,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { GraphElement, isNode, Node, observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { labelKeyForNodeKind } from './list-view-utils';
 import ListElementWrapper from './ListElementWrapper';
 

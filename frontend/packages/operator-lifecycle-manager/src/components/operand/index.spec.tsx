@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import * as extensionHooks from '@console/plugin-sdk';
 import { Provider } from 'react-redux';
-import * as k8sModels from '@console/internal/module/k8s';
+import { match as RouterMatch } from 'react-router-dom';
 import { Table, DetailsPage, MultiListPage, ListPage } from '@console/internal/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '@console/internal/components/utils';
+import * as k8sModels from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
-
+import * as extensionHooks from '@console/plugin-sdk';
+import { referenceForProvidedAPI } from '..';
 import {
   testCRD,
   testResourceInstance,
@@ -18,6 +18,9 @@ import {
   testConditionsDescriptor,
 } from '../../../mocks';
 import { ClusterServiceVersionModel } from '../../models';
+import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
+import { Resources } from '../k8s-resource';
+import { OperandLink } from './operand-link';
 import {
   OperandList,
   OperandListProps,
@@ -34,10 +37,6 @@ import {
   OperandStatus,
   OperandStatusProps,
 } from '.';
-import { Resources } from '../k8s-resource';
-import { referenceForProvidedAPI } from '..';
-import { OperandLink } from './operand-link';
-import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

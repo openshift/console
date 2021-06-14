@@ -1,15 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { NodeKind } from '@console/internal/module/k8s';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { NodeKind } from '@console/internal/module/k8s';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-
-import { NodeDashboardContext, HealthCheck } from './NodeDashboardContext';
-import InventoryCard from './InventoryCard';
-import DetailsCard from './DetailsCard';
-import StatusCard from './StatusCard';
 import ActivityCard from './ActivityCard';
+import DetailsCard from './DetailsCard';
+import InventoryCard from './InventoryCard';
+import { NodeDashboardContext, HealthCheck } from './NodeDashboardContext';
+import StatusCard from './StatusCard';
 import UtilizationCard from './UtilizationCard';
 
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];

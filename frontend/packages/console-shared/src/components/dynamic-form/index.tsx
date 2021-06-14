@@ -1,10 +1,10 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import Form, { FormProps } from 'react-jsonschema-form';
-import { Accordion, ActionGroup, Button, Alert } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
-import defaultWidgets from './widgets';
+import { K8S_UI_SCHEMA } from './const';
 import defaultFields from './fields';
 import {
   FieldTemplate as DefaultFieldTemplate,
@@ -12,8 +12,8 @@ import {
   ArrayFieldTemplate as DefaultArrayFieldTemplate,
   ErrorTemplate as DefaultErrorTemplate,
 } from './templates';
-import { K8S_UI_SCHEMA } from './const';
 import { getSchemaErrors } from './utils';
+import defaultWidgets from './widgets';
 import './styles.scss';
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({

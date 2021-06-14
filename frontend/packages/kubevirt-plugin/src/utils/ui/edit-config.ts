@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { UINetworkEditConfig } from '../../types/ui/nic';
 import { UIStorageEditConfig } from '../../types/ui/storage';
 

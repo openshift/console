@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import { SourceToImageFormProps } from './import-types';
-import GitSection from './git/GitSection';
-import BuilderSection from './builder/BuilderSection';
-import AppSection from './app/AppSection';
+import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
+import AppSection from './app/AppSection';
+import BuilderSection from './builder/BuilderSection';
+import GitSection from './git/GitSection';
+import { SourceToImageFormProps } from './import-types';
 import ResourceSection from './section/ResourceSection';
 
 const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormProps> = ({

@@ -12,6 +12,7 @@ import {
   apiVersionCompare,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
+import * as operatorLogo from '../operator.svg';
 import {
   APIServiceDefinition,
   ClusterServiceVersionIcon,
@@ -24,7 +25,6 @@ import {
   StepResource,
   SubscriptionKind,
 } from '../types';
-import * as operatorLogo from '../operator.svg';
 import { getInternalObjects } from '../utils';
 
 export const visibilityLabel = 'olm-visibility';

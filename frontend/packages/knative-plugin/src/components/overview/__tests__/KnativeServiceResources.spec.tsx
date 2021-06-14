@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useExtensions } from '@console/plugin-sdk';
+import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
+import { useExtensions } from '@console/plugin-sdk';
 import {
   sampleKnativeRoutes,
   sampleKnativeRevisions,
   knativeServiceObj,
   MockKnativeBuildConfig,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import { BuildOverview } from '@console/internal/components/overview/build-overview';
-import KnativeServiceResources from '../KnativeServiceResources';
-import KSRoutesOverviewList from '../RoutesOverviewList';
-import RevisionsOverviewList from '../RevisionsOverviewList';
 import { KnativeServiceOverviewItem } from '../../../topology/topology-types';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import KnativeServiceResources from '../KnativeServiceResources';
+import RevisionsOverviewList from '../RevisionsOverviewList';
+import KSRoutesOverviewList from '../RoutesOverviewList';
 
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),

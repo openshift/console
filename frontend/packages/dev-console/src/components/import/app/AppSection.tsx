@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { TextInputTypes } from '@patternfly/react-core';
 import { InputField, TextAreaField } from '@console/shared';
 import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 import { ProjectData } from '../import-types';

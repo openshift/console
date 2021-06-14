@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   WithSourceDragProps,
   WithTargetDragProps,
@@ -8,8 +7,9 @@ import {
   observer,
   EdgeConnectorArrow,
 } from '@patternfly/react-topology';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
 import BaseEdge from './BaseEdge';
 import './ConnectsTo.scss';

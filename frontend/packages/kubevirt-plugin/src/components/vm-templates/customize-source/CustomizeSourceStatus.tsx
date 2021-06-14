@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { Alert, Bullseye, Button, Spinner, Stack, StackItem, Title } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { VirtualMachineModel } from '../../../models';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';

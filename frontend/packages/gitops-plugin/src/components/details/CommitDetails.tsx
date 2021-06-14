@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { Label, Split, SplitItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { k8sCreate } from '@console/internal/module/k8s';
-import { ImageStreamImportsModel } from '@console/internal/models';
 import { LoadingInline, Timestamp } from '@console/internal/components/utils';
+import { ImageStreamImportsModel } from '@console/internal/models';
+import { k8sCreate } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { CommitData } from '../utils/gitops-types';
-import { Label, Split, SplitItem } from '@patternfly/react-core';
 import './CommitDetails.scss';
 
 interface CommitDetailsProps {

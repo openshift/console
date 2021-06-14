@@ -7,11 +7,10 @@ import {
   OsImageIcon,
   FileUploadIcon,
 } from '@patternfly/react-icons';
-
-import * as yamlIcon from '../images/yaml.svg';
-import * as gitIcon from '../images/from-git.svg';
-import * as dockerfileIcon from '../images/dockerfile.svg';
 import * as devfileIcon from '../images/devfile.svg';
+import * as dockerfileIcon from '../images/dockerfile.svg';
+import * as gitIcon from '../images/from-git.svg';
+import * as yamlIcon from '../images/yaml.svg';
 
 export const gitIconSVG = gitIcon;
 

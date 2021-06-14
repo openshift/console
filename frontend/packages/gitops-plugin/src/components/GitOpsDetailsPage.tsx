@@ -1,10 +1,12 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import * as _ from 'lodash';
 import { LoadingBox } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
+import GitOpsDetailsController from './details/GitOpsDetailsController';
+import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
 import { GitOpsAppGroupData, GitOpsEnvironment } from './utils/gitops-types';
 import {
   fetchAppGroups,
@@ -13,8 +15,6 @@ import {
   getApplicationsBaseURI,
 } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
-import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
-import GitOpsDetailsController from './details/GitOpsDetailsController';
 
 type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }>;
 

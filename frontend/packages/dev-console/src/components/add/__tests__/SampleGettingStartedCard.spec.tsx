@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src';
-
+import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider';
-
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 

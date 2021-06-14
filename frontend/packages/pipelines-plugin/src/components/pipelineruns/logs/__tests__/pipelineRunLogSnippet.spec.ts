@@ -1,10 +1,10 @@
-import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
-import { getPLRLogSnippet } from '../pipelineRunLogSnippet';
 import {
   pipelineTestData,
   PipelineExampleNames,
   DataState,
 } from '../../../../test-data/pipeline-data';
+import { ErrorDetailsWithLogName, ErrorDetailsWithStaticLog } from '../log-snippet-types';
+import { getPLRLogSnippet } from '../pipelineRunLogSnippet';
 
 const pipelineRunMock =
   pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];

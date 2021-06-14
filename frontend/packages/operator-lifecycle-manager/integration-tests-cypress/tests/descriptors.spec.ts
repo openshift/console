@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { nav } from '../../../integration-tests-cypress/views/nav';
 import { testCR, testCRD, testCSV } from '../mocks';
 
 describe('Using OLM descriptor components', () => {

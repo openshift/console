@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import i18n from 'i18next';
+import * as _ from 'lodash';
+import { errorModal } from '@console/internal/components/modals';
 import {
   history,
   resourcePathFromModel,
@@ -7,14 +8,13 @@ import {
   KebabAction,
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, k8sPatch, referenceForModel } from '@console/internal/module/k8s';
-import { errorModal } from '@console/internal/components/modals';
+import { StartedByAnnotation } from '../components/pipelines/const';
 import {
   addTriggerModal,
   startPipelineModal,
   removeTriggerModal,
 } from '../components/pipelines/modals';
 import { getPipelineRunData } from '../components/pipelines/modals/common/utils';
-import { StartedByAnnotation } from '../components/pipelines/const';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
 import { shouldHidePipelineRunStop } from './pipeline-augment';

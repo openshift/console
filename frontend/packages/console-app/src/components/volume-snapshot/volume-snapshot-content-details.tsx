@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ResourceEventStream } from '@console/internal/components/events';
+import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
   SectionHeading,
   ResourceSummary,
@@ -9,10 +12,7 @@ import {
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { Status } from '@console/shared';
-import { useTranslation } from 'react-i18next';
-import { ResourceEventStream } from '@console/internal/components/events';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;

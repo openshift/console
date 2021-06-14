@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
-import { handleCta } from './utils/quick-search-utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { handleCta } from './utils/quick-search-utils';
 
 interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Alert, Radio } from '@patternfly/react-core';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Alert, Radio } from '@patternfly/react-core';
 import QuickStartMarkdownView from '../QuickStartMarkdownView';
 import { QuickStartTaskStatus, QuickStartTaskReview } from '../utils/quick-start-types';
 

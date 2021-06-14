@@ -1,6 +1,8 @@
-import * as _ from 'lodash';
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { SecretType } from '@console/internal/components/secrets/create-secret';
+import { history } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
   BuildConfigModel,
@@ -21,22 +23,20 @@ import {
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { history } from '@console/internal/components/utils';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
   updatePipelineForImportFlow,
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import { Perspective } from '@console/plugin-sdk';
-import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
+import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import {
   updateServiceAccount,
   getSecretAnnotations,
 } from '@console/pipelines-plugin/src/utils/pipeline-utils';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { Perspective } from '@console/plugin-sdk';
+import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -47,8 +47,8 @@ import {
   getTemplateLabels,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
+import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import {
   GitImportFormData,
   ProjectData,

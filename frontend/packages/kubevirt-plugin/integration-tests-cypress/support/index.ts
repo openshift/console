@@ -1,11 +1,11 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
+import { V1alpha1DataVolume } from '../../src/types/api';
 import {
   KUBEVIRT_PROJECT_NAME,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   EXPECT_LOGIN_SCRIPT_PATH,
   OS_IMAGES_NS,
 } from '../const';
-import { V1alpha1DataVolume } from '../../src/types/api';
 import { VirtualMachineData } from '../types/vm';
 
 export * from '../../../integration-tests-cypress/support';

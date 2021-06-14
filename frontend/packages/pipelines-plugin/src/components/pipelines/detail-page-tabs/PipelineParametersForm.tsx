@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps, FormikValues, getIn } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { Form } from '@patternfly/react-core';
+import { FormikProps, FormikValues, getIn } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useAccessReview } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
 import PipelineParameters from './PipelineParameters';

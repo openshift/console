@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
 import { TriggerBindingKind, TriggerBindingParam } from '../../resource-types';
+import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
 import TriggerBindingSelector from './TriggerBindingSelector';
 import { AddTriggerFormValues } from './types';
 

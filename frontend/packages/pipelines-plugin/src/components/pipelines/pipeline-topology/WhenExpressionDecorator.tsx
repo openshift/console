@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { global_BorderColor_100 as lightBorderColor } from '@patternfly/react-tokens/dist/js/global_BorderColor_100';
+import { useTranslation } from 'react-i18next';
 import { runStatus } from '../../../utils/pipeline-augment';
 import { NODE_HEIGHT } from './const';
 

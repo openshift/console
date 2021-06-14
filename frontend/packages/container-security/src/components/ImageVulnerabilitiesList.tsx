@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { MultiListPage } from '@console/internal/components/factory';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ImageManifestVulnModel } from '../models';
 import { Priority, priorityFor } from '../const';
+import { ImageManifestVulnModel } from '../models';
 import { Feature, ImageManifestVuln, Vulnerability } from '../types';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 

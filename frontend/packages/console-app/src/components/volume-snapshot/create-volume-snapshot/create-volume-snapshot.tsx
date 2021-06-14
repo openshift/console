@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
-import { match } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
-
+import { Helmet } from 'react-helmet';
+import { Trans, useTranslation } from 'react-i18next';
+import { match } from 'react-router';
+import { Link } from 'react-router-dom';
+import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
+import {
+  getAccessModeRadios,
+  snapshotPVCStorageClassAnnotation,
+  snapshotPVCAccessModeAnnotation,
+  snapshotPVCVolumeModeAnnotation,
+} from '@console/internal/components/storage/shared';
 import {
   ListDropdown,
   ButtonBar,
@@ -18,6 +23,16 @@ import {
   humanizeBinaryBytes,
   getURLSearchParams,
 } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
+import {
+  PersistentVolumeClaimModel,
+  VolumeSnapshotModel,
+  VolumeSnapshotClassModel,
+  StorageClassModel,
+  NamespaceModel,
+} from '@console/internal/models';
 import {
   referenceForModel,
   k8sCreate,
@@ -29,24 +44,7 @@ import {
   apiVersionForModel,
   ListKind,
 } from '@console/internal/module/k8s';
-import {
-  PersistentVolumeClaimModel,
-  VolumeSnapshotModel,
-  VolumeSnapshotClassModel,
-  StorageClassModel,
-  NamespaceModel,
-} from '@console/internal/models';
-import {
-  getAccessModeRadios,
-  snapshotPVCStorageClassAnnotation,
-  snapshotPVCAccessModeAnnotation,
-  snapshotPVCVolumeModeAnnotation,
-} from '@console/internal/components/storage/shared';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
-import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (

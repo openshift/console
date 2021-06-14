@@ -3,8 +3,8 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { RocketIcon } from '@patternfly/react-icons';
 import { FallbackImg } from '@console/shared';
 import { QuickStartStatus, QuickStart } from '../utils/quick-start-types';
-import QuickStartTileHeader from './QuickStartTileHeader';
 import QuickStartTileDescription from './QuickStartTileDescription';
+import QuickStartTileHeader from './QuickStartTileHeader';
 
 import './QuickStartTile.scss';
 

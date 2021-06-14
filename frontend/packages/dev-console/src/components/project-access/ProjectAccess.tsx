@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
-import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   LoadingBox,
   openshiftHelpBase,
@@ -10,9 +11,7 @@ import {
   ExternalLink,
   StatusBox,
 } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
 import {
   getRolesWithNameChange,
   sendRoleBindingRequest,
@@ -21,9 +20,10 @@ import {
   sendK8sRequest,
   getGroupedRole,
 } from './project-access-form-submit-utils';
+import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
+import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
-import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 
 export interface ProjectAccessProps {
   namespace: string;

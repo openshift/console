@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as cx from 'classnames';
 import { Button, EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
+import * as cx from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   Table,
   TableProps,
@@ -12,19 +12,19 @@ import {
   RowFunction,
   MultiListPage,
 } from '@console/internal/components/factory';
-import { FirehoseResult, humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
-import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { FirehoseResult, humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { SubscriptionKind, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { getNamespace, getNodeRole } from '@console/shared/';
-import { LocalVolumeDiscoveryResult } from '../../models';
 import { LABEL_SELECTOR } from '../../constants/disks-list';
-import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './types';
+import { LocalVolumeDiscoveryResult } from '../../models';
 import {
   updateLocalVolumeDiscovery,
   createLocalVolumeDiscovery,
 } from '../local-volume-discovery/request';
+import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './types';
 
 export const tableColumnClasses = [
   '',

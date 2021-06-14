@@ -1,17 +1,17 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { InputField } from '@console/shared';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { TextInputTypes } from '@patternfly/react-core';
-import PubSubSubscriber from './form-fields/PubSubSubscriber';
 import PubSubFilter from './form-fields/PubSubFilter';
+import PubSubSubscriber from './form-fields/PubSubSubscriber';
 
 export interface PubSubModalProps {
   filterEnabled: boolean;

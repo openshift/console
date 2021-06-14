@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
-import { PromiseComponent, history } from '@console/internal/components/utils';
+import { Formik, FormikProps, FormikValues } from 'formik';
+import { useTranslation, Trans } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Formik, FormikProps, FormikValues } from 'formik';
+import { PromiseComponent, history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '../status';
 import { InputField } from '../formik-fields';
+import { YellowExclamationTriangleIcon } from '../status';
 
 type DeleteResourceModalProps = {
   resourceName: string;

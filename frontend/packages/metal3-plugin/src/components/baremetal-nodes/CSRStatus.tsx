@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Alert } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-import { PopoverStatus, StatusIconAndText, SecondaryStatus } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { CertificateSigningRequestModel } from '@console/internal/models';
-
-import { approveCSR, denyCSR } from './menu-actions';
+import { PopoverStatus, StatusIconAndText, SecondaryStatus } from '@console/shared';
 import { CertificateSigningRequestKind } from '../../types';
+import { approveCSR, denyCSR } from './menu-actions';
 
 type CSRStatusProps = {
   csr: CertificateSigningRequestKind;

@@ -1,5 +1,4 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   errorMessage,
@@ -20,7 +19,6 @@ import {
   deleteResource,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-
 import { activeTab } from '../views/uiResource.view';
 import { virtualizationTitle } from '../views/vms.list.view';
 import { createItemButton, createWithYAMLButton } from '../views/wizard.view';

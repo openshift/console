@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import { EmptyBox } from '@console/internal/components/utils';
-import QuickStartCatalog from '../QuickStartCatalog';
 import { getQuickStarts } from '../../utils/quick-start-utils';
+import QuickStartCatalog from '../QuickStartCatalog';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

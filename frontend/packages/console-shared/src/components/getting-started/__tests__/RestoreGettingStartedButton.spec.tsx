@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
-
 import { RestoreGettingStartedButton } from '../RestoreGettingStartedButton';
+import { useGettingStartedShowState, GettingStartedShowState } from '../useGettingStartedShowState';
 
 jest.mock('react', () => ({
   ...require.requireActual('react'),

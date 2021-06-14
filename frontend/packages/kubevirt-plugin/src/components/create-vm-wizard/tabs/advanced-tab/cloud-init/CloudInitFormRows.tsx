@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { asValidationObject } from '@console/shared';
 import { Button, ButtonVariant, Split, SplitItem, TextInput } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { asValidationObject } from '@console/shared';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,

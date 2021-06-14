@@ -1,15 +1,13 @@
 import * as React from 'react';
+import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
-import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';

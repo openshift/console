@@ -1,7 +1,7 @@
-import { cloneDeep } from 'lodash';
 import { TFunction } from 'i18next';
-import { healthChecksValidationSchema, MAX_INT32 } from '../health-checks-probe-validation-utils';
+import { cloneDeep } from 'lodash';
 import { healthChecksDefaultValues } from '../health-checks-probe-utils';
+import { healthChecksValidationSchema, MAX_INT32 } from '../health-checks-probe-validation-utils';
 
 const mockHealthCheckFormData = {
   healthChecks: {

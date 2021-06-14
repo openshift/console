@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { NodeKind } from '@console/internal/module/k8s';
-import NodeDetailsOverview from './NodeDetailsOverview';
 import NodeDetailsConditions from './NodeDetailsConditions';
 import NodeDetailsImages from './NodeDetailsImages';
+import NodeDetailsOverview from './NodeDetailsOverview';
 
 type NodeDetailsProps = {
   obj: NodeKind;

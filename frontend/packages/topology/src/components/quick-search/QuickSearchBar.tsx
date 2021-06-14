@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { InputGroup, InputGroupText, Spinner, TextInput } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import QuickSearchIcon from './QuickSearchIcon';
 import './QuickSearchBar.scss';
 

@@ -10,8 +10,8 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RevisionModel, RouteModel } from '../../models';
-import { getConditionString } from '../../utils/condition-utils';
 import { RouteKind } from '../../types';
+import { getConditionString } from '../../utils/condition-utils';
 import { tableColumnClasses } from './route-table';
 
 const routeReference = referenceForModel(RouteModel);

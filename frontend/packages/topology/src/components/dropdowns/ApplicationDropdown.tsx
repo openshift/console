@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
-import { ResourceDropdown } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
+import { ResourceDropdown } from '@console/shared';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
+import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
 
 interface ApplicationDropdownProps {
   id?: string;

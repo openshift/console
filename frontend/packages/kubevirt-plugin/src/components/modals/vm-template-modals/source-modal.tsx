@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   createModalLauncher,
   ModalBody,
@@ -8,8 +8,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { BlueInfoCircleIcon, RedExclamationCircleIcon } from '@console/shared';
-import { Stack, StackItem } from '@patternfly/react-core';
-
 import { TemplateSourceStatusError } from '../../../statuses/template/types';
 import { SourceStatusErrorBody } from '../../vm-templates/vm-template-source';
 import { ModalFooter } from '../modal/modal-footer';

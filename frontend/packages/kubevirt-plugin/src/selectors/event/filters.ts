@@ -1,7 +1,6 @@
 import { PodModel } from '@console/internal/models';
 import { EventInvolvedObject, EventKind } from '@console/internal/module/k8s';
 import { getCreationTimestamp, getName, getNamespace, getUID } from '@console/shared';
-
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
 import {
   VirtualMachineImportModel,

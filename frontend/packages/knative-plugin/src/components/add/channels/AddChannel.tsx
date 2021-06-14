@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
+import { K8sResourceKind, k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
-import { K8sResourceKind, k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
-import { AddChannelFormData, ChannelListProps } from '../import-types';
-import { addChannelValidationSchema } from '../eventSource-validation-utils';
-import ChannelForm from './ChannelForm';
+import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
+import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { getCreateChannelResource } from '../../../utils/create-channel-utils';
 import { handleRedirect } from '../../../utils/create-eventsources-utils';
-import { useTranslation } from 'react-i18next';
+import { addChannelValidationSchema } from '../eventSource-validation-utils';
+import { AddChannelFormData, ChannelListProps } from '../import-types';
+import ChannelForm from './ChannelForm';
 
 interface ChannelProps {
   namespace: string;

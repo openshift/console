@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import ProjectAccessPage from '../ProjectAccessPage';
 import ProjectAccess from '../ProjectAccess';
+import ProjectAccessPage from '../ProjectAccessPage';
 
 type ProjectAccessPageProps = React.ComponentProps<typeof ProjectAccessPage>;
 

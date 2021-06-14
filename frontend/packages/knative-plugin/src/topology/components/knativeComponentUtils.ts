@@ -1,5 +1,3 @@
-import i18next from 'i18next';
-import { errorModal } from '@console/internal/components/modals';
 import {
   GraphElement,
   Edge,
@@ -11,6 +9,8 @@ import {
   CREATE_CONNECTOR_OPERATION,
   DragSpecOperationType,
 } from '@patternfly/react-topology';
+import i18next from 'i18next';
+import { errorModal } from '@console/internal/components/modals';
 import {
   NodeComponentProps,
   NODE_DRAG_TYPE,
@@ -18,6 +18,7 @@ import {
   EdgeComponentProps,
   EditableDragOperationType,
 } from '@console/topology/src/components/graph-view';
+import { EventingBrokerModel } from '../../models';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_SERVICE,
@@ -29,7 +30,6 @@ import {
   createSinkConnection,
   createSinkPubSubConnection,
 } from '../knative-topology-utils';
-import { EventingBrokerModel } from '../../models';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
 export const MOVE_PUB_SUB_CONNECTOR_OPERATION = 'movepubsubconnector';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { defaultCatalogCategories } from '../utils/default-categories';
 import { CatalogCategory } from '../utils/types';
 

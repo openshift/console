@@ -1,9 +1,9 @@
 import { checkErrors, testName } from '../../support';
-import { listPage } from '../../views/list-page';
+import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
+import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
-import { projectDropdown } from '../../views/common';
 
 describe('Namespace', () => {
   before(() => {

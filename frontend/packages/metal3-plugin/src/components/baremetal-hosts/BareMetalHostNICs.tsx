@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { getHostNICs } from '../../selectors';
 import { BareMetalHostNIC, BareMetalHostKind } from '../../types';

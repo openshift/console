@@ -1,8 +1,8 @@
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+import { devNavigationMenu, addOptions } from '../../constants';
+import { topologyPO } from '../../pageObjects';
 import { addPage, gitPage } from '../add-flow';
 import { app, createForm, navigateTo } from '../app';
-import { devNavigationMenu, addOptions } from '../../constants';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
-import { topologyPO } from '../../pageObjects';
 
 export const createGitWorkload = (
   gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',

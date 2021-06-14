@@ -1,6 +1,6 @@
+import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import ToastProvider from '../ToastProvider';
 import useToast from '../useToast';
-import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 
 describe('useToast', () => {
   it('should provide a context', () => {

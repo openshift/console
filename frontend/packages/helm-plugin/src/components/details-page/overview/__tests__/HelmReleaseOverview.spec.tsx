@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
 import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
-import HelmReleaseOverview from '../HelmReleaseOverview';
 import HelmChartSummary from '../HelmChartSummary';
+import HelmReleaseOverview from '../HelmReleaseOverview';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

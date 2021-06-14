@@ -1,8 +1,8 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { topologyPO } from '../../page-objects/topology-po';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { addSecret } from '@console/topology/integration-tests/support/pages/functions/add-secret';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
+import { topologyPO } from '../../page-objects/topology-po';
 import { editDeployment } from '../../pages/topology/topology-edit-deployment';
 
 When('user edits application groupings to {string}', (newAppName: string) => {

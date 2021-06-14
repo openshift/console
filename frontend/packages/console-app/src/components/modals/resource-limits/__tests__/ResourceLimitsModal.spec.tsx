@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { FormikProps, FormikValues } from 'formik';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { FormikProps, FormikValues } from 'formik';
 import ResourceLimitSection from '@console/dev-console/src/components/import/advanced/ResourceLimitSection';
+import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import ResourceLimitsModal from '../ResourceLimitsModal';
 
 type ResourceLimitsModalProps = React.ComponentProps<typeof ResourceLimitsModal>;

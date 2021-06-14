@@ -1,11 +1,9 @@
 import * as React from 'react';
-
+import { Button } from '@patternfly/react-core';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { DASH, dimensifyRow, getCreationTimestamp, getName, getNamespace } from '@console/shared';
-import { Button } from '@patternfly/react-core';
-
 import { VirtualMachineSnapshotModel } from '../../models';
 import {
   getVmRestoreTime,

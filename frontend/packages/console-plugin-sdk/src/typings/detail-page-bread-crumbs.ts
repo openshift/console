@@ -1,6 +1,6 @@
 import { match } from 'react-router';
-import { K8sKind } from '@console/internal/module/k8s';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import { K8sKind } from '@console/internal/module/k8s';
 import { Extension } from './base';
 
 export type DetailsPageBreadCrumbsHook = (

@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useCloudShellAvailable';
 import { MARKDOWN_COPY_BUTTON_ID, MARKDOWN_EXECUTE_BUTTON_ID, MARKDOWN_SNIPPET_ID } from './const';
+import { removeTemplateWhitespace } from './utils';
 
 import './showdown-extension.scss';
-import { removeTemplateWhitespace } from './utils';
 
 const useInlineExecuteCommandShowdownExtension = () => {
   const { t } = useTranslation();

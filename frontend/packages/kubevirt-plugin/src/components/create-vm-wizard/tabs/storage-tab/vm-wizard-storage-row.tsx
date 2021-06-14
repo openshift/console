@@ -1,9 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
+import * as _ from 'lodash';
 import { RowFunction } from '@console/internal/components/factory';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
-
 import { DiskSimpleRow } from '../../../vm-disks/disk-row';
 import { VMWizardStorage } from '../../types';
 import {

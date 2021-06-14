@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DASH, getNamespace } from '@console/shared';
-import { MachineModel } from '@console/internal/models';
 import { ResourceLink } from '@console/internal/components/utils';
+import { MachineModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { DASH, getNamespace } from '@console/shared';
 import { getHostMachineName } from '../../selectors';
 import { BareMetalHostKind } from '../../types';
 

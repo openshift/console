@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { FormGroup, Title, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
+import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
+import { TFunction } from 'i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Edge, Node } from '@patternfly/react-topology';
+import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KAFKA_CONNECTION_LINK,

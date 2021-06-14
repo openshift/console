@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { PodModel } from '@console/internal/models';
-import LogsWrapperComponent from '../pipelineruns/logs/LogsWrapperComponent';
 import { TaskRunKind } from '../../types';
+import LogsWrapperComponent from '../pipelineruns/logs/LogsWrapperComponent';
 import './TaskRunLog.scss';
 
 export type TaskRunLogProps = {

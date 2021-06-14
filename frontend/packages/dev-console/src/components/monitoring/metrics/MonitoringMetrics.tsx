@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import MetricsQueryInput from './MetricsQueryInput';
+import { useTranslation } from 'react-i18next';
 import ConnectedMetricsChart from './MetricsChart';
+import MetricsQueryInput from './MetricsQueryInput';
 
 export const MonitoringMetrics: React.FC = () => {
   const { t } = useTranslation();

@@ -1,13 +1,13 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Checkbox, Switch } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { WidgetProps } from 'react-jsonschema-form';
+import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { RadioGroup } from '@console/internal/components/radio';
 import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
-import { RadioGroup } from '@console/internal/components/radio';
 import { JSON_SCHEMA_NUMBER_TYPES } from './const';
-import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { DynamicFormFieldOptionsList } from './types';
 
 export const TextWidget: React.FC<WidgetProps> = (props) => {

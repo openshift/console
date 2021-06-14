@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FormikValues, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { CheckboxField, InputField } from '@console/shared/src';
 import ImageStream from '../../import/image-search/ImageStream';
 

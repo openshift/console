@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
-
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
 import { NodeDashboardContext } from './NodeDashboardContext';

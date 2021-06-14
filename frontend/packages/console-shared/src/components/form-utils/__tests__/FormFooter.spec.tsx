@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { FormFooter } from '@console/shared';
-import { Button } from '@patternfly/react-core';
 
 type FormFooterProps = React.ComponentProps<typeof FormFooter>;
 

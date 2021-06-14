@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import {
   asAccessReview,
@@ -10,7 +9,6 @@ import {
 } from '@console/internal/components/utils';
 import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
-
 import { PENDING_RESTART_LABEL } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';

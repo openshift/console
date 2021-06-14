@@ -1,5 +1,4 @@
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
-
 import {
   TEMPLATE_DEFAULT_LABEL,
   TEMPLATE_FLAVOR_LABEL,

@@ -1,6 +1,5 @@
-import { shallow } from 'enzyme';
 import * as React from 'react';
-
+import { shallow } from 'enzyme';
 import VMIDetailsPageInfoMessage from '../VMIDetailsPageInfoMessage';
 import { mockData } from './mock_data';
 

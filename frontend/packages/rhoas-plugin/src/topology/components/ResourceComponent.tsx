@@ -1,8 +1,8 @@
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { SecretModel } from '@console/internal/models';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ResourceLink } from '@console/internal/components/utils';
+import { SecretModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnection } from '../../utils/rhoas-types';
 
 export const ResourcesComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {

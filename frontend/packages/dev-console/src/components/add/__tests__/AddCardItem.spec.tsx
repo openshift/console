@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Text } from '@patternfly/react-core';
 import { CatalogIcon } from '@patternfly/react-icons';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import AddCardItem from '../AddCardItem';
+import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
 
 jest.mock('@console/shared/src/hooks/useTelemetry', () => ({

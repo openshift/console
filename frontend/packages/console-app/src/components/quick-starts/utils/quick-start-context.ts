@@ -1,4 +1,5 @@
 import { createContext, useCallback } from 'react';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 import { QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY, QUICKSTART_TASKS_INITIAL_STATES } from './const';
 import {
@@ -7,7 +8,6 @@ import {
   QuickStartStatus,
   QuickStartTaskStatus,
 } from './quick-start-types';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { getTaskStatusKey } from './quick-start-utils';
 
 export type QuickStartContextValues = {

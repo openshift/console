@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { TextColumnItemProps } from './text-column-types';
 import TextColumnItemContent from './TextColumnItemContent';
 

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Button, ButtonType, ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useField } from 'formik';
+import { Trans, useTranslation } from 'react-i18next';
 import { MultiColumnField } from '@console/shared';
-import { SelectedBuilderTask } from '../types';
+import { RowRendererProps } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldRow';
 import { useBuilderParams } from '../../../shared/common/auto-complete/autoCompleteValueParsers';
 import WhenExpressionForm from '../../pipeline-topology/WhenExpressionForm';
+import { SelectedBuilderTask } from '../types';
 
 import './TaskSidebarWhenExpression.scss';
-import { RowRendererProps } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldRow';
 
 type TaskSidebarWhenExpressionProps = {
   hasParam: boolean;

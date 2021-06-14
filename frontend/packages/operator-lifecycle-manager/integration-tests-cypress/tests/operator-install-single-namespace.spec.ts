@@ -1,6 +1,6 @@
-import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { nav } from '../../../integration-tests-cypress/views/nav';
 import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
 
 const operatorName = 'Couchbase Operator';

@@ -8,9 +8,9 @@ import {
   k8sPatch,
   k8sGet,
 } from '@console/internal/module/k8s';
-import { LocalVolumeDiscovery } from '../../models';
-import { DISCOVERY_CR_NAME, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodeSelectorTermsIndices } from '@console/local-storage-operator-plugin/src/utils';
+import { DISCOVERY_CR_NAME, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
+import { LocalVolumeDiscovery } from '../../models';
 
 export const getDiscoveryRequestData = (
   nodes: string[],

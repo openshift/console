@@ -6,11 +6,11 @@ import {
   useCombineRefs,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import { truncateMiddle } from '@console/internal/components/utils';
-import SvgResourceIcon from './SvgResourceIcon';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
+import SvgResourceIcon from './SvgResourceIcon';
 
 interface SvgBoxedTextProps {
   children?: string;

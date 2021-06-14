@@ -1,5 +1,5 @@
-import { KebabOption } from '@console/internal/components/utils/kebab';
 import { Node } from '@patternfly/react-topology';
+import { KebabOption } from '@console/internal/components/utils/kebab';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import {
   deleteHelmRelease,

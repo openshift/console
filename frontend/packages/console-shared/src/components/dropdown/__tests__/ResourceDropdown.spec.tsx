@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
-import ResourceDropdown from '../ResourceDropdown';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
+import ResourceDropdown from '../ResourceDropdown';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

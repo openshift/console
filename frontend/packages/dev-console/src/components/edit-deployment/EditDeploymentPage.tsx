@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { StatusBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import EditDeployment from './EditDeployment';
 

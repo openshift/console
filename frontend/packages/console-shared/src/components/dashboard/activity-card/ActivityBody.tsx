@@ -1,19 +1,20 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
-import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import { Accordion } from '@patternfly/react-core';
-import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import { FirehoseResult } from '@console/internal/components/utils/types';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { AsyncComponent } from '@console/internal/components/utils/async';
+import { Timestamp } from '@console/internal/components/utils/timestamp';
+import { FirehoseResult } from '@console/internal/components/utils/types';
+import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
 import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
+
 import './activity-card.scss';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 
 export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
   const { t } = useTranslation();

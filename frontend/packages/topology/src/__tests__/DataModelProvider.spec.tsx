@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import store from '@console/internal/redux';
 import * as utils from '@console/internal/components/utils/url-poll-hook';
-import DataModelProvider from '../data-transforms/DataModelProvider';
+import store from '@console/internal/redux';
 import TopologyDataRenderer from '../components/page/TopologyDataRenderer';
+import DataModelProvider from '../data-transforms/DataModelProvider';
 import TopologyDataRetriever from '../data-transforms/TopologyDataRetriever';
 import { TopologyViewType } from '../topology-types';
 

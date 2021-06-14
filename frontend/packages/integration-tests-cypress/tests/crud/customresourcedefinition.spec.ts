@@ -1,12 +1,11 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
-import { checkErrors, testName } from '../../support';
-import { nav } from '../../views/nav';
-import { listPage } from '../../views/list-page';
-import * as yamlEditor from '../../views/yaml-editor';
-import { errorMessage } from '../../views/form';
 import { CustomResourceDefinitionKind } from '@console/internal/module/k8s';
+import { checkErrors, testName } from '../../support';
+import { errorMessage } from '../../views/form';
+import { listPage } from '../../views/list-page';
+import { nav } from '../../views/nav';
+import * as yamlEditor from '../../views/yaml-editor';
 
 describe('CustomResourceDefinitions', () => {
   const plural = `crd${testName}`;

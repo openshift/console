@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { TooltipPosition } from '@patternfly/react-core';
 import { Node, NodeModel, observer, useHover } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import {
   AddNodeDirection,
   BUILDER_NODE_ADD_RADIUS,
@@ -11,7 +12,6 @@ import ErrorNodeDecorator from './ErrorNodeDecorator';
 import PlusNodeDecorator from './PlusNodeDecorator';
 import TaskNode from './TaskNode';
 import { BuilderNodeModelData } from './types';
-import { TooltipPosition } from '@patternfly/react-core';
 
 type BuilderNodeProps = {
   element: Node<NodeModel, BuilderNodeModelData>;

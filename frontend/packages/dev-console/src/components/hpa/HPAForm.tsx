@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { isEmpty } from 'lodash';
 import { FormikProps } from 'formik';
+import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   FlexForm,
   FormBody,
@@ -10,11 +12,9 @@ import {
   YAMLEditorField,
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import HPADetailsForm from './HPADetailsForm';
 import { sanitizeHPAToForm } from './hpa-utils';
+import HPADetailsForm from './HPADetailsForm';
 import { HPAFormValues } from './types';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 
 type HPAFormProps = {
   targetResource: K8sResourceCommon;

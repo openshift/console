@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { CodeIcon } from '@patternfly/react-icons';
+import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
+import { SecretModel, ConfigMapModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelFeatureFlag,
@@ -14,14 +17,11 @@ import {
   PostFormSubmissionAction,
   CustomFeatureFlag,
 } from '@console/plugin-sdk';
-import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { SecretModel, ConfigMapModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
-import { getKebabActionsForKind } from './utils/kebab-actions';
-import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
-import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
+import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
+import { getKebabActionsForKind } from './utils/kebab-actions';
+import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 
 type ConsumedExtensions =
   | ModelFeatureFlag

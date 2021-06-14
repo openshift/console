@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { prefixedID } from '../../../utils';
 import { iGet } from '../../../utils/immutable';
 import { getReviewValue } from '../tabs/review-tab/utils';

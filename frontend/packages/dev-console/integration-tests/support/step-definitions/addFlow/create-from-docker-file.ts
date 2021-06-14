@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage, addPage, devFilePage } from '../../pages';
 import { addOptions } from '../../constants';
+import { gitPage, addPage, devFilePage } from '../../pages';
 
 Given('user is on Import from Docker file page', () => {
   addPage.selectCardFromOptions(addOptions.DockerFile);

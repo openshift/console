@@ -1,21 +1,19 @@
 import { Set as ImmutableSet } from 'immutable';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
-import { nav } from '../../views/nav';
-import * as yamlEditor from '../../views/yaml-editor';
-import { overviewPage } from '../../views/overview';
-import { detailsPage } from '../../views/details-page';
-import { errorMessage } from '../../views/form';
-import { masthead } from '../../views/masthead';
-
-import { checkErrors, testName } from '../../support';
 import {
   DeploymentModel,
   StatefulSetModel,
   DeploymentConfigModel,
   DaemonSetModel,
 } from '../../../../public/models';
+import { checkErrors, testName } from '../../support';
+import { detailsPage } from '../../views/details-page';
+import { errorMessage } from '../../views/form';
+import { masthead } from '../../views/masthead';
+import { nav } from '../../views/nav';
+import { overviewPage } from '../../views/overview';
+import * as yamlEditor from '../../views/yaml-editor';
 
 const overviewResources = ImmutableSet([
   DaemonSetModel,

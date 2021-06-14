@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { isCustomFlavor } from '../selectors/vm-like/flavor';
 import { OperatingSystemRecord } from '../types';
 

@@ -1,9 +1,9 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { nav } from '@console/cypress-integration-tests/views/nav';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 import { switchPerspective, devNavigationMenu } from '../../constants';
 import { perspective, navigateTo } from '../../pages';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);

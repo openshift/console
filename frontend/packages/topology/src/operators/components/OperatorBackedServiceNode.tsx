@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   observer,
@@ -14,7 +12,8 @@ import {
   createSvgIdUrl,
   useSize,
 } from '@patternfly/react-topology';
-import { useSearchFilter } from '../../filters/useSearchFilter';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   noRegroupDragSourceSpec,
   NodeShadows,
@@ -23,6 +22,7 @@ import {
   GroupNode,
   GroupNodeAnchor,
 } from '../../components/graph-view';
+import { useSearchFilter } from '../../filters/useSearchFilter';
 
 type OperatorBackedServiceNodeProps = {
   element: Node;

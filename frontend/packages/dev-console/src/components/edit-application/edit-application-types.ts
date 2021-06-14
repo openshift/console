@@ -1,5 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 
 export interface AppResources {

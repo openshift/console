@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TriggerTemplateModel } from '../../../models';
-import { EventListenerKindTrigger } from '../resource-types';
 import DynamicResourceLinkList, {
   ResourceModelLink,
 } from '../resource-overview/DynamicResourceLinkList';
+import { EventListenerKindTrigger } from '../resource-types';
 import { getEventListenerTriggerBindingNames } from '../utils/triggers';
 import './EventListenerTriggers.scss';
 

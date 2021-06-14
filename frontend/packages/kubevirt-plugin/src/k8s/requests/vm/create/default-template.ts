@@ -1,5 +1,4 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   DiskBus,

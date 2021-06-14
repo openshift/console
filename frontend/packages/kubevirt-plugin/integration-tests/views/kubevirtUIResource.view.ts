@@ -1,5 +1,4 @@
 import { $, browser, by, element, ExpectedConditions as until } from 'protractor';
-
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 

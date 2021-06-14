@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { FormGroup, TextArea, TextInput } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Dropdown } from '@console/internal/components/utils';
 import { ELEMENT_TYPES, networkTypeParams, NetworkTypeParams } from '../../constants';
-import { FormGroup, TextArea, TextInput } from '@patternfly/react-core';
 
 const handleTypeParamChange = (
   paramKey,

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Formik, useField, useFormikContext } from 'formik';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Formik, useField, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
+import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
 import {
@@ -12,10 +12,10 @@ import {
   getSecretAnnotations,
 } from '../../../../utils/pipeline-utils';
 import { SecretAnnotationId } from '../../const';
-import { advancedSectionValidationSchema } from './validation-utils';
 import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
 import { CommonPipelineModalFormikValues } from './types';
+import { advancedSectionValidationSchema } from './validation-utils';
 
 import './PipelineSecretSection.scss';
 

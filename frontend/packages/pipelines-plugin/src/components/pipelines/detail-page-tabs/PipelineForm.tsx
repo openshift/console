@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Formik } from 'formik';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { removeEmptyDefaultFromPipelineParams } from './utils';

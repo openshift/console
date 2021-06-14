@@ -7,8 +7,8 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import TrafficSplittingFields from './TrafficSplittingFields';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';
+import TrafficSplittingFields from './TrafficSplittingFields';
 
 interface TrafficSplittingModalProps {
   revisionItems: RevisionItems;

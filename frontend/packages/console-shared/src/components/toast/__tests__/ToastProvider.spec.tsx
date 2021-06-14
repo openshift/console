@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { act } from 'react-dom/test-utils';
-import { mount, ReactWrapper } from 'enzyme';
 import { Alert, AlertActionLink } from '@patternfly/react-core';
+import { mount, ReactWrapper } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import ToastContext, { ToastContextType, ToastVariant } from '../ToastContext';
 import ToastProvider from '../ToastProvider';
 

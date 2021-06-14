@@ -2,8 +2,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
-import { StatusIcon } from './StatusIcon';
 import { StepStatus } from './pipeline-step-utils';
+import { StatusIcon } from './StatusIcon';
 
 import './PipelineVisualizationStepList.scss';
 

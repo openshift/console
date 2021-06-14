@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import ResourceLimitSection from '../ResourceLimitSection';
 import FormSection from '../../section/FormSection';
+import ResourceLimitSection from '../ResourceLimitSection';
 
 let resourceLimitSectionProps: React.ComponentProps<typeof ResourceLimitSection>;
 const useFormikContextMock = useFormikContext as jest.Mock;

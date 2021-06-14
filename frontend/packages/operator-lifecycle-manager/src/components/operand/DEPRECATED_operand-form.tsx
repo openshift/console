@@ -1,11 +1,6 @@
 // THIS COMPONENT IS DEPRECATED AND WILL BE REMOVED IN v4.6.
 
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
-import * as Immutable from 'immutable';
 import * as React from 'react';
-import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   Alert,
   ActionGroup,
@@ -17,9 +12,24 @@ import {
   AccordionToggle,
   AccordionContent,
 } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import * as classNames from 'classnames';
+import * as Immutable from 'immutable';
+import { JSONSchema6, JSONSchema6TypeName } from 'json-schema';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ConfigureUpdateStrategy } from '@console/internal/components/modals/configure-update-strategy-modal';
-import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import { RadioGroup } from '@console/internal/components/radio';
+import {
+  NumberSpinner,
+  history,
+  SelectorInput,
+  ListDropdown,
+  useScrollToTopOnMount,
+  Dropdown,
+} from '@console/internal/components/utils';
+import { ExpandCollapse } from '@console/internal/components/utils/expand-collapse';
 import {
   GroupVersionKind,
   ImagePullPolicy,
@@ -29,28 +39,18 @@ import {
   modelFor,
   NodeAffinity as NodeAffinityType,
 } from '@console/internal/module/k8s';
-import {
-  NumberSpinner,
-  history,
-  SelectorInput,
-  ListDropdown,
-  useScrollToTopOnMount,
-  Dropdown,
-} from '@console/internal/components/utils';
-import { ClusterServiceVersionLogo } from '../index';
-import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
-import { Descriptor, SpecCapability, StatusCapability } from '../descriptors/types';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { usePostFormSubmitAction } from '@console/shared';
+import { ProvidedAPI } from '../../types';
 import {
   NodeAffinity,
   PodAffinity,
   DEFAULT_NODE_AFFINITY,
   DEFAULT_POD_AFFINITY,
 } from '../descriptors/spec/affinity';
+import { ResourceRequirements } from '../descriptors/spec/resource-requirements';
+import { Descriptor, SpecCapability, StatusCapability } from '../descriptors/types';
+import { ClusterServiceVersionLogo } from '../index';
 import { OperandFormProps } from './operand-form';
-import { ProvidedAPI } from '../../types';
-import { usePostFormSubmitAction } from '@console/shared';
-import { useTranslation } from 'react-i18next';
 
 /*
  * Matches a path that contains an array index. Use Sting.match against an OperandField 'path'

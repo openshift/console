@@ -1,6 +1,6 @@
-import { Plugin } from '@console/plugin-sdk';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,

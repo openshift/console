@@ -1,6 +1,18 @@
 import * as React from 'react';
+import {
+  Alert,
+  AlertVariant,
+  Checkbox,
+  ExpandableSection,
+  Form,
+  FormSelect,
+  FormSelectOption,
+  SelectOption,
+  Stack,
+  StackItem,
+  TextInput,
+} from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   ExternalLink,
@@ -19,20 +31,6 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { getAnnotations, getName } from '@console/shared/src';
-import {
-  Alert,
-  AlertVariant,
-  Checkbox,
-  ExpandableSection,
-  Form,
-  FormSelect,
-  FormSelectOption,
-  SelectOption,
-  Stack,
-  StackItem,
-  TextInput,
-} from '@patternfly/react-core';
-
 import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,
@@ -71,6 +69,7 @@ import { TemplateValidations } from '../../../utils/validations/template/templat
 import { validateDisk } from '../../../utils/validations/vm';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { VMImportProvider } from '../../create-vm-wizard/types';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
 import {
@@ -84,7 +83,7 @@ import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { StorageUISource } from './storage-ui-source';
-import { VMImportProvider } from '../../create-vm-wizard/types';
+
 import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {

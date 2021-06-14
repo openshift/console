@@ -1,6 +1,6 @@
-import { StoreType } from './store';
 import { bucketStore, namespaceStore } from '../mocks/bucket-class';
 import { commonFlows } from './common';
+import { StoreType } from './store';
 
 export const bcName = 'test-bucketclass';
 const bcDescription =

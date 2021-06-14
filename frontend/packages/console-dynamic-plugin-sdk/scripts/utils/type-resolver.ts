@@ -1,5 +1,5 @@
-import * as ts from 'typescript';
 import * as _ from 'lodash';
+import * as ts from 'typescript';
 import { resolvePath } from './path';
 import {
   getTypeAliasDeclaration,

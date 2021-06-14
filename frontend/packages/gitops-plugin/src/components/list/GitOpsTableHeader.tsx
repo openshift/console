@@ -1,6 +1,6 @@
-import i18n from '@console/internal/i18n';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import i18n from '@console/internal/i18n';
 
 const tableColumnClasses = [
   classNames('pf-m-width-20'), // Application name

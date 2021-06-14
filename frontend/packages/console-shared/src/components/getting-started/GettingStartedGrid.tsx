@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardHeader,
@@ -14,6 +13,7 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import './GettingStartedGrid.scss';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import { Resources } from '../../import-types';
 import ServerlessRouteSection from '../../serverless/ServerlessRouteSection';
 import AdvancedRouteOptions from '../AdvancedRouteOptions';

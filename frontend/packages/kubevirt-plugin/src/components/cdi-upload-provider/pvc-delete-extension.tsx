@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import {
   useK8sWatchResource,
@@ -7,7 +6,6 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { k8sKill, PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
-
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,

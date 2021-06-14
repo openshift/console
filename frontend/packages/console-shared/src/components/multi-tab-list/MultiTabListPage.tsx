@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { match as Rmatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { match as Rmatch } from 'react-router-dom';
 import {
   history,
   PageHeading,

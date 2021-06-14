@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
-import { useTranslation, Trans } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
-import { history, useAccessReview, Page } from '@console/internal/components/utils';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
-import { ProjectModel, RoleBindingModel } from '@console/internal/models';
-import { DetailsPage } from '@console/internal/components/factory';
+import { Helmet } from 'react-helmet';
+import { useTranslation, Trans } from 'react-i18next';
+import { match as RMatch } from 'react-router';
 import { ProjectDashboard } from '@console/internal/components/dashboard/project-dashboard/project-dashboard';
+import { DetailsPage } from '@console/internal/components/factory';
+import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
 import { withStartGuide } from '@console/internal/components/start-guide';
+import { history, useAccessReview, Page } from '@console/internal/components/utils';
+import { ProjectModel, RoleBindingModel } from '@console/internal/models';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import ProjectAccessPage from '../../project-access/ProjectAccessPage';
-import { Helmet } from 'react-helmet';
 import CreateProjectListPage from '../CreateProjectListPage';
 
 export const PROJECT_DETAILS_ALL_NS_PAGE_URI = '/project-details/all-namespaces';

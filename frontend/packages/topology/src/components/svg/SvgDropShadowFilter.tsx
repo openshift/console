@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { SVGDefs } from '@patternfly/react-topology';
 import { global_palette_black_1000 as globalBlack1000 } from '@patternfly/react-tokens/dist/js/global_palette_black_1000';
+import { SVGDefs } from '@patternfly/react-topology';
 
 interface SvgDropShadowFilterProps {
   // The unique ID that identifies the filter.

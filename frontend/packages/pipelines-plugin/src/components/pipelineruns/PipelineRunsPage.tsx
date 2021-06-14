@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Button } from '@patternfly/react-core';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import { PipelineRunModel } from '../../models';
-import PipelineRunsResourceList from './PipelineRunsResourceList';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import PipelineRunsResourceList from './PipelineRunsResourceList';
 
 type PipelineRunsPageProps = RouteComponentProps<{ ns: string }>;
 

@@ -9,18 +9,18 @@ import {
   EventingBrokerModel,
   CamelKameletBindingModel,
 } from '../../models';
-import KnativeServiceResources from './KnativeServiceResources';
-import KnativeRevisionResources from './KnativeRevisionResources';
-import RevisionsOverviewList from './RevisionsOverviewList';
-import KSRoutesOverviewList from './RoutesOverviewList';
-import ConfigurationsOverviewList from './ConfigurationsOverviewList';
-import EventSourceResources from './EventSourceResources';
+import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
+import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import EventPubSubResources from './EventPubSubResources';
-import { KnativeServiceOverviewItem } from '../../topology/topology-types';
+import EventSourceResources from './EventSourceResources';
+import KnativeRevisionResources from './KnativeRevisionResources';
+import KnativeServiceResources from './KnativeServiceResources';
+import RevisionsOverviewList from './RevisionsOverviewList';
+import KSRoutesOverviewList from './RoutesOverviewList';
 
 type OverviewDetailsResourcesTabProps = {
   item: KnativeServiceOverviewItem;

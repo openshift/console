@@ -1,6 +1,6 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import {
   TopologyApplyDisplayOptions,
   TopologyDataModelDepicted,

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
 import {
   Edge,
   observer,
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
-import { getResource } from '@console/topology/src/utils';
+import * as classNames from 'classnames';
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
+import { getResource } from '@console/topology/src/utils';
 import { EVENT_MARKER_RADIUS } from '../../const';
 import './EventSourceLink.scss';
 

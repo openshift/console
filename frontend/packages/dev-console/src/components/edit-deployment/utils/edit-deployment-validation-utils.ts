@@ -1,13 +1,13 @@
 import * as yup from 'yup';
 import i18n from '@console/internal/i18n';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { DeploymentStrategyType, LifecycleAction } from '../deployment-strategy/utils/types';
 import {
   DeploymentStrategy,
   EditDeploymentData,
   EditDeploymentFormData,
   LifecycleHookFormData,
 } from './edit-deployment-types';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { DeploymentStrategyType, LifecycleAction } from '../deployment-strategy/utils/types';
 
 export const lchValidationSchema = (lch: LifecycleHookFormData) =>
   yup.object().shape({

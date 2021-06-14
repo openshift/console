@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import {
   observer,
   Node,
@@ -15,6 +13,8 @@ import {
   WithCreateConnectorProps,
   useSize,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, Point } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
 import {
   BUILDER_NODE_ADD_RADIUS,
@@ -14,11 +14,11 @@ import {
   FINALLY_ADD_LINK_SIZE,
   WHEN_EXPRESSION_SPACING,
 } from './const';
-import PlusNodeDecorator from './PlusNodeDecorator';
-import ErrorNodeDecorator from './ErrorNodeDecorator';
-import { BuilderFinallyNodeModel } from './types';
-import TaskList from './TaskList';
 import { integralShapePath, straightPath } from './draw-utils';
+import ErrorNodeDecorator from './ErrorNodeDecorator';
+import PlusNodeDecorator from './PlusNodeDecorator';
+import TaskList from './TaskList';
+import { BuilderFinallyNodeModel } from './types';
 
 import './BuilderFinallyNode.scss';
 

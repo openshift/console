@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
+import FormSection from '../../../import/section/FormSection';
 import { lifecycleActionType } from '../utils/deployment-strategy-utils';
 import { FailurePolicyOptions } from '../utils/types';
 import ExecNewPodForm from './ExecNewPodForm';
 import TagImagesForm from './TagImagesForm';
-import FormSection from '../../../import/section/FormSection';
 import './LifecycleHookForm.scss';
 
 interface LifecycleHookFormProps {

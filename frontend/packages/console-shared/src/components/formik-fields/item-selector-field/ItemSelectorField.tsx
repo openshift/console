@@ -1,9 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useField, useFormikContext, FormikValues } from 'formik';
-import { LoadingInline } from '@console/internal/components/utils';
 import {
   FormGroup,
   EmptyState,
@@ -13,6 +8,11 @@ import {
   TextInput,
   EmptyStateBody,
 } from '@patternfly/react-core';
+import { useField, useFormikContext, FormikValues } from 'formik';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { LoadingInline } from '@console/internal/components/utils';
 import { getFieldId, useDebounceCallback } from '@console/shared';
 import SelectorCard from './SelectorCard';
 import './ItemSelectorField.scss';

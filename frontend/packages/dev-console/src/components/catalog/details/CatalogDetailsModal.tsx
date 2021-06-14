@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Modal } from '@console/shared';
-import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
-import { getIconProps } from '../utils/catalog-utils';
-import useCtaLink from '../hooks/useCtaLink';
 import CatalogBadges from '../CatalogBadges';
+import useCtaLink from '../hooks/useCtaLink';
+import { getIconProps } from '../utils/catalog-utils';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
 
 type CatalogDetailsModalProps = {

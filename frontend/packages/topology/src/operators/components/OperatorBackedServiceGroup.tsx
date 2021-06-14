@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -15,14 +13,16 @@ import {
   useAnchor,
   RectAnchor,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { referenceFor } from '@console/internal/module/k8s';
-import SvgBoxedText from '../../components/svg/SvgBoxedText';
 import {
   noRegroupDragSourceSpec,
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
 } from '../../components/graph-view';
+import SvgBoxedText from '../../components/svg/SvgBoxedText';
 import {
   getFilterById,
   useDisplayFilters,

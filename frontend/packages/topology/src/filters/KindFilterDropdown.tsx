@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
-import { modelFor } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { modelFor } from '@console/internal/module/k8s';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 
 import './KindFilterDropdown.scss';

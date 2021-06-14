@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { capitalize } from 'lodash';
 import { FieldArray, useField } from 'formik';
+import { capitalize } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import PipelineResourceDropdownField from './PipelineResourceDropdownField';

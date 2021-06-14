@@ -4,7 +4,6 @@ import {
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
-
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';

@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
-import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { Popover, PopoverPosition } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-
+import { Trans, useTranslation } from 'react-i18next';
+import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { VirtualMachineModel } from '../../../models/index';
 import { preventDefault } from '../../form/utils';
 import SSHCreateServiceMessage from './SSHCreateServiceMessage';

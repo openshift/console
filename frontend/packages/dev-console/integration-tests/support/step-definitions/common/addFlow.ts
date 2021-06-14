@@ -1,4 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { switchPerspective, devNavigationMenu, pageTitle, addOptions } from '../../constants';
+import { topologyPO } from '../../pageObjects';
 import {
   gitPage,
   addPage,
@@ -9,8 +11,6 @@ import {
   perspective,
   navigateTo,
 } from '../../pages';
-import { switchPerspective, devNavigationMenu, pageTitle, addOptions } from '../../constants';
-import { topologyPO } from '../../pageObjects';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);

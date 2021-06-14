@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
-import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
 import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
 import {
   DeployImageFormData,
   GitImportFormData,
   UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
-import { ServiceModel } from '../models';
+import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
+import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { NameValuePair } from 'packages/console-shared/src';
+import { ServiceModel } from '../models';
 
 export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData | UploadJarFormData,

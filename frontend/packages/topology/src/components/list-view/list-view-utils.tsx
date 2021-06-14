@@ -1,6 +1,6 @@
+import { isNode, Node, GraphElement } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { K8sKind, modelFor } from '@console/internal/module/k8s';
-import { isNode, Node, GraphElement } from '@patternfly/react-topology';
 import { getResourceKind } from '../../utils/topology-utils';
 
 export const labelForNodeKind = (kindString: string) => {

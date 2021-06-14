@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import { Kebab, KebabAction, KebabOption } from '@console/internal/components/utils';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
-import { menuActions as deploymentConfigMenuActions } from '@console/internal/components/deployment-config';
-import { menuActions as deploymentMenuActions } from '@console/internal/components/deployment';
-import { menuActions as statefulSetMenuActions } from '@console/internal/components/stateful-set';
-import { menuActions as daemonSetMenuActions } from '@console/internal/components/daemon-set';
 import { menuActions as cronJobActions } from '@console/internal/components/cron-job';
+import { menuActions as daemonSetMenuActions } from '@console/internal/components/daemon-set';
+import { menuActions as deploymentMenuActions } from '@console/internal/components/deployment';
+import { menuActions as deploymentConfigMenuActions } from '@console/internal/components/deployment-config';
 import { menuActions as jobActions } from '@console/internal/components/job';
 import { menuActions as podActions } from '@console/internal/components/pod';
+import { menuActions as statefulSetMenuActions } from '@console/internal/components/stateful-set';
+import { Kebab, KebabAction, KebabOption } from '@console/internal/components/utils';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '../topology-types';
 import { ModifyApplication } from './modify-application';
 

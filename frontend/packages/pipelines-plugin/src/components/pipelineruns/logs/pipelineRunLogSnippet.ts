@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { Condition, PipelineRunKind, PLRTaskRunData, PLRTaskRunStep } from '../../../types';
-import { CombinedErrorDetails } from './log-snippet-types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
+import { CombinedErrorDetails } from './log-snippet-types';
 import { taskRunSnippetMessage } from './log-snippet-utils';
 
 export const getPLRLogSnippet = (pipelineRun: PipelineRunKind): CombinedErrorDetails => {

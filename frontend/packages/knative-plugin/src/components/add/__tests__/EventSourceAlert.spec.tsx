@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import EventSourceAlert from '../EventSourceAlert';
 
 jest.mock('react-i18next', () => {

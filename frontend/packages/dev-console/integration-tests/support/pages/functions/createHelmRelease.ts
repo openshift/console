@@ -1,8 +1,8 @@
-import { devNavigationMenu } from '../../constants/global';
-import { navigateTo } from '../app';
 import { addOptions } from '../../constants/add';
-import { catalogPage } from '../add-flow/catalog-page';
+import { devNavigationMenu } from '../../constants/global';
 import { addPage } from '../add-flow/add-page';
+import { catalogPage } from '../add-flow/catalog-page';
+import { navigateTo } from '../app';
 
 export const createHelmRelease = (helmCardName: string) => {
   navigateTo(devNavigationMenu.Add);

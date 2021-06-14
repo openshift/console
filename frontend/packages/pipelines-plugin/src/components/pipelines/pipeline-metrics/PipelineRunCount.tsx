@@ -1,18 +1,18 @@
 import * as React from 'react';
-import Measure from 'react-measure';
+import { ChartVoronoiContainer } from '@patternfly/react-charts';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ChartVoronoiContainer } from '@patternfly/react-charts';
-import { LoadingInline } from '@console/internal/components/utils';
+import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { LoadingInline } from '@console/internal/components/utils';
+import { DEFAULT_CHART_HEIGHT, DEFAULT_SAMPLES } from '../const';
+import { usePipelineRunPoll } from '../hooks';
+import { TimeSeriesChart } from './charts/TimeSeriesChart';
 import {
   formatDate,
   formatTimeSeriesValues,
   PipelineMetricsGraphProps,
 } from './pipeline-metrics-utils';
-import { TimeSeriesChart } from './charts/TimeSeriesChart';
-import { DEFAULT_CHART_HEIGHT, DEFAULT_SAMPLES } from '../const';
-import { usePipelineRunPoll } from '../hooks';
 
 import './pipeline-chart.scss';
 

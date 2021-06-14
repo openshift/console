@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
 import { ChartDonut } from '@patternfly/react-charts';
 import { SecurityIcon } from '@patternfly/react-icons';
+import { ShallowWrapper, shallow } from 'enzyme';
+import { fakeVulnFor } from '../../../integration-tests/bad-pods';
+import { Priority, totalFor, vulnPriority } from '../../const';
 import {
   ImageManifestVulnDetails,
   ImageManifestVulnDetailsProps,
   totalCount,
   highestSeverityIndex,
 } from '../image-manifest-vuln';
-import { fakeVulnFor } from '../../../integration-tests/bad-pods';
-import { Priority, totalFor, vulnPriority } from '../../const';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

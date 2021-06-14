@@ -1,5 +1,4 @@
 import { K8sKind } from '@console/internal/module/k8s';
-
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 import { POD_STATUS } from '../utils/constants/pod';
 import { DISK_DRIVE, DISK_SOURCE, VM_STATUS } from '../utils/constants/vm';

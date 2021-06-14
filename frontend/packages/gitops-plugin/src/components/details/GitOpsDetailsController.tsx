@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
-import GitOpsDetails from './GitOpsDetails';
+import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import PodRingWrapper from './PodRingWrapper';
-import TimestampWrapper from './TimestampWrapper';
+import GitOpsEmptyState from '../GitOpsEmptyState';
 import { WORKLOAD_KINDS, GitOpsResource, GitOpsEnvironment } from '../utils/gitops-types';
 import CommitDetails from './CommitDetails';
-import GitOpsEmptyState from '../GitOpsEmptyState';
+import GitOpsDetails from './GitOpsDetails';
+import PodRingWrapper from './PodRingWrapper';
+import TimestampWrapper from './TimestampWrapper';
 
 interface GitOpsDetailsControllerProps {
   envsData: GitOpsEnvironment[];

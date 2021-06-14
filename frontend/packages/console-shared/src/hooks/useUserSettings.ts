@@ -3,11 +3,10 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConfigMapModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useUserSettingsLocalStorage } from './useUserSettingsLocalStorage';
+import { RootState } from '@console/internal/redux';
 import {
   createConfigMap,
   deseralizeData,
@@ -15,6 +14,7 @@ import {
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../utils/user-settings';
+import { useUserSettingsLocalStorage } from './useUserSettingsLocalStorage';
 
 const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
 if (alwaysUseFallbackLocalStorage) {

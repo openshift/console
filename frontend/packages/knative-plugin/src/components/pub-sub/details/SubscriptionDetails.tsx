@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
+import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import DynamicResourceLink from './DynamicResourceLink';
 

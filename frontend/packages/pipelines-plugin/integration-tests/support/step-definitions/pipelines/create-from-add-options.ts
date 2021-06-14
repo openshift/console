@@ -1,9 +1,11 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
   devNavigationMenu,
   addOptions,
   messages,
 } from '@console/dev-console/integration-tests/support/constants';
+import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   topologyPage,
   topologySidePane,
@@ -14,11 +16,9 @@ import {
   createGitWorkload,
   dockerfilePage,
 } from '@console/dev-console/integration-tests/support/pages';
-import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
-import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { pipelineActions } from '../../constants';
+import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
+import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);

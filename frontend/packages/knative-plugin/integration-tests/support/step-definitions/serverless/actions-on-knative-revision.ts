@@ -1,4 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nodeActions } from '@console/dev-console/integration-tests/support/constants';
 import {
   deleteRevision,
   editLabels,
@@ -9,8 +11,6 @@ import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
-import { modal } from '@console/cypress-integration-tests/views/modal';
-import { nodeActions } from '@console/dev-console/integration-tests/support/constants';
 
 Given(
   'number of annotations are {string} present in revision side bar details of service {string}',

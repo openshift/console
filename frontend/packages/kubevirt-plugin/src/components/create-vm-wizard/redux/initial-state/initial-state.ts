@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { CommonData, VMWizardTab, VMWizardTabState } from '../../types';
 import { getAdvancedTabInitialData } from './advanced-tab-initial-state';
 import { getImportProvidersInitialState } from './import-provider-tab-initial-state';

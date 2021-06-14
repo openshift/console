@@ -1,21 +1,21 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import {
+  getImageForIconClass,
+  getImageStreamIcon,
+} from '@console/internal/components/catalog/catalog-item-icon';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
   isBuilder,
 } from '@console/internal/components/image-stream';
+import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  getImageForIconClass,
-  getImageStreamIcon,
-} from '@console/internal/components/catalog/catalog-item-icon';
 import { ANNOTATIONS } from '@console/shared';
-import { ExternalLink } from '@console/internal/components/utils';
 
 const normalizeBuilderImages = (
   builderImageStreams: K8sResourceKind[],

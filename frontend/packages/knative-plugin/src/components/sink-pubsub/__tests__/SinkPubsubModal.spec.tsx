@@ -7,8 +7,8 @@ import {
 } from '@console/internal/components/factory/modal';
 import { ResourceDropdownField } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import SinkPubsubModal from '../SinkPubsubModal';
 import { ServiceModel } from '../../../models';
+import SinkPubsubModal from '../SinkPubsubModal';
 
 type SinkPubsubModalProps = React.ComponentProps<typeof SinkPubsubModal>;
 

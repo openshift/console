@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Table,
   MultiListPage,
@@ -10,6 +10,14 @@ import {
   TableRow,
 } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  testSubscription,
+  testSubscriptions,
+  testClusterServiceVersion,
+  testPackageManifest,
+  testCatalogSource,
+} from '../../mocks';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
@@ -18,13 +26,6 @@ import {
   InstallPlanModel,
   CatalogSourceModel,
 } from '../models';
-import {
-  testSubscription,
-  testSubscriptions,
-  testClusterServiceVersion,
-  testPackageManifest,
-  testCatalogSource,
-} from '../../mocks';
 import { SubscriptionKind, SubscriptionState } from '../types';
 import {
   SubscriptionTableRow,
@@ -40,7 +41,6 @@ import {
   SubscriptionUpdatesState,
   SubscriptionStatus,
 } from './subscription';
-import { Button } from '@patternfly/react-core';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

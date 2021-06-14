@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { htmlDocumentForCopyClipboard } from './test-data';
 import MarkdownCopyClipboard, { CopyClipboard } from '../MarkdownCopyClipboard';
+import { htmlDocumentForCopyClipboard } from './test-data';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

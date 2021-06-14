@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SecondaryStatus } from '@console/shared';
-import { BareMetalHostKind } from '../../types';
+import { HOST_POWER_STATUS_POWERED_ON, HOST_REGISTERING_STATES } from '../../constants';
 import {
   getHostPowerStatus,
   getHostProvisioningState,
   isHostScheduledForRestart,
   hasPowerManagement,
 } from '../../selectors';
-import { HOST_POWER_STATUS_POWERED_ON, HOST_REGISTERING_STATES } from '../../constants';
+import { BareMetalHostKind } from '../../types';
 
 type BareMetalHostSecondaryStatusProps = {
   host: BareMetalHostKind;

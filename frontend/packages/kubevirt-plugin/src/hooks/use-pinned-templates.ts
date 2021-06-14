@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { TEMPLATE_PIN, TEMPLATE_PIN_PROMOTED } from '../constants';
 import { TemplateItem } from '../types/template';
 import { useLocalStorage } from './use-local-storage';

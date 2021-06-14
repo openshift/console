@@ -1,18 +1,18 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
-import { withHandlePromise } from '@console/internal/components/utils';
-import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
+import { withHandlePromise } from '@console/internal/components/utils';
+import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { useTranslation } from 'react-i18next';
 
 export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
   const { t } = useTranslation();

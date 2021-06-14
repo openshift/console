@@ -1,13 +1,13 @@
-import * as path from 'path';
 import * as fs from 'fs';
-import * as tsj from 'ts-json-schema-generator';
+import * as path from 'path';
 import chalk from 'chalk';
-import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
+import * as tsj from 'ts-json-schema-generator';
 import { CodeRefTypeReferenceParser } from './parsers/CodeRefTypeReferenceParser';
+import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
 import { ExtensionDeclarationParser } from './parsers/ExtensionDeclarationParser';
-import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
-import { getConsoleTypeResolver } from './utils/type-resolver';
 import { resolvePath, relativePath } from './utils/path';
+import { getConsoleTypeResolver } from './utils/type-resolver';
+import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
 
 type SchemaTypeConfig = {
   srcFile: string;

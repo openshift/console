@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { DASH, getName, getNamespace } from '@console/shared';
-
 import {
   getDataVolumeResources,
   getDataVolumeStorageClassName,

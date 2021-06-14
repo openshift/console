@@ -1,15 +1,4 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
-
-import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { withStartGuide } from '@console/internal/components/start-guide';
-import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
-import { ConfigMapModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   Dropdown,
   DropdownGroup,
@@ -18,7 +7,16 @@ import {
   DropdownSeparator,
   DropdownToggle,
 } from '@patternfly/react-core';
-
+import { TFunction } from 'i18next';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
+import { ConfigMapModel } from '@console/internal/models';
+import { FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,

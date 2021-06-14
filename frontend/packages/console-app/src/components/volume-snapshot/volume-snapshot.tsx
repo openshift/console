@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { match } from 'react-router';
+import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { sortable } from '@patternfly/react-table';
+import { match } from 'react-router';
 import {
-  K8sResourceKind,
-  PersistentVolumeClaimKind,
-  referenceForModel,
-  VolumeSnapshotKind,
-} from '@console/internal/module/k8s';
+  TableRow,
+  TableData,
+  ListPage,
+  Table,
+  RowFunction,
+} from '@console/internal/components/factory';
 import {
   ResourceLink,
   ResourceKebab,
@@ -19,19 +20,18 @@ import {
   humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import {
-  TableRow,
-  TableData,
-  ListPage,
-  Table,
-  RowFunction,
-} from '@console/internal/components/factory';
-import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  referenceForModel,
+  VolumeSnapshotKind,
+} from '@console/internal/module/k8s';
 import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';

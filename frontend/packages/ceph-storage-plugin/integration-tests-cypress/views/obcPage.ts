@@ -1,6 +1,6 @@
-import { DEPLOYMENT_REPLICAS_STATUS, MINUTE } from '../utils/consts';
 import { projectNameSpace } from '../../../dev-console/integration-tests/support/pages/app';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { DEPLOYMENT_REPLICAS_STATUS, MINUTE } from '../utils/consts';
 
 export class CreateOBCHandler {
   name: string;

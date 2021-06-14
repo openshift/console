@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TaskRunKind } from '../../types';
 import { TaskRunModel } from '../../models';
+import { TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import ResultsList from '../shared/results/ResultsList';
 import TaskRunDetailsSection from './TaskRunDetailsSection';

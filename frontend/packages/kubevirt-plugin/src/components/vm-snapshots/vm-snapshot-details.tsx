@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -15,7 +14,6 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
-
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineSnapshotModel } from '../../models';
 import {

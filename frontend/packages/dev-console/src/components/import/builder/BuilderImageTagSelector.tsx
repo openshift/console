@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
 import { ResourceName } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared';
 import {
   BuilderImage,

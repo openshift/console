@@ -1,12 +1,10 @@
 import * as _ from 'lodash';
-
 import {
   ConfigMapKind,
   K8sResourceKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { alignWithDNS1123, getName, joinGrammaticallyListOfItems } from '@console/shared/src';
-
 import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
 import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
 import {

@@ -1,10 +1,8 @@
 import * as React from 'react';
-
-import { asAccessReview, useAccessReview } from '@console/internal/components/utils';
-import { PodKind } from '@console/internal/module/k8s/types';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
-
+import { asAccessReview, useAccessReview } from '@console/internal/components/utils';
+import { PodKind } from '@console/internal/module/k8s/types';
 import { VMDetailsList, VMResourceSummary } from '../components/vms/vm-resource';
 import { VirtualMachineModel } from '../models';
 import { VMKind } from '../types/vm';

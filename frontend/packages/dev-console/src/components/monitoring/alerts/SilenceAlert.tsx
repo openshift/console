@@ -1,24 +1,24 @@
 import * as React from 'react';
+import { Switch } from '@patternfly/react-core';
 import * as _ from 'lodash';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
-import { Switch } from '@patternfly/react-core';
+import { monitoringSetRules } from '@console/internal/actions/ui';
+import { coFetchJSON } from '@console/internal/co-fetch';
+import {
+  ALERT_MANAGER_TENANCY_BASE_PATH,
+  PROMETHEUS_TENANCY_BASE_PATH,
+} from '@console/internal/components/graphs';
+import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
 import { Rule, RuleStates } from '@console/internal/components/monitoring/types';
 import {
   alertingRuleStateOrder,
   getAlertsAndRules,
 } from '@console/internal/components/monitoring/utils';
-import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import SilenceDurationDropDown from './SilenceDurationDropdown';
-import { monitoringSetRules } from '@console/internal/actions/ui';
-import {
-  ALERT_MANAGER_TENANCY_BASE_PATH,
-  PROMETHEUS_TENANCY_BASE_PATH,
-} from '@console/internal/components/graphs';
 import { refreshNotificationPollers } from '@console/internal/components/notification-drawer';
+import SilenceDurationDropDown from './SilenceDurationDropdown';
 
 type SilenceAlertProps = {
   rule: Rule;

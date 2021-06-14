@@ -1,18 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { DeploymentModel } from '@console/internal/models';
 import {
   apiVersionForModel,
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   getReplicaSetsForResource,
   PodControllerOverviewItem,
   useDeepCompareMemoize,
   useDebounceCallback,
 } from '@console/shared';
-import { DeploymentModel } from '@console/internal/models';
 
 export const usePodsForRevisions = (
   revisionIds: string | string[],

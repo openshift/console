@@ -1,18 +1,18 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useFormikContext, FormikValues, useField } from 'formik';
-import { useTranslation } from 'react-i18next';
 import { FormGroup, TextInputTypes, Alert } from '@patternfly/react-core';
-import { InputField, getFieldId, ResourceDropdownField, RadioGroupField } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useFormikContext, FormikValues, useField } from 'formik';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { InputField, getFieldId, ResourceDropdownField, RadioGroupField } from '@console/shared';
 import { EventingBrokerModel, EventingChannelModel } from '../../../models';
+import { getDynamicChannelResourceList } from '../../../utils/fetch-dynamic-eventsources-utils';
 import {
   knativeServingResourcesServices,
   knativeEventingResourcesBroker,
 } from '../../../utils/get-knative-resources';
-import { getDynamicChannelResourceList } from '../../../utils/fetch-dynamic-eventsources-utils';
 import { sourceSinkType, SinkType } from '../import-types';
 
 interface SinkSectionProps {

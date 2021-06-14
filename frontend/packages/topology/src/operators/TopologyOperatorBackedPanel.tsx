@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
-import { ManagedByOperatorResourceLink } from '@console/internal/components/utils/managed-by';
-import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import {
   SimpleTabNav,
   ResourceSummary,
@@ -11,20 +9,22 @@ import {
   ActionsMenu,
   StatusBox,
 } from '@console/internal/components/utils';
-import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
-import { TopologyDataObject } from '../topology-types';
-import { OperatorGroupData } from './operator-topology-types';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { ManagedByOperatorResourceLink } from '@console/internal/components/utils/managed-by';
+import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager/src';
+import { getOperandActions } from '@console/operator-lifecycle-manager/src/components/operand';
 import {
   ClusterServiceVersionAction,
   isClusterServiceVersionAction,
   useExtensions,
 } from '@console/plugin-sdk/src';
-import {
-  ClusterServiceVersionKind,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager/src';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { getOperandActions } from '@console/operator-lifecycle-manager/src/components/operand';
+import { TopologyDataObject } from '../topology-types';
+import { OperatorGroupData } from './operator-topology-types';
+import TopologyOperatorBackedResources from './TopologyOperatorBackedResources';
 
 type PropsFromState = {
   selectedDetailsTab?: any;

@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-
 import { omitEmpty } from '../../../utils/common';
 import { Wrapper } from './wrapper';
 

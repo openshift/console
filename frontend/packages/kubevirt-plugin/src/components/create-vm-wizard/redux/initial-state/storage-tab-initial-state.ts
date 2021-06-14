@@ -1,5 +1,4 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import {
   DUMMY_VM_NAME,

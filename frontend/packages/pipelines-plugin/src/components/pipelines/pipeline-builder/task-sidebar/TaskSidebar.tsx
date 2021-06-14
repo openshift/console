@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { FormikErrors, useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import { Stack, StackItem } from '@patternfly/react-core';
 import {
   PipelineTask,
   PipelineTaskParam,
@@ -14,12 +14,12 @@ import {
 } from '../../../../types';
 import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { SelectedBuilderTask, TaskType, UpdateOperationRenameTaskData } from '../types';
+import TaskSidebarHeader from './TaskSidebarHeader';
+import TaskSidebarName from './TaskSidebarName';
 import TaskSidebarParam from './TaskSidebarParam';
 import TaskSidebarResource from './TaskSidebarResource';
-import TaskSidebarName from './TaskSidebarName';
-import TaskSidebarWorkspace from './TaskSidebarWorkspace';
-import TaskSidebarHeader from './TaskSidebarHeader';
 import TaskSidebarWhenExpression from './TaskSidebarWhenExpression';
+import TaskSidebarWorkspace from './TaskSidebarWorkspace';
 
 import './TaskSidebar.scss';
 

@@ -1,10 +1,10 @@
-import { testName, checkErrors } from '../../support';
-import { listPage } from '../../views/list-page';
 import { PVC, testerDeployment } from '../../mocks/snapshot';
+import { testName, checkErrors } from '../../support';
+import { resourceStatusShouldContain } from '../../views/common';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
+import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
-import { resourceStatusShouldContain } from '../../views/common';
 
 const cloneName = `${PVC.metadata.name}-clone`;
 const cloneSize = '2';

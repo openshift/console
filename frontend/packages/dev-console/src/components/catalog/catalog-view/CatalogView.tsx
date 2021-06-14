@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import * as cx from 'classnames';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '@console/shared';
-
+import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   categorize,
   findActiveCategory,
@@ -13,7 +13,6 @@ import {
   OTHER_CATEGORY,
   NO_GROUPING,
 } from '../utils/category-utils';
-import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   filterByAttributes,
   filterByCategory,
@@ -22,7 +21,6 @@ import {
   getFilterGroupCounts,
   getFilterSearchParam,
 } from '../utils/filter-utils';
-
 import {
   CatalogCategory,
   CatalogFilterCounts,
@@ -33,12 +31,11 @@ import {
   CatalogType,
   CatalogTypeCounts,
 } from '../utils/types';
-
-import CatalogFilters from './CatalogFilters';
-import CatalogToolbar from './CatalogToolbar';
-import CatalogGrid from './CatalogGrid';
 import CatalogCategories from './CatalogCategories';
 import CatalogEmptyState from './CatalogEmptyState';
+import CatalogFilters from './CatalogFilters';
+import CatalogGrid from './CatalogGrid';
+import CatalogToolbar from './CatalogToolbar';
 import CatalogTypeSelector from './CatalogTypeSelector';
 
 type CatalogViewProps = {

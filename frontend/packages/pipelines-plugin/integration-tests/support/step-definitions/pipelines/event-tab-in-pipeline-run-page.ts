@@ -1,5 +1,5 @@
-import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { Then, When } from 'cypress-cucumber-preprocessor/steps';
+import { app } from '@console/dev-console/integration-tests/support/pages/app';
 import { pipelineDetailsPO } from '../../page-objects/pipelines-po';
 import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
 import { pipelinesPage } from '../../pages/pipelines/pipelines-page';

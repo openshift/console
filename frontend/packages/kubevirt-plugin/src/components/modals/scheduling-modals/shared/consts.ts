@@ -1,5 +1,4 @@
 import { pluralize } from '@console/internal/components/utils';
-
 import { AffinityCondition, AffinityType } from '../affinity-modal/types';
 
 // Node Checker

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { FieldLevelHelp } from '@console/internal/components/utils';
-import { ConsolePluginWarning } from './console-plugin-warning';
-import { ConsolePluginRadioInputs } from './console-plugin-radio-inputs';
 import { isCatalogSourceTrusted } from '../utils';
+import { ConsolePluginRadioInputs } from './console-plugin-radio-inputs';
+import { ConsolePluginWarning } from './console-plugin-warning';
 
 export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({
   catalogSource,

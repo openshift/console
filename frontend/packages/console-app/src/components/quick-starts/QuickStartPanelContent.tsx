@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import {
   DrawerPanelContent,
   DrawerPanelBody,
@@ -9,6 +7,8 @@ import {
   DrawerCloseButton,
   Title,
 } from '@patternfly/react-core';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { useScrollShadows, Shadows } from '@console/shared';
 import { QuickStart } from './utils/quick-start-types';

@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
@@ -8,7 +7,6 @@ import {
   deleteResource,
   selectDropdownOptionById,
 } from '@console/shared/src/test-utils/utils';
-
 import {
   consoleTypeSelectorId,
   openInNewWindow,

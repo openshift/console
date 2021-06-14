@@ -11,8 +11,8 @@ import {
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
 import NotStartedIcon from './NotStartedIcon';
-import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
+import StatusIconAndText from './StatusIconAndText';
 import { StatusComponentProps } from './types';
 
 export const Status: React.FC<StatusProps> = ({

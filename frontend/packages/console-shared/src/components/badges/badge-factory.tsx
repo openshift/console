@@ -1,7 +1,7 @@
 import * as React from 'react';
 import DevPreviewBadge from './DevPreviewBadge';
-import TechPreviewBadge from './TechPreviewBadge';
 import { InlineDevPreviewBadge, InlineTechPreviewBadge } from './InlineBadge';
+import TechPreviewBadge from './TechPreviewBadge';
 
 export enum BadgeType {
   DEV = 'Dev Preview',

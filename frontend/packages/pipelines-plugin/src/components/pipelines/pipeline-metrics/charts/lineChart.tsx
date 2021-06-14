@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   Chart,
   ChartThemeColor,
@@ -11,6 +10,7 @@ import {
   ChartTooltip,
   ChartScatter,
 } from '@patternfly/react-charts';
+import * as _ from 'lodash';
 import { DEFAULT_CHART_HEIGHT } from '../../const';
 
 type LineChartProps = {

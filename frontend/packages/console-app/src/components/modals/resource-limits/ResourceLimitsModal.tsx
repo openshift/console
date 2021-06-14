@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import ResourceLimitSection from '@console/dev-console/src/components/import/advanced/ResourceLimitSection';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import ResourceLimitSection from '@console/dev-console/src/components/import/advanced/ResourceLimitSection';
 
 interface ResourceLimitsModalProps {
   cancel?: () => void;

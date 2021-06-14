@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { Humanize } from '@console/internal/components/utils';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import './MonitoringDashboardGraph.scss';
 
 export enum GraphTypes {

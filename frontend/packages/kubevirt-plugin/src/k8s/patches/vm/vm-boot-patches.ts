@@ -1,6 +1,5 @@
 import { getAnnotations } from '@console/shared';
 import { PatchBuilder } from '@console/shared/src/k8s';
-
 import { ANNOTATION_FIRST_BOOT, BOOT_ORDER_FIRST, BOOT_ORDER_SECOND } from '../../../constants/vm';
 import { getBootDeviceIndex, getDisks, getInterfaces } from '../../../selectors/vm';
 import { VMKind } from '../../../types/vm';

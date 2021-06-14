@@ -1,32 +1,8 @@
-import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
-import { ReduxReducer } from '../extensions/redux';
-import { ContextProvider } from '../extensions/context-providers';
-import {
-  StandaloneRoutePage,
-  RoutePage,
-  ResourceDetailsPage,
-  ResourceListPage,
-  ResourceTabPage,
-} from '../extensions/pages';
-import { YAMLTemplate } from '../extensions/yaml-templates';
-import { AddAction, AddActionGroup } from '../extensions/add-actions';
-import { ClusterGlobalConfig } from '../extensions/cluster-settings';
-import {
-  HrefNavItem,
-  ResourceNSNavItem,
-  ResourceClusterNavItem,
-  Separator,
-  NavSection,
-} from '../extensions/navigation';
-import { SupportedCatalogExtensions } from '../extensions/catalog';
-import { FileUpload } from '../extensions/file-upload';
-import { ModelMetadata } from '../extensions/resource-metadata';
-import { AlertAction } from '../extensions/notification-alert';
-import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
-import { StorageProvider } from '../extensions/storage-provider';
-import { TelemetryListener } from '../extensions/telemetry';
 import { SupportedActionExtensions } from '../extensions/actions';
-import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import { AddAction, AddActionGroup } from '../extensions/add-actions';
+import { SupportedCatalogExtensions } from '../extensions/catalog';
+import { ClusterGlobalConfig } from '../extensions/cluster-settings';
+import { ContextProvider } from '../extensions/context-providers';
 import {
   DashboardsTab,
   DashboardsCard,
@@ -38,6 +14,28 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewResourceActivity,
 } from '../extensions/dashboards';
+import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
+import { FileUpload } from '../extensions/file-upload';
+import {
+  HrefNavItem,
+  ResourceNSNavItem,
+  ResourceClusterNavItem,
+  Separator,
+  NavSection,
+} from '../extensions/navigation';
+import { AlertAction } from '../extensions/notification-alert';
+import {
+  StandaloneRoutePage,
+  RoutePage,
+  ResourceDetailsPage,
+  ResourceListPage,
+  ResourceTabPage,
+} from '../extensions/pages';
+import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
+import { ReduxReducer } from '../extensions/redux';
+import { ModelMetadata } from '../extensions/resource-metadata';
+import { StorageProvider } from '../extensions/storage-provider';
+import { TelemetryListener } from '../extensions/telemetry';
 import {
   TopologyComponentFactory,
   TopologyCreateConnector,
@@ -45,6 +43,8 @@ import {
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
 } from '../extensions/topology';
+import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
   | FeatureFlag

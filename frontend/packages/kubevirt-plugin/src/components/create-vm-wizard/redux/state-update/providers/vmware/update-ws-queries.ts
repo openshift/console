@@ -1,5 +1,4 @@
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
-
 import {
   V2V_TEMPORARY_LABEL,
   V2VVMWARE_DEPLOYMENT_NAME,

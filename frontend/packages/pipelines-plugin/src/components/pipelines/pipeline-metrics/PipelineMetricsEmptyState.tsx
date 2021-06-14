@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Bullseye,
   EmptyState,
@@ -10,6 +9,7 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 import './PipelineMetrics.scss';
 

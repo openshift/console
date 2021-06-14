@@ -1,29 +1,29 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
-import * as fuzzy from 'fuzzysearch';
-import { RootState } from '@console/internal/redux';
-import { Button } from '@patternfly/react-core';
+import {
+  queryBrowserRunQueries,
+  queryBrowserPatchQuery,
+  queryBrowserSetMetrics,
+} from '@console/internal/actions/ui';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import { QueryInput } from '@console/internal/components/monitoring/metrics';
+import { QueryObj } from '@console/internal/components/monitoring/query-browser';
 import {
   Dropdown,
   removeQueryArgument,
   useSafeFetch,
   getURLSearchParams,
 } from '@console/internal/components/utils';
-import {
-  queryBrowserRunQueries,
-  queryBrowserPatchQuery,
-  queryBrowserSetMetrics,
-} from '@console/internal/actions/ui';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { QueryInput } from '@console/internal/components/monitoring/metrics';
-import { QueryObj } from '@console/internal/components/monitoring/query-browser';
-import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { RootState } from '@console/internal/redux';
 import { metricsQuery, getTopMetricsQueries } from '../queries';
 import './MetricsQueryInput.scss';
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { FormGroup, Alert } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, Alert } from '@patternfly/react-core';
-import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import { RadioInput } from '@console/internal/components//radio';
 import {
   getAccessModeRadios,
   getVolumeModeRadios,
@@ -10,10 +10,11 @@ import {
   dropdownUnits,
   getAccessModeForProvisioner,
 } from '@console/internal/components/storage/shared';
-import { RadioInput } from '@console/internal/components//radio';
 import { RequestSizeInput, ExpandCollapse } from '@console/internal/components/utils';
-import { cephStorageProvisioners } from '@console/shared/src/utils';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { useFormikValidationFix } from '@console/shared/src/hooks';
+import { cephStorageProvisioners } from '@console/shared/src/utils';
+
 import './VolumeClaimTemplateForm.scss';
 
 interface VolumeClaimTemplateFormProps {

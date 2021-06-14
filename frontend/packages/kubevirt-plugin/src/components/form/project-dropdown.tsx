@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { ListDropdown } from '@console/internal/components/utils';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import { FLAGS } from '@console/shared';

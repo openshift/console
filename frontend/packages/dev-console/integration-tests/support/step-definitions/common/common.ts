@@ -1,10 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-import { nav } from '@console/cypress-integration-tests/views/nav';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { perspective, projectNameSpace, navigateTo } from '../../pages';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
+import { perspective, projectNameSpace, navigateTo } from '../../pages';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);

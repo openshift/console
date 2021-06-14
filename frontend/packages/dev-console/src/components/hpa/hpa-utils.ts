@@ -1,16 +1,16 @@
+import i18next from 'i18next';
 import { omit, merge } from 'lodash';
-import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { baseTemplates } from '@console/internal/models/yaml-templates';
 import {
   HorizontalPodAutoscalerKind,
   HPAMetric,
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
-import { baseTemplates } from '@console/internal/models/yaml-templates';
 import { LimitsData } from '@console/shared/src';
+import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { HPAFormValues, SupportedMetricTypes } from './types';
-import i18next from 'i18next';
 
 export const VALID_HPA_TARGET_KINDS = ['Deployment', 'DeploymentConfig'];
 

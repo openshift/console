@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { Alert, AlertActionCloseButton, Flex } from '@patternfly/react-core';
 import { useField, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertActionCloseButton, Flex } from '@patternfly/react-core';
-import { InputField, NumberSpinnerField } from '@console/shared';
 import { HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
-import HPAUtilizationField from './HPAUtilizationField';
+import { InputField, NumberSpinnerField } from '@console/shared';
 import { getMetricByType } from './hpa-utils';
+import HPAUtilizationField from './HPAUtilizationField';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
 const HPADetailsForm: React.FC = () => {

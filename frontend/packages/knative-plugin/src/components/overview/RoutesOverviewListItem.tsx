@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../models';
 import { RoutesOverviewListItem } from '../../types';
 import RoutesUrlLink from './RoutesUrlLink';

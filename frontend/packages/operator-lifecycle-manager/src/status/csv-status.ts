@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18n from '@console/internal/i18n';
 import { getName } from '@console/shared/src/selectors/common';
 import {
   ClusterServiceVersionKind,
@@ -7,7 +8,6 @@ import {
   ClusterServiceVersionPhase,
   ClusterServiceVersionStatus,
 } from '../types';
-import i18n from '@console/internal/i18n';
 
 const pedingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,

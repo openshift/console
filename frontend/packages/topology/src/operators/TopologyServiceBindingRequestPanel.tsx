@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   ResourceIcon,
@@ -12,8 +12,8 @@ import {
   ActionsMenu,
 } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { OdcBaseEdge } from '../elements';
 import TopologyEdgeResourcesPanel from '../components/side-bar/TopologyEdgeResourcesPanel';
+import { OdcBaseEdge } from '../elements';
 
 type TopologyServiceBindingRequestPanelProps = {
   edge: OdcBaseEdge;

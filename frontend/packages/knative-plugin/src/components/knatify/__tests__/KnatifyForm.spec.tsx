@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import AdvancedSection from '@console/dev-console/src/components/import/advanced/AdvancedSection';
+import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import ImageSearchSection from '@console/dev-console/src/components/import/image-search/ImageSearchSection';
 import IconSection from '@console/dev-console/src/components/import/section/IconSection';
-import AppSection from '@console/dev-console/src/components/import/app/AppSection';
-import AdvancedSection from '@console/dev-console/src/components/import/advanced/AdvancedSection';
+import { FormFooter } from '@console/shared/src/components/form-utils';
+import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import KnatifyForm from '../KnatifyForm';
 
 let knatifyFormProps: React.ComponentProps<typeof KnatifyForm>;

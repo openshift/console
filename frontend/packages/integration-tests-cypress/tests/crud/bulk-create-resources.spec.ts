@@ -1,7 +1,7 @@
 import { checkErrors, testName } from '../../support';
+import { errorMessage } from '../../views/form';
 import { nav } from '../../views/nav';
 import * as yamlEditor from '../../views/yaml-editor';
-import { errorMessage } from '../../views/form';
 
 describe('Bulk import operation', () => {
   const namespace = `bulk${testName}`;

@@ -1,9 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
 import { ValidationObject } from '@console/shared';
-
 import { iGet, iGetIn, iGetIsLoaded } from '../../../utils/immutable';
 import { FormRow } from '../../form/form-row';
 import { iGetFieldValue, isFieldHidden, isFieldRequired } from '../selectors/immutable/field';

@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as loginView from '@console/internal-integration-tests/views/login.view';
@@ -14,7 +13,6 @@ import {
   withResource,
   withResources,
 } from '@console/shared/src/test-utils/utils';
-
 import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';

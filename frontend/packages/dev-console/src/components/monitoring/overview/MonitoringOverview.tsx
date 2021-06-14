@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   Accordion,
   AccordionItem,
@@ -15,15 +13,17 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
-import { DeploymentConfigModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { sortEvents } from '@console/internal/components/events';
-import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
 import { Alert } from '@console/internal/components/monitoring/types';
+import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
+import { DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
 import { getFiringAlerts } from '@console/shared';
+import WorkloadGraphs from './MonitoringMetrics';
 import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';
-import WorkloadGraphs from './MonitoringMetrics';
 import './MonitoringOverview.scss';
 
 type MonitoringOverviewProps = {

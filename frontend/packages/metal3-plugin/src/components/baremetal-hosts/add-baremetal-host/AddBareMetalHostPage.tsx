@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import AddBareMetalHost from './AddBareMetalHost';
 
 export type AddBareMetalHostPageProps = RouteComponentProps<{ ns?: string; name?: string }>;

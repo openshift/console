@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
-import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../../models';
-import RoutesOverviewListItem from '../RoutesOverviewListItem';
+import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { getKnativeRoutesLinks } from '../../../utils/resource-overview-utils';
+import RoutesOverviewListItem from '../RoutesOverviewListItem';
 import RoutesUrlLink, { RoutesUrlLinkProps } from '../RoutesUrlLink';
 
 type RoutesOverviewListItemProps = React.ComponentProps<typeof RoutesOverviewListItem>;

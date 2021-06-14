@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { GetOperatorsWithStatuses, LazyLoader, OperatorRowProps } from '@console/plugin-sdk';
+import { Link } from 'react-router-dom';
 import { FirehoseResourcesResult } from '@console/internal/components/utils';
-import { HealthState } from './states';
+import { GetOperatorsWithStatuses, LazyLoader, OperatorRowProps } from '@console/plugin-sdk';
 import { getMostImportantStatuses } from './state-utils';
+import { HealthState } from './states';
 
 import './operator-body.scss';
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { updateTopologyDataModel } from '../updateTopologyDataModel';
 import { ExtensibleModel } from '../ModelContext';
+import { updateTopologyDataModel } from '../updateTopologyDataModel';
 
 const namespace = 'test-project';
 

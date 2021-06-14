@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PipelineKind, PipelineRunKind, TaskRunKind, PipelineSpec, TaskKind } from '../types';
 import { TektonResourceLabel, preferredNameAnnotation } from '../components/pipelines/const';
 import { TaskKindAlpha } from '../components/pipelines/resource-utils';
+import { PipelineKind, PipelineRunKind, TaskRunKind, PipelineSpec, TaskKind } from '../types';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',

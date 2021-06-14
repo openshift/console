@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { baseListPages, baseDetailsPages } from '@console/internal/components/resource-pages';
-import { testedExtensions, getDuplicates } from '../plugin-test-utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { isResourceListPage, isResourceDetailsPage } from '@console/plugin-sdk';
+import { testedExtensions, getDuplicates } from '../plugin-test-utils';
 
 describe('ResourceListPage', () => {
   it('only one page per model is allowed', () => {

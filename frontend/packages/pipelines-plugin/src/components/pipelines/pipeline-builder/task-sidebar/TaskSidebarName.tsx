@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import i18n from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { nameValidationSchema } from '@console/shared';
 import { PipelineBuilderFormikValues } from '../types';
 

@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { TemplateKind } from '@console/internal/module/k8s';
 import { Label, Tooltip } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { TemplateKind } from '@console/internal/module/k8s';
 import { getTemplateProvider } from '../../selectors/vm-template/basic';
 
 type VMTemplateLabelProps = {

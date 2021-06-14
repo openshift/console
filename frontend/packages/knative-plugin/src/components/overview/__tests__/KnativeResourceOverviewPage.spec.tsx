@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { OverviewItem } from '@console/shared';
-import { LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
+import { LoadingBox } from '@console/internal/components/utils';
+import { OverviewItem } from '@console/shared';
+import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import {
   revisionObj,
   EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import { RevisionModel, EventingSubscriptionModel } from '../../../models';
+import { URI_KIND } from '../../../topology/const';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
 import SinkUriResourcesTab from '../SinkUriResourcesTab';
-import { URI_KIND } from '../../../topology/const';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

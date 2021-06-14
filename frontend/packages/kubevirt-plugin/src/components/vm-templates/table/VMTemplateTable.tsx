@@ -1,14 +1,13 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { Bullseye, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
+import { info, sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
 import { RowFunction, Table } from '@console/internal/components/factory';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader } from '@console/shared';
-import { Bullseye, Stack, StackItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { info, sortable } from '@patternfly/react-table';
-import { StarIcon } from '@patternfly/react-icons';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { useNamespace } from '../../../hooks/use-namespace';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';

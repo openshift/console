@@ -1,16 +1,4 @@
-import { isEmpty } from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import {
-  createModalLauncher,
-  ModalBody,
-  ModalComponentProps,
-  ModalTitle,
-} from '@console/internal/components/factory';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { k8sCreate } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   Alert,
   AlertVariant,
@@ -20,7 +8,17 @@ import {
   TextArea,
   TextInput,
 } from '@patternfly/react-core';
-
+import { isEmpty } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalTitle,
+} from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+import { k8sCreate } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared';
 import { stopVM } from '../../../k8s/requests/vm/actions';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';

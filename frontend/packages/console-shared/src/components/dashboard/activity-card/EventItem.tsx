@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { typeFilter, getLastTime } from '@console/internal/components/events';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { EventKind, referenceFor } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '../../status';
-import { useTranslation } from 'react-i18next';
 
 const propsAreEqual = (prevProps: EventItemProps, nextProps: EventItemProps) =>
   prevProps.event.metadata.uid === nextProps.event.metadata.uid &&

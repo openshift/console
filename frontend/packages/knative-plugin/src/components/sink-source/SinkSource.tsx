@@ -1,11 +1,11 @@
-import * as yup from 'yup';
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import * as yup from 'yup';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
 import { sinkTypeUriValidation } from '../add/eventSource-validation-utils';
-import SinkSourceModal from './SinkSourceModal';
 import { SinkType } from '../add/import-types';
+import SinkSourceModal from './SinkSourceModal';
 
 export interface SinkSourceProps {
   source: K8sResourceKind;

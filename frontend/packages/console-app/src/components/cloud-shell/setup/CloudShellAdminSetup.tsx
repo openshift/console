@@ -1,16 +1,15 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
-import { k8sCreate, k8sGet, K8sKind } from '@console/internal/module/k8s';
+import { LoadError } from '@console/internal/components/utils/status-box';
+import { NamespaceModel } from '@console/internal/models';
+import { K8sKind, k8sCreate, k8sGet } from '@console/internal/module/k8s';
 import {
   newCloudShellWorkSpace,
   createCloudShellResourceName,
   CLOUD_SHELL_PROTECTED_NAMESPACE,
 } from '../cloud-shell-utils';
-import { NamespaceModel } from '@console/internal/models';
 import TerminalLoadingBox from '../TerminalLoadingBox';
-import { LoadError } from '@console/internal/components/utils/status-box';
-import { useTranslation } from 'react-i18next';
 
 type Props = {
   onInitialize: (namespace: string) => void;

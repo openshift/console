@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Trans } from 'react-i18next';
 import { Edge } from '@patternfly/react-topology';
-import { YellowExclamationTriangleIcon } from '@console/shared/src';
+import { Trans } from 'react-i18next';
 import { confirmModal, errorModal } from '@console/internal/components/modals';
+import { YellowExclamationTriangleIcon } from '@console/shared/src';
 import { removeTopologyResourceConnection } from './topology-utils';
 
 export const removeConnection = (edge: Edge): Promise<any> => {

@@ -5,25 +5,25 @@ import {
   sampleDeploymentConfigs,
 } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
-  TopologyDataResources,
-  TopologyDisplayFilterType,
-} from '@console/topology/src/topology-types';
-import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from '../components/const';
+  sampleHelmChartDeploymentConfig,
+  sampleHelmResourcesMap,
+  TEST_KINDS_MAP,
+} from '@console/topology/src/__tests__/topology-test-data';
+import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
+import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
+import { updateModelFromFilters } from '@console/topology/src/data-transforms/updateModelFromFilters';
+import { getFilterById } from '@console/topology/src/filters';
 import {
   DEFAULT_TOPOLOGY_FILTERS,
   EXPAND_GROUPS_FILTER_ID,
   SHOW_GROUPS_FILTER_ID,
 } from '@console/topology/src/filters/const';
-import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
-import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
-import { updateModelFromFilters } from '@console/topology/src/data-transforms/updateModelFromFilters';
-import { WORKLOAD_TYPES } from '@console/topology/src/utils/topology-utils';
-import { getFilterById } from '@console/topology/src/filters';
 import {
-  sampleHelmChartDeploymentConfig,
-  sampleHelmResourcesMap,
-  TEST_KINDS_MAP,
-} from '@console/topology/src/__tests__/topology-test-data';
+  TopologyDataResources,
+  TopologyDisplayFilterType,
+} from '@console/topology/src/topology-types';
+import { WORKLOAD_TYPES } from '@console/topology/src/utils/topology-utils';
+import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from '../components/const';
 import {
   getHelmGraphModelFromMap,
   getTopologyHelmReleaseGroupItem,

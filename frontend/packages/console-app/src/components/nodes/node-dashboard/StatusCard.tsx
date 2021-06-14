@@ -4,10 +4,9 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-
+import NodeAlerts from './NodeAlerts';
 import { NodeDashboardContext } from './NodeDashboardContext';
 import NodeHealth from './NodeHealth';
-import NodeAlerts from './NodeAlerts';
 
 const StatusCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);

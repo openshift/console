@@ -1,8 +1,8 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DeviceSet } from '../../src/types';
 import { OCS_INTERNAL_CR_NAME } from '../../src/constants';
-import { NS } from '../consts';
+import { DeviceSet } from '../../src/types';
 import { getCurrentDeviceSetIndex } from '../../src/utils/add-capacity';
+import { NS } from '../consts';
 
 export const withJSONResult = (res: Cypress.Exec, scName: string, iAndD: IndexAndDeviceSet) => {
   const jsonOut: K8sResourceKind = JSON.parse(res.stdout);

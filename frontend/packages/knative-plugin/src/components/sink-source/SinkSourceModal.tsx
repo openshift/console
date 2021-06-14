@@ -1,13 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { SinkUriResourcesGroup } from '../add/event-sources/SinkSection';
 
 export interface SinkSourceModalProps {

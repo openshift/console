@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { useTranslation } from 'react-i18next';
-
+import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
   riskIcons,
   colorScale,
@@ -11,9 +13,6 @@ import {
   isWaitingOrDisabled as _isWaitingOrDisabled,
   isError as _isError,
 } from './mappers';
-import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
 import './style.scss';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {

@@ -1,24 +1,24 @@
 import * as React from 'react';
 import { Formik, FormikHelpers } from 'formik';
-import { RouteComponentProps } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
-import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { ProjectModel, ServiceModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router-dom';
+import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
+import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
+import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
+import NamespacedPage, {
+  NamespacedPageVariants,
+} from '@console/dev-console/src/components/NamespacedPage';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import {
   useK8sWatchResources,
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import NamespacedPage, {
-  NamespacedPageVariants,
-} from '@console/dev-console/src/components/NamespacedPage';
-import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
-import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
-import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
+import { ProjectModel, ServiceModel } from '@console/internal/models';
+import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
+import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
 import {
   getInitialValuesKnatify,
   knatifyResources,

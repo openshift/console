@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
 import CheIcon from './CheIcon';
-import { detectGitType } from './import-validation-utils';
 import { GitTypes } from './import-types';
+import { detectGitType } from './import-validation-utils';
 
 export const routeDecoratorIcon = (
   routeURL: string,

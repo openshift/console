@@ -1,8 +1,4 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
 import {
   Alert,
   AlertVariant,
@@ -12,7 +8,9 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { toJS } from '../../../utils/immutable';
 import { wrapWithProgress } from '../../../utils/utils';
 import { vmWizardActions } from '../redux/actions';

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import { getName, getNamespace } from '@console/shared';
-import { MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-import NodeLink from '../NodeLink';
-import BareMetalHostRole from '../BareMetalHostRole';
-import { BareMetalHostKind } from '../../../types';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { BareMetalHostModel } from '../../../models';
+import { BareMetalHostKind } from '../../../types';
+import BareMetalHostRole from '../BareMetalHostRole';
+import NodeLink from '../NodeLink';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 
 const DetailsCard: React.FC<DetailsCardProps> = () => {

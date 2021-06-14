@@ -31,17 +31,31 @@ module.exports = {
   // Disallow console statements
   'no-console': 'error',
 
-  // TODO This rule was not working as expected prior to eslint-config-airbnb-base v14.0.0
-  // Disabling for now since it is causing failures after the update.
   // Sort imports into groups
-  // 'import/order': [
-  //   'error',
-  //   {
-  //     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-  //     'newlines-between': 'never',
-  //   },
-  // ],
-  'import/order': 'off',
+  'import/order': [
+    'error',
+    {
+      groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+      pathGroups: [
+        {
+          pattern: 'react',
+          group: 'external',
+          position: 'before',
+        },
+        {
+          pattern: '@console/**',
+          group: 'internal',
+          position: 'before',
+        },
+      ],
+      pathGroupsExcludedImportTypes: ['builtin'],
+      alphabetize: {
+        order: 'asc',
+        caseInsensitive: true,
+      },
+      'newlines-between': 'never',
+    },
+  ],
 
   /* ------------------------ New Rules as of eslint-config-airbnb-base v14.0.0 -------------------------
 

@@ -1,26 +1,26 @@
 import * as React from 'react';
-import Measure from 'react-measure';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { DEFAULT_CHART_HEIGHT, DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
 import {
   ChartLegend,
   getInteractiveLegendEvents,
   getInteractiveLegendItemStyles,
   ChartLegendTooltip,
 } from '@patternfly/react-charts';
-import { PipelineTask } from '../../../types';
-import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
-import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import Measure from 'react-measure';
 import { CursorVoronoiContainer } from '@console/internal/components/graphs';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
+import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
+import { PipelineTask } from '../../../types';
+import { DEFAULT_CHART_HEIGHT, DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
 import { usePipelineRunTaskRunPoll } from '../hooks';
+import { LineChart } from './charts/lineChart';
 import {
   PipelineMetricsGraphProps,
   getRangeVectorData,
   getYaxisValues,
 } from './pipeline-metrics-utils';
-import { LineChart } from './charts/lineChart';
 
 import './pipeline-chart.scss';
 

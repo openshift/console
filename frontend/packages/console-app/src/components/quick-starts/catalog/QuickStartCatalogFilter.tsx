@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   SearchInput,
   Toolbar,
@@ -9,10 +8,11 @@ import {
   SelectVariant,
   SelectOption,
 } from '@patternfly/react-core';
-import { useQueryParams } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
-import { QuickStartStatus } from '../utils/quick-start-types';
+import { useQueryParams } from '@console/shared';
 import { QUICKSTART_SEARCH_FILTER_KEY, QUICKSTART_STATUS_FILTER_KEY } from '../utils/const';
+import { QuickStartStatus } from '../utils/quick-start-types';
 
 import './QuickStartCatalogFilter.scss';
 

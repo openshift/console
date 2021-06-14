@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ScrollToTopOnMount, SectionHeading, StatusBox } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared/src';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getConfigAsJSON, getDescription, getType } from '../../selectors';
+import { getName, getNamespace } from '@console/shared/src';
 import { networkTypes } from '../../constants';
+import { getConfigAsJSON, getDescription, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 
 const NET_ATTACH_DEF_DETAILS_HEADING = 'Network Attachment Definition Details';

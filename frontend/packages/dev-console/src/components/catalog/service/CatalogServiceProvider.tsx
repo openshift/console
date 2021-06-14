@@ -6,8 +6,8 @@ import {
   CatalogItem,
   CatalogItemType,
 } from '@console/dynamic-plugin-sdk';
-import { keywordCompare } from '../utils/catalog-utils';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
+import { keywordCompare } from '../utils/catalog-utils';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
 
 export type CatalogService = {

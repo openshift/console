@@ -1,11 +1,9 @@
 import * as React from 'react';
+import { Alert, AlertVariant, Checkbox, Form } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch, useSelector } from 'react-redux';
-
-import { Alert, AlertVariant, Checkbox, Form } from '@patternfly/react-core';
-
 import { CloudInitDataHelper } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { prefixedID } from '../../../../../utils';
 import { iGetIn, ihasIn, toShallowJS } from '../../../../../utils/immutable';

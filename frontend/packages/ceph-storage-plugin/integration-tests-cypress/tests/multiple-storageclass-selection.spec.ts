@@ -1,7 +1,7 @@
-import { testEbsSC, testNoProvisionerSC, getPVJSON } from '../mocks/storageclass';
-import { commonFlows } from '../views/common';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getCurrentDeviceSetIndex } from '../../src/utils/add-capacity';
+import { testEbsSC, testNoProvisionerSC, getPVJSON } from '../mocks/storageclass';
+import { commonFlows } from '../views/common';
 import {
   withJSONResult,
   fetchStorageClusterJson,

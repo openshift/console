@@ -1,20 +1,20 @@
 import { createContext } from 'react';
-import { observable, computed } from 'mobx';
 import { Model } from '@patternfly/react-topology';
+import { observable, computed } from 'mobx';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TopologyDataModelDepicted,
   TopologyDataModelGetter,
   TopologyDataModelReconciler,
   TopologyDataResources,
 } from '../topology-types';
+import { WORKLOAD_TYPES } from '../utils/topology-utils';
 import {
   addToTopologyDataModel,
   getBaseWatchedResources,
   getWorkloadResources,
 } from './transform-utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { WORKLOAD_TYPES } from '../utils/topology-utils';
 
 export type ModelExtensionContext = {
   priority: number;

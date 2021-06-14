@@ -1,5 +1,5 @@
-import { Extension } from './base';
 import { TourDataType } from '@console/app/src/components/tour';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface GuidedTour {

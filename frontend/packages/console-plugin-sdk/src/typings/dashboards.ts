@@ -1,22 +1,22 @@
 import { TFunction } from 'i18next';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   FirehoseResource,
   FirehoseResult,
   FirehoseResourcesResult,
 } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import {
-  StatusGroupMapper,
-  ExpandedComponentProps,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   WatchK8sResources,
   ResourcesObject,
   WatchK8sResults,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
+import {
+  StatusGroupMapper,
+  ExpandedComponentProps,
+} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {

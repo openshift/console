@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
-import { TableComposable } from '@patternfly/react-table';
 import { EmptyState } from '@patternfly/react-core';
-import ResultsList, { ResultsListProps } from '../ResultsList';
+import { TableComposable } from '@patternfly/react-table';
+import { ShallowWrapper, shallow } from 'enzyme';
 import { runStatus } from '../../../../utils/pipeline-augment';
 import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
+import ResultsList, { ResultsListProps } from '../ResultsList';
 
 describe('ResultsList', () => {
   let resultsListWrapper: ShallowWrapper<ResultsListProps>;

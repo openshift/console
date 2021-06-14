@@ -1,27 +1,26 @@
 import * as React from 'react';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import ActivityCard from '@console/app/src/components/nodes/node-dashboard/ActivityCard';
-import {
-  NodeDashboardContext,
-  HealthCheck,
-} from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import {
   reducer,
   initialState,
   ActionType,
 } from '@console/app/src/components/nodes/node-dashboard/NodeDashboard';
+import {
+  NodeDashboardContext,
+  HealthCheck,
+} from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
+import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import { createBasicLookup, getNodeMachineName, getName } from '@console/shared';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
 import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-
-import InventoryCard from './InventoryCard';
-import DetailsCard from './DetailsCard';
-import StatusCard from './StatusCard';
-import { BareMetalNodeDetailsPageProps } from '../../types';
 import { getHostMachineName, getNodeMaintenanceNodeName } from '../../../selectors';
 import { getNodeServerCSR } from '../../../selectors/csr';
+import { BareMetalNodeDetailsPageProps } from '../../types';
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
+import DetailsCard from './DetailsCard';
+import InventoryCard from './InventoryCard';
+import StatusCard from './StatusCard';
 
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];

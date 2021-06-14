@@ -7,14 +7,13 @@ import {
   ModalBody,
 } from '@console/internal/components/factory/modal';
 import { RadioInput } from '@console/internal/components/radio';
-import { SubscriptionKind, PackageManifestKind } from '../../types';
-import { SubscriptionModel } from '../../models';
 import { testSubscription, testPackageManifest } from '../../../mocks';
+import { SubscriptionModel } from '../../models';
+import { SubscriptionKind, PackageManifestKind } from '../../types';
 import {
   SubscriptionChannelModal,
   SubscriptionChannelModalProps,
 } from './subscription-channel-modal';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

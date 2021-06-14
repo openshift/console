@@ -1,8 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
 import { TextInput } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
 import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';

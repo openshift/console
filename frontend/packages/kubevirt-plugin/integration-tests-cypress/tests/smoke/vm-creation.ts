@@ -1,7 +1,7 @@
-import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
-import { VirtualMachineData } from '../../types/vm';
 import { ProvisionSource } from '../../enums/provisionSource';
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
+import { virtualization } from '../../view/virtualization';
 import { vm } from '../../view/vm';
 
 const rhelData: VirtualMachineData = {

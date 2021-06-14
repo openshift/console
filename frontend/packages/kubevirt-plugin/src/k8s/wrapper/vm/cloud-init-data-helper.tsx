@@ -1,8 +1,6 @@
 import { safeDump, safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
-
 import { getRandomChars } from '@console/shared';
-
 import { V1CloudInitNoCloudSource } from '../../../types/api';
 
 const safeAtob = (value: string) => {

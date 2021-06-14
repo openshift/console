@@ -1,14 +1,3 @@
-import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import {
-  getHealthChecksData,
-  getProbesData,
-} from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
-import {
-  DeployImageFormData,
-  Resources,
-} from '@console/dev-console/src/components/import/import-types';
-import { ensurePortExists } from '@console/dev-console/src/components/import/deployImage-submit-utils';
 import {
   deployImageInitialValues,
   getDeploymentData,
@@ -18,11 +7,22 @@ import {
   getServerlessData,
   getUserLabels,
 } from '@console/dev-console/src/components/edit-application/edit-application-utils';
-import { getLimitsDataFromResource } from '@console/shared/src';
+import {
+  getHealthChecksData,
+  getProbesData,
+} from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
+import { ensurePortExists } from '@console/dev-console/src/components/import/deployImage-submit-utils';
+import {
+  DeployImageFormData,
+  Resources,
+} from '@console/dev-console/src/components/import/import-types';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
+import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
+import { getLimitsDataFromResource } from '@console/shared/src';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 import { ServiceModel } from '../models';
 import { getKnativeServiceDepResource } from './create-knative-utils';
-import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 
 const PART_OF = 'app.kubernetes.io/part-of';
 const knatify = 'knatify';

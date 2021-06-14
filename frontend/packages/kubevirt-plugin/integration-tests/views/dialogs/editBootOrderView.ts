@@ -1,5 +1,4 @@
 import { $, $$, browser } from 'protractor';
-
 import { waitForCount } from '@console/shared/src/test-utils/utils';
 
 export const bootableDevices = (namespace: string, name: string) =>

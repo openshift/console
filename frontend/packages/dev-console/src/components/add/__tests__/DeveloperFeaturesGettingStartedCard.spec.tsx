@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared/src';
-
+import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('react-i18next', () => ({

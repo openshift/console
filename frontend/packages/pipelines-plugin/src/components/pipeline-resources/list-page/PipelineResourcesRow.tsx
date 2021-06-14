@@ -4,8 +4,8 @@ import { ResourceLink, Timestamp, Kebab, ResourceKebab } from '@console/internal
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineResourceModel } from '../../../models';
 import { PipelineResourceKind } from '../../../types';
-import { PipelineResourceListFilterLabels } from '../../../utils/pipeline-utils';
 import { pipelineResourceFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { PipelineResourceListFilterLabels } from '../../../utils/pipeline-utils';
 import { tableColumnClasses } from './pipeline-resources-table';
 
 const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, key, style }) => {

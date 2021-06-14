@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { Patch, TemplateKind } from '@console/internal/module/k8s';
-
 import { isVM } from '../../../selectors/check-type';
 import { selectVM } from '../../../selectors/vm-template/basic';
 import { VMKind } from '../../../types/vm';

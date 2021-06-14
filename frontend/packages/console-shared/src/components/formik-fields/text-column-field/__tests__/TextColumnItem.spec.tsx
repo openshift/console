@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import TextColumnItem from '../TextColumnItem';
-import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
 import TextColumnItemContent from '../TextColumnItemContent';
+import TextColumnItemWithDnd from '../TextColumnItemWithDnd';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

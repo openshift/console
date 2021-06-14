@@ -1,6 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getNamespace } from '@console/shared/src/selectors';
-
 import { getMigrationVMIName, isMigrating } from './selectors';
 
 export const findVMIMigration = (

@@ -1,16 +1,4 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
-import {
-  FirehoseResult,
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils';
-import { NodeModel } from '@console/internal/models';
-import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import {
   Button,
   ButtonVariant,
@@ -25,7 +13,17 @@ import {
   TextVariants,
   Title,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
+import {
+  FirehoseResult,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
+import { NodeModel } from '@console/internal/models';
+import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
+import { getName } from '@console/shared';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { getAffinityPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { getVMLikeModel } from '../../../../selectors/vm';

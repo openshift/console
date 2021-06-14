@@ -1,12 +1,12 @@
 import * as k8s from '@console/internal/module/k8s';
-import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data/pipeline-data';
+import { EventListenerModel, TriggerTemplateModel } from '../../../../../models';
 import {
   EventlistenerTestData,
   EventlistenerTypes,
   TriggerTestData,
   TriggerTypes,
 } from '../../../../../test-data/event-listener-data';
-import { EventListenerModel, TriggerTemplateModel } from '../../../../../models';
+import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data/pipeline-data';
 import { EventListenerKind } from '../../../resource-types';
 import { removeTrigger } from '../remove-utils';
 

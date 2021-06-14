@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import QuickStartMarkdownView from '../QuickStartMarkdownView';
 import { QuickStartTask, QuickStartTaskStatus, QuickStart } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';

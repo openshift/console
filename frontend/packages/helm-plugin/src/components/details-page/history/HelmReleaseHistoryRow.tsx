@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Status } from '@console/shared';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Timestamp } from '@console/internal/components/utils';
-import { confirmModal } from '@console/internal/components/modals';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { confirmModal } from '@console/internal/components/modals';
+import { Timestamp } from '@console/internal/components/utils';
+import { Status } from '@console/shared';
 import KebabMenu from '@console/shared/src/components/kebab/KebabMenu';
 import { HelmRelease } from '../../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -18,8 +18,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { CardActions } from '@patternfly/react-core';
-
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMILikeEntityKind } from '../../../types/vmLike';

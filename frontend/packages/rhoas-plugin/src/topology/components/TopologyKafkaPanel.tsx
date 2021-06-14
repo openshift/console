@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import { Node } from '@patternfly/react-topology';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   navFactory,
@@ -12,8 +11,9 @@ import {
   resourcePath,
   SimpleTabNav,
 } from '@console/internal/components/utils';
-import { ResourcesComponent } from './ResourceComponent';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { DetailsComponent } from './DetailsComponent';
+import { ResourcesComponent } from './ResourceComponent';
 
 import './TopologyKafkaPanel.scss';
 

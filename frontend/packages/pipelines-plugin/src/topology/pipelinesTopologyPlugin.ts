@@ -1,5 +1,5 @@
-import { Plugin } from '@console/plugin-sdk';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyDecoratorProvider,
   TopologyDataModelFactory,

@@ -1,9 +1,8 @@
-import * as _ from 'lodash';
-import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
 import i18next from 'i18next';
-
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { mapMetrics, isError, isWaitingOrDisabled } from './mappers';
 
 export const getClusterInsightsComponentStatus = (

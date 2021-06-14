@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { ResourceLink } from '@console/internal/components/utils';
+import { NodeModel } from '@console/internal/models';
+import { PrometheusActivityProps, K8sActivityProps } from '@console/plugin-sdk';
+import { getNamespace, getName } from '@console/shared';
 import ActivityItem, {
   ActivityProgress,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import { ResourceLink } from '@console/internal/components/utils';
-import { getNamespace, getName } from '@console/shared';
-import { NodeModel } from '@console/internal/models';
-import { PrometheusActivityProps, K8sActivityProps } from '@console/plugin-sdk';
 
 export const DemoActivity: React.FC<K8sActivityProps> = ({ resource }) => (
   <ActivityProgress title={`Demo activity for node ${getName(resource)}`} progress={30}>

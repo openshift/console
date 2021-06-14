@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
-import { PopoverStatus } from '@console/shared';
-import { NodeKind } from '@console/internal/module/k8s';
-import NodeStatus from '../NodeStatus';
-import { makeNodeSchedulable } from '../../../k8s/requests/nodes';
 import { errorModal } from '@console/internal/components/modals';
+import { NodeKind } from '@console/internal/module/k8s';
+import { PopoverStatus } from '@console/shared';
+import { makeNodeSchedulable } from '../../../k8s/requests/nodes';
+import NodeStatus from '../NodeStatus';
 
 const MarkAsSchedulablePopover: React.FC<MarkAsSchedulablePopoverProps> = ({ node }) => {
   const [visible, setVisible] = React.useState<boolean>(null);

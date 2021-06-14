@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { SelectOption } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
 import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
 import { getLabelValue } from '../../../../selectors/selectors';
 import {
