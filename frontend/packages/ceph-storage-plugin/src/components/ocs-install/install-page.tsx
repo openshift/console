@@ -165,7 +165,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
 
       <div className="ceph-install__mode-toggle">
         <RadioGroup
-          label="Select Mode:"
+          label={t('ceph-storage-plugin~Select mode:')}
           currentValue={persistMode}
           inline
           items={[
