@@ -332,6 +332,11 @@ type KMSDetailsProps = {
   setEditKMS: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+const getMostRecentKMS = (serviceNames: string[]) => {
+  const regexPattern = new RegExp(`^${serviceNames.length}-`);
+  return serviceNames.find((serviceName) => regexPattern.test(serviceName));
+};
+
 export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
   parameterKey,
   onParamChange,
@@ -361,7 +366,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
   React.useEffect(() => {
     if (isKmsSupported && !_.isEmpty(csiConfigMap)) {
       const serviceNames = Object.keys(csiConfigMap?.data);
-      const kmsData = JSON.parse(csiConfigMap?.data[serviceNames[serviceNames.length - 1]]);
+      const kmsData = JSON.parse(csiConfigMap?.data[getMostRecentKMS(serviceNames)]);
       setCurrentKMS(kmsData);
       const url = parseURL(kmsData.VAULT_ADDR);
       const port = getPort(url);
@@ -549,7 +554,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({
   React.useEffect(() => {
     if (isKmsSupported && csiConfigMapLoaded && csiConfigMap) {
       const serviceNames: string[] = Object.keys(csiConfigMap?.data);
-      const targetServiceName: string = serviceNames[serviceNames.length - 1];
+      const targetServiceName: string = getMostRecentKMS(serviceNames);
       onParamChange(parameterKey, targetServiceName, false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
