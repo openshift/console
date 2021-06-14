@@ -10,7 +10,7 @@ import {
 import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
-import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
+import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
 
 const normalizeKamelets = (
   kamelets: K8sResourceKind[],
@@ -59,11 +59,13 @@ const useKameletsProvider: ExtensionHook<CatalogItem[]> = ({
   const [kamelets, kameletsLoaded, kameletsLoadError] = useK8sWatchResource<K8sResourceKind[]>(
     resource,
   );
-  const normalizedSource = React.useMemo(
-    () =>
-      kameletsLoaded && canCreateKameletBinding ? normalizeKamelets(kamelets, namespace, t) : [],
-    [kameletsLoaded, kamelets, namespace, canCreateKameletBinding, t],
-  );
+  const normalizedSource = React.useMemo(() => {
+    if (!kameletsLoaded || !canCreateKameletBinding) return [];
+    const kameletSource = kamelets.filter(
+      (k) => k.metadata?.labels?.[CAMEL_K_TYPE_LABEL] === 'source',
+    );
+    return normalizeKamelets(kameletSource, namespace, t);
+  }, [kameletsLoaded, kamelets, namespace, canCreateKameletBinding, t]);
   return [normalizedSource, kameletsLoaded, kameletsLoadError];
 };
 
