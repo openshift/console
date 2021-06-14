@@ -4,12 +4,19 @@ import * as classNames from 'classnames';
 import { match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { JSONSchema6 } from 'json-schema';
-import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
+import {
+  Status,
+  SuccessStatus,
+  useToggleViewhChange,
+  ToggleView,
+  ToggleValue,
+} from '@console/shared';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
   MultiListPage,
-  ListPage,
   DetailsPage,
   Table,
   TableRow,
@@ -28,6 +35,7 @@ import {
   StatusBox,
   Timestamp,
   navFactory,
+  ResourceLink,
 } from '@console/internal/components/utils';
 import { connectToModel } from '@console/internal/kinds';
 import {
@@ -49,7 +57,7 @@ import {
 import { ResourceEventStream } from '@console/internal/components/events';
 import { deleteModal } from '@console/internal/components/modals';
 import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind } from '../../types';
+import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
 import { DescriptorType, StatusCapability, StatusDescriptor } from '../descriptors/types';
 import { Resources } from '../k8s-resource';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
@@ -64,9 +72,98 @@ import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
-import { useTranslation } from 'react-i18next';
 import { isMainStatusDescriptor } from '../descriptors/utils';
 import { DescriptorConditions } from '../descriptors/status/conditions';
+
+const EmptyMsg = () => (
+  <MsgBox
+    title={i18next.t('olm~No provided APIs defined')}
+    detail={i18next.t('olm~This application was not properly installed or configured.')}
+  />
+);
+
+type WrappedToggleViewProps = {
+  toggleValue: ToggleValue;
+  toggleView?: boolean;
+  title?: string;
+  onChangeToggleValue: (newValue: ToggleValue) => void;
+};
+const WrappedToggleView: React.FC<WrappedToggleViewProps> = ({
+  toggleValue,
+  title,
+  onChangeToggleValue,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-operator-details__toggle-view">
+      <span className="co-operator-details__toggle-view-heading">
+        <SectionHeading text={title || t('olm~All Instances')} />
+      </span>
+      <ToggleView
+        value={toggleValue}
+        onChange={onChangeToggleValue}
+        label={t('olm~Show operands in:')}
+        optionTitles={[t('olm~All namespaces'), t('olm~Current namespace only')]}
+      />
+    </div>
+  );
+};
+
+const firehoseResources = (models, providedAPIs: ProvidedAPI[], namespaced: boolean) => {
+  // Exclude provided APIs that do not have a model
+  return providedAPIs.reduce((resourceAccumulator, api) => {
+    const reference = referenceForProvidedAPI(api);
+    const model = models?.[reference];
+    return model
+      ? [
+          ...resourceAccumulator,
+          namespaced
+            ? {
+                kind: referenceForProvidedAPI(api),
+                namespaced: model.namespaced,
+                prop: api.kind,
+              }
+            : {
+                kind: referenceForProvidedAPI(api),
+                prop: api.kind,
+              },
+        ]
+      : resourceAccumulator;
+  }, []);
+};
+
+const flattenResources = (providedAPIs: K8sResourceKind[]) => {
+  const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
+    ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
+
+  return (resources: { [kind: string]: { data: K8sResourceKind[] } }) =>
+    _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
+      ({ kind, metadata }, i, allResources) =>
+        providedAPIs.filter((item) => item.kind === kind).length > 0 ||
+        owners(metadata.ownerReferences || [], allResources).length > 0,
+    );
+};
+
+const hasOtherManagedNamespaces = (obj: K8sResourceKind) => {
+  const olmTargetNamespaces = obj?.metadata?.annotations?.['olm.targetNamespaces'] ?? '';
+  const managedNamespaces = olmTargetNamespaces?.split(',') || [];
+  return managedNamespaces.length === 1 && managedNamespaces[0] === '';
+};
+
+const rowFilters = (firehoseResource) =>
+  firehoseResource.length > 1
+    ? [
+        {
+          filterGroupName: i18next.t('olm~Resource Kind'),
+          type: 'clusterserviceversion-resource-kind',
+          reducer: ({ kind }) => kind,
+          items: firehoseResource.map(({ kind }) => ({
+            id: kindForReference(kind),
+            title: kindForReference(kind),
+          })),
+        },
+      ]
+    : [];
 
 export const getOperandActions = (
   ref: K8sResourceKindReference,
@@ -144,6 +241,7 @@ export const getOperandActions = (
 const tableColumnClasses = [
   '',
   '',
+  '',
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
@@ -205,7 +303,8 @@ const getOperandStatusText = (operand: K8sResourceKind): string => {
   return status ? `${status.type}: ${status.value}` : '';
 };
 
-export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, rowKey, style }) => {
+export const OperandTableRow: React.FC<OperandTableRowProps> = (props) => {
+  const { obj, index, rowKey, style, data, toggleView } = props;
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
     isClusterServiceVersionAction,
   );
@@ -214,6 +313,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
     objReference,
     actionExtensions,
   ]);
+  const managesOtherNamespaces = hasOtherManagedNamespaces(data);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -225,16 +325,25 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
       >
         {obj.kind}
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      {managesOtherNamespaces && toggleView && (
+        <TableData className={tableColumnClasses[2]}>
+          <ResourceLink
+            kind="Namespace"
+            title={obj.metadata.namespace}
+            name={obj.metadata.namespace}
+          />
+        </TableData>
+      )}
+      <TableData className={tableColumnClasses[3]}>
         <OperandStatus operand={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses[4]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
       </TableData>
     </TableRow>
@@ -243,44 +352,67 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
 
 export const OperandList: React.FC<OperandListProps> = (props) => {
   const { t } = useTranslation();
-  const Header = () => {
-    return [
-      {
-        title: t('public~Name'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('public~Kind'),
-        sortField: 'kind',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('public~Status'),
-        sortFunc: 'operandStatus',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('public~Labels'),
-        sortField: 'metadata.labels',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('public~Last updated'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
+  const nameHeader: Header = {
+    title: t('public~Name'),
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
   };
+  const kindHeader: Header = {
+    title: t('public~Kind'),
+    sortField: 'kind',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
+  };
+  const namespaceHeader: Header = {
+    title: t('olm~Namespace'),
+    sortFunc: 'metadata.namespace',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  };
+  const statusHeader: Header = {
+    title: t('public~Status'),
+    sortFunc: 'operandStatus',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  };
+  const labelsHeader: Header = {
+    title: t('public~Labels'),
+    sortField: 'metadata.labels',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[4] },
+  };
+
+  const lastUpdatedHeader: Header = {
+    title: t('public~Last updated'),
+    sortField: 'metadata.creationTimestamp',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[5] },
+  };
+  const kebbaHeader: Header = {
+    title: '',
+    props: { className: tableColumnClasses[6] },
+  };
+
+  const AllNsHeader = (): Header[] => [
+    nameHeader,
+    kindHeader,
+    namespaceHeader,
+    statusHeader,
+    labelsHeader,
+    lastUpdatedHeader,
+    kebbaHeader,
+  ];
+  const CurrentNsHeader = (): Header[] => [
+    nameHeader,
+    kindHeader,
+    statusHeader,
+    labelsHeader,
+    lastUpdatedHeader,
+    kebbaHeader,
+  ];
+
+  const managesOtherNamespaces = hasOtherManagedNamespaces(props.obj);
   const Row = React.useCallback(
     (rowArgs: RowFunctionArgs<K8sResourceKind>) => (
       <OperandTableRow
@@ -288,9 +420,11 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
         index={rowArgs.index}
         rowKey={rowArgs.key}
         style={rowArgs.style}
+        data={props.obj}
+        toggleView={props.toggleView}
       />
     ),
-    [],
+    [props.obj, props.toggleView],
   );
   const data = React.useMemo(
     () =>
@@ -307,7 +441,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       }) ?? [],
     [props.data, props.kinds],
   );
-  const EmptyMsg = () => (
+  const EmptyMessage = () => (
     <MsgBox
       title={t('olm~No operands found')}
       detail={t(
@@ -323,46 +457,29 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
         operandStatus: getOperandStatusText,
       }}
       data={data}
-      EmptyMsg={EmptyMsg}
+      EmptyMsg={EmptyMessage}
       aria-label="Operands"
-      Header={Header}
+      Header={managesOtherNamespaces && props.toggleView ? AllNsHeader : CurrentNsHeader}
       Row={Row}
       virtualize
     />
   );
 };
 
-export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
+export const ProvidedAPIsPage = connectToModel((props: ProvidedAPIsPageProps) => {
   const { t } = useTranslation();
-  const { obj } = props;
+  const { toggleValue, toggleView, onChangeToggleValue } = useToggleViewhChange();
+  const { obj, kindObj } = props;
   const [models, inFlight] = useK8sModels();
   if (inFlight) {
     return null;
   }
   const providedAPIs = providedAPIsForCSV(obj);
+  const firehoseResourcesForCurrentNs = firehoseResources(models, providedAPIs, kindObj.namespaced);
+  const firehoseResourcesForAllNs = firehoseResources(models, providedAPIs, undefined);
+  const flatten = flattenResources(providedAPIs);
+  const filters = rowFilters(providedAPIs);
 
-  // Exclude provided APIs that do not have a model
-  const firehoseResources = providedAPIs.reduce((resourceAccumulator, api) => {
-    const reference = referenceForProvidedAPI(api);
-    const model = models?.[reference];
-    return model
-      ? [
-          ...resourceAccumulator,
-          {
-            kind: referenceForProvidedAPI(api),
-            namespaced: model.namespaced,
-            prop: api.kind,
-          },
-        ]
-      : resourceAccumulator;
-  }, []);
-
-  const EmptyMsg = () => (
-    <MsgBox
-      title={t('olm~No provided APIs defined')}
-      detail={t('olm~This application was not properly installed or configured.')}
-    />
-  );
   const createLink = (name: string) =>
     `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${
       obj.metadata.name
@@ -375,57 +492,59 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         }
       : { to: providedAPIs.length === 1 ? createLink(providedAPIs[0].name) : null };
 
-  const owners = (ownerRefs: OwnerReference[], items: K8sResourceKind[]) =>
-    ownerRefs.filter(({ uid }) => items.filter(({ metadata }) => metadata.uid === uid).length > 0);
-  const flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) =>
-    _.flatMap(resources, (resource) => _.map(resource.data, (item) => item)).filter(
-      ({ kind, metadata }, i, allResources) =>
-        providedAPIs.filter((item) => item.kind === kind).length > 0 ||
-        owners(metadata.ownerReferences || [], allResources).length > 0,
-    );
+  const managesOtherNamespaces = hasOtherManagedNamespaces(obj);
 
-  const rowFilters =
-    firehoseResources.length > 1
-      ? [
-          {
-            filterGroupName: 'Resource Kind',
-            type: 'clusterserviceversion-resource-kind',
-            reducer: ({ kind }) => kind,
-            items: firehoseResources.map(({ kind }) => ({
-              id: kindForReference(kind),
-              title: kindForReference(kind),
-            })),
-          },
-        ]
-      : [];
-
-  return firehoseResources.length > 0 ? (
-    <MultiListPage
-      {...props}
-      ListComponent={OperandList}
-      filterLabel={t('olm~Resources by name')}
-      resources={firehoseResources}
-      namespace={obj.metadata.namespace}
-      canCreate={providedAPIs.length > 0}
-      createProps={createProps}
-      createButtonText={
-        providedAPIs.length > 1
-          ? t('olm~Create new')
-          : t('olm~Create {{item}}', {
-              item: providedAPIs[0].displayName,
-            })
-      }
-      flatten={flatten}
-      rowFilters={rowFilters}
-    />
-  ) : (
-    <StatusBox loaded EmptyMsg={EmptyMsg} />
+  return (
+    <>
+      {firehoseResourcesForCurrentNs.length > 0 || firehoseResourcesForAllNs.length > 0 ? (
+        <MultiListPage
+          {...props}
+          ListComponent={(listProps) => (
+            <OperandList {...listProps} obj={obj} toggleView={toggleView} />
+          )}
+          filterLabel={t('olm~Resources by name')}
+          resources={
+            managesOtherNamespaces && toggleView
+              ? firehoseResourcesForAllNs
+              : firehoseResourcesForCurrentNs
+          }
+          namespace={obj.metadata.namespace}
+          canCreate={providedAPIs.length > 0}
+          createProps={createProps}
+          createButtonText={
+            providedAPIs.length > 1
+              ? t('olm~Create new')
+              : t('olm~Create {{item}}', {
+                  item: providedAPIs[0].displayName,
+                })
+          }
+          flatten={flatten}
+          rowFilters={filters}
+          toggleViewComponent={
+            managesOtherNamespaces && (
+              <WrappedToggleView
+                toggleValue={toggleValue}
+                toggleView={toggleView}
+                onChangeToggleValue={onChangeToggleValue}
+              />
+            )
+          }
+        />
+      ) : (
+        <StatusBox loaded EmptyMsg={EmptyMsg} />
+      )}
+    </>
   );
-};
+});
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   const { t } = useTranslation();
-  const { namespace, kind, kindsInFlight, kindObj, csv } = props;
+  const { toggleValue, toggleView, onChangeToggleValue } = useToggleViewhChange();
+  const { kind, kindsInFlight, kindObj, csv, obj } = props;
+  const [models, inFlight] = useK8sModels();
+  if (inFlight) {
+    return null;
+  }
   if (!kindObj) {
     return kindsInFlight ? (
       <LoadingBox />
@@ -438,17 +557,54 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
       />
     );
   }
-
+  const providedAPIs = providedAPIsForCSV(csv);
+  const firehoseResourcesForAllNs = firehoseResources(models, providedAPIs, kindObj.namespaced);
+  const firehoseResourcesForCurrentNs = [
+    {
+      kind: `${kindObj.apiGroup}~${kindObj.apiVersion}~${kindObj.kind}`,
+      namespaced: kindObj.namespaced,
+    },
+  ];
+  const flatten = flattenResources(providedAPIs);
+  const filters = rowFilters(providedAPIs);
   const to = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
+  const managesOtherNamespaces = hasOtherManagedNamespaces(obj);
+
   return (
-    <ListPage
-      kind={kind}
-      ListComponent={OperandList}
-      canCreate={kindObj?.verbs?.includes('create')}
-      createProps={{ to }}
-      namespace={kindObj.namespaced ? namespace : null}
-      badge={getBadgeFromType(kindObj.badge)}
-    />
+    <>
+      {firehoseResourcesForCurrentNs.length > 0 || firehoseResourcesForAllNs.length > 0 ? (
+        <MultiListPage
+          {...props}
+          ListComponent={(listProps) => (
+            <OperandList {...listProps} obj={obj} toggleView={toggleView} />
+          )}
+          filterLabel={t('olm~Resources by name')}
+          resources={
+            managesOtherNamespaces && toggleView
+              ? firehoseResourcesForAllNs
+              : firehoseResourcesForCurrentNs
+          }
+          namespace={obj.metadata.namespace}
+          canCreate={providedAPIs.length > 0}
+          createProps={{ to }}
+          createButtonText={t('olm~Create {{label}}', { label: kindObj.label })}
+          flatten={flatten}
+          rowFilters={filters}
+          toggleViewComponent={
+            managesOtherNamespaces && (
+              <WrappedToggleView
+                toggleValue={toggleValue}
+                toggleView={toggleView}
+                title={kindObj.label}
+                onChangeToggleValue={onChangeToggleValue}
+              />
+            )
+          }
+        />
+      ) : (
+        <StatusBox loaded EmptyMsg={EmptyMsg} />
+      )}
+    </>
   );
 });
 
@@ -683,6 +839,8 @@ export type OperandListProps = {
   reduxIDs?: string[];
   rowSplitter?: any;
   staticFilters?: any;
+  obj?: K8sResourceKind;
+  toggleView?: string;
 };
 
 export type OperandStatusProps = {
@@ -700,6 +858,7 @@ export type OperandRowProps = {
 export type ProvidedAPIsPageProps = {
   obj: ClusterServiceVersionKind;
   inFlight?: boolean;
+  kindObj: K8sKind;
 };
 
 export type ProvidedAPIPageProps = {
@@ -708,6 +867,7 @@ export type ProvidedAPIPageProps = {
   kind: GroupVersionKind;
   kindObj: K8sKind;
   namespace: string;
+  obj: K8sResourceKind;
 };
 
 type PodStatusesProps = {
@@ -744,9 +904,19 @@ export type OperandesourceDetailsProps = {
 
 export type OperandTableRowProps = {
   obj: K8sResourceKind;
+  data?: K8sResourceKind;
   index: number;
   rowKey: string;
   style: object;
+  toggleView?: string;
+};
+
+type Header = {
+  title: string;
+  sortField?: string;
+  sortFunc?: string;
+  transforms?: any;
+  props: { className: string };
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

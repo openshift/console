@@ -124,6 +124,7 @@
   "Click": "Click",
   "Right click": "Right click",
   "Drag + Drop": "Drag + Drop",
+  "Invalid value {{value}}": "Invalid value {{value}}",
   "{{label}} details": "{{label}} details",
   "Provisioned as node": "Provisioned as node",
   "Scheduling disabled": "Scheduling disabled",
