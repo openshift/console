@@ -41,7 +41,6 @@ Cypress.Commands.add('testA11y', (target: string, selector?: string) => {
       { id: 'color-contrast', enabled: false }, // seem to be somewhat inaccurate and has difficulty always picking up the correct colors, tons of open issues for it on axe-core
       { id: 'focusable-content', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
       { id: 'scrollable-region-focusable', enabled: false }, // recently updated and need to give the PF team time to fix issues before enabling
-      { id: 'list', enabled: false }, // introduced in Cypress 6.0. fix devconsole's sidebar NavList UL to only have LI as direct child elements. see https://bugzilla.redhat.com/show_bug.cgi?id=1908772
     ],
   });
   a11yTestResults.numberChecks += 1;
