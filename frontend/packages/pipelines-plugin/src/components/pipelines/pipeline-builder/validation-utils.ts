@@ -288,13 +288,13 @@ const resourceDefinition = (formValues: PipelineBuilderFormYamlValues, taskType:
         })
         .test(
           'is-resource-link-broken',
-          i18n.t('pipelines-plugin~Resource name has changed, reselect'),
+          i18n.t('pipelines-plugin~Resource name has changed, reselect.'),
           (resourceValue?: string) =>
             !resourceValue || !!resources.find(({ name }) => name === resourceValue),
         )
         .test(
           'is-resource-type-valid',
-          i18n.t('pipelines-plugin~Resource type has changed, reselect'),
+          i18n.t('pipelines-plugin~Resource type has changed, reselect.'),
           function(resourceValue?: string) {
             if (!resourceValue) {
               return true;
@@ -405,7 +405,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
                 )
                 .test(
                   'is-workspace-link-broken',
-                  i18n.t('pipelines-plugin~Workspace name has changed, reselect'),
+                  i18n.t('pipelines-plugin~Workspace name has changed, reselect.'),
                   (workspaceValue?: string) =>
                     !workspaceValue || !!workspaces.find(({ name }) => name === workspaceValue),
                 ),
@@ -421,7 +421,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
       })
       .test(
         'taskRef-or-taskSpec',
-        i18n.t('pipelines-plugin~TaskSpec or TaskRef must be provided'),
+        i18n.t('pipelines-plugin~TaskSpec or TaskRef must be provided.'),
         function(task: PipelineTask) {
           return !!task.taskRef || !!task.taskSpec;
         },
@@ -462,7 +462,7 @@ const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) =>
       }),
     ),
     tasks: taskValidation(formValues, 'tasks')
-      .min(1, i18n.t('pipelines-plugin~Must define at least one Task'))
+      .min(1, i18n.t('pipelines-plugin~Must define at least one task.'))
       .required(i18n.t('pipelines-plugin~Required')),
     finallyTasks: taskValidation(formValues, 'finallyTasks'),
     listTasks: yup.array().of(

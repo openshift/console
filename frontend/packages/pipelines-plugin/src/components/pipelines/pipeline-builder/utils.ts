@@ -86,7 +86,7 @@ export const findTask = (
       apiVersion: apiVersionForModel(TaskModel),
       kind: 'EmbeddedTask',
       metadata: {
-        name: i18n.t('pipelines-plugin~Embedded Task'),
+        name: i18n.t('pipelines-plugin~Embedded task'),
       },
       spec: task.taskSpec,
     };

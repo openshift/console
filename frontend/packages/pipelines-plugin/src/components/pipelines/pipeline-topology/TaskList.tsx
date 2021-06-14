@@ -52,7 +52,7 @@ const TaskList: React.FC<any> = ({
     listOptions.map((task) => taskToOption(task, onNewTask)),
     (o) => o.label,
   );
-  const unselectedTaskText = unselectedText || t('pipelines-plugin~Select Task');
+  const unselectedTaskText = unselectedText || t('pipelines-plugin~Select task');
 
   const truncatedTaskText = React.useMemo(
     () =>
@@ -86,7 +86,7 @@ const TaskList: React.FC<any> = ({
         />
         {options.length === 0 ? (
           <text className="odc-task-list-node__trigger-disabled" x={width / 2} y={height / 2 + 1}>
-            {t('pipelines-plugin~No Tasks')}
+            {t('pipelines-plugin~No tasks')}
           </text>
         ) : (
           <g>
@@ -145,7 +145,7 @@ const TaskList: React.FC<any> = ({
                   </li>
                   <li>
                     <KebabItem
-                      option={{ label: t('pipelines-plugin~Delete Task'), callback: onRemoveTask }}
+                      option={{ label: t('pipelines-plugin~Delete task'), callback: onRemoveTask }}
                       onClick={onRemoveTask}
                     />
                   </li>

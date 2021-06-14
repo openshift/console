@@ -43,7 +43,7 @@ describe('Pipeline Build validation schema', () => {
           formData: initialPipelineFormData,
         })
         .then(shouldHaveFailed)
-        .catch(hasError('formData.tasks', 'Must define at least one Task'));
+        .catch(hasError('formData.tasks', 'Must define at least one task.'));
     });
   });
 
@@ -150,7 +150,7 @@ describe('Pipeline Build validation schema', () => {
         tasks: [{ name: 'test' }],
       })
         .then(shouldHaveFailed)
-        .catch(hasError('formData.tasks[0]', 'TaskSpec or TaskRef must be provided'));
+        .catch(hasError('formData.tasks[0]', 'TaskSpec or TaskRef must be provided.'));
     });
 
     it('should pass if provided a taskSpec and name', async () => {
@@ -793,7 +793,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.outputs[0].resource',
-              'Resource type has changed, reselect',
+              'Resource type has changed, reselect.',
             ),
           );
       });
@@ -825,7 +825,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.inputs[0].resource',
-              'Resource name has changed, reselect',
+              'Resource name has changed, reselect.',
             ),
           );
       });
@@ -1051,7 +1051,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces[0].workspace',
-              'Workspace name has changed, reselect',
+              'Workspace name has changed, reselect.',
             ),
           );
       });

@@ -67,8 +67,8 @@ const PipelineSecretSection: React.FC = () => {
 
   return (
     <ExpandCollapse
-      textExpanded={t('pipelines-plugin~Hide Credential options')}
-      textCollapsed={t('pipelines-plugin~Show Credential options')}
+      textExpanded={t('pipelines-plugin~Hide credential options')}
+      textCollapsed={t('pipelines-plugin~Show credential options')}
     >
       <div className="odc-pipeline-secret-section">
         <p>
