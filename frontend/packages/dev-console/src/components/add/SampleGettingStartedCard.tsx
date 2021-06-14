@@ -11,6 +11,8 @@ import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 
 import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
+import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
+import { fromSamples } from '../../actions/add-resources';
 
 interface SampleGettingStartedCardProps {
   featured?: string[];
@@ -45,6 +47,11 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
 }) => {
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
+
+  const disabledAddActions = getDisabledAddActions();
+  if (disabledAddActions?.includes(fromSamples.id)) {
+    return null;
+  }
 
   const moreLink: GettingStartedLink = {
     id: 'all-samples',

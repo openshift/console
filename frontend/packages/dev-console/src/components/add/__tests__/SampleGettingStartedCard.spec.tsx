@@ -38,7 +38,22 @@ jest.mock(
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const CatalogServiceProviderMock = CatalogServiceProvider as jest.Mock;
 
+afterEach(() => {
+  delete window.SERVER_FLAGS.addPage;
+});
+
 describe('SampleGettingStartedCard', () => {
+  it('should not render when Samples add card is disabled', () => {
+    window.SERVER_FLAGS.addPage = '{ "disabledActions": "import-from-samples" }';
+
+    useActiveNamespaceMock.mockReturnValue(['active-namespace']);
+    CatalogServiceProviderMock.mockImplementation((props) => props.children(loadedCatalogService));
+
+    const wrapper = shallow(<SampleGettingStartedCard />);
+
+    expect(wrapper.text()).toEqual('');
+  });
+
   it('should render loading links until catalog service is loaded', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadingCatalogService));
