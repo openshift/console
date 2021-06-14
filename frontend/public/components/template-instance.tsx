@@ -20,9 +20,9 @@ import {
 const menuActions = Kebab.factory.common;
 
 const tableColumnClasses = [
-  classNames('col-sm-5', 'col-xs-6'),
-  classNames('col-sm-5', 'col-xs-6'),
-  classNames('col-sm-2', 'hidden-xs'),
+  'pf-u-w-42-on-md',
+  'pf-u-w-42-on-md',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-16-on-md',
   Kebab.columnClass,
 ];
 

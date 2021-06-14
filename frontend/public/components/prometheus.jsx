@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
@@ -10,11 +9,11 @@ const { Edit, Delete, ModifyCount } = Kebab.factory;
 const menuActions = [ModifyCount, Edit, Delete];
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-1', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  'pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-8-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-16-on-xl',
   Kebab.columnClass,
 ];
 
