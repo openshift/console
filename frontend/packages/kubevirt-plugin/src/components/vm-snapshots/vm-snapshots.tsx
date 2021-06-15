@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
@@ -22,6 +21,7 @@ import { VMTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { snapshotsTableColumnClasses } from './utils';
 import { VMSnapshotRow } from './vm-snapshot-row';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 export type VMSnapshotsTableProps = {
   data?: any[];
@@ -96,7 +96,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kvReferenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace,
   };

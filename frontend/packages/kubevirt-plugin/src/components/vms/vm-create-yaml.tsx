@@ -21,6 +21,7 @@ import { VirtualMachineModel } from '../../models';
 import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 const VMCreateYAMLLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
@@ -96,7 +97,7 @@ export const VMCreateYAML = (props: any) => {
   ) : (
     <VMCreateYAMLLConnected
       {...(props as any)}
-      kindObj={VirtualMachineModel.kind}
+      kindObj={kvReferenceForModel(VirtualMachineModel)}
       plural={VirtualMachineModel.plural}
     />
   );

@@ -8,6 +8,7 @@ import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineImportModel } from '../models';
 import { VMKind } from '../types/vm';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 
 export const useVirtualMachineImport = (vm: VMKind) => {
   const resourceWatch = React.useMemo(() => {
@@ -20,13 +21,13 @@ export const useVirtualMachineImport = (vm: VMKind) => {
     if (vmImportOwnerReference) {
       return {
         name: vmImportOwnerReference.name,
-        kind: VirtualMachineImportModel.kind,
+        kind: kvReferenceForModel(VirtualMachineImportModel),
         namespace: getNamespace(vm),
         isList: false,
       };
     }
     return {
-      kind: VirtualMachineImportModel.kind,
+      kind: kvReferenceForModel(VirtualMachineImportModel),
       namespace: getNamespace(vm),
       isList: true,
     };

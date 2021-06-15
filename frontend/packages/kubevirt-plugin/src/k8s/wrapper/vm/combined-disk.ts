@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
 import { FirehoseResult } from '@console/internal/components/utils';
-import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
@@ -22,6 +21,10 @@ import { DataVolumeWrapper } from './data-volume-wrapper';
 import { DiskWrapper } from './disk-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
+import {
+  getKubevirtModelAvailableVersion,
+  kvReferenceForModel,
+} from '../../../models/kvReferenceForModel';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -342,8 +345,8 @@ export class CombinedDiskFactory {
               (getOwnerReferences(p) || []).some((ownerReference) =>
                 compareOwnerReference(ownerReference, {
                   name: dataVolumeName,
-                  kind: DataVolumeModel.kind,
-                  apiVersion: apiVersionForModel(DataVolumeModel),
+                  kind: kvReferenceForModel(DataVolumeModel),
+                  apiVersion: getKubevirtModelAvailableVersion(DataVolumeModel),
                 } as any),
               ),
             );

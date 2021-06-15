@@ -40,6 +40,7 @@ import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { BootOrder, deviceKey } from '../../boot-order';
 import { ModalFooter } from '../modal/modal-footer';
 import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 const BootOrderModalComponent = withHandlePromise(
   ({
@@ -198,7 +199,7 @@ const BootOrderModalFirehost = (props) => {
   const resources = [];
 
   resources.push({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
     namespace: getNamespace(vmLikeEntity),
     name: getName(vmLikeEntity),
     prop: 'vmi',

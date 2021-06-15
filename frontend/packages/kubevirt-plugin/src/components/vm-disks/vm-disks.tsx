@@ -1,7 +1,6 @@
 import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
@@ -36,6 +35,7 @@ import { FileSystemsList } from './guest-agent-file-systems';
 import { diskSourceFilter } from './table-filters';
 import { StorageBundle } from './types';
 import { diskTableColumnClasses } from './utils';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 const getStoragesData = ({
   vmLikeEntity,
@@ -172,11 +172,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
       prop: 'pvcs',
       optional: true,
     }),
-    getResource(DataVolumeModel, {
-      namespace,
-      prop: 'datavolumes',
-      optional: true,
-    }),
+    { kind: kvReferenceForModel(DataVolumeModel), namespace, prop: 'datavolumes', optional: true },
   ];
 
   const flatten = ({ datavolumes, pvcs }) =>

@@ -1,6 +1,7 @@
 import { DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import { kvReferenceForModel } from '../../../../../../models/kvReferenceForModel';
 
 import {
   OVIRT_TYPE_LABEL,
@@ -92,7 +93,7 @@ const getQueries = ({
 
   if (activeOvirtProviderCRName) {
     resources.push({
-      kind: OVirtProviderModel.kind,
+      kind: kvReferenceForModel(OVirtProviderModel),
       model: OVirtProviderModel,
       name: activeOvirtProviderCRName,
       namespace,

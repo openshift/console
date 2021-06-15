@@ -5,6 +5,7 @@ import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
 import { getVMLikeModel } from '../selectors/vm';
 import { VMGenericLikeEntityKind } from '../types/vmLike';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 
 export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLikeEntity: P): P => {
   const vmName = getName(vmLikeEntity);
@@ -13,11 +14,11 @@ export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLik
   const resourceWatch = React.useMemo(() => {
     return {
       name: vmName,
-      kind: model.kind,
+      kind: kvReferenceForModel(model),
       namespace,
       isList: false,
     };
-  }, [model.kind, namespace, vmName]);
+  }, [model, namespace, vmName]);
 
   const [data, loaded, loadError] = useK8sWatchResource(resourceWatch);
 

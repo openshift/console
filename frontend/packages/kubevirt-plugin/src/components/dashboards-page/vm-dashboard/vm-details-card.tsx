@@ -17,7 +17,6 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
@@ -31,6 +30,7 @@ import {
 } from '../../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../../utils/guest-agent-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 import VMIP from '../../vms/VMIP';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
@@ -58,7 +58,9 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
-    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    vm
+      ? kvReferenceForModel(VirtualMachineModel)
+      : kvReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   )}/${VM_DETAIL_DETAILS_HREF}`;

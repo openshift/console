@@ -19,11 +19,11 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { CardActions } from '@patternfly/react-core';
-
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMILikeEntityKind } from '../../../types/vmLike';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 import './vm-activity.scss';
 
@@ -71,7 +71,9 @@ export const VMActivityCard: React.FC = () => {
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const viewEventsLink = `${resourcePath(
-    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    vm
+      ? kvReferenceForModel(VirtualMachineModel)
+      : kvReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   )}/events`;

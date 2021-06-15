@@ -9,7 +9,6 @@ import {
   resourcePathFromModel,
   SimpleTabNav,
 } from '@console/internal/components/utils';
-import { modelFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils';
 import { observer } from '@patternfly/react-topology';
 
@@ -17,6 +16,8 @@ import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';
 import { VMNode } from './types';
+import { VirtualMachineModel } from '../models';
+import { getKubevirtAvailableModel } from '../models/kvReferenceForModel';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -59,7 +60,11 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
             <ResourceIcon className="co-m-resource-icon--lg" kind={vmObj.kind} />
             {name && (
               <Link
-                to={resourcePathFromModel(modelFor(vmObj.kind), name, namespace)}
+                to={resourcePathFromModel(
+                  getKubevirtAvailableModel(VirtualMachineModel),
+                  name,
+                  namespace,
+                )}
                 className="co-resource-item__resource-name"
               >
                 {name}

@@ -14,7 +14,6 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
@@ -27,18 +26,23 @@ import {
   VirtualMachineModel,
   VirtualMachineSnapshotModel,
 } from '../../../models';
+
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getVolumes } from '../../../selectors/vm';
 import { VMIKind, VMKind, VMSnapshot } from '../../../types/vm';
 import { redirectToList } from './utils';
 import { VMIUsersAlert } from './vmi-users-alert';
+import {
+  getKubevirtModelAvailableVersion,
+  kvReferenceForModel,
+} from '../../../models/kvReferenceForModel';
 
 export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vm, vmi } = props;
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kvReferenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace: getNamespace(vm),
   };
@@ -56,7 +60,7 @@ export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const vmReference = {
     name,
     kind: VirtualMachineModel.kind,
-    apiVersion: apiVersionForModel(VirtualMachineModel),
+    apiVersion: getKubevirtModelAvailableVersion(VirtualMachineModel),
   } as any;
 
   const [vmImport, vmImportLoaded] = useVirtualMachineImport(vmUpToDate);

@@ -1,4 +1,5 @@
 import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
+import { kvReferenceForModel } from '../../../../../../models/kvReferenceForModel';
 
 import {
   V2V_TEMPORARY_LABEL,
@@ -91,7 +92,7 @@ const getQueries = ({ namespace, v2vVmwareName }: GetQueriesParams): FirehoseRes
 
   if (v2vVmwareName) {
     resources.push({
-      kind: V2VVMwareModel.kind,
+      kind: kvReferenceForModel(V2VVMwareModel),
       model: V2VVMwareModel,
       name: v2vVmwareName,
       namespace,

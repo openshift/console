@@ -1,6 +1,5 @@
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
-  apiVersionForModel,
   K8sResourceKind,
   PersistentVolumeClaimKind,
   PodKind,
@@ -17,6 +16,7 @@ import { TopologyDataObject, TopologyDataResources } from '@console/topology/src
 import { Model } from '@patternfly/react-topology';
 
 import { VirtualMachineModel } from '../models';
+import { getKubevirtModelAvailableVersion } from '../models/kvReferenceForModel';
 import { getVMStatus } from '../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
@@ -36,7 +36,7 @@ export const getOperatingSystemImage = (vm: VMKind, templates: K8sResourceKind[]
 
 export const createVMOverviewItem = (vm: K8sResourceKind): OverviewItem => {
   if (!vm.apiVersion) {
-    vm.apiVersion = apiVersionForModel(VirtualMachineModel);
+    vm.apiVersion = getKubevirtModelAvailableVersion(VirtualMachineModel);
   }
   if (!vm.kind) {
     vm.kind = VirtualMachineModel.kind;

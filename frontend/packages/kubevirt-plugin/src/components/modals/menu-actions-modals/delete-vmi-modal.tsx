@@ -9,7 +9,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
@@ -21,6 +20,10 @@ import { getVMIVolumes } from '../../../selectors/vmi';
 import { VMIKind } from '../../../types';
 import { redirectToList } from './utils';
 import { VMIUsersAlert } from './vmi-users-alert';
+import {
+  getKubevirtModelAvailableVersion,
+  kvReferenceForModel,
+} from '../../../models/kvReferenceForModel';
 
 export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vmi } = props;
@@ -35,8 +38,8 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
 
   const vmiReference = {
     name,
-    kind: VirtualMachineInstanceModel.kind,
-    apiVersion: apiVersionForModel(VirtualMachineInstanceModel),
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
+    apiVersion: getKubevirtModelAvailableVersion(VirtualMachineInstanceModel),
   } as any;
 
   const [ownedVolumeResources, isOwnedVolumeResourcesLoaded] = useOwnedVolumeReferencedResources(

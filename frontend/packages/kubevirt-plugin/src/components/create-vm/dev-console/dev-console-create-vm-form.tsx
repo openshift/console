@@ -4,7 +4,6 @@ import * as React from 'react';
 import Helmet from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-
 import {
   ButtonBar,
   ExternalLink,
@@ -46,6 +45,7 @@ import { filterTemplates } from '../../vm-templates/utils';
 import { CreateVMForm } from '../forms/create-vm-form';
 import { FORM_ACTION_TYPE, formReducer, initFormState } from '../forms/create-vm-form-reducer';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
@@ -84,7 +84,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   } = useVmTemplatesResources(namespace);
 
   const [vms, vmsLoaded] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kvReferenceForModel(VirtualMachineModel),
     namespace,
     isList: true,
   });

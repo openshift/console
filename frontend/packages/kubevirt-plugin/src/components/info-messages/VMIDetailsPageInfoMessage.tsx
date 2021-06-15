@@ -7,11 +7,12 @@ import { getOwnerReferences } from '@console/shared/src';
 
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
 import { VMIKind } from '../../types';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 const VMIDetailsPageInfoMessage: React.FC<InfoMessageHintBlockProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
   const [vmi, isLoaded] = useK8sWatchResource<VMIKind>({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   });

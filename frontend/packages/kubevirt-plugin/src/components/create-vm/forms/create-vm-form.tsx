@@ -54,6 +54,7 @@ import {
 } from '../../vm-templates/vm-template-source';
 import { BootSourceState } from './boot-source-form-reducer';
 import { FORM_ACTION_TYPE, FormAction, FormState } from './create-vm-form-reducer';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 import './create-vm-form.scss';
 
@@ -81,7 +82,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   const { t } = useTranslation();
   const { name, nameValidation, namespace, startVM, template } = state;
   const [vms, loaded] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kvReferenceForModel(VirtualMachineModel),
     namespace,
     isList: true,
   });

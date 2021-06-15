@@ -12,6 +12,7 @@ import {
 import * as models from '../models';
 import { findVMIPod } from '../selectors/pod/selectors';
 import { VMIKind } from '../types/vm';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 
 export const usePodsForVm = (
   vm: K8sResourceKind,
@@ -37,7 +38,7 @@ export const usePodsForVm = (
       },
       virtualmachineinstances: {
         isList: true,
-        kind: models.VirtualMachineInstanceModel.kind,
+        kind: kvReferenceForModel(models.VirtualMachineInstanceModel),
         namespace,
         optional: true,
       },

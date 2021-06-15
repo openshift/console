@@ -38,6 +38,7 @@ import { VMTemplateWrapper } from '../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { initializeCommonMetadata, initializeCommonTemplateMetadata } from '../vm/create/common';
 import { prepareVM } from '../vm/create/simple-create';
+import { getKubevirtAvailableModel } from '../../../models/kvReferenceForModel';
 
 export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
   const template = JSON.parse(
@@ -321,5 +322,5 @@ export const createVMForCustomization = async (
     }
   }
 
-  return k8sCreate(VirtualMachineModel, vm);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vm);
 };

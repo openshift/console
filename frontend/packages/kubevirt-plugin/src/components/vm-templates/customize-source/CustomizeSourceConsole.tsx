@@ -14,7 +14,6 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
-
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
 import { VirtualMachineModel } from '../../../models';
@@ -22,6 +21,7 @@ import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
 import finishCustomizationModal from '../../modals/template-customization/FinishCustomizationModal';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 import VMConsoles from '../../vms/vm-console/VMConsoles';
 
 import './customize-source.scss';
@@ -42,7 +42,7 @@ const VMPopover: React.FC<VMPopoverProps> = ({ vm, children }) => {
           </StackItem>
           <StackItem>
             <ResourceLink
-              kind={VirtualMachineModel.kind}
+              kind={kvReferenceForModel(VirtualMachineModel)}
               name={vm.metadata.name}
               namespace={vm.metadata.namespace}
             />

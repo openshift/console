@@ -20,6 +20,8 @@ import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { VMIKind, VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
+
 import VMConsoles from './VMConsoles';
 
 const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: string }>> = ({
@@ -31,14 +33,14 @@ const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: 
   const { name, ns: namespace } = match.params;
 
   const [vm, vmLoaded] = useK8sWatchResource<VMKind>({
-    kind: VirtualMachineModel.kind,
+    kind: kvReferenceForModel(VirtualMachineModel),
     name,
     namespace,
     isList: false,
   });
 
   const [vmi, vmiLoaded] = useK8sWatchResource<VMIKind>({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
     isList: false,
@@ -51,13 +53,13 @@ const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: 
   });
 
   const [migrations] = useK8sWatchResource<K8sResourceKind[]>({
-    kind: VirtualMachineInstanceMigrationModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceMigrationModel),
     namespace,
     isList: true,
   });
 
   const [vmImports] = useK8sWatchResource<VMImportKind[]>({
-    kind: VirtualMachineImportModel.kind,
+    kind: kvReferenceForModel(VirtualMachineImportModel),
     namespace,
     isList: true,
   });
@@ -67,7 +69,7 @@ const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: 
     isList: true,
   });
   const [dataVolumes] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kvReferenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

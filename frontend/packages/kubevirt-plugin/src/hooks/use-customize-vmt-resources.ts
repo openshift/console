@@ -8,6 +8,7 @@ import { CDI_APP_LABEL, TEMPLATE_VM_NAME_LABEL } from '../constants';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
 import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 
 type CustomizeVMTResourcesResult = {
   vm: VMKind;
@@ -24,14 +25,14 @@ export const useCustomizeVMTResources = (
   namespace: string,
 ): CustomizeVMTResourcesResult => {
   const [vm, vmLoaded, vmLoadError] = useK8sWatchResource<VMKind>({
-    kind: VirtualMachineModel.kind,
+    kind: kvReferenceForModel(VirtualMachineModel),
     name,
     namespace,
     isList: false,
   });
 
   const [vmis, vmisLoaded, vmiLoadError] = useK8sWatchResource<VMIKind>({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
     namespace,
     isList: true,
     fieldSelector: `metadata.name=${name}`,
@@ -62,7 +63,7 @@ export const useCustomizeVMTResources = (
   });
 
   const [dataVolumes] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kvReferenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

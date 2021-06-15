@@ -14,6 +14,7 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 import {
   DiskType,
@@ -49,7 +50,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const snapshotResource: WatchK8sResource = React.useMemo(
     () => ({
       isList: true,
-      kind: VirtualMachineSnapshotModel.kind,
+      kind: referenceForModel(VirtualMachineSnapshotModel),
       namespaced: true,
       namespace,
     }),
@@ -60,7 +61,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
     snapshotResource,
   );
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === name);
-  const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
+  const basePath = resourcePath(referenceForModel(getVMLikeModel(vmiLike)), name, namespace);
   const DisksTitle = React.useCallback(
     ({ children }) => (
       <Link

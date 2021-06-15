@@ -6,13 +6,13 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import { CDIConfigModel } from '../../models';
 import { getUploadProxyURL } from '../../selectors/cdi';
 import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 const resource: WatchK8sResource = {
-  kind: CDIConfigModel.kind,
+  kind: kvReferenceForModel(CDIConfigModel),
   isList: false,
   namespaced: false,
   name: 'config',

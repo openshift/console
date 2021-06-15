@@ -6,11 +6,11 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-
 import { TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER } from '../constants';
 import { DataVolumeModel } from '../models';
 import { getParameterValue } from '../selectors/selectors';
 import { V1alpha1DataVolume } from '../types/api';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 
 type BaseImages = [PersistentVolumeClaimKind[], boolean, any, V1alpha1DataVolume[], PodKind[]];
 
@@ -43,7 +43,7 @@ export const useBaseImages = (
         (acc, ns) => ({
           ...acc,
           [ns]: {
-            kind: DataVolumeModel.kind,
+            kind: kvReferenceForModel(DataVolumeModel),
             namespace: ns,
             isList: true,
           } as WatchK8sResource,

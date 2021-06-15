@@ -1,6 +1,11 @@
 import { coFetch } from '@console/internal/co-fetch';
-import { apiVersionForModel, k8sKill, resourceURL } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { groupVersionFor, k8sKill, resourceURL } from '@console/internal/module/k8s';
+import { getAPIVersion, getName, getNamespace } from '@console/shared';
+import {
+  getKubevirtAvailableModel,
+  getKubevirtModelAvailableVersion,
+  kvReferenceForModel,
+} from '../../../models/kvReferenceForModel';
 
 import { VirtualMachineInstanceModel } from '../../../models';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
@@ -17,6 +22,7 @@ const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
   let url = resourceURL(
     {
       ...VirtualMachineInstanceModel,
+      apiVersion: groupVersionFor(getAPIVersion(vmi)).version,
       apiGroup: `subresources.${VirtualMachineInstanceModel.apiGroup}`,
     },
     {
@@ -51,12 +57,12 @@ export const deleteVMI = async (
       ownedVolumeResources,
       {
         name: getName(vmi),
-        kind: VirtualMachineInstanceModel.kind,
-        apiVersion: apiVersionForModel(VirtualMachineInstanceModel),
+        kind: kvReferenceForModel(VirtualMachineInstanceModel),
+        apiVersion: getKubevirtModelAvailableVersion(VirtualMachineInstanceModel),
       } as any,
       false,
     );
   }
 
-  await k8sKill(VirtualMachineInstanceModel, vmi);
+  await k8sKill(getKubevirtAvailableModel(VirtualMachineInstanceModel), vmi);
 };

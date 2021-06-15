@@ -30,7 +30,6 @@ import {
   TemplateModel,
 } from '@console/internal/models';
 import {
-  apiVersionForModel,
   ConfigMapKind,
   K8sResourceKind,
   K8sVerb,
@@ -89,6 +88,7 @@ import {
 import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
 import { BinaryUnit, convertToBytes } from '../../form/size-unit-utils';
 import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
+import { getKubevirtModelAvailableVersion } from '../../../models/kvReferenceForModel';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -201,7 +201,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
       const obj: K8sResourceKind = {
-        apiVersion: apiVersionForModel(DataVolumeModel),
+        apiVersion: getKubevirtModelAvailableVersion(DataVolumeModel),
         kind: DataVolumeModel.kind,
         metadata: {
           name: pvcName,

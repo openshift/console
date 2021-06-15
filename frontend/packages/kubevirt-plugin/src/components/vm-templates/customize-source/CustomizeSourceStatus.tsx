@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 
 import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { Alert, Bullseye, Button, Spinner, Stack, StackItem, Title } from '@patternfly/react-core';
-
 import { VirtualMachineModel } from '../../../models';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
 import { VMStatus } from '../../vm-status/vm-status';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 import './customize-source.scss';
 
@@ -46,7 +46,7 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
             </StackItem>
             <StackItem>
               <ResourceLink
-                kind={VirtualMachineModel.kind}
+                kind={kvReferenceForModel(VirtualMachineModel)}
                 name={vm.metadata.name}
                 namespace={vm.metadata.namespace}
                 className="kv-customize-source__status-link"

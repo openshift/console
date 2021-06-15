@@ -9,6 +9,7 @@ import {
 } from '@console/topology/src/extensions';
 
 import * as models from '../models';
+import { kvReferenceForModel } from '../models/kvReferenceForModel';
 import {
   getIsKubevirtResource,
   getKubevirtComponentFactory,
@@ -23,13 +24,13 @@ export type TopologyConsumedExtensions =
 const virtualMachineResourceWatchers = (namespace: string): WatchK8sResources<any> => ({
   virtualmachines: {
     isList: true,
-    kind: models.VirtualMachineModel.kind,
+    kind: kvReferenceForModel(models.VirtualMachineModel),
     namespace,
     optional: true,
   },
   virtualmachineinstances: {
     isList: true,
-    kind: models.VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(models.VirtualMachineInstanceModel),
     namespace,
     optional: true,
   },
@@ -43,19 +44,19 @@ const virtualMachineResourceWatchers = (namespace: string): WatchK8sResources<an
   },
   migrations: {
     isList: true,
-    kind: models.VirtualMachineInstanceMigrationModel.kind,
+    kind: kvReferenceForModel(models.VirtualMachineInstanceMigrationModel),
     namespace,
     optional: true,
   },
   dataVolumes: {
     isList: true,
     optional: true,
-    kind: models.DataVolumeModel.kind,
+    kind: kvReferenceForModel(models.DataVolumeModel),
   },
   vmImports: {
     isList: true,
     optional: true,
-    kind: models.VirtualMachineImportModel.kind,
+    kind: kvReferenceForModel(models.VirtualMachineImportModel),
   },
   pods: {
     isList: true,

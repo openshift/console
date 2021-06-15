@@ -28,6 +28,7 @@ import { VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachinesPage } from './vm';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 import './virtualization.scss';
 
@@ -126,7 +127,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 
   const namespace = props.match.params.ns;
 
-  const obj = { loaded: true, data: { kind: VirtualMachineModel.kind } };
+  const obj = { loaded: true, data: { kind: kvReferenceForModel(VirtualMachineModel) } };
   const pages = [
     {
       href: '',

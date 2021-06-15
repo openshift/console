@@ -60,6 +60,7 @@ import { ProjectDropdown } from '../../form/project-dropdown';
 import { preventDefault } from '../../form/utils';
 import { filterTemplates } from '../utils';
 import { FORM_ACTION_TYPE, formReducer, initFormState } from './customize-source-form-reducer';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 import './customize-source.scss';
 
@@ -96,7 +97,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     loadvmWithCutomBootSource,
     vmWithCustomBootSourceError,
   ] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kvReferenceForModel(VirtualMachineModel),
     isList: true,
     namespace,
     selector: {

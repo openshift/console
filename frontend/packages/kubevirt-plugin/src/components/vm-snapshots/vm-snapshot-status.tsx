@@ -3,7 +3,6 @@ import * as React from 'react';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { ErrorStatus, getName, getNamespace, ProgressStatus, Status } from '@console/shared';
 import { Button, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
-
 import { VirtualMachineRestoreModel } from '../../models';
 import {
   getVMRestoreError,
@@ -13,6 +12,7 @@ import {
 } from '../../selectors/snapshot/snapshot';
 import { VMRestore, VMSnapshot } from '../../types';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, restore }) => {
   const snapshotError = getVMSnapshotError(snapshot);
@@ -43,7 +43,7 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
                   onClick={() =>
                     history.push(
                       resourcePath(
-                        VirtualMachineRestoreModel.kind,
+                        kvReferenceForModel(VirtualMachineRestoreModel),
                         getName(restore),
                         getNamespace(restore),
                       ),
@@ -72,7 +72,7 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
               onClick={() =>
                 history.push(
                   resourcePath(
-                    VirtualMachineRestoreModel.kind,
+                    kvReferenceForModel(VirtualMachineRestoreModel),
                     getName(restore),
                     getNamespace(restore),
                   ),

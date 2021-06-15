@@ -44,6 +44,7 @@ import { VMILikeEntityKind } from '../../types/vmLike';
 import { getVMTabURL } from '../../utils/url';
 import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-restart-modal';
 import { VMTabURLEnum } from '../vms/types';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 import './vm-status.scss';
 
@@ -191,7 +192,7 @@ export const getPodLink = (pod: PodKind) =>
 
 export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
   `${resourcePath(
-    getVMLikeModel(vmLike).kind,
+    kvReferenceForModel(getVMLikeModel(vmLike)),
     getName(vmLike),
     getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;

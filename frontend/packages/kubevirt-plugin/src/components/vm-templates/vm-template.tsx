@@ -23,6 +23,7 @@ import { getLoadedData } from '../../utils';
 import { VirtualMachineTemplateBundle } from './table/types';
 import VMTemplateTable from './table/VMTemplateTable';
 import { filterTemplates } from './utils';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 import './vm-template.scss';
 
@@ -108,7 +109,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       },
     },
     {
-      kind: DataVolumeModel.kind,
+      kind: kvReferenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
@@ -129,7 +130,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'pods',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kvReferenceForModel(VirtualMachineModel),
       selector: {
         matchLabels: { [VM_CUSTOMIZE_LABEL]: 'true' },
       },
@@ -138,7 +139,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'vms',
     },
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kvReferenceForModel(VirtualMachineInstanceModel),
       namespace,
       isList: true,
       prop: 'vmis',

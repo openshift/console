@@ -28,6 +28,7 @@ import { descriptionModal } from '../modals';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { VMSnapshotStatus } from './vm-snapshot-status';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 const { editYaml } = navFactory;
 const { common } = Kebab.factory;
@@ -95,7 +96,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
   const { ns: namespace, name: snapshotName } = match.params;
 
   const resource: FirehoseResource = {
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kvReferenceForModel(VirtualMachineSnapshotModel),
     prop: 'snapshot',
     isList: false,
     name: snapshotName,
@@ -144,7 +145,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
       match={match}
       name={snapshotName}
       namespace={namespace}
-      kind={VirtualMachineSnapshotModel.kind}
+      kind={kvReferenceForModel(VirtualMachineSnapshotModel)}
       kindObj={VirtualMachineSnapshotModel}
       resources={[resource]}
       menuActions={menuActions}

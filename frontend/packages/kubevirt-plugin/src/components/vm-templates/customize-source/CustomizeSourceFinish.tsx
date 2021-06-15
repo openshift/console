@@ -27,6 +27,7 @@ import {
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
+import { getKubevirtAvailableModel } from '../../../models/kvReferenceForModel';
 
 type ItemStatusProps = {
   error: boolean;
@@ -71,7 +72,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
   const deleteVM = async () => {
     setVMError(undefined);
     try {
-      await k8sKill(VirtualMachineModel, vm);
+      await k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm);
       setVMSuccess(true);
     } catch (err) {
       setVMError(err.message);

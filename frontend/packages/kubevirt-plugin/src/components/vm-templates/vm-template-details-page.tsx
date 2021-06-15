@@ -13,7 +13,6 @@ import {
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
-
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
@@ -25,6 +24,7 @@ import { VMDisks } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
 import { menuActionsCreator } from './menu-actions';
 import { VMTemplateDetails } from './vm-template-details';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {
@@ -46,7 +46,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const { name } = props.match.params;
   const namespace = props.match.params.ns;
   const [dataVolumes, dvLoaded, dvError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kvReferenceForModel(DataVolumeModel),
     isList: true,
     namespace,
   });

@@ -53,6 +53,7 @@ import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, convertToBytes, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
@@ -275,7 +276,7 @@ const VMFlavorModalFirehose = (props) => {
   }
 
   resources.push({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kvReferenceForModel(VirtualMachineInstanceModel),
     namespace: getNamespace(vmLike),
     isList: true,
     prop: 'vmis',

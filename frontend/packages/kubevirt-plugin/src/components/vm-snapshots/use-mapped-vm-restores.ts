@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   useK8sWatchResource,
   WatchK8sResource,
@@ -8,13 +7,14 @@ import {
 import { VirtualMachineRestoreModel } from '../../models';
 import { getVmRestoreSnapshotName, getVmRestoreTime } from '../../selectors/snapshot/snapshot';
 import { VMRestore } from '../../types';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 export const useMappedVMRestores = (
   namespace: string,
 ): [{ [key: string]: VMRestore }, boolean, any] => {
   const restoreResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineRestoreModel.kind,
+    kind: kvReferenceForModel(VirtualMachineRestoreModel),
     namespaced: true,
     namespace,
   };

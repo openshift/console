@@ -18,6 +18,7 @@ import {
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, ValidationErrorType } from '@console/shared';
+
 import {
   Checkbox,
   Form,
@@ -45,6 +46,7 @@ import { validateVmLikeEntityName } from '../../../utils/validations/vm';
 import { Errors } from '../../errors/errors';
 import { ModalFooter } from '../modal/modal-footer';
 import { ConfigurationSummary } from './configuration-summary';
+import { kvReferenceForModel } from '../../../models/kvReferenceForModel';
 
 import './_clone-vm-modal.scss';
 
@@ -261,7 +263,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
       prop: 'namespaces',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kvReferenceForModel(VirtualMachineModel),
       namespace,
       isList: true,
       prop: 'virtualMachines',
@@ -279,7 +281,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
 
   if (requestsDataVolumes) {
     resources.push({
-      kind: DataVolumeModel.kind,
+      kind: kvReferenceForModel(DataVolumeModel),
       namespace: vmNamespace,
       isList: true,
       prop: 'dataVolumes',

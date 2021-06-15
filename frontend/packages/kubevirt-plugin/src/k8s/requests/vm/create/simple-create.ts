@@ -39,6 +39,7 @@ import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import { getKubevirtAvailableModel } from '../../../../models/kvReferenceForModel';
 
 type GetRootDataVolume = (args: {
   name: string;
@@ -256,5 +257,5 @@ export const createVM = async (
     enableSSHService,
     containerImages,
   );
-  return k8sCreate(VirtualMachineModel, vm);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vm);
 };

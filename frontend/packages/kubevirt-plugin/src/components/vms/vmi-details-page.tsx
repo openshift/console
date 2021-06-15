@@ -26,6 +26,7 @@ import { VMDashboard } from './vm-dashboard';
 import { VMDetailsFirehose } from './vm-details';
 import { breadcrumbsForVMPage } from './vm-details-page';
 import { VMEvents } from './vm-events';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanceDetailsPageProps> = (
   props,
@@ -90,7 +91,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       {...props}
       name={name}
       namespace={namespace}
-      kind={VirtualMachineInstanceModel.kind}
+      kind={kvReferenceForModel(VirtualMachineInstanceModel)}
       kindObj={VirtualMachineInstanceModel}
       menuActions={vmiMenuActionsCreator}
       pages={pages}

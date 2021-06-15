@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
   Breadcrumb,
@@ -24,6 +23,7 @@ import { getLoadedData } from '../../utils';
 import { getPendingChanges, hasPendingChanges } from '../../utils/pending-changes';
 import { PendingChangesAlert } from '../Alerts/PendingChangesAlert';
 import { PendingChanges, PendingChangesByTab } from './types';
+import { kvReferenceForModel } from '../../models/kvReferenceForModel';
 
 import './pending-changes-warning.scss';
 
@@ -145,13 +145,13 @@ export const PendingChangesWarningFirehose: React.FC<PendingChangeWarningFirehos
 }) => {
   const resources = [
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kvReferenceForModel(VirtualMachineInstanceModel),
       name,
       namespace,
       prop: 'vmi',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kvReferenceForModel(VirtualMachineModel),
       name,
       namespace,
       prop: 'vmLikeEntity',
