@@ -24,32 +24,32 @@
 }
 .nb-create-bc-step-page-form {
   display: block;
-  width: 80%;
-  margin-right: auto;
   margin-bottom: var(--pf-global--spacer--lg);
+  margin-right: auto;
+  width: 80%;
 }
 
 .nb-create-bc-step-page-form__element {
-  margin-top: var(--pf-global--spacer--md);
-  margin-bottom: var(--pf-global--spacer--md);
   cursor: default;
+  margin-bottom: var(--pf-global--spacer--md);
+  margin-top: var(--pf-global--spacer--md);
 }
 
 .nb-create-bc-step-page-form__element--light-text {
-  margin-top: var(--pf-global--spacer--sm);
   color: var(--pf-global--Color--400);
+  margin-top: var(--pf-global--spacer--sm);
 }
 
 .nb-bc-step-page-form__element--short {
-  width: 30%;
   display: flex;
   margin-top: var(--pf-global--spacer--md);
+  width: 30%;
 }
 
 .nb-bc-bs-page__table--short {
-  width: 90%;
   max-height: 50vh;
   overflow-y: auto;
+  width: 90%;
 }
 
 /* Review page */
@@ -95,6 +95,6 @@
 }
 
 .nb-bc-create-review__selected-stores {
-  padding-top: var(--pf-global--spacer--sm);
   padding-bottom: var(--pf-global--spacer--sm);
+  padding-top: var(--pf-global--spacer--sm);
 }

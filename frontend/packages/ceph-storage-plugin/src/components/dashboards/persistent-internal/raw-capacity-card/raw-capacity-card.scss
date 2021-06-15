@@ -3,8 +3,8 @@
 .ceph-raw-usage {
   &__container {
     display: flex;
-    width: 100%;
     margin-top: var(--pf-global--spacer--md);
+    width: 100%;
   }
   &__legend {
     flex-grow: 1;
@@ -15,27 +15,27 @@
     max-height: 180px;
   }
   &--error {
-    margin-top: var(--pf-global--spacer--xs);
     margin-bottom: var(--pf-global--spacer--xs);
-    width: 100%;
+    margin-top: var(--pf-global--spacer--xs);
     text-align: center;
+    width: 100%;
   }
 }
 
 .ceph-raw-card-legend {
   &__container {
-    margin-bottom: 1em;
-    flex: 1 1 0;
     display: flex;
+    flex: 1 1 0;
+    margin-bottom: 1em;
   }
   &__color-square {
-    width: 15px;
     height: 15px;
+    width: 15px;
   }
   &__title {
-    margin-left: 6px;
-    line-height: 15px;
     font-weight: bold;
+    line-height: 15px;
+    margin-left: 6px;
     &--pad {
       padding-right: 30px;
     }
@@ -54,8 +54,8 @@
     flex-grow: 0.10;
   }
   &__text {
-    line-height: 15px;
     font-weight: bold;
+    line-height: 15px;
   }
 }
 
@@ -64,10 +64,10 @@
 .skeleton-activity {
   animation: $skeleton-animation;
   background: $skeleton-color;
-  opacity: 0;
   border-radius: 6px;
-  margin: 0.5rem 0.7em 0.5rem 0.7em;
   height: 30px;
+  margin: 0.5rem 0.7em 0.5rem 0.7em;
+  opacity: 0;
   &::after {
     background-repeat: no-repeat;
     content: '';
@@ -82,17 +82,17 @@
     flex-grow: 1;
   }
   &-legend__item {
-    min-width: 1em;
-    max-width: 18em;
     flex-grow: 0.5;
-    min-height: 1em;
     max-height: 2em;
+    max-width: 18em;
+    min-height: 1em;
+    min-width: 1em;
   }
   &__chart {
     flex-grow: 1;
-    min-width: 5em;
+    max-height: 10em;
     max-width: 10em;
     min-height: 8em;
-    max-height: 10em;
+    min-width: 5em;
   }
 }

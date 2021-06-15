@@ -11,14 +11,14 @@
 }
 
 .ceph-ocs-install__auto-detect-table {
-  width: 80%;
   margin-top: var(--pf-global--spacer--lg);
+  width: 80%;
 }
 
 .ceph-ocs-install__wizard-alert {
-  width: 90%;
   margin: var(--pf-c-wizard__main-body--PaddingTop) var(--pf-c-wizard__main-body--PaddingRight)
     var(--pf-c-wizard__main-body--PaddingBottom) var(--pf-c-wizard__main-body--PaddingLeft);
+  width: 90%;
 }
 .ceph-ocs-install__select-arbiter-zone {
   padding-left: var(--pf-global--spacer--lg);
@@ -37,9 +37,9 @@
 }
 
 .ceph-ocs-install__chart-wrapper {
+  align-items: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .ceph-ocs-install__create-new-sc-btn {
@@ -48,9 +48,9 @@
 }
 
 .ceph-ocs-install_capacity-header {
-  text-align: center;
   font-size: var(--pf-global--FontSize--xl);
   margin-bottom: var(--pf-c-wizard__main-body--PaddingBottom);
+  text-align: center;
 }
 
 .ceph-ocs-install__stats {
@@ -67,14 +67,14 @@
 }
 
 .ceph-ocs-install__disk-list-btn {
-  padding-top: 0;
   padding-left: 0;
+  padding-top: 0;
 }
 
 .ceph-ocs-install__node-list-btn {
-  padding-top: 0;
   padding-left: 0;
   padding-right: 0;
+  padding-top: 0;
 }
 
 .ceph-ocs-install__filtered-modal {
@@ -105,6 +105,6 @@
 
 // inner class of modal for modifying margin
 .pf-c-modal-box__body {
-  margin-top: var(--pf-global--spacer--md);
   margin-bottom: var(--pf-global--spacer--md);
+  margin-top: var(--pf-global--spacer--md);
 }

@@ -193,6 +193,8 @@
     "screenfull": "4.x",
     "semver": "6.x",
     "showdown": "1.8.x",
+    "stylelint": "^13.13.1",
+    "stylelint-order": "^4.1.0",
     "subscriptions-transport-ws": "^0.9.16",
     "text-encoding": "0.x",
     "typesafe-actions": "^4.2.1",
@@ -325,7 +327,7 @@
     "ua-parser-js": "^0.7.24",
     "@types/jest": "21.x",
     "glob-parent": "^5.1.2",
-    "postcss": "^8.2.13"
+    "postcss": "7.0.32"
   },
   "husky": {
     "hooks": {
@@ -333,6 +335,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix"
+    "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix",
+    "packages/ceph-storage-plugin/**/*.scss": "./node_modules/.bin/stylelint --fix"
   }
 }
