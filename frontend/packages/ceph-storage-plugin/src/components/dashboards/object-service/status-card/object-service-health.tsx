@@ -52,8 +52,12 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
         firstColumn={t('ceph-storage-plugin~Services')}
         secondColumn={t('ceph-storage-plugin~Status')}
       >
-        <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>Multicloud Object Gateway</Status>
-        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>Object Gateway (RGW)</Status>
+        <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>
+          {t('ceph-storage-plugin~Multicloud Object Gateway')}
+        </Status>
+        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>
+          {t('ceph-storage-plugin~Object Gateway (RGW)')}
+        </Status>
       </StatusPopupSection>
     </HealthItem>
   );
