@@ -75,6 +75,15 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
     isList: false,
     namespaced: true,
   });
+
+  if (!subscription?.status?.installedCSV) {
+    return (
+      <HintBlock className="co-catalog-page__hint" title="Operator Not Yet Installed">
+        <p>{t('olm~A suitable CSV is not found.')}</p>
+      </HintBlock>
+    );
+  }
+
   const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`

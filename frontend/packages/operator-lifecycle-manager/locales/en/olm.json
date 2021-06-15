@@ -207,6 +207,7 @@
   "Deep Insights": "Deep Insights",
   "Auto Pilot": "Auto Pilot",
   "Checked": "Checked",
+  "A suitable CSV is not found.": "A suitable CSV is not found.",
   "Version <1>{{installedVersion}}</1> of this Operator has been installed on the cluster.": "Version <1>{{installedVersion}}</1> of this Operator has been installed on the cluster.",
   "This Operator has been installed on the cluster.": "This Operator has been installed on the cluster.",
   "View it here.": "View it here.",
