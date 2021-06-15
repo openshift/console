@@ -6,12 +6,15 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as UIActions from '@console/internal/actions/ui';
 import {
+  ActionsMenu,
+  Kebab,
   navFactory,
   ResourceIcon,
   resourcePath,
   SimpleTabNav,
 } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { KafkaConnectionModel } from '../../models';
 import { DetailsComponent } from './DetailsComponent';
 import { ResourcesComponent } from './ResourceComponent';
 
@@ -59,6 +62,13 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   const kindRef = referenceFor(akc);
   const kindObj = modelFor(kindRef);
 
+  const commonActions = Kebab.factory.common.map((action) => action);
+  const menuActions = commonActions.map((a) => a(kindObj, akc));
+  const menuActionsCreator = [
+    ...Kebab.getExtensionsActionsForKind(KafkaConnectionModel),
+    ...menuActions,
+  ];
+
   return (
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
@@ -75,6 +85,9 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
             >
               {akc.metadata.name}
             </Link>
+          </div>
+          <div className="co-actions">
+            <ActionsMenu actions={menuActionsCreator} />
           </div>
         </h1>
         {showAlert && (
