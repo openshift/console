@@ -37,6 +37,7 @@ describe('Monitoring Dashboard Tab', () => {
     },
     timespan: 1800000,
     pollInterval: 90000,
+    endTime: 1900000,
   };
 
   it('should render Monitoring Dashboard tab', () => {
