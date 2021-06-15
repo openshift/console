@@ -58,11 +58,9 @@ export class GitlabService extends BaseService {
   };
 
   getRepoMetadata(): RepoMetadata {
-    const { name, owner, protocol, resource, full_name: fullName } = GitUrlParse(
-      this.gitsource.url,
-    );
+    const { name, owner, resource, full_name: fullName } = GitUrlParse(this.gitsource.url);
     const contextDir = removeLeadingSlash(this.gitsource.contextDir);
-    const host = `${protocol}://${resource}`;
+    const host = `https://${resource}`;
     return {
       repoName: name,
       owner,
@@ -96,7 +94,7 @@ export class GitlabService extends BaseService {
       await this.getRepo();
       return RepoStatus.Reachable;
     } catch (e) {
-      if (e.response.status === 429) {
+      if (e.response?.status === 429) {
         return RepoStatus.RateLimitExceeded;
       }
     }
