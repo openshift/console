@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { NavItemSeparator } from '@patternfly/react-core';
+import { NavList, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { FLAGS, useActiveNamespace } from '@console/shared';
@@ -109,7 +109,7 @@ const AdminNav = () => {
   const machineNS = lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : 'openshift-machine-api';
   const { t } = useTranslation();
   return (
-    <>
+    <NavList>
       <NavSection id="home" title={t('public~Home')} data-quickstart-id="qs-nav-home">
         <HrefLink
           id="dashboards"
@@ -420,7 +420,7 @@ const AdminNav = () => {
           required={FLAGS.CAN_LIST_CRD}
         />
       </NavSection>
-    </>
+    </NavList>
   );
 };
 

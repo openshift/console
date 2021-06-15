@@ -61,7 +61,7 @@ const PerspectiveNav: React.FC<{}> = () => {
     return '';
   };
 
-  const getPinnedItems = (rootNavLink: boolean = false): React.ReactElement[] =>
+  const getPinnedItems = (): React.ReactElement[] =>
     pinnedResourcesLoaded
       ? pinnedResources
           .map((resource) => {
@@ -92,7 +92,7 @@ const PerspectiveNav: React.FC<{}> = () => {
               </Button>
             );
 
-            return rootNavLink ? (
+            return (
               <RootNavLink
                 key={resource}
                 className="oc-nav-pinned-item"
@@ -101,17 +101,13 @@ const PerspectiveNav: React.FC<{}> = () => {
               >
                 {removeButton}
               </RootNavLink>
-            ) : (
-              <Component key={resource} className="oc-nav-pinned-item" {...props}>
-                {removeButton}
-              </Component>
             );
           })
           .filter((p) => p !== null)
       : [];
 
   return (
-    <>
+    <div className="oc-perspective-nav">
       {orderedNavItems.map((item, index) => {
         if (isNavSection(item)) {
           const { id, name } = item.properties;
@@ -120,14 +116,12 @@ const PerspectiveNav: React.FC<{}> = () => {
         if (isSeparator(item)) {
           return <NavItemSeparator key={`separator-${index}`} />;
         }
-        return createLink(item, true);
+        return <li key={item.uid}>{createLink(item, true)}</li>;
       })}
       {pinnedResourcesLoaded && pinnedResources?.length ? (
-        <NavGroup className="oc-nav-group" title="" key="group-pins">
-          {getPinnedItems(true)}
-        </NavGroup>
+        <NavGroup title="">{getPinnedItems()}</NavGroup>
       ) : null}
-    </>
+    </div>
   );
 };
 

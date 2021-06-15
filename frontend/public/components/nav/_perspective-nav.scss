@@ -1,16 +1,15 @@
-.oc-nav-group.pf-c-nav__section {
-  margin-top: 0;
-  .pf-c-nav__section-title {
-    padding-bottom: 0;
-  }
-  &:first-of-type {
+.oc-perspective-nav {
+  .pf-c-nav__section:first-child {
     .pf-c-nav__section-title {
       padding-top: 0;
       border: none;
     }
   }
-  > ul {
-    padding-left: 0;
+  .pf-c-nav__section {
+    margin-top: 0;
+    .pf-c-nav__section-title {
+      padding-bottom: 0;
+    }
   }
 }
 
