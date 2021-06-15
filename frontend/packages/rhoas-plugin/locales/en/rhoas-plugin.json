@@ -47,6 +47,7 @@
   "Bootstrap Server": "Bootstrap Server",
   "URL": "URL",
   "Secret": "Secret",
+  "No Secret": "No Secret",
   "Create a Kafka connector": "Create a Kafka connector",
   "Create a binding connector": "Create a binding connector",
   "No data": "No data",
