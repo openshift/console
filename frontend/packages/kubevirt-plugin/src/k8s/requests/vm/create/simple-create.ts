@@ -20,6 +20,7 @@ import { CLOUDINIT_DISK } from '../../../../constants/vm/constants';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { VirtualMachineModel } from '../../../../models';
+import { getKubevirtAvailableModel } from '../../../../models/kubevirtReferenceForModel';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import {
@@ -254,5 +255,5 @@ export const createVM = async (
     enableSSHService,
     containerImages,
   );
-  return k8sCreate(VirtualMachineModel, vm);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vm);
 };

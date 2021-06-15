@@ -35,6 +35,7 @@ import { VMImportType } from '../../constants/v2v-import/ovirt/vm-import-type';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMLikeModel } from '../../selectors/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';
@@ -189,7 +190,7 @@ export const getPodLink = (pod: PodKind) =>
 
 export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
   `${resourcePath(
-    getVMLikeModel(vmLike).kind,
+    kubevirtReferenceForModel(getVMLikeModel(vmLike)),
     getName(vmLike),
     getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;

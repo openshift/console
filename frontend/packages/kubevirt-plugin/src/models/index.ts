@@ -10,6 +10,7 @@ export const VirtualMachineModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachine',
   id: 'virtualmachine',
+  crd: true,
 };
 
 export const VirtualMachineInstanceModel: K8sKind = {
@@ -23,6 +24,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
   kind: 'VirtualMachineInstance',
   id: 'virtualmachineinstance',
   color: '#002F5D',
+  crd: true,
 };
 
 export const VirtualMachineInstancePresetModel: K8sKind = {
@@ -35,6 +37,7 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstancePreset',
   id: 'virtualmachineinstancepreset',
+  crd: true,
 };
 
 export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
@@ -47,6 +50,7 @@ export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstanceReplicaSet',
   id: 'virtualmachineinstancereplicaset',
+  crd: true,
 };
 
 export const VirtualMachineInstanceMigrationModel: K8sKind = {
@@ -59,6 +63,7 @@ export const VirtualMachineInstanceMigrationModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstanceMigration',
   id: 'virtualmachineinstancemigration',
+  crd: true,
 };
 
 export const DataVolumeModel: K8sKind = {
@@ -71,6 +76,7 @@ export const DataVolumeModel: K8sKind = {
   namespaced: true,
   kind: 'DataVolume',
   id: 'datavolume',
+  crd: true,
 };
 
 export const V2VVMwareModel: K8sKind = {
@@ -83,6 +89,7 @@ export const V2VVMwareModel: K8sKind = {
   namespaced: true,
   kind: 'V2VVmware',
   id: 'v2vvmware',
+  crd: true,
 };
 
 export const OVirtProviderModel: K8sKind = {
@@ -95,6 +102,7 @@ export const OVirtProviderModel: K8sKind = {
   namespaced: true,
   kind: 'OVirtProvider',
   id: 'ovirtprovider',
+  crd: true,
 };
 
 export const VirtualMachineImportModel: K8sKind = {
@@ -107,6 +115,7 @@ export const VirtualMachineImportModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineImport',
   id: 'virtualmachineimport',
+  crd: true,
 };
 
 export const UploadTokenRequestModel: K8sKind = {
@@ -119,6 +128,7 @@ export const UploadTokenRequestModel: K8sKind = {
   abbr: 'utr',
   kind: 'UploadTokenRequest',
   id: 'uploadtokenrequest',
+  crd: true,
 };
 
 export const CDIConfigModel: K8sKind = {
@@ -131,6 +141,7 @@ export const CDIConfigModel: K8sKind = {
   abbr: 'cdic',
   kind: 'CDIConfig',
   id: 'cdiconfig',
+  crd: true,
 };
 
 export const VirtualMachineSnapshotModel: K8sKind = {
@@ -143,6 +154,7 @@ export const VirtualMachineSnapshotModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineSnapshot',
   id: 'virtualmachinesnapshot',
+  crd: true,
 };
 
 export const VirtualMachineRestoreModel: K8sKind = {
@@ -155,4 +167,5 @@ export const VirtualMachineRestoreModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineRestore',
   id: 'virtualmachinerestore',
+  crd: true,
 };

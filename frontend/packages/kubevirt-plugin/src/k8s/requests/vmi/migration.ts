@@ -1,6 +1,7 @@
 import { k8sCreate } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../../types/vm';
 import { prefixedID } from '../../../utils';
 import { VMIMigration } from '../../objects/vmi-migration/vmi-migration';
@@ -13,5 +14,5 @@ export const startVMIMigration = (vmi: VMIKind) => {
     .setVMI(vmi)
     .build();
 
-  return k8sCreate(VirtualMachineInstanceMigrationModel, migration);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineInstanceMigrationModel), migration);
 };

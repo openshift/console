@@ -13,6 +13,7 @@ import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
@@ -170,11 +171,12 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
       prop: 'pvcs',
       optional: true,
     }),
-    getResource(DataVolumeModel, {
+    {
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       namespace,
       prop: 'datavolumes',
       optional: true,
-    }),
+    },
   ];
 
   const flatten = ({ datavolumes, pvcs }) =>

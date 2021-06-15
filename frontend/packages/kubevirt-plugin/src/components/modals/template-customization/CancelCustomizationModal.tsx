@@ -11,6 +11,7 @@ import { HandlePromiseProps, history, withHandlePromise } from '@console/interna
 import { k8sKill } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMKind } from '../../../types';
 
 const CancelCustomizationModal = withHandlePromise<CancelCustomizationModalProps>(
@@ -25,7 +26,7 @@ const CancelCustomizationModal = withHandlePromise<CancelCustomizationModalProps
     const submit = (event) => {
       event.preventDefault();
 
-      handlePromise(k8sKill(VirtualMachineModel, vm), () => {
+      handlePromise(k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm), () => {
         backToVirt && history.push(`/k8s/ns/${vm.metadata.namespace}/virtualization`);
         close();
       });

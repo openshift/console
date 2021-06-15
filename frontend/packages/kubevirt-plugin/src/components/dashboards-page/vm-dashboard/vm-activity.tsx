@@ -19,6 +19,7 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMILikeEntityKind } from '../../../types/vmLike';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
@@ -69,7 +70,9 @@ export const VMActivityCard: React.FC = () => {
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
   const viewEventsLink = `${resourcePath(
-    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    vm
+      ? kubevirtReferenceForModel(VirtualMachineModel)
+      : kubevirtReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   )}/events`;

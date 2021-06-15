@@ -32,6 +32,7 @@ import useSSHService from '../../../hooks/use-ssh-service';
 import useV2VConfigMap from '../../../hooks/use-v2v-config-map';
 import { createVM } from '../../../k8s/requests/vm/create/simple-create';
 import { VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getDescription } from '../../../selectors/selectors';
 import { getTemplateName } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
@@ -82,7 +83,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   } = useVmTemplatesResources(namespace);
 
   const [vms, vmsLoaded] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineModel),
     namespace,
     isList: true,
   });
