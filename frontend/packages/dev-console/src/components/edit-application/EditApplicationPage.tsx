@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import { LoadingBox } from '@console/internal/components/utils';
+import { StatusBox } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
@@ -121,7 +121,7 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
       <Helmet>
         <title>{t('devconsole~Edit')}</title>
       </Helmet>
-      {isResourcesLoaded ? (
+      <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}
           appName={appName}
@@ -135,9 +135,7 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
             pipeline: resources.pipeline as WatchK8sResultsObject<PipelineKind[]>,
           }}
         />
-      ) : (
-        <LoadingBox />
-      )}
+      </StatusBox>
     </NamespacedPage>
   );
 };
