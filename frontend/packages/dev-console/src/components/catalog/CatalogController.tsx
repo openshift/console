@@ -16,6 +16,7 @@ import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
 import { CatalogService } from './service/CatalogServiceProvider';
+import { getURLWithParams } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import {
   CatalogCategory,
@@ -155,7 +156,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             ? () => item.cta.callback()
             : null
         }
-        href={!enableDetailsPanel ? item.cta?.href : null}
+        href={
+          !enableDetailsPanel
+            ? item.cta?.href
+            : getURLWithParams(CatalogQueryParams.SELECTED_ID, item.uid)
+        }
       />
     ),
     [catalogTypes, openDetailsPanel, enableDetailsPanel],
