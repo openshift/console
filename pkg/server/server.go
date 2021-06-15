@@ -55,6 +55,7 @@ const (
 	devfileEndpoint                  = "/api/devfile/"
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginsEndpoint                  = "/api/plugins/"
+	pluginsListEndpoint              = "/api/plugins"
 
 	sha256Prefix = "sha256~"
 )
@@ -422,24 +423,23 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
 
-	// No need to create plugins handler if no plugin is enabled.
-	if len(s.EnabledConsolePlugins) > 0 {
-		pluginsHandler := plugins.NewPluginsHandler(
-			&http.Client{
-				Timeout:   10 * time.Second,
-				Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
-			},
-			s.ServiceAccountToken,
-			s.EnabledConsolePlugins,
-		)
+	pluginsHandler := plugins.NewPluginsHandler(
+		&http.Client{
+			Timeout:   10 * time.Second,
+			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
+		},
+		s.ServiceAccountToken,
+		s.EnabledConsolePlugins,
+	)
 
-		handle(pluginsEndpoint, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, pluginsEndpoint),
-			authHandler(func(w http.ResponseWriter, r *http.Request) {
-				pluginsHandler.HandlePlugins(w, r)
-			}),
-		))
-	}
+	handle(pluginsEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginsEndpoint),
+		authHandler(func(w http.ResponseWriter, r *http.Request) {
+			pluginsHandler.HandlePlugins(w, r)
+		}),
+	))
+
+	handle(pluginsListEndpoint, authHandler(pluginsHandler.HandleListPlugins))
 
 	// Helm Endpoints
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
