@@ -383,15 +383,35 @@ type KeyValuePair = {
   key: string;
   value: string;
 };
-export const getSecretAnnotations = (annotation: KeyValuePair) => {
-  const annotations = {};
+
+const getAnnotationKey = (secretType: string, suffix: number) => {
   const annotationPrefix = 'tekton.dev';
-  if (annotation?.key === SecretAnnotationId.Git) {
-    annotations[`${annotationPrefix}/${SecretAnnotationId.Git}-0`] = annotation?.value;
-  } else if (annotation?.key === SecretAnnotationId.Image) {
-    annotations[`${annotationPrefix}/${SecretAnnotationId.Image}-0`] = annotation?.value;
+  if (secretType === SecretAnnotationId.Git) {
+    return `${annotationPrefix}/${SecretAnnotationId.Git}-${suffix}`;
   }
-  return annotations;
+  if (secretType === SecretAnnotationId.Image) {
+    return `${annotationPrefix}/${SecretAnnotationId.Image}-${suffix}`;
+  }
+  return null;
+};
+
+export const getSecretAnnotations = (
+  annotation: KeyValuePair,
+  existingAnnotations: { [key: string]: string } = {},
+) => {
+  let count = 0;
+  let annotationKey = getAnnotationKey(annotation?.key, count);
+  if (!annotationKey) {
+    return existingAnnotations;
+  }
+  while (
+    existingAnnotations[annotationKey] &&
+    existingAnnotations[annotationKey] !== annotation?.value
+  ) {
+    annotationKey = getAnnotationKey(annotation?.key, ++count);
+  }
+
+  return { ...existingAnnotations, [annotationKey]: annotation?.value };
 };
 
 export const pipelinesTab = (kindObj: K8sKind) => {

@@ -144,6 +144,55 @@ describe('pipeline-utils ', () => {
     });
   });
 
+  it('should have correct annotation key prefix when there are existing annotations', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'gitlab.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: SecretAnnotationId.Git,
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'gitlab.com',
+      'tekton.dev/git-1': 'github.com',
+    });
+  });
+
+  it('should avoid adding duplicate annotations to secret', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'github.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: SecretAnnotationId.Git,
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'github.com',
+    });
+  });
+
+  it('should return unmodified annotations if invalid key is provided', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'gitlab.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: 'invalid-type',
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'gitlab.com',
+    });
+  });
+
   it('expected relative time should be "a few seconds"', () => {
     const relativeTime = calculateRelativeTime('2020-05-22T11:57:53Z', '2020-05-22T11:57:57Z');
     expect(relativeTime).toBe('a few seconds');
