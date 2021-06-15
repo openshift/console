@@ -21,11 +21,15 @@ export const ResourcesComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) 
   return (
     <ul>
       <h3>{t('rhoas-plugin~Secret')}</h3>
-      <li className="list-group-item container-fluid">
-        <div className="row">
-          <span className="col-xs-12">{link}</span>
-        </div>
-      </li>
+      {!serviceAccountSecretName ? (
+        <span className="text-muted">{t('rhoas-plugin~No Secret')}</span>
+      ) : (
+        <li className="list-group-item container-fluid">
+          <div className="row">
+            <span className="col-xs-12">{link}</span>
+          </div>
+        </li>
+      )}
     </ul>
   );
 };
