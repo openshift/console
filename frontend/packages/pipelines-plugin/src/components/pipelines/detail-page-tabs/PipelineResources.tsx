@@ -42,7 +42,10 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         data-test="pipeline-resources"
         name={fieldName}
         addLabel={addLabel}
-        headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}
+        headers={[
+          { name: t('pipelines-plugin~Name'), required: true },
+          { name: t('pipelines-plugin~Resource type'), required: true },
+        ]}
         emptyValues={{ name: '', type: '' }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
