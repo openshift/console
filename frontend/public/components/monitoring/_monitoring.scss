@@ -20,7 +20,7 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 .graph-empty-state {
   min-height: 310px;
   &__loaded {
-    align-items: center;
+    align-items: stretch;
     display: flex;
     flex-direction: column;
     justify-content: center;
