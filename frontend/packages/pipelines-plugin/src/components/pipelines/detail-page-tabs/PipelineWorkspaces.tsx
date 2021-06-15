@@ -23,7 +23,7 @@ const PipelineWorkspaces: React.FC<PipelineWorkspacesParam> = (props) => {
         data-test="pipeline-workspaces"
         name={fieldName}
         addLabel={addLabel}
-        headers={[t('pipelines-plugin~Name')]}
+        headers={[{ name: t('pipelines-plugin~Name'), required: true }]}
         emptyValues={{ name: '', optional: false }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}

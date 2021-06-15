@@ -25,7 +25,10 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
         name={fieldName}
         addLabel={addLabel}
         headers={[
-          t('pipelines-plugin~Name'),
+          {
+            name: t('pipelines-plugin~Name'),
+            required: true,
+          },
           t('pipelines-plugin~Description'),
           t('pipelines-plugin~Default value'),
         ]}
