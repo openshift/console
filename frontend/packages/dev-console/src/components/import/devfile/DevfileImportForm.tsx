@@ -45,8 +45,8 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
             {devfileParseError}
           </Alert>
         )}
-        <FormSection>
-          {formType === 'sample' ? (
+        {formType === 'sample' ? (
+          <FormSection>
             <InputField
               type={TextInputTypes.text}
               name="git.url"
@@ -54,17 +54,18 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
               data-test-id="git-form-input-url"
               isDisabled
             />
-          ) : (
-            <GitSection
-              buildStrategy="Devfile"
-              builderImages={builderImages}
-              defaultSample={{
-                url: gitRepoUrl || 'https://github.com/redhat-developer/devfile-sample',
-              }}
-            />
-          )}
-          {selectedSample && <DevfileSampleInfo devfileSample={selectedSample} />}
-        </FormSection>
+          </FormSection>
+        ) : (
+          <GitSection
+            buildStrategy="Devfile"
+            builderImages={builderImages}
+            defaultSample={{
+              url: gitRepoUrl || 'https://github.com/redhat-developer/devfile-sample',
+            }}
+          />
+        )}
+        {selectedSample && <DevfileSampleInfo devfileSample={selectedSample} />}
+
         <AppSection
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
