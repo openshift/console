@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { K8sResourceKind, ObjectMetadata, Patch } from '@console/internal/module/k8s';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { INTERNAL_OBJECTS_ANNOTATION, OPERATOR_PLUGINS_ANNOTATION } from './const';
+import { SubscriptionKind, SubscriptionState } from './types';
 
 export const getClusterServiceVersionPlugins = (
   annotations: ObjectMetadata['annotations'],
@@ -42,3 +43,9 @@ export const isCatalogSourceTrusted = (catalogSource: string): boolean =>
 
 export const isPluginEnabled = (console: K8sResourceKind, plugin: string): boolean =>
   !!console?.spec?.plugins?.includes(plugin);
+
+export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
+  subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
+  (subscription.status?.conditions ?? []).filter(
+    ({ status, reason }) => status === 'True' && reason === 'RequiresApproval',
+  ).length > 0;

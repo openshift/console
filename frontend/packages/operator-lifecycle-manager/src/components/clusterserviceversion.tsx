@@ -99,7 +99,11 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
-import { getClusterServiceVersionPlugins, isPluginEnabled } from '../utils';
+import {
+  getClusterServiceVersionPlugins,
+  isPluginEnabled,
+  upgradeRequiresApproval,
+} from '../utils';
 import { consolePluginModal } from './modals/console-plugin-modal';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -108,7 +112,6 @@ import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SubscriptionDetails,
   catalogSourceForSubscription,
-  upgradeRequiresApproval,
   UpgradeApprovalLink,
 } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
