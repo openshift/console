@@ -14,7 +14,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
-import { initialPipelineFormData, UpdateOperationType } from './const';
+import { initialPipelineFormData, STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';
 import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hooks';
 import { removeTaskModal } from './modals';
 import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
@@ -170,6 +170,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   : !dirty ||
                     !_.isEmpty(errors) ||
                     !_.isEmpty(status?.tasks) ||
+                    !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
                     formData.tasks.length === 0
               }
               resetLabel={t('pipelines-plugin~Cancel')}

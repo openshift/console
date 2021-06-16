@@ -61,6 +61,13 @@ export type PipelineBuilderFormYamlValues = {
 
 export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormYamlValues;
 
+export type NameErrorStatus = { nameError: string; errorMessage: string };
+export type PipelineBuilderFormikStatus = {
+  submitError?: string;
+  /** @see STATUS_KEY_NAME_ERROR */
+  taskError?: { [path: string]: NameErrorStatus };
+};
+
 export type SelectedBuilderTask = {
   resource: TaskKind;
   taskIndex: number;

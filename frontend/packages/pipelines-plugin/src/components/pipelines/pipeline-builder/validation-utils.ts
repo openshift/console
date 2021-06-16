@@ -17,7 +17,7 @@ import {
 import { paramIsRequired } from '../../../utils/common';
 import { PipelineResourceType } from '../const';
 import { getTaskParameters, getTaskResources } from '../resource-utils';
-import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
+import { getTaskErrorString, TaskErrorType } from './const';
 import { PipelineBuilderFormYamlValues, TaskType } from './types';
 import { findTaskFromFormikData } from './utils';
 
@@ -348,7 +348,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
           )
           .test(
             'is-param-optional',
-            TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+            getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             function(params?: PipelineTaskParam[]) {
               return areRequiredParamsAdded(formValues, this.parent, params);
             },
@@ -360,7 +360,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
           })
           .test(
             'is-resources-required',
-            TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+            getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             function(resourceValue?: TektonResourceGroup<PipelineTaskResource>) {
               return hasRequiredResources(formValues, this.parent, [
                 ...(resourceValue?.inputs || []),
@@ -379,7 +379,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
           )
           .test(
             'is-when-expression-required',
-            TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS],
+            getTaskErrorString(TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS),
             function(when?: WhenExpression[]) {
               return areRequiredWhenExpressionsAdded(when);
             },
@@ -413,7 +413,7 @@ const taskValidation = (formValues: PipelineBuilderFormYamlValues, taskType: Tas
           )
           .test(
             'is-workspaces-required',
-            TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+            getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             function(workspaceList?: PipelineTaskWorkspace[]) {
               return hasRequiredWorkspaces(formValues, this.parent, workspaceList);
             },
