@@ -386,7 +386,7 @@ func main() {
 
 		if *fK8sModeOffClusterThanos != "" {
 			offClusterThanosURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-thanos", *fK8sModeOffClusterThanos)
-			offClusterThanosURL.Path = "/api"
+			offClusterThanosURL.Path += "/api"
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -406,7 +406,7 @@ func main() {
 
 		if *fK8sModeOffClusterAlertmanager != "" {
 			offClusterAlertManagerURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-alertmanager", *fK8sModeOffClusterAlertmanager)
-			offClusterAlertManagerURL.Path = "/api"
+			offClusterAlertManagerURL.Path += "/api"
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -421,7 +421,7 @@ func main() {
 
 		if *fK8sModeOffClusterMetering != "" {
 			offClusterMeteringURL := bridge.ValidateFlagIsURL("k8s-mode-off-cluster-metering", *fK8sModeOffClusterMetering)
-			offClusterMeteringURL.Path = "/api"
+			offClusterMeteringURL.Path += "/api"
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
@@ -579,7 +579,7 @@ func main() {
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
-			Path:   "/api/v1/namespaces/openshift-config-managed/configmaps",
+			Path:   k8sEndpoint.Path + "/api/v1/namespaces/openshift-config-managed/configmaps",
 			RawQuery: url.Values{
 				"labelSelector": {"console.openshift.io/dashboard=true"},
 			}.Encode(),
@@ -597,7 +597,7 @@ func main() {
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
-			Path:   "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
+			Path:   k8sEndpoint.Path + "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
 			RawQuery: url.Values{
 				"labelSelector": {"duck.knative.dev/source=true"},
 			}.Encode(),
@@ -615,7 +615,7 @@ func main() {
 		&url.URL{
 			Scheme: k8sEndpoint.Scheme,
 			Host:   k8sEndpoint.Host,
-			Path:   "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
+			Path:   k8sEndpoint.Path + "/apis/apiextensions.k8s.io/v1/customresourcedefinitions",
 			RawQuery: url.Values{
 				"labelSelector": {"duck.knative.dev/addressable=true,messaging.knative.dev/subscribable=true"},
 			}.Encode(),
