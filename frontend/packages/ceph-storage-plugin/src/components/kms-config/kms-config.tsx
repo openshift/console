@@ -4,15 +4,17 @@ import { useTranslation } from 'react-i18next';
 
 import * as classNames from 'classnames';
 import {
+  InputGroup,
   FormGroup,
   TextInput,
   FormSelect,
   FormSelectOption,
   Button,
   ValidatedOptions,
+  Tooltip,
 } from '@patternfly/react-core';
 import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
-import { PencilAltIcon } from '@patternfly/react-icons';
+import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import { advancedKMSModal } from '../modals/advanced-kms-modal/advanced-kms-modal';
 import {
@@ -35,6 +37,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 
   // Vault as default KMS
   const [kmsProvider, setKMSProvider] = React.useState<string>(KMSProviders[0].name);
+  const [revealToken, setRevealToken] = React.useState(false);
 
   React.useEffect(() => {
     const hasHandled: boolean = kmsConfigValidation(kms);
@@ -179,15 +182,22 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           validated={isValid(kms.token.valid)}
           isRequired
         >
-          <TextInput
-            value={kms.token.value}
-            onChange={setToken}
-            type="password"
-            id="kms-token"
-            name="kms-token"
-            isRequired
-            validated={isValid(kms.token.valid)}
-          />
+          <InputGroup className="ocs-install-kms__form-token">
+            <TextInput
+              value={kms.token.value}
+              onChange={setToken}
+              type={revealToken ? 'text' : 'password'}
+              id="kms-token"
+              name="kms-token"
+              isRequired
+              validated={isValid(kms.token.valid)}
+            />
+            <Tooltip content={revealToken ? 'Hide token' : 'Reveal token'}>
+              <Button variant="control" onClick={() => setRevealToken(!revealToken)}>
+                {revealToken ? <EyeSlashIcon /> : <EyeIcon />}
+              </Button>
+            </Tooltip>
+          </InputGroup>
         </FormGroup>
       )}
       <Button variant="link" className={`${className}__form-body`} onClick={openAdvancedModal}>
