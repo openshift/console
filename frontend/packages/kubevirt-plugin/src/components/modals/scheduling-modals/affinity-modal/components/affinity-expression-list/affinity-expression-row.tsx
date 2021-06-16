@@ -65,6 +65,7 @@ export const AffinityExpressionRow = ({
       </GridItem>
       <GridItem span={5}>
         <Select
+          className="kv-affinity-expression-row__values-input"
           isDisabled={!enableValueField}
           variant={SelectVariant.typeaheadMulti}
           isOpen={isValuesExpanded}
