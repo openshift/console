@@ -148,19 +148,6 @@ export type DashboardsInventoryItemGroup = ExtensionDeclaration<
   }
 >;
 
-/** Adds a resource tile to the overview utilization card. */
-export type DashboardsOverviewUtilizationItem = ExtensionDeclaration<
-  'console.dashboards/overview/utilization/item',
-  {
-    /** The utilization item to be replaced */
-    id: string;
-    /** The Prometheus utilization query */
-    query: string;
-    /** The Prometheus total query */
-    totalQuery: string;
-  }
->;
-
 /** Adds a resource tile to the overview inventory card. */
 export type DashboardsOverviewInventoryItem<
   T extends K8sKind = K8sKind,
@@ -267,11 +254,6 @@ export const isResolvedDashboardsOverviewHealthOperator = (
 
 export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
   e.type === 'console.dashboards/overview/inventory/item/group';
-
-export const isDashboardsOverviewUtilizationItem = (
-  e: Extension,
-): e is DashboardsOverviewUtilizationItem =>
-  e.type === 'console.dashboards/overview/utilization/item';
 
 export const isDashboardsOverviewInventoryItem = (
   e: Extension,
