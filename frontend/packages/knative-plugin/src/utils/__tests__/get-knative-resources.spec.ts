@@ -10,6 +10,7 @@ import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
   knativeServingResourcesRoutes,
+  getTrafficByRevision,
 } from '../get-knative-resources';
 import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
@@ -66,6 +67,53 @@ describe('Get knative resources', () => {
     it('expect getEventSourceCronjob to return event source as undefined', () => {
       const knEventResource = getKnativeServingServices(deploymentData, MockResources);
       expect(knEventResource).toBeUndefined();
+    });
+
+    it('expect getTrafficByRevision to return traffic url with percentage if present', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+        status: {
+          traffic: [
+            {
+              latestRevision: true,
+              percent: 60,
+              revisionName: 'overlayimage-00001',
+              url: 'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+              tag: 'tag1',
+            },
+            {
+              latestRevision: true,
+              percent: 40,
+              revisionName: 'overlayimage-00002',
+              url: 'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+              tag: 'tag2',
+            },
+          ],
+        },
+      };
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData.urls).toHaveLength(1);
+      expect(knTrafficData.urls).toEqual([
+        'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+      ]);
+      expect(knTrafficData.percent).toEqual('60%');
+    });
+
+    it('expect getTrafficByRevision to not return traffic url with percentage if service status is not present', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+      };
+      delete mockKsvcData.status;
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData).toEqual({});
+    });
+
+    it('expect getTrafficByRevision to not return traffic url with percentage if service status doesnot has traffic', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+      };
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData).toEqual({});
     });
   });
 

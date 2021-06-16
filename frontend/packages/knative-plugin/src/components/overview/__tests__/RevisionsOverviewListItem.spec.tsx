@@ -9,6 +9,7 @@ import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import RevisionsOverviewListItem, {
   RevisionsOverviewListItemProps,
 } from '../RevisionsOverviewListItem';
+import RoutesUrlLink from '../RoutesUrlLink';
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
@@ -154,5 +155,19 @@ describe('RevisionsOverviewListItem', () => {
           .props().title,
       ).toEqual(1);
     });
+  });
+
+  it('should not render RoutesUrlLink if status is not present', () => {
+    const mockKsvc = {
+      ...MockKnativeResources.ksservices.data[0],
+    };
+    delete mockKsvc.status;
+    wrapper = shallow(
+      <RevisionsOverviewListItem
+        revision={MockKnativeResources.revisions.data[0]}
+        service={mockKsvc}
+      />,
+    );
+    expect(wrapper.find(RoutesUrlLink).exists()).toBe(false);
   });
 });
