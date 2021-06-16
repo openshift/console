@@ -111,11 +111,6 @@ func main() {
 	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 
-	fAlermanagerPublicURL := fs.String("alermanager-public-url", "", "Public URL of the cluster's AlertManager server.")
-	fGrafanaPublicURL := fs.String("grafana-public-url", "", "Public URL of the cluster's Grafana server.")
-	fPrometheusPublicURL := fs.String("prometheus-public-url", "", "Public URL of the cluster's Prometheus server.")
-	fThanosPublicURL := fs.String("thanos-public-url", "", "Public URL of the cluster's Thanos server.")
-
 	consolePluginsFlags := serverconfig.MultiKeyValue{}
 	fs.Var(&consolePluginsFlags, "plugins", "List of plugin entries that are enabled for the console. Each entry consist of plugin-name as a key and plugin-endpoint as a value.")
 
@@ -162,23 +157,6 @@ func main() {
 			bridge.FlagFatalf("documentation-base-url", "value must end with slash")
 		}
 		documentationBaseURL = bridge.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
-	}
-
-	alertManagerPublicURL := &url.URL{}
-	if *fAlermanagerPublicURL != "" {
-		alertManagerPublicURL = bridge.ValidateFlagIsURL("alermanager-public-url", *fAlermanagerPublicURL)
-	}
-	grafanaPublicURL := &url.URL{}
-	if *fGrafanaPublicURL != "" {
-		grafanaPublicURL = bridge.ValidateFlagIsURL("grafana-public-url", *fGrafanaPublicURL)
-	}
-	prometheusPublicURL := &url.URL{}
-	if *fPrometheusPublicURL != "" {
-		prometheusPublicURL = bridge.ValidateFlagIsURL("prometheus-public-url", *fPrometheusPublicURL)
-	}
-	thanosPublicURL := &url.URL{}
-	if *fThanosPublicURL != "" {
-		thanosPublicURL = bridge.ValidateFlagIsURL("thanos-public-url", *fThanosPublicURL)
 	}
 
 	branding := *fBranding
@@ -229,10 +207,6 @@ func main() {
 		CustomLogoFile:            *fCustomLogoFile,
 		StatuspageID:              *fStatuspageID,
 		DocumentationBaseURL:      documentationBaseURL,
-		AlertManagerPublicURL:     alertManagerPublicURL,
-		GrafanaPublicURL:          grafanaPublicURL,
-		PrometheusPublicURL:       prometheusPublicURL,
-		ThanosPublicURL:           thanosPublicURL,
 		LoadTestFactor:            *fLoadTestFactor,
 		InactivityTimeout:         *fInactivityTimeout,
 		DevCatalogCategories:      *fDevCatalogCategories,

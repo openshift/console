@@ -81,10 +81,6 @@ type jsGlobals struct {
 	CustomLogoURL             string   `json:"customLogoURL"`
 	StatuspageID              string   `json:"statuspageID"`
 	DocumentationBaseURL      string   `json:"documentationBaseURL"`
-	AlertManagerPublicURL     string   `json:"alertManagerPublicURL"`
-	GrafanaPublicURL          string   `json:"grafanaPublicURL"`
-	PrometheusPublicURL       string   `json:"prometheusPublicURL"`
-	ThanosPublicURL           string   `json:"thanosPublicURL"`
 	LoadTestFactor            int      `json:"loadTestFactor"`
 	InactivityTimeout         int      `json:"inactivityTimeout"`
 	GOARCH                    string   `json:"GOARCH"`
@@ -517,10 +513,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		StatuspageID:              s.StatuspageID,
 		InactivityTimeout:         s.InactivityTimeout,
 		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
-		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
-		ThanosPublicURL:           s.ThanosPublicURL.String(),
 		GOARCH:                    s.GOARCH,
 		GOOS:                      s.GOOS,
 		LoadTestFactor:            s.LoadTestFactor,
