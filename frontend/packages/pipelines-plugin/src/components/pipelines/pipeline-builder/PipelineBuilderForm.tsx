@@ -11,10 +11,10 @@ import {
   FormBody,
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
-import { initialPipelineFormData, STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';
+import { STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';
+import { sanitizeToForm, sanitizeToYaml } from './form-switcher-validation';
 import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hooks';
 import { removeTaskModal } from './modals';
 import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
@@ -30,8 +30,6 @@ import {
   TaskType,
 } from './types';
 import { applyChange } from './update-utils';
-import { convertBuilderFormToPipeline } from './utils';
-
 import './PipelineBuilderForm.scss';
 
 type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
@@ -120,23 +118,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     <YAMLEditorField name="yamlData" model={PipelineModel} onSave={handleSubmit} />
   );
 
-  const sanitizeToForm = (yamlPipeline: PipelineKind) => {
-    const { finally: finallyTasks, ...pipelineSpecProperties } = yamlPipeline.spec;
-
-    const newFormData = {
-      ...formData,
-      ...pipelineSpecProperties, // support & keep unknown values as well as whatever they may have changed that we use
-      name: yamlPipeline.metadata?.name,
-      finallyTasks,
-    };
-    return _.merge({}, initialPipelineFormData, newFormData);
-  };
-
-  const sanitizeToYaml = () =>
-    safeJSToYAML(convertBuilderFormToPipeline(formData, namespace, existingPipeline), 'yamlData', {
-      skipInvalid: true,
-    });
-
   return (
     <>
       <div ref={contentRef} className="odc-pipeline-builder-form">
@@ -152,9 +133,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   name: 'formData',
                   editor: formEditor,
                   label: t('pipelines-plugin~Pipeline builder'),
-                  sanitizeTo: sanitizeToForm,
+                  sanitizeTo: (yamlPipeline: PipelineKind) =>
+                    sanitizeToForm(formData, yamlPipeline),
                 }}
-                yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+                yamlContext={{
+                  name: 'yamlData',
+                  editor: yamlEditor,
+                  sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
+                }}
               />
             </FormBody>
             <FormFooter
