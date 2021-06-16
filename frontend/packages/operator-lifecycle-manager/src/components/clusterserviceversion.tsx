@@ -94,6 +94,7 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionPhase,
   CRDDescription,
+  CSVConditionReason,
   InstallPlanKind,
   PackageManifestKind,
   SubscriptionKind,
@@ -986,8 +987,25 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   isInline
                   className="co-alert"
                   variant="danger"
-                  title={`${status.phase}: ${status.message}`}
-                />
+                  title={t('olm~Operator failed')}
+                >
+                  {status.reason === CSVConditionReason.CSVReasonCopied ? (
+                    <>
+                      {t(
+                        'olm~This Operator was copied from another namespace. For the reason it failed, see ',
+                      )}
+                      <ResourceLink
+                        name={metadata.name}
+                        kind={referenceForModel(ClusterServiceVersionModel)}
+                        namespace={operatorNamespaceFor(props.obj)}
+                        hideIcon
+                        inline
+                      />
+                    </>
+                  ) : (
+                    status.message
+                  )}
+                </Alert>
               )}
               {initializationResource && (
                 <InitializationResourceAlert
