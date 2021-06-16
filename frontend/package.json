@@ -336,6 +336,6 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,gql,graphql}": "eslint --color --fix",
-    "packages/ceph-storage-plugin/**/*.scss": "./node_modules/.bin/stylelint --fix"
+    "packages/ceph-storage-plugin/**/*.scss": "yarn workspace @console/ceph-storage-plugin run lint"
   }
 }
