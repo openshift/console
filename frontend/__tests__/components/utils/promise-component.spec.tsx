@@ -8,6 +8,16 @@ import {
   HandlePromiseProps,
 } from '../../../public/components/utils/promise-component';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
+const i18nNS = 'public';
+
 describe('withHandlePromise', () => {
   type TestProps = {
     promise: Promise<any>;
@@ -49,7 +59,7 @@ describe('withHandlePromise', () => {
           .dive()
           .find('h1')
           .text(),
-      ).toEqual('An error occurred. Please try again.');
+      ).toEqual(`${i18nNS}~An error occurred. Please try again.`);
       done();
     }, 10);
   });

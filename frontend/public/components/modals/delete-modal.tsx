@@ -27,7 +27,6 @@ import { ResourceLink } from '../utils/resource-link';
 const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
   const [isChecked, setIsChecked] = React.useState(true);
   const [owner, setOwner] = React.useState(null);
-  const [errorMessage] = React.useState(null);
 
   const { t } = useTranslation();
 
@@ -72,7 +71,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
       });
   });
 
-  const { kind, resource, message } = props;
+  const { kind, resource, message, errorMessage } = props;
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
