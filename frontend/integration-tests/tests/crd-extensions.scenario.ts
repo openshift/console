@@ -297,6 +297,7 @@ describe('CRD extensions', () => {
       const newContent = _.defaultsDeep({}, { spec: { namespaceFilter } }, safeLoad(content));
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`namespaceFilter: ${namespaceFilter}`);
+      expect(yamlView.saveButton.isPresent()).toBe(true);
       await yamlView.saveButton.click();
       await browser.wait(until.visibilityOf(crudView.successMessage));
       expect(crudView.successMessage.isPresent()).toBe(true);
