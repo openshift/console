@@ -83,7 +83,7 @@ describe(RouteLocation.displayName, () => {
     expect(wrapper.find(ExternalLink).props().href).toContain('http:');
   });
 
-  it('renders oldest admitted ingress', () => {
+  it('renders recent admitted ingress', () => {
     const route: RouteKind = {
       apiVersion: 'v1',
       kind: 'Route',
@@ -91,7 +91,7 @@ describe(RouteLocation.displayName, () => {
         name: 'example',
       },
       spec: {
-        host: 'www.example.com',
+        host: 'newer.example.com',
         path: '\\mypath',
         wildcardPolicy: 'None',
         to: {
@@ -128,7 +128,7 @@ describe(RouteLocation.displayName, () => {
 
     const wrapper = shallow(<RouteLocation obj={route} />);
     expect(wrapper.find(ExternalLink).exists()).toBe(true);
-    expect(wrapper.find(ExternalLink).props().href).toContain('http://www.example.com');
+    expect(wrapper.find(ExternalLink).props().href).toContain('http://newer.example.com');
   });
 
   it('renders additional path in url', () => {

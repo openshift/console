@@ -44,21 +44,22 @@ export type IngressStatusProps = {
 };
 
 const getRouteHost = (route: RouteKind, onlyAdmitted: boolean): string => {
-  let oldestAdmittedIngress: RouteIngress;
-  let oldestTransitionTime: string;
+  let recentAdmittedIngress: RouteIngress;
+  let recentTransitionTime: Date;
   _.each(route.status.ingress, (ingress) => {
     const admittedCondition = _.find(ingress.conditions, { type: 'Admitted', status: 'True' });
+    const admittedConditionTS = admittedCondition && new Date(admittedCondition.lastTransitionTime);
     if (
-      admittedCondition &&
-      (!oldestTransitionTime || oldestTransitionTime > admittedCondition.lastTransitionTime)
+      admittedConditionTS &&
+      (!recentTransitionTime || recentTransitionTime < admittedConditionTS)
     ) {
-      oldestAdmittedIngress = ingress;
-      oldestTransitionTime = admittedCondition.lastTransitionTime;
+      recentAdmittedIngress = ingress;
+      recentTransitionTime = admittedConditionTS;
     }
   });
 
-  if (oldestAdmittedIngress) {
-    return oldestAdmittedIngress.host;
+  if (recentAdmittedIngress) {
+    return recentAdmittedIngress.host;
   }
 
   return onlyAdmitted ? null : route.spec.host;
