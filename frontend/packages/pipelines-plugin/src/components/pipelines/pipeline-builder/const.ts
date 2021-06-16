@@ -2,8 +2,6 @@ import i18n from 'i18next';
 // eslint-disable-next-line import/no-cycle
 import { PipelineBuilderFormValues } from './types';
 
-export const TASK_INCOMPLETE_ERROR_MESSAGE = 'Incomplete Task';
-
 export enum UpdateOperationType {
   ADD_LIST_TASK,
   ADD_FINALLY_LIST_TASK,

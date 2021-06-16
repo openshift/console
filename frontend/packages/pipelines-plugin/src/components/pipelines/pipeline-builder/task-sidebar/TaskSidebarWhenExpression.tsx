@@ -30,7 +30,7 @@ const TaskSidebarWhenExpression: React.FC<TaskSidebarWhenExpressionProps> = (pro
       <p className="co-help-text">
         {field.value?.length > 0 ? (
           <Trans ns="pipelines-plugin">
-            use this format while referencing the variables in this form: <code>$(</code>
+            Use this format when you reference variables in this form: <code>$(</code>
           </Trans>
         ) : (
           t('pipelines-plugin~No when expressions are associated with this task.')
