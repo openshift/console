@@ -25,8 +25,9 @@
       ]
     },
     "exposedModules": {
-      "alert": "./src/utils/alert-action-path.tsx",
-      "storageProvider": "./src/components/attach-obc/attach-obc-deployment.tsx"
+      "alert": "src/utils/alert-action-path.tsx",
+      "storageProvider": "src/components/attach-obc/attach-obc-deployment.tsx",
+      "createStorageSystem": "src/components/create-storage-system/create-storage-system.tsx"
     }
   }
 }
