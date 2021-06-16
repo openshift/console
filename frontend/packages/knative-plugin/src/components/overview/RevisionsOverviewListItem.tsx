@@ -4,7 +4,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
 import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../models';
-import { Traffic } from '../../types';
+import { getTrafficByRevision } from '../../utils/get-knative-resources';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import RoutesUrlLink from './RoutesUrlLink';
 
@@ -22,42 +22,18 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
   const {
     metadata: { name, namespace },
   } = revision;
-  const {
-    status: { traffic },
-  } = service;
-  const getTrafficByRevision = (revName: string) => {
-    if (!traffic || !traffic.length) {
-      return {};
-    }
-    const trafficPercent = traffic
-      .filter((t: Traffic) => t.revisionName === revName)
-      .reduce(
-        (acc, tr: Traffic) => {
-          acc.percent += tr.percent ? tr.percent : 0;
-          if (tr.url) {
-            acc.urls.push(tr.url);
-          }
-          return acc;
-        },
-        { urls: [], percent: 0 },
-      );
-    return {
-      ...trafficPercent,
-      percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
-    };
-  };
   const { pods } = usePodsForRevisions(revision.metadata.uid, namespace);
   const current = pods?.[0];
   const deploymentData = current?.obj?.metadata.ownerReferences?.[0] || ({} as OwnerReference);
   const availableReplicas = current?.obj?.status?.availableReplicas || '0';
-  const { urls = [], percent: trafficPercent } = getTrafficByRevision(name);
+  const { urls = [], percent: trafficPercent } = getTrafficByRevision(name, service);
   return (
     <li className="list-group-item">
       <div className="row">
         <div className="col-sm-8 col-xs-9">
           <ResourceLink kind={referenceForModel(RevisionModel)} name={name} namespace={namespace} />
         </div>
-        <span className="col-sm-4 col-xs-3 text-right">{trafficPercent}</span>
+        {trafficPercent && <span className="col-sm-4 col-xs-3 text-right">{trafficPercent}</span>}
       </div>
       {deploymentData.name && (
         <div className="odc-revision-deployment-list">
