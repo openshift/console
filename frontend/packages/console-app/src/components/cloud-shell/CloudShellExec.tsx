@@ -61,6 +61,11 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     [tick],
   );
 
+  const handleResize = React.useCallback((cols: number, rows: number) => {
+    const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
+    ws.current && ws.current.send(`4${data}`);
+  }, []);
+
   React.useEffect(() => {
     let unmounted: boolean;
     const usedClient = flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
@@ -148,7 +153,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   }
 
   if (wsOpen) {
-    return <Terminal onData={onData} ref={terminal} />;
+    return <Terminal onData={onData} onResize={handleResize} ref={terminal} />;
   }
 
   return <TerminalLoadingBox />;
