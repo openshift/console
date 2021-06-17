@@ -3,6 +3,7 @@ import { Alert, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { InputField, FormFooter, FormBody } from '@console/shared';
 import AppSection from '../app/AppSection';
 import GitSection from '../git/GitSection';
@@ -57,7 +58,7 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
           </FormSection>
         ) : (
           <GitSection
-            buildStrategy="Devfile"
+            buildStrategy={BuildStrategyType.Devfile}
             builderImages={builderImages}
             defaultSample={{
               url: gitRepoUrl || 'https://github.com/redhat-developer/devfile-sample',
