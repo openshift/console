@@ -3,16 +3,18 @@
   "moderate": "中",
   "important": "重要",
   "critical": "critical",
+  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Insights Advisor 会识别集群的安全、性能、可用性和稳定性风险，并根据优先级对它们进行排序。",
   "Temporary unavailable.": "临时不可用。",
   "Disabled or waiting for results.": "禁用或等待结果。",
   "Total issue_0": "问题总数",
   "Total Risk": "风险总数",
   "Fixable issues": "可修复的问题",
   "View all in OpenShift Cluster Manager": "在 OpenShift Cluster Manager 中查看所有",
+  "Go to OpenShift Cluster Manager": "进入 OpenShift Cluster Manager",
   "More about Insights": "更多有关 Insights 的信息",
   "Not available": "不可用",
   "{{issuesNumber}} issue found": "{{issuesNumber}} 个发现的问题",
   "{{issuesNumber}} issues found": "{{issuesNumber}} 个发现的问题",
   "Insights": "Insights",
-  "Insights status": "Insights 状态"
+  "Insights Advisor status": "Insights Advisor 状态"
 }
