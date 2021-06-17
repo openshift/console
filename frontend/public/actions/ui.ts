@@ -65,6 +65,9 @@ export enum ActionType {
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
   SetPVCMetrics = 'setPVCMetrics',
+  SetUtilizationDuration = 'SetUtilizationDuration',
+  SetUtilizationDurationSelectedKey = 'SetUtilizationDurationSelectedKey',
+  SetUtilizationDurationEndTime = 'SetUtilizationDurationEndTime',
 }
 
 type MetricValuesByName = {
@@ -382,6 +385,12 @@ export const setNodeMetrics = (nodeMetrics: NodeMetrics) =>
   action(ActionType.SetNodeMetrics, { nodeMetrics });
 export const setPVCMetrics = (pvcMetrics: PVCMetrics) =>
   action(ActionType.SetPVCMetrics, { pvcMetrics });
+export const setUtilizationDuration = (duration) =>
+  action(ActionType.SetUtilizationDuration, { duration });
+export const setUtilizationDurationSelectedKey = (key) =>
+  action(ActionType.SetUtilizationDurationSelectedKey, { key });
+export const setUtilizationDurationEndTime = (endTime) =>
+  action(ActionType.SetUtilizationDurationEndTime, { endTime });
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -433,6 +442,9 @@ const uiActions = {
   setNodeMetrics,
   setPVCMetrics,
   notificationDrawerToggleExpanded,
+  setUtilizationDuration,
+  setUtilizationDurationSelectedKey,
+  setUtilizationDurationEndTime,
 };
 
 export type UIAction = Action<typeof uiActions>;

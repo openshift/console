@@ -9,7 +9,6 @@ import { getName } from '@console/shared';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { PopoverPosition } from '@patternfly/react-core';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { Dropdown } from '../../utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeCpuCores,
@@ -18,10 +17,6 @@ import {
 } from '../../utils';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { PodModel } from '../../../models';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import {
   getUtilizationQueries,
   ProjectQueries,
@@ -32,11 +27,10 @@ import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
 } from '../dashboards-page/cluster-dashboard/utilization-card';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 
 export const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
@@ -151,22 +145,15 @@ export const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('public~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('public~CPU')}
           humanizeValue={humanizeCpuCores}
           utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
           requestQuery={queries[ProjectQueries.CPU_REQUESTS]}
           TopConsumerPopover={cpuPopover}
-          duration={duration}
-          setTimestamps={setTimestamps}
           namespace={projectName}
         />
         <PrometheusUtilizationItem
@@ -176,7 +163,6 @@ export const UtilizationCard: React.FC = () => {
           requestQuery={queries[ProjectQueries.MEMORY_REQUESTS]}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
-          duration={duration}
           namespace={projectName}
         />
         <PrometheusUtilizationItem
@@ -185,7 +171,6 @@ export const UtilizationCard: React.FC = () => {
           utilizationQuery={queries[ProjectQueries.FILESYSTEM_USAGE]}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={filesystemPopover}
-          duration={duration}
           namespace={projectName}
         />
         <PrometheusMultilineUtilizationItem
@@ -193,14 +178,12 @@ export const UtilizationCard: React.FC = () => {
           humanizeValue={humanizeDecimalBytesPerSec}
           queries={multilineQueries[ProjectQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
-          duration={duration}
           namespace={projectName}
         />
         <PrometheusUtilizationItem
           title={t('public~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[ProjectQueries.POD_COUNT]}
-          duration={duration}
           namespace={projectName}
         />
       </UtilizationBody>
