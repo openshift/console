@@ -205,6 +205,7 @@ describe('CRD extensions', () => {
       const newContent = _.defaultsDeep({}, { spec: { location, text } }, safeLoad(content));
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`location: ${location}`);
+      await browser.wait(until.elementToBeClickable(yamlView.saveButton));
       await yamlView.saveButton.click();
       await browser.wait(until.visibilityOf(crudView.successMessage));
       expect(crudView.successMessage.isPresent()).toBe(true);
@@ -297,7 +298,7 @@ describe('CRD extensions', () => {
       const newContent = _.defaultsDeep({}, { spec: { namespaceFilter } }, safeLoad(content));
       await yamlView.setEditorContent(safeDump(newContent));
       expect(yamlView.getEditorContent()).toContain(`namespaceFilter: ${namespaceFilter}`);
-      expect(yamlView.saveButton.isPresent()).toBe(true);
+      await browser.wait(until.elementToBeClickable(yamlView.saveButton));
       await yamlView.saveButton.click();
       await browser.wait(until.visibilityOf(crudView.successMessage));
       expect(crudView.successMessage.isPresent()).toBe(true);
