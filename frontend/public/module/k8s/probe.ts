@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import i18next from 'i18next';
 
 import {
   ContainerLifecycle,
@@ -13,15 +14,15 @@ import {
 const HookAction = Object.freeze({
   exec: {
     id: 'exec',
-    label: 'Exec Command',
+    label: i18next.t('public~Exec command'),
   },
   httpGet: {
     id: 'httpGet',
-    label: 'HTTP Get',
+    label: i18next.t('public~HTTP GET'),
   },
   tcpSocket: {
     id: 'tcpSocket',
-    label: 'TCP Socket (Port)',
+    label: i18next.t('public~TCP socket (port)'),
   },
 });
 

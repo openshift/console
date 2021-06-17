@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { BanIcon, PendingIcon, SyncAltIcon } from '@patternfly/react-icons';
@@ -50,9 +51,14 @@ export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj
   ) : null;
 };
 
-const StagesNotStarted: React.SFC = () => (
-  <div className="build-pipeline__stage build-pipeline__stage--none">No stages have started.</div>
-);
+const StagesNotStarted: React.SFC = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="build-pipeline__stage build-pipeline__stage--none">
+      {t('public~No stages have started.')}
+    </div>
+  );
+};
 
 const BuildSummaryTimestamp: React.SFC<BuildSummaryTimestampProps> = ({ timestamp }) => (
   <span className="build-pipeline__timestamp text-muted">{fromNow(timestamp)}</span>
@@ -62,12 +68,13 @@ const BuildPipelineSummary: React.SFC<BuildPipelineSummaryProps> = ({ obj }) => 
   const { name, namespace } = obj.metadata;
   const buildNumber = getBuildNumber(obj);
   const path: string = resourcePath(obj.kind, name, namespace);
+  const { t } = useTranslation();
   return (
     <div className="build-pipeline__summary">
       <div className="build-pipeline__phase">
         <BuildSummaryStatusIcon status={obj.status.phase} />{' '}
         <Link to={path} title={name}>
-          Build {buildNumber}
+          {t('public~Build {{buildNumber}}', { buildNumber })}
         </Link>
       </div>
       <BuildSummaryTimestamp timestamp={obj.metadata.creationTimestamp} />
@@ -91,6 +98,7 @@ const BuildAnimation: React.SFC<BuildAnimationProps> = ({ status }) => (
 
 const JenkinsInputUrl: React.SFC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   const pending = stage.status === 'PAUSED_PENDING_INPUT';
+  const { t } = useTranslation();
 
   if (!pending) {
     return null;
@@ -99,7 +107,7 @@ const JenkinsInputUrl: React.SFC<JenkinsInputUrlProps> = ({ obj, stage }) => {
   const buildUrl = getJenkinsBuildURL(obj);
   return (
     <div className="build-pipeline__stage-actions text-muted">
-      <ExternalLink href={buildUrl} text="Input Required" />
+      <ExternalLink href={buildUrl} text={t('public~Input required')} />
     </div>
   );
 };
