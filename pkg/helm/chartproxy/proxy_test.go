@@ -91,6 +91,11 @@ func TestProxy_IndexFile(t *testing.T) {
 			mergedFile: "testdata/mergedRepoIndex.yaml",
 		},
 		{
+			name:       "returned merged index file without library chart entries",
+			indexFiles: []string{"testdata/sampleRepoLibrary.yaml"},
+			mergedFile: "testdata/mergedRepoLibrary.yaml",
+		},
+		{
 			name:       "returned merged index contains all entries from source repos - helm names are appended with repo names to avoid duplicate removal",
 			indexFiles: []string{"testdata/sampleRepoIndex2.yaml", "testdata/sampleRepoIndex2.yaml"},
 			mergedFile: "testdata/mergedRepoIndexWithDuplicates.yaml",
