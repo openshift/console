@@ -1,8 +1,9 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { Dropdown } from '../utils/dropdown';
+import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../utils/datetime';
+import { useBoolean } from './hooks/useBoolean';
 
 const OFF_KEY = 'OFF_KEY';
 
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
+  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
   const { t } = useTranslation();
 
   const onChange = React.useCallback(
@@ -33,12 +35,27 @@ const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
     '1d': t('public~{{count}} day', { count: 1 }),
   };
 
+  const selectedKey = interval === null ? OFF_KEY : formatPrometheusDuration(interval);
+
   return (
     <Dropdown
-      id={id}
-      items={intervalOptions}
-      onChange={onChange}
-      selectedKey={interval === null ? OFF_KEY : formatPrometheusDuration(interval)}
+      dropdownItems={_.map(intervalOptions, (name, key) => (
+        <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
+          {name}
+        </DropdownItem>
+      ))}
+      isOpen={isOpen}
+      onSelect={setClosed}
+      toggle={
+        <DropdownToggle
+          className="monitoring-dashboards__dropdown-button"
+          id={`${id}-dropdown`}
+          onToggle={toggleIsOpen}
+        >
+          {intervalOptions[selectedKey]}
+        </DropdownToggle>
+      }
+      className="monitoring-dashboards__variable-dropdown"
     />
   );
 };
