@@ -6,6 +6,7 @@ import { K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s'
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VolumeReferencedObject, VolumeWrapper } from '../k8s/wrapper/vm/volume-wrapper';
+import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { V1Volume } from '../types/api';
 import { K8sResourceWithModel } from '../types/k8s-resource-with-model';
 
@@ -35,7 +36,7 @@ export const useOwnedVolumeReferencedResources = (
         const ref = referencedObjectLookup[volumeName];
         acc[volumeName] = {
           name: ref.name,
-          kind: ref.model.kind, // referenceForModel does not work for basic types like Secret, DataVolume
+          kind: kubevirtReferenceForModel(ref.model),
           namespace,
           isList: false,
         };

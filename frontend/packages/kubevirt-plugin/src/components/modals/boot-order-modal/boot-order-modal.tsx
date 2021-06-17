@@ -22,6 +22,7 @@ import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import {
   asVM,
   getBootableDevices,
@@ -196,7 +197,7 @@ const BootOrderModalFirehost = (props) => {
   const resources = [];
 
   resources.push({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
     namespace: getNamespace(vmLikeEntity),
     name: getName(vmLikeEntity),
     prop: 'vmi',

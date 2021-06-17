@@ -8,6 +8,7 @@ import {
   useDeepCompareMemoize,
 } from '@console/shared';
 import * as models from '../models';
+import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { findVMIPod } from '../selectors/pod/selectors';
 import { VMIKind } from '../types/vm';
 
@@ -35,7 +36,7 @@ export const usePodsForVm = (
       },
       virtualmachineinstances: {
         isList: true,
-        kind: models.VirtualMachineInstanceModel.kind,
+        kind: kubevirtReferenceForModel(models.VirtualMachineInstanceModel),
         namespace,
         optional: true,
       },

@@ -3,6 +3,7 @@ import { Alert, Bullseye, Button, Spinner, Stack, StackItem, Title } from '@patt
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
@@ -44,7 +45,7 @@ const CustomizeSourceStatus: React.FC<CustomizeSourceStatusProps> = ({
             </StackItem>
             <StackItem>
               <ResourceLink
-                kind={VirtualMachineModel.kind}
+                kind={kubevirtReferenceForModel(VirtualMachineModel)}
                 name={vm.metadata.name}
                 namespace={vm.metadata.namespace}
                 className="kv-customize-source__status-link"

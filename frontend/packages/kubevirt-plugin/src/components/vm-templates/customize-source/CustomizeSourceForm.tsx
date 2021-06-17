@@ -45,6 +45,7 @@ import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/custo
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
 import { VirtualMachineModel } from '../../../models/index';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getCPU, vCPUCount } from '../../../selectors/vm';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -94,7 +95,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     loadvmWithCutomBootSource,
     vmWithCustomBootSourceError,
   ] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineModel),
     isList: true,
     namespace,
     selector: {

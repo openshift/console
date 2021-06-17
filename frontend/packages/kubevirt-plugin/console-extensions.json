@@ -4,6 +4,17 @@
     "properties": {
       "model": {
         "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "VirtualMachine"
+      },
+      "flag": "KUBEVIRT"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
         "version": "v1",
         "kind": "VirtualMachine"
       },
@@ -224,7 +235,11 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachines/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachines/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachine/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachine/:name"
+      ],
       "component": {
         "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage"
       }
@@ -236,7 +251,11 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachineinstances/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachineinstances/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachineInstance/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachineInstance/:name"
+      ],
       "component": {
         "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
       }
@@ -311,7 +330,10 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachinesnapshots/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachinesnapshots/:name",
+        "/k8s/ns/:ns/snapshot.kubevirt.io~v1alpha1~VirtualMachineSnapshot/:name"
+      ],
       "component": {
         "$codeRef": "SnapshotDetailsPage.SnapshotDetailsPage"
       }

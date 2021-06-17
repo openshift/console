@@ -20,6 +20,7 @@ import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm';
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
@@ -56,7 +57,9 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
-    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    vm
+      ? kubevirtReferenceForModel(VirtualMachineModel)
+      : kubevirtReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   )}/${VM_DETAIL_DETAILS_HREF}`;

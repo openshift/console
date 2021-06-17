@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { DASH, dimensifyRow, getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import {
   getVmRestoreTime,
   isVmRestoreProgressing,
@@ -45,7 +45,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
     <TableRow id={snapshot?.metadata?.uid} index={index} trKey={snapshotName} style={style}>
       <TableData className={dimensify()}>
         <ResourceLink
-          kind={referenceFor(VirtualMachineSnapshotModel)}
+          kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
           namespace={namespace}
           name={snapshotName}
         />
@@ -92,7 +92,7 @@ export const VMSnapshotRow: RowFunction<VMSnapshot, VMSnapshotRowCustomData> = (
     actionsComponent={
       <ResourceKebab
         resource={snapshot}
-        kind={referenceForModel(VirtualMachineSnapshotModel)}
+        kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
         isDisabled={isDisabled}
         actions={[Delete]}
         id={`kebab-for-${getName(snapshot)}`}

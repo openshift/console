@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
+import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../../types/vm';
 
 /**
@@ -12,7 +13,7 @@ export class VMIMigration {
 
   constructor() {
     this.data = {
-      apiVersion: apiVersionForModel(VirtualMachineInstanceMigrationModel),
+      apiVersion: getKubevirtModelAvailableAPIVersion(VirtualMachineInstanceMigrationModel),
       kind: VirtualMachineInstanceMigrationModel.kind,
       metadata: {
         generateName: null,

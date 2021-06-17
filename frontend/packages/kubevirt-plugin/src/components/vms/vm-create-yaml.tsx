@@ -16,6 +16,7 @@ import { OSSelection } from '../../constants/vm/default-os-selection';
 import { resolveDefaultVM } from '../../k8s/requests/vm/create/default-vm';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
@@ -94,7 +95,7 @@ export const VMCreateYAML = (props: any) => {
   ) : (
     <VMCreateYAMLLConnected
       {...(props as any)}
-      kindObj={VirtualMachineModel.kind}
+      kindObj={kubevirtReferenceForModel(VirtualMachineModel)}
       plural={VirtualMachineModel.plural}
     />
   );

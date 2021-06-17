@@ -4,6 +4,7 @@ import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CDI_APP_LABEL, TEMPLATE_VM_NAME_LABEL } from '../constants';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
+import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
 
@@ -22,14 +23,14 @@ export const useCustomizeVMTResources = (
   namespace: string,
 ): CustomizeVMTResourcesResult => {
   const [vm, vmLoaded, vmLoadError] = useK8sWatchResource<VMKind>({
-    kind: VirtualMachineModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineModel),
     name,
     namespace,
     isList: false,
   });
 
   const [vmis, vmisLoaded, vmiLoadError] = useK8sWatchResource<VMIKind>({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
     namespace,
     isList: true,
     fieldSelector: `metadata.name=${name}`,
@@ -60,7 +61,7 @@ export const useCustomizeVMTResources = (
   });
 
   const [dataVolumes] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kubevirtReferenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

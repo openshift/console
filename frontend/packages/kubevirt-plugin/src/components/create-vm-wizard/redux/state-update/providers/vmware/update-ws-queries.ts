@@ -7,6 +7,7 @@ import {
   VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
 } from '../../../../../../constants/v2v';
 import { V2VVMwareModel } from '../../../../../../models';
+import { kubevirtReferenceForModel } from '../../../../../../models/kubevirtReferenceForModel';
 import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 import { iGetIn } from '../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
@@ -90,7 +91,7 @@ const getQueries = ({ namespace, v2vVmwareName }: GetQueriesParams): FirehoseRes
 
   if (v2vVmwareName) {
     resources.push({
-      kind: V2VVMwareModel.kind,
+      kind: kubevirtReferenceForModel(V2VVMwareModel),
       model: V2VVMwareModel,
       name: v2vVmwareName,
       namespace,
