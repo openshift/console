@@ -4,8 +4,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '@console/shared';
+import { connectToFlags, FlagsObject } from '../reducers/features';
+import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
@@ -19,6 +19,13 @@ import {
 } from './utils';
 import { NetworkPolicyModel } from '../models';
 import { getNetworkPolicyDocLink } from './utils/documentation';
+import {
+  NetworkPolicyKind,
+  NetworkPolicyPort,
+  NetworkPolicyPeer,
+  Selector as K8SSelector,
+} from '../module/k8s';
+import { Tooltip } from '@patternfly/react-core';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
@@ -32,7 +39,19 @@ const tableColumnClasses = [
 
 const kind = 'NetworkPolicy';
 
-const NetworkPolicyTableRow = ({ obj: np, index, key, style }) => {
+type NetworkPolicyTableRowProps = {
+  obj: NetworkPolicyKind;
+  index: number;
+  key: string;
+  style: object;
+};
+
+const NetworkPolicyTableRow: React.FunctionComponent<NetworkPolicyTableRowProps> = ({
+  obj: np,
+  index,
+  key,
+  style,
+}) => {
   return (
     <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -135,7 +154,39 @@ const EgressHeader = () => {
   );
 };
 
-const RuleRow = ({ peer, ports, namespace, mainPodSelector }) => {
+type ConsolidatedRow = Omit<NetworkPolicyPeer, 'ipBlock'> & {
+  ipBlocks?: {
+    cidr: string;
+    except?: string[];
+  }[];
+};
+
+const consolidatePeers = (peers?: NetworkPolicyPeer[]): ConsolidatedRow[] => {
+  // Consolidate peers as one row per peer, except ipblock peers which are merged into a single row
+  if (!peers) {
+    return [{}]; // stands for "any peer"
+  }
+  const ipBlocks = peers.filter((p) => !!p.ipBlock).map((p) => p.ipBlock);
+  const consolidated = peers.filter((p) => !p.ipBlock) as ConsolidatedRow[];
+  if (ipBlocks.length > 0) {
+    consolidated.push({ ipBlocks });
+  }
+  return consolidated;
+};
+
+type PeerRowProps = {
+  row: ConsolidatedRow;
+  ports: NetworkPolicyPort[];
+  namespace: string;
+  mainPodSelector: K8SSelector;
+};
+
+const PeerRow: React.FunctionComponent<PeerRowProps> = ({
+  row,
+  ports,
+  namespace,
+  mainPodSelector,
+}) => {
   const { t } = useTranslation();
   const style = { margin: '5px 0' };
 
@@ -146,56 +197,82 @@ const RuleRow = ({ peer, ports, namespace, mainPodSelector }) => {
           <span className="text-muted">{t('public~Pod selector')}:</span>
         </div>
         <div style={style}>
-          <Selector selector={mainPodSelector} namespace={namespace} />
+          {_.isEmpty(mainPodSelector) ? (
+            <Link to={`/search/ns/${namespace}?kind=Pod`}>{`All pods within ${namespace}`}</Link>
+          ) : (
+            <Selector selector={mainPodSelector} namespace={namespace} />
+          )}
         </div>
       </div>
       <div className="col-xs-5">
         <div>
-          {peer ? (
+          {!row.namespaceSelector && !row.podSelector && !row.ipBlocks ? (
+            <div>{t('public~Any peer')}</div>
+          ) : (
             <>
-              {peer.namespaceSelector ? (
+              {row.namespaceSelector ? (
                 <div>
                   <span className="text-muted">{t('public~NS selector')}:</span>
                   <div style={style}>
-                    {_.isEmpty(peer.namespaceSelector) ? (
+                    {_.isEmpty(row.namespaceSelector) ? (
                       <span>{t('public~Any namespace')}</span>
                     ) : (
-                      <Selector selector={peer.namespaceSelector} kind="Namespace" />
+                      <Selector selector={row.namespaceSelector} kind="Namespace" />
                     )}
                   </div>
                 </div>
               ) : (
-                peer.podSelector && (
+                row.podSelector && (
                   <div>
                     <span className="text-muted">{t('public~Namespace')}:</span>
                     <div style={style}>{namespace}</div>
                   </div>
                 )
               )}
-              {peer.podSelector && (
+              {row.podSelector && (
                 <div style={{ paddingTop: 10 }}>
                   <span className="text-muted">{t('public~Pod selector')}:</span>
                   <div style={style}>
-                    {_.isEmpty(peer.podSelector) ? (
+                    {_.isEmpty(row.podSelector) ? (
                       <span>{t('public~Any pod')}</span>
                     ) : (
                       <Selector
-                        selector={peer.podSelector}
-                        namespace={peer.namespaceSelector ? undefined : namespace}
+                        selector={row.podSelector}
+                        namespace={row.namespaceSelector ? undefined : namespace}
                       />
                     )}
                   </div>
                 </div>
               )}
-              {peer.ipBlock && (
+              {row.ipBlocks && (
                 <div>
-                  <span className="text-muted">{t('public~IP block')}:</span>
-                  <div style={style}>{peer.ipBlock.cidr}</div>
+                  <span className="text-muted">{t('public~IP blocks')}:</span>
+                  {row.ipBlocks.map((ipblock, idx) => (
+                    <div style={style} key={`ipblock_${idx}`}>
+                      {ipblock.cidr}
+                      {ipblock.except && ipblock.except.length > 0 && (
+                        <>
+                          <Tooltip
+                            content={
+                              <div>
+                                {t('public~Exceptions')}
+                                {': '}
+                                {ipblock.except.join(', ')}
+                              </div>
+                            }
+                          >
+                            <span>
+                              {` (${t('public~with exceptions')}) `}
+                              <BlueInfoCircleIcon />
+                            </span>
+                          </Tooltip>
+                        </>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </>
-          ) : (
-            <div>{t('public~Any peer')}</div>
           )}
         </div>
       </div>
@@ -216,7 +293,12 @@ const RuleRow = ({ peer, ports, namespace, mainPodSelector }) => {
   );
 };
 
-const Details_ = ({ obj: np, flags }) => {
+type DetailsProps = {
+  obj: NetworkPolicyKind;
+  flags: FlagsObject;
+};
+
+const Details_: React.FunctionComponent<DetailsProps> = ({ obj: np, flags }) => {
   const { t } = useTranslation();
   // Note, the logic differs between ingress and egress, see https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#networkpolicyspec-v1-networking-k8s-io
   // A policy affects egress if it is explicitely specified in policyTypes, or if policyTypes isn't set and there is an egress section.
@@ -263,10 +345,10 @@ const Details_ = ({ obj: np, flags }) => {
               <IngressHeader />
               <div className="co-m-table-grid__body">
                 {_.map(np.spec.ingress, (rule, i) =>
-                  (rule.from || [undefined]).map((peer, j) => (
-                    <RuleRow
+                  consolidatePeers(rule.from).map((row, j) => (
+                    <PeerRow
                       key={`${i}_${j}`}
-                      peer={peer}
+                      row={row}
                       ports={rule.ports}
                       mainPodSelector={np.spec.podSelector}
                       namespace={np.metadata.namespace}
@@ -303,10 +385,10 @@ const Details_ = ({ obj: np, flags }) => {
               <EgressHeader />
               <div className="co-m-table-grid__body">
                 {_.map(np.spec.egress, (rule, i) =>
-                  (rule.to || [undefined]).map((peer, j) => (
-                    <RuleRow
+                  consolidatePeers(rule.to).map((row, j) => (
+                    <PeerRow
                       key={`${i}_${j}`}
-                      peer={peer}
+                      row={row}
                       ports={rule.ports}
                       mainPodSelector={np.spec.podSelector}
                       namespace={np.metadata.namespace}
