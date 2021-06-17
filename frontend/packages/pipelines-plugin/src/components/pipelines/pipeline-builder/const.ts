@@ -18,6 +18,7 @@ export enum TaskErrorType {
   MISSING_RESOURCES = 'missingResources',
   MISSING_WORKSPACES = 'missingWorkspaces',
   MISSING_REQUIRED_WHEN_EXPRESSIONS = 'missingWhenExpressions',
+  INVALID_RUNAFTER = 'invalidRunAfter',
 }
 
 export const TASK_FIELD_ERROR_TYPE_MAPPING: { [key in TaskErrorType]: string[] } = {
@@ -25,6 +26,7 @@ export const TASK_FIELD_ERROR_TYPE_MAPPING: { [key in TaskErrorType]: string[] }
   [TaskErrorType.MISSING_RESOURCES]: ['resources'],
   [TaskErrorType.MISSING_WORKSPACES]: ['workspaces'],
   [TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS]: ['when'],
+  [TaskErrorType.INVALID_RUNAFTER]: ['runAfter'],
 };
 
 export const TASK_ERROR_STRINGS: { [key in TaskErrorType]: string } = {
@@ -34,6 +36,7 @@ export const TASK_ERROR_STRINGS: { [key in TaskErrorType]: string } = {
   [TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS]: i18n.t(
     'pipelines-plugin~Invalid When Expressions',
   ),
+  [TaskErrorType.INVALID_RUNAFTER]: i18n.t('pipelines-plugin~Invalid RunAfter'),
 };
 
 export enum WhenExpressionOperatorType {

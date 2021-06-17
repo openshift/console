@@ -225,8 +225,9 @@ export const tasksToBuilderNodes = (
   });
 };
 
-export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdgeModel[] =>
-  _.flatten(
+export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdgeModel[] => {
+  const regularNodeIds = nodes.map((n) => n.id);
+  return _.flatten(
     nodes.map((node) => {
       const {
         data: {
@@ -236,15 +237,17 @@ export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdge
 
       if (runAfter.length === 0) return null;
 
-      return runAfter.map((source) => ({
-        id: `${source}~to~${target}`,
-        type: 'edge',
-        source,
-        target,
-      }));
+      return runAfter
+        .filter((runAfterNode) => regularNodeIds.includes(runAfterNode))
+        .map((source) => ({
+          id: `${source}~to~${target}`,
+          type: 'edge',
+          source,
+          target,
+        }));
     }),
   ).filter((edgeList) => !!edgeList);
-
+};
 export const getFinallyTaskHeight = (allTasksLength: number, disableBuilder: boolean): number => {
   return (
     allTasksLength * NODE_HEIGHT +

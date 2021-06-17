@@ -144,6 +144,7 @@
   "Missing Resources": "Missing Resources",
   "Missing Workspaces": "Missing Workspaces",
   "Invalid When Expressions": "Invalid When Expressions",
+  "Invalid RunAfter": "Invalid RunAfter",
   "Failed to load Tasks. {{error}}": "Failed to load Tasks. {{error}}",
   "Remove task": "Remove task",
   "Remove {{taskName}}?": "Remove {{taskName}}?",

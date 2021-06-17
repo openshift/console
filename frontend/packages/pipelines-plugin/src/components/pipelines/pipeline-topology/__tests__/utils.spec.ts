@@ -7,6 +7,7 @@ import {
   getFinallyTaskWidth,
   taskHasWhenExpression,
   nodesHasWhenExpression,
+  getEdgesFromNodes,
 } from '../utils';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
@@ -137,5 +138,41 @@ describe('hasWhenExpression', () => {
 
   it('expect to return true if the finally tasks in the pipeline contains when expression', () => {
     expect(hasWhenExpression(pipelineWithWhenAndFinally)).toBe(true);
+  });
+});
+
+describe('getEdgesFromNodes', () => {
+  it('should contain correct number of edges based on the runAfters', () => {
+    const [task1, task2, task3, task4] = pipeline.spec.tasks;
+    const pipelineWithMultipleLastTasks = {
+      ...pipeline,
+      spec: {
+        ...pipeline.spec,
+        tasks: [task1, task2, task3, task4],
+      },
+    };
+    const { nodes } = getTopologyNodesEdges(pipelineWithMultipleLastTasks);
+    expect(getEdgesFromNodes(nodes)).toHaveLength(3);
+  });
+
+  it('should exclude the invalid runAfter names', () => {
+    const [task1, task2, task3, task4] = pipeline.spec.tasks;
+    const pipelineWithInvalidRunAfter = {
+      ...pipeline,
+      spec: {
+        ...pipeline.spec,
+        tasks: [
+          task1,
+          task2,
+          task3,
+          {
+            ...task4,
+            runAfter: [...task4.runAfter, 'fake-task-name'],
+          },
+        ],
+      },
+    };
+    const { nodes } = getTopologyNodesEdges(pipelineWithInvalidRunAfter);
+    expect(getEdgesFromNodes(nodes)).toHaveLength(3);
   });
 });
