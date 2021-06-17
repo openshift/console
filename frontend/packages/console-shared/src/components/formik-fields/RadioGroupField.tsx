@@ -50,7 +50,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
               value={option.value}
               label={option.label}
               isDisabled={option.isDisabled}
-              aria-describedby={`${fieldId}-helper`}
+              aria-describedby={helpText ? `${fieldId}-helper` : undefined}
               description={description}
               onChange={onChange}
             />

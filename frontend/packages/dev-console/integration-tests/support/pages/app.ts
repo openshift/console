@@ -34,8 +34,7 @@ export const perspective = {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
     if (switchPerspective.Developer) {
-      // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-      // cy.testA11y('Developer perspective with guider tour modal');
+      cy.testA11y('Developer perspective with guide tour modal');
       guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');

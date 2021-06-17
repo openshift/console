@@ -36,6 +36,9 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
     { value: PipelineResourceType.storage, label: 'Storage' },
   ];
 
+  const nameLabel = t('pipelines-plugin~Name');
+  const resourceTypeLabel = t('pipelines-plugin~Resource type');
+
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
@@ -43,8 +46,8 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         name={fieldName}
         addLabel={addLabel}
         headers={[
-          { name: t('pipelines-plugin~Name'), required: true },
-          { name: t('pipelines-plugin~Resource type'), required: true },
+          { name: nameLabel, required: true },
+          { name: resourceTypeLabel, required: true },
         ]}
         emptyValues={{ name: '', type: '' }}
         emptyMessage={emptyMessage}
@@ -53,13 +56,15 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         <InputField
           name="name"
           type={TextInputTypes.text}
-          placeholder={t('pipelines-plugin~Name')}
+          placeholder={nameLabel}
           isReadOnly={isReadOnly}
+          aria-label={nameLabel}
         />
         <FormSelectField
           name="type"
           options={pipelineResourceTypeSelections}
           isDisabled={isReadOnly}
+          aria-label={resourceTypeLabel}
         />
       </MultiColumnField>
     </div>

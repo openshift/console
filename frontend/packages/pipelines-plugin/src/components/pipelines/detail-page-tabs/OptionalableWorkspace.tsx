@@ -19,6 +19,7 @@ const OptionalableWorkspace: React.FC<OptionalableWorkspace> = ({ namePrefix, is
         type={TextInputTypes.text}
         placeholder={t('pipelines-plugin~Name')}
         isReadOnly={isReadOnly}
+        aria-label={t('pipelines-plugin~Name')}
       />
       <div style={{ marginBottom: 'var(--pf-global--spacer--xs)' }} />
       <CheckboxField

@@ -8,8 +8,7 @@ import { perspective, projectNameSpace, navigateTo } from '../../pages';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
+  cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Commenting below line, because it is executing on every test scenario - we will remove this in future releases

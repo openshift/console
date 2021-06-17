@@ -24,8 +24,7 @@ Given('user has installed OpenShift Serverless Operator', () => {
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
+  cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   cy.testA11y('Developer perspective');
