@@ -111,6 +111,7 @@
   "Container Runtime": "Container Runtime",
   "Kubelet Version": "Kubelet Version",
   "Kube-Proxy Version": "Kube-Proxy Version",
+  "Terminal": "Terminal",
   "{{name}} · Details": "{{name}} · Details",
   "{{name}} Details": "{{name}} Details",
   "Nodes": "Nodes",
