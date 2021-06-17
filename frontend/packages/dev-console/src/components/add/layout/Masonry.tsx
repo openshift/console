@@ -4,13 +4,13 @@ import Measure from 'react-measure';
 import './MasonryLayout.scss';
 
 type MasonryProps = {
-  columnsCount: number;
+  columnCount: number;
   children: React.ReactElement[];
 };
 
-export const Masonry: React.FC<MasonryProps> = ({ columnsCount, children }) => {
+export const Masonry: React.FC<MasonryProps> = ({ columnCount, children }) => {
   const [heights, setHeights] = React.useState<Record<string, number>>({});
-  const columns = columnsCount || 1;
+  const columns = columnCount || 1;
   const setHeight = (key: string, height: number) => {
     setHeights((old) => ({ ...old, [key]: height }));
   };
