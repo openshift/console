@@ -39,6 +39,29 @@ export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
   }
 };
 
+export const getNewerMinorVersionUpdate = (currentVersion, availableUpdates) => {
+  const currentVersionParsed = semver.parse(currentVersion);
+  return availableUpdates?.find(
+    // find the next minor version update, which there should never be more than one
+    (update) => {
+      const updateParsed = semver.parse(update.version);
+      return semver.gt(
+        semver.coerce(`${updateParsed.major}.${updateParsed.minor}`),
+        semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+      );
+    },
+  );
+};
+
+export const isMinorVersionNewer = (currentVersion, otherVersion) => {
+  const currentVersionParsed = semver.parse(currentVersion);
+  const otherVersionParsed = semver.parse(otherVersion);
+  return semver.gt(
+    semver.coerce(`${otherVersionParsed.major}.${otherVersionParsed.minor}`),
+    semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+  );
+};
+
 export const getAvailableClusterChannels = (cv) => {
   return cv?.status?.desired?.channels || [];
 };
@@ -224,3 +247,11 @@ export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.
 
 export const getOCMLink = (clusterID: string): string =>
   `https://cloud.redhat.com/openshift/details/${clusterID}`;
+
+export const getConditionUpgradeableFalse = (resource) =>
+  resource.status?.conditions.find(
+    (c) => c.type === 'Upgradeable' && c.status === K8sResourceConditionStatus.False,
+  );
+
+export const getNotUpgradeableResources = (resources) =>
+  resources.filter((resource) => getConditionUpgradeableFalse(resource));

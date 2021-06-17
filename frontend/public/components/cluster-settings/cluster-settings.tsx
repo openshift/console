@@ -1,10 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import * as semver from 'semver';
 import { Helmet } from 'react-helmet';
 import {
   Alert,
   Button,
+  Flex,
+  FlexItem,
+  Label,
   Popover,
   Progress,
   ProgressSize,
@@ -17,6 +21,11 @@ import { useTranslation } from 'react-i18next';
 
 import { AddCircleOIcon, PencilAltIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager';
 
 import { ClusterOperatorPage } from './cluster-operator';
 import {
@@ -44,14 +53,18 @@ import {
   getClusterOperatorVersion,
   getClusterUpdateStatus,
   getClusterVersionCondition,
+  getConditionUpgradeableFalse,
   getCurrentVersion,
   getDesiredClusterVersion,
   getLastCompletedUpdate,
   getNewerClusterVersionChannel,
+  getNewerMinorVersionUpdate,
+  getNotUpgradeableResources,
   getOCMLink,
   getReleaseNotesLink,
   getSimilarClusterVersionChannels,
   getSortedUpdates,
+  isMinorVersionNewer,
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
@@ -70,6 +83,7 @@ import {
   FirehoseResource,
   HorizontalNav,
   openshiftHelpBase,
+  ReleaseNotesLink,
   ResourceLink,
   resourcePathFromModel,
   SectionHeading,
@@ -294,16 +308,6 @@ export const UpdateStatus: React.FC<UpdateStatusProps> = ({ cv }) => {
   }
 };
 
-export const ReleaseNotesLink: React.FC<ReleaseNotesLinkProps> = ({ version }) => {
-  const releaseNotesLink = getReleaseNotesLink(version);
-  const { t } = useTranslation();
-  return (
-    releaseNotesLink && (
-      <ExternalLink text={t('public~View release notes')} href={releaseNotesLink} />
-    )
-  );
-};
-
 export const CurrentVersion: React.FC<CurrentVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
   const lastVersion = getLastCompletedUpdate(cv);
@@ -446,35 +450,70 @@ const ChannelPath: React.FC<ChannelPathProps> = ({ children, current }) => {
   );
 };
 
-export const ChannelVersion: React.FC<ChannelVersionProps> = ({ children, current }) => {
+export const ChannelVersion: React.FC<ChannelVersionProps> = ({
+  children,
+  current,
+  updateBlocked,
+}) => {
   return (
     <span
       className={classNames('co-channel-version', {
         'co-channel-version--current': current,
+        'co-channel-version--update-blocked': updateBlocked,
       })}
     >
+      {updateBlocked && (
+        <YellowExclamationTriangleIcon className="co-channel-version__warning-icon co-icon-space-r" />
+      )}
       {children}
     </span>
   );
 };
 
-const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current, version }) => {
+export const UpdateBlockedLabel = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Label color="orange" icon={<YellowExclamationTriangleIcon />} className="pf-u-ml-sm">
+      {t('public~Update blocked')}
+    </Label>
+  );
+};
+
+const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({
+  current,
+  updateBlocked,
+  version,
+}) => {
   const releaseNotesLink = getReleaseNotesLink(version);
   const { t } = useTranslation();
 
-  return releaseNotesLink ? (
+  return releaseNotesLink || updateBlocked ? (
     <Popover
       headerContent={
         <>
           {t('public~Version')} {version}
+          {updateBlocked && <UpdateBlockedLabel />}
         </>
       }
-      bodyContent={<ReleaseNotesLink version={version} />}
+      bodyContent={
+        <>
+          {updateBlocked && (
+            <p>
+              {t(
+                'public~See the alert above the visualization for instructions on how to unblock this version.',
+              )}
+            </p>
+          )}
+          {releaseNotesLink && <ReleaseNotesLink version={version} />}
+        </>
+      }
     >
       <Button
         variant="secondary"
         className={classNames('co-channel-version-dot', {
           'co-channel-version-dot--current': current,
+          'co-channel-version-dot--update-blocked': updateBlocked,
         })}
       />
     </Popover>
@@ -482,6 +521,7 @@ const ChannelVersionDot: React.FC<ChannelVersionDotProps> = ({ current, version 
     <div
       className={classNames('co-channel-version-dot', {
         'co-channel-version-dot--current': current,
+        'co-channel-version-dot--update-blocked': updateBlocked,
       })}
     ></div>
   );
@@ -593,6 +633,7 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
   const currentPrefix = splitClusterVersionChannel(currentChannel)?.prefix;
   const similarChannels = getSimilarClusterVersionChannels(cv, currentPrefix);
   const newerChannel = getNewerClusterVersionChannel(similarChannels, currentChannel);
+  const clusterUpgradeableFalse = !!getConditionUpgradeableFalse(cv);
   const { t } = useTranslation();
 
   return (
@@ -623,8 +664,20 @@ export const UpdatesGraph: React.FC<UpdatesGraphProps> = ({ cv }) => {
           <ChannelLine>
             {newestVersion && (
               <>
-                <ChannelVersion>{newestVersion}</ChannelVersion>
-                <ChannelVersionDot channel={currentChannel} version={newestVersion} />
+                <ChannelVersion
+                  updateBlocked={
+                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
+                  }
+                >
+                  {newestVersion}
+                </ChannelVersion>
+                <ChannelVersionDot
+                  channel={currentChannel}
+                  updateBlocked={
+                    clusterUpgradeableFalse && isMinorVersionNewer(lastVersion, newestVersion)
+                  }
+                  version={newestVersion}
+                />
               </>
             )}
           </ChannelLine>
@@ -659,6 +712,11 @@ const MachineConfigPoolsResource: WatchK8sResource = {
   kind: referenceForModel(MachineConfigPoolModel),
 };
 
+export const ClusterOperatorsLink: React.FC<ClusterOperatorsLinkProps> = ({
+  children,
+  queryString,
+}) => <Link to={`/settings/cluster/clusteroperators${queryString}`}>{children}</Link>;
+
 export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
   desiredVersion,
   machineConfigPools,
@@ -676,9 +734,7 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
     <UpdatesProgress>
       <UpdatesGroup>
         <UpdatesType>
-          <Link to="/settings/cluster/clusteroperators">
-            {t(ClusterOperatorModel.labelPluralKey)}
-          </Link>
+          <ClusterOperatorsLink>{t(ClusterOperatorModel.labelPluralKey)}</ClusterOperatorsLink>
         </UpdatesType>
         <UpdatesBar>
           <Progress
@@ -711,6 +767,70 @@ export const UpdateInProgress: React.FC<UpdateInProgressProps> = ({
         <OtherNodes machineConfigPools={machineConfigPools} updateStartedTime={updateStartedTime} />
       )}
     </UpdatesProgress>
+  );
+};
+
+const ClusterServiceVersionResource: WatchK8sResource = {
+  isList: true,
+  kind: referenceForModel(ClusterServiceVersionModel),
+};
+
+export const ClusterNotUpgradeableAlert: React.FC<ClusterNotUpgradeableAlertProps> = ({ cv }) => {
+  const [clusterOperators] = useK8sWatchResource<ClusterOperator[]>(ClusterOperatorsResource);
+  const [clusterServiceVersions] = useK8sWatchResource<ClusterServiceVersionKind[]>(
+    ClusterServiceVersionResource,
+  );
+  const { t } = useTranslation();
+  const notUpgradeableClusterOperators = getNotUpgradeableResources(clusterOperators);
+  const notUpgradeableClusterOperatorsPresent = notUpgradeableClusterOperators.length > 0;
+  const notUpgradeableClusterServiceVersions = getNotUpgradeableResources(clusterServiceVersions);
+  const notUpgradeableCSVsPresent = notUpgradeableClusterServiceVersions.length > 0;
+  const clusterUpgradeableFalseCondition = getConditionUpgradeableFalse(cv);
+  const currentVersion = getLastCompletedUpdate(cv);
+  const currentVersionParsed = semver.parse(currentVersion);
+  const currentMajorMinorVersion = `${currentVersionParsed?.major}.${currentVersionParsed?.minor}`;
+  const availableUpdates = getSortedUpdates(cv);
+  const newerUpdate = getNewerMinorVersionUpdate(currentVersion, availableUpdates);
+  const newerUpdateParsed = semver.parse(newerUpdate?.version);
+  const nextMajorMinorVersion = `${newerUpdateParsed?.major}.${newerUpdateParsed?.minor}`;
+
+  return (
+    <Alert
+      variant="warning"
+      isInline
+      title={
+        currentVersionParsed && newerUpdateParsed
+          ? t(
+              'public~This cluster should not be updated to {{nextMajorMinorVersion}}. You can continue to update to patch releases in {{currentMajorMinorVersion}}.',
+              { nextMajorMinorVersion, currentMajorMinorVersion },
+            )
+          : t('public~This cluster should not be updated to the next minor version.')
+      }
+      className="co-alert"
+      actionLinks={
+        (notUpgradeableClusterOperatorsPresent || notUpgradeableCSVsPresent) && (
+          <Flex>
+            {notUpgradeableClusterOperatorsPresent && (
+              <FlexItem>
+                <ClusterOperatorsLink queryString="?rowFilter-cluster-operator-status=Cannot+update">
+                  {t('public~View ClusterOperators')}
+                </ClusterOperatorsLink>
+              </FlexItem>
+            )}
+            {notUpgradeableCSVsPresent && (
+              // TODO:  update link to include filter once installed Operators filters are updated
+              <FlexItem>
+                <Link to={`/k8s/ns/all-namespaces/${ClusterServiceVersionModel.plural}`}>
+                  {t('public~View installed Operators')}
+                </Link>
+              </FlexItem>
+            )}
+          </Flex>
+        )
+      }
+    >
+      <SyncMarkdownView content={clusterUpgradeableFalseCondition.message} inline />
+    </Alert>
   );
 };
 
@@ -774,6 +894,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
               className="co-alert"
             />
           )}
+          {!!getConditionUpgradeableFalse(cv) && <ClusterNotUpgradeableAlert cv={cv} />}
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">
@@ -1021,10 +1142,6 @@ type UpdateStatusProps = {
   cv: ClusterVersionKind;
 };
 
-type ReleaseNotesLinkProps = {
-  version: string;
-};
-
 type CVStatusMessageProps = {
   cv: ClusterVersionKind;
   isFailing?: boolean;
@@ -1063,11 +1180,13 @@ type ChannelPathProps = {
 type ChannelVersionProps = {
   children: React.ReactNode;
   current?: boolean;
+  updateBlocked?: boolean;
 };
 
 type ChannelVersionDotProps = {
   channel: string;
   current?: boolean;
+  updateBlocked?: boolean;
   version: string;
 };
 
@@ -1106,11 +1225,20 @@ type OtherNodesProps = {
   updateStartedTime: string;
 };
 
+type ClusterOperatorsLinkProps = {
+  children: React.ReactNode;
+  queryString?: string;
+};
+
 type UpdateInProgressProps = {
   desiredVersion: string;
   machineConfigPools: MachineConfigPoolKind[];
   workerMachineConfigPool: MachineConfigPoolKind;
   updateStartedTime: string;
+};
+
+type ClusterNotUpgradeableAlertProps = {
+  cv: ClusterVersionKind;
 };
 
 type ClusterVersionDetailsTableProps = {

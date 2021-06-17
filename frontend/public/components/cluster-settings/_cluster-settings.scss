@@ -7,10 +7,6 @@ $co-channel-height: 60px;
   width: 100%;
 }
 
-.cluster-update-modal__dropdown .pf-c-dropdown {
-  width: 100%;
-}
-
 .co-channel {
   align-items: center;
   display: flex;
@@ -161,6 +157,16 @@ $co-channel-height: 60px;
   &--current {
     font-weight: var(--pf-global--FontWeight--bold);
   }
+
+  &--update-blocked {
+    align-items: flex-end;
+    flex-direction: row;
+  }
+
+  &__warning-icon {
+    flex-shrink: 0;
+  }
+
 }
 
 .co-channel-version-dot {
@@ -188,8 +194,13 @@ $co-channel-height: 60px;
     background: transparent !important;
 
   }
+
   &:focus {
     outline: 0 !important;
+  }
+
+  &--update-blocked {
+    background: var(--pf-global--warning-color--100) !important;
   }
 }
 
