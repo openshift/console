@@ -44,7 +44,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
           queryParams.set(CatalogQueryParams.TYPE, type.value);
 
           const to = {
-            path: pathname,
+            pathname,
             search: `?${queryParams.toString()}`,
           };
 
