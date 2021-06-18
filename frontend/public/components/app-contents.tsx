@@ -118,18 +118,18 @@ const getPluginPageRoutes = (
   dynamicRoutePages: ResolvedExtension<DynamicRoutePage>[],
 ) => {
   const activeRoutes = [
+    ...dynamicRoutePages
+      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+      .map((r) => <Route {...r.properties} key={Array.from(r.properties.path).join(',')} />),
     ...routePages
       .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
       .map((r) => {
         const Component = r.properties.loader ? LazyRoute : Route;
         return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
       }),
-    ...dynamicRoutePages
-      .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-      .map((r) => <Route {...r.properties} key={Array.from(r.properties.path).join(',')} />),
   ];
 
-  const inactiveRoutes = [...routePages, ...dynamicRoutePages]
+  const inactiveRoutes = [...dynamicRoutePages, ...routePages]
     .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
     .map((r) => {
       const key = Array.from(r.properties.path)
