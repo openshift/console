@@ -14,8 +14,16 @@ const PipelineMetricsRefreshDropdown: React.FC<PipelineMetricsRefreshDropdownPro
   const { t } = useTranslation();
   return (
     <div className="form-group">
-      <label>{t('pipelines-plugin~Refresh Interval')}</label>
-      <IntervalDropdown interval={interval} setInterval={setInterval as never} />
+      <label htmlFor="pipeline-refresh-interval-dropdown">
+        {t('pipelines-plugin~Refresh Interval')}
+      </label>
+      <div>
+        <IntervalDropdown
+          id="pipeline-refresh-interval-dropdown"
+          interval={interval}
+          setInterval={setInterval}
+        />
+      </div>
     </div>
   );
 };
