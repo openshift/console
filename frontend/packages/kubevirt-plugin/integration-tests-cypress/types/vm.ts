@@ -16,11 +16,12 @@ export type Disk = {
 };
 
 export type Network = {
-  name: string;
-  model: string;
-  mac: string;
-  network: string;
-  type: string;
+  name?: string;
+  model?: string;
+  mac?: string;
+  nad: string;
+  network?: string;
+  type?: string;
 };
 
 export type CloudInitConfig = {
