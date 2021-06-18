@@ -58,10 +58,10 @@ const TLSCert = ({ ingress }) => {
 };
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
