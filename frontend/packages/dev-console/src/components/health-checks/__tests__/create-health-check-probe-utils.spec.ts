@@ -51,13 +51,19 @@ describe('Create Health Check probe Utils', () => {
     expect(constructProbeData(healthChecksInputData.healthChecks.readinessProbe.data)).toEqual(
       enabledProbeData.readinessProbe,
     );
+    expect(constructProbeData(healthChecksInputData.healthChecks.livenessProbe.data)).toEqual(
+      enabledProbeData.livenessProbe,
+    );
     expect(constructProbeData(healthChecksInputData.healthChecks.startupProbe.data)).toEqual(
       enabledProbeData.startupProbe,
     );
   });
 
   it('getProbesData should return all the enabled probes', () => {
-    expect(getProbesData(healthChecksInputData.healthChecks)).toEqual(enabledProbeData);
+    expect(getProbesData(healthChecksInputData.healthChecks)).toEqual({
+      readinessProbe: enabledProbeData.readinessProbe,
+      startupProbe: enabledProbeData.startupProbe,
+    });
   });
 
   it('getProbesData should not return startup probes in case of knative service', () => {

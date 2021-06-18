@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { HealthChecksProbeType, RequestType, HealthCheckProbe } from './health-checks-types';
+import { HealthChecksProbeType, RequestType, HealthCheckFormProbe } from './health-checks-types';
 
 export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
   switch (probe) {
@@ -32,27 +32,27 @@ export const getHealthChecksProbeConfig = (probe: string, t: TFunction) => {
   }
 };
 
-export const healthChecksDefaultValues: HealthCheckProbe = {
+export const healthChecksDefaultValues: HealthCheckFormProbe = {
   showForm: false,
   enabled: false,
   modified: false,
   data: {
-    failureThreshold: 3,
+    failureThreshold: '3',
     requestType: RequestType.HTTPGET,
     httpGet: {
-      scheme: 'HTTP',
+      scheme: undefined,
       path: '/',
-      port: 8080,
+      port: '8080',
       httpHeaders: [],
     },
     tcpSocket: {
-      port: 8080,
+      port: '8080',
     },
     exec: { command: [''] },
-    initialDelaySeconds: 0,
-    periodSeconds: 10,
-    timeoutSeconds: 1,
-    successThreshold: 1,
+    initialDelaySeconds: '0',
+    periodSeconds: '10',
+    timeoutSeconds: '1',
+    successThreshold: '1',
   },
 };
 
