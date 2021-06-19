@@ -249,23 +249,27 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
               />
             </div>
           </FormGroup>
-          {isNoProvionerSC ? (
-            <PVsAvailableCapacity
-              replica={replica}
-              data-test-id="ceph-add-capacity-pvs-available-capacity"
-              storageClass={storageClass}
-              data={pvData}
-              loaded={pvLoaded}
-              loadError={pvLoadError}
-            />
-          ) : (
-            <>
-              {!!osdSizeWithoutUnit && (
-                <RawCapacity t={t} replica={replica} osdSizeWithoutUnit={osdSizeWithoutUnit} />
-              )}
-              <CurrentlyUsedCapacity t={t} currentCapacity={currentCapacity} />
-            </>
+          {!selectedSCName && (
+            <div className="skeleton-text ceph-add-capacity__storage-calss-dropdown--loading" />
           )}
+          {!!selectedSCName &&
+            (isNoProvionerSC ? (
+              <PVsAvailableCapacity
+                replica={replica}
+                data-test-id="ceph-add-capacity-pvs-available-capacity"
+                storageClass={storageClass}
+                data={pvData}
+                loaded={pvLoaded}
+                loadError={pvLoadError}
+              />
+            ) : (
+              <>
+                {!!osdSizeWithoutUnit && (
+                  <RawCapacity t={t} replica={replica} osdSizeWithoutUnit={osdSizeWithoutUnit} />
+                )}
+                <CurrentlyUsedCapacity t={t} currentCapacity={currentCapacity} />
+              </>
+            ))}
         </ModalBody>
         <ModalSubmitFooter
           inProgress={inProgress}
