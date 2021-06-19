@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -14,16 +13,6 @@ import UtilizationItem, {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  useExtensions,
-  DashboardsOverviewUtilizationItem,
-  isDashboardsOverviewUtilizationItem,
-} from '@console/plugin-sdk';
-import {
-  useResolvedExtensions,
-  DashboardsOverviewUtilizationItem as DynamicDashboardsOverviewUtilizationItem,
-  isDashboardsOverviewUtilizationItem as isDynamicDashboardsOverviewUtilizationItem,
-} from '@console/dynamic-plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import {
@@ -353,33 +342,8 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
   },
 );
 
-const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem['properties'][]) => {
-  const pluginQueries = {};
-  itemExtensions.forEach((e) => {
-    if (!pluginQueries[e.id]) {
-      pluginQueries[e.id] = {
-        utilization: e.query,
-        total: e.totalQuery,
-      };
-    }
-  });
-  return _.defaults(pluginQueries, utilizationQueries);
-};
-
 export const UtilizationCard = () => {
   const { t } = useTranslation();
-
-  const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(
-    isDashboardsOverviewUtilizationItem,
-  );
-  const [dynamicItemExtensions] = useResolvedExtensions<DynamicDashboardsOverviewUtilizationItem>(
-    isDynamicDashboardsOverviewUtilizationItem,
-  );
-
-  const queries = React.useMemo(
-    () => getQueries([...itemExtensions, ...dynamicItemExtensions].map((e) => e.properties)),
-    [itemExtensions, dynamicItemExtensions],
-  );
 
   const [timestamps, setTimestamps] = React.useState<Date[]>();
   const [duration, setDuration] = useMetricDuration(t);
@@ -476,9 +440,9 @@ export const UtilizationCard = () => {
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
           title={t('public~CPU')}
-          utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total}
-          requestQuery={queries[OverviewQuery.CPU_UTILIZATION].requests}
+          utilizationQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].utilization}
+          totalQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].total}
+          requestQuery={utilizationQueries[OverviewQuery.CPU_UTILIZATION].requests}
           TopConsumerPopover={cpuPopover}
           duration={duration}
           humanizeValue={humanizeCpuCores}
@@ -486,9 +450,9 @@ export const UtilizationCard = () => {
         />
         <PrometheusUtilizationItem
           title={t('public~Memory')}
-          utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total}
-          requestQuery={queries[OverviewQuery.MEMORY_UTILIZATION].requests}
+          utilizationQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].utilization}
+          totalQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].total}
+          requestQuery={utilizationQueries[OverviewQuery.MEMORY_UTILIZATION].requests}
           TopConsumerPopover={memPopover}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}
@@ -496,8 +460,8 @@ export const UtilizationCard = () => {
         />
         <PrometheusUtilizationItem
           title={t('public~Filesystem')}
-          utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total}
+          utilizationQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].utilization}
+          totalQuery={utilizationQueries[OverviewQuery.STORAGE_UTILIZATION].total}
           TopConsumerPopover={storagePopover}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}
@@ -512,7 +476,7 @@ export const UtilizationCard = () => {
         />
         <PrometheusUtilizationItem
           title={t('public~Pod count')}
-          utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization}
+          utilizationQuery={utilizationQueries[OverviewQuery.POD_UTILIZATION].utilization}
           TopConsumerPopover={podPopover}
           duration={duration}
           humanizeValue={humanizeNumber}

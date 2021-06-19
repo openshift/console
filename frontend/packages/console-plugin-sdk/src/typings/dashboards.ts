@@ -290,15 +290,6 @@ export interface DashboardsCard extends Extension<ExtensionProperties.Dashboards
 
 export const isDashboardsCard = (e: Extension): e is DashboardsCard => e.type === 'Dashboards/Card';
 
-export interface DashboardsOverviewUtilizationItem
-  extends Extension<ExtensionProperties.DashboardsOverviewUtilizationItem> {
-  type: 'Dashboards/Overview/Utilization/Item';
-}
-
-export const isDashboardsOverviewUtilizationItem = (
-  e: Extension,
-): e is DashboardsOverviewUtilizationItem => e.type === 'Dashboards/Overview/Utilization/Item';
-
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {
   type: 'Dashboards/Overview/Inventory/Item';

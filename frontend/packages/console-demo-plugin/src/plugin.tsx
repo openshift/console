@@ -16,13 +16,11 @@ import {
   DashboardsTab,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
-  DashboardsOverviewUtilizationItem,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { OverviewQuery } from '@console/shared/src/promql/cluster-dashboard';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import TestIcon from './components/test-icon';
@@ -41,7 +39,6 @@ type ConsumedExtensions =
   | DashboardsCard
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
-  | DashboardsOverviewUtilizationItem
   | DashboardsOverviewResourceActivity
   | DashboardsOverviewPrometheusActivity
   | HorizontalNavTab;
@@ -176,17 +173,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'demo-inventory-group',
       icon: <DemoGroupIcon />,
-    },
-    flags: {
-      required: [TEST_MODEL_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Overview/Utilization/Item',
-    properties: {
-      id: OverviewQuery.STORAGE_UTILIZATION,
-      query: 'barQuery',
-      totalQuery: 'fooQuery',
     },
     flags: {
       required: [TEST_MODEL_FLAG],
