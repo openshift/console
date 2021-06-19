@@ -2,6 +2,30 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": ".",
+    "paths": {
+      "@console/ceph-storage-plugin/*": ["./packages/ceph-storage-plugin/*"],
+      "@console/container-security/*": ["./packages/container-security/*"],
+      "@console/dev-console/*": ["./packages/dev-console/*"],
+      "@console/gitops-plugin/*": ["./packages/gitops-plugin/*"],
+      "@console/helm-plugin/*": ["./packages/helm-plugin/*"],
+      "@console/rhoas-plugin/*": ["./packages/rhoas-plugin/*"],
+      "@console/internal/*": ["./public/*"],
+      "@console/insights-plugin/*": ["./packages/insights-plugin/*"],
+      "@console/knative-plugin/*": ["./packages/knative-plugin/*"],
+      "@console/kubevirt-plugin/*": ["./packages/kubevirt-plugin/*"],
+      "@console/local-storage-operator-plugin/*": ["./packages/local-storage-operator-plugin/*"],
+      "@console/metal3-plugin/*": ["./packages/metal3-plugin/*"],
+      "@console/operator-lifecycle-manager/*": ["./packages/operator-lifecycle-manager/*"],
+      "@console/patternfly/*": ["./packages/patternfly/*"],
+      "@console/pipelines-plugin/*": ["./packages/pipelines-plugin/*"],
+      "@console/plugin-sdk/*": ["./packages/console-plugin-sdk/*"],
+      "@console/dynamic-plugin-sdk/*": ["./packages/console-dynamic-plugin-sdk"],
+      "@console/shared/*": ["./packages/console-shared/*"],
+      "@console/topology/*": ["./packages/topology/*"],
+      "@console/network-attachment-definition-plugin/*": [
+        "./packages/network-attachment-definition-plugin/*"
+      ]
+    },
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
