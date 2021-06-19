@@ -254,7 +254,7 @@
   "Provided": "Provided",
   "KMS service {{value}} already exist": "KMS service {{value}} already exist",
   "An encryption key will be generated for each persistent volume created using this storageclass.": "An encryption key will be generated for each persistent volume created using this storageclass.",
-  "Encrypted PVs cannot be cloned expanded or create snapshots.": "Encrypted PVs cannot be cloned expanded or create snapshots.",
+  "PV expansion, snapshot and cloning operations are not supported for encrypted PVs.": "PV expansion, snapshot and cloning operations are not supported for encrypted PVs.",
   "The last saved values will be updated": "The last saved values will be updated",
   "The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.": "The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.",
   "The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.": "The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.",
