@@ -15,10 +15,10 @@ import {
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
-import { isLabeledTemplate, selectVM } from '../../../selectors/vm-template/basic';
+import { selectVM } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
-import { VMTemplateLabel } from '../label';
 import { createVMAction } from '../utils';
+import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 
 import './vm-template-table.scss';
 
@@ -36,14 +36,13 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   const { t } = useTranslation();
   const osName = getOperatingSystemName(template);
   const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
-  const isLabel = isLabeledTemplate(t, template);
   return (
     <Stack hasGutter>
-      {isLabel && (
+      {
         <StackItem>
-          <VMTemplateLabel template={template} />
+          <VMTemplateCommnunityLabel template={template} />
         </StackItem>
-      )}
+      }
       {osName && <StackItem>{osName}</StackItem>}
       <StackItem>
         <div className="kubevirt-vm-template-popover">

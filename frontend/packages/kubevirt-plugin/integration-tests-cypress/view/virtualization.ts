@@ -32,7 +32,7 @@ export const virtualization = {
           .click(),
       ),
     testProvider: (templateName: string, provider: string) =>
-      getRow(templateName, () => cy.byTestID('template-provider').should('have.text', provider)),
+      getRow(templateName, () => cy.byTestID('template-provider').should('include.text', provider)),
     testSupport: (templateName: string, support?: string, parentSupport?: string) => {
       getRow(templateName, () => cy.byTestID('template-details').click());
       if (support) {
