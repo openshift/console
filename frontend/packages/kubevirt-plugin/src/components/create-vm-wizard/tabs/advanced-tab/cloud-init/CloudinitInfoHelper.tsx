@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ExternalLink, FieldLevelHelp } from '@console/internal/components/utils';
 import { CLOUD_INIT_DOC_LINK } from '../../../../../utils/strings';
 
-export const CloudInitInfoHelper = () => {
+const CloudInitInfoHelper = () => {
   const { t } = useTranslation();
   return (
     <FieldLevelHelp>
@@ -28,3 +28,5 @@ export const CloudInitInfoHelper = () => {
     </FieldLevelHelp>
   );
 };
+
+export default CloudInitInfoHelper;

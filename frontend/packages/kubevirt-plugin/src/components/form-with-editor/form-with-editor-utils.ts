@@ -15,7 +15,7 @@ export enum ViewComponent {
   sideBySide = 'sideBySide',
 }
 
-export type FieldsMapper = {
+type FieldsMapper = {
   [key: string]: { path: string; isArray?: boolean };
 };
 
@@ -32,6 +32,7 @@ export const formModifier = (
   data: string,
   setData: Function,
   setAlert: Function,
+  alert: string,
   alertTitle: string,
   onFormChange?: FormOnChange,
 ): React.ReactNode[] => {

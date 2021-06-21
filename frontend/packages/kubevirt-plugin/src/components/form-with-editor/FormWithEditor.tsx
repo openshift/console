@@ -3,14 +3,13 @@ import cn from 'classnames';
 import yamlParser from 'js-yaml';
 import { MonacoEditorProps } from 'react-monaco-editor';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
-import {
-  EditorPosition,
-  FieldsMapper,
-  formModifier,
-  ViewComponent,
-} from './form-with-editor-utils';
+import { EditorPosition, formModifier, ViewComponent } from './form-with-editor-utils';
 
 import './form-with-editor.scss';
+
+type FieldsMapper = {
+  [key: string]: { path: string; isArray?: boolean };
+};
 
 type FormWithEditorProps = {
   className?: string;
@@ -30,6 +29,7 @@ type FormWithEditorProps = {
   editorProps?: MonacoEditorProps;
   view?: string;
   alertTitle: string;
+  setIsYamlValid?: Function;
 };
 
 const FormWithEditor: React.FC<FormWithEditorProps> = ({
@@ -46,33 +46,48 @@ const FormWithEditor: React.FC<FormWithEditorProps> = ({
   editorProps = {},
   view = ViewComponent.sideBySide,
   alertTitle,
+  setIsYamlValid,
 }) => {
   const [data, setData] = React.useState<string>();
-  const [alert, setAlert] = React.useState<string>(alertTitle);
+  const [alert, setAlert] = React.useState<string>();
 
   const Form = React.useMemo(
-    () => formModifier(children, fieldsMapper, data, setData, setAlert, alert, onFormChange),
-    [children, fieldsMapper, data, alert, onFormChange],
+    () =>
+      formModifier(
+        children,
+        fieldsMapper,
+        data,
+        setData,
+        setAlert,
+        alert,
+        alertTitle,
+        onFormChange,
+      ),
+    [children, fieldsMapper, data, alert, alertTitle, onFormChange],
   );
 
-  React.useEffect(() => {
+  React.useMemo(() => {
     initialData && setData(initialData);
   }, [initialData]);
 
   React.useEffect(() => {
-    const dataAsJS = {};
     try {
-      Object.assign(dataAsJS, yamlParser.load(data));
+      data && onChange && onChange(data, yamlParser.load(data));
+      setIsYamlValid && setIsYamlValid(true);
     } catch (e) {
+      setIsYamlValid && setIsYamlValid(false);
       console.log(e?.message); // eslint-disable-line no-console
     }
-    onChange && onChange(data, dataAsJS);
-  }, [data, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, setIsYamlValid]);
 
-  const onChangeYaml = (newValue: any) => {
-    setData(newValue);
-    return {};
-  };
+  const onChangeYaml = React.useCallback(
+    (newValue: any) => {
+      setData(newValue);
+      return {};
+    },
+    [setData],
+  );
 
   return (
     <div
@@ -101,5 +116,5 @@ const FormWithEditor: React.FC<FormWithEditorProps> = ({
   );
 };
 
-export { EditorPosition, ViewComponent, FieldsMapper };
+export { FieldsMapper, EditorPosition, ViewComponent };
 export default FormWithEditor;
