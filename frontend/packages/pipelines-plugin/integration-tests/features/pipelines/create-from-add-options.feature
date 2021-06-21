@@ -89,8 +89,8 @@ Feature: Create Pipeline from Add Options
               And user is able to see workload "<pipeline_name>" in topology page
 
         Examples:
-                  | docker_git_url                         | pipeline_name   |
-                  | https://github.com/sclorg/nginx-ex.git | docker-pipeline |
+                  | docker_git_url                                  | pipeline_name   |
+                  | https://github.com/openshift/pipelines-vote-api | docker-pipeline |
 
 
         @regression
