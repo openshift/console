@@ -456,12 +456,14 @@ export const managePipelineResources = async (
   if (git.secret) {
     const secret = await k8sGet(SecretModel, git.secret, project.name);
     const gitUrl = GitUrlParse(git.url);
-    const secretAnnotation = getSecretAnnotations({
-      key: 'git',
-      value:
-        gitUrl.protocol === 'ssh' ? gitUrl.resource : `${gitUrl.protocol}://${gitUrl.resource}`,
-    });
-    secret.metadata.annotations = _.merge(secret.metadata.annotations, secretAnnotation);
+    secret.metadata.annotations = getSecretAnnotations(
+      {
+        key: 'git',
+        value:
+          gitUrl.protocol === 'ssh' ? gitUrl.resource : `${gitUrl.protocol}://${gitUrl.resource}`,
+      },
+      secret.metadata.annotations,
+    );
     await k8sUpdate(SecretModel, secret, project.name);
 
     const pipelineServiceAccount = await k8sGet(
