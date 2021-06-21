@@ -53,9 +53,13 @@ func TestResourceQuotaRace(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.releaseName, func(t *testing.T) {
 			// Connect to client
-			kubeconfig := filepath.Join(
-				os.Getenv("HOME"), ".kube", "config",
-			)
+			kubeconfig, ok := os.LookupEnv("KUBECONFIG")
+			if !ok {
+				kubeconfig = filepath.Join(
+					os.Getenv("HOME"), ".kube", "config",
+				)
+			}
+
 			config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 			if err != nil {
 				t.Errorf("Error occurred while creating config: %v", err)
