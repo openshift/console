@@ -1104,11 +1104,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   {olmTargetNamespaces === '' ? (
                     t('olm~All Namespaces')
                   ) : (
-                    <ResourceLink
-                      kind="Namespace"
-                      name={props.obj.metadata.namespace}
-                      title={props.obj.metadata.uid}
-                    />
+                    <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} />
                   )}
                 </dd>
               </ResourceSummary>

@@ -75,18 +75,13 @@ const IngressTableRow = ({ obj: ingress, index, key, style }) => {
           kind={kind}
           name={ingress.metadata.name}
           namespace={ingress.metadata.namespace}
-          title={ingress.metadata.uid}
         />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={ingress.metadata.namespace}
-          title={ingress.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={ingress.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={ingress.metadata.labels} />

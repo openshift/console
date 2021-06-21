@@ -360,11 +360,7 @@ export const ResourceQuotasList = (props) => {
           columnID="namespace"
         >
           {rq.metadata.namespace ? (
-            <ResourceLink
-              kind="Namespace"
-              name={rq.metadata.namespace}
-              title={rq.metadata.namespace}
-            />
+            <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
           ) : (
             t('public~None')
           )}

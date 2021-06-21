@@ -73,18 +73,12 @@ export const InstallPlanTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key
           kind={referenceForModel(InstallPlanModel)}
           namespace={obj.metadata.namespace}
           name={obj.metadata.name}
-          title={obj.metadata.uid}
         />
       </TableData>
 
       {/* Namespace */}
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-          displayName={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
 
       {/* Status */}

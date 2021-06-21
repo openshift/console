@@ -318,7 +318,6 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
           kind={ImageStreamsReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

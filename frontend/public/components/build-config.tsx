@@ -121,7 +121,6 @@ const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
           kind={BuildConfigsReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

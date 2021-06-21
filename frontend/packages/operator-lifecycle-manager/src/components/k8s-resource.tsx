@@ -146,12 +146,7 @@ export const linkForCsvResource = (
   (providedAPI?.resources ?? []).some(({ kind, name }) => name && kind === obj.kind) ? (
     <OperandLink obj={obj} csvName={csvName} />
   ) : (
-    <ResourceLink
-      kind={obj.kind}
-      name={obj.metadata.name}
-      namespace={obj.metadata.namespace}
-      title={obj.metadata.name}
-    />
+    <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
   );
 
 export const Resources: React.FC<ResourcesProps> = (props) => {

@@ -303,11 +303,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
     return (
       <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-          <ResourceLink
-            kind={machineConfigPoolReference}
-            name={obj.metadata.name}
-            title={obj.metadata.name}
-          />
+          <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
         </TableData>
         <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
           {_.get(obj, 'status.configuration.name') ? (

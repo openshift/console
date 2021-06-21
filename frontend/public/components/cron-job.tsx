@@ -52,7 +52,6 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
         <ResourceLink
           kind={kind}
           name={cronjob.metadata.name}
-          title={cronjob.metadata.name}
           namespace={cronjob.metadata.namespace}
         />
       </TableData>
@@ -60,11 +59,7 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={cronjob.metadata.namespace}
-          title={cronjob.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>
       <TableData className={tableColumnClasses[3]}>

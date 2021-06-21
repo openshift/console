@@ -42,12 +42,7 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
-        />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <OBStatus ob={obj} />

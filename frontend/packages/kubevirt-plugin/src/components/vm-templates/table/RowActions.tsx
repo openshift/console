@@ -69,7 +69,6 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
         <StackItem>
           <Link
             to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-            title={template.metadata.uid}
             data-test-id={template.metadata.name}
             className="co-resource-item__resource-name"
           >

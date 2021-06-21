@@ -184,22 +184,13 @@ export const ReplicationControllersList = (props) => {
     return (
       <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={kind}
-            name={obj.metadata.name}
-            namespace={obj.metadata.namespace}
-            title={obj.metadata.uid}
-          />
+          <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
         </TableData>
         <TableData
           className={classNames(tableColumnClasses[1], 'co-break-word')}
           columnID="namespace"
         >
-          <ResourceLink
-            kind="Namespace"
-            name={obj.metadata.namespace}
-            title={obj.metadata.namespace}
-          />
+          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
           <Link
