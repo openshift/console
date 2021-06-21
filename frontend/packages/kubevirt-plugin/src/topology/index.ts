@@ -6,7 +6,7 @@ export const getKubevirtTopologyDataModel = () =>
 export const getKubevirtComponentFactory = () =>
   import(
     './components/kubevirtComponentFactory' /* webpackChunkName: "kubevirt-topology-components" */
-  ).then((m) => m.getKubevirtComponentFactory());
+  ).then((m) => m.getKubevirtComponentFactory);
 
 export const getIsKubevirtResource = () =>
   import('./isKubevirtResource' /* webpackChunkName: "kubevirt-topology-components" */).then(

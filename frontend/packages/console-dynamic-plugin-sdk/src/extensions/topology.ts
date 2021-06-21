@@ -10,7 +10,7 @@ import {
   ViewComponentFactory,
 } from '../api/topology-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
-import { WatchK8sResources } from './console-types';
+import { WatchK8sResourcesGeneric } from './console-types';
 
 /** Getter for a ViewComponentFactory */
 export type TopologyComponentFactory = ExtensionDeclaration<
@@ -39,7 +39,7 @@ export type TopologyDataModelFactory = ExtensionDeclaration<
     /** Priority for the factory */
     priority: number;
     /** Resources to be fetched from useK8sWatchResources hook. */
-    resources?: CodeRef<(namespace: string) => WatchK8sResources<any>>;
+    resources?: WatchK8sResourcesGeneric;
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */

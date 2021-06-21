@@ -93,7 +93,7 @@ export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConn
   return e.type === 'Topology/CreateConnector';
 };
 
-export const isTopologyDisplayFilter = (e: Extension): e is TopologyDisplayFilters => {
+export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters => {
   return e.type === 'Topology/DisplayFilters';
 };
 

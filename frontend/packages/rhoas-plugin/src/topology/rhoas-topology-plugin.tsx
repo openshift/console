@@ -1,6 +1,4 @@
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { Plugin } from '@console/plugin-sdk';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import {
@@ -9,7 +7,7 @@ import {
   TopologyDataModelFactory,
 } from '@console/topology/src/extensions/topology';
 import { FLAG_RHOAS } from '../const';
-import { KafkaConnectionModel } from '../models';
+import { getRhoasWatchedResources } from './rhoasResources';
 import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 
 export type TopologyConsumedExtensions =
@@ -17,24 +15,11 @@ export type TopologyConsumedExtensions =
   | TopologyDataModelFactory
   | TopologyCreateConnector;
 
-const getRhoasWatchedResources = (
-  namespace: string,
-): WatchK8sResources<{ kafkaConnections: K8sResourceKind[] }> => {
-  return {
-    kafkaConnections: {
-      isList: true,
-      kind: referenceForModel(KafkaConnectionModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
 export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getRhoasComponentFactory,
+      getFactory: applyCodeRefSymbol(getRhoasComponentFactory),
     },
     flags: {
       required: [FLAG_RHOAS],
@@ -45,7 +30,7 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
     properties: {
       id: 'rhoas-topology-model-factory',
       priority: 400,
-      getDataModel: getRhoasTopologyDataModel,
+      getDataModel: applyCodeRefSymbol(getRhoasTopologyDataModel),
       resources: getRhoasWatchedResources,
       workloadKeys: ['kafkaConnections'],
     },
