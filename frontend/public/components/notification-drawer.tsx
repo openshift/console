@@ -88,7 +88,7 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
 
 export const getAlertActions = (actionsExtensions: AlertAction[]) => {
   const alertActions = new Map().set('AlertmanagerReceiversNotConfigured', {
-    text: i18next.t('notification-drawer~Configure'),
+    text: i18next.t('public~Configure'),
     path: '/monitoring/alertmanagerconfig',
   });
   actionsExtensions.forEach(({ properties }) =>

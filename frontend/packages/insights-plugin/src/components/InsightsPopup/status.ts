@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
+import i18next from 'i18next';
+
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { mapMetrics, isError, isWaitingOrDisabled } from './mappers';
@@ -11,7 +13,7 @@ export const getClusterInsightsComponentStatus = (
   if (error) {
     return {
       state: HealthState.NOT_AVAILABLE,
-      message: 'Not available',
+      message: i18next.t('insights-plugin~Not available'),
     };
   }
   if (!response) {
@@ -20,11 +22,11 @@ export const getClusterInsightsComponentStatus = (
   const values = mapMetrics(response);
 
   if (isError(values)) {
-    return { state: HealthState.ERROR, message: 'Not available' };
+    return { state: HealthState.ERROR, message: i18next.t('insights-plugin~Not available') };
   }
 
   if (!isError(values) && isWaitingOrDisabled(values)) {
-    return { state: HealthState.UNKNOWN, message: 'Not available' };
+    return { state: HealthState.UNKNOWN, message: i18next.t('insights-plugin~Not available') };
   }
 
   // Insights Operator has sent rules results

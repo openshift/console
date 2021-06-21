@@ -25,5 +25,7 @@
   "API version": "API version",
   "Restore": "Restore",
   "Administrator": "Administrator",
+  "Cluster": "Cluster",
+  "Control Plane": "Control Plane",
   "VolumeSnapshotContents": "VolumeSnapshotContents"
 }

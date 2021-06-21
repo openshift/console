@@ -24,5 +24,7 @@
   "Status": "ステータス",
   "API version": "API バージョン",
   "Restore": "復元",
-  "Administrator": "管理者"
+  "Administrator": "管理者",
+  "Cluster": "クラスター",
+  "Control Plane": "コントロールプレーン"
 }
