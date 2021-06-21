@@ -475,5 +475,89 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.componentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "kubevirt-topology-model-factory",
+      "priority": 200,
+      "resources": {
+        "virtualmachines": {
+          "model": { "kind": "VirtualMachine", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachineinstances": {
+          "model": { "kind": "VirtualMachineInstance", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachinetemplates": {
+          "opts": {
+            "kind": "Template",
+            "isList": true,
+            "optional": true,
+            "selector": {
+              "matchLabels": {
+                "template.kubevirt.io/type": "base"
+              }
+            }
+          }
+        },
+        "migrations": {
+          "model": { "kind": "VirtualMachineInstanceMigration", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "dataVolumes": {
+          "model": { "kind": "DataVolume", "group": "cdi.kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "vmImports": {
+          "model": { "kind": "VirtualMachineImport", "group": "v2v.kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "pods": {
+          "opts": {
+            "isList": true,
+            "kind": "Pod",
+            "optional": true
+          }
+        }
+      },
+      "workloadKeys": ["virtualmachines"],
+      "getDataModel": {
+        "$codeRef": "topology.getDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "topology.isResourceDepicted"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]
