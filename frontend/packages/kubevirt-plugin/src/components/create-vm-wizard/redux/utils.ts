@@ -4,7 +4,6 @@ import { updateImportProvidersState } from './state-update/import-provider-tab-s
 import { updateStorageTabState } from './state-update/storage-tab-state-update';
 import { updateVmSettingsState } from './state-update/vm-settings-tab-state-update';
 import { UpdateOptions } from './types';
-import { setAdvancedTabValidity } from './validations/advanced-tab-validation';
 import {
   setImportProvidersTabValidity,
   validateImportProviderTab,
@@ -42,7 +41,6 @@ const isTabValidResolver = {
   [VMWizardTab.VM_SETTINGS]: setVmSettingsTabValidity,
   [VMWizardTab.NETWORKING]: setNetworksTabValidity,
   [VMWizardTab.STORAGE]: setStoragesTabValidity,
-  [VMWizardTab.ADVANCED]: setAdvancedTabValidity,
 };
 
 const finalizeTabResolver = {

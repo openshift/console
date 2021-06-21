@@ -1,32 +1,33 @@
-.kubevirt-create-vm-modal__cloud-init-base64 > input[type="checkbox"] {
-  margin: -0.1em 0 0 !important;
-}
-
-.kubevirt-create-vm-modal__cloud-init-custom-script-text-area {
-  height: 50vh !important;
-  resize: vertical;
-}
-
-.kubevirt-create-vm-modal__cloud-init-ssh-keys-text-area {
-  resize: vertical;
-}
-
-.kubevirt-create-vm-modal__cloud-init-ssh-keys-row {
-  padding-bottom: 1rem;
-}
-
-.kubevirt-create-vm-modal__cloud-init-remove-button {
-  color: var( --pf-global--Color--200) !important;
-  &:active,
-  &:focus,
-  &:hover {
-    color: var(--pf-global--Color--100) !important;
-  }
-  &:disabled {
-    color: var(--pf-global--disabled-color--200) !important;
-  }
-}
-
 .kubevirt-create-vm-modal__cloud-init-help-link {
   padding-left: var(--pf-global--spacer--xs);
+}
+
+.kv-cloudinit-advanced-tab-with-editor--form {
+  width: 50%;
+  margin-left: var(--pf-global--spacer--lg);
+}
+
+.kv-cloudinit-advanced-tab-with-editor--main {
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.kv-cloudinit-advanced-tab-with-editor--title_main {
+  display: inline-flex;
+  align-items: center;
+}
+
+.kv-cloudinit-advanced-tab-with-editor--title_radio_buttons {
+  display: inline-flex;
+  margin-left: var(--pf-global--spacer--lg);
+  label {
+    margin-right: var(--pf-global--spacer--lg);
+  }
+}
+
+.kv-cloudint-advanced-tab-with-editor--validation-text .pf-c-form__helper-text.pf-m-success {
+  color: var(--pf-c-form__group-label-help--Color);
+}
+
+.kv-cloudint-advanced-tab-with-editor--ssh-key-row.pf-l-split {
+  margin-bottom: var(--pf-global--spacer--sm);
 }
