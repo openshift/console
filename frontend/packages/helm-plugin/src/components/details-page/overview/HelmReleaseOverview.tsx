@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceSummary, SectionHeading } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { ResourceSummary } from '@console/internal/components/utils/details-page';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { HelmRelease } from '../../../types/helm-types';
 import HelmChartSummary from './HelmChartSummary';
 

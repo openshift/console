@@ -103,4 +103,5 @@ export type DetailsResourceAlertContent = {
   content: React.Component | undefined;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
   actionLinks?: React.ReactNode;
+  onClose?: () => void;
 };
