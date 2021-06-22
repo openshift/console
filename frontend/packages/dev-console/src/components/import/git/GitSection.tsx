@@ -25,17 +25,17 @@ import AdvancedGitOptions from './AdvancedGitOptions';
 import SampleRepo from './SampleRepo';
 
 export interface GitSectionProps {
+  buildStrategy: BuildStrategyType;
+  builderImages: NormalizedBuilderImages;
   defaultSample?: { url: string; ref?: string; dir?: string };
   showSample?: boolean;
-  buildStrategy?: string;
-  builderImages: NormalizedBuilderImages;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
-  defaultSample,
-  showSample = !!defaultSample,
   buildStrategy,
   builderImages,
+  defaultSample,
+  showSample = !!defaultSample,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
@@ -100,10 +100,10 @@ const GitSection: React.FC<GitSectionProps> = ({
       const repositoryStatus = gitService && (await gitService.isRepoReachable());
 
       setRepoStatus(repositoryStatus);
-      setFieldValue('git.isUrlValidating', false);
 
       if (repositoryStatus !== RepoStatus.Reachable) {
         setValidated(ValidatedOptions.warning);
+        setFieldValue('git.isUrlValidating', false);
         return;
       }
 
@@ -117,7 +117,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
-      if (buildStrategy === 'Devfile' && !values.devfile?.devfileSourceUrl) {
+      if (buildStrategy === BuildStrategyType.Devfile && !values.devfile?.devfileSourceUrl) {
         // No need to check the existence of the file, waste of a call to the gitService for this need
         const devfileContents = gitService && (await gitService.getDevfileContent());
         if (!devfileContents) {
@@ -132,6 +132,8 @@ const GitSection: React.FC<GitSectionProps> = ({
       } else {
         setValidated(ValidatedOptions.success);
       }
+
+      setFieldValue('git.isUrlValidating', false);
     },
     [
       setFieldValue,
@@ -246,9 +248,6 @@ const GitSection: React.FC<GitSectionProps> = ({
     if (values.git.isUrlValidating) {
       return `${t('devconsole~Validating')}...`;
     }
-    if (buildStrategy === 'Devfile' && validated === ValidatedOptions.error) {
-      return t('devconsole~No Devfile present, unable to continue');
-    }
     if (validated === ValidatedOptions.success) {
       return t('devconsole~Validated');
     }
@@ -259,6 +258,18 @@ const GitSection: React.FC<GitSectionProps> = ({
       return t(
         'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
+    }
+    if (validated === ValidatedOptions.error && buildStrategy === BuildStrategyType.Devfile) {
+      return t('devconsole~No Devfile present, unable to continue.');
+    }
+    if (buildStrategy === BuildStrategyType.Source) {
+      return t('devconsole~Repository URL to build and deploy your code from source.');
+    }
+    if (buildStrategy === BuildStrategyType.Docker) {
+      return t('devconsole~Repository URL to build and deploy your code from a Dockerfile.');
+    }
+    if (buildStrategy === BuildStrategyType.Devfile) {
+      return t('devconsole~Repository URL to build and deploy your code from a Devfile.');
     }
     return '';
   };

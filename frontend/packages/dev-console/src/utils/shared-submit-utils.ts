@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   GitImportFormData,
@@ -47,10 +48,13 @@ export const createService = (
 
   let ports = imagePorts;
   const buildStrategy = formData.build?.strategy;
-  if (buildStrategy === 'Docker' && unknownTargetPort) {
+  if (buildStrategy === BuildStrategyType.Docker && unknownTargetPort) {
     const port = { containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' };
     ports = [port];
-  } else if (buildStrategy === 'Devfile' && !_.isEmpty(originalService?.spec?.ports)) {
+  } else if (
+    buildStrategy === BuildStrategyType.Devfile &&
+    !_.isEmpty(originalService?.spec?.ports)
+  ) {
     ports = [
       ...originalService.spec.ports.map((port) => ({
         name: port.name,
@@ -133,12 +137,12 @@ export const createRoute = (
 
   let targetPort: string;
   const buildStrategy = formData.build?.strategy;
-  if (buildStrategy === 'Docker' && unknownTargetPort) {
+  if (buildStrategy === BuildStrategyType.Docker && unknownTargetPort) {
     targetPort = makePortName({
       containerPort: _.toInteger(unknownTargetPort),
       protocol: 'TCP',
     });
-  } else if (buildStrategy === 'Devfile') {
+  } else if (buildStrategy === BuildStrategyType.Devfile) {
     targetPort = originalRoute?.spec?.port?.targetPort;
   } else if (unknownTargetPort) {
     targetPort = makePortName({ containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' });

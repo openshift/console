@@ -1,6 +1,7 @@
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
 import {
@@ -616,7 +617,7 @@ export const createOrUpdateResources = async (
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
 
-  if (buildStrategy === 'Devfile') {
+  if (buildStrategy === BuildStrategyType.Devfile) {
     if (verb !== 'create') {
       throw new Error(t('devconsole~Cannot update Devfile resources'));
     }
@@ -713,7 +714,11 @@ export const createOrUpdateResources = async (
     );
   }
 
-  if (!_.isEmpty(ports) || buildStrategy === 'Docker' || buildStrategy === 'Source') {
+  if (
+    !_.isEmpty(ports) ||
+    buildStrategy === BuildStrategyType.Docker ||
+    buildStrategy === BuildStrategyType.Source
+  ) {
     const originalService = _.get(appResources, 'service.data');
     const service = createService(formData, imageStream, originalService);
 
