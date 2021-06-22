@@ -79,6 +79,8 @@ export const getUserAnnotations = (allAnnotations: { [key: string]: string }) =>
     'openshift.io/generated-by',
     'image.openshift.io/triggers',
     'alpha.image.policy.openshift.io/resolve-names',
+    'jarFileName',
+    'kubectl.kubernetes.io/last-applied-configuration',
   ];
   return _.omit(allAnnotations, defaultAnnotations);
 };
