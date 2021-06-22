@@ -4,11 +4,9 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { ResourceIcon } from './resource-icon';
+import { resourcePathFromModel } from './resource-link';
 import {
-  groupVersionFor,
   K8sResourceCommon,
-  referenceForGroupVersionKind,
-  referenceForModel,
   referenceForOwnerRef,
   OwnerReference,
   modelFor,
@@ -19,38 +17,39 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { ResourceLink } from '.';
 
-export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = (props) => {
-  const { csvName, namespace, owner, className } = props;
-  const name = owner.name;
-  const { group, version } = groupVersionFor(owner.apiVersion);
-  const kind = owner.kind;
-
-  const reference = referenceForGroupVersionKind(group)(version)(kind);
-  const { namespaced } = modelFor(reference);
-
-  const link = `/k8s/ns/${namespace}/${referenceForModel(
-    ClusterServiceVersionModel,
-  )}/${csvName}/${reference}/${name}`;
-
+export const ManagedByOperatorResourceLink: React.SFC<ManagerLinkProps> = ({
+  csvName,
+  namespace,
+  owner,
+  className,
+}) => {
+  const ownerGroupVersionKind = referenceForOwnerRef(owner);
+  const { apiGroup, kind, namespaced } = modelFor(ownerGroupVersionKind) ?? {};
+  const ownerIsCSV =
+    apiGroup === ClusterServiceVersionModel.apiGroup && kind === ClusterServiceVersionModel.kind;
+  const link = resourcePathFromModel(ClusterServiceVersionModel, csvName, namespace);
   return (
     <span className={className}>
       {namespaced ? (
         <>
-          <ResourceIcon kind={referenceForOwnerRef(owner)} />
-          <Link to={link} className="co-resource-item__resource-name" data-test-operand-link={name}>
-            {name}
+          <ResourceIcon kind={ownerGroupVersionKind} />
+          <Link
+            to={ownerIsCSV ? link : `${link}/${ownerGroupVersionKind}/${owner.name}`}
+            className="co-resource-item__resource-name"
+            data-test-operand-link={owner.name}
+          >
+            {owner.name}
           </Link>
         </>
       ) : (
-        <ResourceLink kind={reference} name={name} />
+        <ResourceLink kind={ownerGroupVersionKind} name={owner.name} />
       )}
     </span>
   );
 };
 
-export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
+export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = ({ obj, className }) => {
   const { t } = useTranslation();
-  const { obj, className } = props;
   const [data, setData] = React.useState<ClusterServiceVersionKind[] | undefined>();
   const namespace = obj.metadata.namespace;
   React.useEffect(() => {
@@ -67,20 +66,17 @@ export const ManagedByOperatorLink: React.SFC<ManagedByLinkProps> = (props) => {
   const owner = findOwner(obj, data);
   const csv = data && owner ? matchOwnerAndCSV(owner, data) : undefined;
 
-  if (owner && csv) {
-    return (
-      <div className={classNames('co-m-pane__heading-owner', className)}>
-        {t('public~Managed by')}{' '}
-        <ManagedByOperatorResourceLink
-          className="co-resource-item"
-          namespace={namespace}
-          csvName={csv.metadata.name}
-          owner={owner}
-        />
-      </div>
-    );
-  }
-  return null;
+  return owner && csv ? (
+    <div className={classNames('co-m-pane__heading-owner', className)}>
+      {t('public~Managed by')}{' '}
+      <ManagedByOperatorResourceLink
+        className="co-resource-item"
+        namespace={namespace}
+        csvName={csv.metadata.name}
+        owner={owner}
+      />
+    </div>
+  ) : null;
 };
 
 type ManagedByLinkProps = {
