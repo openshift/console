@@ -25,6 +25,7 @@ declare global {
       Login(): void;
       deleteTestProject(namespace: string): void;
       pauseVM(vmData: VirtualMachineData): void;
+      uploadFromCLI(dvName: string, ns: string, imagePath: string, size: string): void;
     }
   }
 }
@@ -146,7 +147,7 @@ Cypress.Commands.add('cdiCloner', (namespace: string) => {
 Cypress.Commands.add('waitForLoginPrompt', (vmName: string, namespace: string) => {
   cy.exec(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${vmName} ${namespace}`, {
     failOnNonZeroExit: false,
-    timeout: 180000,
+    timeout: 600000,
   });
 });
 
@@ -169,3 +170,19 @@ Cypress.Commands.add('pauseVM', (vmData: VirtualMachineData) => {
     timeout: 180000,
   });
 });
+
+Cypress.Commands.add(
+  'uploadFromCLI',
+  (dvName: string, ns: string, imagePath: string, size: string) => {
+    if (Cypress.env('STORAGE_CLASS') === 'ocs-storagecluster-ceph-rbd') {
+      cy.exec(
+        `virtctl image-upload dv ${dvName} --image-path=${imagePath} --size=${size}Gi --storage-class=ocs-storagecluster-ceph-rbd --access-mode=ReadWriteMany --block-volume -n ${ns} --insecure || true`,
+      );
+    }
+    if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {
+      cy.exec(
+        `virtctl image-upload dv ${dvName} --image-path=${imagePath} --size=${size}Gi --storage-class=hostpath-provisioner --access-mode=ReadWriteOnce -n ${ns} --insecure || true`,
+      );
+    }
+  },
+);

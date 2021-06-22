@@ -49,4 +49,5 @@ export type VirtualMachineData = {
   cdrom?: boolean;
   sshEnable?: boolean;
   startOnCreation?: boolean;
+  sourceAvailable?: boolean;
 };
