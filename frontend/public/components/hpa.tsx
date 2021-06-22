@@ -256,18 +256,13 @@ const HorizontalPodAutoscalersTableRow: RowFunction<K8sResourceKind> = ({
           kind={HorizontalPodAutoscalersReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />

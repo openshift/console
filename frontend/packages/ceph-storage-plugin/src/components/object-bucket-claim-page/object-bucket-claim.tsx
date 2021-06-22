@@ -48,31 +48,17 @@ const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
-        />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2])}>
         <OBCStatus obc={obj} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[3])}>
         {isBound(obj) ? (
-          <ResourceLink
-            kind="Secret"
-            name={obj.metadata.name}
-            title={obj.metadata.name}
-            namespace={obj.metadata.namespace}
-          />
+          <ResourceLink kind="Secret" name={obj.metadata.name} namespace={obj.metadata.namespace} />
         ) : (
           '-'
         )}
@@ -105,7 +91,6 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                   <ResourceLink
                     kind="Secret"
                     name={obj.metadata.name}
-                    title={obj.metadata.name}
                     namespace={obj.metadata.namespace}
                   />
                 </dd>

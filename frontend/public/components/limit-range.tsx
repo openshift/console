@@ -39,11 +39,7 @@ export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
         />
       </TableData>
       <TableData className={tableColumnClasses[1]} columnID="namespace">
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />

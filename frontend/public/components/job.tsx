@@ -63,22 +63,13 @@ const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
   return (
     <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={job.metadata.name}
-          namespace={job.metadata.namespace}
-          title={job.metadata.uid}
-        />
+        <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={job.metadata.namespace}
-          title={job.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={job.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={job.metadata.labels} />

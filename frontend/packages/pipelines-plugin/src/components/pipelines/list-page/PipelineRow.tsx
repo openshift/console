@@ -41,7 +41,6 @@ const PipelineRow: RowFunction<PipelineWithLatest> = ({ obj, index, key, style }
           kind={pipelineReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]} columnID="namespace">

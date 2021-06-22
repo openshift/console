@@ -59,7 +59,6 @@ const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) =
           kind={machineReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

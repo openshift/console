@@ -75,7 +75,6 @@ const ClusterOperatorTableRow: RowFunction<ClusterOperator> = ({ obj, index, key
           kind={clusterOperatorReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>

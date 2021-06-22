@@ -202,16 +202,10 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, ke
           kind={referenceForModel(SubscriptionModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-          displayName={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />

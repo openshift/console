@@ -74,18 +74,13 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
           kind="Secret"
           name={secret.metadata.name}
           namespace={secret.metadata.namespace}
-          title={secret.metadata.uid}
         />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={secret.metadata.namespace}
-          title={secret.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {secret.type}

@@ -21,7 +21,6 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
         kind={taskRunsReference}
         name={obj.metadata.name}
         namespace={obj.metadata.namespace}
-        title={obj.metadata.name}
         data-test-id={obj.metadata.name}
       />
     </TableData>
