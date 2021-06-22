@@ -29,9 +29,18 @@ describe('resource-label-utils', () => {
       });
     });
 
-    it('should return mergedData with newResource annotations ', () => {
+    it('should return mergedData with default and user annotations with correct values', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.metadata.annotations).toEqual(newDeployment.metadata.annotations);
+      expect(mergedResource.metadata.annotations).toEqual({
+        'alpha.image.policy.openshift.io/resolve-names': '*',
+        'app.openshift.io/vcs-ref': 'master',
+        'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
+        'image.openshift.io/triggers':
+          '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"true"}]',
+        'openshift.io/generated-by': 'OpenShiftWebConsole',
+        'app.openshift.io/connects-to': 'database',
+        'deployment.kubernetes.io/revision': '4',
+      });
     });
 
     it('should return mergedData with newResource and originalResource annotations if originalResource is a devfile resource', () => {
