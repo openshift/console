@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next, { TFunction } from 'i18next';
-
+import { QuickStartContext } from '@patternfly/quickstarts';
 import { Dropdown } from '../utils';
 import {
   createModalLauncher,
@@ -13,6 +13,7 @@ import {
 
 const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { i18n, t } = useTranslation();
+  const { setLng, setResourceBundle } = React.useContext(QuickStartContext);
   const supportedLocales = {
     en: 'English',
     zh: '中文',
@@ -33,6 +34,9 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
     e.preventDefault();
     i18n.changeLanguage(language ? language : 'en');
     localStorage.setItem('bridge/language', language);
+    const resourceBundle = i18n.getResourceBundle(language || 'en', 'quickstart');
+    setLng(language || 'en');
+    setResourceBundle(resourceBundle);
     close();
   };
 

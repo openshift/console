@@ -1,50 +1,34 @@
-import { createContext, useCallback } from 'react';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
-import { QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY, QUICKSTART_TASKS_INITIAL_STATES } from './const';
+import * as React from 'react';
 import {
-  AllQuickStartStates,
-  QuickStartState,
+  QuickStartContext,
+  QuickStartContextProvider,
+  QuickStartContextValues,
+  getDefaultQuickStartState,
   QuickStartStatus,
   QuickStartTaskStatus,
-} from './quick-start-types';
-import { getTaskStatusKey } from './quick-start-utils';
+  getTaskStatusKey,
+  QUICKSTART_TASKS_INITIAL_STATES,
+} from '@patternfly/quickstarts';
+import {
+  MarkdownExecuteSnippet,
+  MarkdownCopyClipboard,
+  useInlineCopyClipboardShowdownExtension,
+  useInlineExecuteCommandShowdownExtension,
+  useMultilineCopyClipboardShowdownExtension,
+  useMultilineExecuteCommandShowdownExtension,
+} from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
-export type QuickStartContextValues = {
-  activeQuickStartID: string;
-  allQuickStartStates?: AllQuickStartStates;
-  activeQuickStartState?: QuickStartState;
-  setActiveQuickStart?: (quickStartId: string, totalTasks?: number) => void;
-  startQuickStart?: (quickStartId: string, totalTasks: number) => void;
-  restartQuickStart?: (quickStartId: string, totalTasks: number) => void;
-  nextStep?: (totalTasks: number) => void;
-  previousStep?: () => void;
-  setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
-  setQuickStartTaskStatus?: (taskStatus: QuickStartTaskStatus) => void;
-  getQuickStartForId?: (id: string) => QuickStartState;
-};
+export { QuickStartContext };
+export { QuickStartContextProvider };
 
-export const QuickStartContext = createContext<QuickStartContextValues>({ activeQuickStartID: '' });
-
-export const QuickStartContextProvider = QuickStartContext.Provider;
+const QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY = 'bridge/quick-start-redux-state';
 
 const getInitialState = () =>
   localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY)
     ? JSON.parse(localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY))
     : {};
-
-const getDefaultQuickStartState = (totalTasks: number, initialStatus?: QuickStartStatus) => {
-  const defaultQuickStartState = {
-    status: initialStatus || QuickStartStatus.NOT_STARTED,
-    taskNumber: -1,
-  };
-  if (totalTasks) {
-    for (let i = 0; i < totalTasks; i++) {
-      defaultQuickStartState[getTaskStatusKey(i)] = QuickStartTaskStatus.INIT;
-    }
-  }
-  return defaultQuickStartState;
-};
 
 const QUICK_START_KEY = 'console.quickstart';
 const ACTIVE_QUICK_START_ID_KEY = `${QUICK_START_KEY}.active`;
@@ -59,8 +43,12 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();
+  const inlineCopyClipboardShowdownExtension = useInlineCopyClipboardShowdownExtension();
+  const inlineExecuteCommandShowdownExtension = useInlineExecuteCommandShowdownExtension();
+  const multilineCopyClipboardShowdownExtension = useMultilineCopyClipboardShowdownExtension();
+  const multilineExecuteCommandShowdownExtension = useMultilineExecuteCommandShowdownExtension();
 
-  const setActiveQuickStart = useCallback(
+  const setActiveQuickStart = React.useCallback(
     (quickStartId: string, totalTasks?: number) => {
       setActiveQuickStartID((id) => (id !== quickStartId ? quickStartId : ''));
       setAllQuickStartStates((qs) =>
@@ -72,7 +60,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates],
   );
 
-  const startQuickStart = useCallback(
+  const startQuickStart = React.useCallback(
     (quickStartId: string, totalTasks?: number) => {
       setActiveQuickStartID((id) => {
         if (!id || id !== quickStartId) {
@@ -100,7 +88,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const restartQuickStart = useCallback(
+  const restartQuickStart = React.useCallback(
     (quickStartId: string, totalTasks: number) => {
       setActiveQuickStartID((id) => {
         if (!id || id !== quickStartId) {
@@ -120,7 +108,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const nextStep = useCallback(
+  const nextStep = React.useCallback(
     (totalTasks: number) => {
       if (!activeQuickStartID) return;
 
@@ -183,7 +171,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const previousStep = useCallback(() => {
+  const previousStep = React.useCallback(() => {
     setAllQuickStartStates((qs) => {
       const quickStart = qs[activeQuickStartID];
       const taskNumber = quickStart?.taskNumber;
@@ -200,7 +188,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     });
   }, [activeQuickStartID, setAllQuickStartStates]);
 
-  const setQuickStartTaskNumber = useCallback(
+  const setQuickStartTaskNumber = React.useCallback(
     (quickStartId: string, taskNumber: number) => {
       setAllQuickStartStates((qs) => {
         const quickStart = qs[quickStartId];
@@ -234,7 +222,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setAllQuickStartStates],
   );
 
-  const setQuickStartTaskStatus = useCallback(
+  const setQuickStartTaskStatus = React.useCallback(
     (taskStatus: QuickStartTaskStatus) => {
       const quickStart = allQuickStartStates[activeQuickStartID];
       const { taskNumber } = quickStart;
@@ -246,7 +234,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
 
   const activeQuickStartState = allQuickStartStates?.[activeQuickStartID] ?? {};
 
-  const getQuickStartForId = useCallback((id: string) => allQuickStartStates[id], [
+  const getQuickStartForId = React.useCallback((id: string) => allQuickStartStates[id], [
     allQuickStartStates,
   ]);
 
@@ -255,6 +243,8 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     activeQuickStartState,
     allQuickStartStates,
     setActiveQuickStart,
+    setActiveQuickStartID,
+    setAllQuickStartStates,
     startQuickStart,
     restartQuickStart,
     nextStep,
@@ -262,5 +252,22 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     setQuickStartTaskNumber,
     setQuickStartTaskStatus,
     getQuickStartForId,
+    footer: {
+      show: false,
+    },
+    markdown: {
+      extensions: [
+        inlineCopyClipboardShowdownExtension,
+        inlineExecuteCommandShowdownExtension,
+        multilineCopyClipboardShowdownExtension,
+        multilineExecuteCommandShowdownExtension,
+      ],
+      renderExtension: (docContext: HTMLDocument, rootSelector: string) => (
+        <>
+          <MarkdownCopyClipboard docContext={docContext} rootSelector={rootSelector} />
+          <MarkdownExecuteSnippet docContext={docContext} rootSelector={rootSelector} />
+        </>
+      ),
+    },
   };
 };

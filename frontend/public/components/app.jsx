@@ -42,6 +42,7 @@ import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
+import '@patternfly/quickstarts/dist/quickstarts.css';
 
 // PF4 Imports
 import { Page, SkipToContent } from '@patternfly/react-core';

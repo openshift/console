@@ -1,11 +1,7 @@
 import * as React from 'react';
+import { QuickStart, QuickStartContext, QuickStartContextValues } from '@patternfly/quickstarts';
 import { TextList, TextListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  QuickStartContext,
-  QuickStartContextValues,
-} from '@console/app/src/components/quick-starts/utils/quick-start-context';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import { keywordCompare } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { history, removeQueryArgument } from '@console/internal/components/utils';

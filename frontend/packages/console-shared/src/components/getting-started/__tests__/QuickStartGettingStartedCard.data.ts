@@ -1,4 +1,4 @@
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
+import { QuickStart } from '@patternfly/quickstarts';
 
 export const loadingQuickStarts: QuickStart[] = [];
 
