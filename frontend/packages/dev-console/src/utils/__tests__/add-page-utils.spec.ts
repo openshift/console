@@ -2,7 +2,7 @@ import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import {
   addActionExtensions,
-  addActionGroupExtensions,
+  addActionGroup,
   addActionsWithoutValidGroupId,
 } from '../../components/add/__tests__/add-page-test-data';
 import { AddGroup } from '../../components/types';
@@ -10,7 +10,7 @@ import { getAddGroups, resolvedHref, filterNamespaceScopedUrl } from '../add-pag
 
 describe('getAddGroups', () => {
   it('should return empty array if addActions is not defined', () => {
-    expect(getAddGroups(undefined, addActionGroupExtensions).length).toEqual(0);
+    expect(getAddGroups(undefined, addActionGroup).length).toEqual(0);
   });
 
   it('should return empty array if addActions is not defined', () => {
@@ -23,7 +23,7 @@ describe('getAddGroups', () => {
     >[] = addActionExtensions.filter((action) =>
       action.properties.groupId.includes('developer-catalog'),
     );
-    const addGroups: AddGroup[] = getAddGroups(addActionExtensions, addActionGroupExtensions);
+    const addGroups: AddGroup[] = getAddGroups(addActionExtensions, addActionGroup);
     expect(addGroups.find((group) => group.id === 'developer-catalog').items.length).toEqual(
       devCatalogGroupItems.length,
     );
@@ -37,7 +37,7 @@ describe('getAddGroups', () => {
     );
     const addGroups: AddGroup[] = getAddGroups(
       addActionsExcludingDevCatalogGroupItems,
-      addActionGroupExtensions,
+      addActionGroup,
     );
     expect(addGroups.find((group) => group.id === 'developer-catalog')).toBeUndefined();
   });
@@ -47,8 +47,8 @@ describe('getAddGroups', () => {
       ...addActionExtensions,
       ...addActionsWithoutValidGroupId,
     ];
-    const addGroups: AddGroup[] = getAddGroups(mockAddExtensions, addActionGroupExtensions);
-    expect(addGroups.length).toBeGreaterThan(addActionGroupExtensions.length);
+    const addGroups: AddGroup[] = getAddGroups(mockAddExtensions, addActionGroup);
+    expect(addGroups.length).toBeGreaterThan(addActionGroup.length);
     addActionsWithoutValidGroupId.forEach((action) => {
       expect(addGroups.find((group) => group.id === action.properties.id)).toBeDefined();
     });

@@ -389,6 +389,15 @@ export const addActionsWithoutValidGroupId: AddActionExtension[] = [
   actionWithUnavailableGroupId,
 ];
 
+export const addActionGroup: AddActionGroup['properties'][] = [
+  containerImagesActionGroup.properties,
+  developerCatalog.properties,
+  pipelinesActionGroup.properties,
+  serverless.properties,
+  gitRepository.properties,
+  localMachine.properties,
+];
+
 export const addActionGroupExtensions: AddActionGroupExtension[] = [
   containerImagesActionGroup,
   developerCatalog,
