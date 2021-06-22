@@ -12,8 +12,13 @@ export enum RequestType {
   TCPSocket = 'tcpSocket',
 }
 export interface HealthCheckProbeData {
-  failureThreshold: number | string;
+  failureThreshold: number;
+  initialDelaySeconds: number;
+  periodSeconds: number;
+  timeoutSeconds: number;
+  successThreshold: number;
   requestType?: string;
+  exec?: { command?: string[] };
   httpGet?: {
     scheme: string;
     path: string;
@@ -23,15 +28,29 @@ export interface HealthCheckProbeData {
   tcpSocket?: {
     port: number;
   };
-  exec?: { command?: string[] };
-  initialDelaySeconds: number | string;
-  periodSeconds: number | string;
-  timeoutSeconds: number | string;
-  successThreshold: number | string;
 }
-export interface HealthCheckProbe {
+
+export interface HealthCheckFormProbeData {
+  failureThreshold: string;
+  initialDelaySeconds: string;
+  periodSeconds: string;
+  timeoutSeconds: string;
+  successThreshold: string;
+  requestType?: string;
+  exec?: { command?: string[] };
+  httpGet?: {
+    scheme: string[];
+    path: string;
+    port: string;
+    httpHeaders: NameValuePair[];
+  };
+  tcpSocket?: {
+    port: string;
+  };
+}
+export interface HealthCheckFormProbe {
   showForm?: boolean;
   enabled?: boolean;
   modified?: boolean;
-  data: HealthCheckProbeData;
+  data: HealthCheckFormProbeData;
 }
