@@ -34,12 +34,7 @@ import {
 
 const { common } = Kebab.factory;
 
-const tableColumnClasses = [
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 export const DetailsForKind = (
   kind: string,

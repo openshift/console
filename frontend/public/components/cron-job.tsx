@@ -37,11 +37,11 @@ export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), 
 const kind = 'CronJob';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
   Kebab.columnClass,
 ];
 

@@ -173,6 +173,10 @@ export type WatchK8sResources<R extends ResourcesObject> = {
   [k in keyof R]: WatchK8sResource;
 };
 
+export type WatchK8sResourcesGeneric = {
+  [key: string]: WatchK8sResource;
+};
+
 export type FirehoseResource = {
   kind: K8sResourceKindReference;
   name?: string;

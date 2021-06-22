@@ -12,6 +12,7 @@ const safeAtob = (value: string) => {
 };
 
 export enum CloudInitDataFormKeys {
+  USER = 'user',
   NAME = 'name',
   HOSTNAME = 'hostname',
   SSH_AUTHORIZED_KEYS = 'ssh_authorized_keys',

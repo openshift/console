@@ -396,10 +396,10 @@ export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => (
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'hidden-xs'),
-  classNames('col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 

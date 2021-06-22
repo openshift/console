@@ -16,23 +16,8 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
-import {
-  getDynamicEventSourcesWatchers,
-  getDynamicEventingChannelWatchers,
-  fetchEventSourcesCrd,
-  fetchChannelsCrd,
-} from '../utils/fetch-dynamic-eventsources-utils';
-import {
-  knativeServingResourcesConfigurationsWatchers,
-  knativeServingResourcesRevisionWatchers,
-  knativeServingResourcesRoutesWatchers,
-  knativeServingResourcesServicesWatchers,
-  knativeEventingResourcesSubscriptionWatchers,
-  knativeEventingBrokerResourceWatchers,
-  knativeEventingTriggerResourceWatchers,
-  knativeCamelIntegrationsResourceWatchers,
-  knativeCamelKameletBindingResourceWatchers,
-} from '../utils/get-knative-resources';
+import { fetchEventSourcesCrd, fetchChannelsCrd } from '../utils/fetch-dynamic-eventsources-utils';
+import { getKnativeResources } from '../utils/get-knative-resources';
 import { getRevisionRouteDecorator, getServiceRouteDecorator } from './components/decorators';
 import {
   getIsKnativeResource,
@@ -47,22 +32,6 @@ import {
 fetchEventSourcesCrd();
 fetchChannelsCrd();
 
-export const getKnativeResources = (namespace: string) => {
-  return {
-    ...knativeServingResourcesRevisionWatchers(namespace),
-    ...knativeServingResourcesConfigurationsWatchers(namespace),
-    ...knativeServingResourcesRoutesWatchers(namespace),
-    ...knativeServingResourcesServicesWatchers(namespace),
-    ...knativeEventingResourcesSubscriptionWatchers(namespace),
-    ...getDynamicEventSourcesWatchers(namespace),
-    ...getDynamicEventingChannelWatchers(namespace),
-    ...knativeEventingBrokerResourceWatchers(namespace),
-    ...knativeEventingTriggerResourceWatchers(namespace),
-    ...knativeCamelIntegrationsResourceWatchers(namespace),
-    ...knativeCamelKameletBindingResourceWatchers(namespace),
-  };
-};
-
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
@@ -74,7 +43,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getKnativeComponentFactory,
+      getFactory: applyCodeRefSymbol(getKnativeComponentFactory),
     },
     flags: {
       required: [
@@ -94,8 +63,8 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       resources: getKnativeResources,
       workloadKeys: ['ksservices'],
-      getDataModel: getKnativeTopologyDataModel,
-      isResourceDepicted: getIsKnativeResource,
+      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
       required: [

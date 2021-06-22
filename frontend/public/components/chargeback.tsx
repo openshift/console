@@ -59,11 +59,11 @@ const ChargebackNavBar: React.SFC<{ match: { url: string; path: string } }> = (p
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-2', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  '',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 

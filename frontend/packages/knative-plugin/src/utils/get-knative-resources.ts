@@ -18,6 +18,10 @@ import {
   CamelKameletBindingModel,
 } from '../models';
 import { Traffic } from '../types';
+import {
+  getDynamicEventSourcesWatchers,
+  getDynamicEventingChannelWatchers,
+} from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -327,5 +331,21 @@ export const getTrafficByRevision = (revName: string, service: K8sResourceKind) 
   return {
     ...trafficPercent,
     percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
+  };
+};
+
+export const getKnativeResources = (namespace: string) => {
+  return {
+    ...knativeServingResourcesRevisionWatchers(namespace),
+    ...knativeServingResourcesConfigurationsWatchers(namespace),
+    ...knativeServingResourcesRoutesWatchers(namespace),
+    ...knativeServingResourcesServicesWatchers(namespace),
+    ...knativeEventingResourcesSubscriptionWatchers(namespace),
+    ...getDynamicEventSourcesWatchers(namespace),
+    ...getDynamicEventingChannelWatchers(namespace),
+    ...knativeEventingBrokerResourceWatchers(namespace),
+    ...knativeEventingTriggerResourceWatchers(namespace),
+    ...knativeCamelIntegrationsResourceWatchers(namespace),
+    ...knativeCamelKameletBindingResourceWatchers(namespace),
   };
 };

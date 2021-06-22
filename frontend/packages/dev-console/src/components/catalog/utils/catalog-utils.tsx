@@ -78,7 +78,3 @@ export const getCatalogTypeCounts = (
 
   return catalogTypeCounts;
 };
-
-export const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) => {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-};

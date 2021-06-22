@@ -6,7 +6,7 @@ export const getHelmTopologyDataModel = () =>
 export const getHelmComponentFactory = () =>
   import(
     './components/helmComponentFactory' /* webpackChunkName: "helm-topology-components" */
-  ).then((m) => m.getHelmComponentFactory());
+  ).then((m) => m.getHelmComponentFactory);
 
 export const getIsHelmResource = () =>
   import('./isHelmResource' /* webpackChunkName: "helm-topology-components" */).then(

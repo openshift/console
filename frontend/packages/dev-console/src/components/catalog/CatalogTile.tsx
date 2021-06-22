@@ -8,8 +8,9 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
+import { isModifiedEvent } from '@console/shared';
 import CatalogBadges from './CatalogBadges';
-import { getIconProps, isModifiedEvent } from './utils/catalog-utils';
+import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
 
 import './CatalogTile.scss';
