@@ -13,7 +13,7 @@ export enum RequestType {
 }
 
 export interface HealthCheckProbeData {
-  failureThreshold: number;
+  failureThreshold: number | string;
   requestType?: string;
   httpGet?: {
     scheme: string;
@@ -25,10 +25,10 @@ export interface HealthCheckProbeData {
     port: number;
   };
   exec?: { command?: string[] };
-  initialDelaySeconds: number;
-  periodSeconds: number;
-  timeoutSeconds: number;
-  successThreshold: number;
+  initialDelaySeconds: number | string;
+  periodSeconds: number | string;
+  timeoutSeconds: number | string;
+  successThreshold: number | string;
 }
 
 export interface HealthCheckProbe {

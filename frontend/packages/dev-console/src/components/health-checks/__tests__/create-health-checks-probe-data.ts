@@ -94,3 +94,44 @@ export const enabledProbeData = {
     timeoutSeconds: 1,
   },
 };
+
+export const healthChecksFormInputData = {
+  healthChecks: {
+    readinessProbe: {
+      showForm: false,
+      enabled: true,
+      modified: false,
+      data: {
+        failureThreshold: '3',
+        requestType: RequestType.HTTPGET,
+        httpGet: {
+          scheme: 'HTTPS',
+          path: '/tmp/healthy',
+          port: 8080,
+          httpHeaders: [{ name: 'custom-header', value: 'value' }],
+        },
+        tcpSocket: {
+          port: 8080,
+        },
+        exec: { command: [''] },
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
+      },
+    },
+    livenessProbe: healthChecksDefaultValues,
+    startupProbe: {
+      showForm: false,
+      enabled: true,
+      modified: false,
+      data: {
+        ...healthChecksDefaultValues.data,
+        requestType: RequestType.TCPSocket,
+        tcpSocket: {
+          port: 8081,
+        },
+      },
+    },
+  },
+};
