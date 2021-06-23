@@ -31,6 +31,7 @@ import {
 } from './types';
 import { applyChange } from './update-utils';
 import { convertBuilderFormToPipeline } from './utils';
+import { validationSchema } from './validation-utils';
 
 import './PipelineBuilderForm.scss';
 
@@ -121,6 +122,9 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   );
 
   const sanitizeToForm = (yamlPipeline: PipelineKind) => {
+    if (!yamlPipeline.spec) {
+      return {};
+    }
     const { finally: finallyTasks, ...pipelineSpecProperties } = yamlPipeline.spec;
 
     const newFormData = {
@@ -129,6 +133,17 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       name: yamlPipeline.metadata?.name,
       finallyTasks,
     };
+    try {
+      validationSchema(true).validateSync({
+        ...props.values,
+        editorType: EditorType.Form,
+        formData: newFormData,
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Validation error:', e);
+      return {};
+    }
     return _.merge({}, initialPipelineFormData, newFormData);
   };
 

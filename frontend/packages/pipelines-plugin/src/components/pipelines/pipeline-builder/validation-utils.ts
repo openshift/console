@@ -479,7 +479,7 @@ const pipelineBuilderFormSchema = (formValues: PipelineBuilderFormYamlValues) =>
   });
 };
 
-export const validationSchema = () =>
+export const validationSchema = (sync = false) =>
   yup.mixed().test({
     test(formValues: PipelineBuilderFormYamlValues) {
       const formYamlDefinition = yup.object({
@@ -491,6 +491,8 @@ export const validationSchema = () =>
         }),
       });
 
-      return formYamlDefinition.validate(formValues, { abortEarly: false });
+      return sync
+        ? formYamlDefinition.validateSync(formValues, { abortEarly: false })
+        : formYamlDefinition.validate(formValues, { abortEarly: false });
     },
   });

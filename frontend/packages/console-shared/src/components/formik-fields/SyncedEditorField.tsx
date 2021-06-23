@@ -47,12 +47,14 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   const handleToggleToForm = () => {
     const newFormData = safeYAMLToJS(yamlData);
-    if (!_.isEmpty(newFormData)) {
+    const santizedFormData =
+      !_.isEmpty(newFormData) && formContext.sanitizeTo
+        ? formContext.sanitizeTo(newFormData)
+        : newFormData;
+
+    if (!_.isEmpty(santizedFormData)) {
       changeEditorType(EditorType.Form);
-      setFieldValue(
-        formContext.name,
-        formContext.sanitizeTo ? formContext.sanitizeTo(newFormData) : newFormData,
-      );
+      setFieldValue(formContext.name, santizedFormData);
     } else {
       setYAMLWarning(true);
     }
