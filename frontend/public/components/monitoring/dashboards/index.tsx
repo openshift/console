@@ -631,13 +631,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
             // Look for an option that should be selected by default
             let value = _.find(v.options, { selected: true })?.value;
 
-            // If no default option was found, see if the "All" option should be the default
-            if (
-              value === undefined &&
-              v.includeAll &&
-              v.current.selected === true &&
-              v.current.value === '$__all'
-            ) {
+            // If no default option was found, default to "All" (if present)
+            if (value === undefined && v.includeAll) {
               value = MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY;
             }
 
@@ -722,10 +717,6 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 };
 
 type TemplateVariable = {
-  current: {
-    selected?: boolean;
-    value?: string;
-  };
   hide: number;
   includeAll: boolean;
   name: string;
