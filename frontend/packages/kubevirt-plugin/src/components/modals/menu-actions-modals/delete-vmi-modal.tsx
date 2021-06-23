@@ -9,7 +9,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { apiVersionForModel } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 
@@ -17,6 +16,10 @@ import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volu
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVMI } from '../../../k8s/requests/vmi/actions';
 import { VirtualMachineInstanceModel } from '../../../models';
+import {
+  getKubevirtModelAvailableAPIVersion,
+  kubevirtReferenceForModel,
+} from '../../../models/kubevirtReferenceForModel';
 import { getVMIVolumes } from '../../../selectors/vmi';
 import { VMIKind } from '../../../types';
 import { redirectToList } from './utils';
@@ -35,8 +38,8 @@ export const DeleteVMIModal = withHandlePromise((props: DeleteVMIProps) => {
 
   const vmiReference = {
     name,
-    kind: VirtualMachineInstanceModel.kind,
-    apiVersion: apiVersionForModel(VirtualMachineInstanceModel),
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+    apiVersion: getKubevirtModelAvailableAPIVersion(VirtualMachineInstanceModel),
   } as any;
 
   const [ownedVolumeResources, isOwnedVolumeResourcesLoaded] = useOwnedVolumeReferencedResources(

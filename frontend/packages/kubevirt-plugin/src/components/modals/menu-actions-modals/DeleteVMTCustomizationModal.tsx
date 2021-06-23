@@ -14,6 +14,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared/src/components/st
 
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
 import { VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMKind } from '../../../types';
 
 export const DeleteVMTCustomizationModal = withHandlePromise<DeleteVMTCustomizationModal>(
@@ -22,7 +23,7 @@ export const DeleteVMTCustomizationModal = withHandlePromise<DeleteVMTCustomizat
 
     const submit = (event) => {
       event.preventDefault();
-      handlePromise(k8sKill(VirtualMachineModel, vm), close);
+      handlePromise(k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm), close);
     };
 
     return (

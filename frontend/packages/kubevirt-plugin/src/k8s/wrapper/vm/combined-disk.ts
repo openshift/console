@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
 import { FirehoseResult } from '@console/internal/components/utils';
-import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
@@ -9,6 +8,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
+import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getSimpleName } from '../../../selectors/utils';
 import { asVM, getDataVolumeTemplates } from '../../../selectors/vm';
 import { isWinToolsImage } from '../../../selectors/vm/winimage';
@@ -343,7 +343,7 @@ export class CombinedDiskFactory {
                 compareOwnerReference(ownerReference, {
                   name: dataVolumeName,
                   kind: DataVolumeModel.kind,
-                  apiVersion: apiVersionForModel(DataVolumeModel),
+                  apiVersion: getKubevirtModelAvailableAPIVersion(DataVolumeModel),
                 } as any),
               ),
             );

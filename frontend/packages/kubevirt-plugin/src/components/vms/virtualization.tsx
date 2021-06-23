@@ -25,6 +25,7 @@ import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
 } from '../../constants/v2v';
 import { VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import { VirtualMachinesPage } from './vm';
@@ -126,7 +127,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
 
   const namespace = props.match.params.ns;
 
-  const obj = { loaded: true, data: { kind: VirtualMachineModel.kind } };
+  const obj = { loaded: true, data: { kind: kubevirtReferenceForModel(VirtualMachineModel) } };
   const pages = [
     {
       href: '',

@@ -31,9 +31,7 @@ const winData: VirtualMachineData = {
   description: 'windows vm',
   namespace: testName,
   template: 'Microsoft Windows Server 2019 VM',
-  provisionSource: ProvisionSource.CLONE_PVC,
-  pvcName: 'clone-pvc-win10',
-  pvcNS: testName,
+  provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
   startOnCreation: true,
@@ -44,7 +42,6 @@ describe('Test vm creation', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    cy.createDataVolume(winData.pvcName, winData.pvcNS);
   });
 
   after(() => {

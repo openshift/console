@@ -12,6 +12,7 @@ import {
 } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { DataVolumeModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { V1alpha1DataVolume } from '../../../types/api';
 
 export const useVmTemplatesResources = (namespace: string): useVmTemplatesResourcesValues => {
@@ -40,7 +41,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     },
   });
   const [dvs, dvsLoaded, dvsError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kubevirtReferenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });
