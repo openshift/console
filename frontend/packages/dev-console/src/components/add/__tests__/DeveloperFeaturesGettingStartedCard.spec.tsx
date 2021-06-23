@@ -35,6 +35,10 @@ jest.mock(
 
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 
+afterEach(() => {
+  delete window.SERVER_FLAGS.addPage;
+});
+
 describe('DeveloperFeaturesGettingStartedCard', () => {
   it('should contain links to current active namespace', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
@@ -59,7 +63,32 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
       title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/getting-started',
+      href: 'https://developers.redhat.com/products/openshift/whats-new',
+      external: true,
+    });
+  });
+
+  it('should not show helm link when helm card is disabled', () => {
+    window.SERVER_FLAGS.addPage = '{ "disabledActions": "helm" }';
+
+    useActiveNamespaceMock.mockReturnValue(['active-namespace']);
+
+    const wrapper = shallow(<DeveloperFeaturesGettingStartedCard />);
+
+    expect(wrapper.find(GettingStartedCard).props().title).toEqual(
+      'Explore new developer features',
+    );
+    expect(wrapper.find(GettingStartedCard).props().links).toEqual([
+      {
+        id: 'topology',
+        title: 'Start building your application quickly in topology',
+        href: '/topology/ns/active-namespace?catalogSearch=',
+      },
+    ]);
+    expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
+      id: 'whats-new',
+      title: "What's new in OpenShift 4.8",
+      href: 'https://developers.redhat.com/products/openshift/whats-new',
       external: true,
     });
   });
@@ -87,7 +116,7 @@ describe('DeveloperFeaturesGettingStartedCard', () => {
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
       id: 'whats-new',
       title: "What's new in OpenShift 4.8",
-      href: 'https://developers.redhat.com/products/openshift/getting-started',
+      href: 'https://developers.redhat.com/products/openshift/whats-new',
       external: true,
     });
   });
