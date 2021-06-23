@@ -125,8 +125,8 @@ export const EditYAML_ = connect(stateToProps)(
           });
         }
 
-        handleError(error) {
-          this.setState({ errors: _.isEmpty(error) ? null : [error], success: null });
+        handleError(error, success = null) {
+          this.setState({ errors: _.isEmpty(error) ? null : [error], success });
         }
 
         handleErrors(resourceObject, error) {
@@ -172,7 +172,7 @@ export const EditYAML_ = connect(stateToProps)(
           const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
           const stale = this.displayedVersion !== newVersion;
           this.setState({ stale });
-          this.handleError(nextProps.error);
+          this.handleError(nextProps.error, this.state.success);
           if (nextProps.sampleObj) {
             this.loadYaml(
               !_.isEqual(this.state.sampleObj, nextProps.sampleObj),
