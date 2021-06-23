@@ -8,11 +8,12 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 import { CDIConfigModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getUploadProxyURL } from '../../selectors/cdi';
 import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
 
 const resource: WatchK8sResource = {
-  kind: CDIConfigModel.kind,
+  kind: kubevirtReferenceForModel(CDIConfigModel),
   isList: false,
   namespaced: false,
   name: 'config',

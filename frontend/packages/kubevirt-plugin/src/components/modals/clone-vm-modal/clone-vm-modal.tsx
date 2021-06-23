@@ -30,6 +30,7 @@ import {
 
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getDescription } from '../../../selectors/selectors';
 import {
   getVolumeDataVolumeName,
@@ -261,7 +262,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
       prop: 'namespaces',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
       namespace,
       isList: true,
       prop: 'virtualMachines',
@@ -279,7 +280,7 @@ const CloneVMModalFirehose: React.FC<CloneVMModalFirehoseProps> = (props) => {
 
   if (requestsDataVolumes) {
     resources.push({
-      kind: DataVolumeModel.kind,
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       namespace: vmNamespace,
       isList: true,
       prop: 'dataVolumes',

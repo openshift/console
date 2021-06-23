@@ -12,6 +12,7 @@ import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
@@ -96,7 +97,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace,
   };

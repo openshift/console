@@ -1,13 +1,11 @@
-import { safeLoad } from 'js-yaml';
 import * as React from 'react';
-
+import { safeLoad } from 'js-yaml';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { AsyncComponent, LoadingBox } from '@console/internal/components/utils';
 import { connectToPlural } from '@console/internal/kinds';
 import { TemplateModel } from '@console/internal/models';
 import { k8sList } from '@console/internal/module/k8s';
-
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,
@@ -22,8 +20,8 @@ import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
 
-const VMCreateYAMLLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
+const VMCreateYAMLConnected = connectToPlural(
+  ({ match, kindsInFlight, kindObj = VirtualMachineModel, resourceObjPath }: CreateYAMLProps) => {
     const [defaultVM, setDefaultVM] = React.useState<VMKind>(null);
 
     React.useEffect(() => {
@@ -94,10 +92,6 @@ export const VMCreateYAML = (props: any) => {
   return userMode === 'template' ? (
     <CreateVMTemplateYAML {...props} />
   ) : (
-    <VMCreateYAMLLConnected
-      {...(props as any)}
-      kindObj={VirtualMachineModel.kind}
-      plural={VirtualMachineModel.plural}
-    />
+    <VMCreateYAMLConnected {...(props as any)} plural={VirtualMachineModel.plural} />
   );
 };

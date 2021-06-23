@@ -9,6 +9,7 @@ import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/inter
 
 import { TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER } from '../constants';
 import { DataVolumeModel } from '../models';
+import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { getParameterValue } from '../selectors/selectors';
 import { V1alpha1DataVolume } from '../types/api';
 
@@ -43,7 +44,7 @@ export const useBaseImages = (
         (acc, ns) => ({
           ...acc,
           [ns]: {
-            kind: DataVolumeModel.kind,
+            kind: kubevirtReferenceForModel(DataVolumeModel),
             namespace: ns,
             isList: true,
           } as WatchK8sResource,

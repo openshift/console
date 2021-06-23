@@ -6,12 +6,13 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { getOwnerReferences } from '@console/shared/src';
 
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../types';
 
 const VMIDetailsPageInfoMessage: React.FC<InfoMessageHintBlockProps> = ({ name, namespace }) => {
   const { t } = useTranslation();
   const [vmi, isLoaded] = useK8sWatchResource<VMIKind>({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   });

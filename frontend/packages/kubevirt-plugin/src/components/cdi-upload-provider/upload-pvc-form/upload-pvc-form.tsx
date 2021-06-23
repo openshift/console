@@ -30,7 +30,6 @@ import {
   TemplateModel,
 } from '@console/internal/models';
 import {
-  apiVersionForModel,
   ConfigMapKind,
   K8sResourceKind,
   K8sVerb,
@@ -67,6 +66,7 @@ import {
   PVCInitError,
 } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { DataVolumeModel } from '../../../models';
+import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
@@ -201,7 +201,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
       const obj: K8sResourceKind = {
-        apiVersion: apiVersionForModel(DataVolumeModel),
+        apiVersion: getKubevirtModelAvailableAPIVersion(DataVolumeModel),
         kind: DataVolumeModel.kind,
         metadata: {
           name: pvcName,

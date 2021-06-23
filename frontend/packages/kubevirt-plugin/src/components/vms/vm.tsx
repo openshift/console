@@ -30,12 +30,7 @@ import {
   PersistentVolumeClaimModel,
   PodModel,
 } from '@console/internal/models';
-import {
-  K8sKind,
-  PersistentVolumeClaimKind,
-  PodKind,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import {
   createLookup,
   dimensifyHeader,
@@ -68,6 +63,7 @@ import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVM, isVMI, isVMImport } from '../../selectors/check-type';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
@@ -169,7 +165,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   return (
     <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
-        <ResourceLink kind={model?.kind} name={name} namespace={namespace} />
+        <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
@@ -206,7 +202,7 @@ const VMListEmpty: React.FC = () => {
 
   const searchText = 'virtual machine';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
-    kind: referenceForModel(QuickStartModel),
+    kind: kubevirtReferenceForModel(QuickStartModel),
     isList: true,
   });
   const hasQuickStarts =
@@ -291,12 +287,12 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
 
   const resources = [
     {
-      kind: VirtualMachineModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
       namespace,
       prop: 'vms',
     },
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
       namespace,
       prop: 'vmis',
     },
@@ -306,7 +302,7 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       prop: 'pods',
     },
     {
-      kind: VirtualMachineInstanceMigrationModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),
       namespace,
       prop: 'migrations',
     },
@@ -317,13 +313,13 @@ const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
       prop: 'pvcs',
     },
     {
-      kind: DataVolumeModel.kind,
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
     },
     {
-      kind: VirtualMachineImportModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
       isList: true,
       namespace,
       prop: 'vmImports',

@@ -16,6 +16,7 @@ import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getResource } from '../../utils';
 import VMIDetailsPageInfoMessage from '../info-messages/VMIDetailsPageInfoMessage';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
@@ -90,7 +91,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       {...props}
       name={name}
       namespace={namespace}
-      kind={VirtualMachineInstanceModel.kind}
+      kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
       kindObj={VirtualMachineInstanceModel}
       menuActions={vmiMenuActionsCreator}
       pages={pages}
