@@ -1,7 +1,7 @@
 import { K8sResourceKind } from 'public/module/k8s';
 import {
   imageStremsData,
-  knatifyFormCommonInitailValues,
+  knatifyFormCommonInitialValues,
   ksvcData,
 } from '../__mocks__/knatify-mock';
 import {
@@ -38,13 +38,13 @@ describe('knatify-utils', () => {
 
   it('getCommonInitialValues should return valid formik common initial values', () => {
     expect(getCommonInitialValues(ksvcData, 'testproject3')).toEqual(
-      knatifyFormCommonInitailValues,
+      knatifyFormCommonInitialValues,
     );
   });
 
   it('getInitialValuesKnatify should return valid formik initial values with external regstry and searchTerm if image is not in imageStreams', () => {
     const knatifyFormInitialVal = {
-      ...knatifyFormCommonInitailValues,
+      ...knatifyFormCommonInitialValues,
       runtimeIcon: null,
       searchTerm: 'openshift/hello-openshift',
       registry: 'external',
@@ -80,7 +80,7 @@ describe('knatify-utils', () => {
       },
     };
     const knatifyFormInitialVal = {
-      ...knatifyFormCommonInitailValues,
+      ...knatifyFormCommonInitialValues,
       runtimeIcon: null,
       searchTerm: '',
       registry: 'internal',

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { getAddGroups, getSortedExtensionItems } from '../../utils/add-page-utils';
+import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/';
+import { getAddGroups } from '../../utils/add-page-utils';
 import { AddGroup } from '../types';
 import AddCard from './AddCard';
 import AddCardSectionEmptyState from './AddCardSectionEmptyState';
@@ -34,9 +35,9 @@ const AddCardSection: React.FC<AddCardSectionProps> = ({
     if (!extensionsLoaded) {
       return [];
     }
-    const sortedActionGroup: LoadedExtension<AddActionGroup>[] = getSortedExtensionItems<
-      LoadedExtension<AddActionGroup>
-    >(addActionGroupExtensions);
+    const sortedActionGroup = orderExtensionBasedOnInsertBeforeAndAfter<
+      AddActionGroup['properties']
+    >(addActionGroupExtensions.map(({ properties }) => properties));
 
     const addGroups: AddGroup[] = getAddGroups(addActionExtensions, sortedActionGroup);
 

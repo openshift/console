@@ -55,22 +55,13 @@ const NetworkPolicyTableRow: React.FunctionComponent<NetworkPolicyTableRowProps>
   return (
     <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={np.metadata.name}
-          namespace={np.metadata.namespace}
-          title={np.metadata.name}
-        />
+        <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind={'Namespace'}
-          name={np.metadata.namespace}
-          title={np.metadata.namespace}
-        />
+        <ResourceLink kind={'Namespace'} name={np.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {_.isEmpty(np.spec.podSelector) ? (

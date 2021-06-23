@@ -77,11 +77,7 @@ const MachineConfigTableRow: RowFunction<MachineConfigKind> = ({ obj, index, key
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={machineConfigReference}
-          name={obj.metadata.name}
-          title={obj.metadata.name}
-        />
+        <ResourceLink kind={machineConfigReference} name={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {_.get(

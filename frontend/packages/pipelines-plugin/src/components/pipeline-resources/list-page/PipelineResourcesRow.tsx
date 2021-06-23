@@ -17,7 +17,6 @@ const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, k
           kind={pipelineResourcesReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
           data-test-id={obj.metadata.name}
         />
       </TableData>

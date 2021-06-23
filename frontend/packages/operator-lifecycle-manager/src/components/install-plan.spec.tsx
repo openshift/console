@@ -96,13 +96,6 @@ describe('InstallPlanTableRow', () => {
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.metadata.name);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(0)
-        .find(ResourceLink)
-        .props().title,
-    ).toEqual(testInstallPlan.metadata.uid);
   });
 
   it('renders column for install plan namespace', () => {
@@ -113,20 +106,6 @@ describe('InstallPlanTableRow', () => {
         .find(ResourceLink)
         .props().kind,
     ).toEqual('Namespace');
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .find(ResourceLink)
-        .props().title,
-    ).toEqual(testInstallPlan.metadata.namespace);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .find(ResourceLink)
-        .props().displayName,
-    ).toEqual(testInstallPlan.metadata.namespace);
   });
 
   it('renders column for install plan status', () => {

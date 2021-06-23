@@ -373,7 +373,6 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
           kind={catalogSourceModelReference}
           name={source.metadata.name}
           namespace={source.metadata.namespace}
-          title={source.metadata.name}
         />
       ) : (
         name

@@ -8,7 +8,7 @@ import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-
 import { HealthCheckProbeData } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';
 import ProbeForm from './ProbeForm';
-import './HealthChecksProbe.scss';
+import './HealthCheckProbe.scss';
 
 interface HealthCheckProbeProps {
   probeType: string;

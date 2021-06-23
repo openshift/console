@@ -24,7 +24,6 @@ const RouteRow: RowFunction<RouteKind> = ({ obj, index, key, style }) => (
         kind={routeReference}
         name={obj.metadata.name}
         namespace={obj.metadata.namespace}
-        title={obj.metadata.uid}
       />
     </TableData>
     <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">

@@ -288,7 +288,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
     return (
       <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
-          <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
+          <ResourceLink kind="Namespace" name={ns.metadata.name} />
         </TableData>
         <TableData
           className={namespaceColumnInfo.displayName.classes}
@@ -608,11 +608,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
             <ProjectLinkComponent project={project} />
           ) : (
             <span className="co-resource-item">
-              <ResourceLink
-                kind="Project"
-                name={project.metadata.name}
-                title={project.metadata.uid}
-              />
+              <ResourceLink kind="Project" name={project.metadata.name} />
             </span>
           )}
         </TableData>

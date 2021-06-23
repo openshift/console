@@ -1,10 +1,18 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Resources, HealthChecksData } from '../import/import-types';
+import { Resources, HealthChecksFormData } from '../import/import-types';
 import { healthChecksDefaultValues } from './health-checks-probe-utils';
-import { HealthCheckProbeData, RequestType, HealthChecksProbeType } from './health-checks-types';
+import {
+  HealthCheckProbeData,
+  RequestType,
+  HealthChecksProbeType,
+  HealthCheckFormProbeData,
+} from './health-checks-types';
 
-export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Resources) => {
+export const constructProbeData = (
+  data: HealthCheckFormProbeData,
+  resourceType?: Resources,
+): HealthCheckProbeData => {
   const probeData = {
     ...(data.failureThreshold && { failureThreshold: _.toInteger(data.failureThreshold) }),
     ...(data.successThreshold && { successThreshold: _.toInteger(data.successThreshold) }),
@@ -14,9 +22,7 @@ export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Re
     ...(data.requestType === RequestType.HTTPGET && {
       httpGet: {
         ...data[data.requestType],
-        ...(data[data.requestType]?.scheme?.[0] === 'HTTPS' && {
-          scheme: data[data.requestType].scheme[0],
-        }),
+        scheme: data[data.requestType]?.scheme ? data[data.requestType].scheme[0] : 'HTTP',
         port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.httpGet.port),
       },
     }),
@@ -41,14 +47,42 @@ export const getRequestType = (data: HealthCheckProbeData) => {
   return '';
 };
 
+export const convertResourceDataToFormData = (
+  resourceData: HealthCheckProbeData,
+): HealthCheckFormProbeData => {
+  return {
+    ...resourceData,
+    requestType: getRequestType(resourceData),
+    failureThreshold: resourceData.failureThreshold.toString(),
+    successThreshold: resourceData.successThreshold.toString(),
+    initialDelaySeconds: resourceData.initialDelaySeconds?.toString(),
+    periodSeconds: resourceData.periodSeconds.toString(),
+    timeoutSeconds: resourceData.timeoutSeconds.toString(),
+    ...(resourceData.httpGet && {
+      httpGet: {
+        ...resourceData.httpGet,
+        port: resourceData.httpGet.port.toString(),
+        scheme: resourceData.httpGet.scheme === 'HTTP' ? undefined : ['HTTPS'],
+      },
+    }),
+    ...(resourceData.tcpSocket && {
+      tcpSocket: { port: resourceData.tcpSocket.port.toString() },
+    }),
+  };
+};
+
 export const getHealthChecksData = (
   resource: K8sResourceKind,
   containerIndex: number = 0,
-): HealthChecksData => {
+): HealthChecksFormData => {
   const containers = resource?.spec?.template?.spec?.containers ?? [];
-  const readinessProbe = containers?.[containerIndex]?.[HealthChecksProbeType.ReadinessProbe] ?? {};
-  const livenessProbe = containers?.[containerIndex]?.[HealthChecksProbeType.LivenessProbe] ?? {};
-  const startupProbe = containers?.[containerIndex]?.[HealthChecksProbeType.StartupProbe] ?? {};
+  const readinessProbe: HealthCheckProbeData =
+    containers?.[containerIndex]?.[HealthChecksProbeType.ReadinessProbe] ?? {};
+  const livenessProbe: HealthCheckProbeData =
+    containers?.[containerIndex]?.[HealthChecksProbeType.LivenessProbe] ?? {};
+  const startupProbe: HealthCheckProbeData =
+    containers?.[containerIndex]?.[HealthChecksProbeType.StartupProbe] ?? {};
+
   const healthChecks = {
     readinessProbe: {
       showForm: false,
@@ -56,11 +90,7 @@ export const getHealthChecksData = (
       enabled: !_.isEmpty(readinessProbe),
       data: !_.isEmpty(readinessProbe)
         ? {
-            ...readinessProbe,
-            requestType: getRequestType(readinessProbe),
-            ...(readinessProbe.httpGet?.scheme === 'HTTPS' && {
-              httpGet: { ...readinessProbe.httpGet, scheme: ['HTTPS'] },
-            }),
+            ...convertResourceDataToFormData(readinessProbe),
           }
         : healthChecksDefaultValues.data,
     },
@@ -70,11 +100,7 @@ export const getHealthChecksData = (
       enabled: !_.isEmpty(livenessProbe),
       data: !_.isEmpty(livenessProbe)
         ? {
-            ...livenessProbe,
-            requestType: getRequestType(livenessProbe),
-            ...(livenessProbe.httpGet?.scheme === 'HTTPS' && {
-              httpGet: { ...livenessProbe.httpGet, scheme: ['HTTPS'] },
-            }),
+            ...convertResourceDataToFormData(livenessProbe),
           }
         : healthChecksDefaultValues.data,
     },
@@ -84,11 +110,7 @@ export const getHealthChecksData = (
       enabled: !_.isEmpty(startupProbe),
       data: !_.isEmpty(startupProbe)
         ? {
-            ...startupProbe,
-            requestType: getRequestType(startupProbe),
-            ...(startupProbe.httpGet?.scheme === 'HTTPS' && {
-              httpGet: { ...startupProbe.httpGet, scheme: ['HTTPS'] },
-            }),
+            ...convertResourceDataToFormData(startupProbe),
           }
         : healthChecksDefaultValues.data,
     },
@@ -96,7 +118,7 @@ export const getHealthChecksData = (
   return healthChecks;
 };
 
-export const getProbesData = (healthChecks: HealthChecksData, resourceType?: Resources) => {
+export const getProbesData = (healthChecks: HealthChecksFormData, resourceType?: Resources) => {
   const { readinessProbe, livenessProbe, startupProbe } = healthChecks;
   return {
     ...(readinessProbe.enabled

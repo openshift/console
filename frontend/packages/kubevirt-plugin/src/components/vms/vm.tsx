@@ -10,7 +10,6 @@ import {
 } from '@patternfly/react-core';
 import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
@@ -82,12 +81,12 @@ import VMIP from './VMIP';
 import './vm.scss';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-2', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-3', 'col-xs-3'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-3', 'col-xs-3'),
+  'pf-u-w-16-on-xl pf-u-w-50-on-xs',
+  'pf-m-hidden pf-m-visible-on-lg',
+  '',
+  'pf-m-hidden pf-m-visible-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg',
+  '',
   Kebab.columnClass,
 ];
 

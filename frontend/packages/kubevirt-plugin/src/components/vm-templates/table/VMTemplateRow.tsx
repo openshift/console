@@ -63,7 +63,6 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
           to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-          title={template.metadata.uid}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
         >
@@ -78,11 +77,7 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
         )}
       </TableData>
       <TableData className={dimensify()}>
-        <ResourceLink
-          kind={NamespaceModel.kind}
-          name={template.metadata.namespace}
-          title={template.metadata.namespace}
-        />
+        <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />
       </TableData>
       <TableData className={dimensify()} data-test="template-source">
         <TemplateSource

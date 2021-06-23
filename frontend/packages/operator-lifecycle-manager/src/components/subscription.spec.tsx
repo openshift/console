@@ -89,14 +89,6 @@ describe('SubscriptionTableRow', () => {
         .childAt(0)
         .shallow()
         .find(ResourceLink)
-        .props().title,
-    ).toEqual(subscription.metadata.name);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(0)
-        .shallow()
-        .find(ResourceLink)
         .props().namespace,
     ).toEqual(subscription.metadata.namespace);
     expect(
@@ -167,22 +159,6 @@ describe('SubscriptionTableRow', () => {
         .shallow()
         .find(ResourceLink)
         .props().name,
-    ).toEqual(subscription.metadata.namespace);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .shallow()
-        .find(ResourceLink)
-        .props().title,
-    ).toEqual(subscription.metadata.namespace);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .shallow()
-        .find(ResourceLink)
-        .props().displayName,
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper

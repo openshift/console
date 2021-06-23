@@ -127,16 +127,11 @@ export const DefaultList: React.FC<TableProps> = (props) => {
             kind={customData.kind}
             name={obj.metadata.name}
             namespace={obj.metadata.namespace}
-            title={obj.metadata.name}
           />
         </TableData>
         <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
           {obj.metadata.namespace ? (
-            <ResourceLink
-              kind="Namespace"
-              name={obj.metadata.namespace}
-              title={obj.metadata.namespace}
-            />
+            <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
           ) : (
             t('public~None')
           )}
