@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Button, EmptyState, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import { QuickStartModel } from '@console/app/src/models';
@@ -36,12 +35,7 @@ import './NetworkAttachmentDefinition.scss';
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-4', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', 'pf-m-hidden pf-m-visible-on-md', '', Kebab.columnClass];
 
 const NetworkAttachmentDefinitionsHeader = () =>
   dimensifyHeader(

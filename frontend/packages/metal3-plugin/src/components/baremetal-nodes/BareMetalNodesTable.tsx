@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
@@ -21,11 +20,11 @@ import { menuActions } from './menu-actions';
 import './baremetal-nodes-table.scss';
 
 const tableColumnClasses = {
-  name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
-  status: classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  role: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  machine: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  name: '',
+  status: 'pf-m-hidden pf-m-visible-on-sm',
+  role: 'pf-m-hidden pf-m-visible-on-md pf-u-w-16-on-lg',
+  machine: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  address: 'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
   kebab: Kebab.columnClass,
 };
 
