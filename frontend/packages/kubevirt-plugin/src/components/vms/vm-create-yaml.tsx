@@ -16,13 +16,12 @@ import { OSSelection } from '../../constants/vm/default-os-selection';
 import { resolveDefaultVM } from '../../k8s/requests/vm/create/default-vm';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../models';
-import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
 
-const VMCreateYAMLLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
+const VMCreateYAMLConnected = connectToPlural(
+  ({ match, kindsInFlight, kindObj = VirtualMachineModel, resourceObjPath }: CreateYAMLProps) => {
     const [defaultVM, setDefaultVM] = React.useState<VMKind>(null);
 
     React.useEffect(() => {
@@ -93,10 +92,6 @@ export const VMCreateYAML = (props: any) => {
   return userMode === 'template' ? (
     <CreateVMTemplateYAML {...props} />
   ) : (
-    <VMCreateYAMLLConnected
-      {...(props as any)}
-      kindObj={kubevirtReferenceForModel(VirtualMachineModel)}
-      plural={VirtualMachineModel.plural}
-    />
+    <VMCreateYAMLConnected {...(props as any)} plural={VirtualMachineModel.plural} />
   );
 };
