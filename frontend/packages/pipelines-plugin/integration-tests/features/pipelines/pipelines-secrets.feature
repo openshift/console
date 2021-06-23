@@ -1,4 +1,4 @@
-@pipelines
+@pipelines, @unverified
 Feature: Secrets
               As a user, I want to add or remove secrets details to pipeline
 
@@ -8,15 +8,18 @@ Feature: Secrets
 
 
         @smoke
-        Scenario: Add Secrets: P-08-TC01
-            Given user has created pipeline "pipe-secret-0" with git resources
+        Scenario Outline: Add Secrets: P-08-TC01
+            Given user has created pipeline "<pipeline_name>" with git resources
               And user is at pipelines page
-             When user selects "Start" option from kebab menu for pipeline "pipe-secret-0"
+             When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
               And user clicks on Show Credentials link present in Start Pipeline modal
               And user clicks on "Add Secret" link
              Then user is able to see Create Source Secret section
               And user is able to see Secret Name, Access to, Server UrL fields and authentication type fields
 
+        Examples:
+                  | pipeline_name |
+                  | pipe-secret-0 |
 
         @smoke
         Scenario Outline: Add secret to pipeline with authentication type as Basic Authentication: P-08-TC02
