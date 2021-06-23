@@ -1,36 +1,60 @@
 import * as React from 'react';
 import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
-import i18n from 'i18next';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { nameValidationSchema } from '@console/shared';
-import { PipelineBuilderFormikValues } from '../types';
+import { STATUS_KEY_NAME_ERROR } from '../const';
+import { NameErrorStatus, PipelineBuilderFormikValues } from '../types';
 
 type TaskSidebarNameProps = {
-  initialName: string;
+  name: string;
   onChange: (newName: string) => void;
   taskName: string;
 };
 
 const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
   const { t } = useTranslation();
-  const { initialName, onChange, taskName } = props;
+  const { name, onChange, taskName } = props;
+  const { setStatus, status, values } = useFormikContext<PipelineBuilderFormikValues>();
   const {
-    values: {
-      formData: { tasks, finallyTasks },
-    },
-  } = useFormikContext<PipelineBuilderFormikValues>();
-  const [interimName, setInterimName] = React.useState(initialName);
-  const [error, setError] = React.useState(null);
+    formData: { tasks, finallyTasks },
+  } = values;
+  const initialName: string = _.get(values, name, taskName);
+  const statusPath: string[] = [STATUS_KEY_NAME_ERROR, name];
+  const { nameError, errorMessage }: NameErrorStatus = _.get(status, statusPath, {});
+  const [interimName, setInterimName] = React.useState(nameError ?? initialName);
   const [validating, setValidating] = React.useState(null);
-  const isValid = !error;
-  const reservedNames = [...tasks, ...finallyTasks].map(({ name }) => name);
+  const isValid = !errorMessage;
+  const reservedNames: string[] = [...tasks, ...finallyTasks]
+    .map(({ name: usedName }) => usedName)
+    .filter((usedName) => usedName !== initialName);
+
+  const saveErrorState = (value: string, message: string) => {
+    setStatus({
+      ...status,
+      [STATUS_KEY_NAME_ERROR]: {
+        ...(status?.[STATUS_KEY_NAME_ERROR] || {}),
+        // `name` stored as a path string intentionally
+        [name]: {
+          nameError: value,
+          errorMessage: message,
+        },
+      },
+    });
+  };
+  const clearErrorState = () => {
+    setStatus({
+      ...status,
+      [STATUS_KEY_NAME_ERROR]: _.omit(status?.[STATUS_KEY_NAME_ERROR], name),
+    });
+  };
 
   return (
     <FormGroup
       fieldId="task-name"
       label={t('pipelines-plugin~Display name')}
-      helperTextInvalid={error}
+      helperTextInvalid={errorMessage}
       validated={isValid ? 'default' : 'error'}
       isRequired
     >
@@ -43,19 +67,19 @@ const TaskSidebarName: React.FC<TaskSidebarNameProps> = (props) => {
           setInterimName(value);
 
           if (reservedNames.includes(value)) {
-            setError(t('pipelines-plugin~Name is already in use'));
+            saveErrorState(value, t('pipelines-plugin~This name is already in use.'));
             return;
           }
 
           setValidating(true);
-          nameValidationSchema((tKey) => i18n.t(tKey), 63)
+          nameValidationSchema(t, 63)
             .validate(value)
             .then(() => {
-              setError(null);
+              clearErrorState();
               setValidating(false);
             })
             .catch((err) => {
-              setError(err?.message || t('pipelines-plugin~Required'));
+              saveErrorState(value, err?.message || t('pipelines-plugin~Required'));
               setValidating(false);
             });
         }}

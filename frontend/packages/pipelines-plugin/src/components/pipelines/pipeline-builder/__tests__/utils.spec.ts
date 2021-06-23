@@ -1,7 +1,19 @@
+import { FormikErrors } from 'formik';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { PipelineTask, TaskKind } from '../../../../types';
-import { initialPipelineFormData } from '../const';
-import { PipelineBuilderFormikValues, PipelineBuilderTaskBase } from '../types';
+import {
+  getTaskErrorString,
+  initialPipelineFormData,
+  STATUS_KEY_NAME_ERROR,
+  TaskErrorType,
+} from '../const';
+import {
+  BuilderTasksErrorGroup,
+  PipelineBuilderFormikStatus,
+  PipelineBuilderFormikValues,
+  PipelineBuilderFormValues,
+  PipelineBuilderTaskBase,
+} from '../types';
 import {
   convertResourceToTask,
   findTask,
@@ -13,6 +25,7 @@ import {
   mapStitchReplaceInOthers,
   safeName,
   removeEmptyFormFields,
+  getBuilderTasksErrorGroup,
 } from '../utils';
 import { externalTask, externalTaskWithVarietyParams } from './validation-utils-data';
 
@@ -467,6 +480,102 @@ describe('removeEmptyFormFields', () => {
         outputs: [{ name: 'required-out-resource', resource: 'pipeline-image-resource' }],
       },
       workspaces: [{ name: 'required-workspace', workspace: 'pipeline-workspace' }],
+    });
+  });
+});
+
+describe('getBuilderTasksErrorGroup', () => {
+  const defaultResponse: BuilderTasksErrorGroup = { tasks: [], finally: [] };
+
+  it('should not error out if given nothing', () => {
+    expect(getBuilderTasksErrorGroup()).toEqual(defaultResponse);
+    expect(getBuilderTasksErrorGroup(null)).toEqual(defaultResponse);
+    expect(getBuilderTasksErrorGroup(undefined)).toEqual(defaultResponse);
+    expect(getBuilderTasksErrorGroup(null, null)).toEqual(defaultResponse);
+    expect(getBuilderTasksErrorGroup(undefined, undefined)).toEqual(defaultResponse);
+    expect(getBuilderTasksErrorGroup(undefined, null)).toEqual(defaultResponse);
+  });
+
+  it('should return a standard structure if there are no errors or status states', () => {
+    expect(getBuilderTasksErrorGroup({}, {})).toEqual(defaultResponse);
+  });
+
+  it('should not capture any non task/finally errors', () => {
+    expect(
+      getBuilderTasksErrorGroup({
+        name: 'invalid name',
+        params: ['some error'],
+        resources: ['some error'],
+        workspaces: ['some error'],
+      }),
+    ).toEqual(defaultResponse);
+  });
+
+  it('should ignore other status values', () => {
+    expect(getBuilderTasksErrorGroup({}, { submitError: 'some other error' })).toEqual(
+      defaultResponse,
+    );
+  });
+
+  it('should merge in status name errors', () => {
+    const status: PipelineBuilderFormikStatus = {
+      [STATUS_KEY_NAME_ERROR]: {
+        'formData.tasks[0].name': { nameError: '', errorMessage: 'Required' },
+      },
+    };
+    expect(getBuilderTasksErrorGroup({}, status)).toEqual({
+      tasks: [{ name: getTaskErrorString(TaskErrorType.NAME_ERROR) }],
+      finally: [],
+    });
+  });
+
+  it('should merge in status name errors at the index of the error', () => {
+    const status: PipelineBuilderFormikStatus = {
+      [STATUS_KEY_NAME_ERROR]: {
+        'formData.tasks[5].name': { nameError: '', errorMessage: 'Required' },
+      },
+    };
+    const arr = [];
+    arr.length = 6;
+    arr[5] = { name: getTaskErrorString(TaskErrorType.NAME_ERROR) };
+    expect(getBuilderTasksErrorGroup({}, status)).toEqual({
+      tasks: arr,
+      finally: [],
+    });
+  });
+
+  it('should merge in status name errors for finally tasks', () => {
+    const status: PipelineBuilderFormikStatus = {
+      [STATUS_KEY_NAME_ERROR]: {
+        'formData.finallyTasks[2].name': { nameError: '', errorMessage: 'Required' },
+      },
+    };
+    const arr = [];
+    arr.length = 3;
+    arr[2] = { name: getTaskErrorString(TaskErrorType.NAME_ERROR) };
+    expect(getBuilderTasksErrorGroup({}, status)).toEqual({
+      tasks: [],
+      finally: arr,
+    });
+  });
+
+  it('should merge both normal errors and status errors together', () => {
+    const yupErrors: FormikErrors<PipelineBuilderFormValues> = {
+      tasks: [{ workspaces: [getTaskErrorString(TaskErrorType.MISSING_WORKSPACES)] }],
+    };
+    const status: PipelineBuilderFormikStatus = {
+      [STATUS_KEY_NAME_ERROR]: {
+        'formData.tasks[0].name': { nameError: '', errorMessage: 'Required' },
+      },
+    };
+    expect(getBuilderTasksErrorGroup(yupErrors, status)).toEqual({
+      tasks: [
+        {
+          name: getTaskErrorString(TaskErrorType.NAME_ERROR),
+          workspaces: [getTaskErrorString(TaskErrorType.MISSING_WORKSPACES)],
+        },
+      ],
+      finally: [],
     });
   });
 });

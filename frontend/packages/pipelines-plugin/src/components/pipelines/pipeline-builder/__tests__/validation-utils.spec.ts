@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { initialPipelineFormData, TASK_ERROR_STRINGS, TaskErrorType } from '../const';
+import { initialPipelineFormData, getTaskErrorString, TaskErrorType } from '../const';
 import { validationSchema } from '../validation-utils';
 import {
   createSafeTask,
@@ -297,7 +297,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -322,7 +322,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -394,7 +394,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -450,7 +450,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -478,7 +478,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -507,7 +507,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -536,7 +536,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -734,7 +734,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -849,7 +849,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -908,7 +908,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -934,7 +934,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -1022,7 +1022,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -1068,7 +1068,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -1095,7 +1095,7 @@ describe('Pipeline Build validation schema', () => {
     describe('Validate When Expresssions', () => {
       const invalidWhenExpressionCheck = hasError(
         'formData.tasks[0].when',
-        TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS],
+        getTaskErrorString(TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS),
       );
 
       it('should fail if the when expression is missing input value', async () => {

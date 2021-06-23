@@ -36,7 +36,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
     onUpdateTasks,
     taskGroup,
     taskResources,
-    getBuilderTasksErrorGroup(errors?.formData),
+    getBuilderTasksErrorGroup(errors?.formData, status),
   );
   const taskCount = taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
   const hasWhenExpression = nodesHasWhenExpression(nodes);
