@@ -35,7 +35,7 @@
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "在快照<1>{{snapshotName}}</1>恢复操作完成后，将创建一个新的与崩溃系统一致的 PVC 副本。",
   "Volume Mode": "卷模式",
   "Size should be equal or greater than the restore size of snapshot": "大小应等于或大于快照的恢复大小",
-  "{{resourceKind}} details": "{{resourceKind}} 详情",
+  "{{resourceKind}} details": "{{resourceKind}}详情",
   "Created at": "创建于",
   "Status": "状态",
   "API version": "API 版本",
