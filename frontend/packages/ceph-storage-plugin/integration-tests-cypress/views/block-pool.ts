@@ -15,7 +15,7 @@ export const poolMessage: {
   [POOL_PROGRESS.CREATED]: `Pool ${poolName} was successfully created`,
   [POOL_PROGRESS.NOTALLOWED]:
     "Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.",
-  [POOL_PROGRESS.BOUNDED]: `${poolName} cannot be deleted. When a pool is bounded to PVC it cannot be deleted. Please detach all the resources from StorageClass(es): ${scName}`,
+  [POOL_PROGRESS.BOUNDED]: `${poolName} cannot be deleted. When a pool is bounded to PVC it cannot be deleted. Please detach all the resources from StorageClass(es):`,
 };
 
 export const navigateToBlockPool = () => {

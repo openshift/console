@@ -47,6 +47,7 @@ describe('Test block pool deletion under OCS UI', () => {
 
     modal.modalTitleShouldContain('Delete BlockPool');
     cy.byTestID('pool-bound-message').contains(poolMessage[POOL_PROGRESS.BOUNDED]);
+    cy.byTestID('pool-storage-classes').contains(scName);
     verifyFooterActions(POOL_PROGRESS.BOUNDED);
 
     cy.log('Delete pvc and try pool deletion');
