@@ -24,6 +24,7 @@ type MonitoringDashboardGraphProps = {
   byteDataType: ByteDataTypes;
   timespan?: number;
   pollInterval?: number;
+  endTime?: number;
 };
 
 const DEFAULT_TIME_SPAN = 30 * 60 * 1000;
@@ -36,6 +37,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   graphType = GraphTypes.area,
   timespan,
   pollInterval,
+  endTime,
 }) => {
   const { t } = useTranslation();
   return (
@@ -59,6 +61,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
             isStack={graphType === GraphTypes.area}
             timespan={timespan}
             pollInterval={pollInterval}
+            fixedEndTime={endTime}
             formatSeriesTitle={(labels) => labels.pod}
             showLegend
           />

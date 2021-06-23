@@ -33,11 +33,17 @@ type MonitoringDashboardProps = {
 type StateProps = {
   timespan: number;
   pollInterval: number;
+  endTime: number;
 };
 
 type Props = MonitoringDashboardProps & StateProps;
 
-export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInterval }) => {
+export const MonitoringDashboard: React.FC<Props> = ({
+  match,
+  timespan,
+  pollInterval,
+  endTime,
+}) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
   const params = getURLSearchParams();
@@ -104,6 +110,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
               key={q.title}
               timespan={timespan}
               pollInterval={pollInterval}
+              endTime={endTime}
             />
           ))}
         </Dashboard>
@@ -115,6 +122,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
 const mapStateToProps = (state: RootState): StateProps => ({
   timespan: state.UI.getIn(['monitoringDashboards', 'timespan']),
   pollInterval: state.UI.getIn(['monitoringDashboards', 'pollInterval']),
+  endTime: state.UI.getIn(['monitoringDashboards', 'endTime']),
 });
 
 export default connect<StateProps, MonitoringDashboardProps>(mapStateToProps)(MonitoringDashboard);
