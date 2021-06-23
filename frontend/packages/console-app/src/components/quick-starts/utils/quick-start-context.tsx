@@ -9,6 +9,7 @@ import {
   getTaskStatusKey,
   QUICKSTART_TASKS_INITIAL_STATES,
 } from '@patternfly/quickstarts';
+import { useTranslation } from 'react-i18next';
 import {
   MarkdownExecuteSnippet,
   MarkdownCopyClipboard,
@@ -40,6 +41,7 @@ const useAllQuickStartStates = () =>
   useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
+  const { i18n } = useTranslation();
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();
@@ -47,18 +49,6 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const inlineExecuteCommandShowdownExtension = useInlineExecuteCommandShowdownExtension();
   const multilineCopyClipboardShowdownExtension = useMultilineCopyClipboardShowdownExtension();
   const multilineExecuteCommandShowdownExtension = useMultilineExecuteCommandShowdownExtension();
-
-  const setActiveQuickStart = React.useCallback(
-    (quickStartId: string, totalTasks?: number) => {
-      setActiveQuickStartID((id) => (id !== quickStartId ? quickStartId : ''));
-      setAllQuickStartStates((qs) =>
-        !quickStartId || qs[quickStartId]
-          ? qs
-          : { ...qs, [quickStartId]: getDefaultQuickStartState(totalTasks) },
-      );
-    },
-    [setActiveQuickStartID, setAllQuickStartStates],
-  );
 
   const startQuickStart = React.useCallback(
     (quickStartId: string, totalTasks?: number) => {
@@ -171,87 +161,18 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [activeQuickStartID, setAllQuickStartStates, fireTelemetryEvent],
   );
 
-  const previousStep = React.useCallback(() => {
-    setAllQuickStartStates((qs) => {
-      const quickStart = qs[activeQuickStartID];
-      const taskNumber = quickStart?.taskNumber;
-
-      if (taskNumber < 0) return qs;
-
-      return {
-        ...qs,
-        [activeQuickStartID]: {
-          ...quickStart,
-          taskNumber: taskNumber - 1,
-        },
-      };
-    });
-  }, [activeQuickStartID, setAllQuickStartStates]);
-
-  const setQuickStartTaskNumber = React.useCallback(
-    (quickStartId: string, taskNumber: number) => {
-      setAllQuickStartStates((qs) => {
-        const quickStart = qs[quickStartId];
-        const status = quickStart?.status;
-        let updatedStatus;
-        if (taskNumber > -1 && status === QuickStartStatus.NOT_STARTED) {
-          updatedStatus = QuickStartStatus.IN_PROGRESS;
-        }
-
-        let updatedTaskStatus = {};
-        for (let taskIndex = 0; taskIndex <= taskNumber; taskIndex++) {
-          const taskStatus = quickStart[getTaskStatusKey(taskIndex)];
-          const newTaskStatus =
-            taskStatus === QuickStartTaskStatus.INIT ? QuickStartTaskStatus.VISITED : undefined;
-          if (newTaskStatus) {
-            updatedTaskStatus = {
-              ...updatedTaskStatus,
-              [getTaskStatusKey(taskIndex)]: newTaskStatus,
-            };
-          }
-        }
-        const updatedQuickStart = {
-          ...quickStart,
-          ...(updatedStatus ? { status: updatedStatus } : {}),
-          taskNumber,
-          ...updatedTaskStatus,
-        };
-        return { ...qs, [quickStartId]: updatedQuickStart };
-      });
-    },
-    [setAllQuickStartStates],
-  );
-
-  const setQuickStartTaskStatus = React.useCallback(
-    (taskStatus: QuickStartTaskStatus) => {
-      const quickStart = allQuickStartStates[activeQuickStartID];
-      const { taskNumber } = quickStart;
-      const updatedQuickStart = { ...quickStart, [getTaskStatusKey(taskNumber)]: taskStatus };
-      setAllQuickStartStates((qs) => ({ ...qs, [activeQuickStartID]: updatedQuickStart }));
-    },
-    [allQuickStartStates, activeQuickStartID, setAllQuickStartStates],
-  );
-
-  const activeQuickStartState = allQuickStartStates?.[activeQuickStartID] ?? {};
-
-  const getQuickStartForId = React.useCallback((id: string) => allQuickStartStates[id], [
-    allQuickStartStates,
-  ]);
-
+  const language = localStorage.getItem('bridge/language') || 'en';
+  const resourceBundle = i18n.getResourceBundle(language, 'quickstart');
   return {
+    language,
+    resourceBundle,
     activeQuickStartID,
-    activeQuickStartState,
     allQuickStartStates,
-    setActiveQuickStart,
     setActiveQuickStartID,
     setAllQuickStartStates,
     startQuickStart,
     restartQuickStart,
     nextStep,
-    previousStep,
-    setQuickStartTaskNumber,
-    setQuickStartTaskStatus,
-    getQuickStartForId,
     footer: {
       show: false,
     },

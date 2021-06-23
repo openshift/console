@@ -36,7 +36,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
-import { withTelemetry } from '@console/shared/src/hoc';
+import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -441,7 +441,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, t } = this.props;
+    const { flags, consoleLinks, t, quickStartContext } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -463,7 +463,7 @@ class MastheadToolbarContents_ extends React.Component {
     const userActions = [
       {
         label: t('public~Language preference'),
-        callback: () => languagePreferencesModal({}),
+        callback: () => languagePreferencesModal({ quickStartContext }),
         component: 'button',
         dataTest: 'language',
       },
@@ -690,8 +690,8 @@ const mastheadToolbarStateToProps = (state) => ({
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
-const MastheadToolbarContentsWithTranslation = withTranslation()(
-  withTelemetry(MastheadToolbarContents_),
+const MastheadToolbarContentsWithTranslation = withQuickStartContext(
+  withTranslation()(withTelemetry(MastheadToolbarContents_)),
 );
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,
