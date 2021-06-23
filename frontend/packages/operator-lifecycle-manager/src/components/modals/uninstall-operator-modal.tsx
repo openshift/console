@@ -131,25 +131,17 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
     close();
     if (
       window.location.pathname.split('/').includes(subscription.metadata.name) ||
-      window.location.pathname.split('/').includes(subscription.status.installedCSV)
+      window.location.pathname.split('/').includes(subscription?.status?.installedCSV)
     ) {
       history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
     }
-  }, [close, subscription.metadata.name, subscription.status.installedCSV]);
+  }, [close, subscription]);
 
   React.useEffect(() => {
     if (isSubmitFinished && !areSubmitErrors) {
       closeAndRedirect();
     }
-  }, [
-    close,
-    closeAndRedirect,
-    areSubmitErrors,
-    isSubmitFinished,
-    subscription,
-    subscription.metadata.name,
-    subscription.status.installedCSV,
-  ]);
+  }, [closeAndRedirect, areSubmitErrors, isSubmitFinished]);
 
   const submit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
