@@ -88,7 +88,7 @@
       "^.+\\.(gql|graphql)$": "jest-transform-graphql"
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project|@popperjs|i18next\\S*?)/.*)"
+      "<rootDir>/node_modules/(?!(@patternfly|lodash-es|@console|@novnc|@spice-project|@popperjs|i18next\\S*?)/.*)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
