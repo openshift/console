@@ -22,7 +22,6 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewHealthOperator,
   ResourceDetailsPage,
-  CustomFeatureFlag,
   ResourceListPage,
   ResourceTabPage,
 } from '@console/plugin-sdk';
@@ -38,7 +37,6 @@ import {
   getControlPlaneHealth,
   getClusterOperatorHealthStatus,
 } from './components/dashboards-page/status';
-import { detectMCHAvailability } from './features';
 import * as models from './models';
 import {
   API_SERVERS_UP,
@@ -57,7 +55,6 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewHealthOperator<ClusterOperator>
   | ResourceListPage
-  | CustomFeatureFlag
   | ResourceDetailsPage
   | ResourceTabPage;
 
@@ -194,12 +191,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.CLUSTER_VERSION],
-    },
-  },
-  {
-    type: 'FeatureFlag/Custom',
-    properties: {
-      detect: detectMCHAvailability,
     },
   },
   {

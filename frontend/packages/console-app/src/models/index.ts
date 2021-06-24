@@ -32,16 +32,3 @@ export const QuickStartModel: K8sKind = {
   plural: 'consolequickstarts',
   propagationPolicy: 'Background',
 };
-
-export const MultiClusterHubModel: K8sKind = {
-  kind: 'MultiClusterHub',
-  label: 'MultiClusterHub',
-  labelPlural: 'MultiClusterhubs',
-  apiGroup: 'operator.open-cluster-management.io',
-  apiVersion: 'v1',
-  abbr: 'MCH',
-  namespaced: false,
-  crd: true,
-  plural: 'multiclusterhubs',
-  propagationPolicy: 'Background',
-};
