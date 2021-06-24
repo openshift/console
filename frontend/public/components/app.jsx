@@ -35,7 +35,7 @@ import {
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
-import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';

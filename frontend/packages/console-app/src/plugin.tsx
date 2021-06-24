@@ -201,7 +201,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/quick-starts/QuickStartCatalogPage' /* webpackChunkName: "co-quick-start" */
+            './components/quick-starts/QuickStartCatalogPageAsync' /* webpackChunkName: "co-quick-start" */
           )
         ).default,
     },

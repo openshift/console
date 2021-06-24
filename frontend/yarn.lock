@@ -1782,19 +1782,19 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-4.87.3.tgz#eb2e9b22aa8f6f106580e7451bf204a06cb9949e"
   integrity sha512-hDNMPa7B1zKD8LWFZO4SS5hC/N+yvuci2sAn8HJd+EIbAvbMAUkRsyZ0/XO3BG3RVtpSlgq7q8x1pAHC/FTFuA==
 
-"@patternfly/quickstarts@1.0.0-rc.19":
-  version "1.0.0-rc.19"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-1.0.0-rc.19.tgz#f942ab0758e4e550a6db0e28a9ed026dbbac30c6"
-  integrity sha512-pL8i1utskXmyzVaIc8yHVo0yCYU0A9d8UQL5/iGggSftEWoC5rh6vWQjf+BELHDsPmwn22GMzxVk9e5B/TYbcQ==
+"@patternfly/quickstarts@1.0.0-rc.20":
+  version "1.0.0-rc.20"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-1.0.0-rc.20.tgz#fd31e8e5fd57e9847d122701aaccc0df6e752ddb"
+  integrity sha512-55EbA0xEGCTjF2Bl06zNGnkXVaRYvC2+Jwd58IYxqMKdLSsvkRjtkczh9iYnKZiG+jEOqlJr4/nWber5p8PrSw==
   dependencies:
     "@patternfly/patternfly" "^4.90.5"
     "@patternfly/react-catalog-view-extension" "^4.10.13"
     "@patternfly/react-core" "^4.101.3"
+    "@patternfly/react-icons" "^4.9.5"
     bootstrap-sass "^3.3.7"
     classnames "^2.2.6"
     dompurify "^2.2.6"
     history "^5.0.0"
-    lodash-es "^4.17.20"
     showdown "1.8.6"
 
 "@patternfly/react-catalog-view-extension@4.11.42", "@patternfly/react-catalog-view-extension@^4.10.13":
@@ -1884,6 +1884,11 @@
   version "4.9.2"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.9.2.tgz#dcb2efa9727de97d5aa5d6be47a75daee49addb8"
   integrity sha512-3PY81A9mj9YyUpznSWhcWMKHRyGWNgZ1IDYqbMva7Q8wgd0fjsiTJ+5zAp4YQLo1mA8KwYX9v5s37hK8XiTbAA==
+
+"@patternfly/react-icons@^4.9.5":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-4.11.0.tgz#26790eeff22dc3204aa8cd094470f0a2f915634a"
+  integrity sha512-WsIX34bO9rhVRmPG0jlV3GoFGfYgPC64TscNV0lxQosiVRnYIA6Z3nBSArtJsxo5Yn6c63glIefC/YTy6D/ZYg==
 
 "@patternfly/react-styles@^4.10.11":
   version "4.10.11"
@@ -12204,7 +12209,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash-es@^4.17.14, lodash-es@^4.17.20, lodash-es@^4.17.21:
+lodash-es@^4.17.14, lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -17118,12 +17123,19 @@ shortid@^2.2.14:
   dependencies:
     nanoid "^2.1.0"
 
-showdown@1.8.6, showdown@1.8.x:
+showdown@1.8.6:
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/showdown/-/showdown-1.8.6.tgz#91ea4ee3b7a5448aaca6820a4e27e690c6ad771c"
   integrity sha1-kepO47elRIqspoIKTifmkMatdxw=
   dependencies:
     yargs "^10.0.3"
+
+showdown@^1.8.7:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/showdown/-/showdown-1.9.1.tgz#134e148e75cd4623e09c21b0511977d79b5ad0ef"
+  integrity sha512-9cGuS382HcvExtf5AHk7Cb4pAeQQ+h0eTr33V1mu+crYWV4KvWAw6el92bDrqGEk5d46Ai/fhbEUwqJ/mTCNEA==
+  dependencies:
+    yargs "^14.2"
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
@@ -20233,6 +20245,14 @@ yargs-parser@^13.1.2:
     camelcase "^5.0.0"
     decamelize "^1.2.0"
 
+yargs-parser@^15.0.1:
+  version "15.0.3"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-15.0.3.tgz#316e263d5febe8b38eef61ac092b33dfcc9b1115"
+  integrity sha512-/MVEVjTXy/cGAjdtQf8dW3V9b97bPN7rNn8ETj6BmAQL7ibC7O1Q9SPJbGjgh3SlwoBNXMzj/ZGIj8mBgl12YA==
+  dependencies:
+    camelcase "^5.0.0"
+    decamelize "^1.2.0"
+
 yargs-parser@^18.1.2:
   version "18.1.3"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.3.tgz#be68c4975c6b2abf469236b0c870362fab09a7b0"
@@ -20320,6 +20340,23 @@ yargs@^13.2.2, yargs@^13.3.2:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^13.1.2"
+
+yargs@^14.2:
+  version "14.2.3"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-14.2.3.tgz#1a1c3edced1afb2a2fea33604bc6d1d8d688a414"
+  integrity sha512-ZbotRWhF+lkjijC/VhmOT9wSgyBQ7+zr13+YLkhfsSiTriYsMzkTUFP18pFhWwBeMa5gUc1MzbhrO6/VB7c9Xg==
+  dependencies:
+    cliui "^5.0.0"
+    decamelize "^1.2.0"
+    find-up "^3.0.0"
+    get-caller-file "^2.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^2.0.0"
+    set-blocking "^2.0.0"
+    string-width "^3.0.0"
+    which-module "^2.0.0"
+    y18n "^4.0.0"
+    yargs-parser "^15.0.1"
 
 yargs@^9.0.0:
   version "9.0.1"
