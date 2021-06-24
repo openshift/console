@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next, { TFunction } from 'i18next';
+// eslint-disable-next-line import/no-unresolved
 import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { Dropdown } from '../utils';
 import {
