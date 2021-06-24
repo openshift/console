@@ -916,6 +916,7 @@
   "query browser chart": "query browser chart",
   "Ungraphable results": "Ungraphable results",
   "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.": "Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.",
+  "Query result is a string, which cannot be graphed.": "Query result is a string, which cannot be graphed.",
   "The resulting dataset is too large to graph.": "The resulting dataset is too large to graph.",
   "Stacked": "Stacked",
   "Displaying with reduced resolution due to large dataset.": "Displaying with reduced resolution due to large dataset.",
