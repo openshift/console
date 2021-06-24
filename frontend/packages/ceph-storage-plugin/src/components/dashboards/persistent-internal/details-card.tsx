@@ -1,7 +1,12 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getInfrastructurePlatform } from '@console/shared';
+import {
+  BlueArrowCircleUpIcon,
+  getInfrastructurePlatform,
+  useDeepCompareMemoize,
+} from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -17,12 +22,20 @@ import { InfrastructureModel } from '@console/internal/models/index';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,
+  PackageManifestModel,
 } from '@console/operator-lifecycle-manager/src/models';
-import { K8sResourceKind } from '@console/internal/module/k8s/index';
+import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import {
+  PackageManifestKind,
+  SubscriptionKind,
+} from '@console/operator-lifecycle-manager/src/types';
+import { createSubscriptionChannelModal } from '@console/operator-lifecycle-manager/src/components/modals/subscription-channel-modal';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { Button } from '@patternfly/react-core';
 import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
@@ -43,6 +56,24 @@ const SubscriptionResource: FirehoseResource = {
   isList: true,
 };
 
+const ocsSubscriptionResource: FirehoseResource = {
+  kind: referenceForModel(SubscriptionModel),
+  namespaced: true,
+  namespace: 'openshift-storage',
+  prop: 'subscription',
+  isList: false,
+  name: 'ocs-operator',
+};
+
+const PackageManifestResource: FirehoseResource = {
+  kind: referenceForModel(PackageManifestModel),
+  namespaced: true,
+  isList: false,
+  namespace: 'openshift-storage',
+  prop: 'packages',
+  name: 'ocs-operator',
+};
+
 const DetailsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
   stopWatchK8sResource,
@@ -53,6 +84,29 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     InfrastructureModel,
     'cluster',
   );
+  const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sWatchResource<
+    SubscriptionKind
+  >(ocsSubscriptionResource);
+  const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sWatchResource<
+    PackageManifestKind
+  >(PackageManifestResource);
+  const memoizedPackageManifest = useDeepCompareMemoize(packageManifest, true);
+  const memoizedOcsSubscription = useDeepCompareMemoize(ocsSubscription, true);
+  let currentChannel;
+  let currentChannelVersion;
+  if (ocsSubscriptionLoaded) {
+    currentChannel =
+      memoizedOcsSubscription?.spec?.channel ??
+      memoizedPackageManifest?.status?.channels?.[0]?.name;
+    currentChannelVersion = parseFloat(currentChannel.substring(currentChannel.indexOf('-') + 1));
+  }
+  const filteredVersions = memoizedPackageManifest?.status?.channels?.filter(
+    (channel) =>
+      parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) > currentChannelVersion,
+  );
+  _.set(memoizedPackageManifest, 'status.channels', filteredVersions);
+  const ocsChannelsList = memoizedPackageManifest?.status?.channels;
+
   React.useEffect(() => {
     watchK8sResource(SubscriptionResource);
     watchK8sResource(ocsResource);
@@ -78,6 +132,17 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     ocsVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
+  const updateFunction = (...args) => k8sUpdate(...args);
+  const launchModal = () => {
+    if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
+      return createSubscriptionChannelModal({
+        subscription: memoizedOcsSubscription,
+        pkg: memoizedPackageManifest,
+        k8sUpdate: updateFunction,
+      });
+    }
+    return null;
+  };
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -119,6 +184,24 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             error={subscriptionLoaded && !ocsVersion}
           >
             {ocsVersion}
+            {!_.isEmpty(filteredVersions) &&
+              memoizedOcsSubscription?.spec?.installPlanApproval === 'Manual' && (
+                <>
+                  {ocsSubscriptionLoaded && packageManifestLoaded && (
+                    <Button
+                      type="button"
+                      isInline
+                      onClick={launchModal}
+                      variant="link"
+                      className="pf-u-ml-xl"
+                    >
+                      <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                      {t('ceph-storage-plugin~Update to ')}
+                      {ocsChannelsList[ocsChannelsList.length - 1].name}
+                    </Button>
+                  )}
+                </>
+              )}
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>

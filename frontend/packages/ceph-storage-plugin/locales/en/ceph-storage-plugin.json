@@ -239,6 +239,7 @@
   "Service name": "Service name",
   "Cluster name": "Cluster name",
   "Internal": "Internal",
+  "Update to ": "Update to ",
   "Inventory": "Inventory",
   "Error": "Error",
   "Warning": "Warning",
