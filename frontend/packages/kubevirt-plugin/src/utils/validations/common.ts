@@ -75,3 +75,9 @@ export const validateContainer = (value: string): ValidationObject => {
 
   return null;
 };
+
+export enum ValidatedOptions {
+  success = 'success',
+  error = 'error',
+  default = 'default',
+}

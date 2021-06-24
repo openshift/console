@@ -19,6 +19,7 @@ export const READY = 'Ready';
 
 export const CLOUD = 'cloud';
 export const SSH = 'ssh';
+export const SYSPREP = 'sysprep';
 
 export const EXAMPLE_CONTAINER = 'registry.redhat.io/rhel8/rhel-guest-image';
 export const FEDORA_EXAMPLE_CONTAINER = 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest';
