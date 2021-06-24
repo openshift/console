@@ -721,10 +721,8 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
               <Alert variant="warning" isInline title={t('kubevirt-plugin~PVC size warning')}>
                 <p>
                   {t(
-                    'kubevirt-plugin~PVC size is smaller than double the provided image, Please ensure your PVC size covers the requirements of the uncompressed image and any other space requirements',
-                  )}
-                </p>
-                <p>
+                    'kubevirt-plugin~PVC size is smaller than double the provided image. Please ensure your PVC size covers the requirements of the uncompressed image and any other space requirements.',
+                  )}{' '}
                   <ExternalLink
                     text={t('kubevirt-plugin~Learn more')}
                     href="https://docs.openshift.com/container-platform/4.7/virt/virtual_machines/virtual_disks/virt-uploading-local-disk-images-block.html"

@@ -17,6 +17,7 @@ const LabelSection: React.FC = () => {
       <SelectorInput
         onChange={(val) => setFieldValue('labels', SelectorInput.objectify(val))}
         tags={labels}
+        placeholder="app.io/type=frontend"
       />
     </FormSection>
   );

@@ -560,10 +560,10 @@ const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation();
   const project = useActiveNamespace();
   const noOperatorsInSingleNamespaceMessage = t(
-    'olm~No Operators are availalble for project {{project}}.',
+    'olm~No Operators are available for project {{project}}.',
     { project },
   );
-  const noOperatorsInAllNamespacesMessage = t('olm~No Operators are availalble.');
+  const noOperatorsInAllNamespacesMessage = t('olm~No Operators are available.');
   const detail = (
     <>
       <div>
