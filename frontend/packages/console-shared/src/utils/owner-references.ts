@@ -1,4 +1,4 @@
-import { kindForReference, OwnerReference } from '@console/internal/module/k8s';
+import { OwnerReference } from '@console/internal/module/k8s';
 
 export const compareOwnerReference = (
   obj: OwnerReference,
@@ -16,7 +16,7 @@ export const compareOwnerReference = (
 
   return (
     obj.apiVersion === otherObj.apiVersion &&
-    kindForReference(obj.kind) === kindForReference(otherObj.kind) &&
+    obj.kind === otherObj.kind &&
     isNameEqual &&
     isUIDEqual
   );
