@@ -55,6 +55,7 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
                 e.preventDefault();
                 e.stopPropagation();
               }}
+              aria-label={t('quickstart~Show prerequisites')}
             >
               <InfoCircleIcon />
             </Button>
