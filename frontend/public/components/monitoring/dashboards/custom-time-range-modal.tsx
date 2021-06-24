@@ -1,3 +1,4 @@
+import * as _ from 'lodash-es';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -18,7 +19,7 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../../factory/modal';
-import { dateFormatter, toISODateString, twentyFourHourTime } from '../../utils/datetime';
+import { toISODateString, twentyFourHourTime } from '../../utils/datetime';
 
 const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
   const { t } = useTranslation();
@@ -33,22 +34,24 @@ const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
   // covers all of today
   const now = new Date();
   const defaultFrom = endTime && timespan ? new Date(endTime - timespan) : undefined;
-  const [fromDate, setFromDate] = React.useState(defaultFrom ?? now);
+  const [fromDate, setFromDate] = React.useState(toISODateString(defaultFrom ?? now));
   const [fromTime, setFromTime] = React.useState(
     defaultFrom ? twentyFourHourTime(defaultFrom) : '00:00',
   );
-  const [toDate, setToDate] = React.useState(endTime ? new Date(endTime) : now);
+  const [toDate, setToDate] = React.useState(toISODateString(endTime ? new Date(endTime) : now));
   const [toTime, setToTime] = React.useState(
     endTime ? twentyFourHourTime(new Date(endTime)) : '23:59',
   );
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const from = Date.parse(`${toISODateString(fromDate)} ${fromTime}`);
-    const to = Date.parse(`${toISODateString(toDate)} ${toTime}`);
-    dispatch(monitoringDashboardsSetEndTime(to));
-    dispatch(monitoringDashboardsSetTimespan(to - from));
-    close();
+    const from = Date.parse(`${fromDate} ${fromTime}`);
+    const to = Date.parse(`${toDate} ${toTime}`);
+    if (_.isInteger(from) && _.isInteger(to)) {
+      dispatch(monitoringDashboardsSetEndTime(to));
+      dispatch(monitoringDashboardsSetTimespan(to - from));
+      close();
+    }
   };
 
   return (
@@ -60,10 +63,7 @@ const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
             <label>{t('public~From')}</label>
           </div>
           <div className="col-sm-4">
-            <DatePicker
-              onChange={(str, date) => setFromDate(date)}
-              value={dateFormatter.format(fromDate)}
-            />
+            <DatePicker onChange={(str) => setFromDate(str)} value={fromDate} />
           </div>
           <div className="col-sm-4">
             <TimePicker is24Hour onChange={setFromTime} time={fromTime} />
@@ -74,10 +74,7 @@ const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
             <label>{t('public~To')}</label>
           </div>
           <div className="col-sm-4">
-            <DatePicker
-              onChange={(str, date) => setToDate(date)}
-              value={dateFormatter.format(toDate)}
-            />
+            <DatePicker onChange={(str) => setToDate(str)} value={toDate} />
           </div>
           <div className="col-sm-4">
             <TimePicker is24Hour onChange={setToTime} time={toTime} />
