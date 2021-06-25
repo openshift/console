@@ -12,6 +12,7 @@ import {
 } from '../create-health-checks-probe-utils';
 import { appResources } from '../../edit-application/__tests__/edit-application-data';
 import { Resources } from '../../import/import-types';
+import { healthChecksDefaultValues } from '../health-checks-probe-utils';
 
 describe('Create Health Check probe Utils', () => {
   const { editAppResource } = appResources;
@@ -51,6 +52,19 @@ describe('Create Health Check probe Utils', () => {
     expect(constructProbeData(healthChecksInputData.healthChecks.readinessProbe.data)).toEqual(
       enabledProbeData.readinessProbe,
     );
+    const livenessProbe = _.set(_.cloneDeep(healthChecksDefaultValues), 'data.httpGet.scheme', []);
+    expect(constructProbeData(livenessProbe.data)).toEqual({
+      failureThreshold: 3,
+      httpGet: {
+        scheme: 'HTTP',
+        path: '/',
+        port: 8080,
+        httpHeaders: [],
+      },
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    });
     expect(constructProbeData(healthChecksInputData.healthChecks.startupProbe.data)).toEqual(
       enabledProbeData.startupProbe,
     );
