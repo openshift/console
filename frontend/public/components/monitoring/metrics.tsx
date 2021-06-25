@@ -676,6 +676,9 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   if (data.resultType === 'scalar') {
     columns = ['', { title: t('public~Value'), ...cellProps }];
     rows = [[buttonCell({}), _.get(result, '[1]')]];
+  } else if (data.resultType === 'string') {
+    columns = [{ title: t('public~Value'), ...cellProps }];
+    rows = [[result?.[1]]];
   } else {
     const allLabelKeys = _.uniq(_.flatMap(result, ({ metric }) => Object.keys(metric))).sort();
 
