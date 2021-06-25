@@ -114,7 +114,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/URL',
     properties: {
-      title: 'Cluster',
+      // t('console-app~Cluster')
+      title: '%console-app~Cluster%',
       url: 'healthz',
       fetch: fetchK8sHealth,
       healthHandler: getK8sHealthState,
@@ -131,7 +132,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Prometheus',
     properties: {
-      title: 'Control Plane',
+      // t('console-app~Control Plane')
+      title: '%console-app~Control Plane%',
       queries: [API_SERVERS_UP, CONTROLLER_MANAGERS_UP, SCHEDULERS_UP, API_SERVER_REQUESTS_SUCCESS],
       healthHandler: getControlPlaneHealth,
       popupComponent: () =>

@@ -24,5 +24,7 @@
   "Status": "状态",
   "API version": "API 版本",
   "Restore": "恢复",
-  "Administrator": "管理员"
+  "Administrator": "管理员",
+  "Cluster": "集群",
+  "Control Plane": "Control Plane"
 }
