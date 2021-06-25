@@ -221,7 +221,11 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
           <div className="co-form-section__separator" />
           <h3>{t('public~Organizations')}</h3>
           <p className="co-help-text">
-            <Trans i18nKey="teams-help" ns="public">
+            <Trans
+              t={t}
+              ns="public"
+              i18nKey="Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>."
+            >
               Optionally list organizations. If specified, only GitHub users that are members of at
               least one of the listed organizations will be allowed to log in. Cannot be used in
               combination with <strong>teams</strong>.
@@ -235,7 +239,11 @@ class AddGitHubPageWithTranslation extends PromiseComponent<
           <div className="co-form-section__separator" />
           <h3>{t('public~Teams')}</h3>
           <p className="co-help-text">
-            <Trans i18nKey="organizations-help" ns="public">
+            <Trans
+              t={t}
+              ns="public"
+              i18nKey="Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>."
+            >
               Optionally list teams. If specified, only GitHub users that are members of at least
               one of the listed teams will be allowed to log in. Cannot be used in combination with{' '}
               <strong>organizations</strong>.
