@@ -35,7 +35,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
       {children({
         ...field,
         ...props,
-        value: field.value,
+        value: field.value ?? false,
         id: fieldId,
         label,
         isChecked: field.checked,
