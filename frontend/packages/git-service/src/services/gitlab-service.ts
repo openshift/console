@@ -73,8 +73,10 @@ export class GitlabService extends BaseService {
 
   getAuthProvider = (): any => {
     switch (this.gitsource.secretType) {
-      case SecretType.PERSONAL_ACCESS_TOKEN || SecretType.OAUTH:
-        return this.gitsource.secretContent;
+      case SecretType.PERSONAL_ACCESS_TOKEN:
+      case SecretType.OAUTH:
+      case SecretType.BASIC_AUTH:
+        return this.gitsource.secretContent.password;
       default:
         return null;
     }
