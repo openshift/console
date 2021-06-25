@@ -10,7 +10,7 @@ import {
 } from '../types';
 import { upgradeRequiresApproval } from '../utils';
 
-const pedingPhases = [
+const pendingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,
   ClusterServiceVersionPhase.CSVPhaseInstalling,
   ClusterServiceVersionPhase.CSVPhaseReplacing,
@@ -39,7 +39,7 @@ export const getCSVStatus = (
   const statusPhase = csv?.status?.phase ?? ClusterServiceVersionPhase.CSVPhaseUnknown;
   // TODO Get rid of let.
   let status: ClusterServiceVersionStatus;
-  if (pedingPhases.includes(statusPhase)) {
+  if (pendingPhases.includes(statusPhase)) {
     status = i18n.t('olm~Pending');
   } else {
     switch (statusPhase) {
