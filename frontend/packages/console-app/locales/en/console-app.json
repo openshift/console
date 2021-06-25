@@ -38,6 +38,8 @@
   "Status": "Status",
   "API version": "API version",
   "Restore": "Restore",
+  "Quick Starts": "Quick Starts",
+  "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.": "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.",
   "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode",
   "VolumeSnapshotClass with same provisioner as claim": "VolumeSnapshotClass with same provisioner as claim",
   "Select volume snapshot class": "Select volume snapshot class",

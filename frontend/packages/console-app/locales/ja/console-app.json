@@ -38,6 +38,8 @@
   "Status": "ステータス",
   "API version": "API バージョン",
   "Restore": "復元",
+  "Quick Starts": "クイックスタート",
+  "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.": "ステップごとの手順およびタスクを使用して、OpenShift でアプリケーションを作成し、インポートし、実行する方法を説明します。",
   "Only {volumeMode} volume mode is available for {storageClass} with {accessMode} access mode": "{accessMode} アクセスモードの {storageClass} には {volumeMode} ボリュームモードのみを使用できます。",
   "VolumeSnapshotClass with same provisioner as claim": "要求と同じプロビジョナーを持つボリュームスナップショットクラス",
   "Select volume snapshot class": "ボリュームスナップショットクラスの選択",

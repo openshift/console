@@ -10,7 +10,7 @@ const QuickStartCatalogPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{t('quickstart~Quick Starts')}</title>
+        <title>{t('console-app~Quick Starts')}</title>
       </Helmet>
       <QuickStartsLoader>
         {(quickStarts, loaded) =>
@@ -18,9 +18,9 @@ const QuickStartCatalogPage: React.FC = () => {
             <PfQuickStartCatalogPage
               quickStarts={quickStarts}
               showFilter
-              title={t('quickstart~Quick Starts')}
+              title={t('console-app~Quick Starts')}
               hint={t(
-                'quickstart~Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
+                'console-app~Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
               )}
             />
           ) : (
