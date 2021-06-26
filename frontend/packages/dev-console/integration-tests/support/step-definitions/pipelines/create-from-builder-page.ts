@@ -1,10 +1,13 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
-import { pipelineBuilderPO } from '../../pageObjects/pipelines-po';
+import {
+  pipelinesPage,
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  navigateTo,
+} from '@console/dev-console/integration-tests/support/pages';
+
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { pipelineBuilderPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 When('user clicks Create Pipeline button on Pipelines page', () => {
   pipelinesPage.clickOnCreatePipeline();

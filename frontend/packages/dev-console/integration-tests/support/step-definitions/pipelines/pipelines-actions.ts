@@ -1,18 +1,19 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
-import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineBuilderPO, pipelinesPO } from '../../pageObjects/pipelines-po';
-
-Given('pipeline run is available for {string}', (pipelineName: string) => {
-  // TODO: implement step
-  cy.log(pipelineName);
-});
+import {
+  pipelinesPage,
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  pipelineRunDetailsPage,
+  navigateTo,
+  topologySidePane,
+  app,
+} from '@console/dev-console/integration-tests/support/pages';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import {
+  pipelineBuilderPO,
+  pipelinesPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
+import { devNavigationMenu } from '../../constants';
 
 Given('pipeline with task {string} is present on Pipelines page', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
@@ -182,23 +183,8 @@ Then('Actions menu display with options Start, Add Trigger, Edit Pipeline, Delet
   cy.byTestActionID('Delete Pipeline').should('be.visible');
 });
 
-Then('Pipeline run details page is displayed', () => {
-  // TODO: implement step
-});
-
-Then('pipeline run status displays as {string} in Pipeline run page', (status: string) => {
-  cy.log(status);
-});
-
-Then(
-  'Last run status of the {string} displays as {string} in pipelines page',
-  (a: string, b: string) => {
-    cy.log(a, b);
-  },
-);
-
 Then('Name field will be disabled', () => {
-  cy.get('#form-input-formData-name-field').should('be.disabled');
+  cy.get(pipelineBuilderPO.formView.name).should('be.disabled');
 });
 
 Then('Add Parameters, Add Resources, Task should be displayed', () => {
@@ -212,7 +198,15 @@ Then('Add Parameters, Add Resources, Task should be displayed', () => {
 });
 
 Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
-  cy.byLegacyTestID(pipelineName).should('not.be.visible');
+  cy.get('body').then(($body) => {
+    app.waitForLoad();
+    if ($body.find(pipelinesPO.emptyMessage).length) {
+      cy.get(pipelinesPO.emptyMessage).should('be.visible');
+    } else {
+      cy.get(pipelinesPO.search).type(pipelineName);
+      cy.get(pipelinesPO.emptyMessage).should('be.visible');
+    }
+  });
 });
 
 Then('user will be redirected to Pipeline Run Details page', () => {

@@ -6,6 +6,7 @@ export const pageTitle = {
   DeveloperCatalog: 'Developer Catalog',
   DevFile: 'Import from Devfile',
   Pipelines: 'Pipelines',
+  PipelineRuns: 'PipelineRuns',
   PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
   upgradeHelmRelease: 'Upgrade Helm Release',
@@ -21,7 +22,7 @@ export const pageTitle = {
   PipelineRunDetails: 'Pipeline Run details',
   PipelineDetails: 'Pipeline details',
   TriggerTemplateDetails: 'Trigger Template details',
-  EventListenerDetails: 'EventListener details',
+  EventListenerDetails: 'Event Listener details',
   ClusterTriggerTemplateDetails: 'ClusterTriggerBinding Details',
   Templates: 'Templates',
   BuilderImages: 'Builder Images',
@@ -32,4 +33,5 @@ export const pageTitle = {
   UpgradeHelmRelease: 'Upgrade Helm Release',
   OperatorHub: 'OperatorHub',
   AddHealthChecks: 'Add health checks',
+  InstallOperator: 'Install Operator',
 };

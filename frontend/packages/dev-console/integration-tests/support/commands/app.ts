@@ -1,5 +1,8 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
+import { operators } from '../constants';
+import { installOperator } from '../pages';
+
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
   namespace Cypress {
@@ -16,15 +19,18 @@ declare global {
 }
 
 before(() => {
+  cy.clearCookie('openshift-session-token');
   cy.login();
   cy.visit('');
   cy.document()
     .its('readyState')
     .should('eq', 'complete');
+  installOperator(operators.PipelineOperator);
 });
 
 after(() => {
-  cy.logout();
+  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
+  // cy.logout();
 });
 
 afterEach(() => {

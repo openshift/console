@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { topologyPage } from '../../pages/topology/topology-page';
-import { navigateTo } from '../../pages/app';
+import { app, navigateTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
 
@@ -35,5 +35,6 @@ Then('user can see sidebar opens with Resources tab selected by default', () => 
 
 Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
+  app.waitForLoad();
   topologySidePane.verifySection('Pipeline Runs');
 });

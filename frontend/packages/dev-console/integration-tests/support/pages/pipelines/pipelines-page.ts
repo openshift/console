@@ -1,6 +1,9 @@
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineActions } from '../../constants/pipelines';
-import { pipelineRunDetailsPO, pipelinesPO } from '../../pageObjects/pipelines-po';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { pipelineActions } from '@console/dev-console/integration-tests/support/constants';
+import {
+  pipelineRunDetailsPO,
+  pipelinesPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
@@ -38,7 +41,7 @@ export const pipelinesPage = {
     switch (action) {
       case pipelineActions.Start: {
         cy.byTestActionID('Start').click();
-        cy.get('[data-test-section-heading="Pipeline Run Details"]').should('be.visible');
+        cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
       case pipelineActions.AddTrigger: {
@@ -102,7 +105,7 @@ export const pipelinesPage = {
 
   verifyPipelineTableColumns: () => {
     cy.get(pipelinesPO.pipelinesTable.columnNames).each(($el) => {
-      expect(['Name', 'Last Run', 'Task Status', 'Last Run Status', 'Last Run Time', '']).toContain(
+      expect(['Name', 'Last run', 'Task status', 'Last run status', 'Last run time', '']).toContain(
         $el.text(),
       );
     });
@@ -113,6 +116,7 @@ export const pipelinesPage = {
   verifyKebabMenu: () => cy.get(pipelinesPO.pipelinesTable.kebabMenu).should('be.visible'),
 
   verifyNameInPipelinesTable: (pipelineName: string) => {
+    // eslint-disable-next-line promise/catch-or-return
     cy.get('[title="Pipeline"]')
       .next('a')
       .then(($el) => {
@@ -121,6 +125,7 @@ export const pipelinesPage = {
   },
 
   verifyNameSpaceInPipelinesTable: (namespace: string) => {
+    // eslint-disable-next-line promise/catch-or-return
     cy.get('[title="Namespace"]')
       .next('a')
       .then(($el) => {
@@ -166,12 +171,23 @@ export const startPipelineInPipelinesPage = {
     cy.get(pipelinesPO.startPipeline.revision).type(revision);
   },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
-    cy.get('.modal-body-content').should('be.visible');
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
-    cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
-    cy.get(pipelinesPO.startPipeline.revision).type(revision);
+    modal.shouldBeOpened();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.get(pipelinesPO.startPipeline.gitResourceDropdown).then(($btn) => {
+      if ($btn.attr('disabled')) {
+        cy.log('Pipeline resource is not available, so adding a new git resource');
+      } else if ($btn.attr('aria-haspopup', 'listbox')) {
+        cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
+        cy.get('ul li')
+          .contains('Create Pipeline resource')
+          .click();
+        // Below line commented, because tags in the DOM got changed
+        // cy.get(pipelinesPO.startPipeline.gitResourceDropdown).select('Create Pipeline resource');
+      }
+      startPipelineInPipelinesPage.enterGitUrl(gitUrl);
+      startPipelineInPipelinesPage.enterRevision(revision);
+    });
   },
   clickStart: () => cy.get(pipelinesPO.startPipeline.start).click(),
   clickShowCredentialOptions: () => cy.byButtonText('Show Credential options').click(),

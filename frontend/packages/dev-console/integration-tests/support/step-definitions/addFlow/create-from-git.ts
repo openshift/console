@@ -4,7 +4,7 @@ import { addPage } from '../../pages/add-flow/add-page';
 import { addOptions, buildConfigOptions } from '../../constants/add';
 import { topologyPage } from '../../pages/topology/topology-page';
 import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { messages } from '../../constants/staticText/addFlow-text';
+import { messages } from '@console/dev-console/integration-tests/support/constants';
 import { addHealthChecksPage } from '../../pages/addHealthChecks-page';
 
 Given('user is at Import from git page', () => {
@@ -17,9 +17,6 @@ When('user enters Git Repo url as {string}', (gitUrl: string) => {
   cy.get('body').then(($el) => {
     if ($el.find('[aria-label$="Alert"]').length) {
       cy.log('Builder image detected');
-    } else {
-      gitPage.enterGitUrl(gitUrl);
-      gitPage.verifyBuilderImageDetectedMessage();
     }
   });
 });
@@ -192,7 +189,7 @@ Then('public url is not created for node {string}', (nodeName: string) => {
   cy.get('[role="dialog"] h2')
     .contains('Routes')
     .next('span')
-    .should('contain.text', messages.noRoutesFound);
+    .should('contain.text', messages.addFlow.noRoutesFound);
 });
 
 Then(

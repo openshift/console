@@ -1,11 +1,14 @@
-import { pageTitle } from '../../constants/pageTitle';
-import { pipelineBuilder } from '../../constants/staticText/pipeline-text';
-import { pipelineBuilderPO, pipelineDetailsPO, pipelinesPO } from '../../pageObjects/pipelines-po';
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
+import {
+  pipelineBuilderPO,
+  pipelineDetailsPO,
+  pipelinesPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 import { pipelineDetailsPage } from './pipelineDetails-page';
 
 export const pipelineBuilderPage = {
   verifyTitle: () => cy.get(pipelineBuilderPO.title).should('have.text', pageTitle.PipelineBuilder),
-  verifyDefaultPipelineName: (pipelineName: string = pipelineBuilder.pipelineName) =>
+  verifyDefaultPipelineName: (pipelineName: string = 'new-pipeline') =>
     cy.get(pipelineBuilderPO.formView.name).should('have.value', pipelineName),
   enterPipelineName: (pipelineName: string) => {
     cy.get(pipelineBuilderPO.formView.name).clear();
@@ -13,13 +16,11 @@ export const pipelineBuilderPage = {
   },
   selectTask: (taskName: string = 'kn') => {
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
-    cy.byTestActionID(taskName).click();
+    cy.byTestActionID(taskName).click({ force: true });
   },
-  clickOnTask: (taskName: string) =>
-    cy
-      .get(pipelineBuilderPO.formView.task)
-      .contains(taskName)
-      .click(),
+  clickOnTask: (taskName: string) => {
+    cy.get(`[data-id="${taskName}"] text`).click({ force: true });
+  },
   selectParallelTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
     cy.get(pipelineBuilderPO.formView.plusTaskIcon)
@@ -85,14 +86,6 @@ export const pipelineBuilderPage = {
   },
   createPipelineFromYamlPage: () => {
     pipelineBuilderPage.editYaml();
-    // Modal is removed - so commented the below code
-    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.alertDialog).should('be.visible');
-    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.title).should(
-    //   'contain.text',
-    //   'Switch to YAML Editor?',
-    // );
-    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.continue).click();
-    // cy.get(pipelineBuilderPO.yamlCreatePipeline.helpText).should('contain.text', 'YAML or JSON');
     cy.get(pipelineBuilderPO.create).click();
   },
   createPipelineWithGitResources: (
@@ -104,30 +97,20 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.addResource(resourceName);
     pipelineBuilderPage.clickOnTask(taskName);
-    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
-    cy.byTestDropDownMenu(resourceName).click();
+    cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
+      cy.selectByDropDownText('[data-test-id="dropdown-button"]', resourceName);
+    });
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);
   },
   selectSampleInYamlView: (yamlSample: string) => {
-    switch (yamlSample) {
-      case 's2i-build-and-deploy-pipeline-using-workspace':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithWorkspace).click();
-        break;
-      case 'docker-build-and-deploy-pipeline-using-pipeline-resource':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerPipelineWithResource).click();
-        break;
-      case 'docker-build-and-deploy-pipeline':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerBuildAndDeployPipeline).click();
-        break;
-      case 'simple-pipeline':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.simplePipeline).click();
-        break;
-      case 's2i-build-and-deploy-pipeline-using-pipeline-resource':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithResource).click();
-        break;
-      default:
-        break;
-    }
+    cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.sidebar).within(() => {
+      cy.get('li.co-resource-sidebar-item')
+        .contains(yamlSample)
+        .parent()
+        .find('button')
+        .contains('Try it')
+        .click();
+    });
   },
 };
