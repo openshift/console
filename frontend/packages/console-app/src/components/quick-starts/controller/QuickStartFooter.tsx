@@ -66,7 +66,12 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
 
   const getPrimaryButton = React.useMemo(
     () => (
-      <Button variant="primary" className="co-quick-start-footer__actionbtn" onClick={onNext}>
+      <Button
+        variant="primary"
+        className="co-quick-start-footer__actionbtn"
+        onClick={onNext}
+        data-test={`${getPrimaryButtonText} button`}
+      >
         {getPrimaryButtonText}
       </Button>
     ),
