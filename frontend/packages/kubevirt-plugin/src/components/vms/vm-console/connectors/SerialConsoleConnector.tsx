@@ -12,7 +12,7 @@ const { debug, info, error } = console;
 
 const onResize = (rows, cols) => {
   debug(
-    'UI has been resized, pass this info to backend. [',
+    'UI has been resized. Pass this info to backend. [',
     rows,
     ', ',
     cols,
@@ -30,57 +30,52 @@ interface WebSocket {
 const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi }) => {
   const { host, path } = getSerialConsoleConnectionDetails(vmi);
   const [status, setStatus] = React.useState(LOADING);
-  const [passKeys, setPassKeys] = React.useState(false);
-  const [ws, setWS] = React.useState<WebSocket>();
-  const childSerialconsole = React.useRef(null);
+  const terminalRef = React.useRef(null);
+  const socket = React.useRef<WebSocket>(null);
 
-  const onBackendDisconnected = React.useCallback(
-    (event?: any) => {
-      debug('Backend has disconnected');
-      if (childSerialconsole.current) {
-        childSerialconsole.current.onConnectionClosed('Reason for disconnect provided by backend.');
-      }
+  const onBackendDisconnected = React.useCallback((event?: any) => {
+    debug('Backend has disconnected');
+    if (terminalRef.current) {
+      terminalRef.current.onConnectionClosed('Reason for disconnect provided by backend.');
+    }
 
-      if (event) {
-        info('Serial console connection closed, reason: ', event.reason);
-      }
+    if (event?.reason) {
+      info('Serial console connection closed, reason: ', event.reason);
+    }
 
-      ws && ws.destroy && ws.destroy();
-
-      setPassKeys(false);
-      setStatus(DISCONNECTED); // will close the terminal window
-    },
-    [ws],
-  );
+    socket?.current?.destroy();
+    setStatus(DISCONNECTED); // will close the terminal window
+  }, []);
 
   const setConnected = React.useCallback(() => {
     setStatus(CONNECTED);
-    setPassKeys(true);
-  }, [setStatus, setPassKeys]);
+  }, [setStatus]);
 
   const onDataFromBackend = React.useCallback((data) => {
     // plain.kubevirt.io is binary and single-channel protocol
-    debug('Backend sent data, pass them to the UI component. [', data, ']');
-    if (childSerialconsole.current) {
+    debug('Backend sent data, pass it to the UI component. [', data, ']');
+
+    if (terminalRef.current) {
       const reader = new FileReader();
       reader.addEventListener('loadend', (e) => {
         // Blob to text transformation ...
         const target = (e.target || e.srcElement) as any;
         const text = target.result;
-        childSerialconsole.current.onDataReceived(text);
+        terminalRef.current.onDataReceived(text);
       });
       reader.readAsText(data);
     }
   }, []);
 
   const onConnect = React.useCallback(() => {
-    debug('SerialConsoleConnector.onConnect(), status = ', status, ', passKeys = ', passKeys);
-    if (ws) {
-      ws.destroy();
+    debug('SerialConsoleConnector.onConnect(), status = ', status);
+
+    if (socket.current) {
+      socket.current.destroy();
       setStatus(LOADING);
     }
 
-    const options = {
+    const websocketOptions = {
       host,
       path,
       reconnect: false,
@@ -88,49 +83,36 @@ const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi }) 
       subprotocols: ['plain.kubevirt.io'],
     };
 
-    setWS(
-      new WSFactory(`${getName(vmi)}-serial`, options)
-        .onmessage(onDataFromBackend)
-        .onopen(setConnected)
-        .onclose(onBackendDisconnected)
-        .onerror((event) => {
-          error('WS error received: ', event);
-        }),
-    );
-  }, [
-    status,
-    passKeys,
-    ws,
-    host,
-    path,
-    vmi,
-    onDataFromBackend,
-    setConnected,
-    onBackendDisconnected,
-  ]);
+    socket.current = new WSFactory(`${getName(vmi)}-serial`, websocketOptions)
+      .onmessage(onDataFromBackend)
+      .onopen(setConnected)
+      .onclose(onBackendDisconnected)
+      .onerror((event) => {
+        error('WebSocket error received: ', event);
+      });
+  }, [status, host, path, vmi, onDataFromBackend, setConnected, onBackendDisconnected]);
 
-  const onData = React.useCallback(
-    (data) => {
-      debug(
-        'UI terminal component produced data, i.e. a key was pressed, pass it to backend. [',
-        data,
-        ']',
-      );
-      // data are resent back from backend so _will_ pass through onDataFromBackend
-      ws && ws.send(new Blob([data]));
-    },
-    [ws],
-  );
+  const onData = React.useCallback((data) => {
+    debug(
+      'UI terminal component produced data, i.e. a key was pressed, pass it to backend. [',
+      data,
+      ']',
+    );
+    // data is resent back from backend so _will_ pass through onDataFromBackend
+    socket?.current?.send(new Blob([data]));
+  }, []);
 
   return (
     <SerialConsole
+      fontFamily="monospace"
+      fontSize={12}
+      id="serial-console"
       onConnect={onConnect}
+      onData={onData}
       onDisconnect={onBackendDisconnected}
       onResize={onResize}
-      onData={onData}
-      id="serial-console"
+      ref={terminalRef}
       status={status}
-      ref={childSerialconsole}
     />
   );
 };
