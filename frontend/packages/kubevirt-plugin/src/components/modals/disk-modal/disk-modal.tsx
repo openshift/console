@@ -626,8 +626,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       text={t('kubevirt-plugin~Supported Storage classes for selected provider')}
                       href={
                         importProvider === VMImportProvider.OVIRT
-                          ? STORAGE_CLASS_SUPPORTED_VMWARE_LINK
-                          : STORAGE_CLASS_SUPPORTED_RHV_LINK
+                          ? STORAGE_CLASS_SUPPORTED_RHV_LINK
+                          : STORAGE_CLASS_SUPPORTED_VMWARE_LINK
                       }
                     />
                   </Alert>
