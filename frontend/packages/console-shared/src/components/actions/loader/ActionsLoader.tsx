@@ -2,17 +2,24 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import {
   Action,
+  ActionGroup,
   ActionProvider,
+  isActionGroup,
   isActionProvider,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
+import { MenuOption } from '../menu/menu-types';
+import { createMenuOptions } from '../menu/menu-utils';
 import ActionsHookResolver from './ActionsHookResolver';
 
 type ActionsLoaderProps = {
   contextId: string;
   scope: any;
-  children: (actions: Action[], loaded: boolean, error: any) => React.ReactNode;
+  children: (loader: Loader) => React.ReactNode;
 };
+
+type Loader = { actions: Action[]; options: MenuOption[]; loaded: boolean; error: any };
 
 const ActionsLoader: React.FC<ActionsLoaderProps> = ({ contextId, scope, children }) => {
   const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
@@ -33,11 +40,28 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({ contextId, scope, childre
     actionProviderGuard,
   );
 
+  const groupExtensions = useExtensions<ActionGroup>(isActionGroup);
+
   const actionsLoaded =
     providerExtensionsResolved &&
     (providerExtensions.length === 0 || providerExtensions.every(({ uid }) => actionsMap[uid]));
 
   const actions: Action[] = React.useMemo(() => _.flatten(Object.values(actionsMap)), [actionsMap]);
+
+  const options: MenuOption[] = React.useMemo(() => createMenuOptions(actions, groupExtensions), [
+    actions,
+    groupExtensions,
+  ]);
+
+  const loader = React.useMemo(
+    () => ({
+      actions,
+      options,
+      loaded: actionsLoaded,
+      error: loadError,
+    }),
+    [actions, actionsLoaded, loadError, options],
+  );
 
   return (
     <>
@@ -51,7 +75,7 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({ contextId, scope, childre
             onValueError={setLoadError}
           />
         ))}
-      {children(actions, actionsLoaded, loadError)}
+      {children(loader)}
     </>
   );
 };
