@@ -23,7 +23,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp. It
 
 ### Build everything:
 
-This project uses uses [Go modules](https://github.com/golang/go/wiki/Modules),
+This project uses [Go modules](https://github.com/golang/go/wiki/Modules),
 so you should clone the project outside of your `GOPATH`. To build both the
 frontend and backend, run:
 
@@ -262,7 +262,7 @@ resources.
 
 If you get Jasmine spec timeout errors during runs perhaps against a busy cluster or over slow network, you can try setting a bigger timeout in milliseconds to `BRIDGE_JASMINE_TIMEOUT` environment variable in your shell before running the tests. Default 120000 (2 minutes).
 
-If you your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
+If your local Chrome version doesn't match the Chromedriver version from the console dependencies, override the version with:
 
 ```
 yarn run webdriver-update --versions.chrome=77.0.3865.120
@@ -282,13 +282,13 @@ yarn run webdriver-update-macos
 
 ##### Hacking Protractor Tests
 
-To see what the tests are actually doing, it is posible to run in none `headless` mode by setting the `NO_HEADLESS` environment variable:
+To see what the tests are actually doing, it is possible to run in non-`headless` mode by setting the `NO_HEADLESS` environment variable:
 
 ```
 $ NO_HEADLESS=true ./test-protractor.sh <suite>
 ```
 
-To use a specific binary version of chrome, it is posible to set the `CHROME_BINARY_PATH` environment variable:
+To use a specific binary version of chrome, it is possible to set the `CHROME_BINARY_PATH` environment variable:
 
 ```
 $ CHROME_BINARY_PATH="/usr/bin/chromium-browser" ./test-protractor.sh <suite>
