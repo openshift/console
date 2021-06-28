@@ -165,7 +165,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/dashboards/persistent-internal/details-card' /* webpackChunkName: "ceph-storage-details-card" */
+          './components/dashboards/persistent-internal/details-card/details-card' /* webpackChunkName: "ceph-storage-details-card" */
         ).then((m) => m.default),
     },
     flags: {

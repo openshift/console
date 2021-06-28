@@ -23,6 +23,7 @@ import {
   SubscriptionModel,
   ClusterServiceVersionModel,
   PackageManifestModel,
+  InstallPlanModel,
 } from '@console/operator-lifecycle-manager/src/models';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
@@ -32,14 +33,17 @@ import { resourcePathFromModel } from '@console/internal/components/utils/resour
 import {
   PackageManifestKind,
   SubscriptionKind,
+  InstallPlanKind,
 } from '@console/operator-lifecycle-manager/src/types';
 import { createSubscriptionChannelModal } from '@console/operator-lifecycle-manager/src/components/modals/subscription-channel-modal';
+import { installPlanForSubscription } from '@console/operator-lifecycle-manager/src/components/subscription';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { Button } from '@patternfly/react-core';
-import { OCSServiceModel } from '../../../models';
-import { getOCSVersion } from '../../../selectors';
-import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
-import { StorageClusterKind } from '../../../types';
+import { OCSServiceModel } from '../../../../models';
+import { getOCSVersion } from '../../../../selectors';
+import { CEPH_STORAGE_NAMESPACE } from '../../../../constants';
+import { StorageClusterKind } from '../../../../types';
+import './details-card.scss';
 
 const ocsResource: FirehoseResource = {
   kind: referenceForModel(OCSServiceModel),
@@ -65,6 +69,13 @@ const ocsSubscriptionResource: FirehoseResource = {
   name: 'ocs-operator',
 };
 
+const InstallPlanResource = {
+  kind: referenceForModel(InstallPlanModel),
+  namespaced: true,
+  isList: true,
+  namespace: 'openshift-storage',
+};
+
 const PackageManifestResource: FirehoseResource = {
   kind: referenceForModel(PackageManifestModel),
   namespaced: true,
@@ -87,6 +98,10 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const [ocsSubscription, ocsSubscriptionLoaded, ocsSubscriptionError] = useK8sWatchResource<
     SubscriptionKind
   >(ocsSubscriptionResource);
+  const [installPlans, installPlansLoaded, installPlansError] = useK8sWatchResource<
+    InstallPlanKind[]
+  >(InstallPlanResource);
+  const installPlan = installPlanForSubscription(installPlans, ocsSubscription);
   const [packageManifest, packageManifestLoaded, packageManifestError] = useK8sWatchResource<
     PackageManifestKind
   >(PackageManifestResource);
@@ -98,11 +113,13 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     currentChannel =
       memoizedOcsSubscription?.spec?.channel ??
       memoizedPackageManifest?.status?.channels?.[0]?.name;
-    currentChannelVersion = parseFloat(currentChannel.substring(currentChannel.indexOf('-') + 1));
+    currentChannelVersion = parseFloat(
+      currentChannel.substring(currentChannel.lastIndexOf('-') + 1),
+    );
   }
   const filteredVersions = memoizedPackageManifest?.status?.channels?.filter(
     (channel) =>
-      parseFloat(channel.name.substring(channel.name.indexOf('-') + 1)) > currentChannelVersion,
+      parseFloat(channel.name.substring(channel.name.lastIndexOf('-') + 1)) > currentChannelVersion,
   );
   _.set(memoizedPackageManifest, 'status.channels', filteredVersions);
   const ocsChannelsList = memoizedPackageManifest?.status?.channels;
@@ -132,13 +149,23 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     ocsVersion,
     CEPH_STORAGE_NAMESPACE,
   )}`;
-  const updateFunction = (...args) => k8sUpdate(...args);
+  const updateFunction = (ip: InstallPlanKind) => {
+    k8sUpdate(InstallPlanModel, { ...ip, spec: { ...ip.spec, approved: true } });
+    return (...args) => k8sUpdate(...args);
+  };
   const launchModal = () => {
-    if (!ocsSubscriptionError && !packageManifestError && packageManifestLoaded) {
+    if (
+      !ocsSubscriptionError &&
+      ocsSubscriptionLoaded &&
+      !packageManifestError &&
+      packageManifestLoaded &&
+      !installPlansError &&
+      installPlansLoaded
+    ) {
       return createSubscriptionChannelModal({
         subscription: memoizedOcsSubscription,
         pkg: memoizedPackageManifest,
-        k8sUpdate: updateFunction,
+        k8sUpdate: updateFunction(installPlan),
       });
     }
     return null;
@@ -183,25 +210,29 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             isLoading={!subscriptionLoaded}
             error={subscriptionLoaded && !ocsVersion}
           >
-            {ocsVersion}
-            {!_.isEmpty(filteredVersions) &&
-              memoizedOcsSubscription?.spec?.installPlanApproval === 'Manual' && (
-                <>
-                  {ocsSubscriptionLoaded && packageManifestLoaded && (
-                    <Button
-                      type="button"
-                      isInline
-                      onClick={launchModal}
-                      variant="link"
-                      className="pf-u-ml-xl"
-                    >
-                      <BlueArrowCircleUpIcon className="co-icon-space-r" />
-                      {t('ceph-storage-plugin~Update to ')}
-                      {ocsChannelsList[ocsChannelsList.length - 1].name}
-                    </Button>
+            <div className="ceph-storage-details-card__version-details">
+              <div className="ceph-storage-details-card__current-version">{ocsVersion}</div>
+              <div className="ceph-storage-deyails-card__update-version">
+                {!_.isEmpty(filteredVersions) &&
+                  memoizedOcsSubscription?.spec?.installPlanApproval === 'Manual' && (
+                    <>
+                      {ocsSubscriptionLoaded && packageManifestLoaded && installPlansLoaded && (
+                        <Button
+                          type="button"
+                          isInline
+                          onClick={launchModal}
+                          variant="link"
+                          className="pf-u-ml-xl"
+                        >
+                          <BlueArrowCircleUpIcon className="co-icon-space-r" />
+                          {t('ceph-storage-plugin~Update to ')}
+                          {ocsChannelsList[ocsChannelsList.length - 1].name}
+                        </Button>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+              </div>
+            </div>
           </DetailItem>
         </DetailsBody>
       </DashboardCardBody>
