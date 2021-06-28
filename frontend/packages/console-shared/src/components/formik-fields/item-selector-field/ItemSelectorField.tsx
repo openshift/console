@@ -182,7 +182,6 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
                   title={item.title}
                   iconUrl={item.iconUrl}
                   name={item.name}
-                  displayName={item.displayName}
                   selected={selected.value === item.name}
                   recommended={recommended === item.name}
                   onChange={handleItemChange}

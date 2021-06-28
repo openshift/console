@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup, TextInputTypes } from '@patternfly/react-core';
+import { TextInputTypes } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
@@ -73,17 +73,16 @@ const JarSection: React.FunctionComponent = () => {
         }}
         required
       />
-      <FormGroup fieldId="uploadJarSection" label={t('devconsole~Optional Java commands')}>
-        <InputField
-          type={TextInputTypes.text}
-          name="fileUpload.javaArgs"
-          helpText={t(
-            'devconsole~Java commands are application specific and can be added to customize your application.',
-          )}
-          data-test-id="upload-jar-form-java-args"
-          placeholder={t('devconsole~Enter Java commands here')}
-        />
-      </FormGroup>
+      <InputField
+        type={TextInputTypes.text}
+        name="fileUpload.javaArgs"
+        label={t('devconsole~Optional Java commands')}
+        helpText={t(
+          'devconsole~Java commands are application specific and can be added to customize your application.',
+        )}
+        data-test-id="upload-jar-form-java-args"
+        placeholder={t('devconsole~Enter Java commands here')}
+      />
     </FormSection>
   );
 };
