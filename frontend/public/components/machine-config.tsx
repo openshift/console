@@ -65,11 +65,11 @@ export const MachineConfigDetailsPage: React.SFC<any> = (props) => {
 };
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-2', 'col-xs-6'),
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
+  '',
   Kebab.columnClass,
 ];
 

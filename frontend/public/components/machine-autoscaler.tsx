@@ -41,11 +41,11 @@ const MachineAutoscalerTargetLink: React.FC<MachineAutoscalerTargetLinkProps> = 
 };
 
 const tableColumnClasses = [
-  classNames('col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-md-1', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-1', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-33-on-lg',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
   Kebab.columnClass,
 ];
 

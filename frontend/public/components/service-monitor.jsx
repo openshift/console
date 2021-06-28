@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
 import { ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
 import { ServiceMonitorModel } from '../models';
@@ -37,10 +36,10 @@ const serviceSelectorLinks = ({ spec }) => {
 };
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-6', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-md',
   Kebab.columnClass,
 ];
 

@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -83,9 +82,9 @@ const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
 };
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs', 'text-center', ''),
-  classNames('col-lg-6', 'col-md-6', 'col-sm-6', 'col-xs-6'),
+  'pf-u-w-50-on-xs pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
+  'pf-u-w-50-on-xs',
   Kebab.columnClass,
 ];
 
