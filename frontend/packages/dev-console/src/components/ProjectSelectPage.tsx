@@ -10,6 +10,7 @@ import { connectToPlural } from '@console/internal/kinds';
 import {
   apiVersionForReference,
   isGroupVersionKind,
+  K8sKind,
   kindForReference,
 } from '@console/internal/module/k8s';
 import { getBadgeFromType } from '@console/shared/src';
@@ -17,6 +18,8 @@ import CreateProjectListPage from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
   match: match<any>;
+  kindObj?: K8sKind;
+  kindsInFlight?: boolean;
 }
 
 const allParams = (props) => Object.assign({}, props?.match?.params, props);

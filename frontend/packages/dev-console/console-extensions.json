@@ -362,7 +362,7 @@
       "perspective": "dev",
       "section": "top",
       "name": "%devconsole~Search%",
-      "href": "/search",
+      "href": "/search-page",
       "namespaced": true,
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-search",

@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { useUserSettingsCompatibility } from '@console/shared/src';
-import TopologyPage from '../components/page/TopologyPage';
+import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -58,41 +58,36 @@ describe('Topology page tests', () => {
   });
 
   it('should render topology page', () => {
-    const wrapperWithFallback = shallow(<TopologyPage match={match} hideProjects={false} />);
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
+    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
   it('should default to graph view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
-    const wrapperWithFallback = shallow(<TopologyPage match={match} hideProjects={false} />);
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
+    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
   it('should allow setting default to list view', () => {
-    const wrapperWithFallback = shallow(
+    const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} defaultViewType={TopologyViewType.list} />,
     );
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
   it('should render graph if useUserSettingsCompatibility setting returns that', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
-    const wrapperWithFallback = shallow(
+    const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
   it('should render list if useUserSettingsCompatibility setting returns that', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
-    const wrapperWithFallback = shallow(
+    const wrapper = shallow(
       <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 
@@ -104,8 +99,7 @@ describe('Topology page tests', () => {
       path: '/topology/graph',
       url: '',
     };
-    const wrapperWithFallback = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
+    const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
@@ -116,8 +110,7 @@ describe('Topology page tests', () => {
       path: '/topology/list',
       url: '',
     };
-    const wrapperWithFallback = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
-    const wrapper = wrapperWithFallback.find('TopologyPage').shallow();
+    const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 });

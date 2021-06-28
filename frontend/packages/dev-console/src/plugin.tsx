@@ -79,6 +79,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/dev-monitoring',
         '/helm-releases',
         '/upload-jar',
+        '/search-page',
       ],
       component: NamespaceRedirect,
     },
@@ -345,6 +346,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       path: ['/workload-hpa/ns/:ns/:resourceRef/:name'],
       loader: async () =>
         (await import('./components/hpa/HPAPage' /* webpackChunkName: "hpa-on-workload`" */))
+          .default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
+      path: ['/search-page/all-namespaces', '/search-page/ns/:ns'],
+      loader: async () =>
+        (await import('./components/SearchPage' /* webpackChunkName: "dev-console-search" */))
           .default,
     },
   },
