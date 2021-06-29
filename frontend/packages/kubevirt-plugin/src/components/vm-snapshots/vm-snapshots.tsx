@@ -71,6 +71,9 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
               transforms: [sortable],
             },
             {
+              title: t('kubevirt-plugin~Online Created'),
+            },
+            {
               title: '',
             },
             {
@@ -108,7 +111,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  const isDisabled = isLocked;
 
   return (
     <div className="co-m-list">
@@ -147,6 +150,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
             withProgress,
             restores: mappedRelevantRestores,
             isDisabled,
+            isVMRunning: isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi),
           }}
           row={VMSnapshotRow}
           columnClasses={snapshotsTableColumnClasses}
