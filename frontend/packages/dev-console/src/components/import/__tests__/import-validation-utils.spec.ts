@@ -46,12 +46,15 @@ describe('ValidationUtils', () => {
 
   describe('createComponentName', () => {
     const invalidConvertedtoValidNamePair: { [key: string]: string } = {
-      '0name': 'ocp-0name',
-      '-name': 'ocp--name',
-      'name-': 'ocp-name',
-      'invalid&name': 'ocp-invalidname',
-      'invalid name': 'ocp-invalidname',
-      'invalid-Name': 'ocp-invalid-name',
+      '-2name': 'ocp-2-name',
+      '0name': 'ocp-0-name',
+      Name: 'name',
+      '-name': 'name',
+      'name-': 'name',
+      'invalid&name': 'invalid-name',
+      'invalid name': 'invalid-name',
+      'invalid-Name': 'invalid-name',
+      InvalidName: 'invalid-name',
     };
     const validNames: string[] = ['name', 'valid-name', 'name0', 'name-0'];
 
@@ -143,6 +146,21 @@ describe('ValidationUtils', () => {
         .then((valid) => expect(valid).toEqual(true));
       const name = detectGitRepoName(mockData.git.url);
       expect(name).toEqual('wild-west-frontend');
+    });
+
+    it('should convert the detected name to valid kebabCase', async () => {
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/Wild-West-Frontend'),
+      ).toEqual('wild-west-frontend');
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/wildWestFrontend'),
+      ).toEqual('wild-west-frontend');
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/wild-west-frontend.git'),
+      ).toEqual('wild-west-frontend-git');
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/Wild-West-Frontend123'),
+      ).toEqual('wild-west-frontend-123');
     });
 
     it('should throw an error if name is invalid', async () => {
