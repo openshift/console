@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Alert, AlertActionLink } from '@patternfly/react-core';
 import {
-  Status,
   usePodsWatcher,
   getPodsForResource,
   getResourcesToWatchForPods,
@@ -14,6 +13,7 @@ import {
 import { ResourceLink, resourcePath, SidebarSectionHeading, LoadingBox } from '../utils';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';
+import { PodStatus } from '../pod';
 
 const kind: string = 'Pod';
 const MAX_PODS: number = 3;
@@ -95,7 +95,6 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
   const {
     metadata: { name, namespace },
   } = pod;
-  const phase = podPhase(pod);
   const { t } = useTranslation();
   return (
     <li className="list-group-item container-fluid">
@@ -104,7 +103,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
           <ResourceLink kind={kind} name={name} namespace={namespace} />
         </span>
         <span className="col-xs-3">
-          <Status status={phase} />
+          <PodStatus pod={pod} />
         </span>
         <span className="col-xs-3 text-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
