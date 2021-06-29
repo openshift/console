@@ -22,11 +22,11 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
 import {
-  useExtensions,
-  isPerspective,
   Perspective,
   RoutePage,
+  isPerspective,
   isRoutePage,
+  useExtensions,
 } from '@console/plugin-sdk';
 import {
   RoutePage as DynamicRoutePage,

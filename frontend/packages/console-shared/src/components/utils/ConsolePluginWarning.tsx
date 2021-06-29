@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-export const ConsolePluginWarning: React.FC<ConsolePluginWarningProps> = ({
+const ConsolePluginWarning: React.FC<ConsolePluginWarningProps> = ({
   enabled,
   previouslyEnabled,
   trusted,
@@ -12,10 +12,10 @@ export const ConsolePluginWarning: React.FC<ConsolePluginWarningProps> = ({
     !previouslyEnabled &&
     enabled &&
     !trusted && (
-      <Alert variant="warning" isInline title={t('olm~Enabling console plugin')}>
+      <Alert variant="warning" isInline title={t('console-shared~Enabling console plugin')}>
         <p>
           {t(
-            'olm~This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
+            'console-shared~This console plugin will be able to provide a custom interface and run any Kubernetes command as the logged in user. Make sure you trust it before enabling.',
           )}
         </p>
       </Alert>
@@ -28,3 +28,5 @@ type ConsolePluginWarningProps = {
   previouslyEnabled: boolean;
   trusted: boolean;
 };
+
+export default ConsolePluginWarning;

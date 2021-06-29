@@ -9,10 +9,11 @@ import {
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { ConsoleOperatorConfigModel } from '@console/internal/models';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { SubscriptionKind } from '../../types';
-import { getPluginPatch, isCatalogSourceTrusted, isPluginEnabled } from '../../utils';
-import { ConsolePluginRadioInputs } from '../../utils/console-plugin-radio-inputs';
-import { ConsolePluginWarning } from '../../utils/console-plugin-warning';
+import {
+  ConsolePluginRadioInputs,
+  ConsolePluginWarning,
+} from '@console/shared/src/components/utils';
+import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
 
 export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalProps) => {
   const {
@@ -24,7 +25,7 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
     handlePromise,
     inProgress,
     plugin,
-    subscription,
+    trusted,
   } = props;
   const previouslyEnabled = isPluginEnabled(consoleOperatorConfig, plugin);
   const { t } = useTranslation();
@@ -39,20 +40,25 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
-        {csvPluginsCount === 1 && <>{t('olm~Console plugin enablement')}</>}
-        {csvPluginsCount > 1 && <>{t('olm~Console plugin enablement - {{plugin}}', { plugin })}</>}
+        {csvPluginsCount > 1
+          ? t('console-shared~Console plugin enablement - {{plugin}}', { plugin })
+          : t('console-shared~Console plugin enablement')}
       </ModalTitle>
       <ModalBody>
         <p>
-          {t(
-            'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
-          )}
+          {csvPluginsCount
+            ? t(
+                'console-shared~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+              )
+            : t(
+                'console-shared~This console plugin provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
+              )}
         </p>
         <ConsolePluginRadioInputs autofocus name={plugin} enabled={enabled} onChange={setEnabled} />
         <ConsolePluginWarning
           previouslyEnabled={previouslyEnabled}
           enabled={enabled}
-          trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
+          trusted={trusted}
         />
       </ModalBody>
       <ModalSubmitFooter
@@ -69,9 +75,9 @@ export const consolePluginModal = createModalLauncher(ConsolePluginModal);
 
 export type ConsolePluginModalProps = {
   consoleOperatorConfig: K8sResourceKind;
-  csvPluginsCount: number;
+  csvPluginsCount?: number;
   plugin: string;
-  subscription: SubscriptionKind;
+  trusted: boolean;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
