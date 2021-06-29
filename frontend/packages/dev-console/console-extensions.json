@@ -47,7 +47,7 @@
     "properties": {
       "id": "import-from-samples",
       "groupId": "samples",
-      "href": "/samples",
+      "href": "/samples/ns/:namespace",
       "label": "%devconsole~Samples%",
       "description": "%devconsole~Create an Application from a code sample%",
       "icon": { "$codeRef": "icons.samplesIconElement" },
@@ -66,7 +66,7 @@
     "properties": {
       "id": "import-from-git",
       "groupId": "git-repository",
-      "href": "/import",
+      "href": "/import/ns/:namespace",
       "label": "%devconsole~From Git%",
       "description": "%devconsole~Import code from your Git repository to be built and deployed%",
       "icon": { "$codeRef": "icons.gitIconSVG" },
@@ -85,7 +85,7 @@
     "properties": {
       "id": "import-from-devfile",
       "groupId": "git-repository",
-      "href": "/import?importType=devfile",
+      "href": "/import/ns/:namespace?importType=devfile",
       "label": "%devconsole~From Devfile%",
       "description": "%devconsole~Import your Devfile from your Git repository to be built and deployed%",
       "icon": { "$codeRef": "icons.devfileIconSVG" },
@@ -104,7 +104,7 @@
     "properties": {
       "id": "deploy-image",
       "groupId": "container-images",
-      "href": "/deploy-image",
+      "href": "/deploy-image/ns/:namespace",
       "label": "%devconsole~Container images%",
       "description": "%devconsole~Deploy an existing Image from an Image registry or Image stream tag%",
       "icon": { "$codeRef": "icons.deployIconElement" },
@@ -124,7 +124,7 @@
     "properties": {
       "id": "import-from-dockerfile",
       "groupId": "git-repository",
-      "href": "/import?importType=docker",
+      "href": "/import/ns/:namespace?importType=docker",
       "label": "%devconsole~From Dockerfile%",
       "description": "%devconsole~Import your Dockerfile from your Git repository to be built and deployed%",
       "icon": { "$codeRef": "icons.dockerfileIconSVG" },
@@ -154,7 +154,7 @@
     "properties": {
       "id": "dev-catalog",
       "groupId": "developer-catalog",
-      "href": "/catalog",
+      "href": "/catalog/ns/:namespace",
       "label": "%devconsole~All services%",
       "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
       "icon": { "$codeRef": "icons.devCatalogIconElement" }
@@ -165,7 +165,7 @@
     "properties": {
       "id": "dev-catalog-databases",
       "groupId": "developer-catalog",
-      "href": "/catalog?category=databases",
+      "href": "/catalog/ns/:namespace?category=databases",
       "label": "%devconsole~Database%",
       "description": "%devconsole~Browse the catalog to discover database services to add to your Application%",
       "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
@@ -176,7 +176,7 @@
     "properties": {
       "id": "operator-backed",
       "groupId": "developer-catalog",
-      "href": "/catalog?catalogType=OperatorBackedService",
+      "href": "/catalog/ns/:namespace?catalogType=OperatorBackedService",
       "label": "%devconsole~Operator Backed%",
       "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
       "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
@@ -187,7 +187,7 @@
     "properties": {
       "id": "upload-jar",
       "groupId": "local-machine",
-      "href": "/upload-jar",
+      "href": "/upload-jar/ns/:namespace",
       "label": "%devconsole~Upload JAR file%",
       "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",
       "icon": { "$codeRef": "icons.uploadJarIconElement" }
