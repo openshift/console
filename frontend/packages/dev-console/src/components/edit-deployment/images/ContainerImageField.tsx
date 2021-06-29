@@ -21,6 +21,7 @@ const ContainerImageField: React.FC = () => {
         <ImageStream
           label={t('devconsole~Image stream tag')}
           formContextField="formData"
+          dataTest="image-stream-tag"
           required
         />
       ) : (
@@ -28,6 +29,7 @@ const ContainerImageField: React.FC = () => {
           name="formData.imageName"
           label={t('devconsole~Image Name')}
           helpText={t('devconsole~Container image name')}
+          data-test="image-name"
           required
         />
       )}

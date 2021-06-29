@@ -12,6 +12,7 @@ const SwitchToYAMLAlert: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
       )}
       variant="info"
+      data-test="info-alert"
     />
   );
 };

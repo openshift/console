@@ -74,7 +74,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
   );
 
   return (
-    <FormSection title={t('devconsole~Deployment strategy')}>
+    <FormSection title={t('devconsole~Deployment strategy')} dataTest="deployment-strategy-section">
       <DropdownField
         name="formData.deploymentStrategy.type"
         label={t('devconsole~Strategy type')}

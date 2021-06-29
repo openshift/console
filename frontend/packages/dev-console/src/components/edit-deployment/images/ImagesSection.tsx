@@ -16,7 +16,7 @@ const ImagesSection: React.FC<{ resourceType: string }> = ({ resourceType }) => 
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormSection title={t('devconsole~Images')}>
+    <FormSection title={t('devconsole~Images')} dataTest="images-section">
       <ContainerField />
       <ContainerImageField />
       {fromImageStreamTag && (

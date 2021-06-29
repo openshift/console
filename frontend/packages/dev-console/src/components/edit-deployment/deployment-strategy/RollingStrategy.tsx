@@ -10,7 +10,7 @@ const RollingStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceO
   const { t } = useTranslation();
   const dataAttribute = resourceType === Resources.OpenShift ? 'rollingParams' : 'rollingUpdate';
   return (
-    <>
+    <div data-test={dataAttribute}>
       {resourceType === Resources.OpenShift && (
         <InputField
           name="formData.deploymentStrategy.rollingParams.timeoutSeconds"
@@ -39,7 +39,7 @@ const RollingStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceO
       {resourceType === Resources.OpenShift && (
         <AdvancedStrategyOptions dataAttribute="rollingParams" resourceObj={resourceObj} />
       )}
-    </>
+    </div>
   );
 };
 

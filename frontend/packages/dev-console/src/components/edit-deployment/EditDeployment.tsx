@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FormikBag, Formik } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
+import { history } from '@console/internal/components/utils';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
@@ -81,6 +82,8 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       });
   };
 
+  const handleCancel = () => history.goBack();
+
   return (
     <Formik
       initialValues={initialValues.current}
@@ -89,7 +92,14 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
       enableReinitialize
     >
       {(formikProps) => {
-        return <EditDeploymentForm {...formikProps} heading={heading} resource={resource} />;
+        return (
+          <EditDeploymentForm
+            {...formikProps}
+            heading={heading}
+            resource={resource}
+            handleCancel={handleCancel}
+          />
+        );
       }}
     </Formik>
   );

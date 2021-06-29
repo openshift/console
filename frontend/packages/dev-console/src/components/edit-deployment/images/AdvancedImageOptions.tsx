@@ -48,6 +48,7 @@ const AdvancedImageOptions: React.FC = () => {
         ]}
         resourceFilter={filterData}
         dataSelector={['metadata', 'name']}
+        dataTest="secrets-dropdown"
         fullWidth
       />
       <Button
