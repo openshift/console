@@ -6,7 +6,12 @@ import { useSelector } from 'react-redux';
 
 import { K8sResourceKindReference, K8sKind, DiscoveryResources } from './index';
 import * as staticModels from '../../models';
-import { referenceForModel, kindForReference, apiVersionCompare } from './k8s';
+import {
+  referenceForModel,
+  kindForReference,
+  apiVersionCompare,
+  referenceForGroupVersionKind,
+} from './k8s';
 import store from '../../redux';
 import { pluginStore } from '../../plugins';
 import { isModelDefinition } from '@console/plugin-sdk';
@@ -75,6 +80,39 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
+};
+
+/**
+ * Provides a synchronous way to acquire an API discovered Kubernetes model by group and kind only.
+ * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
+ */
+export const modelForGroupKind = (group: string, kind: string): K8sKind => {
+  const models: ImmutableMap<string, K8sKind> = store.getState().k8s.getIn(['RESOURCES', 'models']);
+  const groupVersionMap: DiscoveryResources['groupVersionMap'] = store
+    .getState()
+    .k8s.getIn(['RESOURCES', 'groupToVersionMap']);
+
+  const { preferredVersion, versions } = groupVersionMap?.[group] || {};
+  if (preferredVersion) {
+    // Find a model for the CRD that uses this preferred version
+    const ref = referenceForGroupVersionKind(group)(preferredVersion)(kind);
+    const model = models.get(ref);
+    if (model) {
+      return model;
+    }
+  }
+  // In case the preferred version does not have the CRD
+  if (versions) {
+    const sortedVersions: string[] = versions.sort(apiVersionCompare);
+    for (const version of sortedVersions) {
+      const ref = referenceForGroupVersionKind(group)(version)(kind);
+      const model = models.get(ref);
+      if (model) {
+        return model;
+      }
+    }
+  }
+  return null;
 };
 
 /**

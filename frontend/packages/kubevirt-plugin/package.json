@@ -69,7 +69,8 @@
       "yamlTemplates": "src/models/templates/index.ts",
       "dashboardHealth": "src/components/dashboards-page/overview-dashboard/health.ts",
       "dashboardInventory": "src/components/dashboards-page/overview-dashboard/inventory.tsx",
-      "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx"
+      "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx",
+      "topology": "src/topology/topology-plugin.ts"
     }
   }
 }
