@@ -16,6 +16,7 @@
   "Rollback": "Rollback",
   "## README\n{{readmeData}}": "## README\n{{readmeData}}",
   "README not available": "README not available",
+  "This Helm Chart is provided by a trusted partner and has been verified for ease of integration.": "This Helm Chart is provided by a trusted partner and has been verified for ease of integration.",
   "Certified": "Certified",
   "Chart version": "Chart version",
   "App version": "App version",
