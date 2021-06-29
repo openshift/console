@@ -34,14 +34,14 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
   if (canGetSecret) {
     return [
       '',
-      'pf-m-hidden pf-m-visible-on-xl pf-u-w-50-on-xl',
+      'pf-m-hidden pf-m-visible-on-xl pf-u-w-50-on-xl co-break-word',
       'pf-m-hidden pf-m-visible-on-md',
       '',
     ];
   }
   return [
     'pf-u-w-16-on-md',
-    'pf-u-w-58-on-xl',
+    'pf-u-w-58-on-xl co-break-word',
     'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
     'pf-m-hidden',
   ];
