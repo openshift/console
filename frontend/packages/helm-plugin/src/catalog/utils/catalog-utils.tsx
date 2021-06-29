@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Tooltip } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
@@ -57,7 +58,13 @@ export const normalizeHelmCharts = (
           providerType === PROVIDER_TYPE.partner ? (
             <>
               <span style={{ verticalAlign: 'middle' }}>{displayName}</span>{' '}
-              <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
+              <Tooltip
+                content={t(
+                  'helm-plugin~Products from leading independent software vendors (ISVs) that Red Hat has verified for ease of integration.',
+                )}
+              >
+                <img src={certifiedIcon} alt={t('helm-plugin~Certified')} />
+              </Tooltip>
             </>
           ) : null;
 
