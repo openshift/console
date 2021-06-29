@@ -22,6 +22,7 @@ import { V1HostDisk } from './V1HostDisk';
 import { V1PersistentVolumeClaimVolumeSource } from './V1PersistentVolumeClaimVolumeSource';
 import { V1SecretVolumeSource } from './V1SecretVolumeSource';
 import { V1ServiceAccountVolumeSource } from './V1ServiceAccountVolumeSource';
+import { V1SysprepSource } from './v1SysprepSource';
 
 /**
  * Volume represents a named volume in a vmi.
@@ -101,4 +102,10 @@ export interface V1Volume {
    * @memberof V1Volume
    */
   serviceAccount?: V1ServiceAccountVolumeSource;
+  /**
+   *
+   * @type {V1SysprepSource}
+   * @memberof V1Volume
+   */
+  sysprep?: V1SysprepSource;
 }

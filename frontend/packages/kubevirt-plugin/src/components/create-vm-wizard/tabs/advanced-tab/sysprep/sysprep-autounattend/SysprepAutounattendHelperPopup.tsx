@@ -3,11 +3,11 @@ import { Text, TextVariants } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLink, FieldLevelHelp } from '@console/internal/components/utils';
 
-const SysprepAutoUnattendedHelperPopup: React.FC = () => {
+const SysprepAutounattendHelperPopup: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <FieldLevelHelp testId="sysprep-autounattended-popover-button">
-      <div data-test="sysprep-autounattended-popover">
+    <FieldLevelHelp testId="sysprep-autounattend-popover-button">
+      <div data-test="sysprep-autounattend-popover">
         <Trans t={t} ns="kubevirt-plugin">
           <Text component={TextVariants.h6}>Autounattend.xml</Text>
           <Text component={TextVariants.p}>
@@ -23,4 +23,4 @@ const SysprepAutoUnattendedHelperPopup: React.FC = () => {
   );
 };
 
-export default SysprepAutoUnattendedHelperPopup;
+export default SysprepAutounattendHelperPopup;

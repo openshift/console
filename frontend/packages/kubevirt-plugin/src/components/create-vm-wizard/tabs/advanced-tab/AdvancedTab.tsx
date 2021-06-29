@@ -6,22 +6,25 @@ import {
   AccordionToggle,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CLOUD, SSH } from '../../../../utils/strings';
+import { CLOUD, SSH, SYSPREP } from '../../../../utils/strings';
 import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
 import Cloudinit from './cloud-init/Cloudinit';
 import CloudInitInfoHelper from './cloud-init/CloudinitInfoHelper';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
+import Sysprep from './sysprep/Sysprep';
+import SysprepHelperPopup from './sysprep/SysprepHelperPopup';
 
 import './advanced-tab.scss';
 
 type AdvancedTabProps = {
   wizardReduxID: string;
   key: string;
+  isWindowsTemplate: boolean;
 };
 
-const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID }) => {
+const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID, isWindowsTemplate }) => {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = React.useState<string>();
+  const [expanded, setExpanded] = React.useState<string>(isWindowsTemplate ? SYSPREP : CLOUD);
 
   const onToggle = (value: string) =>
     setExpanded((expandedValue) => (expandedValue === value ? '' : value));
@@ -39,6 +42,19 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID }) => {
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== CLOUD}>
           <Cloudinit wizardReduxID={wizardReduxID} />
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem>
+        <AccordionToggle
+          className="AdvancedTab-tab-title"
+          onClick={() => onToggle(SYSPREP)}
+          isExpanded={expanded === SYSPREP}
+          id={SYSPREP}
+        >
+          {t('kubevirt-plugin~Sysprep')} <SysprepHelperPopup />
+        </AccordionToggle>
+        <AccordionContent isHidden={expanded !== SYSPREP}>
+          <Sysprep />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem>
