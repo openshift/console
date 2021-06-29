@@ -1,4 +1,5 @@
 {
+  "Actions": "Actions",
   "An error occurred": "An error occurred",
   "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.": "Note: Some fields may not be represented in this form view. Please select \"YAML view\" for full control.",
   "No resources found": "No resources found",
@@ -108,7 +109,6 @@
   "Are you sure you want to remove the {{hpaLabel}}": "Are you sure you want to remove the {{hpaLabel}}",
   "from": "from",
   "The resources that are attached to the {{hpaLabel}} will be deleted.": "The resources that are attached to the {{hpaLabel}} will be deleted.",
-  "Actions": "Actions",
   "Copy to clipboard": "Copy to clipboard",
   "Run in Web Terminal": "Run in Web Terminal",
   "Successfully copied to clipboard!": "Successfully copied to clipboard!",

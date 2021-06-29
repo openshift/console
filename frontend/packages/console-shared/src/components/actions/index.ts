@@ -1,1 +1,2 @@
-export { default as ActionsLoader } from './ActionsLoader';
+export { default as ActionsLoader } from './loader/ActionsLoader';
+export { default as ActionMenu } from './menu/ActionMenu';
