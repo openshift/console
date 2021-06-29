@@ -11,13 +11,14 @@ import {
   history,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import {
-  HyperConvergedModel,
-  NetworkAttachmentDefinitionModel,
-  SriovNetworkNodePolicyModel,
-} from '../..';
+  k8sCreate,
+  modelFor,
+  referenceForGroupVersionKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
+import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import { networkTypeParams, networkTypes } from '../../constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
@@ -332,7 +333,11 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
 const mapStateToProps = ({ k8s }) => {
   const kindsInFlight = k8s.getIn(['RESOURCES', 'inFlight']);
-  const k8sModels = k8s.getIn(['RESOURCES', 'models']);
+  const hasHyperConvergedCRD =
+    !kindsInFlight &&
+    !!['v1beta1', 'v1alpha1'].find(
+      (v) => !!modelFor(referenceForGroupVersionKind('hco.kubevirt.io')(v)('HyperConverged')),
+    );
 
   return {
     // FIXME: These should be feature flags.
@@ -340,7 +345,7 @@ const mapStateToProps = ({ k8s }) => {
     // hasSriovNetNodePolicyCRD:
     //   !kindsInFlight && !!k8sModels.get(referenceForModel(SriovNetworkNodePolicyModel)),
     hasSriovNetNodePolicyCRD: false,
-    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(referenceForModel(HyperConvergedModel)),
+    hasHyperConvergedCRD,
   };
 };
 
