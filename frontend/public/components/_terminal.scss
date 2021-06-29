@@ -3,17 +3,17 @@
 $console-z-index: $zindex-navbar-fixed + 20;
 $console-collapse-link-z-index: $console-z-index + 20;
 
-.console > .terminal {
+.co-terminal > .terminal {
   color: $color-pf-white;
   padding: 10px;
   background-color: $color-pf-black;
 }
 
-.console > .terminal.fullscreen {
+.co-terminal > .terminal.fullscreen {
   z-index: $console-z-index; // in fullscreen mode, to get above $zindex-navbar-fixed
 }
 
-.console {
+.co-terminal {
   width: 100%;
   height: 100%;
   padding: 0;
@@ -24,7 +24,7 @@ $console-collapse-link-z-index: $console-z-index + 20;
   }
 }
 
-.console-collapse-link.pf-c-button {
+.co-terminal-collapse-link.pf-c-button {
   background: rgba(0, 0, 0, 0.75) !important;
   color: $color-pf-blue-300;
   position: fixed;
