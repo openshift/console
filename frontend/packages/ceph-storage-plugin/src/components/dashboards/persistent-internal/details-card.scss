@@ -1,0 +1,10 @@
+.ceph-details-card {
+    &__version-details {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__update-version {
+        flex-direction: row-reverse;
+    }
+}
