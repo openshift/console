@@ -357,6 +357,7 @@
   "Cluster inventory": "Cluster inventory",
   "A cluster version update is available": "A cluster version update is available",
   "View alerts": "View alerts",
+  "Filter by Node type": "Filter by Node type",
   "CPU": "CPU",
   "Memory": "Memory",
   "Pod count": "Pod count",
