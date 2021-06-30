@@ -1,27 +1,15 @@
 import * as React from 'react';
-import { Label, Tooltip } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import * as classNames from 'classnames';
 
 type VMTemplateLabelProps = {
-  isOnlineSnapshot: boolean;
-  className?: string;
+  indication?: string;
 };
 
-export const VMRunningSnapshotLabel: React.FC<VMTemplateLabelProps> = ({
-  isOnlineSnapshot,
-  className,
-}) => {
-  const { t } = useTranslation();
-
-  if (!isOnlineSnapshot) {
+export const VMRunningSnapshotLabel: React.FC<VMTemplateLabelProps> = ({ indication }) => {
+  const classes = classNames('co-m-label', 'co-text-machine');
+  if (!indication) {
     return null;
   }
 
-  return (
-    <Tooltip content={t('kubevirt-plugin~This snapshot was created while vm is running')}>
-      <Label color="green" className={className} isTruncated>
-        {t('kubevirt-plugin~Online snapshot')}
-      </Label>
-    </Tooltip>
-  );
+  return <span className={classes}>{indication}</span>;
 };
