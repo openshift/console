@@ -120,6 +120,10 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         className={`${className}__form-body`}
         helperTextInvalid="This is a required field"
         validated={isValid(kms.name.valid)}
+        helperText={
+          !mode &&
+          t('ceph-storage-plugin~A unique name for the Key management service within the project.')
+        }
         isRequired
       >
         <TextInput

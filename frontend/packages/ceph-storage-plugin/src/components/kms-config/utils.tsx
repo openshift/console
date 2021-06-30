@@ -65,25 +65,85 @@ export const generateClientKeySecret = (clientKey: string) => ({
   },
 });
 
-export const createKmsResources = (kms: KMSConfig, update = false, previousData?: any) => {
-  let tokenSecret: SecretKind;
-  if (kms.token) {
-    tokenSecret = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: KMSSecretName,
-        namespace: CEPH_STORAGE_NAMESPACE,
+export const createCommonKmsResources = (kms: KMSConfig) => {
+  const commonKmsResources: Promise<K8sResourceKind>[] = [];
+
+  if (kms.caCert)
+    commonKmsResources.push(k8sCreate(SecretModel, kms.caCert, CEPH_STORAGE_NAMESPACE));
+  if (kms.clientCert)
+    commonKmsResources.push(k8sCreate(SecretModel, kms.clientCert, CEPH_STORAGE_NAMESPACE));
+  if (kms.clientKey)
+    commonKmsResources.push(k8sCreate(SecretModel, kms.clientKey, CEPH_STORAGE_NAMESPACE));
+
+  return commonKmsResources;
+};
+
+export const createCsiKmsResources = (kms: KMSConfig, update: boolean = false) => {
+  const parsedAddress = parseURL(kms.address.value);
+  const csiConfigData: KMSConfigMap = {
+    KMS_PROVIDER: 'vaulttokens',
+    KMS_SERVICE_NAME: kms.name.value,
+    VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
+    VAULT_BACKEND_PATH: kms.backend,
+    VAULT_CACERT: kms.caCert?.metadata.name,
+    VAULT_TLS_SERVER_NAME: kms.tls,
+    VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
+    VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
+    VAULT_NAMESPACE: kms.providerNamespace,
+    VAULT_TOKEN_NAME: kms.token.value ? KMSSecretName : '',
+    VAULT_CACERT_FILE: kms.caCertFile,
+    VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
+    VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
+  };
+
+  const csiConfigObj: ConfigMapKind = {
+    apiVersion: ConfigMapModel.apiVersion,
+    kind: ConfigMapModel.kind,
+    data: {
+      [`${kms.name.value}`]: JSON.stringify(csiConfigData),
+    },
+    metadata: {
+      name: KMSConfigMapCSIName,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+  };
+
+  const csiKmsResources: Promise<K8sResourceKind>[] =
+    /** kms.token.value === "" if we are calling this function from StorageClass KMS flow.
+     * Hence, we need to createCommonKmsResources, else it is already created if calling from OCS wizard flow.
+     */
+    kms.token.value ? [] : createCommonKmsResources(kms);
+
+  if (update) {
+    const cmPatch = [
+      {
+        op: 'replace',
+        path: `/data/${kms.name.value}`,
+        value: JSON.stringify(csiConfigData),
       },
-      stringData: {
-        token: kms.token.value,
-      },
-    };
+    ];
+    csiKmsResources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
+  } else {
+    csiKmsResources.push(k8sCreate(ConfigMapModel, csiConfigObj, CEPH_STORAGE_NAMESPACE));
   }
 
-  const resources: Promise<K8sResourceKind>[] = [];
+  return csiKmsResources;
+};
 
+export const createClusterKmsResources = (kms: KMSConfig) => {
   const parsedAddress = parseURL(kms.address.value);
+
+  const tokenSecret: SecretKind = {
+    apiVersion: SecretModel.apiVersion,
+    kind: SecretModel.kind,
+    metadata: {
+      name: KMSSecretName,
+      namespace: CEPH_STORAGE_NAMESPACE,
+    },
+    stringData: {
+      token: kms.token.value,
+    },
+  };
 
   const configData: KMSConfigMap = {
     KMS_PROVIDER: 'vault',
@@ -109,63 +169,11 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
     },
   };
 
-  const csiConfigData: KMSConfigMap = {
-    KMS_PROVIDER: 'vaulttokens',
-    KMS_SERVICE_NAME: kms.name.value,
-    VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
-    VAULT_BACKEND_PATH: kms.backend,
-    VAULT_CACERT: kms.caCert?.metadata.name,
-    VAULT_TLS_SERVER_NAME: kms.tls,
-    VAULT_CLIENT_CERT: kms.clientCert?.metadata.name,
-    VAULT_CLIENT_KEY: kms.clientKey?.metadata.name,
-    VAULT_NAMESPACE: kms.providerNamespace,
-    VAULT_TOKEN_NAME: KMSSecretName,
-    VAULT_CACERT_FILE: kms.caCertFile,
-    VAULT_CLIENT_CERT_FILE: kms.clientCertFile,
-    VAULT_CLIENT_KEY_FILE: kms.clientKeyFile,
-  };
+  const clusterKmsResources: Promise<K8sResourceKind>[] = createCommonKmsResources(kms);
+  clusterKmsResources.push(k8sCreate(SecretModel, tokenSecret, CEPH_STORAGE_NAMESPACE));
+  clusterKmsResources.push(k8sCreate(ConfigMapModel, configMapObj, CEPH_STORAGE_NAMESPACE));
 
-  const csiConfigObj: ConfigMapKind = {
-    apiVersion: ConfigMapModel.apiVersion,
-    kind: ConfigMapModel.kind,
-    data: {
-      [`1-${kms.name.value}`]: JSON.stringify(csiConfigData),
-    },
-    metadata: {
-      name: KMSConfigMapCSIName,
-      namespace: CEPH_STORAGE_NAMESPACE,
-    },
-  };
-
-  if (kms.caCert) {
-    resources.push(k8sCreate(SecretModel, kms.caCert, CEPH_STORAGE_NAMESPACE));
-  }
-
-  if (kms.clientCert) {
-    resources.push(k8sCreate(SecretModel, kms.clientCert, CEPH_STORAGE_NAMESPACE));
-  }
-
-  if (kms.clientKey) {
-    resources.push(k8sCreate(SecretModel, kms.clientKey, CEPH_STORAGE_NAMESPACE));
-  }
-
-  if (update) {
-    const patchValue = Object.keys(previousData).length + 1;
-    const cmPatch = [
-      {
-        op: 'replace',
-        path: `/data/${patchValue}-${kms.name.value}`,
-        value: JSON.stringify(csiConfigData),
-      },
-    ];
-    resources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
-  } else {
-    resources.push(k8sCreate(SecretModel, tokenSecret, CEPH_STORAGE_NAMESPACE));
-    resources.push(k8sCreate(ConfigMapModel, configMapObj, CEPH_STORAGE_NAMESPACE));
-    resources.push(k8sCreate(ConfigMapModel, csiConfigObj, CEPH_STORAGE_NAMESPACE));
-  }
-
-  return resources;
+  return [...clusterKmsResources, ...createCsiKmsResources(kms)];
 };
 
 export const setEncryptionDispatch = (

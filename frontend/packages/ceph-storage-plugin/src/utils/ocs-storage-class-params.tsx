@@ -1,3 +1,4 @@
+import * as _ from 'lodash-es';
 import { ExtensionSCProvisionerProp } from '@console/plugin-sdk';
 import {
   CephFsNameComponent,
@@ -90,6 +91,7 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
           name: 'Encryption ID',
           hintText: 'A unique ID matching KMS ConfigMap',
           Component: StorageClassEncryptionKMSID,
+          visible: (params) => _.get(params, 'encrypted.value', false) === 'true',
         },
         thickProvision: {
           name: 'Enable Thick Provisioning',

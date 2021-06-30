@@ -32,7 +32,7 @@ export type ExtensionSCProvisionerProp = {
           name: string;
           hintText: string;
           value?: string;
-          visible?: () => boolean;
+          visible?: (params?: any) => boolean;
           required?: boolean;
           Component?: React.ComponentType<ProvisionerProps>;
         };
