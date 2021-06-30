@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
-
 import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 
@@ -27,12 +25,12 @@ const PVStatus = ({ pv }) => (
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  '',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 

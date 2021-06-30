@@ -19,7 +19,6 @@ import {
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import { stopVM } from '../../../k8s/requests/vm/actions';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
 import { VMSnapshot } from '../../../types';
@@ -76,11 +75,9 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
       })
       .addOwnerReferences(buildOwnerReference(vmLikeEntity, { blockOwnerDeletion: false }));
     const isValidName = isEmpty(snapshots.filter(({ metadata }) => metadata?.name === name));
-    snapshotWrapper &&
-      isVMRunningOrExpectedRunning &&
-      isValidName &&
-      (await stopVM(asVM(vmLikeEntity)));
-    handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
+    if (snapshotWrapper && isValidName) {
+      handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
+    }
   };
 
   return (
@@ -122,7 +119,6 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                   <SupportedSnapshotVolumesList supportedVolumes={supportedVolumes} />
                   <UnsupportedVolumesSnapshotAlert unsupportedVolumes={unsupportedVolumes} />
                   <VmRunningSnapshotAlert
-                    vmName={vmName}
                     isVMRunningOrExpectedRunning={isVMRunningOrExpectedRunning}
                   />
                 </Stack>

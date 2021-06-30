@@ -36,12 +36,7 @@ export const VMIUsersAlert: React.FC<VMIUsersAlertProps> = ({
   };
 
   const alertBody = (
-    <Trans
-      t={t}
-      i18nKey="Guest agent logged in users alert"
-      ns="kubevirt-plugin"
-      count={userListLength}
-    >
+    <Trans t={t} ns="kubevirt-plugin" count={userListLength}>
       <Button variant="link" isInline onClick={onLinkClick}>
         {{ count: userListLength }} User
       </Button>{' '}

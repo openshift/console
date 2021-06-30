@@ -12,6 +12,7 @@
   "{{count, number}} item_plural": "{{count, number}} items",
   "Prerequisites ({{totalPrereqs}})": "Prerequisites ({{totalPrereqs}})",
   "Prerequisites": "Prerequisites",
+  "Show prerequisites": "Show prerequisites",
   "Complete": "Complete",
   "In progress": "In progress",
   "Not started": "Not started",

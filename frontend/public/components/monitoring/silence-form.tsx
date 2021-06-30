@@ -247,7 +247,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
           <div className="co-m-pane__body-group">
             <SectionHeading text={t('public~Alert labels')} />
             <p className="co-help-text">
-              <Trans i18nKey="silence-matchers-description" ns="public">
+              <Trans t={t} ns="public">
                 Alerts with labels that match these selectors will be silenced instead of firing.
                 Label values can be matched exactly or with a{' '}
                 <ExternalLink

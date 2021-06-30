@@ -88,7 +88,7 @@ const ConfigureMachineAutoscalerModal = withHandlePromise(
         <ModalTitle className="modal-header">{t('public~Create MachineAutoscaler')}</ModalTitle>
         <ModalBody>
           <p>
-            <Trans i18nKey="scale machine set" ns="public">
+            <Trans t={t} ns="public">
               This will automatically scale machine set <b>{{ name }}</b>.
             </Trans>
           </p>

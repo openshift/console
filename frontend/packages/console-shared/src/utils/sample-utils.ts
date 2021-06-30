@@ -30,7 +30,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { subscribeToExtensions } from '@console/plugin-sdk/src/api/subscribeToExtensions';
+import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 
 export type Sample = {
   highlightText?: string;

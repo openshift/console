@@ -74,10 +74,12 @@ import {
   StatusIconAndText,
 } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { consolePluginModal } from '@console/shared/src/components/modals';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { isPluginEnabled } from '@console/shared/src/utils';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../const';
 import {
   ClusterServiceVersionModel,
@@ -101,10 +103,9 @@ import {
 } from '../types';
 import {
   getClusterServiceVersionPlugins,
-  isPluginEnabled,
+  isCatalogSourceTrusted,
   upgradeRequiresApproval,
 } from '../utils';
-import { consolePluginModal } from './modals/console-plugin-modal';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
@@ -263,7 +264,7 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
   }
 };
 
-const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, subscription }) => {
+const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -298,7 +299,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, subscriptio
                     consoleOperatorConfig,
                     csvPluginsCount,
                     plugin,
-                    subscription,
+                    trusted,
                   })
                 }
                 variant="link"
@@ -976,6 +977,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const subscription = subscriptionForCSV(props.subscriptions, props.obj);
+  const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
 
   return (
     <>
@@ -1043,7 +1045,10 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 </dd>
               </dl>
               {csvPlugins.length > 0 && subscription && (
-                <ConsolePlugins csvPlugins={csvPlugins} subscription={subscription} />
+                <ConsolePlugins
+                  csvPlugins={csvPlugins}
+                  trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
+                />
               )}
               <dl className="co-clusterserviceversion-details__field">
                 <dt>{t('olm~Links')}</dt>
@@ -1126,11 +1131,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   />
                 </dd>
               ))}
-              {spec?.install?.spec?.permissions && (
+              {!_.isEmpty(permissions) && (
                 <>
                   <dt>{t('olm~Operator ServiceAccounts')}</dt>
-                  {spec.install.spec.permissions.map(({ serviceAccountName }) => (
-                    <dd key={serviceAccountName}>
+                  {permissions.map(({ serviceAccountName }) => (
+                    <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
                       <ResourceLink
                         name={serviceAccountName}
                         kind="ServiceAccount"
@@ -1349,7 +1354,7 @@ export type ClusterServiceVersionDetailsProps = {
 
 type ConsolePluginsProps = {
   csvPlugins: string[];
-  subscription: SubscriptionKind;
+  trusted: boolean;
 };
 
 type ConsolePluginStatusProps = {

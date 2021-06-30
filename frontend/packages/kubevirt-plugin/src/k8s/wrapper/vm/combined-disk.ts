@@ -6,10 +6,7 @@ import { compareOwnerReference } from '@console/shared/src/utils/owner-reference
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
-import {
-  getKubevirtModelAvailableAPIVersion,
-  kubevirtReferenceForModel,
-} from '../../../models/kubevirtReferenceForModel';
+import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getSimpleName } from '../../../selectors/utils';
 import { asVM, getDataVolumeTemplates } from '../../../selectors/vm';
 import { isWinToolsImage } from '../../../selectors/vm/winimage';
@@ -343,7 +340,7 @@ export class CombinedDiskFactory {
               (getOwnerReferences(p) || []).some((ownerReference) =>
                 compareOwnerReference(ownerReference, {
                   name: dataVolumeName,
-                  kind: kubevirtReferenceForModel(DataVolumeModel),
+                  kind: DataVolumeModel.kind,
                   apiVersion: getKubevirtModelAvailableAPIVersion(DataVolumeModel),
                 } as any),
               ),

@@ -169,7 +169,7 @@ const BootOrderModalComponent = withHandlePromise(
             showUpdatedAlert && t('kubevirt-plugin~Boot order has been updated outside this flow.')
           }
           infoMessage={
-            <Trans t={t} i18nKey="bootOrderModalInfoMessage" ns="kubevirt-plugin">
+            <Trans t={t} ns="kubevirt-plugin">
               Saving these changes will override any boot order previously saved.
               <br />
               To see the updated order{' '}

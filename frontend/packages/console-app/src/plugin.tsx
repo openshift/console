@@ -9,6 +9,7 @@ import {
   PersistentVolumeClaimModel,
   VolumeSnapshotContentModel,
   ClusterOperatorModel,
+  ConsoleOperatorConfigModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
 import {
@@ -243,6 +244,18 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
         ).then((m) => m.VolumeSnapshotPVCPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: ConsoleOperatorConfigModel,
+      loader: async () =>
+        (
+          await import(
+            './components/console-operator/ConsoleOperatorConfig' /* webpackChunkName: "console-operator-config" */
+          )
+        ).ConsoleOperatorConfigDetailsPage,
     },
   },
 ];

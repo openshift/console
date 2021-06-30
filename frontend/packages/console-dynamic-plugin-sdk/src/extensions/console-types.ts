@@ -1,3 +1,5 @@
+import { ExtensionK8sGroupKindModel } from '../api/common-types';
+
 export type OwnerReference = {
   name: string;
   kind: string;
@@ -174,7 +176,10 @@ export type WatchK8sResources<R extends ResourcesObject> = {
 };
 
 export type WatchK8sResourcesGeneric = {
-  [key: string]: WatchK8sResource;
+  [key: string]: {
+    model?: ExtensionK8sGroupKindModel;
+    opts?: Partial<WatchK8sResource>;
+  };
 };
 
 export type FirehoseResource = {

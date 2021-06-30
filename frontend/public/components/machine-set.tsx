@@ -91,12 +91,7 @@ export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentK
 export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.availableReplicas || 0;
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 export const MachineCounts: React.SFC<MachineCountsProps> = ({
   resourceKind,

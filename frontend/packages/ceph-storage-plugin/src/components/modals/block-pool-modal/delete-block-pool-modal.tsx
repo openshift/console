@@ -28,7 +28,7 @@ import {
   FooterPrimaryActions,
   isDefaultPool,
 } from '../../../utils/block-pool';
-import { commaSeparatedString } from '../../../utils/common';
+import { toList } from '../../../utils/common';
 import { POOL_PROGRESS } from '../../../constants/storage-pool-const';
 import { CephBlockPoolModel } from '../../../models';
 import { CEPH_EXTERNAL_CR_NAME } from '../../../constants';
@@ -40,7 +40,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
   const poolName = blockPoolConfig?.metadata.name;
 
   const [state, dispatch] = React.useReducer(blockPoolReducer, blockPoolInitialState);
-  const [scNames, setScNames] = React.useState<string>();
+  const [scNames, setScNames] = React.useState<React.ReactNode>();
 
   const [cephClusters, isLoaded, loadError] = useK8sWatchResource<CephClusterKind[]>(
     cephClusterResource,
@@ -76,7 +76,7 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
 
       if (usedScNames.length) {
         dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.BOUNDED });
-        setScNames(commaSeparatedString(usedScNames, t));
+        setScNames(toList(usedScNames));
       }
     }
   }, [scResources, scLoaded, pvcResources, pvcLoaded, state.poolStatus, poolName, t]);
@@ -105,13 +105,17 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
                 />
               </div>
             ) : state.poolStatus === POOL_PROGRESS.BOUNDED ? (
-              <Trans t={t} ns="ceph-storage-plugin">
-                <p data-test="pool-bound-message">
-                  <strong>{{ poolName }}</strong> cannot be deleted. When a pool is bounded to PVC
-                  it cannot be deleted. Please detach all the resources from StorageClass(es):{' '}
-                  <strong>{{ scNames }}</strong>.{' '}
-                </p>
-              </Trans>
+              <div>
+                <Trans t={t} ns="ceph-storage-plugin">
+                  <p data-test="pool-bound-message">
+                    <strong>{{ poolName }}</strong> cannot be deleted. When a pool is bounded to PVC
+                    it cannot be deleted. Please detach all the resources from StorageClass(es):
+                  </p>
+                </Trans>
+                <strong>
+                  <ul data-test="pool-storage-classes">{scNames}</ul>
+                </strong>
+              </div>
             ) : (
               <Trans t={t} ns="ceph-storage-plugin">
                 <p>
