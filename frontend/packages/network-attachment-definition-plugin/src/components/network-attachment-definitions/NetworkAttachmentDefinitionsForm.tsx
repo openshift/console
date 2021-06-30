@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as _ from 'lodash';
-import { ActionGroup, Alert, Button, Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { referenceForModel, k8sCreate } from '@console/internal/module/k8s';
 import {
   ButtonBar,
   Dropdown,
@@ -11,20 +11,21 @@ import {
   history,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import {
-  HyperConvergedModel,
-  NetworkAttachmentDefinitionModel,
-  SriovNetworkNodePolicyModel,
-} from '../..';
+  k8sCreate,
+  modelFor,
+  referenceForGroupVersionKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
+import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
+import { networkTypeParams, networkTypes } from '../../constants';
 import {
   NetworkAttachmentDefinitionAnnotations,
   NetworkAttachmentDefinitionConfig,
   TypeParamsData,
 } from '../../types';
-import { networkTypeParams, networkTypes } from '../../constants';
 import NetworkTypeOptions from './NetworkTypeOptions';
-import { useTranslation } from 'react-i18next';
 
 const buildConfig = (name, networkType, typeParamsData): NetworkAttachmentDefinitionConfig => {
   const config: NetworkAttachmentDefinitionConfig = {
@@ -332,7 +333,11 @@ const NetworkAttachmentDefinitionFormBase = (props) => {
 
 const mapStateToProps = ({ k8s }) => {
   const kindsInFlight = k8s.getIn(['RESOURCES', 'inFlight']);
-  const k8sModels = k8s.getIn(['RESOURCES', 'models']);
+  const hasHyperConvergedCRD =
+    !kindsInFlight &&
+    !!['v1beta1', 'v1alpha1'].find(
+      (v) => !!modelFor(referenceForGroupVersionKind('hco.kubevirt.io')(v)('HyperConverged')),
+    );
 
   return {
     // FIXME: These should be feature flags.
@@ -340,7 +345,7 @@ const mapStateToProps = ({ k8s }) => {
     // hasSriovNetNodePolicyCRD:
     //   !kindsInFlight && !!k8sModels.get(referenceForModel(SriovNetworkNodePolicyModel)),
     hasSriovNetNodePolicyCRD: false,
-    hasHyperConvergedCRD: !kindsInFlight && !!k8sModels.get(referenceForModel(HyperConvergedModel)),
+    hasHyperConvergedCRD,
   };
 };
 
