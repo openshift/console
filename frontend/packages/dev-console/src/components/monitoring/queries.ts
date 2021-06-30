@@ -33,7 +33,7 @@ export const metricsQuery = (t: TFunction) => ({
 export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
   {
     query: _.template(
-      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace='<%= namespace %>'}) by (pod)`,
+      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
     title: t('devconsole~CPU usage'),
@@ -120,7 +120,7 @@ export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: _.template(
-      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace='<%= namespace %>'}
+      `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace='<%= namespace %>'}
           * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{
           namespace='<%= namespace %>', workload='<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
