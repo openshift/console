@@ -89,7 +89,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams, LinkifyExternal } from '../utils/link';
+import { ExternalLink, getURLSearchParams, LinkifyExternal } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -677,6 +677,9 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
+  // eslint-disable-next-line camelcase
+  const runbookURL = alert?.annotations?.runbook_url;
+
   return (
     <>
       <Helmet>
@@ -764,6 +767,14 @@ const AlertsDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                           labels={labels}
                           template={rule?.annotations?.message}
                         />
+                      </dd>
+                    </>
+                  )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
                       </dd>
                     </>
                   )}
@@ -936,6 +947,9 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
     return `${nameLabel}{${_.map(otherLabels, (v, k) => `${k}="${v}"`).join(',')}}`;
   };
 
+  // eslint-disable-next-line camelcase
+  const runbookURL = rule?.annotations?.runbook_url;
+
   return (
     <>
       <Helmet>
@@ -997,6 +1011,14 @@ const AlertRulesDetailsPage_: React.FC<{ match: any }> = ({ match }) => {
                       <dt>{t('public~Message')}</dt>
                       <dd>
                         <PrometheusTemplate text={rule.annotations.message} />
+                      </dd>
+                    </>
+                  )}
+                  {runbookURL && (
+                    <>
+                      <dt>{t('public~Runbook')}</dt>
+                      <dd>
+                        <ExternalLink href={runbookURL} text={runbookURL} />
                       </dd>
                     </>
                   )}
