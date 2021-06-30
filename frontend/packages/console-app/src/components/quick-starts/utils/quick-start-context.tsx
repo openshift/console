@@ -12,10 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import {
   MarkdownExecuteSnippet,
-  MarkdownCopyClipboard,
-  useInlineCopyClipboardShowdownExtension,
   useInlineExecuteCommandShowdownExtension,
-  useMultilineCopyClipboardShowdownExtension,
   useMultilineExecuteCommandShowdownExtension,
 } from '@console/shared';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
@@ -45,9 +42,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
   const [allQuickStartStates, setAllQuickStartStates] = useAllQuickStartStates();
   const fireTelemetryEvent = useTelemetry();
-  const inlineCopyClipboardShowdownExtension = useInlineCopyClipboardShowdownExtension();
   const inlineExecuteCommandShowdownExtension = useInlineExecuteCommandShowdownExtension();
-  const multilineCopyClipboardShowdownExtension = useMultilineCopyClipboardShowdownExtension();
   const multilineExecuteCommandShowdownExtension = useMultilineExecuteCommandShowdownExtension();
 
   const startQuickStart = React.useCallback(
@@ -177,15 +172,9 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
       show: false,
     },
     markdown: {
-      extensions: [
-        inlineCopyClipboardShowdownExtension,
-        inlineExecuteCommandShowdownExtension,
-        multilineCopyClipboardShowdownExtension,
-        multilineExecuteCommandShowdownExtension,
-      ],
+      extensions: [inlineExecuteCommandShowdownExtension, multilineExecuteCommandShowdownExtension],
       renderExtension: (docContext: HTMLDocument, rootSelector: string) => (
         <>
-          <MarkdownCopyClipboard docContext={docContext} rootSelector={rootSelector} />
           <MarkdownExecuteSnippet docContext={docContext} rootSelector={rootSelector} />
         </>
       ),
