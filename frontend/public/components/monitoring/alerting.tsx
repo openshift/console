@@ -849,15 +849,15 @@ export const AlertsDetailsPage = withFallback(
 // Renders Prometheus template text and highlights any {{ ... }} tags that it contains
 const PrometheusTemplate = ({ text }) => (
   <>
-    {text
-      ?.split(/(\{\{[^{}]*\}\})/)
-      ?.map((part: string) =>
-        part.match(/^\{\{[^{}]*\}\}$/) ? (
-          <code className="prometheus-template-tag">{part}</code>
-        ) : (
-          part
-        ),
-      )}
+    {text?.split(/(\{\{[^{}]*\}\})/)?.map((part: string, i: number) =>
+      part.match(/^\{\{[^{}]*\}\}$/) ? (
+        <code className="prometheus-template-tag" key={i}>
+          {part}
+        </code>
+      ) : (
+        part
+      ),
+    )}
   </>
 );
 
