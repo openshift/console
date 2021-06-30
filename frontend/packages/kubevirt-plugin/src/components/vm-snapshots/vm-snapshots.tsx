@@ -71,7 +71,7 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
               transforms: [sortable],
             },
             {
-              title: t('kubevirt-plugin~Online Created'),
+              title: t('kubevirt-plugin~Indications'),
             },
             {
               title: '',

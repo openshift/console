@@ -45,7 +45,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
   const snapshotName = getName(snapshot);
   const namespace = getNamespace(snapshot);
   const relevantRestore = restores[snapshotName];
-  const isOnlineSnapshot = snapshot?.status?.indications?.[0];
+  const indications = snapshot?.status?.indications;
 
   return (
     <TableRow id={snapshot?.metadata?.uid} index={index} trKey={snapshotName} style={style}>
@@ -66,7 +66,14 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
         {relevantRestore ? <Timestamp timestamp={getVmRestoreTime(relevantRestore)} /> : DASH}
       </TableData>
       <TableData id={`${snapshotName}-online-snapshot`} className={dimensify()}>
-        {isOnlineSnapshot ? <VMRunningSnapshotLabel isOnlineSnapshot={isOnlineSnapshot} /> : DASH}
+        {indications
+          ? indications.map((indication) => (
+              <VMRunningSnapshotLabel
+                key={`${snapshotName}-${indication}`}
+                indication={indication}
+              />
+            ))
+          : DASH}
       </TableData>
       <TableData className={dimensify()}>
         <Tooltip
