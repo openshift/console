@@ -7,7 +7,7 @@
     "properties": {
       "id": "helm",
       "groupId": "developer-catalog",
-      "href": "/catalog?catalogType=HelmChart",
+      "href": "/catalog/ns/:namespace?catalogType=HelmChart",
       "label": "%helm-plugin~Helm Chart%",
       "description": "%helm-plugin~Browse the catalog to discover and install Helm Charts%",
       "icon": { "$codeRef": "icons.helmCatalogIconSVG" }
