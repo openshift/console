@@ -88,7 +88,7 @@ import { ActionsMenu } from '../utils/dropdown';
 import { Firehose } from '../utils/firehose';
 import { SectionHeading, ActionButtons, BreadCrumbs } from '../utils/headings';
 import { Kebab } from '../utils/kebab';
-import { getURLSearchParams } from '../utils/link';
+import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { ResourceLink } from '../utils/resource-link';
 import { ResourceStatus } from '../utils/resource-status';
 import { history } from '../utils/router';
@@ -424,14 +424,6 @@ const SourceHelp: React.FC = () => {
   );
 };
 
-const Annotation = ({ children, title }) =>
-  _.isNil(children) ? null : (
-    <>
-      <dt>{title}</dt>
-      <dd>{children}</dd>
-    </>
-  );
-
 const Label = ({ k, v }) => (
   <div className="co-m-label co-m-label--expand" key={k}>
     <span className="co-m-label__key">{k}</span>
@@ -682,6 +674,9 @@ export const AlertsDetailsPage = withFallback(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
 
+    // eslint-disable-next-line camelcase
+    const runbookURL = alert?.annotations?.runbook_url;
+
     return (
       <>
         <Helmet>
@@ -741,25 +736,42 @@ export const AlertsDetailsPage = withFallback(
                       <Severity severity={labels?.severity} />
                     </dd>
                     {alert?.annotations?.description && (
-                      <Annotation title={t('public~Description')}>
-                        <AlertMessage
-                          alertText={alert.annotations.description}
-                          labels={labels}
-                          template={rule?.annotations.description}
-                        />
-                      </Annotation>
+                      <>
+                        <dt>{t('public~Description')}</dt>
+                        <dd>
+                          <AlertMessage
+                            alertText={alert.annotations.description}
+                            labels={labels}
+                            template={rule?.annotations?.description}
+                          />
+                        </dd>
+                      </>
                     )}
-                    <Annotation title={t('public~Summary')}>
-                      {alert?.annotations?.summary}
-                    </Annotation>
+                    {alert?.annotations?.summary && (
+                      <>
+                        <dt>{t('public~Summary')}</dt>
+                        <dd>{alert.annotations.summary}</dd>
+                      </>
+                    )}
                     {alert?.annotations?.message && (
-                      <Annotation title={t('public~Message')}>
-                        <AlertMessage
-                          alertText={alert.annotations.message}
-                          labels={labels}
-                          template={rule?.annotations.message}
-                        />
-                      </Annotation>
+                      <>
+                        <dt>{t('public~Message')}</dt>
+                        <dd>
+                          <AlertMessage
+                            alertText={alert.annotations.message}
+                            labels={labels}
+                            template={rule?.annotations?.message}
+                          />
+                        </dd>
+                      </>
+                    )}
+                    {runbookURL && (
+                      <>
+                        <dt>{t('public~Runbook')}</dt>
+                        <dd>
+                          <ExternalLink href={runbookURL} text={runbookURL} />
+                        </dd>
+                      </>
                     )}
                   </dl>
                 </div>
@@ -931,6 +943,9 @@ export const AlertRulesDetailsPage = withFallback(
       return `${nameLabel}{${_.map(otherLabels, (v, k) => `${k}="${v}"`).join(',')}}`;
     };
 
+    // eslint-disable-next-line camelcase
+    const runbookURL = annotations?.runbook_url;
+
     return (
       <>
         <Helmet>
@@ -976,13 +991,36 @@ export const AlertRulesDetailsPage = withFallback(
                     <dd>
                       <Severity severity={severity} />
                     </dd>
-                    <Annotation title={t('public~Description')}>
-                      <PrometheusTemplate text={annotations?.description} />
-                    </Annotation>
-                    <Annotation title={t('public~Summary')}>{annotations?.summary}</Annotation>
-                    <Annotation title={t('public~Message')}>
-                      <PrometheusTemplate text={annotations?.message} />
-                    </Annotation>
+                    {annotations?.description && (
+                      <>
+                        <dt>{t('public~Description')}</dt>
+                        <dd>
+                          <PrometheusTemplate text={annotations.description} />
+                        </dd>
+                      </>
+                    )}
+                    {annotations?.summary && (
+                      <>
+                        <dt>{t('public~Summary')}</dt>
+                        <dd>{annotations.summary}</dd>
+                      </>
+                    )}
+                    {annotations?.message && (
+                      <>
+                        <dt>{t('public~Message')}</dt>
+                        <dd>
+                          <PrometheusTemplate text={annotations.message} />
+                        </dd>
+                      </>
+                    )}
+                    {runbookURL && (
+                      <>
+                        <dt>{t('public~Runbook')}</dt>
+                        <dd>
+                          <ExternalLink href={runbookURL} text={runbookURL} />
+                        </dd>
+                      </>
+                    )}
                   </dl>
                 </div>
                 <div className="col-sm-6">
