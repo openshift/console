@@ -37,10 +37,18 @@
   &__help-block {
       display: inline !important; //To override bootstrap help-block
   }
-}
 
-.ocs-storageClass-encryption__form-checkbox {
-  .pf-c-check__description {
-    margin-bottom: var(--pf-global--spacer--md);
+  &__form-checkbox {
+    .pf-c-check__description {
+      margin-bottom: var(--pf-global--spacer--md);
+    }
+  }
+
+  &__form-radio {
+    margin-bottom: var(--pf-global--spacer--md) !important;
+  }
+
+  &__form--padding {
+    padding-left: var(--pf-global--spacer--md) !important;
   }
 }

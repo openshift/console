@@ -26,7 +26,7 @@ import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../fea
 import { MODES, OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
 import { StorageClusterKind, NetworkType, NavUtils } from '../../../types';
 import { labelNodes, getOCSRequestData, labelOCSNamespace } from '../ocs-request-data';
-import { createKmsResources } from '../../kms-config/utils';
+import { createClusterKmsResources } from '../../kms-config/utils';
 import '../install-wizard/install-wizard.scss';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
@@ -54,7 +54,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   );
   const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
   if (encryption.advanced && kms.hasHandled) {
-    promises.push(...createKmsResources(kms));
+    promises.push(...createClusterKmsResources(kms));
   }
   if (enableTaint) {
     promises.push(...taintNodes(nodes));
