@@ -1668,6 +1668,8 @@
   "VolumeSnapshotContents": "VolumeSnapshotContents",
   "ConsolePlugin": "ConsolePlugin",
   "ConsolePlugins": "ConsolePlugins",
+  "Open Support Case with Red Hat": "Open Support Case with Red Hat",
+  "Report Bug to Red Hat": "Report Bug to Red Hat",
   "Loading {{title}} status": "Loading {{title}} status",
   "Unsupported": "Unsupported",
   "Disable": "Disable",

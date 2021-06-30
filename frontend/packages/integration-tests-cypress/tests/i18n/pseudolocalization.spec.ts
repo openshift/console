@@ -20,7 +20,15 @@ describe('Localization', () => {
     cy.log('test masthead');
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
     masthead.clickMastheadLink('help-dropdown-toggle');
-    cy.byTestID('application-launcher-item').isPseudoLocalized();
+    // wait for both console help menu items and additionalHelpActions items to load
+    // additionalHelpActions come from ConsoleLinks 'HelpMenu' yaml and are not translated
+    cy.get('.pf-c-app-launcher__group').should('have.length', 2);
+    // only test console help items which are translated
+    cy.get('.pf-c-app-launcher__group')
+      .first()
+      .within(() => {
+        cy.get('[role="menuitem"]').isPseudoLocalized();
+      });
   });
 
   it('pseudolocalizes navigation', () => {
@@ -42,7 +50,10 @@ describe('Localization', () => {
   it('pseudolocalizes utilization card', () => {
     cy.log('test utilization card components');
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
-    cy.byTestID('utilization-card-item-text').isPseudoLocalized();
+    cy.byLegacyTestID('utilization-card').within(() => {
+      cy.byTestID('dashboard-card-title').isPseudoLocalized();
+      cy.byTestID('utilization-card-item-text').isPseudoLocalized();
+    });
   });
 
   it('pseudolocalizes monitoring pages', () => {
