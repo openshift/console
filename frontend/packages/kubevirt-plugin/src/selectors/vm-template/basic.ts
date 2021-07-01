@@ -97,13 +97,3 @@ export const getTemplateKindProviderType = (template: TemplateKind): ProvidedTyp
 
 export const getTemplateProviderType = (templateItem: TemplateItem): ProvidedType =>
   getTemplateKindProviderType(templateItem?.variants?.[0]);
-
-export const isLabeledTemplate = (t: TFunction, template: TemplateKind): boolean => {
-  const provider = getTemplateProvider(t, template);
-  const support = getTemplateSupport(template);
-  const isSupported = support.parent === 'Full' || support.provider === 'Full';
-  const upstream = isUpstream();
-  const isUserProvider = provider && provider !== (upstream ? 'KubeVirt' : 'Red Hat');
-
-  return (!isSupported || upstream) && !isUserProvider;
-};

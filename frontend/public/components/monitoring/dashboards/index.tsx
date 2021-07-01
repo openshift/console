@@ -44,6 +44,7 @@ import {
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
   Panel,
 } from './types';
+import { useBoolean } from '../hooks/useBoolean';
 
 const NUM_SAMPLES = 30;
 
@@ -92,14 +93,6 @@ const evaluateTemplate = (
   });
 
   return result;
-};
-
-const useBoolean = (initialValue: boolean): [boolean, () => void, () => void, () => void] => {
-  const [value, setValue] = React.useState(initialValue);
-  const toggle = React.useCallback(() => setValue((v) => !v), []);
-  const setTrue = React.useCallback(() => setValue(true), []);
-  const setFalse = React.useCallback(() => setValue(false), []);
-  return [value, toggle, setTrue, setFalse];
 };
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
@@ -638,13 +631,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
             // Look for an option that should be selected by default
             let value = _.find(v.options, { selected: true })?.value;
 
-            // If no default option was found, see if the "All" option should be the default
-            if (
-              value === undefined &&
-              v.includeAll &&
-              v.current.selected === true &&
-              v.current.value === '$__all'
-            ) {
+            // If no default option was found, default to "All" (if present)
+            if (value === undefined && v.includeAll) {
               value = MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY;
             }
 
@@ -729,10 +717,6 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 };
 
 type TemplateVariable = {
-  current: {
-    selected?: boolean;
-    value?: string;
-  };
   hide: number;
   includeAll: boolean;
   name: string;

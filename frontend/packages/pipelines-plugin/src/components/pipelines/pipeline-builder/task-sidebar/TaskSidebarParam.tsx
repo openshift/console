@@ -58,6 +58,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
                 <TextAreaField
                   ref={ref}
                   data-test={`value ${arrayName}`}
+                  aria-label={resourceParam.name}
                   name={arrayName}
                   {...additionalProps}
                   {...textAreaSettings}

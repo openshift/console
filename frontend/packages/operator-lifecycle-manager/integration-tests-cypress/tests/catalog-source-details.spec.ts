@@ -17,7 +17,7 @@ describe(`Interacting with CatalogSource page`, () => {
   beforeEach(() => {
     cy.log('navigate to Catalog Source page');
     cy.visit(`/settings/cluster`);
-    cy.byLegacyTestID('horizontal-link-Global configuration').click();
+    cy.byLegacyTestID('horizontal-link-Configuration').click();
     cy.byLegacyTestID('OperatorHub').click();
 
     // verfiy operatorHub details page is open

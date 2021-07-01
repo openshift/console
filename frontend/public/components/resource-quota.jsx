@@ -72,11 +72,7 @@ const getResourceUsage = (quota, resourceType) => {
   };
 };
 
-const tableColumnClasses = [
-  classNames('col-md-5', 'col-xs-6'),
-  classNames('col-md-7', 'col-xs-6'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', Kebab.columnClass];
 
 export const UsageIcon = ({ percent }) => {
   let usageIcon = <UnknownIcon />;
@@ -360,11 +356,7 @@ export const ResourceQuotasList = (props) => {
           columnID="namespace"
         >
           {rq.metadata.namespace ? (
-            <ResourceLink
-              kind="Namespace"
-              name={rq.metadata.namespace}
-              title={rq.metadata.namespace}
-            />
+            <ResourceLink kind="Namespace" name={rq.metadata.namespace} />
           ) : (
             t('public~None')
           )}

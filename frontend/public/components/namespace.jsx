@@ -27,8 +27,11 @@ import {
   withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  useActiveNamespace,
   withLastNamespace,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  useUserSettingsCompatibility,
+  isModifiedEvent,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -285,7 +288,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
     return (
       <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={namespaceColumnInfo.name.classes}>
-          <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
+          <ResourceLink kind="Namespace" name={ns.metadata.name} />
         </TableData>
         <TableData
           className={namespaceColumnInfo.displayName.classes}
@@ -530,25 +533,43 @@ const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
 const ProjectLink = connect(null, {
   filterList: k8sActions.filterList,
 })(({ project, filterList }) => {
-  const [, setActiveNamespace] = useActiveNamespace();
+  const [, setLastNamespace] = useUserSettingsCompatibility(
+    LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+    LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+  );
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const basePath = url.pathname;
+  if (params.has('project-name')) {
+    // clear project-name query param from the url
+    params.delete('project-name');
+  }
+  const newUrl = {
+    search: `?${params.toString()}`,
+    hash: url.hash,
+  };
+  const namespacedPath = UIActions.formatNamespaceRoute(project.metadata.name, basePath, newUrl);
+
+  const handleClick = (e) => {
+    // Don't set last namespace if its modified click (Ctrl+Click).
+    if (isModifiedEvent(e)) {
+      return;
+    }
+    setLastNamespace(project.metadata.name);
+    // update last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
+    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
+    // sidebar navigation
+    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, project.metadata.name);
+    // clear project-name filter when active namespace is changed
+    filterList(referenceForModel(ProjectModel), 'project-name', '');
+  };
+
   return (
     <span className="co-resource-item co-resource-item--truncate">
       <ResourceIcon kind="Project" />
-      <Button
-        isInline
-        title={project.metadata.name}
-        type="button"
-        className="co-resource-item__resource-name"
-        onClick={() => {
-          setActiveNamespace(project.metadata.name);
-          removeQueryArgument('project-name');
-          // clear project-name filter when active namespace is changed
-          filterList(referenceForModel(ProjectModel), 'project-name', '');
-        }}
-        variant="link"
-      >
+      <Link to={namespacedPath} className="co-resource-item__resource-name" onClick={handleClick}>
         {project.metadata.name}
-      </Button>
+      </Link>
     </span>
   );
 });
@@ -587,11 +608,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
             <ProjectLinkComponent project={project} />
           ) : (
             <span className="co-resource-item">
-              <ResourceLink
-                kind="Project"
-                name={project.metadata.name}
-                title={project.metadata.uid}
-              />
+              <ResourceLink kind="Project" name={project.metadata.name} />
             </span>
           )}
         </TableData>

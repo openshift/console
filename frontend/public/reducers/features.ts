@@ -7,7 +7,7 @@ import { isModelFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
-} from '@console/plugin-sdk/src/api/subscribeToExtensions';
+} from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
   ModelFeatureFlag as DynamicModelFeatureFlag,
   isModelFeatureFlag as isDynamicModelFeatureFlag,

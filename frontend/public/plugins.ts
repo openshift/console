@@ -9,7 +9,10 @@ const activePlugins =
     ? (require('@console/active-plugins').default as ActivePlugin[])
     : [];
 
-export const pluginStore = new PluginStore(activePlugins);
+export const pluginStore = new PluginStore(
+  activePlugins,
+  new Set(window.SERVER_FLAGS.consolePlugins),
+);
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging

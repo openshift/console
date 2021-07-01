@@ -24,6 +24,7 @@ import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
 import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
 import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
 import {
   getDefaultDiskBus,
@@ -79,7 +80,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   const { t } = useTranslation();
   const { name, nameValidation, namespace, startVM, template } = state;
   const [vms, loaded] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineModel),
     namespace,
     isList: true,
   });

@@ -50,7 +50,6 @@ i18n
       'metal3-plugin',
       'nodes',
       'olm',
-      'olm',
       'pipelines-plugin',
       'public',
       'quickstart',
@@ -81,6 +80,7 @@ i18n
     react: {
       useSuspense: true,
       wait: true,
+      transSupportBasicHtmlNodes: true, // allow <br/> and simple html elements in translations
     },
     saveMissing: true,
     missingKeyHandler: function(lng, ns, key) {

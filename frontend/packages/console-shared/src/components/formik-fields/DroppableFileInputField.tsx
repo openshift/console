@@ -16,7 +16,7 @@ const DroppableFileInputField: React.FC<FieldProps> = ({ name, label, helpText }
         onChange={(fileData: string) => setFieldValue(name, fileData)}
         inputFileData={field.value}
         inputFieldHelpText={helpText}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
     </FormGroup>
   );

@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { DASH, dimensifyRow, getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import {
   getVmRestoreTime,
   isVmRestoreProgressing,
@@ -14,6 +15,7 @@ import { VMRestore, VMSnapshot } from '../../types';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
 import { VMSnapshotRowCustomData } from './types';
 import { VMSnapshotStatus } from './vm-snapshot-status';
+import { VMRunningSnapshotLabel } from './VMRunningSnapshotLabel';
 
 const { Delete } = Kebab.factory;
 
@@ -25,6 +27,7 @@ export type VMSnapshotSimpleRowProps = {
   actionsComponent: React.ReactNode;
   index: number;
   style: object;
+  isVMRunning: boolean;
 };
 
 export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
@@ -35,17 +38,20 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
   actionsComponent,
   index,
   style,
+  isVMRunning,
 }) => {
+  const { t } = useTranslation();
   const dimensify = dimensifyRow(columnClasses);
   const snapshotName = getName(snapshot);
   const namespace = getNamespace(snapshot);
   const relevantRestore = restores[snapshotName];
+  const indications = snapshot?.status?.indications;
 
   return (
     <TableRow id={snapshot?.metadata?.uid} index={index} trKey={snapshotName} style={style}>
       <TableData className={dimensify()}>
         <ResourceLink
-          kind={referenceFor(VirtualMachineSnapshotModel)}
+          kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
           namespace={namespace}
           name={snapshotName}
         />
@@ -59,17 +65,34 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
       <TableData id={`${snapshotName}-restore-time`} className={dimensify()}>
         {relevantRestore ? <Timestamp timestamp={getVmRestoreTime(relevantRestore)} /> : DASH}
       </TableData>
+      <TableData id={`${snapshotName}-online-snapshot`} className={dimensify()}>
+        {indications
+          ? indications.map((indication) => (
+              <VMRunningSnapshotLabel
+                key={`${snapshotName}-${indication}`}
+                indication={indication}
+              />
+            ))
+          : DASH}
+      </TableData>
       <TableData className={dimensify()}>
-        <Button
-          id={`${snapshotName}-restore-btn`}
-          variant="secondary"
-          onClick={() => snapshotRestoreModal({ snapshot })}
-          isDisabled={
-            isDisabled || !isVMSnapshotReady(snapshot) || isVmRestoreProgressing(relevantRestore)
-          }
+        <Tooltip
+          content={t('kubevirt-plugin~Restore is enabled only for offline virtual machine.')}
         >
-          Restore
-        </Button>
+          <Button
+            id={`${snapshotName}-restore-btn`}
+            variant="secondary"
+            onClick={() => snapshotRestoreModal({ snapshot })}
+            isDisabled={
+              isDisabled ||
+              !isVMSnapshotReady(snapshot) ||
+              isVmRestoreProgressing(relevantRestore) ||
+              isVMRunning
+            }
+          >
+            {t('kubevirt-plugin~Restore')}
+          </Button>
+        </Tooltip>
       </TableData>
       <TableData className={dimensify(true)}>{actionsComponent}</TableData>
     </TableRow>
@@ -78,7 +101,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
 
 export const VMSnapshotRow: RowFunction<VMSnapshot, VMSnapshotRowCustomData> = ({
   obj: snapshot,
-  customData: { restores, columnClasses, isDisabled },
+  customData: { restores, columnClasses, isDisabled, isVMRunning },
   index,
   style,
 }) => (
@@ -89,10 +112,11 @@ export const VMSnapshotRow: RowFunction<VMSnapshot, VMSnapshotRowCustomData> = (
     index={index}
     style={style}
     isDisabled={isDisabled}
+    isVMRunning={isVMRunning}
     actionsComponent={
       <ResourceKebab
         resource={snapshot}
-        kind={referenceForModel(VirtualMachineSnapshotModel)}
+        kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
         isDisabled={isDisabled}
         actions={[Delete]}
         id={`kebab-for-${getName(snapshot)}`}

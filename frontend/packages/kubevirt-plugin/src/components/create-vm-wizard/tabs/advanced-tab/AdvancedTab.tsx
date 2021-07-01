@@ -8,8 +8,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { CLOUD, SSH } from '../../../../utils/strings';
 import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
-import { CloudInitInfoHelper } from './cloud-init/cloud-init-info-helper';
-import CloudInitAdvancedTab from './cloud-init/CloudInitAdvancedTab';
+import Cloudinit from './cloud-init/Cloudinit';
+import CloudInitInfoHelper from './cloud-init/CloudinitInfoHelper';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
 
 import './advanced-tab.scss';
@@ -19,10 +19,7 @@ type AdvancedTabProps = {
   key: string;
 };
 
-const AdvancedTab: React.FC<AdvancedTabProps> = ({
-  wizardReduxID,
-  key,
-}: AdvancedTabProps): React.ReactElement => {
+const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = React.useState<string>();
 
@@ -41,7 +38,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({
           {t('kubevirt-plugin~Cloud-init')} <CloudInitInfoHelper />
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== CLOUD}>
-          <CloudInitAdvancedTab wizardReduxID={wizardReduxID} key={key} />
+          <Cloudinit wizardReduxID={wizardReduxID} />
         </AccordionContent>
       </AccordionItem>
       <AccordionItem>

@@ -38,7 +38,7 @@ export const getPipelineTaskLinks = (pipeline: PipelineKind): PipelineTaskLinks 
           }
         : {
             resourceKind: 'EmbeddedTask',
-            name: i18next.t('pipelines-plugin~Embedded Task'),
+            name: i18next.t('pipelines-plugin~Embedded task'),
             qualifier: task.name,
           },
     );

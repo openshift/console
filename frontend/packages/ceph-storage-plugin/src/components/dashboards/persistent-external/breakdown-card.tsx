@@ -82,7 +82,7 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
             isOpen={isOpenBreakdownSelect}
             selections={[t('ceph-storage-plugin~{{metricType}}', { metricType })]}
             placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
-            aria-label="Break By Dropdown"
+            aria-label={t('ceph-storage-plugin~Break by dropdown')}
             isCheckboxSelectionBadgeHidden
           >
             {breakdownSelectItems}

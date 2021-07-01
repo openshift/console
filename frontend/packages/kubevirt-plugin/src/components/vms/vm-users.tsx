@@ -13,12 +13,7 @@ import { VMIKind } from '../../types';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 
-const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-];
+const tableColumnClasses = ['', '', '', 'pf-m-hidden pf-m-visible-on-lg'];
 
 const UsersTableHeader = (t: TFunction) => () => {
   return [

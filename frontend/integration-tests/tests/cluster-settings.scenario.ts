@@ -22,7 +22,7 @@ describe('Cluster Settings', () => {
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('ClusterOperators');
     await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('Global configuration');
+    await horizontalnavView.clickHorizontalTab('Configuration');
     await crudView.isLoaded();
   });
   it('display overview channel update modal and click cancel', async () => {
@@ -50,8 +50,8 @@ describe('Cluster Settings', () => {
     await horizontalnavView.clickHorizontalTab('YAML');
     await crudView.isLoaded();
   });
-  it('display Global configuration page, click Configuration Resource item link and display details. Check if the resource link title equals the details page header', async () => {
-    await horizontalnavView.clickHorizontalTab('Global configuration');
+  it('display Configuration page, click Configuration Resource item link and display details. Check if the resource link title equals the details page header', async () => {
+    await horizontalnavView.clickHorizontalTab('Configuration');
     await crudView.isLoaded();
 
     expect(clusterSettingsView.globalConfigResourceLink.isDisplayed()).toBe(true);
@@ -64,8 +64,8 @@ describe('Cluster Settings', () => {
     await horizontalnavView.clickHorizontalTab('YAML');
     await crudView.isLoaded();
   });
-  it('display Global configuration page, click dropdown link to edit resource and display details, and check if details header is correct.', async () => {
-    await horizontalnavView.clickHorizontalTab('Global configuration');
+  it('display Configuration page, click dropdown link to edit resource and display details, and check if details header is correct.', async () => {
+    await horizontalnavView.clickHorizontalTab('Configuration');
     await crudView.isLoaded();
 
     await clusterSettingsView.globalConfigResourceRow.click();
@@ -78,8 +78,8 @@ describe('Cluster Settings', () => {
     expect(clusterSettingsView.clusterResourceDetailsTitle.isDisplayed()).toBe(true);
     expect(clusterSettingsView.clusterResourceDetailsTitle.getText()).toBe('cluster');
   });
-  it('display Global configuration page, click Explore Console API in dropdown link and display details, and check if details header is correct.', async () => {
-    await horizontalnavView.clickHorizontalTab('Global configuration');
+  it('display Configuration page, click Explore Console API in dropdown link and display details, and check if details header is correct.', async () => {
+    await horizontalnavView.clickHorizontalTab('Configuration');
     await crudView.isLoaded();
 
     await clusterSettingsView.globalConfigResourceRow.click();

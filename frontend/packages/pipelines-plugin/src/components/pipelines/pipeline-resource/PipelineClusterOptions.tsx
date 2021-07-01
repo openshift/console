@@ -34,7 +34,7 @@ const PipelineClusterOptions: React.FC<PipelineClusterOptionsProps> = ({ prefixN
         type={TextInputTypes.password}
         name={`${prefixName}.params.password`}
         label={t('pipelines-plugin~Password')}
-        helpText={t('pipelines-plugin~Please provide Password.')}
+        helpText={t('pipelines-plugin~Please provide password.')}
       />
       <InputField
         type={TextInputTypes.text}

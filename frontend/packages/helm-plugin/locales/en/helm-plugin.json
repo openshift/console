@@ -34,7 +34,7 @@
   "Status": "Status",
   "Chart name": "Chart name",
   "Description": "Description",
-  "confirmModalRollbackHelmReleaseKey": "Are you sure you want to rollback <1>{{releaseName}}</1> to <4>Revision {{revision}}</4>?",
+  "Are you sure you want to rollback <1>{{releaseName}}</1> to <4>Revision {{revision}}</4>?": "Are you sure you want to rollback <1>{{releaseName}}</1> to <4>Revision {{revision}}</4>?",
   "Rollback to Revision {{revision}}": "Rollback to Revision {{revision}}",
   "No release notes available": "No release notes available",
   "Release notes are not available for this Helm Chart.": "Release notes are not available for this Helm Chart.",

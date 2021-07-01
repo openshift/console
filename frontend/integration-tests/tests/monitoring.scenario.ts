@@ -18,7 +18,7 @@ describe('Alertmanager: YAML', () => {
   it('displays the Alertmanager YAML page', async () => {
     await sidenavView.clickNavLink(['Administration', 'Cluster Settings']);
     await crudView.isLoaded();
-    await horizontalnavView.clickHorizontalTab('Global configuration');
+    await horizontalnavView.clickHorizontalTab('Configuration');
     await crudView.isLoaded();
     await monitoringView.wait(until.elementToBeClickable(firstElementByTestID('Alertmanager')));
     expect(firstElementByTestID('Alertmanager').getText()).toContain('Alertmanager');

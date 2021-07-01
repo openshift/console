@@ -7,7 +7,7 @@ import { PipelineData } from '@console/pipelines-plugin/src/components/import/im
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import { HealthCheckProbe } from '../health-checks/health-checks-types';
+import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -89,7 +89,7 @@ export interface DeployImageFormData {
   build: BuildData;
   deployment: DeploymentData;
   limits: LimitsData;
-  healthChecks: HealthChecksData;
+  healthChecks: HealthChecksFormData;
   fileUpload?: FileUploadData;
 }
 
@@ -114,7 +114,7 @@ export interface BaseFormData {
   deployment: DeploymentData;
   labels: { [name: string]: string };
   limits: LimitsData;
-  healthChecks: HealthChecksData;
+  healthChecks: HealthChecksFormData;
 }
 export interface UploadJarFormData extends BaseFormData {
   fileUpload: FileUploadData;
@@ -333,8 +333,8 @@ export enum ImportOptions {
   UPLOADJAR = 'UPLOADJAR',
 }
 
-export interface HealthChecksData {
-  readinessProbe: HealthCheckProbe;
-  livenessProbe: HealthCheckProbe;
-  startupProbe?: HealthCheckProbe;
+export interface HealthChecksFormData {
+  readinessProbe: HealthCheckFormProbe;
+  livenessProbe: HealthCheckFormProbe;
+  startupProbe?: HealthCheckFormProbe;
 }

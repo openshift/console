@@ -57,11 +57,11 @@ const menuActions = [
 const kind = 'Secret';
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-8-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -74,18 +74,13 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
           kind="Secret"
           name={secret.metadata.name}
           namespace={secret.metadata.namespace}
-          title={secret.metadata.uid}
         />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={secret.metadata.namespace}
-          title={secret.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={secret.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {secret.type}

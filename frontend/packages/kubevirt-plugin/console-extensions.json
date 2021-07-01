@@ -4,6 +4,17 @@
     "properties": {
       "model": {
         "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "VirtualMachine"
+      },
+      "flag": "KUBEVIRT"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
         "version": "v1",
         "kind": "VirtualMachine"
       },
@@ -224,7 +235,11 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachines/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachines/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachine/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachine/:name"
+      ],
       "component": {
         "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage"
       }
@@ -236,7 +251,11 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachineinstances/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachineinstances/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachineInstance/:name",
+        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachineInstance/:name"
+      ],
       "component": {
         "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
       }
@@ -311,7 +330,10 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": ["/k8s/ns/:ns/virtualmachinesnapshots/:name"],
+      "path": [
+        "/k8s/ns/:ns/virtualmachinesnapshots/:name",
+        "/k8s/ns/:ns/snapshot.kubevirt.io~v1alpha1~VirtualMachineSnapshot/:name"
+      ],
       "component": {
         "$codeRef": "SnapshotDetailsPage.SnapshotDetailsPage"
       }
@@ -448,6 +470,90 @@
       "isActivity": { "$codeRef": "dashboardActivity.isPodActivity" },
       "k8sResource": {
         "$codeRef": "dashboardActivity.k8sPodResource"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.componentFactory"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "kubevirt-topology-model-factory",
+      "priority": 200,
+      "resources": {
+        "virtualmachines": {
+          "model": { "kind": "VirtualMachine", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachineinstances": {
+          "model": { "kind": "VirtualMachineInstance", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "virtualmachinetemplates": {
+          "opts": {
+            "kind": "Template",
+            "isList": true,
+            "optional": true,
+            "selector": {
+              "matchLabels": {
+                "template.kubevirt.io/type": "base"
+              }
+            }
+          }
+        },
+        "migrations": {
+          "model": { "kind": "VirtualMachineInstanceMigration", "group": "kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "dataVolumes": {
+          "model": { "kind": "DataVolume", "group": "cdi.kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "vmImports": {
+          "model": { "kind": "VirtualMachineImport", "group": "v2v.kubevirt.io" },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        },
+        "pods": {
+          "opts": {
+            "isList": true,
+            "kind": "Pod",
+            "optional": true
+          }
+        }
+      },
+      "workloadKeys": ["virtualmachines"],
+      "getDataModel": {
+        "$codeRef": "topology.getDataModel"
+      },
+      "isResourceDepicted": {
+        "$codeRef": "topology.isResourceDepicted"
       }
     },
     "flags": {

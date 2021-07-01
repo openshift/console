@@ -41,7 +41,7 @@ const podControllerMetricsQueries = {
     "sum(container_memory_working_set_bytes{namespace='<%= namespace %>',container!=''} * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{namespace='<%= namespace %>', workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
   ),
   [ResourceUtilizationQuery.CPU]: _.template(
-    "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace='<%= namespace %>'} * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{namespace='<%= namespace %>', workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
+    "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace='<%= namespace %>'} * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{namespace='<%= namespace %>', workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",
   ),
   [ResourceUtilizationQuery.FILESYSTEM]: _.template(
     "sum(pod:container_fs_usage_bytes:sum{namespace='<%= namespace %>'}  * on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{namespace='<%= namespace %>', workload='<%= name %>', workload_type='<%= type %>'}) by (pod)",

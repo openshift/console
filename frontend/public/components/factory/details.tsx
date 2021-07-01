@@ -88,11 +88,18 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           component: (cProps) => renderAsyncComponent(p, cProps),
         })),
       ...dynamicResourcePageExtensions
-        .filter(
-          (p) =>
-            referenceForExtensionModel(p.properties.model) ===
-            (kindObj ? referenceFor(kindObj) : props.kind),
-        )
+        .filter((p) => {
+          if (p.properties.model.version) {
+            return (
+              referenceForExtensionModel(p.properties.model) ===
+              (kindObj ? referenceFor(kindObj) : props.kind)
+            );
+          }
+          return (
+            p.properties.model.group === kindObj.apiGroup &&
+            p.properties.model.kind === kindObj.kind
+          );
+        })
         .map(({ properties: { href, name, component: Component } }) => ({
           href,
           name,

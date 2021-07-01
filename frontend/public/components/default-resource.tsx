@@ -34,12 +34,7 @@ import {
 
 const { common } = Kebab.factory;
 
-const tableColumnClasses = [
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 export const DetailsForKind = (
   kind: string,
@@ -132,16 +127,11 @@ export const DefaultList: React.FC<TableProps> = (props) => {
             kind={customData.kind}
             name={obj.metadata.name}
             namespace={obj.metadata.namespace}
-            title={obj.metadata.name}
           />
         </TableData>
         <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
           {obj.metadata.namespace ? (
-            <ResourceLink
-              kind="Namespace"
-              name={obj.metadata.namespace}
-              title={obj.metadata.namespace}
-            />
+            <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
           ) : (
             t('public~None')
           )}

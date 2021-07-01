@@ -6,7 +6,7 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
-import { LoadingInline, PageHeading } from '@console/internal/components/utils';
+import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { TechPreviewBadge } from '@console/shared';
 import { useEventSourceStatus } from '../../hooks';
 import { CamelKameletBindingModel } from '../../models';
@@ -52,7 +52,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
           createSourceAccess={createSourceAccess}
         />
       ) : (
-        <LoadingInline />
+        <LoadingBox />
       )}
       {loaded && isValidSource && !createSourceAccessLoading && createSourceAccess && (
         <ConnectedEventSource

@@ -4,13 +4,13 @@ import { TopologyDataModelFactory } from '../extensions/topology';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
-  dataModelFactory: TopologyDataModelFactory;
+  dataModelFactory: TopologyDataModelFactory['properties'];
 }
 
 const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { id, priority, resources } = dataModelFactory.properties;
-  const workloadKeys = useDeepCompareMemoize(dataModelFactory.properties.workloadKeys);
+  const { id, priority, resources } = dataModelFactory;
+  const workloadKeys = useDeepCompareMemoize(dataModelFactory.workloadKeys);
   const extensionContext = React.useRef<ModelExtensionContext>({
     priority,
     workloadKeys,
@@ -27,11 +27,7 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
       };
       dataModelContext.updateExtension(id, extensionContext.current);
 
-      const {
-        getDataModel,
-        isResourceDepicted,
-        getDataModelReconciler,
-      } = dataModelFactory.properties;
+      const { getDataModel, isResourceDepicted, getDataModelReconciler } = dataModelFactory;
       if (getDataModel) {
         getDataModel()
           .then((getter) => {
@@ -77,7 +73,7 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
         dataModelContext.updateExtension(id, extensionContext.current);
       }
     }
-  }, [dataModelContext, dataModelFactory.properties, id, priority, resources, workloadKeys]);
+  }, [dataModelContext, dataModelFactory, id, priority, resources, workloadKeys]);
 
   return null;
 };

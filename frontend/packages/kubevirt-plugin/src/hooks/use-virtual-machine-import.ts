@@ -4,6 +4,7 @@ import { getCreationTimestamp, getName, getNamespace } from '@console/shared/src
 import { VMImportWrappper } from '../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineImportModel } from '../models';
+import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { VMKind } from '../types/vm';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 
@@ -18,13 +19,13 @@ export const useVirtualMachineImport = (vm: VMKind) => {
     if (vmImportOwnerReference) {
       return {
         name: vmImportOwnerReference.name,
-        kind: VirtualMachineImportModel.kind,
+        kind: kubevirtReferenceForModel(VirtualMachineImportModel),
         namespace: getNamespace(vm),
         isList: false,
       };
     }
     return {
-      kind: VirtualMachineImportModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
       namespace: getNamespace(vm),
       isList: true,
     };

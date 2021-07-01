@@ -181,7 +181,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
-            <Trans i18nKey="public~use the equivalent podman commands">
+            <Trans t={t} ns="public">
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>
@@ -303,10 +303,10 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'hidden-xs'),
-  classNames('col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -318,7 +318,6 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
           kind={ImageStreamsReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

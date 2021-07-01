@@ -1,4 +1,3 @@
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineRunModel, PipelineModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
@@ -6,9 +5,7 @@ import { PipelineKind, PipelineRunKind } from '../types';
 // label to get the pipelines
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
 
-export const tknPipelineAndPipelineRunsWatchResources = (
-  namespace: string,
-): WatchK8sResources<any> => {
+export const tknPipelineAndPipelineRunsWatchResources = (namespace: string) => {
   return {
     pipelines: {
       isList: true,

@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
 import { PasteIcon } from '@patternfly/react-icons';
 import { Button, AlertVariant } from '@patternfly/react-core';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind, k8sGet } from '../../module/k8s';
@@ -34,17 +33,17 @@ const getTriggerProperty = (trigger: WebhookTrigger) => trigger.type.toLowerCase
 const getTableColumnClasses = (canGetSecret: boolean) => {
   if (canGetSecret) {
     return [
-      classNames('col-lg-2', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-      classNames('col-lg-6', 'hidden-md', 'hidden-sm', 'hidden-xs', 'co-break-all'),
-      classNames('col-lg-2', 'col-md-4 ', 'col-sm-4', 'hidden-xs'),
-      classNames('col-lg-2', 'col-md-4', 'col-sm-4', 'col-xs-6'),
+      '',
+      'pf-m-hidden pf-m-visible-on-xl pf-u-w-50-on-xl co-break-word',
+      'pf-m-hidden pf-m-visible-on-md',
+      '',
     ];
   }
   return [
-    classNames('col-sm-2'),
-    classNames('col-sm-7', 'co-break-all'),
-    classNames('col-sm-3', 'hidden-xs'),
-    classNames('hidden'),
+    'pf-u-w-16-on-md',
+    'pf-u-w-58-on-xl co-break-word',
+    'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
+    'pf-m-hidden',
   ];
 };
 

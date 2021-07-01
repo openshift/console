@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import {
   VM_DETAIL_CONSOLES_HREF,
@@ -26,6 +25,7 @@ import {
   VirtualMachineModel,
   VirtualMachineSnapshotModel,
 } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getResource } from '../../utils';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
@@ -56,7 +56,7 @@ export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
 export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
   const { name, ns: namespace } = props.match.params;
   const { t } = useTranslation();
-  const [snapshotResource] = useK8sModel(referenceForModel(VirtualMachineSnapshotModel));
+  const [snapshotResource] = useK8sModel(kubevirtReferenceForModel(VirtualMachineSnapshotModel));
 
   const dashboardPage = {
     href: '', // default landing page
@@ -113,15 +113,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   ];
 
   const resources = [
-    getResource(VirtualMachineInstanceModel, {
-      namespace,
-      isList: true,
-      prop: 'vmis',
-      optional: true,
-      fieldSelector: `metadata.name=${name}`, // Note(yaacov): we look for a list, instead of one obj, to avoid 404 response if no VMI exist.
-    }),
     getResource(PodModel, { namespace, prop: 'pods' }),
-    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
     getResource(TemplateModel, {
       isList: true,
       namespace,
@@ -129,7 +121,21 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
     }),
     {
-      kind: VirtualMachineImportModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),
+      namespace,
+      prop: 'migrations',
+      isList: true,
+    },
+    {
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+      namespace,
+      isList: true,
+      prop: 'vmis',
+      optional: true,
+      fieldSelector: `metadata.name=${name}`, // Note(yaacov): we look for a list, instead of one obj, to avoid 404 response if no VMI exist.
+    },
+    {
+      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
       isList: true,
       namespace,
       prop: 'vmImports',
@@ -142,7 +148,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       prop: 'pvcs',
     },
     {
-      kind: DataVolumeModel.kind,
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
@@ -154,7 +160,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       {...props}
       name={name}
       namespace={namespace}
-      kind={VirtualMachineModel.kind}
+      kind={kubevirtReferenceForModel(VirtualMachineModel)}
       kindObj={VirtualMachineModel}
       menuActions={vmMenuActionsCreator}
       pages={pages}

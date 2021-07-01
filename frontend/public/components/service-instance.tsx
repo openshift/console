@@ -306,15 +306,10 @@ const ServiceInstancesTableRow: RowFunction<K8sResourceKind> = ({ obj, index, ke
           kind={referenceForModel(ServiceInstanceModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <StatusWithIcon obj={obj} />

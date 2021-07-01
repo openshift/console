@@ -139,11 +139,7 @@ const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemp
         {getTemplateProvider(t, template)}
       </TableData>
       <TableData className={dimensify()}>
-        <ResourceLink
-          kind={NamespaceModel.kind}
-          name={template.metadata.namespace}
-          title={template.metadata.namespace}
-        />
+        <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />
       </TableData>
       <TableData className={dimensify()} data-test="template-source">
         <VMCustomizeStatus vmis={vmis} vm={vm} pods={pods} pvcs={pvcs} dataVolumes={dataVolumes} />

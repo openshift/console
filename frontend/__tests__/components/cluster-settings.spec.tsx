@@ -121,7 +121,7 @@ describe('Cluster Settings page', () => {
         .find(HorizontalNav)
         .at(0)
         .props().pages[2].name,
-    ).toBe(`${i18nNS}~Global configuration`);
+    ).toBe(`${i18nNS}~Configuration`);
     expect(
       wrapper
         .find(HorizontalNav)

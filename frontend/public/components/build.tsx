@@ -231,7 +231,7 @@ export const PipelineBuildStrategyAlert: React.FC<BuildsDetailsProps> = () => {
       variant="info"
       title={t('public~Pipeline build strategy deprecation')}
     >
-      <Trans i18nKey="public~pipelineBuildStrategyAlert">
+      <Trans t={t} ns="public">
         With the release of{' '}
         <ExternalLink
           href="https://openshift.github.io/pipelines-docs/"
@@ -396,10 +396,10 @@ export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = (props) => (
 BuildsDetailsPage.displayName = 'BuildsDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'hidden-xs'),
-  classNames('col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -411,7 +411,6 @@ const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }
           kind={BuildsReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

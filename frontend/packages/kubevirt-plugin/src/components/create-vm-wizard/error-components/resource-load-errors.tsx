@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { TemplateModel } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { getLoadError, getModelString } from '../../../utils';
 import { iGet, toShallowJS } from '../../../utils/immutable';
 import { Error, Errors } from '../../errors/errors';
@@ -75,15 +76,16 @@ const stateToProps = (state, { wizardReduxID }) => {
     }
   }
 
-  errors.push(
-    asError({
-      state,
-      wizardReduxID,
-      key: VMWizardProps.virtualMachines,
-      isList: true,
-      model: VirtualMachineModel,
+  if (!getKubevirtAvailableModel(VirtualMachineModel)) {
+    errors.push({
+      message: 'No model registered for VirtualMachines',
+      title: 'Could not load VirtualMachines',
+      key: wizardReduxID,
       variant: AlertVariant.warning,
-    }), // for validation only
+    });
+  }
+
+  errors.push(
     ...getExtraWSQueries(state, wizardReduxID).map((query) =>
       asError({
         state,

@@ -46,7 +46,6 @@ const Secrets: React.FC<SecretsProps> = ({ secrets, serviceaccounts }) => {
             kind={SecretModel.kind}
             name={secret.metadata.name}
             namespace={secret.metadata.namespace}
-            title={secret.metadata.name}
             linkTo={false}
           />
         );

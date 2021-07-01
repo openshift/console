@@ -15,6 +15,7 @@ import {
   VM_CUSTOMIZE_LABEL,
 } from '../../constants/vm';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
 import { VMKind } from '../../types';
 import { getLoadedData } from '../../utils';
@@ -106,7 +107,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       },
     },
     {
-      kind: DataVolumeModel.kind,
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
@@ -127,7 +128,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'pods',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
       selector: {
         matchLabels: { [VM_CUSTOMIZE_LABEL]: 'true' },
       },
@@ -136,7 +137,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'vms',
     },
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
       namespace,
       isList: true,
       prop: 'vmis',

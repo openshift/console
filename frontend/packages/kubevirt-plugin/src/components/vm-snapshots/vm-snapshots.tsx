@@ -10,6 +10,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
@@ -70,6 +71,9 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
               transforms: [sortable],
             },
             {
+              title: t('kubevirt-plugin~Indications'),
+            },
+            {
               title: '',
             },
             {
@@ -94,7 +98,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace,
   };
@@ -107,7 +111,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  const isDisabled = isLocked;
 
   return (
     <div className="co-m-list">
@@ -146,6 +150,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
             withProgress,
             restores: mappedRelevantRestores,
             isDisabled,
+            isVMRunning: isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi),
           }}
           row={VMSnapshotRow}
           columnClasses={snapshotsTableColumnClasses}

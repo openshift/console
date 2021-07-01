@@ -59,11 +59,11 @@ const ChargebackNavBar: React.SFC<{ match: { url: string; path: string } }> = (p
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-2', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  '',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -113,16 +113,10 @@ const ReportsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style 
           kind={ReportReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          namespace={undefined}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <ResourceLink
@@ -507,16 +501,10 @@ const ReportGenerationQueriesTableRow: RowFunction<K8sResourceKind> = ({
           kind={ReportGenerationQueryReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          namespace={undefined}
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[2]}>
         <LabelList

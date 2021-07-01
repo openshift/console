@@ -9,7 +9,7 @@ type ModalCallback = () => void;
 
 export const removeTaskModal = (taskName: string, onRemove: ModalCallback) => {
   confirmModal({
-    title: i18next.t('pipelines-plugin~Remove Task'),
+    title: i18next.t('pipelines-plugin~Remove task'),
     message: (
       <ModalContent
         icon={<ExclamationTriangleIcon size="lg" color={warningColor.value} />}

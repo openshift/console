@@ -36,7 +36,6 @@ const PipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, key, style }
           kind={pipelinerunReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
           data-test-id={obj.metadata.name}
         />
       </TableData>

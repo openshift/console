@@ -51,6 +51,20 @@ export const updateURLParams = (paramName: string, value: string | string[]) => 
   setURLParams(params);
 };
 
+export const getURLWithParams = (paramName: string, value: string | string[]): string => {
+  const params = new URLSearchParams(window.location.search);
+  const url = new URL(window.location.href);
+
+  if (value) {
+    params.set(paramName, Array.isArray(value) ? JSON.stringify(value) : value);
+  } else {
+    params.delete(paramName);
+  }
+
+  const searchParams = `?${params.toString()}${url.hash}`;
+  return `${url.pathname}${searchParams}`;
+};
+
 export const getCatalogTypeCounts = (
   items: CatalogItem[],
   catalogTypes: CatalogType[],

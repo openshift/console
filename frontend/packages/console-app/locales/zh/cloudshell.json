@@ -14,8 +14,6 @@
   "Reconnect to terminal": "重新连接至终端",
   "Restart terminal": "重启终端",
   "OpenShift command line": "OpenShift 命令行",
-  "Close command line terminal": "关闭命令行终端",
-  "Open command line terminal": "打开命令行终端",
   "OpenShift command line terminal": "OpenShift 命令行终端",
   "Failed to connect to your OpenShift command line terminal": "无法连接到您的 OpenShift 命令行终端",
   "Initialize terminal": "初始化终端",

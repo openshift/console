@@ -16,6 +16,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
 import { VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
@@ -40,7 +41,7 @@ const VMPopover: React.FC<VMPopoverProps> = ({ vm, children }) => {
           </StackItem>
           <StackItem>
             <ResourceLink
-              kind={VirtualMachineModel.kind}
+              kind={kubevirtReferenceForModel(VirtualMachineModel)}
               name={vm.metadata.name}
               namespace={vm.metadata.namespace}
             />

@@ -65,37 +65,29 @@ const monitoringNavSectionStateToProps = (state) => ({
 
 const MonitoringNavSection_ = ({ canAccess }) => {
   const { t } = useTranslation();
-  const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
-  const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
-  return canAccessPrometheus || showSilences ? (
+  return canAccess && !!window.SERVER_FLAGS.prometheusBaseURL ? (
     <NavSection
       id="monitoring"
       title={t('public~Monitoring')}
       data-quickstart-id="qs-nav-monitoring"
     >
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringalerts"
-          href="/monitoring/alerts"
-          name={t('public~Alerting')}
-          startsWith={monitoringAlertsStartsWith}
-        />
-      )}
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringmetrics"
-          href="/monitoring/query-browser?query0="
-          name={t('public~Metrics')}
-          startsWith={['monitoring/query-browser']}
-        />
-      )}
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringdashboards"
-          href="/monitoring/dashboards"
-          name={t('public~Dashboards')}
-        />
-      )}
+      <HrefLink
+        id="monitoringalerts"
+        href="/monitoring/alerts"
+        name={t('public~Alerting')}
+        startsWith={monitoringAlertsStartsWith}
+      />
+      <HrefLink
+        id="monitoringmetrics"
+        href="/monitoring/query-browser?query0="
+        name={t('public~Metrics')}
+        startsWith={['monitoring/query-browser']}
+      />
+      <HrefLink
+        id="monitoringdashboards"
+        href="/monitoring/dashboards"
+        name={t('public~Dashboards')}
+      />
     </NavSection>
   ) : null;
 };

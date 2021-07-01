@@ -17,6 +17,11 @@ import {
   CamelIntegrationModel,
   CamelKameletBindingModel,
 } from '../models';
+import { Traffic } from '../types';
+import {
+  getDynamicEventSourcesWatchers,
+  getDynamicEventingChannelWatchers,
+} from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -304,5 +309,43 @@ export const knativeCamelKameletBindingResourceWatchers = (
       namespace,
       optional: true,
     },
+  };
+};
+
+export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
+  if (!service.status?.traffic?.length) {
+    return {};
+  }
+  const trafficPercent = service.status.traffic
+    .filter((t: Traffic) => t.revisionName === revName)
+    .reduce(
+      (acc, tr: Traffic) => {
+        acc.percent += tr.percent ? tr.percent : 0;
+        if (tr.url) {
+          acc.urls.push(tr.url);
+        }
+        return acc;
+      },
+      { urls: [], percent: 0 },
+    );
+  return {
+    ...trafficPercent,
+    percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
+  };
+};
+
+export const getKnativeResources = (namespace: string) => {
+  return {
+    ...knativeServingResourcesRevisionWatchers(namespace),
+    ...knativeServingResourcesConfigurationsWatchers(namespace),
+    ...knativeServingResourcesRoutesWatchers(namespace),
+    ...knativeServingResourcesServicesWatchers(namespace),
+    ...knativeEventingResourcesSubscriptionWatchers(namespace),
+    ...getDynamicEventSourcesWatchers(namespace),
+    ...getDynamicEventingChannelWatchers(namespace),
+    ...knativeEventingBrokerResourceWatchers(namespace),
+    ...knativeEventingTriggerResourceWatchers(namespace),
+    ...knativeCamelIntegrationsResourceWatchers(namespace),
+    ...knativeCamelKameletBindingResourceWatchers(namespace),
   };
 };

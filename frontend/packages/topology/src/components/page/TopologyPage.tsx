@@ -20,6 +20,7 @@ import {
 } from '../../const';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
+import { FilterProvider } from '../../filters/FilterProvider';
 import { TopologyViewType } from '../../topology-types';
 import TopologyDataRenderer from './TopologyDataRenderer';
 import TopologyPageToolbar from './TopologyPageToolbar';
@@ -86,42 +87,44 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   };
 
   return (
-    <DataModelProvider namespace={namespace}>
-      <Helmet>
-        <title>{t('topology~Topology')}</title>
-      </Helmet>
-      <NamespacedPage
-        variant={
-          viewType === TopologyViewType.graph
-            ? NamespacedPageVariants.default
-            : NamespacedPageVariants.light
-        }
-        onNamespaceChange={handleNamespaceChange}
-        hideProjects={hideProjects}
-        toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
-        data-test-id={
-          viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
-        }
-      >
-        <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
-          {namespace ? (
-            <TopologyDataRenderer viewType={viewType} />
-          ) : (
-            <CreateProjectListPage title={t('topology~Topology')}>
-              {(openProjectModal) => (
-                <Trans t={t} ns="topology">
-                  Select a Project to view the topology or{' '}
-                  <Button isInline variant="link" onClick={openProjectModal}>
-                    create a Project
-                  </Button>
-                  .
-                </Trans>
-              )}
-            </CreateProjectListPage>
-          )}
-        </ProjectsExistWrapper>
-      </NamespacedPage>
-    </DataModelProvider>
+    <FilterProvider>
+      <DataModelProvider namespace={namespace}>
+        <Helmet>
+          <title>{t('topology~Topology')}</title>
+        </Helmet>
+        <NamespacedPage
+          variant={
+            viewType === TopologyViewType.graph
+              ? NamespacedPageVariants.default
+              : NamespacedPageVariants.light
+          }
+          onNamespaceChange={handleNamespaceChange}
+          hideProjects={hideProjects}
+          toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
+          data-test-id={
+            viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
+          }
+        >
+          <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
+            {namespace ? (
+              <TopologyDataRenderer viewType={viewType} />
+            ) : (
+              <CreateProjectListPage title={t('topology~Topology')}>
+                {(openProjectModal) => (
+                  <Trans t={t} ns="topology">
+                    Select a Project to view the topology or{' '}
+                    <Button isInline variant="link" onClick={openProjectModal}>
+                      create a Project
+                    </Button>
+                    .
+                  </Trans>
+                )}
+              </CreateProjectListPage>
+            )}
+          </ProjectsExistWrapper>
+        </NamespacedPage>
+      </DataModelProvider>
+    </FilterProvider>
   );
 };
 

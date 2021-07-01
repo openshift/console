@@ -1,6 +1,7 @@
 .kv-editor--main {
   height: 100%;
   width: 100%;
+  min-height: 500px;
   display: flex;
   &.bottom {
     flex-direction: column;

@@ -75,7 +75,7 @@
   "Master": "Master",
   "Worker": "Worker",
   "This node's {{conditionDescription}}. Performance may be degraded.": "This node's {{conditionDescription}}. Performance may be degraded.",
-  "host binaries": "<0>To use host binaries, run <1>chroot /host</1></0>",
+  "<0>To use host binaries, run <1>chroot /host</1></0>": "<0>To use host binaries, run <1>chroot /host</1></0>",
   "The debug pod failed. ": "The debug pod failed. ",
   "An error occurred. Please try again": "An error occurred. Please try again",
   "Scheduling disabled": "Scheduling disabled",

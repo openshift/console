@@ -32,7 +32,6 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
           kind={serviceReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.uid}
         />
       </TableData>
       <TableData className={cx(tableColumnClasses[1], 'co-break-word')} columnID="namespace">

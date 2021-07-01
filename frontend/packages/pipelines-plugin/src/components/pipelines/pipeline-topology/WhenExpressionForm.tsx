@@ -44,7 +44,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
           name={`${namePrefix}.operator`}
           label={t('pipelines-plugin~Operator')}
           items={WhenExpressionOperatorType}
-          title={t('pipelines-plugin~Select Operator')}
+          title={t('pipelines-plugin~Select operator')}
           onChange={(operator: string) => setFieldValue(`${namePrefix}.operator`, operator)}
           fullWidth
         />

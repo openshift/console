@@ -1,8 +1,5 @@
 import { INCONTEXT_ACTIONS_SERVICE_BINDING } from '@console/dev-console/src/const';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
 import { ALLOW_SERVICE_BINDING_FLAG } from '../const';
 import {
@@ -11,9 +8,12 @@ import {
   TopologyDisplayFilters,
   TopologyCreateConnector,
 } from '../extensions/topology';
-import { ServiceBindingModel } from '../models';
 import { doContextualBinding } from '../utils/connector-utils';
 import { getCreateConnector } from './actions';
+import {
+  getOperatorWatchedResources,
+  getServiceBindingWatchedResources,
+} from './operatorResources';
 import {
   getOperatorsComponentFactory,
   getOperatorTopologyDataModel,
@@ -29,33 +29,11 @@ export type OperatorsTopologyConsumedExtensions =
   | TopologyDisplayFilters
   | PostFormSubmissionAction;
 
-const getOperatorWatchedResources = (namespace: string): WatchK8sResources<any> => {
-  return {
-    clusterServiceVersions: {
-      isList: true,
-      kind: referenceForModel(ClusterServiceVersionModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
-const getServiceBindingWatchedResources = (namespace: string): WatchK8sResources<any> => {
-  return {
-    serviceBindingRequests: {
-      isList: true,
-      kind: referenceForModel(ServiceBindingModel),
-      namespace,
-      optional: true,
-    },
-  };
-};
-
 export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions> = [
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getOperatorsComponentFactory,
+      getFactory: applyCodeRefSymbol(getOperatorsComponentFactory),
     },
   },
   {
@@ -63,9 +41,9 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
     properties: {
       id: 'operator-topology-model-factory',
       priority: 500,
-      getDataModel: getOperatorTopologyDataModel,
+      getDataModel: applyCodeRefSymbol(getOperatorTopologyDataModel),
       resources: getOperatorWatchedResources,
-      getDataModelReconciler,
+      getDataModelReconciler: applyCodeRefSymbol(getDataModelReconciler),
     },
   },
   {

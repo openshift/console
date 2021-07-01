@@ -22,6 +22,7 @@ import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import {
   asVM,
   getBootableDevices,
@@ -168,7 +169,7 @@ const BootOrderModalComponent = withHandlePromise(
             showUpdatedAlert && t('kubevirt-plugin~Boot order has been updated outside this flow.')
           }
           infoMessage={
-            <Trans t={t} i18nKey="bootOrderModalInfoMessage" ns="kubevirt-plugin">
+            <Trans t={t} ns="kubevirt-plugin">
               Saving these changes will override any boot order previously saved.
               <br />
               To see the updated order{' '}
@@ -196,7 +197,7 @@ const BootOrderModalFirehost = (props) => {
   const resources = [];
 
   resources.push({
-    kind: VirtualMachineInstanceModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
     namespace: getNamespace(vmLikeEntity),
     name: getName(vmLikeEntity),
     prop: 'vmi',

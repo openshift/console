@@ -43,7 +43,7 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
       </div>
       <div className="odc-pipeline-build-decorator-tooltip__status-bars-wrapper">
         <div className="odc-pipeline-build-decorator-tooltip__status-bars-title">
-          {t('pipelines-plugin~Task Status')}
+          {t('pipelines-plugin~Task status')}
         </div>
         <div className="odc-pipeline-build-decorator-tooltip__status-bars">{pipelineBars}</div>
       </div>

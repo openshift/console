@@ -771,6 +771,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     );
   }
 
+  if (error?.json?.error?.match(/invalid expression type "string"/)) {
+    return (
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t('public~Query result is a string, which cannot be graphed.')}
+      </GraphEmptyState>
+    );
+  }
+
   if (isDatasetTooBig) {
     return (
       <GraphEmptyState title={t('public~Ungraphable results')}>

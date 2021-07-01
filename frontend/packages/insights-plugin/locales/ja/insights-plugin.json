@@ -3,6 +3,7 @@
   "moderate": "中程度 (moderate)",
   "important": "重要 (important)",
   "critical": "重大 (critical)",
+  "Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.": "Insights Advisor は、クラスターのセキュリティー、パフォーマンス、可用性、および安定性のリスクを特定し、優先順位を付けます。",
   "Temporary unavailable.": "一時的に利用不可です。",
   "Disabled or waiting for results.": "無効にされているか、または結果を待機しています。",
   "Total issue_0": "全体の問題",
@@ -10,10 +11,12 @@
   "Total Risk": "全体リスク",
   "Fixable issues": "修正可能な問題",
   "View all in OpenShift Cluster Manager": "OpenShift Cluster Manager ですべてを表示する",
+  "Go to OpenShift Cluster Manager": "OpenShift Cluster Manager に移動する",
   "More about Insights": "Insights の詳細",
   "Not available": "利用不可",
   "{{issuesNumber}} issue found": "{{issuesNumber}} 件の問題が見つかりました",
   "{{issuesNumber}} issues found": "{{issuesNumber}} 件の問題が見つかりました",
   "Insights": "Insights",
+  "Insights Advisor status": "Insights Advisor のステータス",
   "Insights status": "Insights のステータス"
 }

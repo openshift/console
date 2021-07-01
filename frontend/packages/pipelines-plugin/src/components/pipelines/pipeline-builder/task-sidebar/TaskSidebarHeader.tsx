@@ -39,7 +39,7 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
             <ActionsMenu
               actions={[
                 {
-                  label: t('pipelines-plugin~Remove Task'),
+                  label: t('pipelines-plugin~Remove task'),
                   callback: () => removeThisTask(),
                 },
               ]}

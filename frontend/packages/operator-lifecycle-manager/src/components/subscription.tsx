@@ -66,6 +66,7 @@ import {
   InstallPlanPhase,
   CatalogSourceKind,
 } from '../types';
+import { upgradeRequiresApproval } from '../utils';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
 import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
@@ -105,12 +106,6 @@ export const installPlanForSubscription = (
   subscription: SubscriptionKind,
 ): InstallPlanKind =>
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
-
-export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
-  subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
-  (subscription.status?.conditions ?? []).filter(
-    ({ status, reason }) => status === 'True' && reason === 'RequiresApproval',
-  ).length > 0;
 
 const tableColumnClasses = [
   '',
@@ -207,16 +202,10 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, ke
           kind={referenceForModel(SubscriptionModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-          displayName={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />

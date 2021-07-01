@@ -71,3 +71,8 @@ export const toTitleCase = (title: string): string => {
     .map((w) => (w ? w[0].toUpperCase() + w.substr(1) : ''))
     .join(' ');
 };
+
+// Check for a modified mouse event. For example - Ctrl + Click
+export const isModifiedEvent = (event: React.MouseEvent<HTMLElement>) => {
+  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
+};

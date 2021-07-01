@@ -18,6 +18,10 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
   } = props;
   const emptyMessage = t('pipelines-plugin~No parameters are associated with this pipeline.');
 
+  const nameLabel = t('pipelines-plugin~Name');
+  const descriptionLabel = t('pipelines-plugin~Description');
+  const defaultValueLabel = t('pipelines-plugin~Default value');
+
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
@@ -25,9 +29,12 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
         name={fieldName}
         addLabel={addLabel}
         headers={[
-          t('pipelines-plugin~Name'),
-          t('pipelines-plugin~Description'),
-          t('pipelines-plugin~Default value'),
+          {
+            name: nameLabel,
+            required: true,
+          },
+          descriptionLabel,
+          defaultValueLabel,
         ]}
         emptyValues={{ name: '', description: '', default: '' }}
         emptyMessage={emptyMessage}
@@ -37,22 +44,25 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
           data-test="name"
           name="name"
           type={TextInputTypes.text}
-          placeholder={t('pipelines-plugin~Name')}
+          placeholder={nameLabel}
           isReadOnly={isReadOnly}
+          aria-label={nameLabel}
         />
         <InputField
           data-test="description"
           name="description"
           type={TextInputTypes.text}
-          placeholder={t('pipelines-plugin~Description')}
+          placeholder={descriptionLabel}
           isReadOnly={isReadOnly}
+          aria-label={descriptionLabel}
         />
         <InputField
           data-test="default"
           name="default"
           type={TextInputTypes.text}
-          placeholder={t('pipelines-plugin~Default value')}
+          placeholder={defaultValueLabel}
           isReadOnly={isReadOnly}
+          aria-label={defaultValueLabel}
         />
       </MultiColumnField>
     </div>

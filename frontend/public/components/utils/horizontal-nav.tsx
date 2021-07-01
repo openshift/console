@@ -5,7 +5,7 @@ import { History, Location } from 'history';
 import { useTranslation } from 'react-i18next';
 import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-dom';
 
-import { EmptyBox, StatusBox } from './status-box';
+import { EmptyBox, LoadingBox, StatusBox } from './status-box';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
@@ -207,7 +207,11 @@ NavBar.displayName = 'NavBar';
 export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const renderContent = (routes: JSX.Element[]) => {
     const { noStatusBox, obj, EmptyMsg, label } = props;
-    const content = <Switch> {routes} </Switch>;
+    const content = (
+      <React.Suspense fallback={<LoadingBox />}>
+        <Switch>{routes}</Switch>
+      </React.Suspense>
+    );
 
     const skeletonDetails = (
       <div data-test="skeleton-detail-view" className="skeleton-detail-view">

@@ -21,7 +21,7 @@ export const pipelinesTopologyPlugin: Plugin<PipelineTopologyConsumedExtensions>
       id: 'pipeline-topology-model-factory',
       priority: 800,
       resources: tknPipelineAndPipelineRunsWatchResources,
-      getDataModelReconciler,
+      getDataModelReconciler: applyCodeRefSymbol(getDataModelReconciler),
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],

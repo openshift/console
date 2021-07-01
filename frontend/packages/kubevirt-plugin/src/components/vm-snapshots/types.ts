@@ -10,6 +10,7 @@ export type VMSnapshotRowCustomData = {
   vmLikeEntity: VMLikeEntityKind;
   columnClasses: string[];
   isDisabled: boolean;
+  isVMRunning: boolean;
   restores: { [key: string]: VMRestore };
   withProgress: (promise: Promise<any>) => void;
 } & VMSnapshotRowActionOpts;

@@ -14,8 +14,6 @@
   "Reconnect to terminal": "터미널에 다시 연결",
   "Restart terminal": "터미널 다시 시작",
   "OpenShift command line": "OpenShift 명령줄",
-  "Close command line terminal": "명령줄 터미널 닫기",
-  "Open command line terminal": "명령줄 터미널 열기",
   "OpenShift command line terminal": "OpenShift 명령줄 터미널",
   "Failed to connect to your OpenShift command line terminal": "OpenShift 명령줄 터미널에 연결하지 못했습니다.",
   "Initialize terminal": "터미널 초기화",
@@ -26,5 +24,7 @@
   "Create Project": "프로젝트 만들기",
   "This Project will be used to initialize your command line terminal": "이 프로젝트는 명령줄 터미널을 초기화하는 데 사용됩니다.",
   "Project name": "프로젝트 이름",
-  "Connecting to your OpenShift command line terminal ...": "OpenShift 명령줄 터미널에 연결 중..."
+  "Connecting to your OpenShift command line terminal ...": "OpenShift 명령줄 터미널에 연결 중...",
+  "Close command line terminal": "명령줄 터미널 닫기",
+  "Open command line terminal": "명령줄 터미널 열기"
 }

@@ -3,7 +3,6 @@ import {
   ClusterServiceVersionAction,
   DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
-  DashboardsOverviewUtilizationItem,
   DashboardsTab,
   HorizontalNavTab,
   ModelDefinition,
@@ -49,7 +48,6 @@ type ConsumedExtensions =
   | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
-  | DashboardsOverviewUtilizationItem
   | RoutePage
   | CustomFeatureFlag
   | ClusterServiceVersionAction

@@ -20,10 +20,11 @@ import {
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
-import { getClusterServiceVersionPlugins, isPluginEnabled, getPluginPatch } from '../../utils';
+import { getClusterServiceVersionPlugins } from '../../utils';
 
 export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   cancel,

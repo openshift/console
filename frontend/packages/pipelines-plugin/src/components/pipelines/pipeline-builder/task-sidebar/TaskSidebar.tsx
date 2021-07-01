@@ -79,7 +79,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
       </StackItem>
       <StackItem className="opp-task-sidebar__content pf-c-form">
         <TaskSidebarName
-          initialName={thisTask.name}
+          name={`${formikTaskReference}.name`}
           taskName={taskResource.metadata.name}
           // We need to do this through an update call because runAfters are tied to the name and we need to fix those
           // with this change to maintain a healthy and stable graph
@@ -91,7 +91,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
             <h2>{t('pipelines-plugin~Parameters')}</h2>
             <p className="co-help-text">
               <Trans ns="pipelines-plugin">
-                Use this format when referencing variables in this form: <code>$(</code>
+                Use this format when you reference variables in this form: <code>$(</code>
               </Trans>
             </p>
             {params.map((param) => {

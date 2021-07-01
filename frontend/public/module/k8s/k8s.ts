@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { ExtensionK8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
+import { ExtensionK8sGroupModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 
 import {
   CustomResourceDefinitionKind,
@@ -114,7 +114,7 @@ export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind
 export const referenceForModel = (model: K8sKind): GroupVersionKind =>
   referenceForGroupVersionKind(model.apiGroup || 'core')(model.apiVersion)(model.kind);
 
-export const referenceForExtensionModel = (model: ExtensionK8sModel): GroupVersionKind =>
+export const referenceForExtensionModel = (model: ExtensionK8sGroupModel): GroupVersionKind =>
   referenceForGroupVersionKind(model?.group || 'core')(model?.version)(model?.kind);
 
 export const referenceFor = ({ kind, apiVersion }: K8sResourceCommon): GroupVersionKind => {

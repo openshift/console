@@ -106,7 +106,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             error={false}
             isLoading={false}
           >
-            <Link to={ocsPath}>OpenShift Container Storage</Link>
+            <Link to={ocsPath}>{t('ceph-storage-plugin~OpenShift Container Storage')}</Link>
           </DetailItem>
           <DetailItem
             key="system_name"
@@ -117,14 +117,14 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             <ExternalLink
               href={systemLink}
               dataTestID="system-name-mcg"
-              text="Multicloud Object Gateway"
+              text={t('ceph-storage-plugin~Multicloud Object Gateway')}
             />
             {hasRGW && (
               <p
                 className="ceph-details-card__rgw-system-name--margin"
                 data-test-id="system-name-rgw"
               >
-                RADOS Object Gateway
+                {t('ceph-storage-plugin~RADOS Object Gateway')}
               </p>
             )}
           </DetailItem>

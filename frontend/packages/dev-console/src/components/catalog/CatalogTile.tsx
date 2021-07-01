@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
+import { isModifiedEvent } from '@console/shared';
 import CatalogBadges from './CatalogBadges';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
@@ -38,7 +39,8 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, 
   return (
     <PfCatalogTile
       className="odc-catalog-tile co-catalog-tile"
-      onClick={(e) => {
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        if (isModifiedEvent(e)) return;
         e.preventDefault();
         if (onClick) {
           onClick(item);

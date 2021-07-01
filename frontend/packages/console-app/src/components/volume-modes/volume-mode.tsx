@@ -67,8 +67,8 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
           {allowedVolumeModes[0]}
           <FieldLevelHelp>
             <Trans t={t} ns="console-app">
-              Only {volumeMode} volume mode is available for {storageClass} with {accessMode} access
-              mode
+              Only {{ volumeMode }} volume mode is available for {{ storageClass }} with{' '}
+              {{ accessMode }} access mode
             </Trans>
           </FieldLevelHelp>
         </>

@@ -20,8 +20,8 @@ import { VirtualMachineYAMLTemplates } from '../../models/templates';
 import { VMKind } from '../../types/vm';
 import { CreateVMTemplateYAML } from '../vm-templates/vm-template-create-yaml';
 
-const VMCreateYAMLLConnected = connectToPlural(
-  ({ match, kindsInFlight, kindObj, resourceObjPath }: CreateYAMLProps) => {
+const VMCreateYAMLConnected = connectToPlural(
+  ({ match, kindsInFlight, kindObj = VirtualMachineModel, resourceObjPath }: CreateYAMLProps) => {
     const [defaultVM, setDefaultVM] = React.useState<VMKind>(null);
 
     React.useEffect(() => {
@@ -92,10 +92,6 @@ export const VMCreateYAML = (props: any) => {
   return userMode === 'template' ? (
     <CreateVMTemplateYAML {...props} />
   ) : (
-    <VMCreateYAMLLConnected
-      {...(props as any)}
-      kindObj={VirtualMachineModel.kind}
-      plural={VirtualMachineModel.plural}
-    />
+    <VMCreateYAMLConnected {...(props as any)} plural={VirtualMachineModel.plural} />
   );
 };

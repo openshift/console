@@ -400,7 +400,6 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
                           kind={referenceForModel(ImageManifestVulnModel)}
                           name={vuln.metadata.name}
                           namespace={props.pod.metadata.namespace}
-                          title={vuln.metadata.uid}
                           displayName={`${totalFor(
                             vulnPriority.findKey(
                               ({ title }) => _.get(vuln.status, 'highestSeverity') === title,
