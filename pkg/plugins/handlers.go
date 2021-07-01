@@ -77,7 +77,7 @@ func (p *PluginsHandler) HandlePlugins(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *PluginsHandler) HandleListPlugins(w http.ResponseWriter, r *http.Request) {
+func (p *PluginsHandler) HandleCheckUpdates(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})

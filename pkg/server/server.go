@@ -55,7 +55,7 @@ const (
 	devfileEndpoint                  = "/api/devfile/"
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginsEndpoint                  = "/api/plugins/"
-	pluginsListEndpoint              = "/api/plugins"
+	updatesEndpoint                  = "/api/check-updates"
 
 	sha256Prefix = "sha256~"
 )
@@ -439,7 +439,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		}),
 	))
 
-	handle(pluginsListEndpoint, authHandler(pluginsHandler.HandleListPlugins))
+	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
 
 	// Helm Endpoints
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
