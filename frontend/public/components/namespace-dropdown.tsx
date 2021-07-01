@@ -108,7 +108,8 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     <>
       <Divider />
       {/* NOTE: All Menu components throw type errors if translate isn't added */}
-      <MenuInput translate>
+      {/* @ts-ignore */}
+      <MenuInput>
         <Switch
           id="no-label-switch-on"
           label={isProjects ? t('public~Show system projects') : t('public~Show system namespaces')}
@@ -123,7 +124,8 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
   ) : null;
 
   const filter = (
-    <MenuInput translate>
+    // @ts-ignore
+    <MenuInput>
       <TextInput
         autoFocus
         value={filterText}
@@ -212,8 +214,8 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
 
     const menuItems = optionsToDisplay.map((option) => {
       return (
+        // @ts-ignore
         <MenuItem
-          translate
           key={option.key}
           itemId={option.key}
           isFavorited={isFavorite(option)}
@@ -226,9 +228,12 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     return (
       <>
         <Divider />
-        <MenuGroup label={label} translate>
-          <MenuContent translate>
-            <MenuList translate>{menuItems}</MenuList>
+        {/* @ts-ignore */}
+        <MenuGroup label={label}>
+          {/* @ts-ignore */}
+          <MenuContent>
+            {/* @ts-ignore */}
+            <MenuList>{menuItems}</MenuList>
           </MenuContent>
         </MenuGroup>
       </>
