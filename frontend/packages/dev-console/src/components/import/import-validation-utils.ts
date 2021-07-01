@@ -64,18 +64,20 @@ export const detectGitType = (url: string): string => {
   return GitTypes.unsure;
 };
 
+export const createComponentName = (nameString: string): string => {
+  if (nameRegex.test(nameString)) {
+    return nameString;
+  }
+  const kebabCaseStr = _.kebabCase(nameString);
+  return nameString.match(/^\d/) || kebabCaseStr.match(/^\d/)
+    ? `ocp-${kebabCaseStr}`
+    : kebabCaseStr;
+};
+
 export const detectGitRepoName = (url: string): string | undefined => {
   if (!gitUrlRegex.test(url)) {
     return undefined;
   }
-
-  return _.kebabCase(url.split('/').pop());
-};
-
-export const createComponentName = (nameString: string): string => {
-  const prefixToValidate = 'ocp-';
-  if (!nameRegex.test(nameString)) {
-    return `${prefixToValidate}${nameString.replace(/[^-a-zA-Z0-9]|(-*)$/g, '').toLowerCase()}`;
-  }
-  return nameString;
+  const name = url.split('/').pop();
+  return createComponentName(name);
 };

@@ -19,7 +19,7 @@ import {
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
 import { GitData, GitReadableTypes, GitTypes } from '../import-types';
-import { detectGitType, detectGitRepoName, createComponentName } from '../import-validation-utils';
+import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
 import SampleRepo from './SampleRepo';
@@ -107,10 +107,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         return;
       }
 
-      gitRepoName &&
-        !nameTouched &&
-        !values.name &&
-        setFieldValue('name', createComponentName(gitRepoName));
+      gitRepoName && !nameTouched && !values.name && setFieldValue('name', gitRepoName);
       gitRepoName &&
         values.formType !== 'edit' &&
         !values.application.name &&
@@ -192,10 +189,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    values.formType !== 'edit' &&
-      gitRepoName &&
-      !nameTouched &&
-      setFieldValue('name', createComponentName(gitRepoName));
+    values.formType !== 'edit' && gitRepoName && !nameTouched && setFieldValue('name', gitRepoName);
     gitRepoName &&
       values.formType !== 'edit' &&
       !values.application.name &&
