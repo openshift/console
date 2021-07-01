@@ -7,31 +7,36 @@ import {
   isDetailsResourceAlert,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
+import { USERSETTINGS_PREFIX, useUserSettings } from '@console/shared';
+
+const SIDEBAR_ALERTS = 'sideBarAlerts';
 
 const ResolveResourceAlerts: React.FC<{
   id?: string;
-  dismissible?: boolean;
-  title?: string;
   useResourceAlertsContent?: (element: GraphElement) => DetailsResourceAlertContent;
   element: GraphElement;
-}> = ({ title, dismissible = false, useResourceAlertsContent, element }) => {
-  const [showAlert, setShowAlert] = React.useState<boolean>(true);
+}> = ({ id, useResourceAlertsContent, element }) => {
+  const [showAlert, setShowAlert, loaded] = useUserSettings(
+    `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}`,
+    true,
+  );
   const alertConfigs = useResourceAlertsContent(element);
   if (!alertConfigs) return null;
-  const { variant, content, actionLinks, onClose } = alertConfigs;
-  return showAlert ? (
+  const { variant, content, actionLinks, dismissible, title } = alertConfigs;
+  return loaded && showAlert ? (
     <Alert
       isInline
       variant={variant}
       title={title}
       actionLinks={actionLinks}
       actionClose={
-        <AlertActionCloseButton
-          onClose={() => {
-            if (dismissible) setShowAlert(false);
-            else onClose?.();
-          }}
-        />
+        dismissible && (
+          <AlertActionCloseButton
+            onClose={() => {
+              setShowAlert(false);
+            }}
+          />
+        )
       }
     >
       {content}

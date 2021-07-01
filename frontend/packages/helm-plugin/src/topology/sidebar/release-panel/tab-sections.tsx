@@ -8,9 +8,8 @@ import HelmReleaseOverview from '../../../components/details-page/overview/HelmR
 import { TYPE_HELM_RELEASE } from '../../components/const';
 import TopologyHelmReleaseNotesPanel from '../../TopologyHelmReleaseNotesPanel';
 
-export const useHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
+const HelmReleasePanelDetailsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
   const { t } = useTranslation();
-  if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
   const secret = element.getData().resources.obj;
   return !secret ? (
     <>
@@ -29,7 +28,12 @@ export const useHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
   );
 };
 
-export const useHelmReleasePanelResourceTabSection = (element: GraphElement) => {
+export const getHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
+  if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
+  return <HelmReleasePanelDetailsTabSection element={element} />;
+};
+
+export const getHelmReleasePanelResourceTabSection = (element: GraphElement) => {
   if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
   const { manifestResources } = element.getData().data;
   const { namespace } = getResource(element as Node).metadata;
@@ -44,7 +48,7 @@ export const useHelmReleasePanelResourceTabSection = (element: GraphElement) => 
   ) : null;
 };
 
-export const useHelmReleasePanelReleaseNotesTabSection = (element: GraphElement) => {
+export const getHelmReleasePanelReleaseNotesTabSection = (element: GraphElement) => {
   if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
   const { releaseNotes } = element.getData().data;
   return <TopologyHelmReleaseNotesPanel releaseNotes={releaseNotes} />;

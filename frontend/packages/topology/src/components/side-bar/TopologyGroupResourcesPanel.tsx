@@ -6,7 +6,7 @@ import TopologyGroupResourceList from './TopologyGroupResourceList';
 type TopologyGroupResourcesPanelProps = {
   manifestResources: K8sResourceKind[];
   releaseNamespace: string;
-  linkForResource?: (obj) => React.ReactElement;
+  linkForResource?: (obj: K8sResourceKind) => React.ReactElement;
 };
 
 const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> = ({
@@ -29,7 +29,7 @@ const TopologyGroupResourcesPanel: React.SFC<TopologyGroupResourcesPanelProps> =
     const resources = manifestResources.filter((resource) => resource.kind === model.kind);
     if (resources.length) {
       lists.push(
-        <div key={'kind'}>
+        <div key={model.kind}>
           <SidebarSectionHeading text={model.labelPlural} />
           <TopologyGroupResourceList
             resources={resources}

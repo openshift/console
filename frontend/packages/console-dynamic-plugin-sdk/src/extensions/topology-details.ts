@@ -64,14 +64,10 @@ export type DetailsResourceLink = ExtensionDeclaration<
 export type DetailsResourceAlert = ExtensionDeclaration<
   'topology.details/resource-alert',
   {
-    /** The ID of this alert. Used to save state if the alert should be shown after dismissed. */
+    /** The ID of this alert. Used to save state if the alert shouldn't be shown after dismissed. */
     id: string;
-    /** The title of the alert */
-    title: string;
     /** Hook to return the contents of the Alert. */
-    contentProvider: CodeRef<(element: GraphElement) => DetailsResourceAlertContent>;
-    /** Whether to show a dismiss button. false by default */
-    dismissible?: boolean;
+    contentProvider: CodeRef<(element: GraphElement) => DetailsResourceAlertContent | null>;
   }
 >;
 
@@ -100,8 +96,13 @@ export const isDetailsResourceAlert = (e: Extension): e is DetailsResourceAlert 
 };
 
 export type DetailsResourceAlertContent = {
+  /** The title of the alert */
+  title: string;
+  /** Whether to show a dismiss button. false by default.
+   * State will be store in user settings, once dismissed alert won't show up again untill user settings state resets
+   */
+  dismissible?: boolean;
   content: React.Component | undefined;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
   actionLinks?: React.ReactNode;
-  onClose?: () => void;
 };
