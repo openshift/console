@@ -6204,6 +6204,11 @@ cypress-cucumber-preprocessor@latest:
     minimist "^1.2.0"
     through "^2.3.8"
 
+cypress-file-upload@^5.0.8:
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/cypress-file-upload/-/cypress-file-upload-5.0.8.tgz#d8824cbeaab798e44be8009769f9a6c9daa1b4a1"
+  integrity sha512-+8VzNabRk3zG6x8f8BWArF/xA/W0VK4IZNx3MV0jFWrJS/qKn8eHfa5nU73P9fOQAgwHFJx7zjg4lwOnljMO8g==
+
 cypress-jest-adapter@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/cypress-jest-adapter/-/cypress-jest-adapter-0.1.1.tgz#d1aa9d84393b6a5007022d1d33b3cdd3ce9672af"

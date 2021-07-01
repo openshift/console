@@ -165,6 +165,7 @@ export const SecretFormWrapper = withTranslation()(
     onDataChanged(secretsData) {
       this.setState({
         stringData: { ...secretsData?.stringData },
+        base64StringData: { ...secretsData?.base64StringData },
       });
     }
     onError(err) {
@@ -190,13 +191,17 @@ export const SecretFormWrapper = withTranslation()(
       e.preventDefault();
       const { metadata } = this.state.secret;
       this.setState({ inProgress: true });
+      const data = {
+        ..._.mapValues(this.state.stringData, (value) => {
+          return Base64.encode(value);
+        }),
+        ...this.state?.base64StringData,
+      };
       const newSecret = _.assign(
         {},
         this.state.secret,
         {
-          data: _.mapValues(this.state.stringData, (value) => {
-            return Base64.encode(value);
-          }),
+          data,
         },
         // When creating new Secret, determine it's type from the `stringData` keys.
         // When updating a Secret, use it's type.
@@ -239,6 +244,7 @@ export const SecretFormWrapper = withTranslation()(
                   value={this.state.secret.metadata.name}
                   aria-describedby="secret-name-help"
                   id="secret-name"
+                  data-test="secret-name"
                   required
                 />
                 <p className="help-block" id="secret-name-help">
@@ -1022,6 +1028,7 @@ class SSHAuthSubformWithTranslation extends React.Component<
 export const SSHAuthSubform = withTranslation()(SSHAuthSubformWithTranslation);
 
 type KeyValueEntryFormState = {
+  isBase64?: boolean;
   key: string;
   value: string;
 };
@@ -1082,7 +1089,10 @@ class GenericSecretFormWithTranslation extends React.Component<
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(
       genericSecretArray,
-      (acc, k) => _.assign(acc, { [k.entry.key]: k.entry.value }),
+      (acc, k) =>
+        _.assign(acc, {
+          [k.entry.key]: k.entry?.isBase64 ? k.entry.value : Base64.encode(k.entry.value),
+        }),
       {},
     );
   }
@@ -1099,7 +1109,7 @@ class GenericSecretFormWithTranslation extends React.Component<
       },
       () =>
         this.props.onChange({
-          stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
         }),
     );
   }
@@ -1112,7 +1122,7 @@ class GenericSecretFormWithTranslation extends React.Component<
       },
       () =>
         this.props.onChange({
-          stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
         }),
     );
   }
@@ -1123,7 +1133,7 @@ class GenericSecretFormWithTranslation extends React.Component<
       },
       () =>
         this.props.onChange({
-          stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+          base64StringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
         }),
     );
   }
@@ -1176,10 +1186,11 @@ class KeyValueEntryFormWithTranslation extends React.Component<
     this.onValueChange = this.onValueChange.bind(this);
     this.onKeyChange = this.onKeyChange.bind(this);
   }
-  onValueChange(fileData) {
+  onValueChange(fileData, isBinary) {
     this.setState(
       {
         value: fileData,
+        isBase64: isBinary,
       },
       () => this.props.onChange(this.state, this.props.id),
     );
@@ -1208,6 +1219,7 @@ class KeyValueEntryFormWithTranslation extends React.Component<
               name="key"
               onChange={this.onKeyChange}
               value={this.state.key}
+              data-test="secret-key"
               required
             />
           </div>
@@ -1346,6 +1358,9 @@ type BaseEditSecretState_ = {
   inProgress: boolean;
   type: SecretType;
   stringData: {
+    [key: string]: string;
+  };
+  base64StringData?: {
     [key: string]: string;
   };
   error?: any;
