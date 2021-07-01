@@ -44,8 +44,7 @@ export const addPage = {
       case addOptions.EventSource:
         cy.byTestID('item knative-event-source').click();
         detailsPage.titleShouldContain(pageTitle.EventSource);
-        // Bug: ODC 5719 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-        // cy.testA11y(pageTitle.EventSource);
+        cy.testA11y(pageTitle.EventSource);
         break;
       case 'Helm Chart':
       case addOptions.HelmChart:
@@ -83,14 +82,12 @@ export const addPage = {
       case addOptions.DevFile:
         cy.byTestID('item import-from-devfile').click();
         detailsPage.titleShouldContain(pageTitle.DevFile);
-        // Below line is commented due to Bug: ODC-5832
-        // cy.testA11y(pageTitle.DevFile);
+        cy.testA11y(pageTitle.DevFile);
         break;
       case addOptions.UploadJARFile:
         cy.byTestID('item upload-jar').click();
         detailsPage.titleShouldContain(pageTitle.UploadJarFile);
-        // Below line is commented due to Bug: ODC-5832
-        // cy.testA11y(pageTitle.UploadJarFile);
+        cy.testA11y(pageTitle.UploadJarFile);
         break;
       default:
         throw new Error(`Unable to find the "${card}" card on Add page`);
