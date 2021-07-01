@@ -22,9 +22,10 @@ import { isSystemNamespace } from './factory/table-filters';
 import NamespaceMenuToggle from './namespace-menu-toggle';
 
 const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
-  actions,
+  canCreateNew,
   disabled,
   isProjects,
+  onCreateNew,
   onSelect,
   options,
   selected,
@@ -234,29 +235,21 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     );
   };
 
-  const actionList = (
-    <>
-      {actions.map((action) => {
-        return (
-          <Button
-            key={action.actionKey}
-            variant="secondary"
-            onClick={(event) => {
-              setOpen(false);
-              onSelect(event, action.actionKey);
-            }}
-          >
-            {action.actionTitle}
-          </Button>
-        );
-      })}
-    </>
-  );
-
-  const footer =
-    actions?.length > 0 ? (
-      <MenuFooter className="co-namespace-selector__footer">{actionList}</MenuFooter>
-    ) : null;
+  const footer = canCreateNew ? (
+    <MenuFooter className="co-namespace-selector__footer">
+      {
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setOpen(false);
+            onCreateNew();
+          }}
+        >
+          {isProjects ? t('public~Create Project') : t('public~Create Namespace')}
+        </Button>
+      }
+    </MenuFooter>
+  ) : null;
 
   const NamespaceChildSelect = (
     <Menu
@@ -283,7 +276,7 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
         disabled={disabled}
         menu={NamespaceChildSelect}
         isOpen={isOpen}
-        title={title}
+        title={`${isProjects ? t('public~Project') : t('public~Namespace')}: ${title}`}
         onToggle={(menuState) => {
           setOpen(menuState);
         }}
@@ -295,7 +288,6 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
 
 type NamespaceBarDropdownProps = {
   options: { title: string; key: string }[];
-  actions?: { actionTitle: string; actionKey: string }[];
   disabled?: boolean;
   isProjects?: boolean; // Does this drop down contain projects.  If not, assuming namespaces
   onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
@@ -304,6 +296,8 @@ type NamespaceBarDropdownProps = {
   storageKey?: string;
   title?: string;
   userSettingsPrefix?: string;
+  onCreateNew?: () => void;
+  canCreateNew?: boolean;
 };
 
 export default NamespaceBarDropdown;

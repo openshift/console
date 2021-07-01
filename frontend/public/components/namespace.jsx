@@ -92,14 +92,12 @@ import {
 import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
-import NamespaceDropDown from './namespace-dropdown';
+import NamespaceDropdown from './namespace-dropdown';
 import { isCurrentUser, isOtherUser, isSystemNamespace } from './factory/table-filters';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
-
-const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
 
 export const REQUEST_FILTER = { me: 'me', user: 'user', system: 'system' };
 
@@ -757,7 +755,6 @@ const ProjectRow = (rowArgs) => (
   />
 );
 
-// KKD: Project Table (for Dev console)
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
   return (
@@ -1141,26 +1138,12 @@ const NamespaceBarDropdowns_ = (props) => {
   const allNamespacesTitle =
     model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
 
-  let title = activeNamespace;
-  if (activeNamespace === ALL_NAMESPACES_KEY) {
-    title = allNamespacesTitle;
-  }
-
-  const defaultActionItem = canCreateProject
-    ? [
-        {
-          actionTitle:
-            model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
-          actionKey: CREATE_NEW_RESOURCE,
-        },
-      ]
-    : [];
+  const title = activeNamespace === ALL_NAMESPACES_KEY ? allNamespacesTitle : activeNamespace;
 
   const items = data.map((item) => ({ title: item.metadata.name, key: item.metadata.name }));
 
   if (loaded && !items.find((option) => option.title === title) && title !== allNamespacesTitle) {
-    // Add current namespace if it isn't included
-    items.push({ title, key: title });
+    items.push({ title, key: title }); // Add current namespace if it isn't included
   }
 
   items.sort((a, b) => a.title.localeCompare(b.title));
@@ -1170,33 +1153,30 @@ const NamespaceBarDropdowns_ = (props) => {
   }
 
   const onChange = (newNamespace) => {
-    if (newNamespace === CREATE_NEW_RESOURCE) {
-      createProjectModal({
-        blocking: true,
-        onSubmit: (newProject) => {
-          setActiveNamespace(newProject.metadata.name);
-          removeQueryArgument('project-name');
-        },
-      });
-    } else {
-      onNamespaceChange && onNamespaceChange(newNamespace);
-      setActiveNamespace(newNamespace);
-      removeQueryArgument('project-name');
-    }
+    onNamespaceChange && onNamespaceChange(newNamespace);
+    setActiveNamespace(newNamespace);
+    removeQueryArgument('project-name');
   };
 
   return (
     <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-      <NamespaceDropDown
+      <NamespaceDropdown
+        canCreateNew={canCreateProject}
         options={items}
         onSelect={(event, newNamespace) => {
           onChange(newNamespace);
         }}
+        onCreateNew={() =>
+          createProjectModal({
+            blocking: true,
+            onSubmit: (newProject) => {
+              setActiveNamespace(newProject.metadata.name);
+              removeQueryArgument('project-name');
+            },
+          })
+        }
         selected={activeNamespace || ALL_NAMESPACES_KEY}
-        title={`${
-          model.label === 'Project' ? t('public~Project') : t('public~Namespace')
-        }: ${title}`}
-        actions={defaultActionItem}
+        title={title}
         userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         isProjects={model.label === 'Project'}
