@@ -101,7 +101,7 @@ const getDisplayName = (obj) =>
 
 export const REQUEST_FILTER = { me: 'me', user: 'user', system: 'system' };
 
-const getFilters = () => [
+const getFilters = [
   {
     filterGroupName: i18next.t('public~Requester'),
     type: 'requester',
@@ -125,6 +125,7 @@ const getFilters = () => [
     ],
   },
 ];
+
 export const deleteModal = (kind, ns) => {
   const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
@@ -476,7 +477,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
   return (
     <ListPage
       {...props}
-      rowFilters={getFilters()}
+      rowFilters={getFilters}
       ListComponent={NamespacesList}
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
@@ -868,7 +869,7 @@ export const ProjectsPage = connectToFlags(
     return (
       <ListPage
         {...rest}
-        rowFilters={getFilters()}
+        rowFilters={getFilters}
         ListComponent={ProjectList}
         canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
         createHandler={() => createProjectModal({ blocking: true })}
