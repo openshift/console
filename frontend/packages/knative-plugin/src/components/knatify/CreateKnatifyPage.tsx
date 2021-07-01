@@ -101,7 +101,11 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
         });
       }
     } catch {
-      knatifyResources(values, appName)
+      const resourceActions = knatifyResources(values, appName, true).then(() =>
+        knatifyResources(values, appName),
+      );
+
+      resourceActions
         .then(() => {
           helpers.setStatus({ submitError: '' });
           handleRedirect(namespace, perspective, perspectiveExtensions);

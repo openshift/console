@@ -16,6 +16,7 @@ import {
   KafkaTopicModel,
   CamelIntegrationModel,
   CamelKameletBindingModel,
+  DomainMappingModel,
 } from '../models';
 import { Traffic } from '../types';
 import {
@@ -36,6 +37,7 @@ export type KnativeItem = {
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
   eventSourceSinkbinding?: K8sResourceKind[];
+  domainMappings?: K8sResourceKind[];
   pods?: PodKind[];
 };
 
@@ -63,6 +65,25 @@ const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
   return revisionResource;
 };
 
+export const getDomainMapping = (res: K8sResourceKind, { data }): K8sResourceKind[] => {
+  const { apiVersion, kind, metadata } = res;
+  let domainMappingResource = [];
+  if (!metadata || !data.length) return domainMappingResource;
+  if (
+    kind === ServiceModel.kind &&
+    apiVersion === `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`
+  ) {
+    domainMappingResource = data.filter((domainMapping) => {
+      return (
+        domainMapping.spec.ref.apiVersion === apiVersion &&
+        domainMapping.spec.ref.kind === kind &&
+        domainMapping.spec.ref.name === metadata.name
+      );
+    });
+  }
+  return domainMappingResource;
+};
+
 export const getKnativeServingRevisions = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const revisions = props && props.revisions && getRevisions(dc, props.revisions);
   return revisions && revisions.length > 0 ? { revisions } : undefined;
@@ -79,6 +100,12 @@ export const getKnativeServingConfigurations = (
 export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const ksroutes = props && props.ksroutes && getKsResource(dc, props.ksroutes);
   return ksroutes && ksroutes.length > 0 ? { ksroutes } : undefined;
+};
+
+export const getKnativeServingDomainMapping = (res: K8sResourceKind, props) => {
+  const domainMappings =
+    props && props.domainmappings && getDomainMapping(res, props.domainmappings);
+  return domainMappings?.length > 0 ? { domainMappings } : undefined;
 };
 
 export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeItem | undefined => {
@@ -312,6 +339,19 @@ export const knativeCamelKameletBindingResourceWatchers = (
   };
 };
 
+export const knativeCamelDomainMappingResourceWatchers = (
+  namespace: string,
+): WatchK8sResources<{ [key: string]: K8sResourceKind[] }> => {
+  return {
+    [DomainMappingModel.plural]: {
+      isList: true,
+      kind: referenceForModel(DomainMappingModel),
+      namespace,
+      optional: true,
+    },
+  };
+};
+
 export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
   if (!service.status?.traffic?.length) {
     return {};
@@ -347,5 +387,6 @@ export const getKnativeResources = (namespace: string) => {
     ...knativeEventingTriggerResourceWatchers(namespace),
     ...knativeCamelIntegrationsResourceWatchers(namespace),
     ...knativeCamelKameletBindingResourceWatchers(namespace),
+    ...knativeCamelDomainMappingResourceWatchers(namespace),
   };
 };

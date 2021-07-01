@@ -9,6 +9,7 @@ import {
 } from '../utils/fetch-dynamic-eventsources-utils';
 import {
   getKnativeServingConfigurations,
+  getKnativeServingDomainMapping,
   getKnativeServingRevisions,
   getKnativeServingRoutes,
   getKnativeServingServices,
@@ -45,6 +46,7 @@ export const getKnativeTopologyDataModel = (
     getKnativeServingConfigurations,
     getKnativeServingRoutes,
     getKnativeServingServices,
+    getKnativeServingDomainMapping,
   ];
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   const channelResourceProps = getDynamicChannelModelRefs();
