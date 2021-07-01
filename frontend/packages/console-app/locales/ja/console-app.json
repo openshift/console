@@ -38,7 +38,7 @@
   "Status": "ステータス",
   "API version": "API バージョン",
   "Restore": "復元",
-  "Only {{volumeMode}} volume mode is available for {{storageClass}} with {{accessMode}} access mode": "{{accessMode}} アクセスモードの {{storageClass}} には {{volumeMode}} ボリュームモードのみを使用できます。",
+  "Only {volumeMode} volume mode is available for {storageClass} with {accessMode} access mode": "{accessMode} アクセスモードの {storageClass} には {volumeMode} ボリュームモードのみを使用できます。",
   "VolumeSnapshotClass with same provisioner as claim": "要求と同じプロビジョナーを持つボリュームスナップショットクラス",
   "Select volume snapshot class": "ボリュームスナップショットクラスの選択",
   "PersistentVolumeClaim details": "永続ボリューム要求の詳細",
