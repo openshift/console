@@ -187,6 +187,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
             title={t(
               "ceph-storage-plugin~A bucket will be created to provide the OpenShift Container Storage's Service.",
             )}
+            role="alert"
             aria-label={t(
               "ceph-storage-plugin~Bucket created for OpenShift Container Storage's Service",
             )}
@@ -210,7 +211,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
                 className="im-install-page__input-box"
                 isDisabled
               />
-              <FileUpload onUpload={onUpload} />
+              <FileUpload role="button" onUpload={onUpload} />
             </InputGroup>
           </FormGroup>
           <FormGroup fieldId="preview-box">
