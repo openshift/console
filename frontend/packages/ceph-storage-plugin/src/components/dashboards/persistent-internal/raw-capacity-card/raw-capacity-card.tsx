@@ -15,7 +15,7 @@ import { getInstantVectorStats } from '@console/internal/components/graphs/utils
 import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
+} from '@console/dynamic-plugin-sdk/src/api/status/icons';
 import { CAPACITY_INFO_QUERIES } from '../../../../queries';
 import { DANGER_THRESHOLD, WARNING_THRESHOLD } from '../../common/capacity-breakdown/consts';
 import './raw-capacity-card.scss';

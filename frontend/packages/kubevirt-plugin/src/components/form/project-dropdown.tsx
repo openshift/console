@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { ListDropdown } from '@console/internal/components/utils';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 
 type ProjectDropdownProps = {

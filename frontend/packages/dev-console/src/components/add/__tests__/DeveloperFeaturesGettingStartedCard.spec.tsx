@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src';
+import { useActiveNamespace } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 

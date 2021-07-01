@@ -4,7 +4,8 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ListKind, k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { useDeepCompareMemoize, YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
+import { useDeepCompareMemoize } from '@console/shared';
 import {
   createModalLauncher,
   ModalTitle,

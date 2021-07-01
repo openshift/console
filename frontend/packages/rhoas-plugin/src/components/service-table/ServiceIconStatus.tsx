@@ -5,7 +5,7 @@ import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 
 type ServiceIconStatusProps = {
   status: string;

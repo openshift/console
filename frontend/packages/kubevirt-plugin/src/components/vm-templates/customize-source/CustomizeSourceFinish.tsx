@@ -14,14 +14,14 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Prompt } from 'react-router';
-import { history } from '@console/internal/components/utils';
-import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
 import {
   ErrorStatus,
   GreenCheckCircleIcon,
   ProgressStatus,
   SuccessStatus,
-} from '@console/shared/src';
+} from '@console/dynamic-plugin-sdk/src';
+import { history } from '@console/internal/components/utils';
+import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
 import { VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';

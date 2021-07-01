@@ -16,7 +16,7 @@ export const ErrorStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={RedExclamationCircleIcon}
-      title={props.title || t('console-shared~Error')}
+      title={props.title || t('dynamic-plugin-sdk~Error')}
     />
   );
 };
@@ -28,7 +28,7 @@ export const InfoStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={BlueInfoCircleIcon}
-      title={props.title || t('console-shared~Information')}
+      title={props.title || t('dynamic-plugin-sdk~Information')}
     />
   );
 };
@@ -40,7 +40,7 @@ export const PendingStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={HourglassHalfIcon}
-      title={props.title || t('console-shared~Pending')}
+      title={props.title || t('dynamic-plugin-sdk~Pending')}
     />
   );
 };
@@ -52,7 +52,7 @@ export const ProgressStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={InProgressIcon}
-      title={props.title || t('console-shared~In progress')}
+      title={props.title || t('dynamic-plugin-sdk~In progress')}
     />
   );
 };
@@ -64,7 +64,7 @@ export const SuccessStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={GreenCheckCircleIcon}
-      title={props.title || t('console-shared~Healthy')}
+      title={props.title || t('dynamic-plugin-sdk~Healthy')}
     />
   );
 };
@@ -76,7 +76,7 @@ export const WarningStatus: React.FC<StatusComponentProps> = (props) => {
     <GenericStatus
       {...props}
       Icon={YellowExclamationTriangleIcon}
-      title={props.title || t('console-shared~Warning')}
+      title={props.title || t('dynamic-plugin-sdk~Warning')}
     />
   );
 };

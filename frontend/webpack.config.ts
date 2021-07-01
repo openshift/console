@@ -228,6 +228,9 @@ const config: Configuration = {
     new CopyWebpackPlugin([
       { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
     ]),
+    new CopyWebpackPlugin([
+      { from: './packages/console-dynamic-plugin-sdk/locales', to: 'locales' },
+    ]),
     extractCSS,
     virtualModules,
     new ConsoleActivePluginsModule(resolvePluginPackages(), virtualModules),

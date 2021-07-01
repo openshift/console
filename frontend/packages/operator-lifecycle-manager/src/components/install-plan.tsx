@@ -6,6 +6,7 @@ import { Map as ImmutableMap, Set as ImmutableSet, fromJS } from 'immutable';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match, Link } from 'react-router-dom';
+import { GreenCheckCircleIcon, Status } from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   MultiListPage,
@@ -33,7 +34,6 @@ import {
   k8sUpdate,
   apiVersionForReference,
 } from '@console/internal/module/k8s';
-import { GreenCheckCircleIcon, Status } from '@console/shared';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,

@@ -3,6 +3,7 @@ import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -13,7 +14,7 @@ import {
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { ActionMenu, ActionsLoader, ActionMenuVariant, Status } from '@console/shared';
+import { ActionMenu, ActionsLoader, ActionMenuVariant } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmReleases } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';

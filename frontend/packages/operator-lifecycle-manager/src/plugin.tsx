@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
@@ -9,7 +10,6 @@ import {
   RoutePage,
   DashboardsOverviewHealthOperator,
 } from '@console/plugin-sdk';
-import { FLAGS } from '@console/shared/src/constants';
 import { getClusterServiceVersionsWithStatuses } from './components/dashboard/utils';
 import { Flags } from './const';
 import * as models from './models';

@@ -13,6 +13,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import { BlueInfoCircleIcon, FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   convertToBaseValue,
   humanizeBinaryBytes,
@@ -20,7 +21,7 @@ import {
   useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
+import { useFlag } from '@console/shared';
 import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
 import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';

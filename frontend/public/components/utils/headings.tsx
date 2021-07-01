@@ -8,13 +8,8 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
-import {
-  OverviewItem,
-  Status,
-  HealthChecksAlert,
-  YellowExclamationTriangleIcon,
-  useCsvWatchResource,
-} from '@console/shared';
+import { Status, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
+import { OverviewItem, HealthChecksAlert, useCsvWatchResource } from '@console/shared';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import {
   ActionsMenu,

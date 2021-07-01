@@ -8,7 +8,7 @@ import {
   ExclamationTriangleIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { DASH } from '../../constants';
+import { DASH } from '../constants';
 import { YellowExclamationTriangleIcon } from './icons';
 import NotStartedIcon from './NotStartedIcon';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';

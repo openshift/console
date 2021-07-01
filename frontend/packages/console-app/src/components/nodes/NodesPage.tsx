@@ -7,6 +7,10 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import {
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+} from '@console/dynamic-plugin-sdk';
 import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import {
@@ -38,8 +42,6 @@ import {
   WithUserSettingsCompatibilityProps,
   TableColumnsType,
   withUserSettingsCompatibility,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared';
 import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';

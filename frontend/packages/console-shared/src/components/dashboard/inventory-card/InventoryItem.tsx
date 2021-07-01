@@ -9,6 +9,8 @@ import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
   useResolvedExtensions,
   DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup as isDynamicDashboardsInventoryItemGroup,
@@ -21,7 +23,6 @@ import {
   DashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
 import './inventory-card.scss';
 

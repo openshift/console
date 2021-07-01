@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans } from 'react-i18next';
 import i18next from 'i18next';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { modelFor } from '../../module/k8s';
 import { confirmModal } from '../modals/confirm-modal';
 

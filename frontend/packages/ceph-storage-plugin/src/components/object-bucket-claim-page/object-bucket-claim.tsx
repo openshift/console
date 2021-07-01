@@ -21,7 +21,7 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { sortable } from '@patternfly/react-table';
 import { GetSecret } from './secret';
 import { menuActionCreator, menuActions } from './menu-actions';

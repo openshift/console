@@ -9,13 +9,11 @@ import {
   DataListItemCells,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-  WithUserSettingsCompatibilityProps,
-  withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { WithUserSettingsCompatibilityProps, withUserSettingsCompatibility } from '@console/shared';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory';
 
 export const MAX_VIEW_COLS = 9;

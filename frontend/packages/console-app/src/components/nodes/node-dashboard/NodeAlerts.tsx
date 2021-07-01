@@ -13,6 +13,11 @@ import {
   MemoryPopover,
 } from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import {
+  YellowResourcesAlmostFullIcon,
+  RedResourcesFullIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk/src/api/status/icons';
+import {
   humanizeCpuCores,
   humanizeBinaryBytes,
   Humanize,
@@ -32,11 +37,6 @@ import {
   LIMIT_STATE,
   LimitRequested,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import {
-  YellowResourcesAlmostFullIcon,
-  RedResourcesFullIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
 import {
   getNodeAddresses,
   getNodeMachineNameAndNamespace,

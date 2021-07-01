@@ -4,6 +4,7 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
+import { DASH } from '@console/dynamic-plugin-sdk';
 import {
   useAccessReview,
   SectionHeading,
@@ -21,7 +22,6 @@ import {
   getNodeAddresses,
   getName,
   getNamespace,
-  DASH,
 } from '@console/shared';
 import { BareMetalHostModel } from '../../models';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';

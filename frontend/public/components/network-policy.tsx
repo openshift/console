@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { connectToFlags, FlagsObject } from '../reducers/features';
-import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
+import { BlueInfoCircleIcon, FLAGS } from '@console/dynamic-plugin-sdk';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,

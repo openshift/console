@@ -15,6 +15,14 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match as RouterMatch } from 'react-router-dom';
+import {
+  CONSOLE_OPERATOR_CONFIG_NAME,
+  RedExclamationCircleIcon,
+  ALL_NAMESPACES_KEY,
+  Status,
+  StatusIconAndText,
+  WarningStatus,
+} from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -66,18 +74,9 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import {
-  ALL_NAMESPACES_KEY,
-  Status,
-  WarningStatus,
-  getNamespace,
-  getUID,
-  StatusIconAndText,
-} from '@console/shared';
+import { getNamespace, getUID } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { consolePluginModal } from '@console/shared/src/components/modals';
-import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { isPluginEnabled } from '@console/shared/src/utils';

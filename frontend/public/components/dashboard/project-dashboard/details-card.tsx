@@ -9,7 +9,8 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import { getName, getRequester, GreenCheckCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
+import { getName, getRequester } from '@console/shared';
 import { LabelList, resourcePathFromModel } from '../../utils';
 import { ProjectModel } from '../../../models';
 import { ProjectDashboardContext } from './project-dashboard-context';

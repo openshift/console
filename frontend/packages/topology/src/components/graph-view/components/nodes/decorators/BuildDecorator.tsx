@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BuildModel } from '@console/internal/models';
-import { Status, useBuildConfigsWatcher } from '@console/shared';
+import { useBuildConfigsWatcher } from '@console/shared';
 import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';
 

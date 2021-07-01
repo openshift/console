@@ -3,6 +3,7 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   DeploymentConfigModel,
@@ -17,7 +18,6 @@ import {
   modelFor,
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin';
-import { STORAGE_PREFIX, USERSETTINGS_PREFIX } from '../../constants';
 import { useUserSettingsCompatibility } from '../../hooks/useUserSettingsCompatibility';
 
 import './HealthChecksAlert.scss';

@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';

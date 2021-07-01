@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { STORAGE_PREFIX } from '@console/shared';
+import { STORAGE_PREFIX } from '@console/dynamic-plugin-sdk';
 import TopologyPage from '@console/topology/src/components/page/TopologyPage';
 import { TopologyViewType } from '@console/topology/src/topology-types';
 

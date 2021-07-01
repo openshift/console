@@ -10,7 +10,7 @@ import {
   SuccessStatus,
   ProgressStatus,
   StatusIconAndText,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import {
   OCSColumnState,
   Status,

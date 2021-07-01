@@ -10,7 +10,8 @@ import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
-import { Status, TableColumnsType } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk/src/api/status';
+import { TableColumnsType } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   withUserSettingsCompatibility,
@@ -19,7 +20,7 @@ import {
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+} from '@console/dynamic-plugin-sdk/src/api/constants/common';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { ContainerSpec, K8sResourceKindReference, PodKind, referenceForModel } from '../module/k8s';

@@ -20,7 +20,7 @@ import {
   OutlinedWindowRestoreIcon,
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
-import { FLAGS, USERSETTINGS_PREFIX } from '@console/shared/src/constants';
+import { FLAGS, USERSETTINGS_PREFIX } from '@console/dynamic-plugin-sdk';
 import { useUserSettings } from '@console/shared';
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';

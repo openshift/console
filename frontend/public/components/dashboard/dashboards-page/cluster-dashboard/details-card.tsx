@@ -1,13 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { InProgressIcon } from '@patternfly/react-icons';
-import {
-  BlueArrowCircleUpIcon,
-  FLAGS,
-  getInfrastructureAPIURL,
-  getInfrastructurePlatform,
-  isSingleNode,
-} from '@console/shared';
+import { BlueArrowCircleUpIcon, FLAGS } from '@console/dynamic-plugin-sdk';
+import { getInfrastructureAPIURL, getInfrastructurePlatform, isSingleNode } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';

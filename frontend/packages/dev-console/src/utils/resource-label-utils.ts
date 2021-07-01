@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { TRIGGERS_ANNOTATION } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { TRIGGERS_ANNOTATION } from '@console/shared';
 
 export const getAppLabels = ({
   name,

@@ -2,7 +2,8 @@ import * as React from 'react';
 import { FlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
+import { useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
 import {
   GettingStartedLink,
   GettingStartedCard,

@@ -1,6 +1,7 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import { getImageForCSVIcon, ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk';
+import { getImageForCSVIcon } from '@console/shared';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import {
   sbrBackingServiceSelector,

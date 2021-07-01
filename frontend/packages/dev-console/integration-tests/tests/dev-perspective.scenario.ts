@@ -1,10 +1,10 @@
 import { browser } from 'protractor';
+import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/dynamic-plugin-sdk/src';
 import {
   appHost,
   checkLogs,
   checkErrors,
 } from '@console/internal-integration-tests/protractor.conf';
-import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/shared/src';
 import {
   switchPerspective,
   Perspective,

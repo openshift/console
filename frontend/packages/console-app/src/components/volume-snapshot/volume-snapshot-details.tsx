@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Status, FLAGS } from '@console/dynamic-plugin-sdk';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
@@ -17,7 +18,7 @@ import {
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotKind } from '@console/internal/module/k8s';
-import { Status, snapshotSource, FLAGS } from '@console/shared';
+import { snapshotSource } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { volumeSnapshotStatus } from '../../status';
 

@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AllPodStatus } from '@console/dynamic-plugin-sdk';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { PodModel } from '@console/internal/models';
 import { PodKind, podPhase } from '@console/internal/module/k8s';
-import {
-  AllPodStatus,
-  usePluginsOverviewTabSection,
-  useBuildConfigsWatcher,
-} from '@console/shared';
+import { usePluginsOverviewTabSection, useBuildConfigsWatcher } from '@console/shared';
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
 import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';

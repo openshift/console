@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members,no-underscore-dangle */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '@console/dynamic-plugin-sdk';
 import { getStringEnumValues } from '../../utils/types';
 import { StatusSimpleLabel } from '../status-constants';
 import { StatusEnum, StatusMetadata } from '../status-enum';

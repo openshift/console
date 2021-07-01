@@ -38,12 +38,13 @@ import { CustomResourceDefinitionModel } from '../models';
 import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
-import { GreenCheckCircleIcon } from '@console/shared';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
 import {
+  GreenCheckCircleIcon,
   ResourceListPage as DynamicResourceListPage,
   isResourceListPage as isDynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
+import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+
 const { common } = Kebab.factory;
 
 const crdInstancesPath = (crd: CustomResourceDefinitionKind) =>

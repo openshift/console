@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import {
@@ -12,7 +13,6 @@ import {
 } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel, VolumeSnapshotModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import { volumeSnapshotStatus } from '../../status';
 
 const { editYaml, events } = navFactory;

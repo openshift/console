@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/api/status/icons';
 import {
   createModalLauncher,
   ModalBody,
@@ -9,7 +10,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';

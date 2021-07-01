@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { DASH } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { DASH } from '@console/shared';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';

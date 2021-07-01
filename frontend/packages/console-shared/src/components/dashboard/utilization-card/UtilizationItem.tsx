@@ -1,5 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  YellowExclamationTriangleIcon,
+  RedExclamationCircleIcon,
+  ColoredIconProps,
+} from '@console/dynamic-plugin-sdk';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import {
   AreaChart,
@@ -9,11 +14,6 @@ import {
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import { Humanize } from '@console/internal/components/utils/types';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  YellowExclamationTriangleIcon,
-  RedExclamationCircleIcon,
-  ColoredIconProps,
-} from '../../status';
 
 export enum LIMIT_STATE {
   ERROR = 'ERROR',

@@ -1,4 +1,4 @@
-import { STORAGE_PREFIX } from '@console/shared/src/constants/common';
+import { STORAGE_PREFIX } from '@console/dynamic-plugin-sdk/src/api/constants/common';
 
 export const ALLOW_SERVICE_BINDING_FLAG = 'ALLOW_SERVICE_BINDING';
 

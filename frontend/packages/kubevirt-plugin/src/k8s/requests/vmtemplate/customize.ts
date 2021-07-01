@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ANNOTATIONS } from '@console/dynamic-plugin-sdk';
 import { TemplateModel } from '@console/internal/models';
 import {
   k8sCreate,
@@ -6,7 +7,7 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
+import { getRandomChars } from '@console/shared/src';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
   AccessMode,

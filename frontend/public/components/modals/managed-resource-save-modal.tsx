@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { referenceForOwnerRef, K8sResourceCommon, OwnerReference } from '../../module/k8s/';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 
 import { ResourceLink } from '../utils/resource-link';
 

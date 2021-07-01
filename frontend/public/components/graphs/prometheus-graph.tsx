@@ -4,7 +4,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { FLAGS, useActivePerspective } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/shared';
 import { featureReducerName } from '../../reducers/features';
 import { getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';

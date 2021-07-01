@@ -1,8 +1,8 @@
 import { Model, NodeModel, EdgeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { ALL_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk';
 import * as utils from '@console/internal/components/utils';
 import * as k8s from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockBaseResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { TEST_KINDS_MAP } from '@console/topology/src/__tests__/topology-test-data';
 import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';

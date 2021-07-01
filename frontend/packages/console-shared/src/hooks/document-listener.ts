@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { KEYBOARD_SHORTCUTS } from '@console/dynamic-plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
-import { KEYBOARD_SHORTCUTS } from '../constants/common';
 
 /**
  * Use this hook for components that require visibility only

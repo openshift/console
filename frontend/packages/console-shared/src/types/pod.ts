@@ -1,6 +1,6 @@
+import { AllPodStatus } from '@console/dynamic-plugin-sdk';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { DeploymentKind, K8sResourceKind, PodKind, PodPhase } from '@console/internal/module/k8s';
-import { AllPodStatus } from '../constants';
 
 export interface PodDataResources {
   replicationControllers: FirehoseResult;

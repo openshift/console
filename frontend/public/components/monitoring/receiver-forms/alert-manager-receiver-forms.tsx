@@ -7,7 +7,8 @@ import { ActionGroup, Alert, Button, Tooltip } from '@patternfly/react-core';
 import { safeLoad } from 'js-yaml';
 import * as classNames from 'classnames';
 
-import { BlueInfoCircleIcon, APIError } from '@console/shared';
+import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
+import { APIError } from '@console/shared';
 import { ButtonBar } from '../../utils/button-bar';
 import { Dropdown } from '../../utils/dropdown';
 import { Firehose } from '../../utils/firehose';

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp, ResourceIcon } from '@console/internal/components/utils';
-import { ActionsLoader, ActionMenu, Status } from '@console/shared';
+import { ActionsLoader, ActionMenu } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseListHeader';
 

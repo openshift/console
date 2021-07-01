@@ -3,7 +3,7 @@ import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { GreenCheckCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { getHealthChecksProbeConfig, healthChecksDefaultValues } from './health-checks-probe-utils';
 import { HealthCheckProbeData } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';

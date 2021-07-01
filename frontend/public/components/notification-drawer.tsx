@@ -15,7 +15,13 @@ import store, { RootState } from '@console/internal/redux';
 import { Alert, PrometheusRulesResponse } from '@console/internal/components/monitoring/types';
 import { getAlertsAndRules, alertURL } from '@console/internal/components/monitoring/utils';
 import { NotificationAlerts } from '@console/internal/reducers/ui';
-import { RedExclamationCircleIcon } from '@console/shared';
+import {
+  RedExclamationCircleIcon,
+  AlertAction,
+  isAlertAction,
+  useResolvedExtensions,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
 import {
   getAlertDescription,
   getAlertMessage,
@@ -33,12 +39,7 @@ import {
 } from '@patternfly/react-core';
 import { useClusterVersion } from '@console/shared/src/hooks/version';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import {
-  AlertAction,
-  isAlertAction,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
+
 import { history } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
 import {

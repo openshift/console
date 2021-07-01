@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { PipelineRunKind } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import {

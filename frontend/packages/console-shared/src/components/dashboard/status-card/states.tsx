@@ -7,7 +7,7 @@ import {
   YellowExclamationTriangleIcon,
   BlueSyncIcon,
   GrayUnknownIcon,
-} from '@console/shared/src/components/status/icons';
+} from '@console/dynamic-plugin-sdk/src/api/status/icons';
 
 export enum HealthState {
   OK = 'OK',

@@ -3,14 +3,14 @@ import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
-import { ExternalLink, Timestamp } from '@console/internal/components/utils';
-import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { ExternalLink, Timestamp } from '@console/internal/components/utils';
+import i18n from '@console/internal/i18n';
 import { GitOpsAppGroupData } from '../utils/gitops-types';
 import GitOpsSyncFragment from './GitOpsSyncFragment';
 

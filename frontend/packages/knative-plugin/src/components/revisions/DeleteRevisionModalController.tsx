@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { Formik, FormikHelpers, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -21,7 +22,6 @@ import {
   k8sUpdate,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RedExclamationCircleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel, ServiceModel } from '../../models';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';

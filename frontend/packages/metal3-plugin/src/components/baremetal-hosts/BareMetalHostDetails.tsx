@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { StatusIconAndText, SecondaryStatus, DASH } from '@console/dynamic-plugin-sdk';
 import {
   SectionHeading,
   Timestamp,
@@ -21,11 +22,8 @@ import {
   getMachineNodeName,
   getNamespace,
   getMachineRole,
-  StatusIconAndText,
   DetailPropertyList,
   DetailPropertyListItem,
-  SecondaryStatus,
-  DASH,
 } from '@console/shared';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {

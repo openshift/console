@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Status, ProgressStatus } from '@console/shared';
+import { Status, ProgressStatus } from '@console/dynamic-plugin-sdk';
 import {
   NODE_STATUS_UNDER_MAINTENANCE,
   NODE_STATUS_STARTING_MAINTENANCE,

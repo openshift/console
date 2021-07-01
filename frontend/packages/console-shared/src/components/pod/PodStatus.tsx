@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { podColor, AllPodStatus } from '../../constants';
+import { podColor, AllPodStatus } from '@console/dynamic-plugin-sdk';
 import { useForceUpdate } from '../../hooks/useForceUpdate';
 import { ExtPodKind } from '../../types';
 import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';

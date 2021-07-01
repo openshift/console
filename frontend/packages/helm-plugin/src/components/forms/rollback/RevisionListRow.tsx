@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils';
-import { Status, RadioButtonField } from '@console/shared';
+import { RadioButtonField } from '@console/shared';
 import { tableColumnClasses } from './RevisionListHeader';
 
 const RevisionListRow: RowFunction = ({ obj, index, key, style }) => {

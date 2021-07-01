@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { KUBE_ADMIN_USERNAMES } from '@console/shared';
+import { KUBE_ADMIN_USERNAMES } from '@console/dynamic-plugin-sdk';
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';
 import { resourcePathFromModel } from './utils/resource-link';

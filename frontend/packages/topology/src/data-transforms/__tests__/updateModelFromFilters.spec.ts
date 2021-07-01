@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { ALL_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk';
 import { referenceFor } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { topologyDataModel, dataModel, TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { TYPE_WORKLOAD } from '../../const';

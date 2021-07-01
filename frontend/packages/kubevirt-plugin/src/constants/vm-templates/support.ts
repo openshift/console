@@ -1,4 +1,4 @@
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '@console/dynamic-plugin-sdk';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 
 export class TemplateSupport extends SelectDropdownObjectEnum<string> {

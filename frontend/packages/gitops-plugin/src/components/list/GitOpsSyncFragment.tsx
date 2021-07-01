@@ -4,7 +4,7 @@ import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 
 interface SyncProps {
   tooltip: any[];

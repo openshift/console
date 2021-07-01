@@ -2,6 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { Status } from '@console/dynamic-plugin-sdk';
 import {
   getMachineAddresses,
   getMachineInstanceType,
@@ -9,7 +10,6 @@ import {
   getMachineRegion,
   getMachineRole,
   getMachineZone,
-  Status,
   getMachinePhase,
 } from '@console/shared';
 import { MachineModel } from '../models';

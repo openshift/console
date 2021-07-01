@@ -13,7 +13,7 @@ import {
   VolumeMount,
 } from '../../module/k8s/';
 import { RowVolumeData } from '../volumes-table';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 
 export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const [inProgress, setInProgress] = React.useState(false);

@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/dynamic-plugin-sdk';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   Dropdown,
@@ -41,7 +42,6 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import {

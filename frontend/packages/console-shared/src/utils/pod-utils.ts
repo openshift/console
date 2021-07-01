@@ -1,4 +1,10 @@
 import * as _ from 'lodash';
+import {
+  podColor,
+  AllPodStatus,
+  DEPLOYMENT_STRATEGY,
+  DEPLOYMENT_PHASE,
+} from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils/rbac';
 import {
   K8sResourceKind,
@@ -6,7 +12,6 @@ import {
   SelfSubjectAccessReviewKind,
   AccessReviewResourceAttributes,
 } from '@console/internal/module/k8s';
-import { podColor, AllPodStatus, DEPLOYMENT_STRATEGY, DEPLOYMENT_PHASE } from '../constants';
 import { PodControllerOverviewItem, DeploymentStrategy } from '../types';
 import { ExtPodKind, PodRCData } from '../types/pod';
 

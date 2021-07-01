@@ -1,5 +1,4 @@
-import { AddAction, ResolvedExtension } from '@console/dynamic-plugin-sdk';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { AddAction, ResolvedExtension, ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
 import {
   addActionExtensions,
   addActionGroup,

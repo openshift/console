@@ -23,7 +23,7 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import * as UIActions from '../../actions/ui';

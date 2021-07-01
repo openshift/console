@@ -20,7 +20,7 @@ import {
   PageHeaderToolsItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
+import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/dynamic-plugin-sdk';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';

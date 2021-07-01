@@ -3,6 +3,7 @@ import { Button, Switch, Checkbox } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import {
   LoadingInline,
@@ -12,7 +13,6 @@ import {
   LabelList,
 } from '@console/internal/components/utils';
 import { k8sPatch, k8sUpdate } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DefaultCapability, K8sResourceLinkCapability } from '../common';
 import { CapabilityProps, SpecCapability, Error } from '../types';
 import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';

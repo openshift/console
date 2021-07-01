@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { SecondaryStatus } from '@console/dynamic-plugin-sdk';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import {
   ResourceLink,
@@ -10,7 +11,6 @@ import {
 } from '@console/internal/components/utils';
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
-import { SecondaryStatus } from '@console/shared';
 import { ServiceAccountType } from '../../../../utils/pipeline-utils';
 import { PIPELINE_SERVICE_ACCOUNT } from '../../const';
 import './SecretsList.scss';

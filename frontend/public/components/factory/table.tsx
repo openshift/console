@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
 import {
   getNodeRoles,
   getMachinePhase,
@@ -16,7 +17,6 @@ import {
   pvcUsed,
   snapshotSize,
   snapshotSource,
-  ALL_NAMESPACES_KEY,
   getName,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';

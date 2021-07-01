@@ -22,7 +22,7 @@ import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   Box,
   Dropdown,

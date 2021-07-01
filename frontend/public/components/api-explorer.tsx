@@ -10,8 +10,13 @@ import { Tooltip } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-
-import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
+import {
+  ALL_NAMESPACES_KEY,
+  FLAGS,
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
+import { APIError } from '@console/shared';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
@@ -49,10 +54,6 @@ import {
   setQueryArgument,
 } from './utils';
 import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {

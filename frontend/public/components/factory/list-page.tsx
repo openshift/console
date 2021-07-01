@@ -7,8 +7,8 @@ import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
-
+import { KEYBOARD_SHORTCUTS } from '@console/dynamic-plugin-sdk';
+import { useDocumentListener } from '@console/shared';
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';

@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { DASH } from '@console/dynamic-plugin-sdk';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { LoadingInline } from '@console/internal/components/utils';
-import { DASH, dimensifyRow } from '@console/shared';
+import { dimensifyRow } from '@console/shared';
 import { ValidationCell } from '../table/validation-cell';
 import { StorageSimpleData, StorageSimpleDataValidation } from './types';
 

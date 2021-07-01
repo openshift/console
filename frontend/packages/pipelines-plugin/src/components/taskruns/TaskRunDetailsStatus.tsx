@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
-import { Status } from '@console/shared';
 import { TaskRunKind } from '../../types';
 import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import RunDetailsErrorLog from '../pipelineruns/logs/RunDetailsErrorLog';

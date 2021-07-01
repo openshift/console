@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { SecondaryStatus } from '../../status';
+import { SecondaryStatus } from '@console/dynamic-plugin-sdk';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 

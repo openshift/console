@@ -4,8 +4,8 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
-
-import { ANNOTATIONS, withActivePerspective } from '@console/shared';
+import { ANNOTATIONS } from '@console/dynamic-plugin-sdk';
+import { withActivePerspective } from '@console/shared';
 import { isPerspective, Perspective, withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {

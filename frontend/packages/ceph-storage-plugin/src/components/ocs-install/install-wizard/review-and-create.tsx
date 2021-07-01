@@ -15,9 +15,9 @@ import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
   BlueInfoCircleIcon,
-  ErrorAlert,
   RedExclamationCircleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { ErrorAlert } from '@console/shared';
 import { NodeKind } from '@console/internal/module/k8s';
 import {
   ValidationMessage,

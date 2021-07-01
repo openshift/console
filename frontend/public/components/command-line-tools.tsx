@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
 import { connectToFlags } from '../reducers/features';
 import { ConsoleCLIDownloadModel } from '../models';

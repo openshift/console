@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
+import { PopoverStatus, StatusIconAndText } from '@console/dynamic-plugin-sdk';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
   DetailsPage,
@@ -34,7 +35,6 @@ import {
 import i18n from '@console/internal/i18n';
 import { ConfigMapModel } from '@console/internal/models';
 import { referenceForModel, K8sKind, k8sPatch } from '@console/internal/module/k8s';
-import { PopoverStatus, StatusIconAndText } from '@console/shared';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 import {

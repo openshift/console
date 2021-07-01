@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Grid, GridItem } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
+import { ONE_HOUR, ONE_MINUTE, Status } from '@console/dynamic-plugin-sdk';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   K8sResourceKindReference,

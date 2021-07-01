@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import { useTranslation, Trans } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalTitle,
@@ -11,7 +12,6 @@ import {
 import { PromiseComponent, history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { InputField } from '../formik-fields';
-import { YellowExclamationTriangleIcon } from '../status';
 
 type DeleteResourceModalProps = {
   resourceName: string;

@@ -4,7 +4,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,
   withDashboardResources,

@@ -30,9 +30,11 @@ import {
   isResolvedDashboardsOverviewHealthOperator,
   ResolvedExtension,
   useResolvedExtensions,
+  BlueArrowCircleUpIcon,
+  FLAGS,
 } from '@console/dynamic-plugin-sdk';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import { BlueArrowCircleUpIcon, FLAGS, getInfrastructurePlatform } from '@console/shared';
+import { getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';

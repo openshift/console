@@ -9,7 +9,7 @@ import { OverviewItem } from '@console/shared';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';

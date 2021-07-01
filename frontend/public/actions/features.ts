@@ -1,14 +1,13 @@
 import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
-
-import { FLAGS } from '@console/shared/src/constants/common';
 import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
+  FLAGS,
   FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
   SetFeatureFlag,

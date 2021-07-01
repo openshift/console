@@ -1,4 +1,14 @@
 import * as _ from 'lodash';
+import {
+  DEPLOYMENT_REVISION_ANNOTATION,
+  DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
+  TRIGGERS_ANNOTATION,
+  DEPLOYMENT_PHASE_ANNOTATION,
+  CONTAINER_WAITING_STATE_ERROR_REASONS,
+  DEPLOYMENT_STRATEGY,
+  DEPLOYMENT_PHASE,
+  AllPodStatus,
+} from '@console/dynamic-plugin-sdk';
 import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
 import { Alert, Alerts } from '@console/internal/components/monitoring/types';
 import {
@@ -21,16 +31,6 @@ import {
   JobKind,
 } from '@console/internal/module/k8s';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
-import {
-  DEPLOYMENT_REVISION_ANNOTATION,
-  DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
-  TRIGGERS_ANNOTATION,
-  DEPLOYMENT_PHASE_ANNOTATION,
-  CONTAINER_WAITING_STATE_ERROR_REASONS,
-  DEPLOYMENT_STRATEGY,
-  DEPLOYMENT_PHASE,
-  AllPodStatus,
-} from '../constants';
 import {
   BuildConfigOverviewItem,
   OverviewItemAlerts,

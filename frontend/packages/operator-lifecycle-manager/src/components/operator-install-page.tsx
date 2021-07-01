@@ -11,6 +11,12 @@ import {
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import {
+  StatusIconAndText,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { errorModal } from '@console/internal/components/modals';
 import {
@@ -27,12 +33,7 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { parseJSONAnnotation, StatusIconAndText } from '@console/shared';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
+import { parseJSONAnnotation } from '@console/shared';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,

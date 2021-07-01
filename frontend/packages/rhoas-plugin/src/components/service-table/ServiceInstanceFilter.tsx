@@ -7,7 +7,7 @@ import {
   ToolbarGroup,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { KEYBOARD_SHORTCUTS } from '@console/shared';
+import { KEYBOARD_SHORTCUTS } from '@console/dynamic-plugin-sdk';
 
 type ServiceInstanceFilterProps = {
   textInputNameValue: string;

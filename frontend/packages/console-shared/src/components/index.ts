@@ -7,7 +7,6 @@ export * from './formik-fields';
 export * from './getting-started';
 export * from './lists';
 export * from './log';
-export * from './status';
 export * from './pod';
 export * from './popper';
 export * from './shortcuts';

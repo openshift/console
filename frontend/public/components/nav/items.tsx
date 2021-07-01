@@ -10,6 +10,7 @@ import {
   isHrefNavItem,
   isResourceNSNavItem,
   isResourceClusterNavItem,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
@@ -22,8 +23,8 @@ import { stripBasePath } from '../utils';
 import { featureReducerName } from '../../reducers/features';
 import { RootState } from '../../redux';
 import { getActiveNamespace } from '../../reducers/ui';
-import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/api/constants/common';
 
 export const matchesPath = (resourcePath, prefix) =>
   resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);

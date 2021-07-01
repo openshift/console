@@ -1,0 +1,8 @@
+{
+  "Error": "Error",
+  "Information": "Information",
+  "Pending": "Pending",
+  "In progress": "In progress",
+  "Healthy": "Healthy",
+  "Warning": "Warning"
+}

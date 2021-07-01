@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import * as _ from 'lodash';
+import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '@console/dynamic-plugin-sdk';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
-import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
 import { useActivePerspective } from './useActivePerspective';
 import { useTelemetry } from './useTelemetry';
 import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';

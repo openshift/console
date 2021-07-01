@@ -12,6 +12,7 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/dynamic-plugin-sdk';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
@@ -31,7 +32,6 @@ import {
 import { DynamicPluginInfo, isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { consolePluginModal } from '@console/shared/src/components/modals';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
   ConsoleOperatorConfigModel,

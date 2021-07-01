@@ -5,7 +5,7 @@ import { Base64 } from 'js-base64';
 import { Alert } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
 
-import { CONST } from '@console/shared';
+import { CONST } from '@console/dynamic-plugin-sdk';
 import { k8sPatch, k8sPatchByName, k8sCreate } from '../../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

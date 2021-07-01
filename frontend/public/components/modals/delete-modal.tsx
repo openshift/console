@@ -17,7 +17,7 @@ import {
   HandlePromiseProps,
 } from '../utils';
 import { k8sKill, referenceForOwnerRef, K8sKind } from '../../module/k8s/';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { findOwner } from '../../module/k8s/managed-by';
 import { k8sList } from '../../module/k8s/resource';

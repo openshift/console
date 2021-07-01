@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { CamelCaseWrap } from '@console/internal/components/utils';
-import { DASH } from '../../constants';
+import { DASH } from '../constants';
+import { CamelCaseWrap } from '../utils/CamelCaseWrap';
 import { StatusComponentProps } from './types';
 
 type StatusIconAndTextProps = StatusComponentProps & {

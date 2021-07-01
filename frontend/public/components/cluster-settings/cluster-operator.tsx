@@ -31,7 +31,7 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import RelatedObjectsPage from './related-objects';
 import { ClusterVersionConditionsLink, UpdatingMessageText } from './cluster-settings';
 

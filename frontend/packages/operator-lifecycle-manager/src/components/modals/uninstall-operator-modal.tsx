@@ -1,5 +1,9 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import {
+  CONSOLE_OPERATOR_CONFIG_NAME,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   createModalLauncher,
@@ -17,8 +21,6 @@ import {
   k8sPatch,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
-import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getPluginPatch, isPluginEnabled } from '@console/shared/src/utils';
 import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';

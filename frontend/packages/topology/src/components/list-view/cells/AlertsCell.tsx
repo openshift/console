@@ -3,8 +3,8 @@ import { DataListCell, Tooltip } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { Status as TooltipStatus } from '@console/dynamic-plugin-sdk';
 import {
-  Status as TooltipStatus,
   useBuildConfigsWatcher,
   getBuildAlerts,
   getResourcePausedAlert,

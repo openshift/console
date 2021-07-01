@@ -15,21 +15,23 @@ import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import {
   Status,
-  getRequester,
-  getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
-  FLAGS,
-  GreenCheckCircleIcon,
-  getName,
-  withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  withLastNamespace,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
+  FLAGS,
+  GreenCheckCircleIcon,
+} from '@console/dynamic-plugin-sdk';
+import {
+  getRequester,
+  getDescription,
+  getName,
+  withUserSettingsCompatibility,
+  withLastNamespace,
   useUserSettingsCompatibility,
   isModifiedEvent,
 } from '@console/shared';

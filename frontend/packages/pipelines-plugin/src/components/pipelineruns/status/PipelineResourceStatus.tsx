@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 
 type PipelineResourceStatusProps = {
   status: string;

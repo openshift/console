@@ -3,6 +3,7 @@ import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk';
 import { checkAccess, history } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
@@ -13,7 +14,6 @@ import {
 } from '@console/internal/module/k8s';
 import { Perspective } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getEventSourceCatalogProviderData } from '../catalog/event-source-data';

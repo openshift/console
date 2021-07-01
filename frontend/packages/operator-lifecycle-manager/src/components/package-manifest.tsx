@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, match } from 'react-router-dom';
+import { OPERATOR_HUB_LABEL } from '@console/dynamic-plugin-sdk';
 import {
   MultiListPage,
   Table,
@@ -20,7 +21,6 @@ import {
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
 import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
-import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';

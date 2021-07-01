@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Spinner } from '@patternfly/react-core';
 import { Tr } from '@patternfly/react-table';
-import { RedExclamationCircleIcon } from '@console/shared';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   ImportYAMLResults,
   ImportYAMLPageStatus,

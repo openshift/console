@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Label, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { BlueInfoCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -8,7 +9,6 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
-import { BlueInfoCircleIcon } from '@console/shared';
 import { TEMPLATE_PROVIDER_ANNOTATION, TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
 import { SUPPORT_URL } from '../../../constants/vm-templates/constants';
 import { TemplateSupport } from '../../../constants/vm-templates/support';

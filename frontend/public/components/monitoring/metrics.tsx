@@ -34,9 +34,11 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect, useDispatch, useSelector } from 'react-redux';
-
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   GettingStartedGrid,
   useGettingStartedShowState,

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { DetailsItem, ResourceLink } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { REGEXP_K8S_RESOURCE_SUFFIX } from './const';
 import { CapabilityProps, SpecCapability, StatusCapability } from './types';
 

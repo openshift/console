@@ -57,7 +57,7 @@ import {
   timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { PrometheusAPIError } from './types';
-import { ONE_MINUTE } from '@console/shared/src/constants/time';
+import { ONE_MINUTE } from '@console/dynamic-plugin-sdk/src/api/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CogsIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   ClusterVersionModel,
   NodeModel,
@@ -26,7 +27,6 @@ import {
   ResourceListPage,
   ResourceTabPage,
 } from '@console/plugin-sdk';
-import { FLAGS } from '@console/shared/src/constants';
 import '@console/internal/i18n.js';
 import {
   getClusterUpdateTimestamp,

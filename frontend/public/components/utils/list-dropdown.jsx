@@ -4,7 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { Dropdown } from './dropdown';
 import { Firehose } from './firehose';
 import { LoadingInline } from './status-box';

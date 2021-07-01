@@ -18,9 +18,9 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  useUserSettingsCompatibility,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { useUserSettingsCompatibility } from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace } from '../../actions/ui';

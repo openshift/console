@@ -2,12 +2,17 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+  isAlertAction,
+  AlertAction,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import {
   getAlertSeverity,
   getAlertMessage,

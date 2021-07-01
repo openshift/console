@@ -1,13 +1,14 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-
 import {
   FLAGS,
-  useActivePerspective,
-  useUserSettings,
-  getPerspectiveVisitedKey,
-} from '@console/shared';
+  RoutePage as DynamicRoutePage,
+  isRoutePage as isDynamicRoutePage,
+  useResolvedExtensions,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
+import { useActivePerspective, useUserSettings, getPerspectiveVisitedKey } from '@console/shared';
 import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
@@ -28,12 +29,6 @@ import {
   isRoutePage,
   useExtensions,
 } from '@console/plugin-sdk';
-import {
-  RoutePage as DynamicRoutePage,
-  isRoutePage as isDynamicRoutePage,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
 
 const RedirectComponent = (props) => {
   const to = `/k8s${props.location.pathname}`;

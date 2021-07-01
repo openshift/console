@@ -1,7 +1,7 @@
 import { createAggregateEdges, Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { ALL_APPLICATIONS_KEY, UNASSIGNED_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk/src';
 import { referenceFor } from '@console/internal/module/k8s';
-import { ALL_APPLICATIONS_KEY, UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src';
 import { TYPE_AGGREGATE_EDGE, TYPE_APPLICATION_GROUP } from '../const';
 import {
   DEFAULT_SUPPORTED_FILTER_IDS,

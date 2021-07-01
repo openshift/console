@@ -1,4 +1,4 @@
-import { ALL_NAMESPACES_KEY } from '../constants/common';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
 
 export const formatNamespacedRouteForResource = (resource, namespace) =>
   namespace === ALL_NAMESPACES_KEY

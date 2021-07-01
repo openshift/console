@@ -4,7 +4,7 @@ import {
   PerspectiveContextType,
   PerspectiveType,
 } from '@console/app/src/components/detect-perspective/perspective-context';
-import { USERSETTINGS_PREFIX } from '../constants';
+import { USERSETTINGS_PREFIX } from '@console/dynamic-plugin-sdk';
 
 const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
 
