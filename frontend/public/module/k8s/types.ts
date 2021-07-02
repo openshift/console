@@ -755,6 +755,7 @@ export enum ClusterVersionConditionType {
   Progressing = 'Progressing',
   RetrievedUpdates = 'RetrievedUpdates',
   Invalid = 'Invalid',
+  Upgradeable = 'Upgradeable',
 }
 
 export type ClusterVersionCondition = {

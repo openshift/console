@@ -44,6 +44,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
     [OperatorStatus.Progressing]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
@@ -131,6 +132,7 @@ const allStatuses = [
   OperatorStatus.Available,
   OperatorStatus.Progressing,
   OperatorStatus.Degraded,
+  OperatorStatus.CannotUpdate,
   OperatorStatus.Unknown,
 ];
 
