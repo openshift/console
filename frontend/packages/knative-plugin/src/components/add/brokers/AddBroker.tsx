@@ -33,7 +33,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
     formValues: AddBrokerFormYamlValues,
     actions: FormikHelpers<AddBrokerFormYamlValues>,
   ): Promise<K8sResourceKind> => {
-    let broker;
+    let broker: K8sResourceKind;
     if (formValues.editorType === EditorType.Form) {
       broker = convertFormToBrokerYaml(formValues);
     } else {

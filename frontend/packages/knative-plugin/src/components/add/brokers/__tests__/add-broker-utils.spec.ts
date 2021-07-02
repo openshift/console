@@ -4,7 +4,7 @@ import { LABEL_PART_OF, EVENT_BROKER_APP } from '../../const';
 import { convertFormToBrokerYaml, addBrokerInitialValues } from '../add-broker-utils';
 
 describe('broker-utils: ', () => {
-  describe('convertFormtoBroker', () => {
+  describe('convertFormToBrokerYaml', () => {
     it('should contain all the top level keys for broker', () => {
       const formValues = addBrokerInitialValues('test-ns', '');
       const broker = convertFormToBrokerYaml(formValues);

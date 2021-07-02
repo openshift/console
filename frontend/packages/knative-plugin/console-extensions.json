@@ -33,7 +33,10 @@
       "href": "/channel/ns/:namespace",
       "label": "%knative-plugin~Channel%",
       "description": "%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%",
-      "icon": { "$codeRef": "icons.channelIconSVG" }
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [
+        { "group": "eventing.knative.dev", "resource": "channels", "verb": "create" }
+      ]
     }
   },
   {
@@ -47,7 +50,8 @@
       "href": "/broker/ns/:namespace",
       "label": "%knative-plugin~Broker%",
       "description": "%knative-plugin~Create a Knative Broker to create an event forwarding and persistence layer with in-memory and reliable implementations%",
-      "icon": { "$codeRef": "icons.channelIconSVG" }
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
     }
   },
   {
