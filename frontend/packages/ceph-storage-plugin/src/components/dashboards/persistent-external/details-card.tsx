@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Base64 } from 'js-base64';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import {
@@ -7,14 +8,18 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { getName, getInfrastructurePlatform } from '@console/shared';
+import { getName, getInfrastructurePlatform, useDeepCompareMemoize } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { InfrastructureModel } from '@console/internal/models';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { InfrastructureModel, SecretModel } from '@console/internal/models';
 import { getOCSVersion } from '../../../selectors';
 import { OCSServiceModel } from '../../../models';
 
@@ -40,6 +45,31 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
   resources,
 }) => {
   const { t } = useTranslation();
+  const credentialsName = 'rook-ceph-dashboard-link';
+  const namespace = CEPH_STORAGE_NAMESPACE;
+
+  const secretResource = React.useMemo<WatchK8sResource>(
+    () =>
+      credentialsName
+        ? {
+            kind: SecretModel.kind,
+            namespace,
+            name: credentialsName,
+          }
+        : undefined,
+    [credentialsName, namespace],
+  );
+  const [secret] = useK8sWatchResource<K8sResourceKind>(secretResource);
+  const memoizedSecret = useDeepCompareMemoize(secret, true);
+  const link = React.useMemo(() => {
+    try {
+      const l = memoizedSecret.data.userKey;
+      const decode = Base64.decode(l);
+      return decode;
+    } catch {
+      return '';
+    }
+  }, [memoizedSecret]);
 
   React.useEffect(() => {
     k8sResources.forEach((r) => watchK8sResource(r));
@@ -71,6 +101,18 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
         <DetailItem title={t('ceph-storage-plugin~Service Name')}>
           OpenShift Container Storage
         </DetailItem>
+        {link && (
+          <DetailItem
+            key="ceph-dashboard-url"
+            title={t('ceph-storage-plugin~Ceph dashboard')}
+            isLoading={false}
+            error={false}
+          >
+            <div>
+              <a href={link}>{link}</a>
+            </div>
+          </DetailItem>
+        )}
         <DetailItem
           title={t('ceph-storage-plugin~Cluster Name')}
           error={!!ocsError}
