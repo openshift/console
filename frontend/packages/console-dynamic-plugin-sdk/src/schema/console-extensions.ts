@@ -1,3 +1,4 @@
+import { CreateOperand } from '../extensions';
 import { SupportedActionExtensions } from '../extensions/actions';
 import { AddAction, AddActionGroup } from '../extensions/add-actions';
 import { SupportedCatalogExtensions } from '../extensions/catalog';
@@ -90,7 +91,8 @@ export type SupportedExtension =
   | TopologyCreateConnector
   | TopologyDataModelFactory
   | TopologyDisplayFilters
-  | TopologyDecoratorProvider;
+  | TopologyDecoratorProvider
+  | CreateOperand;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

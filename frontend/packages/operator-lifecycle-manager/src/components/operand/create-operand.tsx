@@ -6,11 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
 import {
+  CreateOperand as CreateOperandExtension,
+  isCreateOperand,
+} from '@console/dynamic-plugin-sdk';
+import {
   PageHeading,
   StatusBox,
   FirehoseResult,
   BreadCrumbs,
   resourcePathFromModel,
+  AsyncComponent,
 } from '@console/internal/components/utils';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -23,8 +28,10 @@ import {
   nameForModel,
   CustomResourceDefinitionKind,
   definitionFor,
+  referenceForExtensionModel,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { Extension, useExtensions } from '@console/plugin-sdk';
 import { useActivePerspective } from '@console/shared';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
 import {
@@ -175,6 +182,19 @@ const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'mod
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => {
   const { t } = useTranslation();
+  const createOperandTypeGuard = React.useCallback(
+    (e: Extension): e is CreateOperandExtension => {
+      return (
+        isCreateOperand(e) &&
+        referenceForExtensionModel(e.properties.model) === props.match.params.plural
+      );
+    },
+    [props.match.params.plural],
+  );
+  const extensionPages = useExtensions(createOperandTypeGuard);
+  if (extensionPages.length) {
+    return <AsyncComponent loader={extensionPages[0].properties.component} match={props.match} />;
+  }
   return (
     <>
       <Helmet>
