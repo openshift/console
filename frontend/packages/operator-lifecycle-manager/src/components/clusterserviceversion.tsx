@@ -24,6 +24,7 @@ import {
   TableData,
   MultiListPage,
   RowFunctionArgs,
+  Flatten,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -118,7 +119,8 @@ import {
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
-const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
+const isCSV = (obj): obj is ClusterServiceVersionKind =>
+  referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const isPackageServer = (obj) =>
   obj.metadata.name === 'packageserver' &&
   obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
@@ -753,7 +755,10 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
     </Trans>
   );
 
-  const flatten = ({ clusterServiceVersions, subscriptions }) =>
+  const flatten: Flatten<{
+    clusterServiceVersions: ClusterServiceVersionKind[];
+    subscriptions: SubscriptionKind[];
+  }> = ({ clusterServiceVersions, subscriptions }) =>
     [
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(

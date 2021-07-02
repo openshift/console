@@ -9,7 +9,7 @@ interface TaskRunsProps {
 const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => (
   <TaskRunsListPage
     showTitle={false}
-    selector={{ 'tekton.dev/pipelineRun': obj.metadata.name }}
+    selector={{ matchLabels: { 'tekton.dev/pipelineRun': obj.metadata.name } }}
     showPipelineColumn={false}
     namespace={obj.metadata.namespace}
     hideBadge

@@ -4,7 +4,13 @@ import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { match as RouterMatch } from 'react-router-dom';
 import { Table, DetailsPage, MultiListPage, ListPage } from '@console/internal/components/factory';
-import { Timestamp, LabelList, StatusBox, ResourceKebab } from '@console/internal/components/utils';
+import {
+  Timestamp,
+  LabelList,
+  StatusBox,
+  ResourceKebab,
+  FirehoseResourcesResult,
+} from '@console/internal/components/utils';
 import * as k8sModels from '@console/internal/module/k8s';
 import store from '@console/internal/redux';
 import * as extensionHooks from '@console/plugin-sdk';
@@ -440,24 +446,38 @@ describe(OperandDetailsPage.displayName, () => {
       kind: 'Pod',
       metadata: {
         uid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        ownerReferences: [{ uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' }],
+        ownerReferences: [
+          {
+            uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            name: 'foo',
+            kind: 'fooKind',
+            apiVersion: 'fooVersion',
+          },
+        ],
       },
     };
     const deployment = {
       kind: 'Deployment',
       metadata: {
         uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        ownerReferences: [{ uid: testResourceInstance.metadata.uid }],
+        ownerReferences: [
+          {
+            uid: testResourceInstance.metadata.uid,
+            name: 'foo',
+            kind: 'fooKind',
+            apiVersion: 'fooVersion',
+          },
+        ],
       },
     };
     const secret = {
       kind: 'Secret',
       metadata: { uid: 'cccccccc-cccc-cccc-cccc-cccccccccccc' },
     };
-    const resources = {
-      Deployment: { data: [deployment] },
-      Secret: { data: [secret] },
-      Pod: { data: [pod] },
+    const resources: FirehoseResourcesResult = {
+      Deployment: { data: [deployment], loaded: true, loadError: undefined },
+      Secret: { data: [secret], loaded: true, loadError: undefined },
+      Pod: { data: [pod], loaded: true, loadError: undefined },
     };
     const data = flatten(resources);
 
@@ -544,12 +564,16 @@ describe(ProvidedAPIsPage.displayName, () => {
   it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {
     const otherResourceInstance = _.cloneDeep(testOwnedResourceInstance);
     otherResourceInstance.metadata.ownerReferences[0].uid = 'abfcd938-b991-11e7-845d-0eb774f2814a';
-    const resources = {
+    const resources: FirehoseResourcesResult = {
       TestOwnedResource: {
         data: [testOwnedResourceInstance, otherResourceInstance],
+        loaded: true,
+        loadError: undefined,
       },
       TestResource: {
         data: [testResourceInstance],
+        loaded: true,
+        loadError: undefined,
       },
     };
 
