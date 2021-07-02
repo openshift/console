@@ -22,6 +22,7 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
   onClick,
 }) => {
   const {
+    metadata: { name },
     spec: { icon, displayName, description, durationMinutes, prerequisites },
   } = quickStart;
 
@@ -42,6 +43,7 @@ const QuickStartTile: React.FC<QuickStartTileProps> = ({
       featured={isActive}
       title={<QuickStartTileHeader name={displayName} status={status} duration={durationMinutes} />}
       onClick={onClick}
+      data-test={`tile ${name}`}
     >
       <QuickStartTileDescription description={description} prerequisites={prerequisites} />
     </CatalogTile>

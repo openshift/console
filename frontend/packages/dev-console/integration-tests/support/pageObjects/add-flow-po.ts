@@ -9,6 +9,7 @@ export const addPagePO = {
   kebabMenuGettingStarted: '[data-test="actions"]',
   hideGettingStarted: '[data-test="hide"]',
   closeButton: '[aria-label="label-close-button"]',
+  viewAllQuickStarts: '[data-test="item all-quick-starts"]',
 };
 
 export const gitPO = {

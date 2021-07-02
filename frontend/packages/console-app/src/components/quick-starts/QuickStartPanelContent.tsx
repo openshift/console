@@ -45,7 +45,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   });
 
   return quickStart ? (
-    <DrawerPanelContent isResizable>
+    <DrawerPanelContent isResizable data-test="quickstart drawer">
       <div className={`co-quick-start-panel-content-head ${headerClasses}`}>
         <DrawerHead>
           <div className="co-quick-start-panel-content__title">
@@ -67,7 +67,11 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
           </DrawerActions>
         </DrawerHead>
       </div>
-      <DrawerPanelBody hasNoPadding className="co-quick-start-panel-content__body">
+      <DrawerPanelBody
+        hasNoPadding
+        className="co-quick-start-panel-content__body"
+        data-test="content"
+      >
         <AsyncComponent
           loader={() => import('./QuickStartController').then((c) => c.default)}
           quickStart={quickStart}

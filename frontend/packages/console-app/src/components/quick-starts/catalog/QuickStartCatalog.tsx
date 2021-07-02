@@ -72,7 +72,7 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) =>
         )}
       </EmptyStateBody>
       <EmptyStatePrimary>
-        <Button variant="link" onClick={clearFilters}>
+        <Button variant="link" onClick={clearFilters} data-test="clear-filter button">
           {t('quickstart~Clear all filters')}
         </Button>
       </EmptyStatePrimary>
