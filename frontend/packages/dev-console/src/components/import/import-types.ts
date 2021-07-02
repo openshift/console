@@ -271,9 +271,10 @@ export enum Resources {
 }
 
 export const ReadableResourcesNames = {
-  [Resources.OpenShift]: DeploymentConfigModel.label,
-  [Resources.Kubernetes]: DeploymentModel.label,
-  [Resources.KnativeService]: `Serverless Deployment`,
+  [Resources.OpenShift]: DeploymentConfigModel.labelKey,
+  [Resources.Kubernetes]: DeploymentModel.labelKey,
+  // t('devconsole~Serverless Deployment')
+  [Resources.KnativeService]: `devconsole~Serverless Deployment`,
 };
 
 export interface ImportData {
