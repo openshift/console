@@ -56,6 +56,8 @@
   "Create instance": "インスタンスの作成",
   "{{initializationResourceKind}} required": "{{initializationResourceKind}} が必須です。",
   "Create a {{initializationResourceKind}} instance to use this Operator.": "この Operator を使用するために {{initializationResourceKind}} インスタンスを作成します。",
+  "Operator failed": "Operator が失敗しました",
+  "This Operator was copied from another namespace. For the reason it failed, see ": "この Operator は別の namespace からコピーされました。失敗した理由については、以下を参照してください。 ",
   "Description": "説明",
   "Not available": "利用不可",
   "Provider": "プロバイダー",
