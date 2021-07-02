@@ -37,6 +37,20 @@
     }
   },
   {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+    },
+    "properties": {
+      "id": "knative-eventing-broker",
+      "groupId": "serverless",
+      "href": "/broker/ns/:namespace",
+      "label": "%knative-plugin~Broker%",
+      "description": "%knative-plugin~Create a Knative Broker to create an event forwarding and persistence layer with in-memory and reliable implementations%",
+      "icon": { "$codeRef": "icons.channelIconSVG" }
+    }
+  },
+  {
     "type": "console.catalog/item-type",
     "properties": {
       "type": "EventSource",
