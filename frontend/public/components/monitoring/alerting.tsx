@@ -478,10 +478,10 @@ const Graph: React.FC<GraphProps> = ({
 };
 
 const tableSilenceClasses = [
-  classNames('col-sm-5', 'col-xs-8'),
-  classNames('col-md-2', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-3', 'col-sm-4'),
-  classNames('col-md-2', 'hidden-sm'),
+  'pf-u-w-50 pf-u-w-33-on-sm',
+  'pf-m-hidden pf-m-visible-on-sm pf-m-hidden-on-md pf-m-visible-on-lg',
+  '',
+  'pf-m-hidden pf-m-visible-on-sm',
   Kebab.columnClass,
 ];
 
@@ -1218,10 +1218,10 @@ const SilencesDetailsPage = withFallback(
 );
 
 const tableAlertClasses = [
-  classNames('col-sm-6', 'col-xs-8'),
-  classNames('col-sm-2', 'hidden-xs'),
-  classNames('col-sm-2', 'col-xs-3'),
-  classNames('col-sm-2', 'col-xs-3'),
+  'pf-u-w-50 pf-u-w-33-on-sm',
+  'pf-m-hidden pf-m-visible-on-sm',
+  '',
+  'pf-m-hidden pf-m-visible-on-sm',
   Kebab.columnClass,
 ];
 
@@ -1460,10 +1460,10 @@ export const alertStateFilter = (): RowFilter => ({
 });
 
 const tableRuleClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-2', 'hidden-xs'),
-  classNames('col-sm-3', 'col-xs-4'),
-  classNames('col-sm-2', 'col-xs-2'),
+  'pf-u-w-50 pf-u-w-33-on-sm',
+  'pf-m-hidden pf-m-visible-on-sm',
+  '',
+  'pf-m-hidden pf-m-visible-on-sm',
 ];
 
 const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (

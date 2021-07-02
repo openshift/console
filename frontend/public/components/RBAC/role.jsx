@@ -52,7 +52,7 @@ const menuActions = [
   Kebab.factory.Delete,
 ];
 
-const roleColumnClasses = [classNames('col-xs-6'), classNames('col-xs-6'), Kebab.columnClass];
+const roleColumnClasses = ['', '', Kebab.columnClass];
 
 const RolesTableRow = ({ obj: role, index, key, style }) => {
   return (
@@ -154,10 +154,10 @@ class Details extends React.Component {
 const DetailsWithTranslation = withTranslation()(Details);
 
 const bindingsColumnClasses = [
-  classNames('col-xs-4'),
-  classNames('col-xs-2'),
-  classNames('col-xs-4'),
-  classNames('col-xs-2'),
+  'pf-u-w-33-on-sm',
+  'pf-u-w-16-on-sm',
+  'pf-u-w-33-on-sm',
+  'pf-u-w-16-on-sm',
 ];
 
 const BindingsTableRow = ({ obj: binding, index, key, style }) => {
