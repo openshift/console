@@ -1,6 +1,32 @@
+import * as React from 'react';
 import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
-import * as React from 'react';
+import { Helmet, Helmet } from 'react-helmet';
+import { useTranslation, useTranslation } from 'react-i18next';
+import { connect, connect } from 'react-redux';
+import { match as RouterMatch, match as RouterMatch } from 'react-router';
+import {
+  CreateOperand as CreateOperandExtension,
+  isCreateOperand,
+} from '@console/dynamic-plugin-sdk';
+import {
+  PageHeading,
+  StatusBox,
+  FirehoseResult,
+  BreadCrumbs,
+  resourcePathFromModel,
+  AsyncComponent,
+  PageHeading,
+  StatusBox,
+  FirehoseResult,
+  BreadCrumbs,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
+import { Firehose, Firehose } from '@console/internal/components/utils/firehose';
+import {
+  CustomResourceDefinitionModel,
+  CustomResourceDefinitionModel,
+} from '@console/internal/models';
 import {
   K8sKind,
   K8sResourceKind,
@@ -10,41 +36,29 @@ import {
   nameForModel,
   CustomResourceDefinitionKind,
   definitionFor,
+  referenceForExtensionModel,
 } from '@console/internal/module/k8s';
-import { CustomResourceDefinitionModel } from '@console/internal/models';
-import {
-  PageHeading,
-  StatusBox,
-  FirehoseResult,
-  BreadCrumbs,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
-import { Firehose } from '@console/internal/components/utils/firehose';
 import { RootState } from '@console/internal/redux';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { Extension, useExtensions } from '@console/plugin-sdk';
+import { useActivePerspective, useActivePerspective } from '@console/shared';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
-import { useActivePerspective } from '@console/shared';
-import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
-import { match as RouterMatch } from 'react-router';
-import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
-import { OperandForm } from './operand-form';
-import { OperandYAML } from './operand-yaml';
-import { exampleForModel, providedAPIForModel } from '..';
-import { DEFAULT_K8S_SCHEMA } from './const';
 import {
   getSchemaErrors,
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
-
+import { SyncedEditor } from '@console/shared/src/components/synced-editor';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { exampleForModel, providedAPIForModel } from '..';
+import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import { DEFAULT_K8S_SCHEMA } from './const';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
+import { OperandForm } from './operand-form';
+import { OperandYAML } from './operand-yaml';
 
 import './create-operand.scss';
-import { useTranslation } from 'react-i18next';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   clusterServiceVersion,
@@ -176,6 +190,19 @@ const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'mod
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => {
   const { t } = useTranslation();
+  const createOperandTypeGuard = React.useCallback(
+    (e: Extension): e is CreateOperandExtension => {
+      return (
+        isCreateOperand(e) &&
+        referenceForExtensionModel(e.properties.model) === props.match.params.plural
+      );
+    },
+    [props.match.params.plural],
+  );
+  const extensionPages = useExtensions(createOperandTypeGuard);
+  if (extensionPages.length) {
+    return <AsyncComponent loader={extensionPages[0].properties.component} match={props.match} />;
+  }
   return (
     <>
       <Helmet>
