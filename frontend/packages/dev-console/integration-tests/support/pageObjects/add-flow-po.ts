@@ -9,6 +9,7 @@ export const addPagePO = {
   kebabMenuGettingStarted: '[data-test="actions"]',
   hideGettingStarted: '[data-test="hide"]',
   closeButton: '[aria-label="label-close-button"]',
+  viewAllQuickStarts: '[data-test="item all-quick-starts"]',
 };
 
 export const gitPO = {
@@ -96,7 +97,7 @@ export const gitPO = {
 
 export const catalogPO = {
   search: 'input[placeholder="Filter by keyword..."]',
-  card: 'a.pf-c-card',
+  card: '.pf-c-card',
   cardBadge: 'span.pf-c-badge',
   groupBy: '[data-test-id="dropdown-button"]',
   aToz: '[data-test-dropdown-menu="desc"]',

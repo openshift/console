@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { shallow, mount, ShallowWrapper } from 'enzyme';
 
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   clusterVersionProps,
+  clusterVersionUpgradeableFalseProps,
   clusterVersionUpdatingProps,
   clusterVersionUpdatedProps,
   machineConfigPoolsProps,
@@ -14,7 +14,9 @@ import {
 import {
   ChannelName,
   ChannelVersion,
+  ClusterNotUpgradeableAlert,
   ClusterOperatorTabPage,
+  ClusterOperatorsLink,
   ClusterSettingsPage,
   ClusterVersionDetailsTable,
   CurrentChannel,
@@ -205,6 +207,25 @@ describe('Cluster Version Details Table page', () => {
         .at(1)
         .props().timestamp,
     ).toEqual('2020-08-05T17:49:47Z');
+  });
+});
+
+describe('Cluster Version Details Table page while ClusterVersion Upgradeable=False', () => {
+  let wrapper: ShallowWrapper<any>;
+  let cv;
+
+  beforeEach(() => {
+    (useK8sWatchResource as jest.Mock).mockReturnValueOnce([[], true]);
+    cv = clusterVersionUpgradeableFalseProps;
+    wrapper = shallow(<ClusterVersionDetailsTable obj={cv} autoscalers={[]} />);
+  });
+
+  it('should render ClusterVersionDetailsTable component', () => {
+    expect(wrapper.exists()).toBe(true);
+  });
+
+  it('should render the ClusterNotUpgradeableAlert component', () => {
+    expect(wrapper.find(ClusterNotUpgradeableAlert).exists()).toBe(true);
   });
 });
 
@@ -402,12 +423,7 @@ describe('Update In Progress while updating', () => {
 
   it('should render the child components of UpdateInProgress component', () => {
     expect(wrapper.find(UpdatesProgress)).toHaveLength(1);
-    expect(
-      wrapper
-        .find(Link)
-        .at(0)
-        .text(),
-    ).toBe(`${i18nNS}~ClusterOperators`);
+    expect(wrapper.find(ClusterOperatorsLink)).toHaveLength(1);
     expect(
       wrapper
         .find(NodesUpdatesGroup)

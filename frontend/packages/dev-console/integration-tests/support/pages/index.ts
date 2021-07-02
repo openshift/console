@@ -6,3 +6,4 @@ export * from './app';
 export * from './modal';
 export * from './operators-page';
 export * from './functions/index';
+export * from './quickStartsPage';

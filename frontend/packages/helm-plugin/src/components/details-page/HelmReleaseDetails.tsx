@@ -13,12 +13,7 @@ import {
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
-import {
-  deleteHelmRelease,
-  upgradeHelmRelease,
-  rollbackHelmRelease,
-} from '../../actions/modify-helm-release';
+import { ActionMenu, ActionsLoader, ActionMenuVariant, Status } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmReleases } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
@@ -78,17 +73,31 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
     </>
   );
 
-  const menuActions = [
-    () => upgradeHelmRelease(releaseName, namespace, HelmActionOrigins.details),
-    () => rollbackHelmRelease(releaseName, namespace, HelmActionOrigins.details),
-    () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
-  ];
+  const actionsScope = {
+    releaseName,
+    namespace,
+    actionOrigin: HelmActionOrigins.details,
+  };
+
+  const customActionMenu = (
+    <ActionsLoader contextId="helm-actions" scope={actionsScope}>
+      {(loader) =>
+        loader.loaded && (
+          <ActionMenu
+            actions={loader.actions}
+            options={loader.options}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        )
+      }
+    </ActionsLoader>
+  );
 
   return (
     <DetailsPage
       kindObj={SecretModel}
       match={match}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       name={secretName}
       namespace={namespace}
       customData={helmReleaseData}

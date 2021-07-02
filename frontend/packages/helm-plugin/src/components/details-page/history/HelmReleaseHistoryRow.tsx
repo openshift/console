@@ -6,8 +6,7 @@ import { coFetchJSON } from '@console/internal/co-fetch';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { confirmModal } from '@console/internal/components/modals';
 import { Timestamp } from '@console/internal/components/utils';
-import { Status } from '@console/shared';
-import KebabMenu from '@console/shared/src/components/kebab/KebabMenu';
+import { ActionMenu, Status } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
 
@@ -53,7 +52,7 @@ const confirmModalRollbackHelmRelease = (
 const HelmReleaseHistoryKebab: React.FC<HelmReleaseHistoryKebabProps> = ({ obj }) => {
   const { t } = useTranslation();
   const menuActions = [confirmModalRollbackHelmRelease(obj.name, obj.namespace, obj.version, t)];
-  return <KebabMenu actions={menuActions} />;
+  return <ActionMenu actions={menuActions} />;
 };
 
 const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => (

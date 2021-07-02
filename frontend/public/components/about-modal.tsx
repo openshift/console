@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/shared';
 import { getBrandingDetails } from './masthead';
-import { useAccessReview } from './utils';
+import { ReleaseNotesLink, useAccessReview } from './utils';
 import { ClusterVersionModel } from '../models';
 import { k8sVersion } from '../module/status';
 import {
@@ -20,7 +20,6 @@ import {
   getOpenShiftVersion,
   hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
-import { ReleaseNotesLink } from './cluster-settings/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');

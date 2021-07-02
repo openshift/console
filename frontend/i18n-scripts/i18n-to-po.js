@@ -44,11 +44,6 @@ function consolidateWithExistingTranslations(filePath, fileName, language, packa
       englishFile[matchingKeys[i]] = existingTranslationsFile[matchingKeys[i]];
     }
 
-    const untrackedKeys = existingKeys.filter((k) => englishKeys.indexOf(k) === -1);
-    for (let i = 0; i < untrackedKeys.length; i++) {
-      englishFile[untrackedKeys[i]] = existingTranslationsFile[untrackedKeys[i]];
-    }
-
     fs.writeFileSync(filePath, JSON.stringify(englishFile, null, 2));
   }
 }

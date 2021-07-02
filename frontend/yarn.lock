@@ -1782,10 +1782,10 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-4.87.3.tgz#eb2e9b22aa8f6f106580e7451bf204a06cb9949e"
   integrity sha512-hDNMPa7B1zKD8LWFZO4SS5hC/N+yvuci2sAn8HJd+EIbAvbMAUkRsyZ0/XO3BG3RVtpSlgq7q8x1pAHC/FTFuA==
 
-"@patternfly/quickstarts@1.0.0-rc.26":
-  version "1.0.0-rc.26"
-  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-1.0.0-rc.26.tgz#b94d5d08e54fa41451d62ed170b40c14fbb960bd"
-  integrity sha512-QJVV1Etw2wRH5FoiZPkwMK7sjGhw361VQTgQff2X60i/iNL8N3H8XeSaG6a2KPqpYhRitRbc178hDX/c/RhHRQ==
+"@patternfly/quickstarts@1.0.0-rc.28":
+  version "1.0.0-rc.28"
+  resolved "https://registry.yarnpkg.com/@patternfly/quickstarts/-/quickstarts-1.0.0-rc.28.tgz#6f20d9ffedf805b7930723f0639834c667304e7e"
+  integrity sha512-J9cTeCJrfXBTrMHBCdfPz1LDNmWiswrh/1Jj8zQcArbfwBrzcTs8VrlV6egzttFE/FS9/e66Jjdx31z+z2Jbtw==
   dependencies:
     "@patternfly/patternfly" "4.108.2"
     "@patternfly/react-catalog-view-extension" "4.11.42"
