@@ -14,6 +14,7 @@ export const createGitWorkload = (
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage();
+  gitPage.selectBuilderImageForGitUrl(gitUrl);
   gitPage.enterAppName(appName);
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);

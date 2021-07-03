@@ -154,6 +154,7 @@ const BaseNode: React.FC<BaseNodeProps> = ({
             paddingX={8}
             paddingY={4}
             kind={kind}
+            data-test={`name-${element.getLabel()}`}
           >
             {element.getLabel()}
           </SvgBoxedText>

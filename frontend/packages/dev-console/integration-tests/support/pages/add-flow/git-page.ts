@@ -36,6 +36,8 @@ export const gitPage = {
           .should('not.be.empty');
         cy.get('#form-input-application-name-field')
           .clear()
+          .should('not.have.value');
+        cy.get('#form-input-application-name-field')
           .type(appName)
           .should('have.value', appName);
         cy.log(`Application Name "${appName}" is created`);
@@ -109,6 +111,9 @@ export const gitPage = {
         break;
       case 'deployment config':
       case 'Deployment Config':
+      case 'deployment-config':
+      case 'Deployment-Config':
+      case 'DeploymentConfig':
         cy.get(gitPO.resources.deploymentConfig)
           .scrollIntoView()
           .check();
@@ -231,11 +236,7 @@ export const gitPage = {
   verifyValidatedMessage: (gitUrl = 'https://github.com/sclorg/nodejs-ex.git') => {
     cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
     cy.get('body').then(($body) => {
-      if (
-        $body.text().includes(messages.addFlow.privateGitRepoMessage) ||
-        $body.text().includes(messages.addFlow.rateLimitExceeded) ||
-        $body.find('[aria-label="Warning Alert"]').length
-      ) {
+      if ($body.text().includes(messages.addFlow.rateLimitExceeded)) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);
       }
     });
