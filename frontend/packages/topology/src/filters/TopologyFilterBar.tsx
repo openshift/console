@@ -92,7 +92,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
           </ToolbarItem>
         </ToolbarGroup>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
-          <ToolbarItem>
+          <ToolbarItem data-test="filter-by-resource">
             <KindFilterDropdown
               filters={filters}
               supportedKinds={supportedKinds}
