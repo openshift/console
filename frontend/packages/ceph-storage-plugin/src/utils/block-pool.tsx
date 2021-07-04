@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 
 import { TFunction } from 'i18next';
@@ -10,7 +11,7 @@ import {
   LockIcon,
 } from '@patternfly/react-icons';
 
-import { StoragePoolKind } from '../types';
+import { StoragePoolKind, OcsStorageClassKind } from '../types';
 import { CephBlockPoolModel } from '../models';
 import { CEPH_STORAGE_NAMESPACE, OCS_INTERNAL_CR_NAME } from '../constants/index';
 import { COMPRESSION_ON, ROOK_MODEL, POOL_PROGRESS } from '../constants/storage-pool-const';
@@ -85,25 +86,6 @@ export const PROGRESS_STATUS = (t: TFunction, poolName: string): ProgressStatusP
   },
 ];
 
-export type ProgressStatusProps = {
-  name: string;
-  icon: React.ComponentClass | React.FC;
-  desc: string;
-  className: string;
-};
-
-export type BlockPoolState = {
-  poolName: string;
-  poolStatus: string;
-  replicaSize: string;
-  isCompressed: boolean;
-  isArbiterCluster: boolean;
-  volumeType: string;
-  failureDomain: string;
-  inProgress: boolean;
-  errorMessage: string;
-};
-
 export enum BlockPoolActionType {
   SET_POOL_NAME = 'SET_POOL_NAME',
   SET_POOL_STATUS = 'SET_POOL_STATUS',
@@ -115,17 +97,6 @@ export enum BlockPoolActionType {
   SET_INPROGRESS = 'SET_INPROGRESS',
   SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE',
 }
-
-export type BlockPoolAction =
-  | { type: BlockPoolActionType.SET_POOL_NAME; payload: string }
-  | { type: BlockPoolActionType.SET_POOL_STATUS; payload: string }
-  | { type: BlockPoolActionType.SET_POOL_REPLICA_SIZE; payload: string }
-  | { type: BlockPoolActionType.SET_POOL_COMPRESSED; payload: boolean }
-  | { type: BlockPoolActionType.SET_POOL_ARBITER; payload: boolean }
-  | { type: BlockPoolActionType.SET_POOL_VOLUME_TYPE; payload: string }
-  | { type: BlockPoolActionType.SET_FAILURE_DOMAIN; payload: string }
-  | { type: BlockPoolActionType.SET_INPROGRESS; payload: boolean }
-  | { type: BlockPoolActionType.SET_ERROR_MESSAGE; payload: string };
 
 export const blockPoolInitialState: BlockPoolState = {
   poolName: '',
@@ -239,3 +210,103 @@ export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
   !!blockPoolConfig?.metadata.ownerReferences?.find(
     (ownerReference) => ownerReference.name === OCS_INTERNAL_CR_NAME,
   );
+
+export const BlockPoolColumnInfo = (t: TFunction) => ({
+  /**
+   * 2xl screen: all
+   * xl: name, status, storageclasses, replicas, mirroringstatus, compressionstatus
+   * lg: name, status, storageclasses, replicas
+   * md: name, status
+   * sm: name
+   */
+  name: {
+    classes: classNames('pf-u-w-16-on-2xl'),
+    id: 'name',
+    title: t('ceph-storage-plugin~Name'),
+  },
+  status: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-8-on-2xl'),
+    id: 'status',
+    title: t('ceph-storage-plugin~Status'),
+  },
+  storageclasses: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+    id: 'storageclasses',
+    title: t('ceph-storage-plugin~StorageClasses'),
+  },
+  replicas: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-8-on-2xl'),
+    id: 'replicas',
+    title: t('ceph-storage-plugin~Replicas'),
+  },
+  usedcapacity: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    id: 'usedcapacity',
+    title: t('ceph-storage-plugin~Used capacity'),
+  },
+  mirroringstatus: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    id: 'mirroringstatus',
+    title: t('ceph-storage-plugin~Mirroring status'),
+  },
+  overallImagehealth: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    id: 'overallImagehealth',
+    title: t('ceph-storage-plugin~Overall image health'),
+  },
+  compressionstatus: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+    id: 'compressionstatus',
+    title: t('ceph-storage-plugin~Compression status'),
+  },
+  compressionsavings: {
+    classes: classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
+    id: 'compressionsavings',
+    title: t('ceph-storage-plugin~Compression savings'),
+  },
+});
+
+export const getScNamesUsingPool = (
+  scResources: OcsStorageClassKind[],
+  poolName: string,
+): string[] =>
+  scResources.reduce((scList, sc) => {
+    if (sc.parameters?.pool === poolName) scList.push(sc.metadata?.name);
+    return scList;
+  }, []);
+
+export const getPerPoolMetrics = (metrics, error, isLoading) =>
+  // {"pool-1" : size_bytes, "pool-2" : size_bytes, ...}
+  !error && !isLoading
+    ? metrics.data?.result?.reduce((arr, obj) => ({ ...arr, [obj.metric?.name]: obj.value[1] }), {})
+    : {};
+
+export type BlockPoolAction =
+  | { type: BlockPoolActionType.SET_POOL_NAME; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_STATUS; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_REPLICA_SIZE; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_COMPRESSED; payload: boolean }
+  | { type: BlockPoolActionType.SET_POOL_ARBITER; payload: boolean }
+  | { type: BlockPoolActionType.SET_POOL_VOLUME_TYPE; payload: string }
+  | { type: BlockPoolActionType.SET_FAILURE_DOMAIN; payload: string }
+  | { type: BlockPoolActionType.SET_INPROGRESS; payload: boolean }
+  | { type: BlockPoolActionType.SET_ERROR_MESSAGE; payload: string };
+
+export type ProgressStatusProps = {
+  name: string;
+  icon: React.ComponentClass | React.FC;
+  desc: string;
+  className: string;
+};
+
+export type BlockPoolState = {
+  poolName: string;
+  poolStatus: string;
+  replicaSize: string;
+  isCompressed: boolean;
+  isArbiterCluster: boolean;
+  volumeType: string;
+  failureDomain: string;
+  inProgress: boolean;
+  errorMessage: string;
+};
