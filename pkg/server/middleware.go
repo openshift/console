@@ -102,6 +102,8 @@ func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {
 		w.Header().Set("X-DNS-Prefetch-Control", "off")
 		// Less information leakage about what domains we link to
 		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
+		// Prevent information leakage to external sources
+        w.Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src: 'self' wss:")
 		hdlr.ServeHTTP(w, r)
 	}
 }
