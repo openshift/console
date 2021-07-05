@@ -78,6 +78,7 @@
   "Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.": "Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.",
   "Select a Project to view the developer catalog or <2>create a Project</2>.": "Select a Project to view the developer catalog or <2>create a Project</2>.",
   "Provided by {{provider}}": "Provided by {{provider}}",
+  "N/A": "N/A",
   "Provider": "Provider",
   "Support": "Support",
   "Get support": "Get support",
