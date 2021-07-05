@@ -31,15 +31,7 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
       actionOrigin: 'topology',
     };
   }, [element]);
-  const { t } = useTranslation();
-  const actions = React.useMemo(
-    () => [
-      getHelmUpgradeAction(scope, t),
-      getHelmRollbackAction(scope, t),
-      getHelmDeleteAction(scope, t),
-    ],
-    [scope, t],
-  );
+  const actions = useHelmActionProvider(scope);
   if (nodeType !== TYPE_HELM_RELEASE) return [[], true, undefined];
-  return [actions, true, undefined];
+  return actions;
 };
