@@ -188,7 +188,7 @@
   "Edit health checks": "Edit health checks",
   "Add health checks": "Add health checks",
   "Learn more": "Learn more",
-  "Health checks for &nbsp;<1></1>": "Health checks for &nbsp;<1></1>",
+  "Health checks for <2></2>": "Health checks for <2></2>",
   "Container": "Container",
   "Container not found": "Container not found",
   "Readiness probe": "Readiness probe",
