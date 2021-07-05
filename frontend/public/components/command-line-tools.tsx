@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { ExternalLink, Firehose, FirehoseResult } from './utils';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { SyncMarkdownView } from './markdown-view';

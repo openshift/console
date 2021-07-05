@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
-import { EnvironmentField, CheckboxField } from '@console/shared';
+import { EnvironmentField, CheckboxField } from '@console/dynamic-plugin-sdk';
 import BuildConfigSection from '../BuildConfigSection';
 
 let BuildConfigSectionProps: React.ComponentProps<typeof BuildConfigSection>;

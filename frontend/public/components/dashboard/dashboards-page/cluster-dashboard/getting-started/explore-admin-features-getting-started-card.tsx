@@ -3,11 +3,11 @@ import * as semver from 'semver';
 import { useTranslation } from 'react-i18next';
 import { FlagIcon } from '@patternfly/react-icons';
 
-import { useOpenShiftVersion } from '@console/shared/src';
+import { useOpenShiftVersion } from '@console/dynamic-plugin-sdk/src/shared';
 import {
   GettingStartedCard,
   GettingStartedLink,
-} from '@console/shared/src/components/getting-started';
+} from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 export const ExploreAdminFeaturesGettingStartedCard: React.FC = () => {
   const { t } = useTranslation();

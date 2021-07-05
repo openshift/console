@@ -2,8 +2,12 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  FormFooter,
+  FlexForm,
+  FormBody,
+} from '@console/dynamic-plugin-sdk/src/shared/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
 import AppSection from './app/AppSection';
 import ImageSearchSection from './image-search/ImageSearchSection';

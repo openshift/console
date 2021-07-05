@@ -1,5 +1,5 @@
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { history } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { VMGenericLikeEntityKind } from 'packages/kubevirt-plugin/src/types/vmLike';
 
 export const redirectToList = (vmi: VMGenericLikeEntityKind, tab?: 'templates' | '' | null) => {

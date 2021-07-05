@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ValidationErrorType } from '@console/dynamic-plugin-sdk';
 import { inject } from '@console/internal/components/utils';
-import { ValidationErrorType } from '@console/shared';
 import { iGetIn } from '../../../utils/immutable';
 import {
   iGetFieldKey,

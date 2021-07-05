@@ -1,12 +1,12 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
   createResource,
   deleteResource,
   selectDropdownOptionById,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   consoleTypeSelectorId,
   openInNewWindow,

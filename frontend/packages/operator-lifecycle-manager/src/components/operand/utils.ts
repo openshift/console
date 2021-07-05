@@ -2,13 +2,13 @@ import * as Immutable from 'immutable';
 import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
 import { UiSchema } from 'react-jsonschema-form';
-import i18n from '@console/internal/i18n';
-import { modelFor } from '@console/internal/module/k8s';
-import { getSchemaAtPath } from '@console/shared';
+import { getSchemaAtPath } from '@console/dynamic-plugin-sdk';
 import {
   getJSONSchemaOrder,
   stringPathToUISchemaPath,
-} from '@console/shared/src/components/dynamic-form/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dynamic-form/utils';
+import i18n from '@console/internal/i18n';
+import { modelFor } from '@console/internal/module/k8s';
 import {
   REGEXP_K8S_RESOURCE_SUFFIX,
   REGEXP_FIELD_DEPENDENCY_PATH_VALUE,

@@ -1,8 +1,8 @@
+import { StatusGroupMapper } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/status-group';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
+import { createBasicLookup } from '@console/dynamic-plugin-sdk/src/shared/utils/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getName } from '@console/shared/src/selectors/common';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { NODE_STATUS_TITLE_KEYS } from '../../../constants';
 import { getNodeMaintenanceNodeName } from '../../../selectors';
 import { getNodeServerCSR } from '../../../selectors/csr';

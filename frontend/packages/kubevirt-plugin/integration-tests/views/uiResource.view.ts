@@ -1,6 +1,6 @@
 import { $, $$, by, element } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s/types';
-import { click } from '@console/shared/src/test-utils/utils';
 
 export const namespaceDropdownButton = $('[data-test-id="namespace-bar-dropdown"]').$('button');
 export const namespaceButton = (namespace: string) => $(`#${namespace}-link`);

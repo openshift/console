@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
+import { dimensifyHeader, getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { dimensifyHeader, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVMI } from '../../selectors/check-type';

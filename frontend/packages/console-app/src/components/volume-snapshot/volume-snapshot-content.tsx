@@ -2,6 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { Status } from '@console/dynamic-plugin-sdk';
 import {
   TableRow,
   TableData,
@@ -22,7 +23,6 @@ import {
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const tableColumnClasses = [

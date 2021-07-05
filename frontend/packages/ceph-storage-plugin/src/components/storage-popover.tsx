@@ -6,10 +6,10 @@ import {
   HealthState,
   healthStateMapping,
   healthStateMessage,
-} from '@console/shared/src/components/dashboard/status-card/states';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import Status, {
   StatusPopupSection,
-} from '@console/shared/src/components/dashboard/status-card/StatusPopup';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/StatusPopup';
 import { getCephHealthState } from './dashboards/persistent-internal/status-card/utils';
 import { WatchCephResource } from '../types';
 

@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import {
   GettingStartedGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
   QuickStartGettingStartedCard,
-} from '@console/shared/src/components/getting-started';
+} from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 import { USER_SETTINGS_KEY } from './constants';
 import { ClusterSetupGettingStartedCard } from './cluster-setup-getting-started-card';

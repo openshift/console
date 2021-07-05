@@ -5,7 +5,7 @@ import {
   getNamespace,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { parseURL } from '../url';
 
 export const isValidationError = (validationObject: ValidationObject) =>

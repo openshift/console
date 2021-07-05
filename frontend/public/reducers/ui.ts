@@ -2,7 +2,10 @@ import * as _ from 'lodash-es';
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 import { ActionType, UIAction } from '../actions/ui';
-import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import {
+  ALL_APPLICATIONS_KEY,
+  ALL_NAMESPACES_KEY,
+} from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';

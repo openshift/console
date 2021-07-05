@@ -2,11 +2,15 @@ import * as React from 'react';
 import { FlagIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import * as semver from 'semver';
-import { ALL_NAMESPACES_KEY, useActiveNamespace, useOpenShiftVersion } from '@console/shared/src';
+import {
+  ALL_NAMESPACES_KEY,
+  useActiveNamespace,
+  useOpenShiftVersion,
+} from '@console/dynamic-plugin-sdk/src/shared';
 import {
   GettingStartedLink,
   GettingStartedCard,
-} from '@console/shared/src/components/getting-started';
+} from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 import { fromHelmCharts } from '../../actions/add-resources';
 import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 

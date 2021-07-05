@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { OperatorStatusPriority, GetOperatorsWithStatuses } from '@console/plugin-sdk';
-import { getOperatorsStatus } from '@console/shared/src/components/dashboard/status-card/state-utils';
+import { getOperatorsStatus } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/state-utils';
 import {
   HealthState,
   healthStateMapping,
-} from '@console/shared/src/components/dashboard/status-card/states';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
+import { OperatorStatusPriority, GetOperatorsWithStatuses } from '@console/plugin-sdk';
 import { getSubscriptionStatus, getCSVStatus, subscriptionForCSV } from '../../status/csv-status';
 import {
   ClusterServiceVersionKind,

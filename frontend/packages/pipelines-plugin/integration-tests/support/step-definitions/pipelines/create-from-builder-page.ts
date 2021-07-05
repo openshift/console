@@ -2,7 +2,7 @@ import { And, Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { navigateTo, sidePane } from '@console/dev-console/integration-tests/support/pages/app';
-import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { safeYAMLToJS } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
 import {
   pipelineBuilderPO,
   pipelineDetailsPO,

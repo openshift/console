@@ -1,4 +1,4 @@
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,

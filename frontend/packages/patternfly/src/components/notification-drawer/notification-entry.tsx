@@ -7,7 +7,7 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { history, Timestamp } from '@console/internal/components/utils';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 

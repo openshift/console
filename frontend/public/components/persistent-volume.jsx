@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';

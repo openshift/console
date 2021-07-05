@@ -3,12 +3,12 @@ import { Alert, Button } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { CreateYAML } from '@console/internal/components/create-yaml';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { referenceForProvidedAPI } from '..';
 import {
   testClusterServiceVersion,

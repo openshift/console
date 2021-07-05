@@ -14,7 +14,7 @@ import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { getName, getUID, useFlag } from '@console/shared';
+import { getName, getUID, useFlag } from '@console/dynamic-plugin-sdk';
 import { GUARDED_FEATURES } from '@console/ceph-storage-plugin/src/features';
 import { storageClassTooltip, requestedCapacityTooltip } from '../../../../constants';
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';

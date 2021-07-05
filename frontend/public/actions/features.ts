@@ -2,7 +2,7 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 
-import { FLAGS } from '@console/shared/src/constants/common';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants/common';
 import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,

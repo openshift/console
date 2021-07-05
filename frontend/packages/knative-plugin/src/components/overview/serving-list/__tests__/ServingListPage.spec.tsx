@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { MultiTabListPage } from '@console/dynamic-plugin-sdk';
 import { NamespaceBar } from '@console/internal/components/namespace';
-import { MultiTabListPage } from '@console/shared';
 import { RevisionModel } from '../../../../models';
 import ServingListPage from '../ServingListsPage';
 

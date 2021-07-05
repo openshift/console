@@ -2,11 +2,11 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { ActionMenu, Status } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { confirmModal } from '@console/internal/components/modals';
 import { Timestamp } from '@console/internal/components/utils';
-import { ActionMenu, Status } from '@console/shared';
 import { HelmRelease } from '../../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseHistoryHeader';
 

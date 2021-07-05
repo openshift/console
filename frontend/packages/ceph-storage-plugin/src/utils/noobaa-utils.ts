@@ -5,7 +5,7 @@ import { PrometheusResponse, DataPoint } from '@console/internal/components/grap
 import { K8sResourceKind, DeploymentKind } from '@console/internal/module/k8s/types';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { SecretModel } from '@console/internal/models';
-import { getAPIVersion } from '@console/shared/src/selectors/common';
+import { getAPIVersion } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { BackingStoreKind, BucketClassKind, NamespaceStoreKind, PlacementPolicy } from '../types';
 import { StoreType } from '../constants/common';
 import {

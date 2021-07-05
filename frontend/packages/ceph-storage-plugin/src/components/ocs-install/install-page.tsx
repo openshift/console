@@ -11,8 +11,8 @@ import { RadioGroup } from '@console/internal/components/radio';
 import { InfrastructureModel, StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { useDeepCompareMemoize } from '@console/shared';
-import { getAnnotations } from '@console/shared/src/selectors/common';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
+import { getAnnotations } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,

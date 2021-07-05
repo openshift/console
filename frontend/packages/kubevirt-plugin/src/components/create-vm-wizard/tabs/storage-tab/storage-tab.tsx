@@ -16,9 +16,9 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { createLookup, getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { createLookup, getName } from '@console/shared/src';
 import { DeviceType } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
+import { ResourceDropdown } from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
 import { DeploymentModel, StatefulSetModel, DaemonSetModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
 
 export enum OptionTypes {
   selectAll = '#SELECT_ALL_WORKLOADS#',

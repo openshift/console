@@ -1,6 +1,6 @@
+import { ValidationErrorType } from '@console/dynamic-plugin-sdk/src/shared';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 /* eslint-disable lines-between-class-members */
-import { ValidationErrorType } from '@console/shared/src';
 import { Interval } from './types';
 
 export class IntervalValidationResult implements Interval {

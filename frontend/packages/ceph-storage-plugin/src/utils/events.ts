@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { EventKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel, PersistentVolumeModel } from '@console/internal/models';
-import { getNamespace } from '@console/shared/src/selectors/common';
+import { getNamespace } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import {
   NooBaaBackingStoreModel,
   NooBaaBucketClassModel,

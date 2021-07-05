@@ -11,7 +11,7 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
-import { getNamespace } from '@console/shared';
+import { getNamespace } from '@console/dynamic-plugin-sdk';
 import CreateStorageClusterWizard from './install-wizard';
 import { NavUtils } from '../../../types';
 import { getOperatorVersion } from '../../../selectors';

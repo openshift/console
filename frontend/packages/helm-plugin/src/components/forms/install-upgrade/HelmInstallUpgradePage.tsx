@@ -10,11 +10,11 @@ import { RouteComponentProps } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   HelmActionType,
   HelmChart,

@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ANNOTATIONS, withActivePerspective } from '@console/shared';
+import { ANNOTATIONS, withActivePerspective } from '@console/dynamic-plugin-sdk';
 import { isPerspective, Perspective, withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalTitle,

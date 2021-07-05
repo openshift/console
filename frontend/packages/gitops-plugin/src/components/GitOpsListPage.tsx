@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { DevPreviewBadge } from '@console/dynamic-plugin-sdk';
 import { PageHeading, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DevPreviewBadge } from '@console/shared';
 import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';

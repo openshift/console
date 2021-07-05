@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { Popover, Modal, Spotlight } from '@console/shared';
+import { Popover, Modal, Spotlight } from '@console/dynamic-plugin-sdk';
 import TourStepComponent from '../TourStepComponent';
 
 jest.mock('react-i18next', () => {

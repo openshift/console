@@ -1,4 +1,4 @@
-import { STORAGE_PREFIX, CONFIG_STORAGE_CONSOLE } from '@console/shared';
+import { STORAGE_PREFIX, CONFIG_STORAGE_CONSOLE } from '@console/dynamic-plugin-sdk';
 
 const STORAGE_CLOUDSHELL = 'terminal';
 

@@ -25,7 +25,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { ProvisionerProps } from '@console/plugin-sdk';
 import {
   ConfigMapKind,

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem, APIError } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { APIError } from '@console/shared';
 import { HelmChartRepositoryModel } from '../../models';
 import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';

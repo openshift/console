@@ -7,8 +7,13 @@ import {
   useActivePerspective,
   useUserSettings,
   getPerspectiveVisitedKey,
-} from '@console/shared';
-import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
+  RoutePage as DynamicRoutePage,
+  isRoutePage as isDynamicRoutePage,
+  useResolvedExtensions,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
@@ -28,12 +33,6 @@ import {
   isRoutePage,
   useExtensions,
 } from '@console/plugin-sdk';
-import {
-  RoutePage as DynamicRoutePage,
-  isRoutePage as isDynamicRoutePage,
-  useResolvedExtensions,
-  ResolvedExtension,
-} from '@console/dynamic-plugin-sdk';
 
 const RedirectComponent = (props) => {
   const to = `/k8s${props.location.pathname}`;

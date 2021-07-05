@@ -8,12 +8,15 @@ import NamespacedPage, {
 } from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
 import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
+import {
+  useQueryParams,
+  useUserSettingsCompatibility,
+} from '@console/dynamic-plugin-sdk/src/shared';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,

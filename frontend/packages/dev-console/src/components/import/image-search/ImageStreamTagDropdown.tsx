@@ -4,9 +4,9 @@ import { useFormikContext, FormikValues, getIn } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { DropdownField } from '@console/dynamic-plugin-sdk';
 import { ImageStreamTagModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   getImageStreamTags,

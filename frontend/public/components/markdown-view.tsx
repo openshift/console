@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 import { useTranslation } from 'react-i18next';
-import { useForceRender } from '@console/shared';
+import { useForceRender } from '@console/dynamic-plugin-sdk';
 
 import './_markdown-view.scss';
 

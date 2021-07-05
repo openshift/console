@@ -1,6 +1,6 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { rowForName } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
 
 const PAGE_LOAD_TIMEOUT_SECS = 15 * 1000;
 

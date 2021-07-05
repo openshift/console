@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { getName } from '@console/dynamic-plugin-sdk';
+import ActivityItem, {
+  ActivityProgress,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityItem';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel, TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { K8sActivityProps } from '@console/plugin-sdk';
-import { getName } from '@console/shared';
-import ActivityItem, {
-  ActivityProgress,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { VMTemplateLink } from '../../vm-templates/vm-template-link';
 import { diskImportKindMapping } from './utils';

@@ -4,12 +4,12 @@ import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { InputField } from '@console/shared';
 import PubSubFilter from './form-fields/PubSubFilter';
 import PubSubSubscriber from './form-fields/PubSubSubscriber';
 

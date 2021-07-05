@@ -10,8 +10,8 @@ import {
   WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
+import { calculateRadius, usePodsWatcher, PodRCData } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
 import { useDisplayFilters, getFilterById, SHOW_POD_COUNT_FILTER_ID } from '../../../../filters';
 import { getTopologyResourceObject } from '../../../../utils/topology-utils';
 import BaseNode from './BaseNode';

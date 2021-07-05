@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { click } from '@console/shared/src/test-utils/utils';
 import * as view from '../views/wizard.view';
 import { DiskDialog } from './dialogs/diskDialog';
 import { Wizard } from './models/wizard';

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getRandomChars } from '@console/dynamic-plugin-sdk/src/shared/utils';
 import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared/src/utils';
 import { EventingBrokerModel, EventingTriggerModel, EventingSubscriptionModel } from '../../models';
 import { pubsubValidationSchema } from './pubsub-validation-utils';
 import PubSubModal from './PubSubModal';

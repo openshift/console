@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Flex, FlexItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge } from '@console/dynamic-plugin-sdk';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 import './PipelineBuilderHeader.scss';

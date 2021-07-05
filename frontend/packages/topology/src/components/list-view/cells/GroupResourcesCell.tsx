@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { DataListCell } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
+import { isValidUrl } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { isValidUrl } from '@console/shared';
 import { showKind, useDisplayFilters } from '../../../filters';
 import { labelForNodeKind } from '../list-view-utils';
 

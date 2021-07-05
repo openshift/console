@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { getAnnotations } from '@console/shared';
+import { getAnnotations } from '@console/dynamic-plugin-sdk';
 import { IP_FAMILY } from '../../../constants';
 
 const pluralize = (count: number, singular: string, plural: string = `${singular}s`): string =>

@@ -1,5 +1,6 @@
 import { safeDump, safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
+import { click, createResource } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -7,7 +8,6 @@ import {
   getEditorContent,
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { click, createResource } from '@console/shared/src/test-utils/utils';
 import * as nadDetailView from '../views/nad.detail.view';
 import { NetworkAttachmentDefinition } from './models/nad';
 import { CNV_BRIDGE, NAD_ACTION } from './utils/constants';

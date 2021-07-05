@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
+import {
+  EnvironmentField,
+  InputField,
+  TextColumnField,
+} from '@console/dynamic-plugin-sdk/src/shared';
 import { StrategyFieldProps } from './utils/types';
 
 const CustomStrategy: React.FC<StrategyFieldProps> = ({ resourceObj }) => {

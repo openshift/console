@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { PodControllerOverviewItem } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, SidebarSectionHeading } from '@console/internal/components/utils';
-import { PodControllerOverviewItem } from '@console/shared';
 import {
   sampleKnativeReplicaSets,
   sampleKnativePods,

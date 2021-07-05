@@ -1,6 +1,6 @@
 import { merge } from 'lodash';
-import { getRandomChars } from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { getRandomChars } from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { PipelineTask, TektonTaskSpec, TaskKind, TektonTaskSteps } from '../../../../types';
 import { initialPipelineFormData } from '../const';
 import { validationSchema } from '../validation-utils';

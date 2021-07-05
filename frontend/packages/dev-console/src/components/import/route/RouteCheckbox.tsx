@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/dynamic-plugin-sdk';
 import { Resources, RouteData } from '../import-types';
 import AdvancedRouteOptions from './AdvancedRouteOptions';
 

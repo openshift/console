@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
+import { parseJSONAnnotation } from '@console/dynamic-plugin-sdk/src/shared/utils/annotations';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import {
   Firehose,
@@ -15,8 +17,6 @@ import {
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
 import { PackageManifestModel, OperatorGroupModel, SubscriptionModel } from '../../models';

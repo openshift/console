@@ -1,7 +1,7 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import * as yup from 'yup';
-import { nameValidationSchema } from '@console/shared';
+import { nameValidationSchema } from '@console/dynamic-plugin-sdk';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import {
   projectNameValidationSchema,

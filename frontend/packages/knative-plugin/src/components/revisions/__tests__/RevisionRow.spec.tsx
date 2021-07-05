@@ -1,9 +1,9 @@
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { ClampedText } from '@console/dynamic-plugin-sdk';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceConditionStatus } from '@console/internal/module/k8s';
-import { ClampedText } from '@console/shared';
 import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
 import { ConditionTypes, RevisionKind } from '../../../types';
 import RevisionRow from '../RevisionRow';

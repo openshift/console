@@ -2,8 +2,8 @@ import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getFieldId } from '@console/dynamic-plugin-sdk';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
-import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { secretModalLauncher } from '../CreateSecretModal';
 

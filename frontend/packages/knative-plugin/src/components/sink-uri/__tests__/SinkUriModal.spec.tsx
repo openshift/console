@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { InputField } from '@console/dynamic-plugin-sdk';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { InputField } from '@console/shared';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import SinkUriModal from '../SinkUriModal';
 
 type SinkUriModalProps = React.ComponentProps<typeof SinkUriModal>;

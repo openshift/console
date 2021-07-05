@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
+import { MenuActions, MultiTabListPage } from '@console/dynamic-plugin-sdk';
 import { NamespaceBar } from '@console/internal/components/namespace';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuActions, MultiTabListPage } from '@console/shared';
 import { ServiceModel, RevisionModel, RouteModel } from '../../../models';
 import RevisionsPage from '../../revisions/RevisionsPage';
 import RoutesPage from '../../routes/RoutesPage';

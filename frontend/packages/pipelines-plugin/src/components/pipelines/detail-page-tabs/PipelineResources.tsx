@@ -6,7 +6,7 @@ import {
   InputField,
   FormSelectField,
   FormSelectFieldOption,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { PipelineResourceType } from '../const';
 
 type PipelineResourcesParam = {

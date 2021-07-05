@@ -1,3 +1,9 @@
+import {
+  MockResources,
+  sampleBuildConfigs,
+  sampleBuilds,
+  sampleSecrets,
+} from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import * as utils from '@console/internal/components/utils';
 import {
   ImageStreamModel,
@@ -9,12 +15,6 @@ import {
   StatefulSetModel,
 } from '@console/internal/models';
 import * as k8s from '@console/internal/module/k8s';
-import {
-  MockResources,
-  sampleBuildConfigs,
-  sampleBuilds,
-  sampleSecrets,
-} from '@console/shared/src/utils/__tests__/test-resource-data';
 import { TEST_KINDS_MAP } from '../../__tests__/topology-test-data';
 import { baseDataModelGetter } from '../../data-transforms/data-transformer';
 import { getWorkloadResources } from '../../data-transforms/transform-utils';

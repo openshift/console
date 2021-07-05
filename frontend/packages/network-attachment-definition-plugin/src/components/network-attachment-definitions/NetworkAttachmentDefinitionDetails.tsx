@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared';
 import { ScrollToTopOnMount, SectionHeading, StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import { networkTypes } from '../../constants';
 import { getConfigAsJSON, getDescription, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';

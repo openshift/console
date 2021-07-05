@@ -1,4 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { errorMessage, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -6,7 +7,6 @@ import {
   cancelButton,
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import { NADDetail } from './models/nadDetail';
 import { getNADConfigs } from './nad.form.configs';
 import { CNV_BRIDGE, CONFIG_NAME_CNV_BRIDGE, PAGE_LOAD_TIMEOUT_SECS } from './utils/constants';

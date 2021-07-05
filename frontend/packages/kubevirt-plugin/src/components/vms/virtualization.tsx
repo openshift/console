@@ -11,12 +11,12 @@ import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
 import { ConfigMapModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,

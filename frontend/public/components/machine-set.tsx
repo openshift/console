@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared';
+import { getMachineAWSPlacement, getMachineRole } from '@console/dynamic-plugin-sdk';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';

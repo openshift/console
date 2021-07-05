@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
 import { K8sResourceKind, SecretKind, ConfigMapKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { SectionHeading, EmptyBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { Button } from '@patternfly/react-core';

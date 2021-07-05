@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import { createModal, GetModalContainer } from '@console/internal/components/factory';
 import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
 import {
@@ -14,7 +15,6 @@ import {
   MsgBox,
 } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
-import { RedExclamationCircleIcon } from '@console/shared';
 
 const NotFound: React.FC<NotFoundProps> = ({ message }) => (
   <Box className="text-center">

@@ -3,13 +3,13 @@ import { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { ResourceDropdownField } from '@console/dynamic-plugin-sdk';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { ResourceDropdownField } from '@console/shared';
 
 export interface SinkPubsubModalProps {
   resourceName: string;

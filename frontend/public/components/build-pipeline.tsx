@@ -7,7 +7,7 @@ import { resourcePath, ExternalLink } from './utils';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 
 const getStages = (status): any[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {

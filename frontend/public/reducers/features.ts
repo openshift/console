@@ -1,8 +1,7 @@
-import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { isModelFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
@@ -11,7 +10,7 @@ import {
 import {
   ModelFeatureFlag as DynamicModelFeatureFlag,
   isModelFeatureFlag as isDynamicModelFeatureFlag,
-} from '@console/dynamic-plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src/extensions';
 import {
   ChargebackReportModel,
   ClusterAutoscalerModel,
@@ -127,10 +126,6 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
 export const stateToFlagsObject = (state: FeatureState, desiredFlags: string[]): FlagsObject =>
   desiredFlags.reduce((allFlags, f) => ({ ...allFlags, [f]: state.get(f) }), {} as FlagsObject);
 
-const stateToProps = (state: FeatureState, desiredFlags: string[]): WithFlagsProps => ({
-  flags: stateToFlagsObject(state, desiredFlags),
-});
-
 export const getFlagsObject = ({ [featureReducerName]: featureState }: RootState): FlagsObject =>
   featureState.toObject();
 
@@ -139,19 +134,6 @@ export type FlagsObject = { [key: string]: boolean };
 export type WithFlagsProps = {
   flags: FlagsObject;
 };
-
-export type ConnectToFlags = <P extends WithFlagsProps>(
-  ...flags: (FLAGS | string)[]
-) => (
-  C: React.ComponentType<P>,
-) => React.ComponentType<Omit<P, keyof WithFlagsProps>> & {
-  WrappedComponent: React.ComponentType<P>;
-};
-
-export const connectToFlags: ConnectToFlags = (...flags) =>
-  connect((state: RootState) => stateToProps(state[featureReducerName], flags), null, null, {
-    areStatePropsEqual: _.isEqual,
-  });
 
 // Flag detection is not complete if the flag's value is `undefined`.
 export const flagPending = (flag: boolean) => flag === undefined;

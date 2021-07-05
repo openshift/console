@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect } from 'react-router';
-import { InlineTechPreviewBadge, useFlag } from '@console/shared';
+import { InlineTechPreviewBadge, useFlag } from '@console/dynamic-plugin-sdk';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import CloudShellTerminal from './CloudShellTerminal';
 import './CloudShellTab.scss';

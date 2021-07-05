@@ -3,6 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { DropdownField, InputField, ActionGroupWithIcons } from '@console/dynamic-plugin-sdk';
 import {
   SecretType,
   BasicAuthSubform,
@@ -10,7 +11,6 @@ import {
   CreateConfigSubform,
 } from '@console/internal/components/secrets/create-secret';
 import { ButtonBar } from '@console/internal/components/utils';
-import { DropdownField, InputField, ActionGroupWithIcons } from '@console/shared';
 import { SecretAnnotationId } from '../../const';
 import './SecretForm.scss';
 

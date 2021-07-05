@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import { FormGroup, NumberInput } from '@patternfly/react-core';
 import { RequestSizeInput } from '@console/internal/components/utils';
-import { getName, isObjectSC } from '@console/shared';
+import { getName, isObjectSC } from '@console/dynamic-plugin-sdk';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import {

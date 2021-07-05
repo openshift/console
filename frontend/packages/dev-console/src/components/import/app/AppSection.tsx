@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { InputField, TextAreaField } from '@console/shared';
+import { InputField, TextAreaField } from '@console/dynamic-plugin-sdk';
 import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 import { ProjectData } from '../import-types';
 import FormSection from '../section/FormSection';

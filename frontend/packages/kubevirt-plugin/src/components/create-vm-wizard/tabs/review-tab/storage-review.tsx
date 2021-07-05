@@ -4,10 +4,10 @@ import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-t
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { createLookup, getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { createLookup, getName } from '@console/shared/src';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';

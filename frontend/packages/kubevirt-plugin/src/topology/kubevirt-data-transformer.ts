@@ -1,4 +1,5 @@
 import { Model } from '@patternfly/react-topology';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   K8sResourceKind,
@@ -6,7 +7,6 @@ import {
   PodKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared';
 import {
   getTopologyGroupItems,
   getTopologyNodeItem,

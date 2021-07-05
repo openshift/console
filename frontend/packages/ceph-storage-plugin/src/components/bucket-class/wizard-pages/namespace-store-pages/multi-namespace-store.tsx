@@ -10,7 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { getName, getUID } from '@console/shared';
+import { getName, getUID } from '@console/dynamic-plugin-sdk';
 import { NamespaceStoreKind } from '../../../../types';
 import { NamespaceStoreList } from '../../../namespace-store/namespace-store-table';
 import { Action, State } from '../../state';

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
+import { getRandomChars } from '@console/dynamic-plugin-sdk/src/shared/utils/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared/src/utils/utils';
 import { PipelineResourceModel } from '../../../models';
 import { convertMapToNameValueArray } from '../modals/common/utils';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useTabbedTableBreadcrumbsFor } from '@console/dynamic-plugin-sdk';
 import { DetailsPage } from '@console/internal/components/factory';
 import { Kebab, navFactory } from '@console/internal/components/utils';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { EventingSubscriptionModel } from '../../../models';
 import { serverlessTab } from '../../../utils/serverless-tab-utils';
 import SubscriptionDetails from './SubscriptionDetails';

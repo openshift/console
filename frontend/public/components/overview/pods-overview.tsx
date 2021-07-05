@@ -9,7 +9,7 @@ import {
   getPodsForResource,
   getResourcesToWatchForPods,
   BuildConfigData,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { ResourceLink, resourcePath, SidebarSectionHeading, LoadingBox } from '../utils';
 import { podPhase, PodKind, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { useK8sWatchResources } from '../utils/k8s-watch-hook';

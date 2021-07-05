@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
 import {
+  getRandomChars,
+  getResourceLimitsData,
+} from '@console/dynamic-plugin-sdk/src/shared/utils';
+import {
   DeploymentConfigModel,
   DeploymentModel,
   ImageStreamModel,
@@ -15,7 +19,6 @@ import {
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import { RegistryType } from '../../utils/imagestream-utils';
 import {
   getAppLabels,

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   MockBaseResources,
   sampleDeployments,
-} from '@console/shared/src/utils/__tests__/test-resource-data';
+} from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   resources,
   topologyData,

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Dropdown, Firehose } from '@console/internal/components/utils';
 import { Button, FormGroup, TextInput, InputGroup } from '@patternfly/react-core';
 import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
+import { ResourceDropdown } from '@console/dynamic-plugin-sdk';
 import { BC_PROVIDERS, AWS_REGIONS } from '../../constants';
 import { endpointsSupported, awsRegionItems } from '../../utils/noobaa-utils';
 import { StoreType } from '../../constants/common';

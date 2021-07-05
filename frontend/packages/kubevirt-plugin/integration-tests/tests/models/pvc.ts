@@ -6,10 +6,10 @@ import {
   pvcStatus,
   selectItemFromDropdown,
 } from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { click } from '@console/shared/src/test-utils/utils';
 import { listViewAction } from '../../views/actions.view';
 import * as pvcView from '../../views/pvc.view';
 import { getTestDataVolume } from '../mocks/mocks';

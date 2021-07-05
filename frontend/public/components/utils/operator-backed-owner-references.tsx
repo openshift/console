@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { OwnerReferences } from './owner-references';
 import { useTranslation } from 'react-i18next';
 

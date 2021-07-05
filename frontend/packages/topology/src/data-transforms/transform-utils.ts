@@ -1,5 +1,6 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
 import * as _ from 'lodash';
+import { isKnativeServing, OverviewItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
@@ -16,7 +17,6 @@ import {
   TYPE_EVENT_SOURCE_KAFKA,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
-import { isKnativeServing, OverviewItem } from '@console/shared';
 import {
   TYPE_APPLICATION_GROUP,
   TYPE_CONNECTS_TO,

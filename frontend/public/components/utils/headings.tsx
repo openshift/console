@@ -14,7 +14,7 @@ import {
   HealthChecksAlert,
   YellowExclamationTriangleIcon,
   useCsvWatchResource,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import {
   ActionsMenu,

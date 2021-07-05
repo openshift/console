@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardGrid from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
 import { StatusCard } from './status-card';
 import { DetailsCard } from './details-card';
 import { InventoryCard } from './inventory-card';

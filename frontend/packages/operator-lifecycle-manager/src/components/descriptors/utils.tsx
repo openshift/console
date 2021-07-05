@@ -1,7 +1,7 @@
 import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
-import { getSchemaAtPath } from '@console/shared';
+import { getSchemaAtPath } from '@console/dynamic-plugin-sdk';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
   DEPRECATED_CAPABILITIES,

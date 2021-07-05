@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField } from '@console/shared';
+import { NumberSpinnerField } from '@console/dynamic-plugin-sdk';
 import FormSection from '../section/FormSection';
 
 const ScalingSection: React.FC<{ name: string }> = ({ name }) => {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ValidationErrorType } from '@console/shared';
+import { ValidationErrorType } from '@console/dynamic-plugin-sdk';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { ignoreCaseSort } from '../../../../utils/sort';

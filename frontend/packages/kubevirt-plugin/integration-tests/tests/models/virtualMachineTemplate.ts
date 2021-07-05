@@ -1,8 +1,11 @@
-import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
+import { cloneDeepWithEnum } from '@console/dynamic-plugin-sdk/src/shared/constants/object-enum';
+import {
+  detailViewAction,
+  listViewAction,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/actions.view';
 /* eslint-disable no-await-in-loop */
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { templateCreateVMLink, vmtLinkByName, vmtTitle } from '../../views/template.view';
 import { VirtualMachineTemplateModel } from '../types/types';
 import { VMTemplateBuilderData } from '../types/vm';

@@ -2608,10 +2608,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-jsonschema-form@^1.0.8":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@types/react-jsonschema-form/-/react-jsonschema-form-1.7.1.tgz#3068a53a6b77d75ba223fd0f6b95fa07297d42fe"
-  integrity sha512-mUU3efUOfEupoDSlCgJTOHEXJ90ZClQLThmoobkV6e8wnkSDP9EiUYza5br/QaJF8EAQFS/l/STfb/WDiUVr1w==
+"@types/react-jsonschema-form@^1.7.5":
+  version "1.7.5"
+  resolved "https://registry.yarnpkg.com/@types/react-jsonschema-form/-/react-jsonschema-form-1.7.5.tgz#1b08327662afd610a93f28e33950e00e6e848581"
+  integrity sha512-Ovhmu9WOAHee0GNCncNiTRtUmrVZgj8vkdEwc3f0CgvkNIYss9ucQ1F6TNLuakXumAg25P1zGgeCqr37iJo5FQ==
   dependencies:
     "@types/json-schema" "*"
     "@types/react" "*"
@@ -12334,11 +12334,6 @@ lodash.once@^4.0.0, lodash.once@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
 
-lodash.pick@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
-  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
-
 lodash.restparam@^3.0.0:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/lodash.restparam/-/lodash.restparam-3.6.1.tgz#936a4e309ef330a7645ed4145986c85ae5b20805"
@@ -12356,11 +12351,6 @@ lodash.sortby@^4.7.0:
 lodash.tail@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.tail/-/lodash.tail-4.1.1.tgz#d2333a36d9e7717c8ad2f7cacafec7c32b444664"
-
-lodash.topath@^4.5.2:
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/lodash.topath/-/lodash.topath-4.5.2.tgz#3616351f3bba61994a0931989660bd03254fd009"
-  integrity sha1-NhY1Hzu6YZlKCTGYlmC9AyVP0Ak=
 
 lodash.unescape@4.0.1:
   version "4.0.1"
@@ -15539,17 +15529,15 @@ react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
 
-react-jsonschema-form@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/react-jsonschema-form/-/react-jsonschema-form-1.7.0.tgz#c2779886c56c4bab25d54e2dec76d24b384d2d73"
-  integrity sha512-h0cPf02SzhY85nCe8C8nbR0fPUgfXAPTrv14yWuGDiti+QNcdF1taO8nIo8LO6ze9GeJVs/MN6AipmS4kB81mA==
+react-jsonschema-form@1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/react-jsonschema-form/-/react-jsonschema-form-1.8.1.tgz#9c962f29a55b3fe071d8edf2fc3430f05f1b7ed9"
+  integrity sha512-aaDloxNAcGXOOOcdKOxxqEEn5oDlPUZgWcs8unXXB9vjBRgCF8rCm/wVSv1u2G5ih0j/BX6Ewd/WjI2g00lPdg==
   dependencies:
     "@babel/runtime-corejs2" "^7.4.5"
     ajv "^6.7.0"
     core-js "^2.5.7"
-    lodash.get "^4.4.2"
-    lodash.pick "^4.4.0"
-    lodash.topath "^4.5.2"
+    lodash "^4.17.15"
     prop-types "^15.5.8"
     react-is "^16.8.4"
     react-lifecycles-compat "^3.0.4"

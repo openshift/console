@@ -2,12 +2,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import Status, {
   StatusPopupSection,
-} from '@console/shared/src/components/dashboard/status-card/StatusPopup';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/StatusPopup';
+import HealthItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthItem';
 import {
   healthStateMapping,
   HealthState,
-} from '@console/shared/src/components/dashboard/status-card/states';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { SubsystemHealth } from '@console/plugin-sdk';
 import { getWorstStatus } from '@console/app/src/components/dashboards-page/status';
 import { StatusType } from '../../../../constants';

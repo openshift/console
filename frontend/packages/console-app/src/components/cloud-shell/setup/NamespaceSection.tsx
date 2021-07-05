@@ -3,9 +3,15 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  InputField,
+  ResourceDropdownField,
+  useFormikValidationFix,
+  FLAGS,
+} from '@console/dynamic-plugin-sdk';
 import { ProjectModel } from '@console/internal/models';
-import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
-import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { WithFlagsProps } from '@console/internal/reducers/features';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
 
 type NamespaceSectionProps = WithFlagsProps;

@@ -1,9 +1,12 @@
+import {
+  listViewAction,
+  detailViewAction,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/actions.view';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { createYAMLLink, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { isLoaded as yamlPageIsLoaded } from '@console/internal-integration-tests/views/yaml.view';
-import { listViewAction, detailViewAction } from '@console/shared/src/test-utils/actions.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import * as NADListView from '../../views/nad.list.view';
 import { NAD_ACTION } from '../utils/constants';
 import { NADForm } from './nadForm';

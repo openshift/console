@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 import { global_warning_color_100 as globalWarning100 } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as globalDanger100 } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import { usePrometheusQueries } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/prometheus-hook';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
+} from '@console/dynamic-plugin-sdk/src/shared/components/status/icons';
 import { CAPACITY_INFO_QUERIES } from '../../../../queries';
 import { DANGER_THRESHOLD, WARNING_THRESHOLD } from '../../common/capacity-breakdown/consts';
 import './raw-capacity-card.scss';

@@ -35,8 +35,11 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import { connect, useDispatch, useSelector } from 'react-redux';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';

@@ -1,4 +1,4 @@
-import * as dashboardView from '@console/shared/src/test-views/dashboard-shared.view';
+import * as dashboardView from '@console/dynamic-plugin-sdk/src/shared/test-views/dashboard-shared.view';
 import * as clusterDashboardView from '../../views/dashboard.view';
 import * as sideNavView from '../../views/sidenav.view';
 

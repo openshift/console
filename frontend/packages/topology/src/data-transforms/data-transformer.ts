@@ -1,8 +1,8 @@
 import { EdgeModel, Model } from '@patternfly/react-topology';
+import { createOverviewItemForType } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { createOverviewItemForType } from '@console/shared';
 import { TYPE_APPLICATION_GROUP, TYPE_TRAFFIC_CONNECTOR, TYPE_WORKLOAD } from '../const';
 import {
   TopologyDataResources,

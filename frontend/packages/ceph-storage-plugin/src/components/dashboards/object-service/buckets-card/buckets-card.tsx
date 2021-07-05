@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { RedExclamationCircleIcon } from '@console/shared';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -14,7 +14,7 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import InventoryItem, {
   ResourceInventoryItem,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
 import { BucketsTitle } from './buckets-card-item';
 import { getObcStatusGroups, getObStatusGroups } from './utils';
 import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../../../models';

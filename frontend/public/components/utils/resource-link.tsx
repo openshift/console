@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { ResourceIcon } from './resource-icon';
 import {
   modelFor,
@@ -13,7 +13,8 @@ import {
   K8sResourceKind,
 } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
-import { connectToFlags, FlagsObject } from '../../reducers/features';
+import { FlagsObject } from '../../reducers/features';
+import { connectToFlags } from '../../reducers/connectToFlags';
 
 const unknownKinds = new Set();
 

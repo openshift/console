@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ResourceDropdown } from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { ResourceDropdown } from '@console/shared';
 
 interface SourceSecretDropdownProps {
   dropDownClassName?: string;

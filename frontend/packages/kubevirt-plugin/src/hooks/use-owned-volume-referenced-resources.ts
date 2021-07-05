@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import * as _ from 'lodash';
+import { getOwnerReferences } from '@console/dynamic-plugin-sdk/src/shared';
+import { compareOwnerReference } from '@console/dynamic-plugin-sdk/src/shared/utils/owner-references';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
-import { getOwnerReferences } from '@console/shared/src';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VolumeReferencedObject, VolumeWrapper } from '../k8s/wrapper/vm/volume-wrapper';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { V1Volume } from '../types/api';

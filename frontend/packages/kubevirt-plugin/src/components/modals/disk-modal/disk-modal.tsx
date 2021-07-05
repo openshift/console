@@ -13,6 +13,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import { getAnnotations, getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   ExternalLink,
@@ -30,7 +31,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { getAnnotations, getName } from '@console/shared/src';
 import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,

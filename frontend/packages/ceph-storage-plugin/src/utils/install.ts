@@ -16,7 +16,7 @@ import {
   HOSTNAME_LABEL_KEY,
   LABEL_OPERATOR,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
+import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/dynamic-plugin-sdk';
 import { NodeModel } from '@console/internal/models';
 import {
   ocsTaint,

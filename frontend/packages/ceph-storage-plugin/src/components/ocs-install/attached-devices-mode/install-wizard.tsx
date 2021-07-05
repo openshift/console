@@ -22,7 +22,7 @@ import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { initialState, reducer } from './reducer';
 import {
   DiscoverDisks,

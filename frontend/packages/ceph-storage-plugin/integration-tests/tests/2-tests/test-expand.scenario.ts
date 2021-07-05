@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { clickKebabAction } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   testPVC,

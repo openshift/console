@@ -1,7 +1,7 @@
 import { $, $$, browser, by, element } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { waitForNone } from '@console/internal-integration-tests/protractor.conf';
 import { actionForLabel } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import { ProvisionSource } from '../tests/utils/constants/enums/provisionSource';
 
 // Wizard Common

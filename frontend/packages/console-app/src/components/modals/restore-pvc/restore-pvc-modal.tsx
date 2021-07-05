@@ -3,6 +3,13 @@ import { FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import {
+  getName,
+  getNamespace,
+  Status,
+  isCephProvisioner,
+  getAnnotations,
+} from '@console/dynamic-plugin-sdk';
+import {
   ModalBody,
   ModalComponentProps,
   ModalSubmitFooter,
@@ -41,7 +48,6 @@ import {
   PersistentVolumeClaimKind,
   VolumeSnapshotClassKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, Status, isCephProvisioner, getAnnotations } from '@console/shared';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 
 import './restore-pvc-modal.scss';

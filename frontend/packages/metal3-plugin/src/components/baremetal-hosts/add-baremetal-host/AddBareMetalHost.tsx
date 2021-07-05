@@ -3,6 +3,8 @@ import { Formik, FormikHelpers } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { getName, nameValidationSchema } from '@console/dynamic-plugin-sdk';
+import { usePrevious } from '@console/dynamic-plugin-sdk/src/shared/hooks/previous';
 import {
   history,
   resourcePathFromModel,
@@ -15,8 +17,6 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { referenceForModel, SecretKind } from '@console/internal/module/k8s';
-import { getName, nameValidationSchema } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import { createBareMetalHost, updateBareMetalHost } from '../../../k8s/requests/bare-metal-host';
 import { BareMetalHostModel } from '../../../models';
 import {

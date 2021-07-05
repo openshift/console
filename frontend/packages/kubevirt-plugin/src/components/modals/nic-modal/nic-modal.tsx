@@ -9,6 +9,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { getName, ValidationErrorType } from '@console/dynamic-plugin-sdk';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -17,7 +18,6 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { getName, ValidationErrorType } from '@console/shared';
 import {
   NetworkInterfaceModel,
   NetworkInterfaceType,

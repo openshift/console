@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import {
   DetailsPage,
   ListPage,

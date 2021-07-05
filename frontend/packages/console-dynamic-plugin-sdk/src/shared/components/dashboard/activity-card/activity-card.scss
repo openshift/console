@@ -1,0 +1,176 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+@import '../../../styles/skeleton-screen';
+@import '../../../../../../../public/style/vars';
+
+.co-activity-card__body {
+  max-height: 30rem;
+  min-height: 10rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.co-activity-card__ongoing-body {
+  .co-activity-item__ongoing:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.co-activity-card__ongoing-title {
+  border-bottom: solid 1px $pf-color-black-300;
+  padding: 0.2rem var(--pf-c-card--child--PaddingRight) 0.2rem var(--pf-c-card--child--PaddingLeft);
+}
+
+.co-activity-card__recent-more-link {
+  padding: 0 var(--pf-c-card--child--PaddingRight) var(--pf-c-card--child--PaddingBottom)
+    var(--pf-c-card--child--PaddingLeft);
+}
+
+.co-activity-card__recent-accordion.pf-c-accordion {
+  box-shadow: none;
+  padding-bottom: 0;
+  padding: 0.75rem 0;
+  h5 {
+    font-family: var(--pf-global--FontFamily--sans-serif);
+    font-size: var(--pf-c-card__body--FontSize);
+    margin: 0;
+  }
+
+  .co-recent-item__content .pf-c-accordion__expanded-content-body {
+    padding-left: var(--pf-c-card--child--PaddingLeft);
+    padding-right: var(--pf-c-card--child--PaddingRight);
+  }
+
+  .co-recent-item__toggle.pf-c-accordion__toggle {
+    line-height: 18px; // so .co-m-resource-icon and text are on same baseline
+    padding-left: var(--pf-c-card--child--PaddingLeft);
+    padding-right: var(--pf-c-card--child--PaddingRight);
+  }
+
+  .co-recent-item--warning {
+    border-left-color: var(--pf-global--warning-color--100);
+  }
+
+  .pf-c-accordion__toggle {
+    &,
+    &:active,
+    &:focus {
+      .pf-c-accordion__toggle-text {
+        font-weight: var(--pf-global--FontWeight--normal) !important;
+      }
+    }
+  }
+}
+
+.co-activity-card__recent-actions svg {
+  vertical-align: -0.125rem !important;
+}
+
+.co-activity-card__recent-list {
+  padding-bottom: 0 !important;
+}
+
+.co-activity-card__recent-title {
+  border-top: solid 1px $pf-color-black-300;
+  border-bottom: solid 1px $pf-color-black-300;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0.2rem var(--pf-c-card--child--PaddingRight) 0.2rem var(--pf-c-card--child--PaddingLeft);
+}
+
+.co-activity-item {
+  display: flex;
+}
+
+.co-activity-item__ongoing {
+  margin: 1rem var(--pf-c-card--child--PaddingRight) 1rem var(--pf-c-card--child--PaddingLeft);
+}
+
+.co-activity-item__progress.pf-c-progress {
+  grid-gap: 0;
+  padding-bottom: 0.2rem;
+}
+
+.co-activity-item__icon {
+  padding-right: var(--pf-global--spacer--xs);
+}
+
+.co-recent-item__content-header {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+}
+
+.co-recent-item__content-message {
+  color: var(--pf-global--Color--100);
+  margin-top: 0.5rem;
+  word-wrap: break-word;
+}
+
+.co-recent-item__content-resourcelink {
+  display: block;
+  flex: 2 0 0;
+  white-space: nowrap;
+
+  .co-resource-item__resource-name {
+    font-size: $font-size-base;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.co-recent-item__icon--warning {
+  align-items: center;
+  display: flex;
+  margin-right: 0.3rem;
+  margin-top: 0;
+  flex: 0 0 auto;
+}
+
+.co-recent-item__title {
+  display: flex;
+  align-items: center;
+}
+
+.co-recent-item__title-message {
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+}
+
+.co-recent-item__title-message-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.co-recent-item__title-timestamp {
+  min-width: 65px;
+  padding-right: 0.3rem;
+  text-align: left;
+}
+
+.skeleton-activity__dashboard {
+  animation: $skeleton-animation;
+  height: $skeleton-bone-height-1line;
+  margin-bottom: 1em;
+  opacity: 0;
+  width: 100%;
+  &::after {
+    background-repeat: no-repeat;
+    content: '';
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.skeleton-activity__dashboard::after {
+  background-image: $skeleton-activity-bone, $skeleton-activity-icon;
+
+  background-position: $skeleton-activity-position, $skeleton-activity-icon-position;
+
+  background-size: $skeleton-activity-size, $skeleton-activity-icon-size;
+}

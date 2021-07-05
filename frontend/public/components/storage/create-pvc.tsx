@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { isObjectSC } from '@console/shared/src/utils';
+import { isObjectSC } from '@console/dynamic-plugin-sdk/src/shared/utils';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';

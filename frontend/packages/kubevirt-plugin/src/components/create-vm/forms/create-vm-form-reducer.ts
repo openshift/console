@@ -1,5 +1,5 @@
+import { ValidationObject } from '@console/dynamic-plugin-sdk';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ValidationObject } from '@console/shared';
 
 export type FormState = {
   template: TemplateKind;

@@ -6,8 +6,8 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Alert, Grid, GridItem } from '@patternfly/react-core';
 
-import { ONE_HOUR, ONE_MINUTE, Status } from '@console/shared';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { ONE_HOUR, ONE_MINUTE, Status } from '@console/dynamic-plugin-sdk';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   K8sResourceKindReference,
   referenceFor,
@@ -44,11 +44,11 @@ import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
 import { BuildModel } from '../models';
 import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 

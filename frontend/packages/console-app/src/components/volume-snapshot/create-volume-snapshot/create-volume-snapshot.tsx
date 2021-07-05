@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
+import { getName, getNamespace, getAnnotations } from '@console/dynamic-plugin-sdk';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import {
   getAccessModeRadios,
@@ -44,7 +45,6 @@ import {
   apiVersionForModel,
   ListKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, getAnnotations } from '@console/shared';
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (

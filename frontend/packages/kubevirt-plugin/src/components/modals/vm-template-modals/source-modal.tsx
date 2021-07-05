@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { BlueInfoCircleIcon, RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
-import { BlueInfoCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 import { TemplateSourceStatusError } from '../../../statuses/template/types';
 import { SourceStatusErrorBody } from '../../vm-templates/vm-template-source';
 import { ModalFooter } from '../modal/modal-footer';

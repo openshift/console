@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next';
 
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
 import DashboardGrid, {
   GridPosition,
   GridDashboardCard,
-} from '@console/shared/src/components/dashboard/DashboardGrid';
-import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
+import { RestoreGettingStartedButton } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 import {
   useExtensions,
   DashboardsCard,

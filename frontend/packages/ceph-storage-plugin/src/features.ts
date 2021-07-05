@@ -7,7 +7,7 @@ import {
 } from '@console/operator-lifecycle-manager';
 import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
-import { getAnnotations, getName } from '@console/shared/src/selectors/common';
+import { getAnnotations, getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel, CephClusterModel, NooBaaSystemModel } from './models';

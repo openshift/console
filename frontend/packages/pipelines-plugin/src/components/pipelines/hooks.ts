@@ -1,4 +1,5 @@
 import { match as RMatch } from 'react-router-dom';
+import { useTabbedTableBreadcrumbsFor } from '@console/dynamic-plugin-sdk';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import {
@@ -12,7 +13,6 @@ import {
   PersistentVolumeClaimKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { PipelineRunModel } from '../../models';
 import { PipelineRunKind } from '../../types';
 import { getLatestRun } from '../../utils/pipeline-augment';

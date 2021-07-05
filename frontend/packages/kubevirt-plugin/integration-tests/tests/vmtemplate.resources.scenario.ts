@@ -3,7 +3,7 @@ import {
   createResource,
   deleteResource,
   deleteResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { hddDisk, multusNAD, multusNetworkInterface } from './mocks/mocks';
 import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';

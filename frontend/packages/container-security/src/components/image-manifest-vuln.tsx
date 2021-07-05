@@ -8,6 +8,7 @@ import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/dynamic-plugin-sdk';
 import { DefaultList } from '@console/internal/components/default-resource';
 import {
   MultiListPage,
@@ -31,7 +32,6 @@ import {
   Loading,
 } from '@console/internal/components/utils';
 import { referenceForModel, PodKind, ContainerStatus } from '@console/internal/module/k8s';
-import { EmptyStateResourceBadge, GreenCheckCircleIcon } from '@console/shared/';
 import { vulnPriority, totalFor, priorityFor } from '../const';
 import { ImageManifestVulnModel } from '../models';
 import { ImageManifestVuln } from '../types';

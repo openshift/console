@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../../types/vm';

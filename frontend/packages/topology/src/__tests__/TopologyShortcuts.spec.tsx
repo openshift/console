@@ -1,5 +1,5 @@
 import { mount, shallow } from 'enzyme';
-import { Shortcut } from '@console/shared';
+import { Shortcut } from '@console/dynamic-plugin-sdk';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
 import { TopologyViewType } from '../topology-types';
 

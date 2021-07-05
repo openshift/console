@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
+import { ClampedText } from '@console/dynamic-plugin-sdk';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -10,7 +11,6 @@ import {
   kindObj,
 } from '@console/internal/components/utils';
 import { referenceForModel, referenceFor, K8sKind } from '@console/internal/module/k8s';
-import { ClampedText } from '@console/shared';
 import { ServiceModel } from '../../models';
 import { ServiceKind, ConditionTypes } from '../../types';
 import { getConditionString, getCondition } from '../../utils/condition-utils';

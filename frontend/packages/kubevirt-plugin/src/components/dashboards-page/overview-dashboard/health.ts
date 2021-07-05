@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { URLHealthHandler } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,

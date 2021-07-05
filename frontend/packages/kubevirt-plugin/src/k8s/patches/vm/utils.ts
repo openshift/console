@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { PatchBuilder } from '@console/shared/src/k8s';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import { getSimpleName } from '../../../selectors/utils';
 import { getDeviceBootOrder } from '../../../selectors/vm';
 

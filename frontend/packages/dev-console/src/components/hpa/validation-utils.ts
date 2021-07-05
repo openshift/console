@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 
 export const hpaValidationSchema = (t: TFunction) =>
   yup.object({

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared';
+import { CheckboxField } from '@console/dynamic-plugin-sdk';
 import { EventSources } from '../import-types';
 import SecretKeySelector from '../SecretKeySelector';
 

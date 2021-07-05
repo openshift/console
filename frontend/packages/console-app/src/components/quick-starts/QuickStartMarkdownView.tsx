@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   MarkdownHighlightExtension,
   MarkdownExecuteSnippet,
@@ -8,8 +7,9 @@ import {
   useInlineExecuteCommandShowdownExtension,
   useMultilineCopyClipboardShowdownExtension,
   useMultilineExecuteCommandShowdownExtension,
-} from '@console/shared';
-import { HIGHLIGHT_REGEXP } from '@console/shared/src/components/markdown-highlight-extension/highlight-consts';
+} from '@console/dynamic-plugin-sdk';
+import { HIGHLIGHT_REGEXP } from '@console/dynamic-plugin-sdk/src/shared/components/markdown-highlight-extension/highlight-consts';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 
 type QuickStartMarkdownViewProps = {
   content: string;

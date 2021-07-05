@@ -2,9 +2,14 @@ import * as React from 'react';
 import { Skeleton, Switch, Tooltip } from '@patternfly/react-core';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { AddActionGroup, isAddActionGroup } from '@console/dynamic-plugin-sdk';
+import {
+  AddActionGroup,
+  isAddActionGroup,
+  PageLayout,
+  useActiveNamespace,
+  RestoreGettingStartedButton,
+} from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { PageLayout, useActiveNamespace, RestoreGettingStartedButton } from '@console/shared';
 import { filterNamespaceScopedUrl } from '../../utils/add-page-utils';
 import { useAddActionExtensions } from '../../utils/useAddActionExtensions';
 import AddCardSection from './AddCardSection';

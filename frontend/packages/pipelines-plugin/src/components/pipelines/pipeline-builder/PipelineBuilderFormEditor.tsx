@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import { PipelineParameters, PipelineResources, PipelineWorkspaces } from '../detail-page-tabs';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
 import PipelineWorkspaceSuggestionIcon from './PipelineWorkspaceSuggestionIcon';

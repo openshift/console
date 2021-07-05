@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import {
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { KNATIVE_SERVING_LABEL } from '../../const';
 import { RevisionModel } from '../../models';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';

@@ -1,4 +1,4 @@
-import { asValidationObject, ValidationObject } from '@console/shared';
+import { asValidationObject, ValidationObject } from '@console/dynamic-plugin-sdk';
 import { AccessMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import {

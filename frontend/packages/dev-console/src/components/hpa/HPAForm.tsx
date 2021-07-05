@@ -2,16 +2,16 @@ import * as React from 'react';
 import { FormikProps } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { HorizontalPodAutoscalerModel } from '@console/internal/models';
-import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
   FlexForm,
   FormBody,
   FormFooter,
   SyncedEditorField,
   YAMLEditorField,
-} from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+} from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { sanitizeHPAToForm } from './hpa-utils';
 import HPADetailsForm from './HPADetailsForm';
 import { HPAFormValues } from './types';

@@ -7,6 +7,18 @@ import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import {
+  getName,
+  getUID,
+  getNodeRole,
+  getLabels,
+  getNodeMachineNameAndNamespace,
+  WithUserSettingsCompatibilityProps,
+  TableColumnsType,
+  withUserSettingsCompatibility,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+} from '@console/dynamic-plugin-sdk';
 import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import {
@@ -29,18 +41,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import {
-  getName,
-  getUID,
-  getNodeRole,
-  getLabels,
-  getNodeMachineNameAndNamespace,
-  WithUserSettingsCompatibilityProps,
-  TableColumnsType,
-  withUserSettingsCompatibility,
-  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-} from '@console/shared';
 import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';
 import NodeRoles from './NodeRoles';

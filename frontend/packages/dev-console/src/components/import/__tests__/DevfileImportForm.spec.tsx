@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import { InputField } from '@console/shared';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { InputField } from '@console/dynamic-plugin-sdk';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import * as hooks from '../devfile/devfileHooks';
 import DevfileImportForm from '../devfile/DevfileImportForm';
 import DevfileSampleInfo from '../devfile/DevfileSampleInfo';

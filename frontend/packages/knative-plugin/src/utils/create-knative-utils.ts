@@ -6,8 +6,8 @@ import {
   UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
 import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource-label-utils';
+import { NameValuePair } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
-import { NameValuePair } from 'packages/console-shared/src';
 import { ServiceModel } from '../models';
 
 export const getKnativeServiceDepResource = (

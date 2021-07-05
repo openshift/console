@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -18,7 +19,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
 import { VMSnapshot } from '../../../types';

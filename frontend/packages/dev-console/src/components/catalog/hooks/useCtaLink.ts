@@ -1,4 +1,4 @@
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '@console/dynamic-plugin-sdk';
 import { CatalogQueryParams } from '../utils/types';
 
 const useCtaLink = (cta: { label: string; href?: string }): [string, string] => {

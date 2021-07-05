@@ -6,6 +6,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { ResourceDropdown, getFieldId, useFormikValidationFix } from '@console/dynamic-plugin-sdk';
 import {
   useK8sWatchResource,
   WatchK8sResource,
@@ -13,7 +14,6 @@ import {
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ResourceDropdown, getFieldId, useFormikValidationFix } from '@console/shared';
 import MultipleKeySelector from './MultipleKeySelector';
 
 interface MultipleResourceKeySelectorProps {

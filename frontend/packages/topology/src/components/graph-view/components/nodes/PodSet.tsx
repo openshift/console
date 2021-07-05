@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RevisionModel } from '@console/knative-plugin/src/models';
 import {
   PodRCData,
   PodStatus,
@@ -9,7 +8,8 @@ import {
   podDataInProgress,
   usePodRingLabel,
   useRelatedHPA,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { RevisionModel } from '@console/knative-plugin/src/models';
 
 interface PodSetProps {
   size: number;

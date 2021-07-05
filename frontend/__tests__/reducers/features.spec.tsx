@@ -4,12 +4,12 @@ import * as _ from 'lodash-es';
 
 import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { connectToFlags } from '../../public/reducers/connectToFlags';
 import {
   featureReducer,
   featureReducerName,
   defaults,
-  connectToFlags,
   stateToFlagsObject,
   getFlagsObject,
   FeatureState,

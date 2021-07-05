@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/dynamic-plugin-sdk';
 
 type PipelineStorageOptionsProps = { prefixName: string };
 

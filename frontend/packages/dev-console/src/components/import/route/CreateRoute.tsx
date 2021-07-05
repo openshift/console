@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 import PortInputField from './PortInputField';
 

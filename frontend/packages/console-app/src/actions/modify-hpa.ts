@@ -1,3 +1,8 @@
+import {
+  isOperatorBackedService,
+  deleteHPAModal,
+  isHelmResource,
+} from '@console/dynamic-plugin-sdk';
 import { KebabAction } from '@console/internal/components/utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
@@ -6,7 +11,6 @@ import {
   K8sResourceCommon,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { isOperatorBackedService, deleteHPAModal, isHelmResource } from '@console/shared';
 
 type RelatedResources = {
   hpas?: HorizontalPodAutoscalerKind[];

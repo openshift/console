@@ -2,7 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router-dom';
-import { getBadgeFromType } from '@console/shared';
+import {
+  getBadgeFromType,
+  ResourceDetailsPage as DynamicResourceDetailsPage,
+  isResourceDetailsPage as isDynamicResourceDetailsPage,
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 import { connectToPlural } from '../kinds';
 import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
@@ -25,12 +31,6 @@ import {
   ResourceListPage as ResourceListPageExt,
   isResourceListPage,
 } from '@console/plugin-sdk';
-import {
-  ResourceDetailsPage as DynamicResourceDetailsPage,
-  isResourceDetailsPage as isDynamicResourceDetailsPage,
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);

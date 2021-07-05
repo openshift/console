@@ -1,7 +1,7 @@
 import i18next from 'i18next';
 import { K8sKind } from '../../module/k8s';
-import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/dynamic-plugin-sdk/src/shared/constants';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/shared/constants/common';
 import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 
 export const getLastNamespace = () => sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);

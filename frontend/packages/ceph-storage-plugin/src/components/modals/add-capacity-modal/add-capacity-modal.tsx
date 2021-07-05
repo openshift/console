@@ -16,8 +16,8 @@ import {
   StorageClassResourceKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import { getName, getRequestedPVCSize } from '@console/shared';
+import { usePrometheusQueries } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/prometheus-hook';
+import { getName, getRequestedPVCSize } from '@console/dynamic-plugin-sdk';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { getJobTypeAndCompletions, K8sKind, JobKind, K8sResourceKind } from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';

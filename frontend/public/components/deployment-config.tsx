@@ -4,9 +4,9 @@ import * as _ from 'lodash-es';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { RootState } from '@console/internal/redux';
-import { Status, useCsvWatchResource } from '@console/shared';
+import { Status, useCsvWatchResource } from '@console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
 import {

@@ -1,7 +1,10 @@
 import * as _ from 'lodash';
+import {
+  createResource,
+  deleteResource,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as nadDetailView from '../views/nad.detail.view';
 import { NetworkAttachmentDefinition } from './models/nad';
 import { CNV_BRIDGE } from './utils/constants';

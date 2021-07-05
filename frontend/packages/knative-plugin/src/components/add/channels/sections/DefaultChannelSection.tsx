@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import ApplicationSelector from '@console/topology/src/components/dropdowns/ApplicationSelector';
 
 type DefaultChannelSectionProps = {

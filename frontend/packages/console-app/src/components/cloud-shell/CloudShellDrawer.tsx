@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Tooltip, Flex, FlexItem, Button } from '@patternfly/react-core';
 import { CloseIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { InlineTechPreviewBadge } from '@console/shared';
-import Drawer from '@console/shared/src/components/drawer/Drawer';
+import { InlineTechPreviewBadge } from '@console/dynamic-plugin-sdk';
+import Drawer from '@console/dynamic-plugin-sdk/src/shared/components/drawer/Drawer';
 import MinimizeRestoreButton from './MinimizeRestoreButton';
 
 import './CloudShellDrawer.scss';

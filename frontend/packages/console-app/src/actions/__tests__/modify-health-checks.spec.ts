@@ -1,5 +1,5 @@
+import { sampleDeployments } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { DeploymentModel } from '@console/internal/models';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { AddHealthChecks, EditHealthChecks } from '../modify-health-checks';
 
 describe('modify health checks action', () => {

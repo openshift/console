@@ -3,7 +3,12 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+import {
+  MultiColumnField,
+  InputField,
+  DropdownField,
+  FormFooter,
+} from '@console/dynamic-plugin-sdk';
 import { Roles, ignoreRoleBindingName } from './project-access-form-utils';
 import { UserRoleBinding } from './project-access-form-utils-types';
 import './ProjectAccessForm.scss';

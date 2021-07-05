@@ -1,5 +1,5 @@
+import { isValidUrl } from '@console/dynamic-plugin-sdk';
 import { kindForReference, K8sResourceKind } from '@console/internal/module/k8s';
-import { isValidUrl } from '@console/shared';
 import { EVENT_SOURCE_ICON, CAMEL_KAMELET_ICON } from '../const';
 import * as eventSourceImg from '../imgs/event-source.svg';
 import * as apiServerSourceImg from '../imgs/logos/apiserversource.svg';

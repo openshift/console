@@ -7,7 +7,7 @@ import {
   FileUploadContext,
   FileUploadContextType,
 } from '@console/app/src/components/file-upload/file-upload-context';
-import { useIsMobile } from '@console/shared';
+import { useIsMobile } from '@console/dynamic-plugin-sdk';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
 import { getTopologyShortcuts } from '../graph-view/TopologyShortcuts';

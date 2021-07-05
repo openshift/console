@@ -11,7 +11,7 @@ import {
   getMachineZone,
   Status,
   getMachinePhase,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';

@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { SelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { asValidationObject, ValidationErrorType } from '@console/shared/src/utils/validation';
+import {
+  asValidationObject,
+  ValidationErrorType,
+} from '@console/dynamic-plugin-sdk/src/shared/utils/validation';
 import { CUSTOM_FLAVOR } from '../../../../constants';
 import { Flavor } from '../../../../constants/vm/flavor';
 import { getLabelValue } from '../../../../selectors/selectors';

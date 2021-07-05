@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { safeDump } from 'js-yaml';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { YAMLEditorField } from '@console/shared';
+import { YAMLEditorField } from '@console/dynamic-plugin-sdk';
 import {
   isDefaultChannel,
   getChannelKind,

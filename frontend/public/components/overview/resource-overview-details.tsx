@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, KebabAction, ResourceOverviewHeading, SimpleTabNav, Tab } from '../utils';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { useExtensions, OverviewResourceTab, isOverviewResourceTab } from '@console/plugin-sdk';
 
 const stateToProps = ({ UI }): PropsFromState => ({

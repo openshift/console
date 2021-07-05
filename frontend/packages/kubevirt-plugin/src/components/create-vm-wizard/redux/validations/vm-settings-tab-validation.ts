@@ -3,7 +3,7 @@ import {
   asValidationObject,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared/src/utils/validation';
+} from '@console/dynamic-plugin-sdk/src/shared/utils/validation';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { UIValidation } from '../../../../types/ui/ui';
 import {

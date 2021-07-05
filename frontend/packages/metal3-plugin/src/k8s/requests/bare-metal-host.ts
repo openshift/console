@@ -1,3 +1,5 @@
+import { getAnnotations } from '@console/dynamic-plugin-sdk/src/shared';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
 import {
   k8sPatch,
@@ -7,8 +9,6 @@ import {
   k8sKill,
   SecretKind,
 } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared/src';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
 import { BareMetalHostModel } from '../../models';

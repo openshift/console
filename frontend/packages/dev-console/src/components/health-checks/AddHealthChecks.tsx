@@ -5,6 +5,7 @@ import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
+import { FormFooter } from '@console/dynamic-plugin-sdk';
 import {
   ContainerDropdown,
   history,
@@ -14,7 +15,6 @@ import {
 } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
 import { K8sResourceKind, referenceFor, modelFor } from '@console/internal/module/k8s';
-import { FormFooter } from '@console/shared';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { getHealthChecksData } from './create-health-checks-probe-utils';
 import { useViewOnlyAccess, HealthCheckContext } from './health-checks-utils';

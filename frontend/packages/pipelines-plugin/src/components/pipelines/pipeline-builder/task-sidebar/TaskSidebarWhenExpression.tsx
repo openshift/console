@@ -3,8 +3,8 @@ import { Button, ButtonType, ButtonVariant, Tooltip } from '@patternfly/react-co
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import { MultiColumnField } from '@console/shared';
-import { RowRendererProps } from '@console/shared/src/components/formik-fields/multi-column-field/MultiColumnFieldRow';
+import { MultiColumnField } from '@console/dynamic-plugin-sdk';
+import { RowRendererProps } from '@console/dynamic-plugin-sdk/src/shared/components/formik-fields/multi-column-field/MultiColumnFieldRow';
 import { useBuilderParams } from '../../../shared/common/auto-complete/autoCompleteValueParsers';
 import WhenExpressionForm from '../../pipeline-topology/WhenExpressionForm';
 import { SelectedBuilderTask } from '../types';

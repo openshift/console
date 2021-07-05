@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import AdvancedSection from '../../import/advanced/AdvancedSection';
 import AppSection from '../../import/app/AppSection';
 import BuilderSection from '../../import/builder/BuilderSection';

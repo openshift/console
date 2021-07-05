@@ -1,7 +1,7 @@
 import { $, ExpectedConditions as until, browser } from 'protractor';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { SECOND } from '../utils/consts';
 import { sendKeys } from '../utils/helpers';
 import { poolData } from '../mocks/storage-pool';

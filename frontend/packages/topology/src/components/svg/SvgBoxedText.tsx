@@ -6,8 +6,8 @@ import {
   useCombineRefs,
   createSvgIdUrl,
 } from '@patternfly/react-topology';
+import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/dynamic-plugin-sdk';
 import { truncateMiddle } from '@console/internal/components/utils';
-import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
 import SvgCircledIcon from './SvgCircledIcon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 import SvgResourceIcon from './SvgResourceIcon';

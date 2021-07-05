@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getPropertyDescription, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { LinkifyExternal } from './link';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModel';
 
 export const PropertyPath: React.FC<{ kind: string; path: string | string[] }> = ({
   kind,

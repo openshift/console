@@ -1,5 +1,8 @@
+import {
+  createResource,
+  deleteResource,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineInstanceModel } from '../../src/models';
 import {
   vmDetailsIPAddress,

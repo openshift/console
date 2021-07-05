@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useForceRender } from '@console/shared/src/hooks/useForceRender';
+import { useForceRender } from '@console/dynamic-plugin-sdk/src/shared/hooks/useForceRender';
 import { DynamicPluginInfo } from '../store';
 import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
 

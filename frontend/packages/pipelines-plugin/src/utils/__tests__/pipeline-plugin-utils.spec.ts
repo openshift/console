@@ -2,7 +2,7 @@ import {
   sampleDeploymentConfigs,
   MockResources,
   sampleDeployments,
-} from '@console/shared/src/utils/__tests__/test-resource-data';
+} from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { getPipelinesAndPipelineRunsForResource } from '../pipeline-plugin-utils';
 
 describe('pipeline-plugin-utils', () => {

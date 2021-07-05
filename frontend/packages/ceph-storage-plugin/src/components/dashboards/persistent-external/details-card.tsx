@@ -7,12 +7,12 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { getName, getInfrastructurePlatform } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import { getName, getInfrastructurePlatform } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailItem';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { InfrastructureModel } from '@console/internal/models';
 import { getOCSVersion } from '../../../selectors';

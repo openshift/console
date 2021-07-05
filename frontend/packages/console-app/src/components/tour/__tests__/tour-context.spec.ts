@@ -1,12 +1,12 @@
 import * as redux from 'react-redux';
+import * as userHooks from '@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettingsCompatibility';
 import * as plugins from '@console/plugin-sdk';
-import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { TourActions } from '../const';
 import * as TourModule from '../tour-context';
 import { TourDataType } from '../type';
 
-jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useActivePerspective', () => ({
   useActivePerspective: () => ['dev', jest.fn()],
 }));
 

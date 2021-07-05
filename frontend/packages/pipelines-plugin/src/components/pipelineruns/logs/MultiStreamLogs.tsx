@@ -4,10 +4,10 @@ import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons'
 import * as classNames from 'classnames';
 import { saveAs } from 'file-saver';
 import { useTranslation } from 'react-i18next';
+import { useFullscreen, useScrollDirection, ScrollDirection } from '@console/dynamic-plugin-sdk';
 import { errorModal } from '@console/internal/components/modals/error-modal';
 import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
 import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
-import { useFullscreen, useScrollDirection, ScrollDirection } from '@console/shared';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
 import Logs from './Logs';
 import { getRenderContainers } from './logs-utils';

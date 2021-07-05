@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Redirect } from 'react-router';
-import * as shared from '@console/shared';
+import * as shared from '@console/dynamic-plugin-sdk';
 import CloudShellTab from '../CloudShellTab';
 import CloudShellTerminal from '../CloudShellTerminal';
 

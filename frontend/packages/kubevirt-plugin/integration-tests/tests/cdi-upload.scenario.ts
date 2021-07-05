@@ -1,15 +1,15 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import {
   click,
   createResource,
   removeLeakedResources,
   withResource,
   withResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { typeWarnMessage } from '../views/pvc.view';
 import { bootSource, vmtLinkByName } from '../views/template.view';
 import { AccessMode, getTestDataVolume, VolumeMode } from './mocks/mocks';

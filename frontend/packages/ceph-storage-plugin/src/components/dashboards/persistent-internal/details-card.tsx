@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getInfrastructurePlatform } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import { getInfrastructurePlatform } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailItem';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import DetailsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailsBody';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel } from '@console/internal/models/index';
 import {
@@ -19,7 +19,7 @@ import {
   ClusterServiceVersionModel,
 } from '@console/operator-lifecycle-manager/src/models';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
-import { getName } from '@console/shared/src/selectors/common';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';

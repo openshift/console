@@ -13,7 +13,10 @@ import {
 } from '@patternfly/react-charts';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
-import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import {
+  processFrame,
+  ByteDataTypes,
+} from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
 import { humanizeNumber, useRefWidth, Humanize } from '../utils';
 import { PrometheusEndpoint } from './helpers';

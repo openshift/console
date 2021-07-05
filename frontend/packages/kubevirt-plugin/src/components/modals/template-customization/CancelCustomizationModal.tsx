@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk/src/shared/components/status/icons';
 import {
   createModalLauncher,
   ModalBody,
@@ -9,7 +10,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, history, withHandlePromise } from '@console/internal/components/utils';
 import { k8sKill } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMKind } from '../../../types';

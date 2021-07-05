@@ -1,9 +1,9 @@
+import { getInfrastructurePlatform } from '@console/dynamic-plugin-sdk/src/shared/selectors/infrastructure';
 import { setFlag, handleError } from '@console/internal/actions/features';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { InfrastructureModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FeatureDetector } from '@console/plugin-sdk';
-import { getInfrastructurePlatform } from '@console/shared/src/selectors/infrastructure';
 import { ProvisioningModel } from './models';
 
 export const BAREMETAL_FLAG = 'BAREMETAL';

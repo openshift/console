@@ -6,7 +6,7 @@ import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   CopyToClipboard,

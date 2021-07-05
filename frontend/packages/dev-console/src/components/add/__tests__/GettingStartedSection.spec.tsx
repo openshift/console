@@ -4,22 +4,22 @@ import {
   GettingStartedGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
-} from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
+} from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { GettingStartedSection } from '../GettingStartedSection';
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/flag', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk/src/shared/hooks/flag'),
   useFlag: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/components/getting-started', () => ({
-  ...require.requireActual('@console/shared/src/components/getting-started'),
+jest.mock('@console/dynamic-plugin-sdk/src/shared/components/getting-started', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk/src/shared/components/getting-started'),
   useGettingStartedShowState: jest.fn(),
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

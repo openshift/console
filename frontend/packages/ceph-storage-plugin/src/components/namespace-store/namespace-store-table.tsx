@@ -10,7 +10,7 @@ import {
   useSelectList,
   getUID,
   useDeepCompareMemoize,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { Table, ListPage, getFilteredRows } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';

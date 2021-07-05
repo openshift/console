@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MultiColumnField } from '@console/shared';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { MultiColumnField } from '@console/dynamic-plugin-sdk';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import {
   mockTrafficData,
   mockRevisionItems,

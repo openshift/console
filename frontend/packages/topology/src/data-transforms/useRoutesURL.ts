@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useRoutesWatcher } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useRoutesWatcher } from '@console/shared';
 import { getRoutesURL } from '../utils/topology-utils';
 
 export const useRoutesURL = (resource: K8sResourceKind): string => {

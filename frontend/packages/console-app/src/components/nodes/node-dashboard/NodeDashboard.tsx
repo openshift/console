@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardGrid from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
+import { LimitRequested } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationItem';
 import { NodeKind } from '@console/internal/module/k8s';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import ActivityCard from './ActivityCard';
 import DetailsCard from './DetailsCard';
 import InventoryCard from './InventoryCard';

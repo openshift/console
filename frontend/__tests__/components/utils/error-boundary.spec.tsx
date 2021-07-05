@@ -6,7 +6,7 @@ import {
   ErrorBoundaryProps,
   ErrorBoundaryState,
   withFallback,
-} from '@console/shared/src/components/error/error-boundary';
+} from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 
 describe(ErrorBoundary.name, () => {
   let wrapper: ShallowWrapper<ErrorBoundaryProps, ErrorBoundaryState>;

@@ -1,6 +1,20 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import {
+  getCreationTimestamp,
+  getName,
+  getNamespace,
+  getNodeName,
+  getUID,
+} from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailItem';
+import DetailsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailsBody';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   NodeLink,
@@ -8,14 +22,6 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
-import { getCreationTimestamp, getName, getNamespace, getNodeName, getUID } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';

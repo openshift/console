@@ -6,8 +6,8 @@ import { chart_color_blue_200 as blue200 } from '@patternfly/react-tokens/dist/j
 import { chart_color_blue_300 as blue300 } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
 import * as _ from 'lodash';
 /* eslint-enable camelcase */
+import { calculateRadius } from '@console/dynamic-plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils';
-import { calculateRadius } from '@console/shared/';
 
 const colorScale = [blue300.value, blue200.value, blue100.value];
 

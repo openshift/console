@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { initialPipelineFormData, getTaskErrorString, TaskErrorType } from '../const';
 import { validationSchema } from '../validation-utils';
 import {

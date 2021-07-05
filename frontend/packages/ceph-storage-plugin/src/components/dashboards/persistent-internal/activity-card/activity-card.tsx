@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   EventKind,
   K8sResourceKind,
@@ -14,9 +14,14 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getAnnotations, isCephProvisioner, getName, useDeepCompareMemoize } from '@console/shared';
+import {
+  getAnnotations,
+  isCephProvisioner,
+  getName,
+  useDeepCompareMemoize,
+} from '@console/dynamic-plugin-sdk';
 import {
   DashboardItemProps,
   withDashboardResources,

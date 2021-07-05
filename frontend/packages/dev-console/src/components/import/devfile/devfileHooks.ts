@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { getLimitsDataFromResource } from '@console/dynamic-plugin-sdk/src/shared';
 import { getGitService, GitProvider } from '@console/git-service';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { parseDevfile } from '@console/internal/module/k8s';
-import { getLimitsDataFromResource } from '@console/shared/src';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
 import { DevfileSuggestedResources } from '../import-types';
 import { createComponentName, detectGitType } from '../import-validation-utils';

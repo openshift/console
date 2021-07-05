@@ -1,5 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import {
+  getReplicaSetsForResource,
+  PodControllerOverviewItem,
+  useDeepCompareMemoize,
+  useDebounceCallback,
+} from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel } from '@console/internal/models';
 import {
@@ -7,12 +13,6 @@ import {
   K8sResourceCommon,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import {
-  getReplicaSetsForResource,
-  PodControllerOverviewItem,
-  useDeepCompareMemoize,
-  useDebounceCallback,
-} from '@console/shared';
 
 export const usePodsForRevisions = (
   revisionIds: string | string[],

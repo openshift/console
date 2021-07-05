@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useUserSettingsCompatibility } from '@console/dynamic-plugin-sdk';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
-import { useUserSettingsCompatibility } from '@console/shared';
 import { PerspectiveType } from './perspective-context';
 
 const LAST_PERSPECTIVE_LOCAL_STORAGE_KEY = `bridge/last-perspective`;

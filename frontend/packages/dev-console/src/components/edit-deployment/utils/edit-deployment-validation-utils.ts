@@ -1,6 +1,6 @@
 import * as yup from 'yup';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import i18n from '@console/internal/i18n';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { DeploymentStrategyType, LifecycleAction } from '../deployment-strategy/utils/types';
 import {
   DeploymentStrategy,

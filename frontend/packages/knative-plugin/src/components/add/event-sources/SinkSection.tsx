@@ -5,8 +5,13 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import {
+  InputField,
+  getFieldId,
+  ResourceDropdownField,
+  RadioGroupField,
+} from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { InputField, getFieldId, ResourceDropdownField, RadioGroupField } from '@console/shared';
 import { EventingBrokerModel, EventingChannelModel } from '../../../models';
 import { getDynamicChannelResourceList } from '../../../utils/fetch-dynamic-eventsources-utils';
 import {

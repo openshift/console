@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ProvisionerProps } from '@console/plugin-sdk';
 import { Checkbox } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 
 import { GUARDED_FEATURES } from '../../features';
 

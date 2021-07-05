@@ -1,4 +1,4 @@
-import { NameValuePair } from '@console/shared';
+import { NameValuePair } from '@console/dynamic-plugin-sdk';
 
 export enum HealthChecksProbeType {
   ReadinessProbe = 'readinessProbe',

@@ -1,4 +1,4 @@
-import { APIError } from '@console/shared';
+import { APIError } from '@console/dynamic-plugin-sdk';
 
 import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { GettingStartedLink } from '@console/shared/src/components/getting-started';
+import { GettingStartedLink } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';

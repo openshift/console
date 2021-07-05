@@ -1,4 +1,4 @@
-import { ValidationErrorType } from '@console/shared/src';
+import { ValidationErrorType } from '@console/dynamic-plugin-sdk/src/shared';
 import { CLOUDINIT_DISK } from '../../../../constants';
 import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';

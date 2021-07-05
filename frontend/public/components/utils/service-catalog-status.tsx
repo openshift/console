@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 
 import { K8sResourceKind, serviceCatalogStatus } from '../../module/k8s';
 

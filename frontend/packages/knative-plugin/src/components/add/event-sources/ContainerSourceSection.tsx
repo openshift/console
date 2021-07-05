@@ -5,8 +5,8 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { getSuggestedName } from '@console/dev-console/src/utils/imagestream-utils';
+import { InputField, TextColumnField } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { InputField, TextColumnField } from '@console/shared';
 import { EventSources } from '../import-types';
 
 const templateSpec = `formData.data.${EventSources.ContainerSource}.template.spec.containers[0]`;

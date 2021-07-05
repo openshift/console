@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { CheckboxField, EnvironmentField } from '@console/dynamic-plugin-sdk';
 import { getStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CheckboxField, EnvironmentField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
 export interface BuildConfigSectionProps {

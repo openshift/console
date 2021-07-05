@@ -4,11 +4,11 @@ import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { EventModel } from '../../../../models';
 import { FirehoseResource, FirehoseResult } from '../../../utils';
@@ -16,7 +16,7 @@ import { EventKind, K8sKind } from '../../../../module/k8s';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityBody';
 import {
   useExtensions,
   DashboardsOverviewResourceActivity,

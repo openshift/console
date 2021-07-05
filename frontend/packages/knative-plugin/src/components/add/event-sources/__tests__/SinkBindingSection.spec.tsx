@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { InputField } from '@console/shared';
 import SinkBindingSection from '../SinkBindingSection';
 
 type SinkBindingSectionProps = React.ComponentProps<typeof SinkBindingSection>;

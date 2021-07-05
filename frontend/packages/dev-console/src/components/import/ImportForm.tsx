@@ -3,15 +3,15 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { history, AsyncComponent } from '@console/internal/components/utils';
-import { getActiveApplication } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import {
   ALL_APPLICATIONS_KEY,
   useActivePerspective,
   usePostFormSubmitAction,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { history, AsyncComponent } from '@console/internal/components/utils';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';

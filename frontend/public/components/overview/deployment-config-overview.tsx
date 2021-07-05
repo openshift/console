@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem } from '@console/shared';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { DeploymentConfigModel } from '../../models';
 import { DeploymentConfigDetailsList, menuActions } from '../deployment-config';
 import { KebabAction, LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';

@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { $, by, element, ExpectedConditions as until, browser } from 'protractor';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { goToInstalledOperators, currentSelectors } from './installFlow.view';
 import { goToPersistentVolumeClaims, selectItemFromDropdown } from './pvc.view';

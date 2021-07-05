@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
@@ -13,7 +14,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';

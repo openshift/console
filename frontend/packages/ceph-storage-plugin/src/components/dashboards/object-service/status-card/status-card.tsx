@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { SubsystemHealth } from '@console/plugin-sdk';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertsBody';
+import AlertItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertItem';
 import { alertURL } from '@console/internal/components/monitoring/utils';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import HealthBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   withDashboardResources,
@@ -21,7 +21,7 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboards/persistent-internal/status-card/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getNooBaaState, getRGWHealthState } from './statuses';
 import { ObjectServiceStatus } from './object-service-health';

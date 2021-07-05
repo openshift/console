@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { FormFooter } from '@console/shared';
+import { FormFooter } from '@console/dynamic-plugin-sdk';
 import CloudShellSetupForm from '../CloudShellSetupForm';
 
 jest.mock('react-i18next', () => {

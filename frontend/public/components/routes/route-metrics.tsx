@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { Area } from '@console/internal/components/graphs/area';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
-import { connectToFlags, WithFlagsProps } from '../../reducers/features';
+import { WithFlagsProps } from '../../reducers/features';
+import { connectToFlags } from '../../reducers/connectToFlags';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Grid, GridItem } from '@patternfly/react-core';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
 
 // TODO Update to use QueryBrowser for each graph
 export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(

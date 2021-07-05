@@ -3,7 +3,7 @@ import { useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { DropdownField, DropdownFieldProps } from '@console/shared';
+import { DropdownField, DropdownFieldProps } from '@console/dynamic-plugin-sdk';
 import { EventingChannelModel } from '../../../../models';
 import { getChannelKind } from '../../../../utils/create-channel-utils';
 

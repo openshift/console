@@ -6,6 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import { QuickStartModel } from '@console/app/src/models';
 import {
+  ALL_NAMESPACES_KEY,
+  dimensifyHeader,
+  dimensifyRow,
+  getName,
+  getNamespace,
+  getUID,
+  useActiveNamespace,
+} from '@console/dynamic-plugin-sdk';
+import {
   ListPage,
   Table,
   TableData,
@@ -16,15 +25,6 @@ import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/c
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  ALL_NAMESPACES_KEY,
-  dimensifyHeader,
-  dimensifyRow,
-  getName,
-  getNamespace,
-  getUID,
-  useActiveNamespace,
-} from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';

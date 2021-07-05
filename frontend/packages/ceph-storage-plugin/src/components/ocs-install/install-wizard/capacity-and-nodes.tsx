@@ -16,7 +16,7 @@ import {
 import { humanizeBinaryBytes, Dropdown, FieldLevelHelp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { TechPreviewBadge, useDeepCompareMemoize, getName } from '@console/shared';
+import { TechPreviewBadge, useDeepCompareMemoize, getName } from '@console/dynamic-plugin-sdk';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { scResource } from '../../../resources';
 import { arbiterText, MODES } from '../../../constants';

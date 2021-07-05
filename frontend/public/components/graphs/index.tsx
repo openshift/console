@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContainer } from '@patternfly/react-charts';
 import { AsyncComponent } from '../utils/async';
-import { ONE_HOUR } from '@console/shared/src/constants/time';
+import { ONE_HOUR } from '@console/dynamic-plugin-sdk/src/shared/constants/time';
 
 // Constants
 export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;

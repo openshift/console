@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared/src';
+import { DropdownField } from '@console/dynamic-plugin-sdk/src/shared';
 import ImageStream from '../../../import/image-search/ImageStream';
 import { getContainerNames } from '../../utils/edit-deployment-utils';
 

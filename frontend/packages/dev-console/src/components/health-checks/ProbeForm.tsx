@@ -3,7 +3,12 @@ import { TextInputTypes, InputGroupText } from '@patternfly/react-core';
 import { FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InputGroupField, InputField, DropdownField, ActionGroupWithIcons } from '@console/shared';
+import {
+  InputGroupField,
+  InputField,
+  DropdownField,
+  ActionGroupWithIcons,
+} from '@console/dynamic-plugin-sdk';
 import FormSection from '../import/section/FormSection';
 import { RequestType } from './health-checks-types';
 import { HealthCheckContext } from './health-checks-utils';

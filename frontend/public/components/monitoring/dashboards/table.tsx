@@ -10,7 +10,7 @@ import {
   TableVariant,
 } from '@patternfly/react-table';
 
-import ErrorAlert from '@console/shared/src/components/alerts/error';
+import ErrorAlert from '@console/dynamic-plugin-sdk/src/shared/components/alerts/error';
 
 import { formatNumber } from './format';
 import { ColumnStyle, Panel } from './types';

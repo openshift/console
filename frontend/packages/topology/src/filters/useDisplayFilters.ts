@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import { DisplayFilters } from '../topology-types';
 import { FilterContext } from './FilterProvider';
 

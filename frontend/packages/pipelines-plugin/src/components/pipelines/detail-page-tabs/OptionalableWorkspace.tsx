@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField, InputField } from '@console/shared';
+import { CheckboxField, InputField } from '@console/dynamic-plugin-sdk';
 
 type OptionalableWorkspace = {
   namePrefix?: string;

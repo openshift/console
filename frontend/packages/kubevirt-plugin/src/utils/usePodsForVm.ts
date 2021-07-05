@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {
   getReplicationControllersForResource,
   PodRCData,
   useDebounceCallback,
   useDeepCompareMemoize,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import * as models from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { findVMIPod } from '../selectors/pod/selectors';

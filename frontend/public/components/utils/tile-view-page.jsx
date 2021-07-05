@@ -19,7 +19,7 @@ import {
   Title,
   TextInput,
 } from '@patternfly/react-core';
-import { VirtualizedGrid } from '@console/shared';
+import { VirtualizedGrid } from '@console/dynamic-plugin-sdk';
 
 import { history } from './router';
 import { isModalOpen } from '../modals';

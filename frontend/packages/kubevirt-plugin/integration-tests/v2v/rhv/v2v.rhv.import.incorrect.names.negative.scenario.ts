@@ -1,9 +1,9 @@
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   asyncForEach,
   deleteResources,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { v2vUIDeployment } from '../../tests/mocks/mocks';
 import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
 import { wrongValues } from '../../tests/utils/constants/vm';

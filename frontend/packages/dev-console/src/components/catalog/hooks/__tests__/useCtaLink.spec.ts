@@ -1,7 +1,7 @@
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '@console/dynamic-plugin-sdk';
 import useCtaLink from '../useCtaLink';
 
-jest.mock('@console/shared', () => ({
+jest.mock('@console/dynamic-plugin-sdk', () => ({
   useQueryParams: jest.fn(),
 }));
 

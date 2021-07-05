@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   StateCounts,
@@ -19,7 +20,6 @@ import {
   labelsToParams,
 } from '@console/internal/components/monitoring/utils';
 import { Kebab } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import SilenceAlert from './SilenceAlert';
 
 const viewAlertRule = (rule: Rule, ns: string) => ({

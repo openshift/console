@@ -16,7 +16,13 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { getBadgeFromType, usePinnedResources, useActivePerspective } from '@console/shared';
+import {
+  getBadgeFromType,
+  usePinnedResources,
+  useActivePerspective,
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -41,10 +47,6 @@ import {
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);

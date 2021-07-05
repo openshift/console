@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { usePodsWatcher } from '@console/dynamic-plugin-sdk';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
@@ -13,7 +14,6 @@ import {
   referenceForGroupVersionKind,
   groupVersionFor,
 } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
 type EventSourceResourcesProps = {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { ShortcutTable, Shortcut } from '@console/shared';
+import { ShortcutTable, Shortcut } from '@console/dynamic-plugin-sdk';
 
 import './RegroupHint.scss';
 

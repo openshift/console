@@ -6,8 +6,8 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
+import { TechPreviewBadge } from '@console/dynamic-plugin-sdk';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
-import { TechPreviewBadge } from '@console/shared';
 import { useEventSourceStatus } from '../../hooks';
 import { CamelKameletBindingModel } from '../../models';
 import ConnectedEventSource from './EventSource';

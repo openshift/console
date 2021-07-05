@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { getName } from '@console/shared/src/selectors/common';
-import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
+import { usePrometheusQueries } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/prometheus-hook';
 import { getRangeVectorStats } from '@console/internal/components/graphs/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -15,7 +15,7 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import DataConsumptionGraph from './data-consumption-graph';

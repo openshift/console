@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { detectGitType } from '@console/dev-console/src/components/import/import-validation-utils';
+import { getBuildConfigsForResource } from '@console/dynamic-plugin-sdk';
 import { checkAccess } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
@@ -27,7 +28,6 @@ import {
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnativeServiceModel } from '@console/knative-plugin/src/models';
 import { isDynamicEventResourceKind } from '@console/knative-plugin/src/utils/fetch-dynamic-eventsources-utils';
-import { getBuildConfigsForResource } from '@console/shared';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '../const';
 import { listInstanceResources } from './connector-utils';
 

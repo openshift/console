@@ -2,8 +2,12 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  ActionGroupWithIcons,
+  DropdownField,
+  RadioGroupField,
+} from '@console/dynamic-plugin-sdk/src/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
 import FormSection from '../../../import/section/FormSection';
 import { lifecycleActionType } from '../utils/deployment-strategy-utils';
 import { FailurePolicyOptions } from '../utils/types';

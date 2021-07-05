@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ResourceDropdownField, getFieldId } from '@console/shared';
+import { ResourceDropdownField, getFieldId } from '@console/dynamic-plugin-sdk';
 import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
 
 const PubSubSubscriber: React.FC = () => {

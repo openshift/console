@@ -3,6 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { Status } from '@console/dynamic-plugin-sdk';
 import {
   MultiListPage,
   Table,
@@ -34,7 +35,6 @@ import {
   referenceForGroupVersionKind,
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
 import { OperandLink } from './operand/operand-link';
 import { providedAPIForReference } from './index';

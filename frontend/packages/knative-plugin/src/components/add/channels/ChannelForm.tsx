@@ -3,8 +3,13 @@ import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  FormFooter,
+  FlexForm,
+  useFormikValidationFix,
+  FormBody,
+} from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, useFormikValidationFix, FormBody } from '@console/shared';
 import {
   isDefaultChannel,
   getChannelKind,

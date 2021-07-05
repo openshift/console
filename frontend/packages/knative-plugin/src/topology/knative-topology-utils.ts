@@ -1,6 +1,7 @@
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
 import i18next from 'i18next';
 import * as _ from 'lodash';
+import { getOwnedResources, OverviewItem } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel, PodModel } from '@console/internal/models';
@@ -13,7 +14,6 @@ import {
   kindForReference,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { getOwnedResources, OverviewItem } from '@console/shared';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
   getTopologyGroupItems,

@@ -1,0 +1,11 @@
+{
+  "Value": "Value",
+  "Resource requirements": "Resource requirements",
+  "Limits": "Limits",
+  "Requests": "Requests",
+  "Update strategy": "Update strategy",
+  "Node affinity": "Node affinity",
+  "Pod affinity": "Pod affinity",
+  "Expressions": "Expressions",
+  "Select {{title}}": "Select {{title}}"
+}

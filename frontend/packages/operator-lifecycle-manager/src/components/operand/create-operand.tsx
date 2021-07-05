@@ -5,6 +5,15 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
+import { getBadgeFromType } from '@console/dynamic-plugin-sdk/src/shared/components/badges';
+import {
+  getSchemaErrors,
+  hasNoFields,
+  prune,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dynamic-form/utils';
+import { SyncedEditor } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import {
   PageHeading,
   StatusBox,
@@ -25,15 +34,6 @@ import {
   definitionFor,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { useActivePerspective } from '@console/shared';
-import { getBadgeFromType } from '@console/shared/src/components/badges';
-import {
-  getSchemaErrors,
-  hasNoFields,
-  prune,
-} from '@console/shared/src/components/dynamic-form/utils';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';

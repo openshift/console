@@ -3,6 +3,16 @@ import { Gallery, GalleryItem, Alert } from '@patternfly/react-core';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getNodeMachineNameAndNamespace } from '@console/dynamic-plugin-sdk';
+import HealthBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthItem';
+import {
+  HealthState,
+  healthStateMapping,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
+import Status, {
+  StatusPopupSection,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/StatusPopup';
 import { ResourceLink } from '@console/internal/components/utils';
 import { pluralize } from '@console/internal/components/utils/details-page';
 import {
@@ -19,16 +29,6 @@ import {
   MachineHealthCondition,
 } from '@console/internal/module/k8s';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
-import { getNodeMachineNameAndNamespace } from '@console/shared';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import {
-  HealthState,
-  healthStateMapping,
-} from '@console/shared/src/components/dashboard/status-card/states';
-import Status, {
-  StatusPopupSection,
-} from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import NodeStatus from '../NodeStatus';
 import MarkAsSchedulablePopover from '../popovers/MarkAsSchedulablePopover';
 import { CONDITIONS_WARNING } from './messages';

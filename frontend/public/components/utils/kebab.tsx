@@ -8,7 +8,7 @@ import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
 import { subscribeToExtensions } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
-import Popper from '@console/shared/src/components/popper/Popper';
+import Popper from '@console/dynamic-plugin-sdk/src/shared/components/popper/Popper';
 import {
   annotationsModal,
   configureReplicaCountModal,

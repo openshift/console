@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import PipelineResourceStatus from '../PipelineResourceStatus';
 
 type PipelineResourceStatusWrapperProps = React.ComponentProps<typeof PipelineResourceStatus>;

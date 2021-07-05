@@ -2,15 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityBody';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '../../utils';
 import { EventModel } from '../../../models';
@@ -25,11 +25,12 @@ import {
   DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
   isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
   ResolvedExtension,
+  getName,
 } from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
-import { getName } from '@console/shared';
+
 import { useTranslation } from 'react-i18next';
 
 const getEventsResource = (projectName: string): FirehoseResource => ({

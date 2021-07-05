@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
 import {
   OverviewItem,
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
   useJobsForCronJobWatcher,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { CronJobModel } from '../../models';
 import { CronJobKind } from '../../module/k8s';
 import { menuActions } from '../cron-job';

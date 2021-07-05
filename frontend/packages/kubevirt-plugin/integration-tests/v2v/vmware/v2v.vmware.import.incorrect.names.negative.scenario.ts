@@ -3,7 +3,7 @@ import {
   click,
   deleteResources,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { VirtualMachineModel } from '../../../src/models';
 import { DiskDialog } from '../../tests/dialogs/diskDialog';
 import { NetworkInterfaceDialog } from '../../tests/dialogs/networkInterfaceDialog';

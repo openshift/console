@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import { ExpectedConditions as until, browser } from 'protractor';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { DeviceSet } from '../../../src/types';
 import { OCS_INTERNAL_CR_NAME } from '../../../src/constants';
 import { getCurrentDeviceSetIndex } from '../../../src/utils/add-capacity';

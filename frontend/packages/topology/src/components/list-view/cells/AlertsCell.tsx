@@ -12,7 +12,7 @@ import {
   useReplicationControllersWatcher,
   getReplicationControllerAlerts,
   useIsMobile,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { getResource } from '../../../utils';
 
 import './AlertsCell.scss';

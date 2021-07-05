@@ -1,7 +1,7 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { PVC_STATUS, SECOND } from '../utils/consts';
 import { PvcType } from '../utils/helpers';
 

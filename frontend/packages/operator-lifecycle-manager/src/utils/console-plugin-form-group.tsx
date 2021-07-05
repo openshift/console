@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FieldLevelHelp } from '@console/internal/components/utils';
 import {
   ConsolePluginRadioInputs,
   ConsolePluginWarning,
-} from '@console/shared/src/components/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/components/utils';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import { isCatalogSourceTrusted } from '../utils';
 
 export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({

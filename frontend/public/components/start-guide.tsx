@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
 import { createProjectModal } from './modals/create-namespace-modal';
 

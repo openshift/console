@@ -15,7 +15,7 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { commonReducer, defaultState } from './state';
 import { NooBaaObjectBucketModel } from '../../models';

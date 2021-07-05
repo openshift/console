@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { EventModel } from '@console/internal/models';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   DashboardItemProps,
@@ -21,7 +21,7 @@ import {
   isObjectStorageEvent,
 } from '@console/ceph-storage-plugin/src/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import {
   dataResiliencyQueryMap,

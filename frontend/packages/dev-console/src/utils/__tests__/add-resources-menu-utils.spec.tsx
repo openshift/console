@@ -1,9 +1,9 @@
 import { URL } from 'url';
 import * as React from 'react';
 import { GitAltIcon } from '@patternfly/react-icons';
+import { MockResources } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { KebabOption } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
-import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
 import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';

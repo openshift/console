@@ -6,7 +6,7 @@ import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, RouteKind } from '../../module/k8s';
 import { RouteLocation } from '../routes';
 import { ResourceLink, SidebarSectionHeading } from '../utils';
-import { useRoutesWatcher, useServicesWatcher } from '@console/shared/src';
+import { useRoutesWatcher, useServicesWatcher } from '@console/dynamic-plugin-sdk/src/shared';
 
 const ServicePortList: React.SFC<ServicePortListProps> = ({ service }) => {
   const ports = _.get(service, 'spec.ports', []);

@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { usePodsWatcher, PodRing } from '@console/shared';
+import { usePodsWatcher, PodRing } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {

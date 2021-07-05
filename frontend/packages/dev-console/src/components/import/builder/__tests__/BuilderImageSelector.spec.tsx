@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { ItemSelectorField } from '@console/shared';
+import { ItemSelectorField } from '@console/dynamic-plugin-sdk';
 import { NormalizedBuilderImages } from '../../../../utils/imagestream-utils';
 import BuilderImageSelector from '../BuilderImageSelector';
 

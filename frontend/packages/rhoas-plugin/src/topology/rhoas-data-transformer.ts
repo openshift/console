@@ -1,6 +1,6 @@
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
+import { OverviewItem } from '@console/dynamic-plugin-sdk/src/shared';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared/src';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
 import { edgesFromServiceBinding } from '@console/topology/src/operators/operators-data-transformer';

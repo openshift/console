@@ -1,4 +1,12 @@
 import * as _ from 'lodash';
+import {
+  getAPIVersion,
+  getKind,
+  getName,
+  getNamespace,
+  getUID,
+} from '@console/dynamic-plugin-sdk/src/shared/selectors';
+import { getRandomChars } from '@console/dynamic-plugin-sdk/src/shared/utils/utils';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
@@ -7,14 +15,6 @@ import {
   MatchExpression,
   OwnerReference,
 } from '@console/internal/module/k8s';
-import {
-  getAPIVersion,
-  getKind,
-  getName,
-  getNamespace,
-  getUID,
-} from '@console/shared/src/selectors';
-import { getRandomChars } from '@console/shared/src/utils/utils';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants';
 import { pluralize } from './strings';
 

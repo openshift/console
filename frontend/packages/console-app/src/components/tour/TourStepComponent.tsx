@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/shared';
+import { Popover, PopoverPlacement, Modal, Spotlight } from '@console/dynamic-plugin-sdk';
 import StepBadge from './steps/StepBadge';
 import StepContent from './steps/StepContent';
 import StepFooter from './steps/StepFooter';

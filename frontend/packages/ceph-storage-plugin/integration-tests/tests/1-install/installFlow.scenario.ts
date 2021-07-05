@@ -3,7 +3,7 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 import { Base64 } from 'js-base64';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { DISCOVERY_CR_NAME } from '@console/local-storage-operator-plugin/src/constants';
 import {
   MINUTE,

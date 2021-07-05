@@ -1,0 +1,14 @@
+@import '../../../../../../public/style/vars';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+
+.ocs-form-footer {
+  padding: var(--pf-global--spacer--md) ($grid-gutter-width/2);
+  @media (min-width: $screen-sm-min) {
+    padding: var(--pf-global--spacer--md) ($grid-gutter-width);
+  }
+  &__sticky {
+    position: sticky;
+    background: var(--pf-chart-global--Fill--Color--white);
+    bottom: 0;
+  }
+}

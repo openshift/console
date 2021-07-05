@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 
 import { checkLogs, checkErrors, firstElementByTestID, appHost } from '../protractor.conf';
-import { fillInput } from '@console/shared/src/test-utils/utils';
+import { fillInput } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { dropdownMenuForTestID } from '../views/form.view';
 import {
   AlertmanagerConfig,

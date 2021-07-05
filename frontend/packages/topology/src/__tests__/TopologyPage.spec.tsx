@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
+import { useUserSettingsCompatibility } from '@console/dynamic-plugin-sdk/src/shared';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useUserSettingsCompatibility } from '@console/shared/src';
 import TopologyPage from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
 
@@ -29,8 +29,8 @@ jest.mock('react-redux', () => {
 
 let mockViewParam = '';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const ActualShared = require.requireActual('@console/dynamic-plugin-sdk');
   return {
     ...ActualShared,
     useQueryParams: () => new Map().set('view', mockViewParam),

@@ -9,7 +9,7 @@ import {
   AlertActionLink,
   WizardContextConsumer,
 } from '@patternfly/react-core';
-import { TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge } from '@console/dynamic-plugin-sdk';
 import { CreateStepsSC } from '../constants';
 import '../components/ocs-install/ocs-install.scss';
 import { EncryptionType } from '../types';

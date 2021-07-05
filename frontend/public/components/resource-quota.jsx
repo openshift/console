@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { FLAGS, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
@@ -23,7 +23,8 @@ import {
   convertToBaseValue,
   FieldLevelHelp,
 } from './utils';
-import { connectToFlags, flagPending } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending } from '../reducers/features';
 import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';

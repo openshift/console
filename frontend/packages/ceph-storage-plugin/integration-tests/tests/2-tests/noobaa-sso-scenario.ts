@@ -1,7 +1,7 @@
 import { browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { isLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { isLoaded } from '@console/dynamic-plugin-sdk/src/shared/test-views/dashboard-shared.view';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import {
   noobaaAddStorageResource,
   noobaaAddStorageResourceModal,

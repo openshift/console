@@ -15,12 +15,12 @@ import {
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { getFiringAlerts } from '@console/dynamic-plugin-sdk';
 import { sortEvents } from '@console/internal/components/events';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { FirehoseResult, LoadingBox } from '@console/internal/components/utils';
 import { DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, EventKind, PodKind } from '@console/internal/module/k8s';
-import { getFiringAlerts } from '@console/shared';
 import WorkloadGraphs from './MonitoringMetrics';
 import MonitoringOverviewAlerts from './MonitoringOverviewAlerts';
 import MonitoringOverviewEvents from './MonitoringOverviewEvents';

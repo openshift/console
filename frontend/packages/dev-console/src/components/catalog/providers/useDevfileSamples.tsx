@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem, APIError } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { APIError } from '@console/shared';
 import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {

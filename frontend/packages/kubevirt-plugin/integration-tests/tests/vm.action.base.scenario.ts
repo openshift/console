@@ -1,17 +1,17 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  resourceRows,
-  resourceRowsPresent,
-  textFilter,
-} from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
   click,
   createResource,
   removeLeakableResource,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import {
+  resourceRows,
+  resourceRowsPresent,
+  textFilter,
+} from '@console/internal-integration-tests/views/crud.view';
 import { unpauseButton } from '../views/dialogs/editStatusView';
 import { vmLinkByName } from '../views/vms.list.view';
 import { getVMManifest } from './mocks/mocks';

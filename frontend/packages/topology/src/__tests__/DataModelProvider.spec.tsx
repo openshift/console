@@ -11,8 +11,8 @@ import { TopologyViewType } from '../topology-types';
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: () => [],
 }));
-jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const ActualShared = require.requireActual('@console/dynamic-plugin-sdk');
   return {
     ...ActualShared,
     useQueryParams: () => new Map(),

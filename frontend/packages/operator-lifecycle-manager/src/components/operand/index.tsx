@@ -5,6 +5,10 @@ import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
+import { Status, SuccessStatus, getBadgeFromType } from '@console/dynamic-plugin-sdk';
+import ErrorAlert from '@console/dynamic-plugin-sdk/src/shared/components/alerts/error';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModel';
+import { useK8sModels } from '@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModels';
 import { Conditions } from '@console/internal/components/conditions';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -56,10 +60,6 @@ import {
   useExtensions,
   isClusterServiceVersionAction,
 } from '@console/plugin-sdk';
-import { Status, SuccessStatus, getBadgeFromType } from '@console/shared';
-import ErrorAlert from '@console/shared/src/components/alerts/error';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';

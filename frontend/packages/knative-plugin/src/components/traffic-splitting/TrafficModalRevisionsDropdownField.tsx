@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useField } from 'formik';
-import { DropdownField } from '@console/shared';
+import { DropdownField } from '@console/dynamic-plugin-sdk';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';
 
 type TrafficModalRevisionsDropdownFieldProps = {

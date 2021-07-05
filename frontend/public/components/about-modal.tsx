@@ -8,7 +8,7 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
-import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/shared';
+import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/dynamic-plugin-sdk';
 import { getBrandingDetails } from './masthead';
 import { ReleaseNotesLink, useAccessReview } from './utils';
 import { ClusterVersionModel } from '../models';

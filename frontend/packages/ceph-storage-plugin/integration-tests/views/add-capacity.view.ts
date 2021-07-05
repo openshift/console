@@ -1,7 +1,7 @@
 import { $, ExpectedConditions as until, browser } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { currentSelectors, VERSION } from './installFlow.view';
 import { CAPACITY_UNIT, OCS_OP } from '../utils/consts';
 

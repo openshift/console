@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ResourceLimitField } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { ContainerModel } from '@console/internal/models';
-import { ResourceLimitField } from '@console/shared';
 import { MemoryUnits, CPUUnits } from '../import-types';
 import FormSection from '../section/FormSection';
 

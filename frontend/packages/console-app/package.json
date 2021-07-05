@@ -25,7 +25,7 @@
     "@console/patternfly": "0.0.0-fixed",
     "@console/pipelines-plugin": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/shared": "0.0.0-fixed",
+    "@console/dynamic-plugin-sdk": "0.0.0-fixed",
     "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {

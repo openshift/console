@@ -3,16 +3,16 @@ import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FormFooter,
   SyncedEditorField,
   YAMLEditorField,
   FlexForm,
   FormBody,
-} from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+} from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getCatalogEventSourceResource,
   sanitizeSourceToForm,

@@ -5,6 +5,13 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import {
+  getNodeMachineNameAndNamespace,
+  getNodeAddresses,
+  getName,
+  getNamespace,
+  DASH,
+} from '@console/dynamic-plugin-sdk';
+import {
   useAccessReview,
   SectionHeading,
   LabelList,
@@ -16,13 +23,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  getNodeMachineNameAndNamespace,
-  getNodeAddresses,
-  getName,
-  getNamespace,
-  DASH,
-} from '@console/shared';
 import { BareMetalHostModel } from '../../models';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';

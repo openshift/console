@@ -3,13 +3,13 @@ import { Flex, FlexItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import {
   SidebarSectionHeading,
   ResourceLink,
   resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared';
 import { PipelineRunModel, PipelineModel } from '../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../types';
 import { isPipelineNotStarted, removePipelineNotStarted } from './pipeline-overview-utils';

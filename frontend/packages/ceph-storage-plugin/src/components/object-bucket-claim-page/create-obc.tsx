@@ -19,7 +19,7 @@ import {
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { getName, ResourceDropdown, isObjectSC } from '@console/shared';
+import { getName, ResourceDropdown, isObjectSC } from '@console/dynamic-plugin-sdk';
 import { NooBaaObjectBucketClaimModel, NooBaaBucketClassModel } from '../../models';
 import { commonReducer, defaultState, State, Action } from '../object-bucket-page/state';
 import { OCS_NS, NB_PROVISIONER } from '../../constants';

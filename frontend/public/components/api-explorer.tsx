@@ -11,7 +11,13 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
-import { ALL_NAMESPACES_KEY, FLAGS, APIError } from '@console/shared';
+import {
+  ALL_NAMESPACES_KEY,
+  FLAGS,
+  APIError,
+  ResourceListPage as DynamicResourceListPage,
+  isResourceListPage as isDynamicResourceListPage,
+} from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
@@ -26,7 +32,8 @@ import {
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
@@ -49,10 +56,6 @@ import {
   setQueryArgument,
 } from './utils';
 import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
-import {
-  ResourceListPage as DynamicResourceListPage,
-  isResourceListPage as isDynamicResourceListPage,
-} from '@console/dynamic-plugin-sdk';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {

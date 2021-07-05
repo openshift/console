@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import i18n from '@console/internal/i18n';
-import { getName } from '@console/shared/src/selectors/common';
 import {
   ClusterServiceVersionKind,
   SubscriptionKind,

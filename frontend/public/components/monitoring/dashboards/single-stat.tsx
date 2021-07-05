@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Bullseye } from '@patternfly/react-core';
 
-import ErrorAlert from '@console/shared/src/components/alerts/error';
+import ErrorAlert from '@console/dynamic-plugin-sdk/src/shared/components/alerts/error';
 
 import { formatNumber } from './format';
 import { Panel } from './types';

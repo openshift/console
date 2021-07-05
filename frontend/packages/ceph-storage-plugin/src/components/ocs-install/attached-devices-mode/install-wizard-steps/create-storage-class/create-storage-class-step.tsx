@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Alert, Button, Grid, GridItem, WizardContextConsumer } from '@patternfly/react-core';
-import { Modal, useFlag } from '@console/shared';
+import { Modal, useFlag } from '@console/dynamic-plugin-sdk';
 import { k8sCreate, NodeKind } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/components/local-volume-set/body';

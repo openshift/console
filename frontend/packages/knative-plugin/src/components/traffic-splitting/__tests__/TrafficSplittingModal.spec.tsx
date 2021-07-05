@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import { ModalSubmitFooter } from '@console/internal/components/factory/modal';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import {
   mockTrafficData,
   mockRevisionItems,

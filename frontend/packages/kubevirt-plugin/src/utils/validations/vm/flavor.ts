@@ -1,4 +1,8 @@
-import { asValidationObject, ValidationErrorType, ValidationObject } from '@console/shared/src';
+import {
+  asValidationObject,
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/dynamic-plugin-sdk/src/shared';
 
 export const validateFlavor = (
   {

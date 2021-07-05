@@ -6,8 +6,8 @@ import { Link, match as RMatch } from 'react-router-dom';
 import { Button, TextInput, TextInputProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/shared';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
+import { useDocumentListener, KEYBOARD_SHORTCUTS } from '@console/dynamic-plugin-sdk';
 
 import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';

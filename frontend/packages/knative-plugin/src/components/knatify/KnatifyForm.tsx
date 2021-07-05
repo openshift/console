@@ -7,8 +7,12 @@ import AppSection from '@console/dev-console/src/components/import/app/AppSectio
 import ImageSearchSection from '@console/dev-console/src/components/import/image-search/ImageSearchSection';
 import { DeployImageFormProps } from '@console/dev-console/src/components/import/import-types';
 import IconSection from '@console/dev-console/src/components/import/section/IconSection';
+import {
+  FormFooter,
+  FlexForm,
+  FormBody,
+} from '@console/dynamic-plugin-sdk/src/shared/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 
 const KnatifyForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,

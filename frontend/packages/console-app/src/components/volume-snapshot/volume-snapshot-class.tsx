@@ -2,6 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { getAnnotations } from '@console/dynamic-plugin-sdk';
 import {
   TableRow,
   TableData,
@@ -12,7 +13,6 @@ import {
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared';
 
 const tableColumnClasses = [
   '', // name

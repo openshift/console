@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Formik } from 'formik';
+import { useRelatedHPA } from '@console/dynamic-plugin-sdk/src/shared/hooks/hpa-hooks';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useRelatedHPA } from '@console/shared/src/hooks/hpa-hooks';
 import { deploymentData } from '../../../utils/__tests__/knative-serving-data';
 import CreateKnatifyPage from '../CreateKnatifyPage';
 
@@ -24,7 +24,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/hpa-hooks', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/hpa-hooks', () => ({
   useRelatedHPA: jest.fn(),
 }));
 

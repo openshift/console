@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { BreadCrumbs, history, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { Button } from '@patternfly/react-core';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { Modal } from '@console/shared/src/components/modal';
+import { Modal } from '@console/dynamic-plugin-sdk/src/shared/components/modal';
 
 import { BlockPoolBody } from './body';
 import { BlockPoolFooter } from './footer';

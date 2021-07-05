@@ -3,8 +3,8 @@ import { Form } from '@patternfly/react-core';
 import { FormikProps, FormikValues, getIn } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { FormFooter } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
-import { FormFooter } from '@console/shared';
 import PipelineResources from './PipelineResources';
 
 type PipelineResourcesFormProps = FormikProps<FormikValues> & {

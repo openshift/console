@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
 import { Grid, GridItem } from '@patternfly/react-core';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
 import { QueryBrowser } from '../monitoring/query-browser';
 import {
   ResourceUtilizationQuery,
   useResourceMetricsQueries,
-} from '@console/shared/src/promql/resource-metrics';
+} from '@console/dynamic-plugin-sdk/src/shared/promql/resource-metrics';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 const ResourceMetricsDashboardCard: React.FC<ResourceMetricsDashboardCardProps> = (props) => (

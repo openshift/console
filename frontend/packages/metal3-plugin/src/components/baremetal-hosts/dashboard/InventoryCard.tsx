@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import InventoryItem, {
+  ResourceInventoryItem,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { getPodStatusGroups } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils';
+import { getNamespace, getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s/types';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import InventoryItem, {
-  ResourceInventoryItem,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { BareMetalHostModel } from '../../../models';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';

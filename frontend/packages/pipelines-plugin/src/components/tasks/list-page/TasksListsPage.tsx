@@ -4,10 +4,10 @@ import { match as Rmatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { MenuActions, MultiTabListPage } from '@console/dynamic-plugin-sdk';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuActions, MultiTabListPage } from '@console/shared';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';

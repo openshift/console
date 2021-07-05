@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NodeDetailsConditions from '@console/app/src/components/nodes/NodeDetailsConditions';
 import NodeDetailsImages from '@console/app/src/components/nodes/NodeDetailsImages';
-import { getNodeMachineName, getName, createBasicLookup } from '@console/shared';
+import { getNodeMachineName, getName, createBasicLookup } from '@console/dynamic-plugin-sdk';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { getNodeServerCSR } from '../../selectors/csr';
 import { BareMetalNodeDetailsPageProps } from '../types';

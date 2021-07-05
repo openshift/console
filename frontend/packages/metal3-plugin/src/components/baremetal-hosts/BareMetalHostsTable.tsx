@@ -2,6 +2,8 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { getName, getUID, getNamespace, DASH } from '@console/dynamic-plugin-sdk';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import {
   TableRow,
   TableData,
@@ -11,8 +13,6 @@ import {
 } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, getUID, getNamespace, DASH } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';

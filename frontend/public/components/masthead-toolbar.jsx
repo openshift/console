@@ -20,12 +20,13 @@ import {
   PageHeaderToolsItem,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/dynamic-plugin-sdk';
+import { formatNamespacedRouteForResource } from '@console/dynamic-plugin-sdk/src/shared/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
 import * as UIActions from '../actions/ui';
-import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink, referenceForModel } from '../module/k8s';
 import { Firehose } from './utils';
@@ -36,7 +37,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
-import { withTelemetry } from '@console/shared/src/hoc';
+import { withTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hoc';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();

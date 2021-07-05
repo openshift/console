@@ -1,4 +1,12 @@
 import { TFunction } from 'i18next';
+import {
+  getMachineNode,
+  getMachineNodeName,
+  getName,
+  getNamespace,
+  getAnnotations,
+} from '@console/dynamic-plugin-sdk';
+import { patchSafeValue } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import { confirmModal, deleteModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel } from '@console/internal/models';
@@ -12,14 +20,6 @@ import {
   referenceForModel,
   Patch,
 } from '@console/internal/module/k8s';
-import {
-  getMachineNode,
-  getMachineNodeName,
-  getName,
-  getNamespace,
-  getAnnotations,
-} from '@console/shared';
-import { patchSafeValue } from '@console/shared/src/k8s';
 import {
   HOST_POWER_STATUS_POWERED_OFF,
   HOST_POWER_STATUS_POWERED_ON,

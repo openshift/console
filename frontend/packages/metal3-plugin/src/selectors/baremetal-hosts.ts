@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { MachineKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src/selectors/common';
 import {
   HOST_POWER_STATUS_POWERED_ON,
   HOST_POWER_STATUS_POWERING_OFF,

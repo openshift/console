@@ -2,10 +2,10 @@ import * as React from 'react';
 import { SortByDirection } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { CustomResourceList, useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { StatusBox } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
 import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
 import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
 

@@ -7,7 +7,7 @@ import AddCardItem from '../AddCardItem';
 import { useShowAddCardItemDetails } from '../hooks/useShowAddCardItemDetails';
 import { addActionExtensions } from './add-page-test-data';
 
-jest.mock('@console/shared/src/hooks/useTelemetry', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry', () => ({
   useTelemetry: () => {},
 }));
 

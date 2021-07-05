@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { useQueryParams } from '@console/shared';
+import { useQueryParams } from '@console/dynamic-plugin-sdk';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import CatalogController from './CatalogController';

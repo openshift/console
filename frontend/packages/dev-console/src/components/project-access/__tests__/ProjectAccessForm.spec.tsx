@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
+import {
+  MultiColumnField,
+  InputField,
+  DropdownField,
+  FormFooter,
+} from '@console/dynamic-plugin-sdk';
 import { defaultAccessRoles } from '../project-access-form-utils';
 import ProjectAccessForm from '../ProjectAccessForm';
 

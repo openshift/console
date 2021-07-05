@@ -6,7 +6,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { withTranslation } from 'react-i18next';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { Extension, withExtensions } from '@console/plugin-sdk';
 import {
   StorageClassProvisioner,

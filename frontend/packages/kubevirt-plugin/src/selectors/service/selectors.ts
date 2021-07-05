@@ -1,5 +1,5 @@
+import { getLabels } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getLabels } from '@console/shared';
 import { VMIKind } from '../../types';
 
 export const getServicePort = (

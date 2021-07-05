@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalTitle,
@@ -9,7 +10,6 @@ import {
 } from '@console/internal/components/factory/modal';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   kind,

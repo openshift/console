@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
-import { getName, ResourceDropdown, useFlag } from '@console/shared';
+import { getName, ResourceDropdown, useFlag } from '@console/dynamic-plugin-sdk';
 import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';

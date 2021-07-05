@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertsBody';
+import AlertItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertItem';
 import { alertURL } from '@console/internal/components/monitoring/utils';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import HealthBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthItem';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   withDashboardResources,

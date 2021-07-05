@@ -1,6 +1,6 @@
 import { $, browser, by, element, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
 
 export const modalTitle = $('[data-test-id="modal-title"]');
 export const modalSubmitButton = $('.modal-content .pf-m-primary');

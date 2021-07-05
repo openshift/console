@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { getVMLikeModel } from '../selectors/vm';
 import { VMGenericLikeEntityKind } from '../types/vmLike';

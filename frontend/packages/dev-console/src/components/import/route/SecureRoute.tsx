@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormHelperText } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
+import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/dynamic-plugin-sdk';
 import {
   TerminationTypes,
   PassthroughInsecureTrafficTypes,

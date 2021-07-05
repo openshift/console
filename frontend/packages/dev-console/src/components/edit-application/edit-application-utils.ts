@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { getLimitsDataFromResource } from '@console/dynamic-plugin-sdk/src/shared';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
@@ -24,7 +25,6 @@ import {
   PIPELINE_RUNTIME_VERSION_LABEL,
 } from '@console/pipelines-plugin/src/const';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import { getLimitsDataFromResource } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';

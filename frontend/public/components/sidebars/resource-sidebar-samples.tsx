@@ -8,7 +8,7 @@ import {
   DownloadIcon,
   PasteIcon,
 } from '@patternfly/react-icons';
-import { Sample } from '@console/shared';
+import { Sample } from '@console/dynamic-plugin-sdk';
 import { useTranslation } from 'react-i18next';
 
 import { K8sKind, referenceFor } from '../../module/k8s';

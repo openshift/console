@@ -3,12 +3,12 @@ import { Accordion, Text, TextVariants } from '@patternfly/react-core';
 import cn from 'classnames';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getNamespace } from '@console/dynamic-plugin-sdk';
+import EventItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/EventItem';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventModel } from '@console/internal/models';
 import { EventKind } from '@console/internal/module/k8s';
 import { VMKind } from '@console/kubevirt-plugin/src/types';
-import { getNamespace } from '@console/shared';
-import EventItem from '@console/shared/src/components/dashboard/activity-card/EventItem';
 import { NORMAL } from '../../constants';
 import { getVmEventsFilters } from '../../selectors/event/filters';
 

@@ -1,4 +1,4 @@
-import { ValidationObject } from '@console/shared';
+import { ValidationObject } from '@console/dynamic-plugin-sdk';
 import { DeviceType } from '../../../constants/vm';
 import { FirehoseResourceEnhanced } from '../../../types/custom';
 import {

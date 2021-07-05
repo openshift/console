@@ -11,7 +11,7 @@ import {
   HandlePromiseProps,
 } from '../utils';
 import { k8sPatch, referenceFor, K8sKind, K8sResourceKind } from '../../module/k8s/';
-import { getRequestedPVCSize } from '@console/shared';
+import { getRequestedPVCSize } from '@console/dynamic-plugin-sdk';
 
 // Modal for expanding persistent volume claims
 const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {

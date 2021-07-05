@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ModalVariant, Flex, FlexItem, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@console/shared/';
+import { Modal } from '@console/dynamic-plugin-sdk';
 
 type QuickStartCloseModalProps = {
   isOpen: boolean;

@@ -4,10 +4,10 @@ import { StarIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { getFieldId, ItemSelectorField } from '@console/dynamic-plugin-sdk';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PIPELINE_RUNTIME_LABEL } from '@console/pipelines-plugin/src/const';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
-import { getFieldId, ItemSelectorField } from '@console/shared';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 
 export interface BuilderImageSelectorProps {

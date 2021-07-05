@@ -1,19 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import UtilizationItem, {
   TopConsumerPopoverProp,
   MultilineUtilizationItem,
   QueryWithDescription,
   LimitRequested,
   trimSecondsXMutator,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationItem';
+import UtilizationBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationBody';
+import ConsumerPopover from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/TopConsumerPopover';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   Flex,
   FlexItem,
@@ -36,14 +36,14 @@ import {
   getTop25ConsumerQueries,
   getUtilizationQueries,
   OverviewQuery,
-} from '@console/shared/src/promql/cluster-dashboard';
+} from '@console/dynamic-plugin-sdk/src/shared/promql/cluster-dashboard';
 import { MachineConfigPoolModel, NodeModel, PodModel, ProjectModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
 import {
   useMetricDuration,
   Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/duration-hook';
 import { DataPoint, PrometheusResponse } from '../../../graphs';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineConfigPoolKind, referenceForModel } from '@console/internal/module/k8s';

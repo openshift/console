@@ -2,8 +2,13 @@ import * as React from 'react';
 import { FormSection } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import {
+  DropdownField,
+  EnvironmentField,
+  InputField,
+  TextColumnField,
+} from '@console/dynamic-plugin-sdk/src/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
 import { getContainerNames } from '../../utils/edit-deployment-utils';
 
 interface ExecNewPodFormProps {

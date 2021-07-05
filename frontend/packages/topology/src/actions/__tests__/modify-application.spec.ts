@@ -1,7 +1,7 @@
+import { sampleDeployments } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { DeploymentModel } from '@console/internal/models';
 import { ServiceModel } from '@console/knative-plugin';
 import { knativeServiceObj } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { EditApplication } from '../modify-application';
 
 describe('modify application edit flow', () => {

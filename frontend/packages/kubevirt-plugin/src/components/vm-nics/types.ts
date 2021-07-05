@@ -1,4 +1,4 @@
-import { ValidationObject } from '@console/shared';
+import { ValidationObject } from '@console/dynamic-plugin-sdk';
 import { VMIKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
 

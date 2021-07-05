@@ -4,6 +4,18 @@ import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { BlueInfoCircleIcon, StatusIconAndText } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import AlertItem, {
+  StatusItem,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertsBody';
+import HealthBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthItem';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -11,18 +23,6 @@ import {
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import AlertItem, {
-  StatusItem,
-} from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,
   HOST_HARDWARE_ERROR_STATES,

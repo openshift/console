@@ -1,4 +1,4 @@
-import { getName } from '@console/shared/src';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { EnhancedK8sMethods } from '../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import {
   cleanupAndGetResults,

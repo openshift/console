@@ -10,16 +10,16 @@ import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
-import { Status, TableColumnsType } from '@console/shared';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { Status, TableColumnsType } from '@console/dynamic-plugin-sdk';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
-} from '@console/shared/src/hoc/withUserSettingsCompatibility';
+} from '@console/dynamic-plugin-sdk/src/shared/hoc/withUserSettingsCompatibility';
 import {
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants/common';
+} from '@console/dynamic-plugin-sdk/src/shared/constants/common';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { ContainerSpec, K8sResourceKindReference, PodKind, referenceForModel } from '../module/k8s';
@@ -68,11 +68,11 @@ import {
 import { VolumesTable } from './volumes-table';
 import { PodModel } from '../models';
 import { Conditions } from './conditions';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
 
 // Key translations for oauth login templates
 // t('public~Log in to your account')

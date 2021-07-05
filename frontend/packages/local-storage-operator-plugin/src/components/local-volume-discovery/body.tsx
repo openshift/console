@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src/selectors/common';
 import { NodesTable } from '../tables/nodes-table';
 
 import './body.scss';

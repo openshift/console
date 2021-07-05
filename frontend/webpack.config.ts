@@ -207,7 +207,9 @@ const config: Configuration = {
       languages: ['yaml'],
     }),
     new CopyWebpackPlugin([{ from: './public/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/console-shared/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([
+      { from: './packages/console-dynamic-plugin-sdk/locales', to: 'locales' },
+    ]),
     new CopyWebpackPlugin([{ from: './packages/console-app/locales', to: 'locales' }]),
     new CopyWebpackPlugin([
       { from: './packages/operator-lifecycle-manager/locales', to: 'locales' },

@@ -1,6 +1,6 @@
+import { getName } from '@console/dynamic-plugin-sdk/src/shared';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import { Patch } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
 import { getSimpleName } from '../../../selectors/utils';
 import {

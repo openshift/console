@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts';
+import { PodStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, OwnerReference, referenceForModel } from '@console/internal/module/k8s';
-import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../models';
 import { getTrafficByRevision } from '../../utils/get-knative-resources';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';

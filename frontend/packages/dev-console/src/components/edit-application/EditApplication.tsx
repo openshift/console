@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk';
 import { history } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { useActivePerspective } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
 import {

@@ -1,8 +1,12 @@
 import * as _ from 'lodash';
 import { browser } from 'protractor';
+import {
+  click,
+  createResource,
+  deleteResource,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { getBootableDevicesInOrder, getNonBootableDevices } from '../../src/selectors/vm/devices';
 import * as bootOrderView from '../views/dialogs/editBootOrderView';
 import { saveButton } from '../views/kubevirtUIResource.view';

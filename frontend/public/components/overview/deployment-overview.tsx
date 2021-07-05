@@ -7,8 +7,8 @@ import { KebabAction, LoadingInline, ResourceSummary, WorkloadPausedAlert } from
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem } from '@console/shared';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 
 const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
   item: { obj: d },

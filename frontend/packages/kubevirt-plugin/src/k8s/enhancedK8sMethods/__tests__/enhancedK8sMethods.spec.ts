@@ -1,5 +1,5 @@
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import { K8sKind, K8sResourceCommon, Patch } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { VirtualMachineModel } from '../../../models';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { EnhancedK8sMethods } from '../enhancedK8sMethods';

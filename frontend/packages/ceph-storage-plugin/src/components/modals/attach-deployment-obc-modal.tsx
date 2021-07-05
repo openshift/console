@@ -26,7 +26,7 @@ import {
   referenceFor,
   DeploymentKind,
 } from '@console/internal/module/k8s/';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { getAttachOBCPatch } from '../../utils';
 
 const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToOBCModalProps) => {

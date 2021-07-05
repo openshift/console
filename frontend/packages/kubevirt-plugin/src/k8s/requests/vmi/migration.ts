@@ -1,5 +1,5 @@
+import { getName } from '@console/dynamic-plugin-sdk';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../../types/vm';

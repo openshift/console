@@ -5,7 +5,7 @@ import { FitAddon } from 'xterm-addon-fit';
 import { withTranslation } from 'react-i18next';
 import { CompressIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { XtermAddonFullscreen } from '@console/shared';
+import { XtermAddonFullscreen } from '@console/dynamic-plugin-sdk';
 
 class Terminal_ extends React.Component {
   constructor(props) {

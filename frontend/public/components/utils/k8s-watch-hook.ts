@@ -4,8 +4,8 @@ import * as React from 'react';
 import { useSelector, useDispatch, Dispatch } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
-import { usePrevious } from '@console/shared/src/hooks/previous';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/shared/hooks/deep-compare-memoize';
+import { usePrevious } from '@console/dynamic-plugin-sdk/src/shared/hooks/previous';
 import {
   UseK8sWatchResource,
   UseK8sWatchResources,

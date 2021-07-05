@@ -1,6 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { ValidationErrorType, ValidationObject } from '@console/shared';
+import { ValidationErrorType, ValidationObject } from '@console/dynamic-plugin-sdk';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 import { iGetFieldKey, isFieldRequired } from '../../selectors/immutable/field';
 import { SettingsFieldType } from '../../types';

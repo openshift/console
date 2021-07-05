@@ -36,7 +36,7 @@ i18n
       'ceph-storage-plugin',
       'cloudshell',
       'console-app',
-      'console-shared',
+      'console-dynamic-plugin-sdk',
       'container-security',
       'devconsole',
       'editor',

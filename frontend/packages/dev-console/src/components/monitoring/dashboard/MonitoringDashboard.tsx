@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
 import {
   TimespanDropdown,
   PollIntervalDropdown,
@@ -14,7 +15,6 @@ import {
   removeQueryArguments,
 } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import {
   monitoringDashboardQueries,
   workloadMetricsQueries,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { usePodsWatcher } from '@console/dynamic-plugin-sdk/src/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared/src';
 import { MetricStats, getPodMetricStats } from './metricStats';
 import { useOverviewMetrics } from './useOverviewMetrics';
 

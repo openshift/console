@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { OverviewItem, PodRing, usePodsWatcher } from '@console/shared';
+import { OverviewItem, PodRing, usePodsWatcher } from '@console/dynamic-plugin-sdk';
 import { DaemonSetModel } from '../../models';
 import { KebabAction, ResourceSummary, StatusBox } from '../utils';
 import { menuActions, DaemonSetDetailsList } from '../daemon-set';

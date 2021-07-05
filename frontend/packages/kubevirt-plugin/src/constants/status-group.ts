@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '@console/dynamic-plugin-sdk/src/shared/constants/object-enum';
 
 export class StatusGroup extends ObjectEnum<string> {
   static readonly VMIMPORT = new StatusGroup('VMIMPORT', 'VM Import');

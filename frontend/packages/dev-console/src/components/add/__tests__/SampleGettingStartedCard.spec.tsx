@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useActiveNamespace } from '@console/shared/src';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/shared';
+import { GettingStartedCard } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider';
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key) => key.split('~')[1] }),
 }));
 
-jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 
@@ -20,7 +20,7 @@ jest.mock('../../catalog/service/CatalogServiceProvider', () => ({
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

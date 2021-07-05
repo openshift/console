@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { getName, getNamespace, getRandomChars } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -8,7 +9,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getName, getNamespace, getRandomChars } from '@console/shared';
 import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { VMSnapshot } from '../../../types';

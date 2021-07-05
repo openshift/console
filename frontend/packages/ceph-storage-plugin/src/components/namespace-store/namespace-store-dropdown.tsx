@@ -8,7 +8,7 @@ import {
   DropdownToggle,
 } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDeepCompareMemoize, getName } from '@console/shared';
+import { useDeepCompareMemoize, getName } from '@console/dynamic-plugin-sdk';
 import NamespaceStoreModal from './namespace-store-modal';
 import { NamespaceStoreKind } from '../../types';
 import { NamespacePolicyType } from '../../constants/bucket-class';

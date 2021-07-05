@@ -4,8 +4,12 @@ import { match as Match } from 'react-router';
 import { Radio } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 import { useExtensions } from '@console/plugin-sdk';
-import { isStorageProvider, StorageProvider } from '@console/dynamic-plugin-sdk';
-import { useDeepCompareMemoize } from '@console/shared';
+import {
+  isStorageProvider,
+  StorageProvider,
+  useDeepCompareMemoize,
+} from '@console/dynamic-plugin-sdk';
+
 import { K8sKind } from '../../module/k8s';
 import { AsyncComponent, ResourceLink, LoadingBox } from '../utils';
 import { connectToPlural } from '../../kinds';

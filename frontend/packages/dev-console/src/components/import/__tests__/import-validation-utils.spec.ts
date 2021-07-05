@@ -133,7 +133,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('console-shared~Required');
+          expect(err.message).toBe('console-dynamic-plugin-sdk~Required');
           expect(err.type).toBe('required');
         });
     });
@@ -173,7 +173,7 @@ describe('ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'console-shared~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'console-dynamic-plugin-sdk~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
           );
         });
     });

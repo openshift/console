@@ -5,7 +5,7 @@ import { ClipboardCheckIcon } from '@patternfly/react-icons';
 import {
   GettingStartedCard,
   GettingStartedLink,
-} from '@console/shared/src/components/getting-started';
+} from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 import { useIdentityProviderLink } from './cluster-setup-identity-provider-link';
 import { useAlertReceiverLink } from './cluster-setup-alert-receiver-link';

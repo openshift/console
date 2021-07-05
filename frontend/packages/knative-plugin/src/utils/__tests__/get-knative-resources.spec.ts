@@ -1,5 +1,5 @@
+import { MockResources } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServingRevisions,

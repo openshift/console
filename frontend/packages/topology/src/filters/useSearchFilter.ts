@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { toLower } from 'lodash';
-import { useQueryParams } from '@console/shared/src';
+import { useQueryParams } from '@console/dynamic-plugin-sdk/src/shared';
 
 const fuzzyCaseInsensitive = (a: string, b: string): boolean => fuzzy(toLower(a), toLower(b));
 

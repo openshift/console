@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import {
   ServiceModel,
@@ -10,7 +11,6 @@ import {
 import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
 import {
   getAppLabels,
   getCommonAnnotations,

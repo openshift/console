@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Title, pluralize } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import {
   convertTime,
   getTimeUnitString,

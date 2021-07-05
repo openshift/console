@@ -4,7 +4,12 @@ import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { FieldArray, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DropdownField, InputField, getFieldId, useFormikValidationFix } from '@console/shared';
+import {
+  DropdownField,
+  InputField,
+  getFieldId,
+  useFormikValidationFix,
+} from '@console/dynamic-plugin-sdk';
 import './MultipleKeySelector.scss';
 
 interface MultipleKeySelectorProps {

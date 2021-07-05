@@ -1,5 +1,5 @@
+import { parseJSONAnnotation } from '@console/dynamic-plugin-sdk/src/shared/utils/annotations';
 import { ObjectMetadata } from '@console/internal/module/k8s';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { INTERNAL_OBJECTS_ANNOTATION, OPERATOR_PLUGINS_ANNOTATION } from './const';
 import { SubscriptionKind, SubscriptionState } from './types';
 

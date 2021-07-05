@@ -52,7 +52,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModels', () => ({
   useK8sModels: () => [
     {
       'testapp.coreos.com~v1alpha1~TestResource': {
@@ -73,7 +73,7 @@ jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   ],
 }));
 
-jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModel', () => ({
   useK8sModel: () => [
     {
       abbr: 'TR',

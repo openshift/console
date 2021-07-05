@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
-import { Shortcut, ShortcutTable } from '@console/shared';
+import { Shortcut, ShortcutTable } from '@console/dynamic-plugin-sdk';
 import { TopologyViewType } from '../../topology-types';
 
 export type Options = {

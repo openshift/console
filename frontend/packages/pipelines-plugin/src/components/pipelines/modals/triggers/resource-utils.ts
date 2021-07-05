@@ -1,7 +1,7 @@
 import { SemVer } from 'semver';
+import { getRandomChars } from '@console/dynamic-plugin-sdk';
 import { RouteModel } from '@console/internal/models';
 import { apiVersionForModel, RouteKind } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
 import { PIPELINE_SERVICE_ACCOUNT } from '../../const';

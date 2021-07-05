@@ -1,5 +1,8 @@
-import { asValidationObject, joinGrammaticallyListOfItems } from '@console/shared';
-import { ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation/types';
+import { asValidationObject, joinGrammaticallyListOfItems } from '@console/dynamic-plugin-sdk';
+import {
+  ValidationErrorType,
+  ValidationObject,
+} from '@console/dynamic-plugin-sdk/src/shared/utils/validation/types';
 import { DiskBus } from '../../../constants/vm/storage/disk-bus';
 
 export class DiskBusValidationResult {

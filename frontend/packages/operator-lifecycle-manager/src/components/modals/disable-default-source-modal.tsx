@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalTitle,
@@ -10,7 +11,6 @@ import {
 } from '@console/internal/components/factory/modal';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { k8sPatch, K8sKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { OperatorHubKind } from '../operator-hub';
 
 const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({

@@ -18,7 +18,7 @@ import {
   CustomFeatureFlag,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-// TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
+// TODO(jtomasek): change this to '@console/dynamic-plugin-sdk/src/shared/utils' once @console/dynamic-plugin-sdk/src/shared/utils modules
 // no longer import from @console/internal (cyclic deps issues)
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
 import {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { useUserSettingsCompatibility } from '@console/dynamic-plugin-sdk';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
 import { DisplayFilters } from '../topology-types';
 import { DEFAULT_TOPOLOGY_FILTERS } from './const';

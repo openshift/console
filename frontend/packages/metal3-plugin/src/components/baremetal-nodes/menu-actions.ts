@@ -4,6 +4,7 @@ import {
   MarkAsUnschedulable,
   Delete,
 } from '@console/app/src/components/nodes/menu-actions';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { Kebab, KebabOption, asAccessReview } from '@console/internal/components/utils';
 import { CertificateSigningRequestModel } from '@console/internal/models';
@@ -14,7 +15,6 @@ import {
   MachineKind,
   k8sUpdate,
 } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import { findNodeMaintenance } from '../../selectors';
 import { CertificateSigningRequestKind } from '../../types';
 import { startNodeMaintenanceModal } from '../modals/StartNodeMaintenanceModal';

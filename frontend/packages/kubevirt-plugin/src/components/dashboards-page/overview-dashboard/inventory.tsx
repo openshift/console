@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { OffIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
+import { StatusGroupMapper } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/status-group';
+import { getNamespace } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
+import { createBasicLookup } from '@console/dynamic-plugin-sdk/src/shared/utils/utils';
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getNamespace } from '@console/shared/src/selectors/common';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { StatusSimpleLabel } from '../../../constants/status-constants';
 import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
 import { VMImportWrappper } from '../../../k8s/wrapper/vm-import/vm-import-wrapper';

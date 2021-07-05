@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { useTabbedTableBreadcrumbsFor } from '@console/dynamic-plugin-sdk';
 import { DetailsForKind } from '@console/internal/components/default-resource';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import { serverlessTab } from '../../utils/serverless-tab-utils';
 

@@ -20,7 +20,7 @@ jest.mock('react', () => {
   };
 });
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: () => ['', () => {}],
 }));
 

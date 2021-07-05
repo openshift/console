@@ -32,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 
 import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/ui';
 import { RootState } from '../../redux';
@@ -57,7 +57,7 @@ import {
   timeFormatterWithSeconds,
 } from '../utils/datetime';
 import { PrometheusAPIError } from './types';
-import { ONE_MINUTE } from '@console/shared/src/constants/time';
+import { ONE_MINUTE } from '@console/dynamic-plugin-sdk/src/shared/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);

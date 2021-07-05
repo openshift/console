@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { safeYAMLToJS } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
 import { history } from '@console/internal/components/utils';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
@@ -9,8 +11,6 @@ import {
   K8sResourceKind,
   k8sUpdate,
 } from '@console/internal/module/k8s';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import {
   getFormData,
   getInvalidUsageError,

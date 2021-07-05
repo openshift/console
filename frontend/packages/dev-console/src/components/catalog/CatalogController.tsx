@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, CatalogItemAttribute, useQueryParams } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   skeletonCatalog,
@@ -11,7 +11,6 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { useQueryParams } from '@console/shared';
 import CatalogView from './catalog-view/CatalogView';
 import CatalogTile from './CatalogTile';
 import CatalogDetailsModal from './details/CatalogDetailsModal';

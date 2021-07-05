@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
 import { Kebab, LoadingBox } from '@console/internal/components/utils';
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/topology/src/actions';
 import { editSinkUri } from '../../actions/edit-sink-uri';
 import { getRevisionActions } from '../../actions/getRevisionActions';

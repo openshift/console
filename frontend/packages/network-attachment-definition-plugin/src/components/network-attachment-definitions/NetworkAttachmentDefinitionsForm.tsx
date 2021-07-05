@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/dynamic-plugin-sdk';
 import {
   ButtonBar,
   Dropdown,
@@ -17,7 +18,6 @@ import {
   referenceForGroupVersionKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { validateDNS1123SubdomainValue, ValidationErrorType } from '@console/shared';
 import { NetworkAttachmentDefinitionModel, SriovNetworkNodePolicyModel } from '../..';
 import { networkTypeParams, networkTypes } from '../../constants';
 import {

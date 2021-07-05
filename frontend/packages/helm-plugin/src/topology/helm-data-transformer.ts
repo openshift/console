@@ -1,8 +1,8 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
+import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { SecretModel } from '@console/internal/models';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/shared';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,

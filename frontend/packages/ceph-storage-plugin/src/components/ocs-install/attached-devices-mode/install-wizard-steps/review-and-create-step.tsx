@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { getName, useFlag } from '@console/shared';
+import { getName, useFlag } from '@console/dynamic-plugin-sdk';
 import {
   ValidationMessage,
   getEncryptionLevel,

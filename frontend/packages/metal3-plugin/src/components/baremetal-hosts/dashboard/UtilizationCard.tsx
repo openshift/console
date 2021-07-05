@@ -1,5 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getMachineNodeName } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import {
+  useMetricDuration,
+  Duration,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/duration-hook';
+import ConsumerPopover from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/TopConsumerPopover';
+import UtilizationBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationBody';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   PrometheusUtilizationItem,
   PrometheusMultilineUtilizationItem,
@@ -11,17 +22,6 @@ import {
 } from '@console/internal/components/utils';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import { PodModel, ProjectModel } from '@console/internal/models';
-import { getMachineNodeName } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import {
   getUtilizationQueries,

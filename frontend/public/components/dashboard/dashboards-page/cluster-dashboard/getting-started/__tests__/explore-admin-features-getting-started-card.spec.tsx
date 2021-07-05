@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { GettingStartedCard } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 import { ExploreAdminFeaturesGettingStartedCard } from '../explore-admin-features-getting-started-card';
 
@@ -17,13 +17,13 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
+jest.mock('@console/dynamic-plugin-sdk/src/shared', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk/src/shared'),
   useOpenShiftVersion: () => '4.8.0',
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

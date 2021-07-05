@@ -11,12 +11,12 @@ import {
 } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+import { useQueryParams } from '@console/dynamic-plugin-sdk';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import * as UIActions from '@console/internal/actions/ui';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { OverviewMetrics } from '@console/internal/components/overview/metricUtils';
-import { useQueryParams } from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { TYPE_APPLICATION_GROUP } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { useOverviewAlertsUpdater } from '../hooks/useOverviewAlertsUpdater';

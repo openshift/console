@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CheckboxField } from '@console/shared/src';
+import { CheckboxField } from '@console/dynamic-plugin-sdk/src/shared';
 import { Resources } from '../../import/import-types';
 import FormSection from '../../import/section/FormSection';
 import ContainerField from '../ContainerField';

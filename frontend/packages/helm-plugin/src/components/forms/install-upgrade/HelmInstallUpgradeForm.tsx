@@ -13,8 +13,8 @@ import {
   SyncedEditorField,
   FormHeader,
   FlexForm,
-} from '@console/shared';
-import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
+} from '@console/dynamic-plugin-sdk';
+import { getJSONSchemaOrder } from '@console/dynamic-plugin-sdk/src/shared/components/dynamic-form/utils';
 import { HelmActionType, HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';

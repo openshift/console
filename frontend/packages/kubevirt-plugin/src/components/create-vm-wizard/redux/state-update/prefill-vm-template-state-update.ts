@@ -1,5 +1,5 @@
 import { Set } from 'immutable';
-import { createBasicLookup, getName } from '@console/shared/src';
+import { createBasicLookup, getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import { DiskBus, DiskType, NetworkInterfaceModel, VolumeType } from '../../../../constants/vm';
 import { ROOT_DISK_NAME } from '../../../../constants/vm/constants';

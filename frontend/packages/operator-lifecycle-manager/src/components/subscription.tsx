@@ -6,6 +6,17 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match, Link } from 'react-router-dom';
+import {
+  BlueArrowCircleUpIcon,
+  BlueInfoCircleIcon,
+  getName,
+  getNamespace,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  StatusIconAndText,
+  WarningStatus,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -36,17 +47,6 @@ import {
   k8sKill,
   k8sUpdate,
 } from '@console/internal/module/k8s';
-import {
-  BlueArrowCircleUpIcon,
-  BlueInfoCircleIcon,
-  getName,
-  getNamespace,
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  StatusIconAndText,
-  WarningStatus,
-  YellowExclamationTriangleIcon,
-} from '@console/shared';
 import {
   SubscriptionModel,
   ClusterServiceVersionModel,

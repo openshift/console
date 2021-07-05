@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY } from '@console/dynamic-plugin-sdk';
 import {
   MockResources,
   sampleDeploymentConfigs,
-} from '@console/shared/src/utils/__tests__/test-resource-data';
+} from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import {
   sampleHelmChartDeploymentConfig,
   sampleHelmResourcesMap,

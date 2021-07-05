@@ -6,17 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { usePrevious } from '@console/dynamic-plugin-sdk/src/shared/hooks/previous';
 import { Firehose, history } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  connectToFlags,
-  featureReducerName,
-  FlagsObject,
-} from '@console/internal/reducers/features';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { FLAGS } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,

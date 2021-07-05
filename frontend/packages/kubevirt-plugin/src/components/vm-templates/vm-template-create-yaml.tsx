@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
 /* eslint-disable lines-between-class-members */
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
 import { ErrorPage404 } from '@console/internal/components/error';
 import {
@@ -11,7 +12,6 @@ import {
 import { connectToPlural } from '@console/internal/kinds';
 import { TemplateModel } from '@console/internal/models';
 import { k8sList, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,

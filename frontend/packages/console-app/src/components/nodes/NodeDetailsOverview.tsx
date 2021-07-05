@@ -3,6 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/dynamic-plugin-sdk';
 import {
   useAccessReview,
   SectionHeading,
@@ -15,7 +16,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import { getNodeMachineNameAndNamespace, getNodeAddresses } from '@console/shared';
 import NodeIPList from './NodeIPList';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';

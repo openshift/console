@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { TextAreaField, TextColumnField, MergeNewValueUtil } from '@console/shared';
+import { TextAreaField, TextColumnField, MergeNewValueUtil } from '@console/dynamic-plugin-sdk';
 import { TektonParam } from '../../../../types';
 import { paramIsRequired } from '../../../../utils/common';
 import AutoCompletePopover from '../../../shared/common/auto-complete/AutoCompletePopover';

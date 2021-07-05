@@ -12,6 +12,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { getName, Status } from '@console/dynamic-plugin-sdk';
 import {
   ExternalLink,
   pluralize,
@@ -19,7 +20,6 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName, Status } from '@console/shared';
 import {
   getSchedulingNodesMatchButtonLabel,
   getSchedulingNodesMatchMsg,

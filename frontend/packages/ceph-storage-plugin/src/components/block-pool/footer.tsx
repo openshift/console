@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import { ButtonBar } from '@console/internal/components/utils';
 import { ActionGroup, Button } from '@patternfly/react-core';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../module/k8s';
 import { ResourceEventStream } from './events';

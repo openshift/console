@@ -32,7 +32,7 @@ import {
   ReplicaSetModel,
   ReplicationControllerModel,
 } from '../models';
-import { getOwnerNameByKind } from '@console/shared/src';
+import { getOwnerNameByKind } from '@console/dynamic-plugin-sdk/src/shared';
 import { rollbackModal } from './modals';
 
 const { ModifyCount, AddStorage, common } = Kebab.factory;

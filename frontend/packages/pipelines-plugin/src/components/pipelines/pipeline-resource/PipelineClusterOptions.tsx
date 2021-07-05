@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { InputField, DroppableFileInputField } from '@console/shared';
+import { InputField, DroppableFileInputField } from '@console/dynamic-plugin-sdk';
 
 type PipelineClusterOptionsProps = { prefixName: string };
 

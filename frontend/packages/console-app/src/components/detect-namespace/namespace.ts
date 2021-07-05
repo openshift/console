@@ -3,21 +3,21 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { setActiveNamespace } from '@console/internal/actions/ui';
-import { getNamespace } from '@console/internal/components/utils/link';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
-import { k8sGet, K8sKind } from '@console/internal/module/k8s';
-import { flagPending } from '@console/internal/reducers/features';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   ALL_NAMESPACES_KEY,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+} from '@console/dynamic-plugin-sdk/src/shared/constants';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
+import { useUserSettingsCompatibility } from '@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettingsCompatibility';
+import { setActiveNamespace } from '@console/internal/actions/ui';
+import { getNamespace } from '@console/internal/components/utils/link';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import { k8sGet, K8sKind } from '@console/internal/module/k8s';
+import { flagPending } from '@console/internal/reducers/features';
 
 type NamespaceContextType = {
   namespace?: string;

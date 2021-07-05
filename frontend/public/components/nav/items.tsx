@@ -15,15 +15,15 @@ import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 import {
   formatNamespacedRouteForResource,
   formatNamespacedRouteForHref,
-} from '@console/shared/src/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/utils';
 import { ExtensionK8sModel } from '@console/dynamic-plugin-sdk/src/api/common-types';
 import { referenceForModel, referenceForExtensionModel } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import { featureReducerName } from '../../reducers/features';
 import { RootState } from '../../redux';
 import { getActiveNamespace } from '../../reducers/ui';
-import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/dynamic-plugin-sdk/src/shared/constants';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/shared/constants/common';
 
 export const matchesPath = (resourcePath, prefix) =>
   resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);

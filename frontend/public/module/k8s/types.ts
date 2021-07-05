@@ -1,5 +1,5 @@
 import { JSONSchema6 } from 'json-schema';
-import { BadgeType, NodeAddress } from '@console/shared';
+import { BadgeType, NodeAddress } from '@console/dynamic-plugin-sdk';
 import {
   ObjectReference,
   ObjectMetadata,

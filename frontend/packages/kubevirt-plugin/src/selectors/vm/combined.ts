@@ -1,6 +1,10 @@
+import {
+  getName,
+  getNamespace,
+  getOwnerReferences,
+} from '@console/dynamic-plugin-sdk/src/shared/selectors';
+import { compareOwnerReference } from '@console/dynamic-plugin-sdk/src/shared/utils/owner-references';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { OS_WINDOWS_PREFIX } from '../../constants';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
 import { buildOwnerReference } from '../../utils';

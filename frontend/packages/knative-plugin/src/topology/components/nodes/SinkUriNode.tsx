@@ -16,7 +16,7 @@ import {
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { calculateRadius } from '@console/shared';
+import { calculateRadius } from '@console/dynamic-plugin-sdk';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,

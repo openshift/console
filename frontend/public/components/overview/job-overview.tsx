@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { OverviewItem, usePluginsOverviewTabSection, usePodsWatcher } from '@console/shared';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import {
+  OverviewItem,
+  usePluginsOverviewTabSection,
+  usePodsWatcher,
+} from '@console/dynamic-plugin-sdk';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
 import { JobModel } from '../../models';
 import { JobKind } from '../../module/k8s';
 import { menuActions } from '../job';

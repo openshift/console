@@ -1,4 +1,4 @@
-import { ValidationObject } from '@console/shared';
+import { ValidationObject } from '@console/dynamic-plugin-sdk';
 import { DiskType } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VMIKind } from '../../types';

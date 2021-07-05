@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid, GridItem, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { InputField, DropdownField, TextColumnField } from '@console/shared';
+import { InputField, DropdownField, TextColumnField } from '@console/dynamic-plugin-sdk';
 import AutoCompletePopover from '../../shared/common/auto-complete/AutoCompletePopover';
 import { WhenExpressionOperatorType } from '../pipeline-builder/const';
 import { PipelineBuilderFormikValues } from '../pipeline-builder/types';

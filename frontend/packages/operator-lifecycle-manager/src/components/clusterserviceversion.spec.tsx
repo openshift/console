@@ -3,6 +3,8 @@ import { CardTitle, CardBody, CardFooter } from '@patternfly/react-core';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { ErrorBoundary } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/shared/hooks/redux-selectors';
 import {
   DetailsPage,
   TableInnerProps,
@@ -19,8 +21,6 @@ import {
 } from '@console/internal/components/utils';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
-import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 import {
   testClusterServiceVersion,
   testSubscription,
@@ -52,7 +52,7 @@ import {
   referenceForProvidedAPI,
 } from '.';
 
-jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModel', () => ({
   useK8sModel: () => [testModel],
 }));
 
@@ -68,7 +68,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-jest.mock('@console/shared/src/hooks/redux-selectors', () => {
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/redux-selectors', () => {
   return {
     useActiveNamespace: jest.fn(),
   };

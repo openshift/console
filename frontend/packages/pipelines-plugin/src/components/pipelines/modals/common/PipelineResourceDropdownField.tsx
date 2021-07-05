@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { DropdownFieldProps, useFormikValidationFix } from '@console/shared';
+import { DropdownFieldProps, useFormikValidationFix } from '@console/dynamic-plugin-sdk';
 import PipelineResourceParam from '../../pipeline-resource/PipelineResourceParam';
 import { CREATE_PIPELINE_RESOURCE } from './const';
 import PipelineResourceDropdown from './PipelineResourceDropdown';

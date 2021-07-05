@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { createBasicLookup, getName, getNamespace } from '@console/dynamic-plugin-sdk';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
 import {
   createModalLauncher,
   ModalBody,
@@ -15,8 +17,6 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { DeviceType } from '../../../constants';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';

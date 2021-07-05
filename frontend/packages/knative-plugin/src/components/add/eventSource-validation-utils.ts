@@ -4,8 +4,8 @@ import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
 } from '@console/dev-console/src/components/import/validation-schema';
-import { isValidUrl, nameValidationSchema } from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { isValidUrl, nameValidationSchema } from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 import { EventSources, SinkType } from './import-types';
 

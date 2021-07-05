@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardGrid from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, LabelSelector, referenceForModel, Selector } from '../../../module/k8s';

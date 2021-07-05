@@ -9,7 +9,10 @@ import {
   ChartThemeVariant,
   getCustomTheme,
 } from '@patternfly/react-charts';
-import { processFrame, ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import {
+  processFrame,
+  ByteDataTypes,
+} from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import { timeFormatter } from '../utils/datetime';
 import { humanizeNumber, useRefWidth } from '../utils';
 import { PrometheusEndpoint } from './helpers';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
+import { MenuActions, MultiTabListPage } from '@console/dynamic-plugin-sdk';
 import { NamespaceBar } from '@console/internal/components/namespace';
 import { Page } from '@console/internal/components/utils';
-import { MenuActions, MultiTabListPage } from '@console/shared';
 import { EventingBrokerModel } from '../../models';
 import BrokerListPage from './brokers-list/BrokerListPage';
 import ChannelListPage from './channels-list/ChannelListPage';

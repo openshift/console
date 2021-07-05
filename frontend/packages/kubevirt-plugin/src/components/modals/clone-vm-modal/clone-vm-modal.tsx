@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { getName, getNamespace, ValidationErrorType } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalBody,
@@ -25,7 +26,6 @@ import {
 } from '@console/internal/components/utils';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, ValidationErrorType } from '@console/shared';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';

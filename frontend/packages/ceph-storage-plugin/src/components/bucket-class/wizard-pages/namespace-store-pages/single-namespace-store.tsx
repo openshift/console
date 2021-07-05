@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, FormGroup, Title } from '@patternfly/react-core';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { Action, State } from '../../state';
 import { NamespaceStoreDropdown } from '../../../namespace-store/namespace-store-dropdown';
 import { NamespaceStoreKind } from '../../../../types';

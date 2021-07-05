@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { useTabbedTableBreadcrumbsFor } from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/shared/hooks/useActivePerspective';
 import { K8sKind } from '@console/internal/module/k8s';
-import { useTabbedTableBreadcrumbsFor } from '@console/shared';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { serverlessTab } from '../utils/serverless-tab-utils';
 
 export const useChannelDetailPageBreadcrumbs = (kindObj: K8sKind, urlMatch: match<any>) => {

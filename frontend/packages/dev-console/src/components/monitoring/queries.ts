@@ -1,12 +1,12 @@
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   Humanize,
   humanizeBinaryBytes,
   humanizeCpuCores,
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { GraphTypes } from './dashboard/MonitoringDashboardGraph';
 
 export interface MonitoringQuery {

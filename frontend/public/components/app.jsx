@@ -36,9 +36,9 @@ import {
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
-import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import ToastProvider from '@console/dynamic-plugin-sdk/src/shared/components/toast/ToastProvider';
+import { useTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry';
+import { useDebounceCallback } from '@console/dynamic-plugin-sdk/src/shared/hooks/debounce';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';

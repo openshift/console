@@ -5,6 +5,7 @@ import { useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import Popper from '@console/dynamic-plugin-sdk/src/shared/components/popper/Popper';
 import {
   KebabItem,
   KebabOption,
@@ -12,7 +13,6 @@ import {
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import Popper from '@console/shared/src/components/popper/Popper';
 import { TaskKind } from '../../../types';
 import { getResourceModelFromTaskKind } from '../../../utils/pipeline-augment';
 import { NewTaskNodeCallback } from './types';

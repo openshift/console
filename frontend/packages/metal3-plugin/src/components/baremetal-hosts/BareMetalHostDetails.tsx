@@ -3,6 +3,18 @@ import { RebootingIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
+  getName,
+  getMachineNode,
+  getMachineNodeName,
+  getNamespace,
+  getMachineRole,
+  StatusIconAndText,
+  DetailPropertyList,
+  DetailPropertyListItem,
+  SecondaryStatus,
+  DASH,
+} from '@console/dynamic-plugin-sdk';
+import {
   SectionHeading,
   Timestamp,
   humanizeDecimalBytes,
@@ -15,18 +27,6 @@ import {
   MachineKind,
   NodeKind,
 } from '@console/internal/module/k8s';
-import {
-  getName,
-  getMachineNode,
-  getMachineNodeName,
-  getNamespace,
-  getMachineRole,
-  StatusIconAndText,
-  DetailPropertyList,
-  DetailPropertyListItem,
-  SecondaryStatus,
-  DASH,
-} from '@console/shared';
 import { HOST_REGISTERING_STATES } from '../../constants/bare-metal-host';
 import {
   getHostNICs,

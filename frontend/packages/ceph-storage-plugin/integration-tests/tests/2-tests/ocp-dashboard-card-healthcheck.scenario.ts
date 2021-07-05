@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { isLoaded as dashboardIsLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
+import { isLoaded as dashboardIsLoaded } from '@console/dynamic-plugin-sdk/src/shared/test-views/dashboard-shared.view';
 import {
   mainHealtGreenSvg,
   mainHealtRedSvg,

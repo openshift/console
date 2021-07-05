@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField, ResourceLimitField } from '@console/shared';
+import { NumberSpinnerField, ResourceLimitField } from '@console/dynamic-plugin-sdk';
 import FormSection from '../section/FormSection';
 
 const ServerlessScalingSection: React.FC = () => {

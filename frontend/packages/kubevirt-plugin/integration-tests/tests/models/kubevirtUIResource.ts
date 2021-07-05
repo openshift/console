@@ -1,14 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
+import { confirmAction } from '@console/dynamic-plugin-sdk/src/shared/test-utils/actions.view';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { confirmAction } from '@console/shared/src/test-utils/actions.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';
 import * as editStatusView from '../../views/dialogs/editStatusView';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';

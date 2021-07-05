@@ -1,7 +1,7 @@
+import { PodRCData } from '@console/dynamic-plugin-sdk/src/shared';
 import { NamespaceMetrics } from '@console/internal/actions/ui';
 import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PodRCData } from '@console/shared/src';
 
 export type PodStats = {
   name: string;

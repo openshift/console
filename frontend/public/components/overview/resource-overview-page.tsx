@@ -3,7 +3,7 @@ import {
   OverviewItem,
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';

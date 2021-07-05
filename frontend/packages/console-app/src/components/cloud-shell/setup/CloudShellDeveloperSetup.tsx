@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
 import { ProjectRequestModel } from '@console/internal/models';
 import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import {
   CloudShellSetupFormData,

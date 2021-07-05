@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FocusTrap, Menu, MenuList, MenuItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import Popper from '@console/dynamic-plugin-sdk/src/shared/components/popper/Popper';
 import { WithScrollContainer } from '@console/internal/components/utils';
-import Popper from '@console/shared/src/components/popper/Popper';
 import useAutoComplete from './useAutoComplete';
 
 type AutoCompletePopoverProps = {

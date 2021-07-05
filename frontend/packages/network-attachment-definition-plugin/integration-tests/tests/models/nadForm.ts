@@ -1,11 +1,14 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import {
+  click,
+  selectDropdownOptionById,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { BROWSER_TIMEOUT, testName } from '@console/internal-integration-tests/protractor.conf';
 import { createYAMLButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { PAGE_LOAD_TIMEOUT_SECS } from '@console/kubevirt-plugin/integration-tests/tests/utils/constants/common';
-import { click, selectDropdownOptionById } from '@console/shared/src/test-utils/utils';
 import * as nadFormView from '../../views/nad.form.view';
 
-// TODO See about moving this function from kubevirt-plugin to console-shared
+// TODO See about moving this function from kubevirt-plugin to console-dynamic-plugin-sdk
 async function fillInput(elem: any, value: string) {
   // Sometimes there seems to be an issue with clear() method not clearing the input
   let attempts = 3;

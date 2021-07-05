@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { EnvironmentField } from '@console/shared';
+import { EnvironmentField } from '@console/dynamic-plugin-sdk';
 import DeploymentConfigSection from '../DeploymentConfigSection';
 
 let deploymentConfigSectionProps: React.ComponentProps<typeof DeploymentConfigSection>;

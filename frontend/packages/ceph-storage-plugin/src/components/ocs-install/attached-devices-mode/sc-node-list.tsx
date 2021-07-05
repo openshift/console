@@ -8,7 +8,7 @@ import {
   getNodeRoles,
   getNodeCPUCapacity,
   getNodeAllocatableMemory,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';

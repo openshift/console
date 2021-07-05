@@ -9,15 +9,15 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
-import { RedExclamationCircleIcon } from '@console/shared';
-import ErrorAlert from '@console/shared/src/components/alerts/error';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { RedExclamationCircleIcon } from '@console/dynamic-plugin-sdk';
+import ErrorAlert from '@console/dynamic-plugin-sdk/src/shared/components/alerts/error';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 
 import {
   monitoringDashboardsPatchAllVariables,

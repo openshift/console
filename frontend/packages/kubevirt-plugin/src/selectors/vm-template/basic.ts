@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
+import { ANNOTATIONS } from '@console/dynamic-plugin-sdk/src/shared/constants/common';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ANNOTATIONS } from '@console/shared/src/constants/common';
 import {
   TEMPLATE_DEPRECATED_ANNOTATION,
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,

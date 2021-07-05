@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import { BuildStrategyType } from '@console/internal/components/build';
-import { InputField } from '@console/shared';
 import FormSection from '../section/FormSection';
 
 export interface DockerSectionProps {

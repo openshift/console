@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import InventoryItem, {
+  ResourceInventoryItem,
+  StatusGroupMapper,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { getPodStatusGroups } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { referenceForModel, K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import InventoryItem, {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({

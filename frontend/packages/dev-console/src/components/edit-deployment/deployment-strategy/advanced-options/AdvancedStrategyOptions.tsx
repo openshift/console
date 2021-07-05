@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FormSection, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { InputField } from '@console/dynamic-plugin-sdk/src/shared';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { InputField } from '@console/shared/src';
 import { DeploymentStrategyType } from '../utils/types';
 import LifecycleHookField from './LifecycleHookField';
 

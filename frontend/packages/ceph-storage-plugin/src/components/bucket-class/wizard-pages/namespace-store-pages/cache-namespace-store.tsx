@@ -8,7 +8,7 @@ import {
   Title,
   ValidatedOptions,
 } from '@patternfly/react-core';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { Action, State } from '../../state';
 import { NamespaceStoreDropdown } from '../../../namespace-store/namespace-store-dropdown';
 import { BackingStoreKind, NamespaceStoreKind } from '../../../../types';

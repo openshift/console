@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import {
   isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
   TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  ResourceDropdown,
 } from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { ResourceDropdown } from '@console/shared';
 import { getNamespacedDynamicModelFactories } from '../../data-transforms/DataModelProvider';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';

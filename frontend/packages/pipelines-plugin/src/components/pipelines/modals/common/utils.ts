@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getRandomChars } from '@console/shared';
+import { getRandomChars } from '@console/dynamic-plugin-sdk';
 import { PipelineRunModel } from '../../../../models';
 import {
   PipelineKind,

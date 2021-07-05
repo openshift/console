@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
+import { formatNamespacedRouteForResource } from '@console/dynamic-plugin-sdk/src/shared/utils/namespace';
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';
 import * as UIActions from '../../public/actions/ui';

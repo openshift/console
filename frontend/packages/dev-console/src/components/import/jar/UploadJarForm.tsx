@@ -2,10 +2,14 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  FlexForm,
+  FormBody,
+  FormFooter,
+} from '@console/dynamic-plugin-sdk/src/shared/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import AdvancedSection from '../advanced/AdvancedSection';
 import AppSection from '../app/AppSection';

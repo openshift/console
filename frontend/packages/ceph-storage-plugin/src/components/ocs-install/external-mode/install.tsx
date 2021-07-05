@@ -33,7 +33,7 @@ import {
 import { history } from '@console/internal/components/utils/router';
 import { SecretModel, PodModel } from '@console/internal/models';
 import { setFlag } from '@console/internal/actions/features';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import FileUpload from './fileUpload';
 import { isValidJSON, checkError, prettifyJSON, getIPFamily } from './utils';
 import { OCSServiceModel } from '../../../models';

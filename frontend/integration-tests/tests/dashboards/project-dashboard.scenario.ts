@@ -1,10 +1,10 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import * as dashboardView from '@console/shared/src/test-views/dashboard-shared.view';
+import * as dashboardView from '@console/dynamic-plugin-sdk/src/shared/test-views/dashboard-shared.view';
 import {
   createResource,
   addLeakableResource,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName, waitForCount } from '../../protractor.conf';
 import * as sideNavView from '../../views/sidenav.view';
 import * as crudView from '../../views/crud.view';

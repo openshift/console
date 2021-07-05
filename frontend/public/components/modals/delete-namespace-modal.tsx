@@ -20,8 +20,8 @@ import {
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
   useUserSettingsCompatibility,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+} from '@console/dynamic-plugin-sdk';
+import { usePromiseHandler } from '@console/dynamic-plugin-sdk/src/shared/hooks/promise-handler';
 import { getActiveNamespace } from '../../reducers/ui';
 import { setActiveNamespace } from '../../actions/ui';
 

@@ -1,5 +1,5 @@
 import { FormikValues, FormikErrors } from 'formik';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import {
   PipelineTask,
   TektonParam,

@@ -1,5 +1,5 @@
 import { $, $$, browser } from 'protractor';
-import { waitForCount } from '@console/shared/src/test-utils/utils';
+import { waitForCount } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 
 export const bootableDevices = (namespace: string, name: string) =>
   $$(`#${namespace}-${name}-boot-order ol li`);

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared';
+import { Status } from '@console/dynamic-plugin-sdk';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';

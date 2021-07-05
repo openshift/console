@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
+import { usePostFormSubmitAction } from '@console/dynamic-plugin-sdk';
+import { DynamicForm } from '@console/dynamic-plugin-sdk/src/shared/components/dynamic-form';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
   history,
@@ -8,8 +10,6 @@ import {
   useScrollToTopOnMount,
 } from '@console/internal/components/utils';
 import { k8sCreate, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { usePostFormSubmitAction } from '@console/shared';
-import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, CRDDescription, APIServiceDefinition } from '../../types';
 import { ClusterServiceVersionLogo } from '../index';

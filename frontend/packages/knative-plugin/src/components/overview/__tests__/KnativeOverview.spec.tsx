@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/shared';
 import { RevisionModel } from '../../../models';
 import {
   revisionObj,
@@ -13,8 +13,8 @@ import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import KnativeOverview, { KnativeOverviewRevisionPodsRing } from '../KnativeOverview';
 import ServerlessFunctionType from '../ServerlessFunctionType';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const ActualShared = require.requireActual('@console/dynamic-plugin-sdk');
   return {
     ...ActualShared,
     usePodScalingAccessStatus: jest.fn(),

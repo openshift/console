@@ -1,5 +1,5 @@
+import { sampleDeployments } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import * as k8s from '@console/internal/module/k8s';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { OdcNodeModel } from '../topology-types';
 import {
   createTopologyResourceConnection,

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
+import { getLabels, getOwnerReferences } from '@console/dynamic-plugin-sdk/src/shared';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
+import { compareOwnerReference } from '@console/dynamic-plugin-sdk/src/shared/utils/owner-references';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet, k8sPatch, SecretKind } from '@console/internal/module/k8s';
-import { getLabels, getOwnerReferences } from '@console/shared/src';
-import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VMImportProvider } from '../../../components/create-vm-wizard/types';
 import { V2V_DATA_TTL_KEY, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel, V2VVMwareModel } from '../../../models';

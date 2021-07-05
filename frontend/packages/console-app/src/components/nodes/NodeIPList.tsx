@@ -1,6 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { NodeAddress, DetailPropertyList, DetailPropertyListItem } from '@console/shared';
+import {
+  NodeAddress,
+  DetailPropertyList,
+  DetailPropertyListItem,
+} from '@console/dynamic-plugin-sdk';
 
 type NodeIPListProps = {
   ips: NodeAddress[];

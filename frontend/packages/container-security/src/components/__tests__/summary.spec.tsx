@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import { SecurityBreakdownPopup, securityHealthHandler } from '../summary';

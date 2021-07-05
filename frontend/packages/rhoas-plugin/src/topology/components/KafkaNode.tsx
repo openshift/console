@@ -9,9 +9,9 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { connect } from 'react-redux';
+import { calculateRadius } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { calculateRadius } from '@console/shared';
 import { getServiceBindingStatus } from '@console/topology/src/utils';
 import { kafkaIcon } from '../../const';
 import { KafkaConnectionModel } from '../../models';

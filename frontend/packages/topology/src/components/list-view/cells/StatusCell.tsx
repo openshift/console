@@ -3,10 +3,10 @@ import { DataListCell } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { usePodsWatcher, PodRCData } from '@console/dynamic-plugin-sdk';
 import { resourceObjPath } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
-import { usePodsWatcher, PodRCData } from '@console/shared';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 
 import './StatusCell.scss';

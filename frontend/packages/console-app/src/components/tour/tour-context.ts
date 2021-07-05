@@ -13,12 +13,12 @@ import { pick, union, isEqual } from 'lodash';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/shared/hooks/useActivePerspective';
+import { useUserSettingsCompatibility } from '@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettingsCompatibility';
 import { getFlagsObject } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
 import { useExtensions } from '@console/plugin-sdk';
 import { isGuidedTour, GuidedTour } from '@console/plugin-sdk/src/typings/guided-tour';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
 import { TourDataType, Step } from './type';
 import { filterTourBasedonPermissionAndFlag } from './utils';

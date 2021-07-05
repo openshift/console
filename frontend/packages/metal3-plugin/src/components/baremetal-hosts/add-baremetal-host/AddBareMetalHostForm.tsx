@@ -3,14 +3,14 @@ import { Form, TextInputTypes } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
 import {
   InputField,
   TextAreaField,
   SwitchField,
   FormFooter,
   CheckboxField,
-} from '@console/shared/src';
+} from '@console/dynamic-plugin-sdk/src/shared';
+import { history } from '@console/internal/components/utils';
 import { AddBareMetalHostFormValues } from './types';
 
 type AddBareMetalHostFormProps = FormikProps<AddBareMetalHostFormValues> & {

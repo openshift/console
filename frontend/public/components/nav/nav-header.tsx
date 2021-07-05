@@ -3,8 +3,8 @@ import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { history } from '../utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
-import { useActivePerspective, ACM_LINK_ID } from '@console/shared';
+import { useTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry';
+import { useActivePerspective, ACM_LINK_ID } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ConsoleLinkModel } from '../../models';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';

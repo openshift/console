@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { OverviewItem, PodRing } from '@console/dynamic-plugin-sdk';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { OverviewItem, PodRing } from '@console/shared';
 import { RevisionModel } from '../../models';
 import { isServerlessFunction } from '../../topology/knative-topology-utils';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';

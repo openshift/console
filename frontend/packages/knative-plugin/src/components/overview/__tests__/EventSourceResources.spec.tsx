@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { usePodsWatcher } from '@console/dynamic-plugin-sdk';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
@@ -8,7 +9,6 @@ import {
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { usePodsWatcher } from '@console/shared';
 import {
   ServiceModel,
   EventSourceApiServerModel,
@@ -116,8 +116,8 @@ const noPodData = {
   isRollingOut: false,
 };
 
-jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const ActualShared = require.requireActual('@console/dynamic-plugin-sdk');
   return {
     ...ActualShared,
     usePodsWatcher: jest.fn(),

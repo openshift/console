@@ -25,15 +25,13 @@ import {
   useResolvedExtensions,
   isTopologyComponentFactory as isDynamicTopologyComponentFactory,
   TopologyComponentFactory as DynamicTopologyComponentFactory,
-} from '@console/dynamic-plugin-sdk';
-import { ErrorBoundaryFallback } from '@console/internal/components/error';
-import { RootState } from '@console/internal/redux';
-import {
   useQueryParams,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
-} from '@console/shared';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+} from '@console/dynamic-plugin-sdk';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { RootState } from '@console/internal/redux';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
 import { odcElementFactory } from '../../elements';
 import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';

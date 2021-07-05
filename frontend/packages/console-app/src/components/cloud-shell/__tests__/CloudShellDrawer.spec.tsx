@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { Drawer } from '@console/shared';
+import { Drawer } from '@console/dynamic-plugin-sdk';
 import CloudShellDrawer from '../CloudShellDrawer';
 
 jest.mock('react-i18next', () => {

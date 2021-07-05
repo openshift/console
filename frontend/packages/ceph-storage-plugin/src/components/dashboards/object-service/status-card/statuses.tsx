@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import { PrometheusHealthHandler, SubsystemHealth } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getGaugeValue } from '../../../../utils';
 import { Phase } from '../../../../constants';

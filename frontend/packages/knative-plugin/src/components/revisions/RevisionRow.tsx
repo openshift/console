@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
+import { ClampedText } from '@console/dynamic-plugin-sdk';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ClampedText } from '@console/shared';
 import { getRevisionActions } from '../../actions/getRevisionActions';
 import { RevisionModel, ServiceModel } from '../../models';
 import { RevisionKind, ConditionTypes } from '../../types';

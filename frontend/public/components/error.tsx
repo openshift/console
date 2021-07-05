@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { ErrorBoundaryFallbackProps } from '@console/shared/src/components/error/error-boundary';
+import { ErrorBoundaryFallbackProps } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import { CopyToClipboard, getQueryArgument, PageHeading, ExpandCollapse } from './utils';
 
 // User messages for error_types returned in auth.go

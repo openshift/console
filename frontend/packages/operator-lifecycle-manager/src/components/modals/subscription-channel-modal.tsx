@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePromiseHandler } from '@console/dynamic-plugin-sdk/src/shared/hooks/promise-handler';
 import {
   createModalLauncher,
   ModalTitle,
@@ -9,7 +10,6 @@ import {
 import { RadioInput } from '@console/internal/components/radio';
 import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { SubscriptionKind, PackageManifestKind } from '../../types';
 

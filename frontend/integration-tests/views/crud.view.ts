@@ -4,7 +4,7 @@ import { $, $$, browser, by, ExpectedConditions as until, element } from 'protra
 
 import * as yamlView from './yaml.view';
 import { appHost, testName, waitForNone } from '../protractor.conf';
-import { waitForCount } from '@console/shared/src/test-utils/utils';
+import { waitForCount } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 
 export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');

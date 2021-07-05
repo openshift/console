@@ -1,5 +1,5 @@
+import { joinGrammaticallyListOfItems } from '@console/dynamic-plugin-sdk';
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { joinGrammaticallyListOfItems } from '@console/shared';
 import { VMImportProvider } from '../../../components/create-vm-wizard/types';
 import {
   V2VConfigMapAttribute,

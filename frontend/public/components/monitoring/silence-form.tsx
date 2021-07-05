@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import { coFetchJSON } from '../../co-fetch';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';

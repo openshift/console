@@ -1,11 +1,11 @@
 import { $, $$ } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import {
   resourceRows,
   textFilter,
   rowFiltersButton,
   isLoaded,
 } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '@console/shared/src/test-utils/utils';
 
 export const page = {
   diskTab: $('a[data-test-id="horizontal-link-Disks"]'),

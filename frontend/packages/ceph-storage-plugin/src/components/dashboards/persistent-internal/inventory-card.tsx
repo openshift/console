@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -13,7 +13,7 @@ import {
   getNodeStatusGroups,
   getPVCStatusGroups,
   getPVStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils';
 import { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import {
   NodeModel,
@@ -21,8 +21,8 @@ import {
   PersistentVolumeModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { getName } from '@console/shared/src/selectors';
+import { ResourceInventoryItem } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors';
 import {
   getCephNodes,
   getCephPVs,

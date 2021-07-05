@@ -6,7 +6,7 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import {
   TableComposable,
   TableGridBreakpoint,

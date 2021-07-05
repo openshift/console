@@ -1,6 +1,16 @@
 import * as React from 'react';
 import { CardActions } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
+import ActivityBody, {
+  PauseButton,
+  RecentEventsBodyContent,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/activity-card/ActivityBody';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -8,16 +18,6 @@ import {
 import { FirehoseResource, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { EventModel } from '@console/internal/models';
 import { EventKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
-import ActivityBody, {
-  PauseButton,
-  RecentEventsBodyContent,
-} from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getVmEventsFilters } from '../../../selectors/event';

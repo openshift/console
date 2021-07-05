@@ -1,7 +1,7 @@
-import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
+import { useUserSettings } from '@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings';
 import { useShowAddCardItemDetails } from '../useShowAddCardItemDetails';
 
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

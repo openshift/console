@@ -1,12 +1,12 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   click,
   createResources,
   deleteResources,
   waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import * as dashboardView from '../views/dashboard.view';
 import { getVMManifest, hddDisk, multusNAD, multusNetworkInterface } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';

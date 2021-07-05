@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as formik from 'formik';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import * as imgUtils from '../../../../utils/imagestream-utils';
 import { BuilderImagesNamespace } from '../../../../utils/imagestream-utils';
 import {

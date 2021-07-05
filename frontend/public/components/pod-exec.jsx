@@ -7,8 +7,8 @@ import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
-import { connectToFlags } from '../reducers/features';
-import { FLAGS } from '@console/shared';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';

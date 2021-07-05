@@ -1,6 +1,6 @@
 import { nodeStatus } from '@console/app/src/status/node';
+import { isNodeUnschedulable } from '@console/dynamic-plugin-sdk/src/shared/selectors/node';
 import { NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { isNodeUnschedulable } from '@console/shared/src/selectors/node';
 import { StatusProps } from '../components/types';
 import { isHostPoweredOn, hasPowerManagement } from '../selectors';
 import { BareMetalHostKind, CertificateSigningRequestKind } from '../types';

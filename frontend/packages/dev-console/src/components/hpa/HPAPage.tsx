@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { useRelatedHPA } from '@console/dynamic-plugin-sdk';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { useRelatedHPA } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';

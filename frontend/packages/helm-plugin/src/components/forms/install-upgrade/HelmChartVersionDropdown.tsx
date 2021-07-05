@@ -5,6 +5,8 @@ import { FormikValues, useFormikContext } from 'formik';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { DropdownField } from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
@@ -12,8 +14,6 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { DropdownField } from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HelmChartRepositoryModel } from '../../../models';
 import {
   HelmChartMetaData,

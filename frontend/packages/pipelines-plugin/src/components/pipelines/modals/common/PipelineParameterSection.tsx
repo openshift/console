@@ -3,7 +3,7 @@ import { TextInputTypes } from '@patternfly/react-core';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { InputField } from '@console/shared';
+import { InputField } from '@console/dynamic-plugin-sdk';
 import { paramIsRequired } from '../../../../utils/common';
 import AutoCompletePopover from '../../../shared/common/auto-complete/AutoCompletePopover';
 import { CommonPipelineModalFormikValues, ModalParameter } from './types';

@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import { FLAGS } from '@console/shared/src/constants';
-import { useActiveNamespace } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -30,7 +30,8 @@ import {
   resourceObjPath,
   useAccessReview,
 } from '../utils';
-import { connectToFlags, flagPending } from '../../reducers/features';
+import { connectToFlags } from '../../reducers/connectToFlags';
+import { flagPending } from '../../reducers/features';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 

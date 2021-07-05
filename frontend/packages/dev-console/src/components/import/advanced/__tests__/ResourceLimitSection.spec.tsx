@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext } from 'formik';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import FormSection from '../../section/FormSection';
 import ResourceLimitSection from '../ResourceLimitSection';
 

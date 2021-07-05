@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Trans, useTranslation } from 'react-i18next';
-import { getDeploymentConfigVersion, getOwnerNameByKind } from '@console/shared/src';
+import {
+  getDeploymentConfigVersion,
+  getOwnerNameByKind,
+} from '@console/dynamic-plugin-sdk/src/shared';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { LoadingInline, withHandlePromise } from '../utils';
 import { DeploymentConfigModel, DeploymentModel, ReplicationControllerModel } from '../../models';

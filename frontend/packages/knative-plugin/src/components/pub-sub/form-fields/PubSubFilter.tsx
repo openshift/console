@@ -2,8 +2,8 @@ import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
+import { getFieldId } from '@console/dynamic-plugin-sdk';
 import { NameValueEditor } from '@console/internal/components/utils/name-value-editor';
-import { getFieldId } from '@console/shared';
 
 const PubSubFilter: React.FC = () => {
   const initialValueResources = [['', '']];

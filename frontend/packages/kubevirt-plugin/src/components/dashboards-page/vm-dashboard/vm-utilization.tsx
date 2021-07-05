@@ -1,5 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getCreationTimestamp, getName, getNamespace } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import {
+  Duration,
+  useMetricDuration,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/duration-hook';
+import UtilizationBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationBody';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 import {
   PrometheusMultilineUtilizationItem,
   PrometheusUtilizationItem,
@@ -9,16 +19,6 @@ import {
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import { getCreationTimestamp, getName, getNamespace } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  Duration,
-  useMetricDuration,
-} from '@console/shared/src/components/dashboard/duration-hook';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';

@@ -3,6 +3,7 @@ import { execSync } from 'child_process';
 import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   createYAMLButton,
@@ -17,7 +18,6 @@ import {
   saveButton,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { MatchLabels } from '@console/internal/module/k8s';
-import { click } from '@console/shared/src/test-utils/utils';
 import { filterCount } from '../../views/vms.list.view';
 import { createItemButton, createWithYAMLButton } from '../../views/wizard.view';
 import { NodePortService, Status } from '../types/types';

@@ -1,4 +1,4 @@
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { VirtualMachineInstanceModel } from '../../models';
 import { VMIKind } from '../../types/vm';
 import { getConsoleAPIBase } from '../../utils/url';

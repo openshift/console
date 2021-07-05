@@ -1,18 +1,18 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import * as crudView from '@console/internal-integration-tests/views/crud.view';
-import * as loginView from '@console/internal-integration-tests/views/login.view';
-import { closeGuidedTour } from '@console/internal-integration-tests/views/overview.view';
-import * as sidenav from '@console/internal-integration-tests/views/sidenav.view';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   addLeakableResource,
   click,
   removeLeakedResources,
   withResource,
   withResources,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as loginView from '@console/internal-integration-tests/views/login.view';
+import { closeGuidedTour } from '@console/internal-integration-tests/views/overview.view';
+import * as sidenav from '@console/internal-integration-tests/views/sidenav.view';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';

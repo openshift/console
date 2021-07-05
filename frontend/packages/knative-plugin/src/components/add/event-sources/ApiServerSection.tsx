@@ -4,8 +4,8 @@ import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { DropdownField, getFieldId } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { DropdownField, getFieldId } from '@console/shared';
 import ServiceAccountDropdown from '../../dropdowns/ServiceAccountDropdown';
 import { EventSources } from '../import-types';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { GettingStartedCard } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 
 import { ClusterSetupGettingStartedCard } from '../cluster-setup-getting-started-card';
 import { useIdentityProviderLink } from '../cluster-setup-identity-provider-link';
@@ -25,7 +25,7 @@ jest.mock('../cluster-setup-alert-receiver-link', () => ({
 }));
 
 // Workaround because getting-started exports also RestoreGettingStartedButton
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

@@ -1,4 +1,4 @@
-import { BadgeType, getBadgeFromType } from '@console/shared';
+import { BadgeType, getBadgeFromType } from '@console/dynamic-plugin-sdk';
 import {
   isGAVersionInstalled,
   usePipelineOperatorVersion,

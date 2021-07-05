@@ -1,8 +1,8 @@
 import * as React from 'react';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardGrid from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
+import { getMachineNode } from '@console/dynamic-plugin-sdk/src/shared/selectors/machine';
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { getMachineNode } from '@console/shared/src/selectors/machine';
 import { findNodeMaintenance, getHostMachine } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';

@@ -1,4 +1,4 @@
-@import '../../../../../../console-shared/src/styles/skeleton-screen.scss';
+@import '../../../../../../console-dynamic-plugin-sdk/src/shared/styles/skeleton-screen.scss';
 
 .ceph-raw-usage {
   &__container {
@@ -51,7 +51,7 @@
   &__icon-block {
     display: flex;
     flex-direction: row-reverse;
-    flex-grow: 0.10;
+    flex-grow: 0.1;
   }
   &__text {
     line-height: 15px;

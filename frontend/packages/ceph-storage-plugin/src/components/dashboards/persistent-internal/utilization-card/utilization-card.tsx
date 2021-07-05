@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import { Dropdown } from '@console/internal/components/utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   FieldLevelHelp,
 } from '@console/internal/components/utils';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import UtilizationBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationBody';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
+import ConsumerPopover from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/TopConsumerPopover';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   useMetricDuration,
   Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/duration-hook';
 import { humanizeIOPS, humanizeLatency } from './utils';
 import {
   StorageDashboardQuery,

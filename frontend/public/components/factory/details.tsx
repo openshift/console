@@ -2,7 +2,13 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getBadgeFromType } from '@console/shared';
+import {
+  getBadgeFromType,
+  ResolvedExtension,
+  useResolvedExtensions,
+  ResourceTabPage as DynamicResourceTabPage,
+  isResourceTabPage as isDynamicResourceTabPage,
+} from '@console/dynamic-plugin-sdk';
 import {
   useExtensions,
   ResourceTabPage,
@@ -10,13 +16,8 @@ import {
   isDetailPageBreadCrumbs,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
-import {
-  ResolvedExtension,
-  useResolvedExtensions,
-  ResourceTabPage as DynamicResourceTabPage,
-  isResourceTabPage as isDynamicResourceTabPage,
-} from '@console/dynamic-plugin-sdk';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import {
   Firehose,
   HorizontalNav,
@@ -38,7 +39,7 @@ import {
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { useK8sModel } from '@console/dynamic-plugin-sdk/src/shared/hooks/useK8sModel';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,

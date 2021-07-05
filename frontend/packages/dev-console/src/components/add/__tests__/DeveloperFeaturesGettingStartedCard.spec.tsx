@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared/src';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
+import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/dynamic-plugin-sdk/src/shared';
+import { GettingStartedCard } from '@console/dynamic-plugin-sdk/src/shared/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
 jest.mock('react-i18next', () => ({
@@ -12,14 +12,14 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-jest.mock('@console/shared/src', () => ({
-  ...require.requireActual('@console/shared/src'),
+jest.mock('@console/dynamic-plugin-sdk/src/shared', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk/src/shared'),
   useActiveNamespace: jest.fn(),
   useOpenShiftVersion: () => '4.8.0',
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState
-jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));
 

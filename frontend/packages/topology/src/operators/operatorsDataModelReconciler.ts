@@ -1,8 +1,8 @@
 import { Model, NodeShape } from '@patternfly/react-topology';
+import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/dynamic-plugin-sdk/src/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import { getDefaultOperatorIcon, getImageForCSVIcon } from '@console/shared/src';
 import { TYPE_APPLICATION_GROUP } from '../const';
 import { getTopologyNodeItem } from '../data-transforms/transform-utils';
 import { OdcNodeModel, TopologyDataResources } from '../topology-types';

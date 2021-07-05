@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { FileUploadField, InputField } from '@console/shared/src';
+import { FileUploadField, InputField } from '@console/dynamic-plugin-sdk/src/shared';
 import JarSection from '../JarSection';
 
 jest.mock('react-i18next', () => {

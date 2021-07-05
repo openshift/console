@@ -18,7 +18,7 @@ export const getNodeMaintenanceProgressPercent = (nodeMaintenance: K8sResourceKi
   if (evictionPods === 0) return 100;
   return (Math.max(evictionPods - pendingPods.length, 0) / evictionPods) * 100;
 };
-// TODO(jtomasek): Move this into console-shared/src/selectors/common.ts
+// TODO(jtomasek): Move this into console-dynamic-plugin-sdk/src/selectors/common.ts
 export const getNodeMaintenanceCreationTimestamp = <A extends K8sResourceKind = K8sResourceKind>(
   value: A,
 ) => _.get(value, 'metadata.creationTimestamp') as K8sResourceKind['metadata']['creationTimestamp'];

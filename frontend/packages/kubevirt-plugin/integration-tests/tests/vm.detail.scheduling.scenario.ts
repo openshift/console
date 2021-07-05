@@ -1,7 +1,11 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import {
+  click,
+  createResource,
+  deleteResource,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { MatchLabels } from '@console/internal/module/k8s';
-import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as editAffinityView from '../views/dialogs/editAffinityView';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as virtualMachineView from '../views/virtualMachine.view';

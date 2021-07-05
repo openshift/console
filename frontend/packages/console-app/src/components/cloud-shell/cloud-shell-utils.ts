@@ -1,6 +1,6 @@
+import { getRandomChars } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON, coFetch } from '@console/internal/co-fetch';
 import { K8sResourceKind, k8sPatch, k8sGet, K8sKind } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 
 type v1alpha1Component = {

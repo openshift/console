@@ -6,7 +6,7 @@ import {
   K8sKind,
 } from '@console/internal/module/k8s';
 import { NodeModel, NamespaceModel } from '@console/internal/models';
-import { hasLabel, getName } from '@console/shared';
+import { hasLabel, getName } from '@console/dynamic-plugin-sdk';
 import {
   NO_PROVISIONER,
   OCS_INTERNAL_CR_NAME,

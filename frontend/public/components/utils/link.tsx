@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import Linkify from 'react-linkify';
 
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk/src/shared/constants';
 
 // Kubernetes "dns-friendly" names match
 // [a-z0-9]([-a-z0-9]*[a-z0-9])?  and are 63 or fewer characters

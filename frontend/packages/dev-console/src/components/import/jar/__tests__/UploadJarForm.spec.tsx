@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { ImageTag } from '@console/dev-console/src/utils/imagestream-utils';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import AdvancedSection from '../../advanced/AdvancedSection';
 import AppSection from '../../app/AppSection';
 import BuilderImageTagSelector from '../../builder/BuilderImageTagSelector';

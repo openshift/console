@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
   PodModel,
   DeploymentModel,
@@ -21,27 +21,28 @@ import {
 import {
   ResourceInventoryItem,
   StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
 import {
   getPodStatusGroups,
   getPVCStatusGroups,
   getVSStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils';
 import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
 import { K8sKind, referenceForModel } from '../../../module/k8s';
-import { getName } from '@console/shared';
+import {
+  getName,
+  useResolvedExtensions,
+  ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
+  isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
+  K8sResourceCommon,
+} from '@console/dynamic-plugin-sdk';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import {
   useExtensions,
   ProjectDashboardInventoryItem,
   isProjectDashboardInventoryItem,
 } from '@console/plugin-sdk';
-import {
-  useResolvedExtensions,
-  ProjectDashboardInventoryItem as DynamicProjectDashboardInventoryItem,
-  isProjectDashboardInventoryItem as isDynamicProjectDashboardInventoryItem,
-  K8sResourceCommon,
-} from '@console/dynamic-plugin-sdk';
+
 import {
   useK8sWatchResources,
   WatchK8sResources,

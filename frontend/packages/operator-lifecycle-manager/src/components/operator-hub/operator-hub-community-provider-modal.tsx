@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Checkbox } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/dynamic-plugin-sdk';
 import {
   createModalLauncher,
   ModalTitle,
@@ -9,7 +10,6 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { ExternalLink } from '@console/internal/components/utils';
-import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '@console/shared';
 
 export const OperatorHubCommunityProviderModal: React.FC<OperatorHubCommunityProviderModalProps> = ({
   close,

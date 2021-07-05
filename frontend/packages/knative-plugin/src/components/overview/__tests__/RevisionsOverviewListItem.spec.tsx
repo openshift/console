@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { PodStatus } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';

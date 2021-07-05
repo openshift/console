@@ -28,7 +28,7 @@ import { storagePrefix } from './row-filter';
 import { createColumnManagementModal } from './modals';
 import { ColumnLayout } from './modals/column-management-modal';
 import { TextFilter } from './factory';
-import { useDebounceCallback, useDeepCompareMemoize } from '@console/shared/src';
+import { useDebounceCallback, useDeepCompareMemoize } from '@console/dynamic-plugin-sdk/src/shared';
 
 /**
  * Housing both the row filter and name/label filter in the same file.

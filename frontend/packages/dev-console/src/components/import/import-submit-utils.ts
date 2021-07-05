@@ -1,6 +1,10 @@
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import {
+  getRandomChars,
+  getResourceLimitsData,
+} from '@console/dynamic-plugin-sdk/src/shared/utils';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
@@ -37,7 +41,6 @@ import {
   getSecretAnnotations,
 } from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import { Perspective } from '@console/plugin-sdk';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,

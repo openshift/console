@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultiColumnField } from '@console/shared';
+import { MultiColumnField } from '@console/dynamic-plugin-sdk';
 import OptionalableWorkspace from './OptionalableWorkspace';
 
 type PipelineWorkspacesParam = {

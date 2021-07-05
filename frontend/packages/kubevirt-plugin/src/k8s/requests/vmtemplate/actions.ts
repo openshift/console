@@ -1,6 +1,6 @@
+import { getName } from '@console/dynamic-plugin-sdk/src/shared';
 import { TemplateModel } from '@console/internal/models';
 import { apiVersionForModel, TemplateKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { freeOwnedResources } from '../free-owned-resources';
 import { k8sKillPropagated } from '../k8s-kill-propagated';

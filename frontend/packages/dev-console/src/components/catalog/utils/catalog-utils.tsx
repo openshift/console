@@ -1,8 +1,7 @@
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, keywordFilter } from '@console/dynamic-plugin-sdk';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { history } from '@console/internal/components/utils';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
-import { keywordFilter } from '@console/shared';
 import { CatalogType, CatalogTypeCounts } from './types';
 
 const catalogItemCompare = (keyword: string, item: CatalogItem): boolean => {

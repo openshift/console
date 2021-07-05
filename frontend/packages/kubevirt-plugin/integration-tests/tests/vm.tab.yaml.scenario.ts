@@ -1,4 +1,10 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import {
+  click,
+  createResource,
+  deleteResource,
+  withResource,
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   errorMessage,
@@ -13,12 +19,6 @@ import {
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import {
-  click,
-  createResource,
-  deleteResource,
-  withResource,
-} from '@console/shared/src/test-utils/utils';
 import { activeTab } from '../views/uiResource.view';
 import { virtualizationTitle } from '../views/vms.list.view';
 import { createItemButton, createWithYAMLButton } from '../views/wizard.view';

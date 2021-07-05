@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { ResourceDropdownField } from '@console/dynamic-plugin-sdk';
+import { ResourceDropdownItems } from '@console/dynamic-plugin-sdk/src/shared/components/dropdown/ResourceDropdown';
 import { ServiceAccountModel } from '@console/internal/models';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ResourceDropdownField } from '@console/shared';
-import { ResourceDropdownItems } from '@console/shared/src/components/dropdown/ResourceDropdown';
 
 interface ServiceAccountDropdownProps {
   name: string;

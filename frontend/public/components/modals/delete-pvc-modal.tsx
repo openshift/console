@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '../utils';
-import { getName, YellowExclamationTriangleIcon } from '@console/shared';
+import { getName, YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isPVCDelete, PVCDelete } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import {

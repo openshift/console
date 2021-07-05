@@ -4,13 +4,13 @@ import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getSeverityAlertType,
   getFiringAlerts,
   AlertSeverityIcon,
   shouldHideMonitoringAlertDecorator,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import Decorator from './Decorator';
 
 type DispatchProps = {

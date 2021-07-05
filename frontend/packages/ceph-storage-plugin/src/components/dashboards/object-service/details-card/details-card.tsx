@@ -2,14 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { getInfrastructurePlatform } from '@console/shared';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { getInfrastructurePlatform } from '@console/dynamic-plugin-sdk';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailsBody';
+import DetailItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/details-card/DetailItem';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 import {
   DashboardItemProps,
   withDashboardResources,

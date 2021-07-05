@@ -4,7 +4,7 @@ import * as cx from 'classnames';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
-import { Modal } from '@console/shared';
+import { Modal } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { DiskMetadata } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import { DiscoveredDisk } from 'packages/ceph-storage-plugin/src/types';

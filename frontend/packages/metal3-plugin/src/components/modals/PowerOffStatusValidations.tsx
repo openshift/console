@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Alert, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { ResourceLink } from '@console/internal/components/utils';
 import { DaemonSetModel, PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   NODE_STATUS_STARTING_MAINTENANCE,
   HOST_STATUS_UNKNOWN,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import HealthChecks from '../../../health-checks/HealthChecks';
 import { Resources } from '../../import-types';
 import RouteCheckbox from '../../route/RouteCheckbox';

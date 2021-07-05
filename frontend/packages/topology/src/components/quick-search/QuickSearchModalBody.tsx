@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { useTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry';
 import {
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
   history,
 } from '@console/internal/components/utils';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';

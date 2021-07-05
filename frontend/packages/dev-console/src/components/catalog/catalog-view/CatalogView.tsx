@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, useQueryParams } from '@console/dynamic-plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
-import { useQueryParams } from '@console/shared';
 import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   categorize,

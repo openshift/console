@@ -21,7 +21,7 @@ import { ResourceLink } from './utils/resource-link';
 import { ResourceSummary } from './utils/details-page';
 import { Timestamp } from './utils/timestamp';
 import { ImageStreamTimeline } from './image-stream-timeline';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/dynamic-plugin-sdk';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';

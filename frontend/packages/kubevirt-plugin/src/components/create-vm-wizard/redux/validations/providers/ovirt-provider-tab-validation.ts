@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { asValidationObject, ValidationErrorType } from '@console/shared/src';
+import { asValidationObject, ValidationErrorType } from '@console/dynamic-plugin-sdk/src/shared';
 import { iGetFieldValue } from '../../../selectors/immutable/field';
 import {
   hasOvirtSettingsChanged,

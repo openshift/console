@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AllPodStatus } from '@console/dynamic-plugin-sdk';
 import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { K8sResourceKind, PodKind, podPhase } from '@console/internal/module/k8s';
-import { AllPodStatus } from '@console/shared';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
 import DeploymentOverviewList from './DeploymentOverviewList';

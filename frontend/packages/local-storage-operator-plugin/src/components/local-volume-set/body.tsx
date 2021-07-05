@@ -10,11 +10,11 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { getName, MultiSelectDropdown } from '@console/dynamic-plugin-sdk';
 import { ListPage } from '@console/internal/components/factory';
 import { Dropdown } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName, MultiSelectDropdown } from '@console/shared';
 import {
   diskModeDropdownItems,
   diskTypeDropdownItems,

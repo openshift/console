@@ -19,11 +19,11 @@ import {
 } from '@patternfly/react-core';
 import { ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { killUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { DataUpload } from '../cdi-upload-provider';

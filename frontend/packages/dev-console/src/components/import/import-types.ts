@@ -1,10 +1,10 @@
 import { ValidatedOptions } from '@patternfly/react-core';
+import { NameValuePair, NameValueFromPair, LimitsData } from '@console/dynamic-plugin-sdk';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { LazyLoader } from '@console/plugin-sdk';
-import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
 

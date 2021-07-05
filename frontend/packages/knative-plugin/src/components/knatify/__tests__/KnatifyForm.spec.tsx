@@ -4,8 +4,8 @@ import AdvancedSection from '@console/dev-console/src/components/import/advanced
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
 import ImageSearchSection from '@console/dev-console/src/components/import/image-search/ImageSearchSection';
 import IconSection from '@console/dev-console/src/components/import/section/IconSection';
-import { FormFooter } from '@console/shared/src/components/form-utils';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
+import { FormFooter } from '@console/dynamic-plugin-sdk/src/shared/components/form-utils';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import KnatifyForm from '../KnatifyForm';
 
 let knatifyFormProps: React.ComponentProps<typeof KnatifyForm>;

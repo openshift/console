@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CogsIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 import {
   ClusterVersionModel,
   NodeModel,
@@ -26,7 +27,6 @@ import {
   ResourceListPage,
   ResourceTabPage,
 } from '@console/plugin-sdk';
-import { FLAGS } from '@console/shared/src/constants';
 import '@console/internal/i18n.js';
 import {
   getClusterUpdateTimestamp,
@@ -140,7 +140,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: NodeModel,
       mapper: () =>
         import(
-          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+          '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
         ).then((m) => m.getNodeStatusGroups),
     },
   },
@@ -150,7 +150,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: PodModel,
       mapper: () =>
         import(
-          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+          '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
         ).then((m) => m.getPodStatusGroups),
     },
   },
@@ -166,7 +166,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: PersistentVolumeClaimModel,
       mapper: () =>
         import(
-          '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
+          '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
         ).then((m) => m.getPVCStatusGroups),
     },
   },

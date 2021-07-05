@@ -14,13 +14,13 @@ import { Node, observer } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getSeverityAlertType,
   AlertSeverityIcon,
   getFiringAlerts,
   shouldHideMonitoringAlertDecorator,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { useSearchFilter } from '../../filters';
 import { getResourceKind } from '../../utils/topology-utils';
 import {

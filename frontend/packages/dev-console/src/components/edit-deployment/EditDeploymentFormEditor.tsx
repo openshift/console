@@ -1,6 +1,6 @@
 import * as React from 'react';
+import SwitchToYAMLAlert from '@console/dynamic-plugin-sdk/src/shared/components/alerts/SwitchToYAMLAlert';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import AdvancedSection from './AdvancedSection';
 import DeploymentStrategySection from './deployment-strategy/DeploymentStrategySection';
 import EnvironmentVariablesSection from './EnvironmentVariablesSection';

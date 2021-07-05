@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-// TODO(vojtech): internal code needed by plugins should be moved to console-shared package
+// TODO(vojtech): internal code needed by plugins should be moved to console-dynamic-plugin-sdk package
+import { GridPosition } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
 import { PodModel, RouteModel, NodeModel } from '@console/internal/models';
 import {
   Plugin,
@@ -20,7 +21,6 @@ import {
   DashboardsOverviewPrometheusActivity,
   HorizontalNavTab,
 } from '@console/plugin-sdk';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
 import TestIcon from './components/test-icon';

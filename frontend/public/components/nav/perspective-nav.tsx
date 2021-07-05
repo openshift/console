@@ -10,8 +10,10 @@ import {
   isNavSection,
   NavSection as PluginNavSection,
   isNavItem,
+  useActivePerspective,
+  usePinnedResources,
 } from '@console/dynamic-plugin-sdk/src';
-import { useActivePerspective, usePinnedResources } from '@console/shared';
+
 import { K8sKind, modelFor, referenceForModel } from '../../module/k8s';
 import { getSortedNavItems } from './navSortUtils';
 import confirmNavUnpinModal from './confirmNavUnpinModal';

@@ -9,9 +9,9 @@ import {
   ModelKind,
   GraphElement,
 } from '@patternfly/react-topology';
+import { ExtPodKind, OverviewItem } from '@console/dynamic-plugin-sdk';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
-import { ExtPodKind, OverviewItem } from '@console/shared';
 
 export type Point = [number, number];
 

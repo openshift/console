@@ -2,13 +2,6 @@ import { execSync } from 'child_process';
 /* eslint-disable no-undef, max-nested-callbacks */
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import {
-  filterForName,
-  isLoaded,
-  resourceRows,
-  resourceRowsPresent,
-} from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
   applyResource,
@@ -19,7 +12,14 @@ import {
   removeLeakedResources,
   waitForCount,
   withResource,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import {
+  filterForName,
+  isLoaded,
+  resourceRows,
+  resourceRowsPresent,
+} from '@console/internal-integration-tests/views/crud.view';
 import { getDataVolumeTemplates, getVolumes } from '../../src/selectors/vm/selectors';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';

@@ -14,7 +14,7 @@ import {
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { ListKind } from '@console/internal/module/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
 
 import { CephClusterKind, StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';

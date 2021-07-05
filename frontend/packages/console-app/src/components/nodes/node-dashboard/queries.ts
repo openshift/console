@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { QueryWithDescription } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { QueryWithDescription } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationItem';
 
 export enum NodeQueries {
   CPU_USAGE = 'CPU_USAGE',

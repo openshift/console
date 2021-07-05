@@ -18,7 +18,10 @@ import {
   TopologyCreateConnector as DynamicTopologyCreateConnector,
   TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
   TopologyDisplayFilters as DynamicTopologyDisplayFilters,
+  useDeepCompareMemoize,
+  useQueryParams,
 } from '@console/dynamic-plugin-sdk';
+import { useTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getQueryArgument,
@@ -28,8 +31,6 @@ import {
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
-import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import {
   isTopologyCreateConnector,

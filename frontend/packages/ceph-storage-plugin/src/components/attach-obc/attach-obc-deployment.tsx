@@ -18,7 +18,7 @@ import {
 } from '@console/internal/module/k8s/';
 import { Form, FormGroup, Radio, ActionGroup, Button } from '@patternfly/react-core';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { NooBaaObjectBucketClaimModel } from '../../models';
 import { CreateOBCForm } from '../object-bucket-claim-page/create-obc';
 import { commonReducer, defaultState } from '../object-bucket-page/state';

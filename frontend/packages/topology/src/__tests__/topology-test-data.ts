@@ -1,7 +1,7 @@
 import { Model } from '@patternfly/react-topology';
+import { sampleDeployments } from '@console/dynamic-plugin-sdk/src/shared/utils/__tests__/test-resource-data';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { EventKind } from '@console/internal/module/k8s';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { NODE_HEIGHT, NODE_PADDING, NODE_WIDTH } from '../const';
 import { WorkloadModelProps } from '../data-transforms/transform-utils';
 import { OdcNodeModel, TopologyDataResources } from '../topology-types';

@@ -32,8 +32,8 @@ import {
   LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
   useUserSettingsCompatibility,
   isModifiedEvent,
-} from '@console/shared';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+} from '@console/dynamic-plugin-sdk';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/shared/graph-helper/data-utils';
 
 import { ConsoleLinkModel, NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
@@ -71,7 +71,8 @@ import {
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
-import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { featureReducerName, flagPending } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';

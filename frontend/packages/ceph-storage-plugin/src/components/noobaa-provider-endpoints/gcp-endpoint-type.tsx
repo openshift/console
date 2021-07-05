@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 import { Button, FormGroup, TextInput, InputGroup, TextArea } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { ExternalLink, Firehose } from '@console/internal/components/utils';
-import { ResourceDropdown } from '@console/shared';
+import { ResourceDropdown } from '@console/dynamic-plugin-sdk';
 import { SecretModel } from '@console/internal/models';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import { DashboardCardPopupLink } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
 import {
   BackingStoreProviderDataState,
   BackingStoreAction,

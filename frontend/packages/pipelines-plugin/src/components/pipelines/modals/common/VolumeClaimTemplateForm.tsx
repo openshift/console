@@ -2,6 +2,8 @@ import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useFormikValidationFix } from '@console/dynamic-plugin-sdk/src/shared/hooks';
+import { cephStorageProvisioners } from '@console/dynamic-plugin-sdk/src/shared/utils';
 import { RadioInput } from '@console/internal/components//radio';
 import {
   getAccessModeRadios,
@@ -12,8 +14,6 @@ import {
 } from '@console/internal/components/storage/shared';
 import { RequestSizeInput, ExpandCollapse } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { useFormikValidationFix } from '@console/shared/src/hooks';
-import { cephStorageProvisioners } from '@console/shared/src/utils';
 
 import './VolumeClaimTemplateForm.scss';
 

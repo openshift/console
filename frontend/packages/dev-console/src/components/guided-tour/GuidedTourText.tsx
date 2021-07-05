@@ -2,10 +2,10 @@ import * as React from 'react';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import * as semver from 'semver';
+import { useOpenShiftVersion } from '@console/dynamic-plugin-sdk/src/shared/hooks/version';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { useOpenShiftVersion } from '@console/shared/src/hooks/version';
 
 const DevPerspectiveTourText: React.FC = () => {
   const { t } = useTranslation();

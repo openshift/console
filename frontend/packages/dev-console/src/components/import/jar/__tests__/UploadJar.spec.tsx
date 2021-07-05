@@ -19,7 +19,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/post-form-submit-action', () => {
   return {
     usePostFormSubmitAction: () => () => {},
   };

@@ -17,13 +17,13 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem as DynamicDashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthResourceSubsystem as DynamicDashboardsOverviewHealthResourceSubsystem,
 } from '@console/dynamic-plugin-sdk';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
-import { OperatorsSection } from '@console/shared/src/components/dashboard/status-card/OperatorStatusBody';
+import HealthItem from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/HealthItem';
+import { OperatorsSection } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/OperatorStatusBody';
 import {
   getOperatorsHealthState,
   getMostImportantStatuses,
-} from '@console/shared/src/components/dashboard/status-card/state-utils';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/state-utils';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { K8sKind } from '../../../../module/k8s';
 import { FirehoseResourcesResult, AsyncComponent, resourcePath } from '../../../utils';
 import {

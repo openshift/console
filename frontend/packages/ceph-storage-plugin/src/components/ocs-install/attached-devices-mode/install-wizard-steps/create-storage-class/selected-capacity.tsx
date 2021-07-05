@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Button, Spinner } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
-import { calculateRadius, Modal } from '@console/shared';
+import { calculateRadius, Modal } from '@console/dynamic-plugin-sdk';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';
-import { getName } from '@console/shared/src/selectors/common';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import {
   DISK_TYPES,
   deviceTypeDropdownItems,

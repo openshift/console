@@ -1,6 +1,6 @@
+import { getAPIVersion, getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared';
 import { coFetch } from '@console/internal/co-fetch';
 import { groupVersionFor, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
-import { getAPIVersion, getName, getNamespace } from '@console/shared/src';
 import { VirtualMachineModel } from '../../../models';
 import {
   getKubevirtAvailableModel,

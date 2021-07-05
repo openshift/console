@@ -3,7 +3,7 @@ import {
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { VolumeType } from '../../../constants';
 import { DiskType } from '../../../constants/vm/storage/disk-type';

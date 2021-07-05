@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { getPodsForResource } from '@console/shared';
+import { getPodsForResource } from '@console/dynamic-plugin-sdk';
 import {
   DetailsPage,
   ListPage,

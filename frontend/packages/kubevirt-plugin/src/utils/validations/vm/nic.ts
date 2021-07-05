@@ -3,7 +3,7 @@ import {
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { UINetworkInterfaceValidation } from '../../../types/ui/nic';

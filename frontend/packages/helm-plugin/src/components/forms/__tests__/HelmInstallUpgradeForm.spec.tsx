@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
+import { InputField, SyncedEditorField, FormHeader, FormFooter } from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { formikFormProps } from '@console/dynamic-plugin-sdk/src/shared/test-utils/formik-props-utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { InputField, SyncedEditorField, FormHeader, FormFooter } from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
 import { HelmActionType } from '../../../types/helm-types';
 import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
 

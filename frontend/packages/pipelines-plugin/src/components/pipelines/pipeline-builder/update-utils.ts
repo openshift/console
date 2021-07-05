@@ -1,4 +1,4 @@
-import { getRandomChars } from '@console/shared';
+import { getRandomChars } from '@console/dynamic-plugin-sdk';
 import { PipelineTask } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import { UpdateOperationType } from './const';

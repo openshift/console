@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { PodStatus, usePodsWatcher } from '@console/shared';
+import { PodStatus, usePodsWatcher } from '@console/dynamic-plugin-sdk';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
 import { K8sResourceKind, referenceFor, JobKind } from '../../module/k8s';
 import { ChartLabel } from '@patternfly/react-charts';

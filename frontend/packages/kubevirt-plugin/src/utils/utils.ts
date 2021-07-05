@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import { VirtualMachineModel } from '../models';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);

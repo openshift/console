@@ -1,6 +1,6 @@
-import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { InventoryStatusGroup } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/status-group';
+import { getStatusGroups } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/utils';
+import { StatusGroupMapper } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
 
 const OB_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.NOT_MAPPED]: ['Bound'],

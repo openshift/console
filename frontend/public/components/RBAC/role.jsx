@@ -22,7 +22,7 @@ import {
 } from '../utils';
 import { DetailsForKind } from '../default-resource';
 import { getLastNamespace } from '../utils/breadcrumbs';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/dynamic-plugin-sdk';
 
 const { common } = Kebab.factory;
 

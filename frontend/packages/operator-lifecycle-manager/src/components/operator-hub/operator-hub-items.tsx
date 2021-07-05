@@ -12,16 +12,16 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ExternalLink } from '@console/internal/components/utils';
-import { history } from '@console/internal/components/utils/router';
-import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import {
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
   GreenCheckCircleIcon,
   Modal,
   useUserSettingsCompatibility,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { ExternalLink } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
+import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
 import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
 import { SubscriptionModel } from '../../models';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Flex, FlexItem, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import DashboardCard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardTitle';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
 import { GraphData } from './pipeline-metrics-utils';

@@ -4,10 +4,10 @@ import { match as Rmatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { TechPreviewBadge, MultiTabListPage } from '@console/dynamic-plugin-sdk';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TechPreviewBadge, MultiTabListPage } from '@console/shared';
 import {
   EventListenerModel,
   TriggerTemplateModel,

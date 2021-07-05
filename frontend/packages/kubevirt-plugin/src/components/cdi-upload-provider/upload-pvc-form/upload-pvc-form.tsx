@@ -17,6 +17,7 @@ import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { getName, getNamespace } from '@console/dynamic-plugin-sdk';
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
@@ -48,7 +49,6 @@ import {
   StorageClassResourceKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   AccessMode,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,

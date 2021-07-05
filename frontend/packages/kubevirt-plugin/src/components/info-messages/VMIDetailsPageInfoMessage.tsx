@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { getOwnerReferences } from '@console/dynamic-plugin-sdk/src/shared';
 import { ExternalLink, HintBlock } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getOwnerReferences } from '@console/shared/src';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { VMIKind } from '../../types';

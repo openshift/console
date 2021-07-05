@@ -1,9 +1,9 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click } from '@console/shared/src/test-utils/utils';
-import { isNodeReady } from '@console/shared/src/selectors/node';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { isNodeReady } from '@console/dynamic-plugin-sdk/src/shared/selectors/node';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src/selectors/common';
+import { getName } from '@console/dynamic-plugin-sdk/src/shared/selectors/common';
 import { DeviceSet } from '../../../src/types';
 import { verifyFields, selectSCDropdown, currentACSelector } from '../../views/add-capacity.view';
 import {

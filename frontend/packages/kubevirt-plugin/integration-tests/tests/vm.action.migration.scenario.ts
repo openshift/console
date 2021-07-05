@@ -2,12 +2,12 @@ import { $, browser, ExpectedConditions as until } from 'protractor';
 import {
   detailViewAction,
   getDetailActionDropdownOptions,
-} from '@console/shared/src/test-utils/actions.view';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/actions.view';
 import {
   click,
   deleteResource,
   waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { confirmButton } from '../views/uiResource.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';

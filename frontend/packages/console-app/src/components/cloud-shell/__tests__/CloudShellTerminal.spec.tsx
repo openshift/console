@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import { useFlag } from '@console/shared';
 import { InternalCloudShellTerminal } from '../CloudShellTerminal';
 import CloudShellDeveloperSetup from '../setup/CloudShellDeveloperSetup';
 import TerminalLoadingBox from '../TerminalLoadingBox';
@@ -24,14 +24,14 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview2: () => [false, false],
 }));
 
-jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useUserSettingsCompatibility', () => {
   return {
     useUserSettingsCompatibility: () => ['', () => {}],
   };
 });
 
-jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const originalModule = (jest as any).requireActual('@console/dynamic-plugin-sdk');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

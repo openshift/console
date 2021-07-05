@@ -4,7 +4,7 @@ import {
   ResourceHealthHandler,
   SubsystemHealth,
 } from '@console/plugin-sdk';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { getResiliencyProgress } from '../../../../utils';
 import { WatchCephResource } from '../../../../types';
 

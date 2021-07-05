@@ -3,7 +3,7 @@ import { FormGroup, TextInput, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { nameValidationSchema } from '@console/shared';
+import { nameValidationSchema } from '@console/dynamic-plugin-sdk';
 import { STATUS_KEY_NAME_ERROR } from '../const';
 import { NameErrorStatus, PipelineBuilderFormikValues } from '../types';
 

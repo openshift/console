@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { getNamespace, getRandomChars } from '@console/dynamic-plugin-sdk';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s/patch';
 import {
   AsyncComponent,
   FieldLevelHelp,
@@ -24,8 +26,6 @@ import {
   ServiceAccountKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { getNamespace, getRandomChars } from '@console/shared';
-import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../../models';

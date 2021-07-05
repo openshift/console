@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import {
   getDeletetionTimestamp,
   getName,
   getNamespace,
   getOwnerReferences,
-} from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/selectors/common'; // do not import just from shared - causes cycles
+import { compareOwnerReference } from '@console/dynamic-plugin-sdk/src/shared/utils/owner-references';
+import { createBasicLookup } from '@console/dynamic-plugin-sdk/src/shared/utils/utils';
+import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
 import { VMStatus } from '../../constants/vm/vm-status';
 import { VMIPhase } from '../../constants/vmi/phase';

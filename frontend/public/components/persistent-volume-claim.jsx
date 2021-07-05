@@ -13,16 +13,17 @@ import {
   isPVCCreateProp,
   isPVCStatus,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
+  useResolvedExtensions,
   Status,
   FLAGS,
   calculateRadius,
   getNamespace,
   getName,
   getRequestedPVCSize,
-} from '@console/shared';
-import { connectToFlags } from '../reducers/features';
+} from '@console/dynamic-plugin-sdk';
+
+import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {

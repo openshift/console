@@ -1,6 +1,10 @@
 import { EdgeModel, Model } from '@patternfly/react-topology';
 import * as _ from 'lodash';
 import {
+  isOperatorBackedService,
+  getOperatorBackedServiceKindMap,
+} from '@console/dynamic-plugin-sdk/src/shared/utils/operator-utils';
+import {
   K8sResourceKind,
   LabelSelector,
   modelFor,
@@ -8,10 +12,6 @@ import {
 } from '@console/internal/module/k8s';
 import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src';
-import {
-  isOperatorBackedService,
-  getOperatorBackedServiceKindMap,
-} from '@console/shared/src/utils/operator-utils';
 import { TYPE_SERVICE_BINDING } from '../const';
 import { getTopologyEdgeItems } from '../data-transforms/transform-utils';
 import { TopologyDataResources } from '../topology-types';

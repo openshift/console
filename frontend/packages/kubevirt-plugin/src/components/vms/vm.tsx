@@ -17,6 +17,16 @@ import { Link, useLocation } from 'react-router-dom';
 import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import { QuickStartModel } from '@console/app/src/models';
 import {
+  createLookup,
+  dimensifyHeader,
+  dimensifyRow,
+  getCreationTimestamp,
+  getLabels,
+  getName,
+  getNamespace,
+  getUID,
+} from '@console/dynamic-plugin-sdk';
+import {
   MultiListPage,
   RowFunction,
   Table,
@@ -39,16 +49,6 @@ import {
   PodModel,
 } from '@console/internal/models';
 import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import {
-  createLookup,
-  dimensifyHeader,
-  dimensifyRow,
-  getCreationTimestamp,
-  getLabels,
-  getName,
-  getNamespace,
-  getUID,
-} from '@console/shared';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared/src';
+import { DropdownField } from '@console/dynamic-plugin-sdk/src/shared';
 import { PipelineKind } from '../../../../types';
 import { RouteTemplate, usePipelineTriggerTemplateNames } from '../../utils/triggers';
 

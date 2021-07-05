@@ -8,7 +8,7 @@ import {
   DropdownToggle,
 } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import CreateBackingStoreFormModal from './create-bs-modal';
 import { BackingStoreKind } from '../../types';
 import { backingStoreResource } from '../../resources';

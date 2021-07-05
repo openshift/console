@@ -2,7 +2,7 @@ import {
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 import { validateEntityAlreadyExists } from '../common';
 

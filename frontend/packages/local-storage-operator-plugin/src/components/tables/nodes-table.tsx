@@ -4,6 +4,13 @@ import { sortable, IRow } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import {
+  getName,
+  getNodeRoles,
+  getNodeCPUCapacity,
+  getNodeAllocatableMemory,
+} from '@console/dynamic-plugin-sdk';
+import { useSelectList } from '@console/dynamic-plugin-sdk/src/shared/hooks/select-list';
 import { Table } from '@console/internal/components/factory';
 import {
   ResourceLink,
@@ -12,13 +19,6 @@ import {
   convertToBaseValue,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
-import {
-  getName,
-  getNodeRoles,
-  getNodeCPUCapacity,
-  getNodeAllocatableMemory,
-} from '@console/shared';
-import { useSelectList } from '@console/shared/src/hooks/select-list';
 import { getZone, hasNoTaints } from '../../utils';
 import { NodesTableRowsFunction, NodesTableCustomData } from './types';
 import './nodes-table.scss';

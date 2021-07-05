@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { getNodeMachineName, createBasicLookup } from '@console/dynamic-plugin-sdk';
 import { PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
-import { getNodeMachineName, createBasicLookup } from '@console/shared';
 import { BareMetalHostModel } from '../../models';
 import { getHostMachineName } from '../../selectors';
 import { BareMetalHostKind } from '../../types';

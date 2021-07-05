@@ -5,11 +5,11 @@ import * as _ from 'lodash-es';
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
 import { history } from '../components/utils/router';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+} from '@console/dynamic-plugin-sdk/src/shared/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';

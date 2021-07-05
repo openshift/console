@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
 import { $, ExpectedConditions as until, browser, Key } from 'protractor';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import {
   LocalVolumeDiscoveryResultKind,
   DiskMetadata,

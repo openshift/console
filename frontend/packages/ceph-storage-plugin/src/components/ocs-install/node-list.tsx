@@ -8,8 +8,8 @@ import {
   getNodeCPUCapacity,
   getNodeAllocatableMemory,
   hasLabel,
-} from '@console/shared';
-import { useSelectList } from '@console/shared/src/hooks/select-list';
+} from '@console/dynamic-plugin-sdk';
+import { useSelectList } from '@console/dynamic-plugin-sdk/src/shared/hooks/select-list';
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { NodeKind } from '@console/internal/module/k8s';
 import { Table } from '@console/internal/components/factory';

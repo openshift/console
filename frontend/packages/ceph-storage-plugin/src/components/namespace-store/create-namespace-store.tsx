@@ -5,7 +5,7 @@ import { Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NamespaceStoreForm from './namespace-store-form';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';

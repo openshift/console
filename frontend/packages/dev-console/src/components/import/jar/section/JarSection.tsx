@@ -6,7 +6,7 @@ import {
   FileUploadContext,
   FileUploadContextType,
 } from '@console/app/src/components/file-upload/file-upload-context';
-import { FileUploadField, InputField } from '@console/shared/src';
+import { FileUploadField, InputField } from '@console/dynamic-plugin-sdk/src/shared';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';

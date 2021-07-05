@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
 import { Button, Text, TextContent } from '@patternfly/react-core';
-import { Modal } from '@console/shared/src/components/modal';
+import { Modal } from '@console/dynamic-plugin-sdk/src/shared/components/modal';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { ListKind, referenceForModel } from '@console/internal/module/k8s';

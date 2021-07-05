@@ -2,9 +2,6 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
-import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FlexForm,
   FormBody,
@@ -12,10 +9,13 @@ import {
   FormHeader,
   SyncedEditorField,
   YAMLEditorField,
-} from '@console/shared/src';
-import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+} from '@console/dynamic-plugin-sdk/src/shared';
+import { downloadYaml } from '@console/dynamic-plugin-sdk/src/shared/components/editor/yaml-download-utils';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
+import { history } from '@console/internal/components/utils';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { Resources } from '../import/import-types';
 import EditDeploymentFormEditor from './EditDeploymentFormEditor';

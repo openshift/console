@@ -1,9 +1,15 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import {
+  DASH,
+  dimensifyRow,
+  getCreationTimestamp,
+  getName,
+  getNamespace,
+} from '@console/dynamic-plugin-sdk';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { DASH, dimensifyRow, getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import {

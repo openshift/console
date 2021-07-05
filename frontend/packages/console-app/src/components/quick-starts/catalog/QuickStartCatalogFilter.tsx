@@ -9,8 +9,8 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useQueryParams } from '@console/dynamic-plugin-sdk';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
-import { useQueryParams } from '@console/shared';
 import { QUICKSTART_SEARCH_FILTER_KEY, QUICKSTART_STATUS_FILTER_KEY } from '../utils/const';
 import { QuickStartStatus } from '../utils/quick-start-types';
 

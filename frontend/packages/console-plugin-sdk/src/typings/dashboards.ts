@@ -1,4 +1,10 @@
 import { TFunction } from 'i18next';
+import { GridPosition } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
+import {
+  StatusGroupMapper,
+  ExpandedComponentProps,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/inventory-card/InventoryItem';
+import { HealthState } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/states';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import {
   FirehoseResource,
@@ -11,12 +17,6 @@ import {
   WatchK8sResults,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sKind, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import {
-  StatusGroupMapper,
-  ExpandedComponentProps,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { Extension, LazyLoader } from './base';
 
 namespace ExtensionProperties {

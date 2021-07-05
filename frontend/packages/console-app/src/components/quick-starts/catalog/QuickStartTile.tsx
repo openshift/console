@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { RocketIcon } from '@patternfly/react-icons';
-import { FallbackImg } from '@console/shared';
+import { FallbackImg } from '@console/dynamic-plugin-sdk';
 import { QuickStartStatus, QuickStart } from '../utils/quick-start-types';
 import QuickStartTileDescription from './QuickStartTileDescription';
 import QuickStartTileHeader from './QuickStartTileHeader';

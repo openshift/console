@@ -24,13 +24,13 @@ jest.mock('react-i18next', () => {
   };
 });
 
-jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/post-form-submit-action', () => {
   return {
     usePostFormSubmitAction: () => () => {},
   };
 });
 
-jest.mock('@console/shared/src/hooks/useResizeObserver', () => {
+jest.mock('@console/dynamic-plugin-sdk/src/shared/hooks/useResizeObserver', () => {
   return {
     useResizeObserver: () => {},
   };

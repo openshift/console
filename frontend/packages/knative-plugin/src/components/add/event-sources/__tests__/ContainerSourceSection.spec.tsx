@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { TextColumnField } from '@console/dynamic-plugin-sdk';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import { TextColumnField } from '@console/shared';
 import ContainerSourceSection from '../ContainerSourceSection';
 
 type ContainerSourceSectionProps = React.ComponentProps<typeof ContainerSourceSection>;

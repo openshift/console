@@ -12,6 +12,23 @@ import {
   PopoverProps,
   MemoryPopover,
 } from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
+import { DashboardCardPopupLink } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/dashboard-card/DashboardCardLink';
+import { StatusItem } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/AlertsBody';
+import { usePrometheusQuery } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/prometheus-hook';
+import {
+  LIMIT_STATE,
+  LimitRequested,
+} from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationItem';
+import {
+  YellowResourcesAlmostFullIcon,
+  RedResourcesFullIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/dynamic-plugin-sdk/src/shared/components/status/icons';
+import {
+  getNodeAddresses,
+  getNodeMachineNameAndNamespace,
+} from '@console/dynamic-plugin-sdk/src/shared/selectors/node';
 import {
   humanizeCpuCores,
   humanizeBinaryBytes,
@@ -24,23 +41,6 @@ import {
   MachineKind,
   MachineHealthCheckKind,
 } from '@console/internal/module/k8s';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
-import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import {
-  LIMIT_STATE,
-  LimitRequested,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import {
-  YellowResourcesAlmostFullIcon,
-  RedResourcesFullIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import {
-  getNodeAddresses,
-  getNodeMachineNameAndNamespace,
-} from '@console/shared/src/selectors/node';
 import * as msg from './messages';
 import { getMachineHealth, HealthChecksPopup, machineHealthChecksResource } from './NodeHealth';
 

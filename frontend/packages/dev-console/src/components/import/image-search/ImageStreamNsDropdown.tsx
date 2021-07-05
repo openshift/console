@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ResourceDropdownField } from '@console/shared';
+import { ResourceDropdownField } from '@console/dynamic-plugin-sdk';
 import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';

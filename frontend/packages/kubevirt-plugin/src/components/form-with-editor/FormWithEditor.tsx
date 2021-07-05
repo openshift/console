@@ -2,7 +2,7 @@ import * as React from 'react';
 import cn from 'classnames';
 import yamlParser from 'js-yaml';
 import { MonacoEditorProps } from 'react-monaco-editor';
-import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
+import YAMLEditor from '@console/dynamic-plugin-sdk/src/shared/components/editor/YAMLEditor';
 import { EditorPosition, formModifier, ViewComponent } from './form-with-editor-utils';
 
 import './form-with-editor.scss';

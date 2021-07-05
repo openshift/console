@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { pluralize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
+import Status from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/status-card/StatusPopup';
 import {
   resourcePathFromModel,
   resourcePath,
 } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { OperatorRowProps } from '@console/plugin-sdk';
-import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from '../../types';
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { usePromiseHandler } from '@console/dynamic-plugin-sdk/src/shared/hooks/promise-handler';
 import {
   createModalLauncher,
   ModalTitle,
@@ -15,7 +16,6 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../../types';
 

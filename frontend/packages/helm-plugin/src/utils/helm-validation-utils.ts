@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import * as yup from 'yup';
-import { nameValidationSchema } from '@console/shared';
+import { nameValidationSchema } from '@console/dynamic-plugin-sdk';
 import { HelmActionType } from '../types/helm-types';
 
 export const getHelmActionValidationSchema = (helmAction: HelmActionType, t: TFunction) => {

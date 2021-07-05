@@ -1,8 +1,8 @@
+import { createBasicLookup, getName, getNamespace } from '@console/dynamic-plugin-sdk/src/shared';
+import { PatchBuilder } from '@console/dynamic-plugin-sdk/src/shared/k8s';
+import { compareOwnerReference } from '@console/dynamic-plugin-sdk/src/shared/utils/owner-references';
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
-import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
 import { getFieldValue } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {

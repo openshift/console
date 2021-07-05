@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDeepCompareMemoize } from '@console/shared';
+import { useDeepCompareMemoize } from '@console/dynamic-plugin-sdk';
 import { TopologyDataModelFactory } from '../extensions/topology';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { isNodeUnschedulable } from '@console/dynamic-plugin-sdk';
 import { deleteModal } from '@console/internal/components/modals/delete-modal';
 import { Kebab, KebabAction, asAccessReview } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { K8sKind, NodeKind } from '@console/internal/module/k8s';
-import { isNodeUnschedulable } from '@console/shared';
 import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
 

@@ -23,9 +23,9 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
+} from '@console/dynamic-plugin-sdk';
+import { useActivePerspective } from '@console/dynamic-plugin-sdk/src/shared/hooks/useActivePerspective';
+import { withFallback } from '@console/dynamic-plugin-sdk/src/shared/components/error/error-boundary';
 import * as UIActions from '../../actions/ui';
 import { coFetchJSON } from '../../co-fetch';
 import {

@@ -3,8 +3,8 @@ import { shallow } from 'enzyme';
 import MonitoringOverview from '../MonitoringOverview';
 import MonitoringTab from '../MonitoringTab';
 
-jest.mock('@console/shared', () => {
-  const ActualShared = require.requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const ActualShared = require.requireActual('@console/dynamic-plugin-sdk');
   return {
     ...ActualShared,
     usePodsWatcher: () => {

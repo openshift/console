@@ -3,7 +3,7 @@ import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-cor
 import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import './QuickSearchDetails.scss';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useTelemetry } from '@console/dynamic-plugin-sdk/src/shared/hooks/useTelemetry';
 import { handleCta } from './utils/quick-search-utils';
 
 interface QuickSearchDetailsProps {

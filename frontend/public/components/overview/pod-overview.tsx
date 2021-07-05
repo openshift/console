@@ -1,6 +1,6 @@
 import * as React from 'react';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem } from '@console/shared';
+import PodRingSet from '@console/dynamic-plugin-sdk/src/shared/components/pod/PodRingSet';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
 import { PodModel } from '../../models';
 import { ResourceOverviewDetails } from './resource-overview-details';

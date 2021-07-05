@@ -1,5 +1,7 @@
 import i18next from 'i18next';
 import { omit, merge } from 'lodash';
+import { LimitsData } from '@console/dynamic-plugin-sdk/src/shared';
+import { safeJSToYAML, safeYAMLToJS } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
 import {
@@ -8,8 +10,6 @@ import {
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { LimitsData } from '@console/shared/src';
-import { safeJSToYAML, safeYAMLToJS } from '@console/shared/src/utils/yaml';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
 export const VALID_HPA_TARGET_KINDS = ['Deployment', 'DeploymentConfig'];

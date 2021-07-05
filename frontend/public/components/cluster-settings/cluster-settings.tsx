@@ -101,9 +101,9 @@ import {
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { FLAGS } from '@console/shared/src/constants';
+} from '@console/dynamic-plugin-sdk';
+import { useFlag } from '@console/dynamic-plugin-sdk/src/shared/hooks/flag';
+import { FLAGS } from '@console/dynamic-plugin-sdk/src/shared/constants';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(

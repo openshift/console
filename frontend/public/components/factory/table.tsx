@@ -18,7 +18,7 @@ import {
   snapshotSource,
   ALL_NAMESPACES_KEY,
   getName,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
 import * as UIActions from '../../actions/ui';
 import {
   alertingRuleSource,

@@ -1,15 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
-import { NodeKind } from '@console/internal/module/k8s';
 import {
   getNodeSecondaryStatus,
   NodeUnschedulableStatus,
   Status,
   SecondaryStatus,
-} from '@console/shared';
-import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+} from '@console/dynamic-plugin-sdk';
+import ConsumerPopover from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/TopConsumerPopover';
+import { humanizeBinaryBytes, humanizeNumber } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import { PressureQueries, Condition } from '../../queries';
 import { nodeStatus } from '../../status/node';
 

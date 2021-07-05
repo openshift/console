@@ -17,8 +17,8 @@ import {
   Resources,
 } from '@console/dev-console/src/components/import/import-types';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
+import { getLimitsDataFromResource } from '@console/dynamic-plugin-sdk/src/shared';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { getLimitsDataFromResource } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 import { ServiceModel } from '../models';

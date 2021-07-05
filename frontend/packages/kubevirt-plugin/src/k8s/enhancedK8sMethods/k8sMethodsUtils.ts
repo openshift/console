@@ -1,5 +1,5 @@
+import { getName } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import {
   INSUFFICIENT_PERMISSIONS_ERROR_DESC,
   INSUFFICIENT_PERMISSIONS_ERROR_MESSAGE,

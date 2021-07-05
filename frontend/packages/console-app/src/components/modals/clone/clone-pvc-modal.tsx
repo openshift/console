@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { isCephProvisioner } from '@console/dynamic-plugin-sdk';
+import { getRequestedPVCSize } from '@console/dynamic-plugin-sdk/src/shared/selectors';
 import {
   ModalBody,
   ModalComponentProps,
@@ -37,8 +39,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { isCephProvisioner } from '@console/shared';
-import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 import './_clone-pvc-modal.scss';

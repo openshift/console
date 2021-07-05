@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { OverviewItem } from '@console/dynamic-plugin-sdk';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
 import { LoadingBox } from '@console/internal/components/utils';
-import { OverviewItem } from '@console/shared';
 import { RevisionModel, EventingSubscriptionModel } from '../../../models';
 import {
   revisionObj,

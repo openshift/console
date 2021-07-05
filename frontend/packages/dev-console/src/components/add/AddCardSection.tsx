@@ -1,7 +1,11 @@
 import * as React from 'react';
-import { AddActionGroup, ResolvedExtension, AddAction } from '@console/dynamic-plugin-sdk';
+import {
+  AddActionGroup,
+  ResolvedExtension,
+  AddAction,
+  orderExtensionBasedOnInsertBeforeAndAfter,
+} from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/plugin-sdk/src';
-import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared/';
 import { getAddGroups } from '../../utils/add-page-utils';
 import { AddGroup } from '../types';
 import AddCard from './AddCard';

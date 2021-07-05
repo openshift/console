@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getParentScrollableElement } from '@console/shared/src/hooks/useScrollContainer';
+import { getParentScrollableElement } from '@console/dynamic-plugin-sdk/src/shared/hooks/useScrollContainer';
 
 type WithScrollContainerProps = {
   children: (scrollContainer: HTMLElement) => React.ReactElement | null;

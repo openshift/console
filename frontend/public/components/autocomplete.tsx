@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { useDocumentListener, getLabelsAsString } from '@console/shared';
-import { KeyEventModes } from '@console/shared/src/hooks';
+import { useDocumentListener, getLabelsAsString } from '@console/dynamic-plugin-sdk';
+import { KeyEventModes } from '@console/dynamic-plugin-sdk/src/shared/hooks';
 import { fuzzyCaseInsensitive } from './factory/table-filters';
 import { TextFilter } from './factory';
 

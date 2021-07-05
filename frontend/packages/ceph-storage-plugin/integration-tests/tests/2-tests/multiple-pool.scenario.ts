@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
 import { NS, CLUSTER_STATUS } from '../../utils/consts';
 import {
   prepareStorageClassForm,

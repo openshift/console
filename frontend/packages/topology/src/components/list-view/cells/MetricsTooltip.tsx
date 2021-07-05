@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '@console/dynamic-plugin-sdk';
 import { truncateMiddle } from '@console/internal/components/utils';
-import { useIsMobile } from '@console/shared';
 
 type MetricsTooltipProps = {
   metricLabel: string;

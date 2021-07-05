@@ -9,10 +9,10 @@ import {
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
+import { InputField, useDebounceCallback, CheckboxField } from '@console/dynamic-plugin-sdk';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { ImageStreamImportsModel } from '@console/internal/models';
 import { k8sCreate, ContainerPort } from '@console/internal/module/k8s';
-import { InputField, useDebounceCallback, CheckboxField } from '@console/shared';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { getSuggestedName, getPorts, makePortName } from '../../../utils/imagestream-utils';
 import { secretModalLauncher } from '../CreateSecretModal';

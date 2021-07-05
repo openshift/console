@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sCreate, referenceForModel } from '@console/internal/module/k8s';
 import { ModalComponentProps } from '@console/internal/components/factory';
-import { getName } from '@console/shared';
+import { getName } from '@console/dynamic-plugin-sdk';
 import { SecretModel } from '@console/internal/models';
 import { history } from '@console/internal/components/utils/router';
 import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';

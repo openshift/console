@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Switch, Tooltip, Skeleton } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { PageLayout } from '@console/shared';
+import { PageLayout } from '@console/dynamic-plugin-sdk';
 import * as utils from '../../../utils/useAddActionExtensions';
 import AddPageLayout from '../AddPageLayout';
 import * as accessFilterHook from '../hooks/useAccessFilterExtensions';

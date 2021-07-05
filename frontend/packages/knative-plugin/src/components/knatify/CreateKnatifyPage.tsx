@@ -9,6 +9,12 @@ import { DeployImageFormData } from '@console/dev-console/src/components/import/
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import {
+  BadgeType,
+  getBadgeFromType,
+  useActivePerspective,
+  useRelatedHPA,
+} from '@console/dynamic-plugin-sdk';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import {
   useK8sWatchResources,
@@ -18,7 +24,6 @@ import {
 import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
 import {
   getInitialValuesKnatify,
   knatifyResources,

@@ -18,7 +18,7 @@ import {
   K8sResourceKind,
 } from '../module/k8s';
 import { ErrorPage404 } from './error';
-import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { safeYAMLToJS } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   const {

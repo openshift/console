@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
   createResource,
@@ -8,7 +7,8 @@ import {
   fillInput,
   removeLeakedResources,
   withResource,
-} from '@console/shared/src/test-utils/utils';
+} from '@console/dynamic-plugin-sdk/src/shared/test-utils/utils';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { getCPU, getMemory } from '../../src/selectors/vm/selectors';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
 import { saveButton } from '../views/kubevirtUIResource.view';

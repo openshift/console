@@ -3,14 +3,14 @@ import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core'
 import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getGitService, GitProvider, BuildType, RepoStatus } from '@console/git-service';
-import { BuildStrategyType } from '@console/internal/components/build';
 import {
   InputField,
   DropdownField,
   useFormikValidationFix,
   useDebounceCallback,
-} from '@console/shared';
+} from '@console/dynamic-plugin-sdk';
+import { getGitService, GitProvider, BuildType, RepoStatus } from '@console/git-service';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import {
   getSampleRepo,

@@ -1,4 +1,4 @@
-import { ValidationObject } from '@console/shared/src';
+import { ValidationObject } from '@console/dynamic-plugin-sdk/src/shared';
 
 export type UIStorageValidation = {
   validations: {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { CheckboxField, EnvironmentField } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CheckboxField, EnvironmentField } from '@console/shared';
 import { Resources } from '../import-types';
 import FormSection from '../section/FormSection';
 

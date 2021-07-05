@@ -1,6 +1,6 @@
 import { $, $$, browser } from 'protractor';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
-import { isLoaded } from '@console/shared/src/test-views/dashboard-shared.view';
+import { isLoaded } from '@console/dynamic-plugin-sdk/src/shared/test-views/dashboard-shared.view';
 
 // export const clusterHealth = $('[class="co-dashboard-text--small co-health-card__text"]');
 export const clusterHealth = $('div.co-status-card__health-item div svg');

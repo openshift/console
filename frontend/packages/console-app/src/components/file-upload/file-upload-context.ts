@@ -3,8 +3,8 @@ import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FileUpload, isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { useToast } from '@console/shared/src/components/toast';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
+import { useToast } from '@console/dynamic-plugin-sdk/src/shared/components/toast';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/shared/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
 
 export type FileUploadContextType = {

@@ -4,9 +4,9 @@ import * as _ from 'lodash-es';
 import { NavExpandable, NavGroup } from '@patternfly/react-core';
 
 import { withExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { NavItem, isNavItem } from '@console/dynamic-plugin-sdk';
+import { NavItem, isNavItem, withActivePerspective } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
-import { withActivePerspective } from '@console/shared';
+
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { stripBasePath } from '../utils';

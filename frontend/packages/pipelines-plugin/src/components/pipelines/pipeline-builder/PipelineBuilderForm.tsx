@@ -9,9 +9,9 @@ import {
   YAMLEditorField,
   FlexForm,
   FormBody,
-} from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { safeJSToYAML } from '@console/shared/src/utils/yaml';
+} from '@console/dynamic-plugin-sdk';
+import { EditorType } from '@console/dynamic-plugin-sdk/src/shared/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/dynamic-plugin-sdk/src/shared/utils/yaml';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import { initialPipelineFormData, STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';

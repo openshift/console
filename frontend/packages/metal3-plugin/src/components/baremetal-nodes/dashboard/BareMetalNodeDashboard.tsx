@@ -10,10 +10,10 @@ import {
   HealthCheck,
 } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import UtilizationCard from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
-import { createBasicLookup, getNodeMachineName, getName } from '@console/shared';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid from '@console/shared/src/components/dashboard/DashboardGrid';
-import { LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { createBasicLookup, getNodeMachineName, getName } from '@console/dynamic-plugin-sdk';
+import Dashboard from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/Dashboard';
+import DashboardGrid from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/DashboardGrid';
+import { LimitRequested } from '@console/dynamic-plugin-sdk/src/shared/components/dashboard/utilization-card/UtilizationItem';
 import { getHostMachineName, getNodeMaintenanceNodeName } from '../../../selectors';
 import { getNodeServerCSR } from '../../../selectors/csr';
 import { BareMetalNodeDetailsPageProps } from '../../types';
