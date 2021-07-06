@@ -355,6 +355,7 @@ export type PrometheusActivityProps = {
 };
 
 export type SubsystemHealth = {
+  alerts?: string[];
   message?: string;
   state: HealthState;
 };

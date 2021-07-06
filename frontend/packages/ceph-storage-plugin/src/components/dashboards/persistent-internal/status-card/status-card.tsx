@@ -87,6 +87,7 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
                 title={t('ceph-storage-plugin~Storage Cluster')}
                 state={cephHealthState.state}
                 details={cephHealthState.message}
+                alerts={cephHealthState.alerts}
               />
             </GalleryItem>
             <GalleryItem>

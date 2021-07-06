@@ -8,7 +8,7 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { getResiliencyProgress } from '../../../../utils';
 import { WatchCephResource } from '../../../../types';
 
-const CephHealthStatus = (status: string, t: TFunction): SubsystemHealth => {
+const CephHealthStatus = (status: string, alerts: string[], t: TFunction): SubsystemHealth => {
   switch (status) {
     case 'HEALTH_OK':
       return {
@@ -18,11 +18,13 @@ const CephHealthStatus = (status: string, t: TFunction): SubsystemHealth => {
       return {
         state: HealthState.WARNING,
         message: t('ceph-storage-plugin~Warning'),
+        alerts,
       };
     case 'HEALTH_ERR':
       return {
         state: HealthState.ERROR,
         message: t('ceph-storage-plugin~Error'),
+        alerts,
       };
     default:
       return { state: HealthState.UNKNOWN };
@@ -31,7 +33,17 @@ const CephHealthStatus = (status: string, t: TFunction): SubsystemHealth => {
 
 export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ ceph }, t) => {
   const { data, loaded, loadError } = ceph;
-  const status = data?.[0]?.status?.ceph?.health;
+
+  const cephObj = data?.[0]?.status?.ceph;
+  const status = cephObj?.health;
+  const details = cephObj?.details;
+  const pattern = /[A-Z]+_*|error/g;
+  const alerts: string[] = [];
+  for (const key in details) {
+    if (details.hasOwnProperty(key) && pattern.test(key)) {
+      alerts.push(details[key].message);
+    }
+  }
 
   if (loadError) {
     return { state: HealthState.NOT_AVAILABLE };
@@ -42,7 +54,7 @@ export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ c
   if (data.length === 0) {
     return { state: HealthState.NOT_AVAILABLE };
   }
-  return CephHealthStatus(status, t);
+  return CephHealthStatus(status, alerts, t);
 };
 
 export const getDataResiliencyState: PrometheusHealthHandler = (responses, t) => {

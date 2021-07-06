@@ -1,9 +1,23 @@
 import * as React from 'react';
+import { Split, SplitItem } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { SecondaryStatus } from '../../status';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
+
+const renderAlerts = (alerts: string[], icon: React.ReactNode): React.ReactNode =>
+  alerts.map((alert) => (
+    <Split hasGutter key={alert}>
+      <SplitItem>{icon}</SplitItem>
+      <SplitItem isFilled>
+        <strong>{alert}</strong>
+      </SplitItem>
+      <SplitItem>
+        <a href="https://www.example.com">Troubleshoot</a>
+      </SplitItem>
+    </Split>
+  ));
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
   <div data-test={dataTest} className="co-dashboard-icon">
@@ -12,10 +26,14 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
 );
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
-  ({ className, state, title, details, popupTitle, noIcon = false, icon, children }) => {
+  ({ alerts, className, state, title, details, popupTitle, noIcon = false, icon, children }) => {
     const { t } = useTranslation();
 
     const detailMessage = details || healthStateMessage(state, t);
+
+    const renderHealthItemIcon = (
+      <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />
+    );
 
     return (
       <div
@@ -29,8 +47,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
             </span>
           </div>
         ) : (
-          !noIcon &&
-          (icon || <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />)
+          !noIcon && (icon || renderHealthItemIcon)
         )}
         <div>
           <span className="co-dashboard-text--small co-status-card__health-item-text">
@@ -41,6 +58,10 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
                 className="co-status-card__popup"
               >
                 {children}
+              </DashboardCardPopupLink>
+            ) : alerts && alerts.length ? (
+              <DashboardCardPopupLink linkTitle={title} popupTitle="Active health checks">
+                {renderAlerts(alerts, renderHealthItemIcon)}
               </DashboardCardPopupLink>
             ) : (
               title
@@ -58,6 +79,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
 export default HealthItem;
 
 type HealthItemProps = {
+  alerts?: string[];
   title: string;
   className?: string;
   details?: string;
