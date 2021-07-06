@@ -26,7 +26,8 @@
     },
     "exposedModules": {
       "alert": "./src/utils/alert-action-path.tsx",
-      "storageProvider": "./src/components/attach-obc/attach-obc-deployment.tsx"
+      "storageProvider": "./src/components/attach-obc/attach-obc-deployment.tsx",
+      "blockPoolDetailsPage": "./src/components/block-pool/block-pool-details-page.tsx"
     }
   }
 }

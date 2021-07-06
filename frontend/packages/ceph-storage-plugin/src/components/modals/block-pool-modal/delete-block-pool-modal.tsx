@@ -3,7 +3,13 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { ListKind, k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import {
+  ListKind,
+  k8sKill,
+  PersistentVolumeClaimKind,
+  K8sKind,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 import { useDeepCompareMemoize, YellowExclamationTriangleIcon } from '@console/shared';
 import {
   createModalLauncher,
@@ -19,7 +25,7 @@ import { StorageClassModel, PersistentVolumeClaimModel } from '@console/internal
 
 import { BlockPoolModalFooter } from './modal-footer';
 import { BlockPoolStatus } from '../../block-pool/body';
-import { CephClusterKind, StoragePoolKind, OcsStorageClassKind } from '../../../types';
+import { CephClusterKind, OcsStorageClassKind } from '../../../types';
 import { cephClusterResource } from '../../../resources';
 import {
   blockPoolReducer,
@@ -148,8 +154,8 @@ const DeleteBlockPoolModal = withHandlePromise((props: DeleteBlockPoolModalProps
 });
 
 type DeleteBlockPoolModalProps = {
-  kind?: string;
-  blockPoolConfig: StoragePoolKind;
+  kind?: K8sKind | string;
+  blockPoolConfig: K8sResourceKind;
 } & HandlePromiseProps &
   ModalComponentProps;
 

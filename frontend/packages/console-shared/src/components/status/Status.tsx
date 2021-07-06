@@ -86,6 +86,7 @@ export const Status: React.FC<StatusProps> = ({
     case 'Up to date':
     case 'Provisioned as node':
     case 'Preferred':
+    case 'Ok':
       return <SuccessStatus {...statusProps} />;
 
     case 'Info':
