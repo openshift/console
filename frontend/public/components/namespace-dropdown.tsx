@@ -18,39 +18,178 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useUserSettingsCompatibility } from '@console/shared';
+import { createProjectModal } from './modals';
+import { removeQueryArgument } from './utils/router';
+
 import { isSystemNamespace } from './factory/table-filters';
 import NamespaceMenuToggle from './namespace-menu-toggle';
 
-const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
-  canCreateNew,
-  disabled,
-  isProjects,
-  onCreateNew,
-  onSelect,
-  options,
-  selected,
-  shortCut,
-  storageKey,
-  title,
-  userSettingsPrefix,
-}) => {
+/* ******************************************************************* */
+
+const NoResults: React.FC<{
+  isProjects: boolean;
+  onClear: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}> = ({ isProjects, onClear }) => {
   const { t } = useTranslation();
+  return (
+    <>
+      <Divider />
+      <EmptyState>
+        <Title size="md" headingLevel="h4">
+          {isProjects ? t('public~No projects found') : t('public~No namespaces found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary>
+          <Button variant="link" onClick={onClear} className="co-namespace-selector__clear-filters">
+            {t('Clear filters')}
+          </Button>
+        </EmptyStatePrimary>
+      </EmptyState>
+    </>
+  );
+};
+/* ******************************************************************* */
+const Filter: React.FC<{
+  filterRef: React.Ref<any>;
+  onFilterChange: (filterText: string) => void;
+  filterText: string;
+  isProject: boolean;
+}> = ({ filterText, filterRef, onFilterChange, isProject }) => {
+  const { t } = useTranslation();
+  return (
+    // @ts-ignore
+    <MenuInput>
+      <TextInput
+        autoFocus
+        value={filterText}
+        aria-label={isProject ? t('public~Select project...') : t('public~Select namespace...')}
+        iconVariant="search"
+        type="search"
+        placeholder={isProject ? t('public~Select project...') : t('public~Select namespace...')}
+        onChange={(value: string) => onFilterChange(value)}
+        className="co-namespace-selector__filter"
+        ref={filterRef}
+      />
+    </MenuInput>
+  );
+};
 
-  const filterRef = React.useRef(null);
+/* ******************************************************************* */
+const SystemSwitch: React.FC<{
+  hasSystemNamespaces: boolean;
+  isProject: boolean;
+  isChecked: boolean;
+  onChange: (isChecked: boolean) => void;
+}> = ({ hasSystemNamespaces, isProject, isChecked, onChange }) => {
+  const { t } = useTranslation();
+  return hasSystemNamespaces ? (
+    <>
+      <Divider />
+      {/*
+        //@ts-ignore */}
+      <MenuInput>
+        <Switch
+          id="no-label-switch-on"
+          label={isProject ? t('public~Show system projects') : t('public~Show system namespaces')}
+          isChecked={isChecked}
+          onChange={onChange}
+          className="pf-c-select__menu-item pf-m-action co-namespace-selector__switch"
+        />
+      </MenuInput>
+    </>
+  ) : null;
+};
+
+/* ******************************************************************* */
+const NamespaceGroup: React.FC<{
+  isFavorites?: boolean;
+  options: { key: string; title: string }[];
+  selectedKey: string;
+  favorites: { [key: string]: boolean }[];
+}> = ({ isFavorites, options, selectedKey, favorites }) => {
+  const { t } = useTranslation();
+  const label = isFavorites ? t('public~Favorites') : t('public~Projects');
+
+  return options.length === 0 ? null : (
+    <>
+      <Divider />
+      {/*
+        //@ts-ignore */}
+      <MenuGroup label={label}>
+        {/*
+        //@ts-ignore */}
+        <MenuList>
+          {options.map((option) => {
+            return (
+              // @ts-ignore
+              <MenuItem
+                key={option.key}
+                itemId={option.key}
+                isFavorited={favorites?.[option.key] ? true : false}
+                isSelected={selectedKey === option.key}
+              >
+                {option.title}
+              </MenuItem>
+            );
+          })}
+        </MenuList>
+      </MenuGroup>
+    </>
+  );
+};
+
+/* ******************************************************************* */
+const Footer: React.FC<{
+  canCreateNew: boolean;
+  isProject?: boolean;
+  setOpen: (isOpen: boolean) => void;
+  setActiveNamespace: (name: string) => void;
+}> = ({ canCreateNew, isProject, setOpen, setActiveNamespace }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {canCreateNew ? (
+        <MenuFooter className="co-namespace-selector__footer">
+          {
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setOpen(false);
+                createProjectModal({
+                  blocking: true,
+                  onSubmit: (newProject) => {
+                    setActiveNamespace(newProject.metadata.name);
+                    removeQueryArgument('project-name');
+                  },
+                });
+              }}
+            >
+              {isProject ? t('public~Create Project') : t('public~Create Namespace')}
+            </Button>
+          }
+        </MenuFooter>
+      ) : null}
+    </>
+  );
+};
+
+/* ******************************************************************* */
+
+const NamespaceMenu: React.FC<{
+  setOpen: (isOpen: boolean) => void;
+  onSelect: (event: React.MouseEvent, itemId: string) => void;
+  selected?: string;
+  isProjects: boolean;
+  options: { title: string; key: string }[];
+  canCreateNew?: boolean;
+}> = ({ setOpen, onSelect, selected, isProjects, options, canCreateNew }) => {
   const menuRef = React.useRef(null);
+  const filterRef = React.useRef(null);
 
-  const [isOpen, setOpen] = React.useState(false);
+  const USERSETTINGS_PREFIX = 'console';
+  const userSettingsPrefix = `${USERSETTINGS_PREFIX}.namespace`;
+  const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
   const [filterText, setFilterText] = React.useState('');
-
-  React.useEffect(() => {
-    // This is necessary until fixed in PatternFly Menu item
-    // see https://github.com/patternfly/patternfly-react/issues/5915
-    // Ensures that menu is always available via keyboard
-    const buttons = menuRef.current?.querySelectorAll('button');
-    if (buttons?.[0]) {
-      (buttons[0] as HTMLElement).tabIndex = 0;
-    }
-  }, [filterText]);
 
   // Bookmarking / favorites (note in <= 4.8 this feature was known as bookmarking)
   const favoritesUserSettingsKey = userSettingsPrefix
@@ -61,8 +200,12 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     ? `${userSettingsPrefix}.systemNamespace`
     : undefined;
 
-  const favoriteStorageKey = storageKey ? `${storageKey}-bookmarks` : undefined;
-  const systemNamespaceKey = storageKey ? `${storageKey}-systemNamespace` : undefined;
+  const favoriteStorageKey = NAMESPACE_LOCAL_STORAGE_KEY
+    ? `${NAMESPACE_LOCAL_STORAGE_KEY}-bookmarks`
+    : undefined;
+  const systemNamespaceKey = NAMESPACE_LOCAL_STORAGE_KEY
+    ? `${NAMESPACE_LOCAL_STORAGE_KEY}-systemNamespace`
+    : undefined;
 
   const [favorites, setFavorites] = useUserSettingsCompatibility(
     favoritesUserSettingsKey,
@@ -71,11 +214,9 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     true,
   );
 
-  const [systemNamespaces, setSystemNamespaces] = useUserSettingsCompatibility(
-    systemNamespacesSettingsKey,
-    systemNamespaceKey,
-    false,
-    true,
+  const hasSystemNamespaces = React.useMemo(
+    () => options.some((option) => isSystemNamespace(option)),
+    [options],
   );
 
   const onSetFavorite = React.useCallback(
@@ -88,87 +229,16 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
     [setFavorites],
   );
 
-  const hasSystemNamespaces = React.useMemo(
-    () => options.some((option) => isSystemNamespace(option)),
-    [options],
-  );
-
-  React.useEffect(() => {
-    if (isOpen) {
-      setFilterText('');
-    }
-  }, [isOpen]);
-
-  const onFavorite = (event: any, itemID: string) => {
-    const isCurrentFavorite = favorites?.[itemID];
-    onSetFavorite(itemID, !isCurrentFavorite);
-  };
-
-  const showSystemSwitch = hasSystemNamespaces ? (
-    <>
-      <Divider />
-      {/* NOTE: All Menu components throw type errors if translate isn't added */}
-      {/* @ts-ignore */}
-      <MenuInput>
-        <Switch
-          id="no-label-switch-on"
-          label={isProjects ? t('public~Show system projects') : t('public~Show system namespaces')}
-          isChecked={systemNamespaces}
-          onChange={(isChecked: boolean) => {
-            setSystemNamespaces(isChecked);
-          }}
-          className="pf-c-select__menu-item pf-m-action co-namespace-selector__switch"
-        />
-      </MenuInput>
-    </>
-  ) : null;
-
-  const filter = (
-    // @ts-ignore
-    <MenuInput>
-      <TextInput
-        autoFocus
-        value={filterText}
-        aria-label={isProjects ? t('public~Select project...') : t('public~Select namespace...')}
-        iconVariant="search"
-        type="search"
-        placeholder={isProjects ? t('public~Select project...') : t('public~Select namespace...')}
-        onChange={(value: string) => setFilterText(value)}
-        className="co-namespace-selector__filter"
-        ref={filterRef}
-      />
-    </MenuInput>
+  const [systemNamespaces, setSystemNamespaces] = useUserSettingsCompatibility(
+    systemNamespacesSettingsKey,
+    systemNamespaceKey,
+    false,
+    true,
   );
 
   const isFavorite = React.useCallback((option) => (favorites?.[option.key] ? true : false), [
     favorites,
   ]); // undefined cannot be an option
-
-  const noResults = (
-    <>
-      <Divider />
-      <EmptyState>
-        <Title size="md" headingLevel="h4">
-          {isProjects ? t('public~No projects found') : t('public~No namespaces found')}
-        </Title>
-        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
-        <EmptyStatePrimary>
-          <Button
-            variant="link"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              setFilterText('');
-              filterRef.current?.focus();
-            }}
-            className="co-namespace-selector__clear-filters"
-          >
-            {t('Clear filters')}
-          </Button>
-        </EmptyStatePrimary>
-      </EmptyState>
-    </>
-  );
 
   const isOptionShown = React.useCallback(
     (option, checkIsFavorite: boolean) => {
@@ -199,64 +269,7 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
       ),
     [isOptionShown, options],
   );
-
-  const menuGroup = (isFavorites?: boolean) => {
-    const label = isFavorites ? t('public~Favorites') : t('public~Projects');
-
-    if (!isFavorites && filteredOptions.length === 0) {
-      return noResults;
-    }
-    if (isFavorites && filteredFavorites.length === 0) {
-      return null;
-    }
-
-    const optionsToDisplay = isFavorites ? filteredFavorites : filteredOptions;
-
-    const menuItems = optionsToDisplay.map((option) => {
-      return (
-        // @ts-ignore
-        <MenuItem
-          key={option.key}
-          itemId={option.key}
-          isFavorited={isFavorite(option)}
-          isSelected={selected === option.key}
-        >
-          {option.title}
-        </MenuItem>
-      );
-    });
-    return (
-      <>
-        <Divider />
-        {/* @ts-ignore */}
-        <MenuGroup label={label}>
-          {/* @ts-ignore */}
-          <MenuContent>
-            {/* @ts-ignore */}
-            <MenuList>{menuItems}</MenuList>
-          </MenuContent>
-        </MenuGroup>
-      </>
-    );
-  };
-
-  const footer = canCreateNew ? (
-    <MenuFooter className="co-namespace-selector__footer">
-      {
-        <Button
-          variant="secondary"
-          onClick={() => {
-            setOpen(false);
-            onCreateNew();
-          }}
-        >
-          {isProjects ? t('public~Create Project') : t('public~Create Namespace')}
-        </Button>
-      }
-    </MenuFooter>
-  ) : null;
-
-  const NamespaceChildSelect = (
+  return (
     <Menu
       className="co-namespace-selector__menu"
       ref={menuRef}
@@ -264,22 +277,86 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
         setOpen(false);
         onSelect(event, itemId);
       }}
-      onActionClick={onFavorite}
+      onActionClick={(event, itemID: string) => {
+        const isCurrentFavorite = favorites?.[itemID];
+        onSetFavorite(itemID, !isCurrentFavorite);
+      }}
       activeItemId={selected}
     >
-      {filter}
-      {menuGroup(true)} {/* favorites/bookmarks */}
-      {showSystemSwitch}
-      {menuGroup()} {/* all options */}
-      {footer}
+      {/*
+        //@ts-ignore */}
+      <MenuContent>
+        <Filter
+          filterRef={filterRef}
+          onFilterChange={setFilterText}
+          filterText={filterText}
+          isProject={isProjects}
+        />
+        <SystemSwitch
+          hasSystemNamespaces={hasSystemNamespaces}
+          isProject={isProjects}
+          isChecked={systemNamespaces}
+          onChange={setSystemNamespaces}
+        />
+        {filteredOptions.length === 0 ? (
+          <NoResults
+            isProjects={isProjects}
+            onClear={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              setFilterText('');
+              filterRef.current?.focus();
+            }}
+          />
+        ) : null}
+        <NamespaceGroup
+          isFavorites
+          options={filteredFavorites}
+          selectedKey={selected}
+          favorites={favorites}
+        />
+        <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
+      </MenuContent>
+      <Footer
+        canCreateNew={canCreateNew}
+        isProject={isProjects}
+        setActiveNamespace={() => {}} //KKD: CHANGE THIS TO BEING PASSED FROM PARENT
+        setOpen={setOpen}
+      />
     </Menu>
   );
+};
+
+/* ******************************************************************* */
+
+const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
+  canCreateNew,
+  disabled,
+  isProjects,
+  onSelect,
+  options,
+  selected,
+  shortCut,
+  title,
+}) => {
+  const { t } = useTranslation();
+
+  const [isOpen, setOpen] = React.useState(false);
 
   return (
     <div className="co-namespace-selector co-namespace-project-selector">
       <NamespaceMenuToggle
         disabled={disabled}
-        menu={NamespaceChildSelect}
+        menu={
+          <NamespaceMenu
+            setOpen={setOpen}
+            onSelect={onSelect}
+            selected={selected}
+            isProjects={isProjects}
+            options={options}
+            canCreateNew={canCreateNew}
+          />
+        }
         isOpen={isOpen}
         title={`${isProjects ? t('public~Project') : t('public~Namespace')}: ${title}`}
         onToggle={(menuState) => {
@@ -298,10 +375,7 @@ type NamespaceBarDropdownProps = {
   onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
   shortCut?: string;
   selected?: string;
-  storageKey?: string;
   title?: string;
-  userSettingsPrefix?: string;
-  onCreateNew?: () => void;
   canCreateNew?: boolean;
 };
 

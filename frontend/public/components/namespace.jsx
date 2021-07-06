@@ -1193,7 +1193,7 @@ const NamespaceBarDropdowns_ = (props) => {
 const NamespaceBarDropdownsWithTranslation = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
-)(withTranslation()(withLastNamespace(NamespaceBarDropdowns_)));
+)(withLastNamespace(NamespaceBarDropdowns_));
 
 const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
 
