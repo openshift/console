@@ -15,7 +15,7 @@ export const getHelmDeleteAction = (
       blocking: true,
       resourceName: releaseName,
       resourceType: 'Helm Release',
-      actionLabelKey: t('helm-plugin~Uninstall'),
+      actionLabel: t('helm-plugin~Uninstall'),
       redirect,
       onSubmit: () => {
         return coFetchJSON.delete(
