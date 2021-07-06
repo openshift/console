@@ -23,7 +23,11 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
   const addActionGroupExtensions = useExtensions<AddActionGroup>(isAddActionGroup);
-  const [addActionExtensions, addActionExtensionsResolved] = useAddActionExtensions();
+  const [
+    addActionExtensions,
+    addActionExtensionsResolved,
+    allAddActionsDisabled,
+  ] = useAddActionExtensions();
   const [
     filteredAddActionExtensions,
     filteredAddActionExtensionsLoaded,
@@ -36,9 +40,9 @@ const AddPageLayout: React.FC<AddPageLayoutProps> = ({ title, hintBlock: additio
   const extensionsLoaded: boolean =
     addActionExtensionsResolved && filteredAddActionExtensionsLoaded;
   const addActionLoadingFailed: boolean =
-    addActionExtensionsResolved && addActionExtensions?.length === 0;
+    !allAddActionsDisabled && addActionExtensionsResolved && addActionExtensions?.length === 0;
   const addActionAccessCheckFailed: boolean =
-    extensionsLoaded && filteredAddActionExtensions?.length === 0;
+    !allAddActionsDisabled && extensionsLoaded && filteredAddActionExtensions?.length === 0;
 
   const getHint = (): React.ReactNode => {
     const hintText: string = t(
