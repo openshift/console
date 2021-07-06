@@ -25,11 +25,12 @@ export type Network = {
 };
 
 export type CloudInitConfig = {
-  useCustomScript?: boolean;
-  customScript?: string;
-  hostname?: string;
-  sshKeys?: string[];
+  yamlView?: boolean;
+  userName?: string;
   password?: string;
+  hostname?: string;
+  customScript?: string;
+  sshKeys?: string[];
 };
 
 export type VirtualMachineData = {
@@ -44,7 +45,7 @@ export type VirtualMachineData = {
   pvcNS?: string;
   pvcSize?: string;
   provisionSource?: ProvisionSource;
-  networks?: Network[];
+  networkInterfaces?: Network[];
   disks?: Disk[];
   cloudInit?: CloudInitConfig;
   cdrom?: boolean;

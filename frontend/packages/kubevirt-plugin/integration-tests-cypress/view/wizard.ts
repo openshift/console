@@ -1,103 +1,206 @@
 import { ProvisionSource } from '../enums/provisionSource';
+import { VirtualMachineData } from '../types/vm';
+import { addDisk, addNIC } from './dialog';
+import { modalTitle, modalConfirm, storageClass } from './selector';
+import * as wizardView from './selector-wizard';
+
+const fillBootSource = (
+  provisionSource: ProvisionSource,
+  pvcName: string,
+  pvcNS: string,
+  pvcSize?: string,
+) => {
+  cy.get(wizardView.imageSourceDropdown).click();
+  cy.get(wizardView.selectMenu)
+    .contains(provisionSource.getDescription())
+    .click({ force: true });
+  switch (provisionSource) {
+    case ProvisionSource.URL: {
+      cy.get(wizardView.sourceURL).type(provisionSource.getSource());
+      if (pvcSize) {
+        cy.get(wizardView.pvcSize)
+          .clear()
+          .type(pvcSize);
+      }
+      break;
+    }
+    case ProvisionSource.CLONE_PVC: {
+      cy.get('body').then(($body) => {
+        if ($body.find(wizardView.clonePVCNSDropdown).length) {
+          cy.get(wizardView.clonePVCNSDropdown).click();
+          cy.get(wizardView.projectNS(pvcNS)).click();
+          cy.contains(wizardView.clonePVCDropDown, 'Select Persistent Volume Claim').click({
+            force: true,
+          });
+          cy.get(wizardView.pvcName(pvcName)).click();
+        } else {
+          cy.get(wizardView.pvcNSDropdown).click();
+          cy.get(wizardView.projectNS(pvcNS)).click();
+          cy.get(wizardView.pvcDropdown).click();
+          cy.get(wizardView.pvcName(pvcName)).click();
+        }
+      });
+      break;
+    }
+    case ProvisionSource.REGISTRY: {
+      cy.get(wizardView.sourceRegistry).type(provisionSource.getSource());
+      if (pvcSize) {
+        cy.get(wizardView.pvcSize)
+          .clear()
+          .type(pvcSize);
+      }
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+};
 
 export const wizard = {
   vm: {
     open: () => {
-      cy.byLegacyTestID('item-create').click();
-      cy.byLegacyTestID('vm-wizard').click();
+      cy.get(wizardView.create).click();
+      cy.get(wizardView.vmWizard).click();
     },
-    processSelectTemplate: (name: string) => {
-      cy.get('.catalog-tile-pf-title')
-        .contains(name)
+    selectTemplate: (vmData: VirtualMachineData) => {
+      const { template } = vmData;
+      cy.get(wizardView.templateTitle)
+        .contains(template)
         .should('exist')
         .click();
-      cy.byLegacyTestID('wizard-next').click();
+      cy.get(wizardView.next).click();
       cy.get('body').then(($body) => {
-        if ($body.find('[data-test-id="modal-title"]').length) {
-          cy.get('[data-test="confirm-action"]').click();
+        if ($body.find(modalTitle).length) {
+          cy.get(modalConfirm).click();
         }
       });
     },
-    processBootSource: (
-      source: ProvisionSource,
-      cdrom: boolean,
-      size: string,
-      pvcName: string,
-      pvcNS: string,
-    ) => {
-      cy.get('#image-source-type-dropdown').click();
-      cy.get('.pf-c-select__menu')
-        .contains(source.getDescription())
-        .click();
-      switch (source) {
-        case ProvisionSource.URL: {
-          cy.get('input[id="provision-source-url"]').type(source.getSource());
-          cy.get('#request-size-input')
-            .clear()
-            .type(size);
-          break;
-        }
-        case ProvisionSource.CLONE_PVC: {
-          cy.get('button[id="pvc-ns-dropdown"]').click();
-          cy.get(`a[id="${pvcNS}-Project-link"]`).click();
-          cy.get('button[id="pvc-name-dropdown"]').click();
-          cy.get(`a[id="${pvcName}-PersistentVolumeClaim-link"]`).click();
-          break;
-        }
-        case ProvisionSource.REGISTRY: {
-          cy.get('input[id="provision-source-container"]').type(source.getSource());
-          cy.get('#request-size-input')
-            .clear()
-            .type(size);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+    fillBootSourceForm: (vmData: VirtualMachineData) => {
+      const { provisionSource, cdrom, pvcSize, pvcNS, pvcName } = vmData;
+      fillBootSource(provisionSource, pvcName, pvcNS, pvcSize);
       if (cdrom) {
-        cy.get('#cdrom').click();
+        cy.get(wizardView.cdrom).click();
       }
       if (Cypress.env('STORAGE_CLASS')) {
-        cy.byTestID('advanced-section').within(() =>
+        cy.get(storageClass.advanced).within(() =>
           cy
             .get('button')
             .contains('Advanced')
             .click(),
         );
-        cy.get('#form-ds-sc-select').click();
-        cy.get('.pf-c-select__menu')
+        cy.get(storageClass.dropdown).click();
+        cy.get(storageClass.selectMenu)
           .contains(Cypress.env('STORAGE_CLASS'))
           .click();
       }
-      cy.byLegacyTestID('wizard-next').click();
+      cy.get(wizardView.next).click();
     },
-    processReview: (
-      namespace: string,
-      name: string,
-      flavor: string,
-      ssh: boolean,
-      start: boolean,
-    ) => {
-      cy.get('#project-dropdown').click();
-      cy.get(`a[id="${namespace}-Project-link"]`).click();
-      cy.get('#vm-name')
-        .clear()
-        .type(name);
+    fillReviewForm: (vmData: VirtualMachineData) => {
+      const { namespace, name, flavor, sshEnable, startOnCreation } = vmData;
+      if (namespace !== undefined) {
+        cy.get(wizardView.projectDropdown).click();
+        cy.get(wizardView.projectNS(namespace)).click();
+      }
+      if (name !== undefined) {
+        cy.get(wizardView.vmName)
+          .clear()
+          .type(name);
+      }
       if (flavor !== undefined) {
-        cy.get('#vm-flavor-select').click();
+        cy.get(wizardView.flavorSelect).click();
         cy.get('button')
           .contains(flavor)
           .click();
       }
-      if (!ssh) {
-        cy.get('input[id="ssh-service-checkbox"]').click();
+      if (!sshEnable) {
+        cy.get(wizardView.sshCheckbox).click();
       }
-      if (!start) {
-        cy.get('input[id="start-vm"]').click();
+      if (!startOnCreation) {
+        cy.get(wizardView.startOnCreation).click();
       }
-      cy.byLegacyTestID('wizard-next').click();
-      cy.byTestID('success-list').click();
+      cy.get(wizardView.next).click();
+      cy.get(wizardView.successList).click();
+    },
+    fillGeneralForm: (vmData: VirtualMachineData) => {
+      const { name, provisionSource, sourceAvailable, flavor, pvcName, pvcNS } = vmData;
+      cy.get(wizardView.vmName)
+        .clear()
+        .type(name);
+      if (!sourceAvailable) {
+        fillBootSource(provisionSource, pvcName, pvcNS);
+      }
+      if (flavor !== undefined) {
+        cy.get(wizardView.flavorDropdown).click();
+        cy.get(wizardView.selectItem)
+          .contains(flavor)
+          .click();
+      }
+      cy.get(wizardView.nextBtn).click();
+    },
+    fillNetworkForm: (vmData: VirtualMachineData) => {
+      const { networkInterfaces, provisionSource } = vmData;
+      if (networkInterfaces !== undefined) {
+        networkInterfaces.forEach((nic) => {
+          addNIC(nic);
+        });
+      }
+      if (provisionSource === ProvisionSource.PXE && networkInterfaces !== undefined) {
+        cy.get(wizardView.selectPXENIC).select(networkInterfaces[0].name);
+      }
+      cy.get(wizardView.nextBtn).click();
+    },
+    fillStorageForm: (vmData: VirtualMachineData) => {
+      const { disks } = vmData;
+      if (disks !== undefined) {
+        disks.forEach((disk) => {
+          addDisk(disk);
+        });
+      }
+      cy.get(wizardView.nextBtn).click();
+    },
+    fillAdvancedForm: (vmData: VirtualMachineData) => {
+      const { cloudInit, sshEnable } = vmData;
+      if (cloudInit !== undefined) {
+        cy.get(wizardView.cloudInit).click();
+        if (cloudInit.yamlView) {
+          cy.get(wizardView.yamlView).click();
+          cy.get(wizardView.yamlEditor)
+            .clear()
+            .type(cloudInit.customScript);
+        } else {
+          cy.get(wizardView.username)
+            .clear()
+            .type(cloudInit.userName);
+          cy.get(wizardView.password)
+            .clear()
+            .type(cloudInit.password);
+          cy.get(wizardView.hostname)
+            .clear()
+            .type(cloudInit.hostname);
+          if (cloudInit.sshKeys !== undefined) {
+            cloudInit.sshKeys.forEach((key: string, index: number) => {
+              cy.get(wizardView.sshKeys(index))
+                .clear()
+                .type(key);
+              cy.get(wizardView.addSSHKey).click();
+            });
+          }
+        }
+      }
+      if (sshEnable) {
+        cy.get(wizardView.ssh).click();
+        cy.get(wizardView.sshCheckbox).click();
+      }
+      cy.get(wizardView.nextBtn).click();
+    },
+    fillConfirmForm: (vmData: VirtualMachineData) => {
+      const { startOnCreation } = vmData;
+      if (!startOnCreation) {
+        cy.get(wizardView.startOnCreation).click();
+      }
+      cy.get(wizardView.nextBtn).click();
+      cy.get(wizardView.successList).click();
     },
   },
   template: {
