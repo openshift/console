@@ -12,7 +12,7 @@ const operatorInstallFormURL = `/operatorhub/subscribe?pkg=${operatorPkgName}&ca
 const operatorInstance = 'CouchbaseCluster';
 const operandLink = 'cb-example';
 
-describe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
+xdescribe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
