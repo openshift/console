@@ -22,6 +22,7 @@ import {
 import { InfrastructureModel, SecretModel } from '@console/internal/models';
 import { getOCSVersion } from '../../../selectors';
 import { OCSServiceModel } from '../../../models';
+import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
 
 const k8sResources: FirehoseResource[] = [
   {
