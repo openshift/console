@@ -23,7 +23,7 @@ const EventingBrokerPage: React.FC<EventingBrokerPageProps> = ({ match, location
       </Helmet>
       <PageHeading title={t('knative-plugin~Broker')}>
         {t(
-          'knative-plugin~Create a Knative Broker to create an event forwarding and persistence layer with in-memory and reliable implementations',
+          'knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers',
         )}
       </PageHeading>
       <QueryFocusApplication>
