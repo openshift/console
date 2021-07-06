@@ -43,7 +43,7 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
         content={
           hasFailedTask
             ? t(
-                'quickstart~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.',
+                'console-app~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.',
               )
             : conclusion
         }
@@ -54,7 +54,7 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
           onClick={() => onQuickStartChange(nextQuickStart.metadata.name)}
           isInline
         >
-          {t('quickstart~Start {{nextQSDisplayName}} quick start', { nextQSDisplayName })}{' '}
+          {t('console-app~Start {{nextQSDisplayName}} quick start', { nextQSDisplayName })}{' '}
           <ArrowRightIcon
             style={{ marginLeft: 'var(--pf-global--spacer--xs)', verticalAlign: 'middle' }}
           />

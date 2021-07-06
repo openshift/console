@@ -21,24 +21,24 @@ const QuickStartCloseModal: React.FC<QuickStartCloseModalProps> = ({
       isOpen={isOpen}
       variant={ModalVariant.small}
       showClose={false}
-      title={t('quickstart~Leave quick start?')}
+      title={t('console-app~Leave quick start?')}
       footer={
         <Flex>
           <FlexItem align={{ default: 'alignRight' }}>
             <Button variant="secondary" onClick={onCancel}>
-              {t('quickstart~Cancel')}
+              {t('console-app~Cancel')}
             </Button>
           </FlexItem>
           <FlexItem>
             <Button variant="primary" onClick={onConfirm}>
-              {t('quickstart~Leave')}
+              {t('console-app~Leave')}
             </Button>
           </FlexItem>
         </Flex>
       }
       isFullScreen
     >
-      {t('quickstart~Your progress will be saved.')}
+      {t('console-app~Your progress will be saved.')}
     </Modal>
   );
 };

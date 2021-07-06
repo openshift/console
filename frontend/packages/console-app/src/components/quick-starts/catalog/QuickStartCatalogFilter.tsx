@@ -31,13 +31,13 @@ const QuickStartCatalogFilter: React.FC<QuickStartCatalogFilterProps> = ({
   const searchQuery = queryParams.get(QUICKSTART_SEARCH_FILTER_KEY) || '';
   const statusFilters = queryParams.get(QUICKSTART_STATUS_FILTER_KEY)?.split(',') || [];
   const statusTypes = {
-    [QuickStartStatus.COMPLETE]: t('quickstart~Complete ({{statusCount, number}})', {
+    [QuickStartStatus.COMPLETE]: t('console-app~Complete ({{statusCount, number}})', {
       statusCount: quickStartStatusCount[QuickStartStatus.COMPLETE],
     }),
-    [QuickStartStatus.IN_PROGRESS]: t('quickstart~In progress ({{statusCount, number}})', {
+    [QuickStartStatus.IN_PROGRESS]: t('console-app~In progress ({{statusCount, number}})', {
       statusCount: quickStartStatusCount[QuickStartStatus.IN_PROGRESS],
     }),
-    [QuickStartStatus.NOT_STARTED]: t('quickstart~Not started ({{statusCount, number}})', {
+    [QuickStartStatus.NOT_STARTED]: t('console-app~Not started ({{statusCount, number}})', {
       statusCount: quickStartStatusCount[QuickStartStatus.NOT_STARTED],
     }),
   };
@@ -80,7 +80,7 @@ const QuickStartCatalogFilter: React.FC<QuickStartCatalogFilterProps> = ({
       <ToolbarContent>
         <ToolbarItem className="co-quick-start-catalog-filter__input">
           <SearchInput
-            placeholder={t('quickstart~Filter by keyword...')}
+            placeholder={t('console-app~Filter by keyword...')}
             value={searchQuery}
             onChange={handleTextChange}
             onClear={() => handleTextChange('')}
@@ -89,10 +89,10 @@ const QuickStartCatalogFilter: React.FC<QuickStartCatalogFilterProps> = ({
         <ToolbarItem>
           <Select
             variant={SelectVariant.checkbox}
-            aria-label={t('quickstart~Select filter')}
+            aria-label={t('console-app~Select filter')}
             isOpen={isDropdownOpen}
             onToggle={(isEnabled) => setIsDropdownOpen(isEnabled)}
-            placeholderText={t('quickstart~Status')}
+            placeholderText={t('console-app~Status')}
             onSelect={onRowfilterSelect}
             selections={selectedFilters}
           >
@@ -103,7 +103,7 @@ const QuickStartCatalogFilter: React.FC<QuickStartCatalogFilterProps> = ({
           className="co-quick-start-catalog-filter__count"
           alignment={{ default: 'alignRight' }}
         >
-          {t('quickstart~{{count, number}} item', { count: quickStartsCount })}
+          {t('console-app~{{count, number}} item', { count: quickStartsCount })}
         </ToolbarItem>
       </ToolbarContent>
     </Toolbar>

@@ -170,7 +170,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
             if (stopReason) {
               stoppedByError = t(
-                'cloudshell~The terminal connection has closed due to {{reason}}.',
+                'console-app~The terminal connection has closed due to {{reason}}.',
                 { reason: stopReason },
               );
             }
@@ -181,7 +181,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           })
           .finally(() => {
             const error =
-              evt.reason || stoppedByError || t('cloudshell~The terminal connection has closed.');
+              evt.reason || stoppedByError || t('console-app~The terminal connection has closed.');
             const currentTerminal = terminal.current;
             currentTerminal && currentTerminal.onConnectionClosed(error);
             websocket.destroy();
@@ -200,7 +200,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       const currentTerminal = terminal.current;
       currentTerminal &&
         currentTerminal.onConnectionClosed(
-          t('cloudshell~connecting to {{container}}', { container }),
+          t('console-app~connecting to {{container}}', { container }),
         );
     }
 
@@ -241,8 +241,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             }}
           >
             {customResource.status.phase === 'Running'
-              ? t('cloudshell~Reconnect to terminal')
-              : t('cloudshell~Restart terminal')}
+              ? t('console-app~Reconnect to terminal')
+              : t('console-app~Restart terminal')}
           </Button>
         </EmptyState>
       </div>

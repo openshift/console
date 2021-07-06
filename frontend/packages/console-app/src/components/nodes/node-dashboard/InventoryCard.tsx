@@ -50,7 +50,7 @@ const InventoryCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Inventory')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('console-app~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <NodeInventoryItem
@@ -60,8 +60,8 @@ const InventoryCard: React.FC = () => {
         />
         <InventoryItem
           isLoading={!obj}
-          title={t('nodes~Image')}
-          titlePlural={t('nodes~Images')}
+          title={t('console-app~Image')}
+          titlePlural={t('console-app~Images')}
           count={obj.status?.images?.length}
           error={!obj.status?.images}
         />

@@ -19,23 +19,23 @@ const MarkAsSchedulablePopover: React.FC<MarkAsSchedulablePopoverProps> = ({ nod
       await makeNodeSchedulable(node);
     } catch (err) {
       setVisible(false);
-      errorModal({ error: err.message || t('nodes~An error occurred. Please try again') });
+      errorModal({ error: err.message || t('console-app~An error occurred. Please try again') });
     }
   };
 
   return (
     <PopoverStatus
-      title={t('nodes~Scheduling disabled')}
+      title={t('console-app~Scheduling disabled')}
       statusBody={<NodeStatus node={node} showPopovers />}
       isVisible={visible}
     >
       <p>
         {t(
-          "nodes~No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
+          "console-app~No new Pods or workloads will be placed on this Node until it's marked as schedulable.",
         )}
       </p>
       <Button isInline variant="link" onClick={onClickMarkAsSchedulable}>
-        {t('nodes~Mark as schedulable')}
+        {t('console-app~Mark as schedulable')}
       </Button>
     </PopoverStatus>
   );

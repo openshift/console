@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'cloudshell';
+const i18nNS = 'console-app';
 
 describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {

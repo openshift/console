@@ -12,16 +12,16 @@ const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) =
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('nodes~Node conditions')} />
+      <SectionHeading text={t('console-app~Node conditions')} />
       <div className="co-table-container">
         <table className="table">
           <thead>
             <tr>
-              <th>{t('nodes~Type')}</th>
-              <th>{t('nodes~Status')}</th>
-              <th>{t('nodes~Reason')}</th>
-              <th>{t('nodes~Updated')}</th>
-              <th>{t('nodes~Changed')}</th>
+              <th>{t('console-app~Type')}</th>
+              <th>{t('console-app~Status')}</th>
+              <th>{t('console-app~Reason')}</th>
+              <th>{t('console-app~Updated')}</th>
+              <th>{t('console-app~Changed')}</th>
             </tr>
           </thead>
           <tbody>

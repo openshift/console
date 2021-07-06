@@ -22,9 +22,9 @@ const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, dur
   const { t } = useTranslation();
 
   const statusLocaleMap = {
-    [QuickStartStatus.COMPLETE]: t('quickstart~Complete'),
-    [QuickStartStatus.IN_PROGRESS]: t('quickstart~In progress'),
-    [QuickStartStatus.NOT_STARTED]: t('quickstart~Not started'),
+    [QuickStartStatus.COMPLETE]: t('console-app~Complete'),
+    [QuickStartStatus.IN_PROGRESS]: t('console-app~In progress'),
+    [QuickStartStatus.NOT_STARTED]: t('console-app~Not started'),
   };
 
   return (
@@ -45,7 +45,7 @@ const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, dur
           </Label>
         )}
         <Label variant="outline" icon={<OutlinedClockIcon />}>
-          {t('quickstart~{{duration, number}} minutes', { duration })}
+          {t('console-app~{{duration, number}} minutes', { duration })}
         </Label>
       </div>
     </div>

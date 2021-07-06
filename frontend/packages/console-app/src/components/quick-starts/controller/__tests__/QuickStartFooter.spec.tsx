@@ -55,7 +55,7 @@ describe('QuickStartFooter', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Start');
+    ).toBe('console-app~Start');
   });
 
   it('should load Continue and Restart buttons for in progress tours at into page', () => {
@@ -78,13 +78,13 @@ describe('QuickStartFooter', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Continue');
+    ).toBe('console-app~Continue');
     expect(
       footerButtons
         .at(1)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Restart');
+    ).toBe('console-app~Restart');
   });
 
   it('should load Next and Back buttons for in progress tours in task page', () => {
@@ -107,13 +107,13 @@ describe('QuickStartFooter', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Next');
+    ).toBe('console-app~Next');
     expect(
       footerButtons
         .at(1)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Back');
+    ).toBe('console-app~Back');
   });
 
   it('should load Close, Back and Restart buttons for completed tours in conclusion page', () => {
@@ -136,18 +136,18 @@ describe('QuickStartFooter', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Close');
+    ).toBe('console-app~Close');
     expect(
       footerButtons
         .at(1)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Back');
+    ).toBe('console-app~Back');
     expect(
       footerButtons
         .at(2)
         .childAt(0)
         .text(),
-    ).toBe('quickstart~Restart');
+    ).toBe('console-app~Restart');
   });
 });

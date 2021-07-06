@@ -11,15 +11,15 @@ const QuickStartCatalogPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{t('quickstart~Quick Starts')}</title>
+        <title>{t('console-app~Quick Starts')}</title>
       </Helmet>
       <div className="ocs-page-layout__header">
         <Text component="h1" className="ocs-page-layout__title" data-test="page-title">
-          {t('quickstart~Quick Starts')}
+          {t('console-app~Quick Starts')}
         </Text>
         <div className="ocs-page-layout__hint">
           {t(
-            'quickstart~Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
+            'console-app~Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.',
           )}
         </div>
       </div>
