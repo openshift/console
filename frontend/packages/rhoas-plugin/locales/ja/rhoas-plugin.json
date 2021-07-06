@@ -47,6 +47,7 @@
   "Bootstrap Server": "ブートストラップサーバー",
   "URL": "URL",
   "Secret": "シークレット",
+  "No Secret": "シークレットなし",
   "Create a Kafka connector": "Kafka コネクターの作成",
   "Create a binding connector": "バインディングコネクターの作成",
   "No data": "データなし",

@@ -1,4 +1,5 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { FirehoseResourcesResult } from '@console/internal/components/utils/types';
+import { K8sResourceCommon, K8sResourceKind } from '@console/internal/module/k8s';
 import { HelmRelease, HelmChartMetaData, HelmChartEntries } from '../../types/helm-types';
 
 /* eslint-disable @typescript-eslint/camelcase */
@@ -224,9 +225,11 @@ export const mockChartEntries: HelmChartEntries = {
   'hazelcast-enterprise--redhat-helm-repo': mockRedhatHelmChartData,
 };
 
-export const mockReleaseResources: {
-  [key: string]: { data: K8sResourceKind };
-} = {
+export const mockReleaseResources: FirehoseResourcesResult<{
+  Deployment: K8sResourceCommon;
+  StatefulSet: K8sResourceCommon;
+  Pod: K8sResourceCommon;
+}> = {
   Deployment: {
     data: {
       kind: 'Deployment',
@@ -235,6 +238,8 @@ export const mockReleaseResources: {
         namespace: 'xyz',
       },
     },
+    loaded: true,
+    loadError: undefined,
   },
   StatefulSet: {
     data: {
@@ -244,9 +249,13 @@ export const mockReleaseResources: {
         namespace: 'xyz',
       },
     },
+    loaded: true,
+    loadError: undefined,
   },
   Pod: {
     data: {},
+    loaded: true,
+    loadError: undefined,
   },
 };
 

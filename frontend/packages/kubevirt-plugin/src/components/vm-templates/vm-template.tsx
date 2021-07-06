@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { ListPage, MultiListPage } from '@console/internal/components/factory';
+import { Flatten, ListPage, MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
@@ -55,7 +55,10 @@ const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
   },
 ];
 
-const flatten = ({ vmTemplates, vmCommonTemplates, vms }): VirtualMachineTemplateBundle[] => {
+const flatten: Flatten<
+  { vmTemplates: TemplateKind[]; vmCommonTemplates: TemplateKind[]; vms: VMKind[] },
+  VirtualMachineTemplateBundle[]
+> = ({ vmTemplates, vmCommonTemplates, vms }) => {
   const user = getLoadedData<TemplateKind[]>(vmTemplates, []);
   const common = getLoadedData<TemplateKind[]>(vmCommonTemplates, []);
   return [

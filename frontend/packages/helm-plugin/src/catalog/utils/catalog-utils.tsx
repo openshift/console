@@ -30,16 +30,7 @@ export const normalizeHelmCharts = (
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
 
       charts.forEach((chart: HelmChartMetaData) => {
-        const {
-          name,
-          digest,
-          created,
-          version,
-          appVersion,
-          description,
-          keywords,
-          annotations,
-        } = chart;
+        const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
         const providerType = annotations?.[PROVIDER_TYPE_ANNOTATION] ?? '';
@@ -107,7 +98,7 @@ export const normalizeHelmCharts = (
         ];
 
         const helmChart = {
-          uid: `${chartRepoName}--${digest}`,
+          uid: `${chartRepoName}--${chartURL}`,
           type: 'HelmChart',
           name: displayName,
           title,

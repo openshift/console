@@ -40,7 +40,7 @@
   "Select consumer type": "소비자 유형 선택",
   "time axis": "시간축",
   "Resource": "리소스",
-  "Usage": "사용법",
+  "Usage": "사용량",
   "View {{title}} metrics in query browser": "쿼리 브라우저에서 {{title}} 메트릭보기",
   "{{humanAvailable}} available of {{humanLimit}} total limit": "{{humanAvailable}} 사용 가능 (총 한도 {{humanLimit}})",
   "{{humanAvailable}} available of {{humanMax}}": "{{humanAvailable}} 사용 가능 (총 {{humanMax}})",

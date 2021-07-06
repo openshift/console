@@ -11,9 +11,9 @@ import {
   TableRow,
   TableData,
   RowFunction,
-  ListPageWrapper_ as ListPageWrapper,
+  ListPageWrapper,
 } from './factory';
-import { CronJobKind, K8sResourceKind } from '../module/k8s';
+import { CronJobKind, K8sResourceCommon, K8sResourceKind } from '../module/k8s';
 import {
   ContainerTable,
   DetailsItem,
@@ -25,6 +25,7 @@ import {
   SectionHeading,
   Timestamp,
   navFactory,
+  FirehoseResourcesResult,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
@@ -174,7 +175,12 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
   <div className="co-m-pane__body">
     <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
-        flatten={(_resources) => {
+        flatten={(
+          _resources: FirehoseResourcesResult<{
+            jobs: K8sResourceCommon[];
+            pods: K8sResourceCommon[];
+          }>,
+        ) => {
           if (!_resources.jobs.loaded || !_resources.pods.loaded) {
             return [];
           }
@@ -205,7 +211,7 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
   <div className="co-m-pane__body">
     <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
-        flatten={(_resources) => {
+        flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
           if (!_resources.jobs.loaded) {
             return [];
           }

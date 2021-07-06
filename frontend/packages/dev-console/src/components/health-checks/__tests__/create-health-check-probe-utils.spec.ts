@@ -6,7 +6,9 @@ import {
   getRequestType,
   constructProbeData,
   getProbesData,
+  convertResourceDataToFormData,
 } from '../create-health-checks-probe-utils';
+import { HealthCheckProbeData } from '../health-checks-types';
 import {
   healthChecksData,
   healthChecksInputData,
@@ -72,5 +74,65 @@ describe('Create Health Check probe Utils', () => {
     expect(getProbesData(healthChecksInputData.healthChecks, Resources.KnativeService)).toEqual({
       readinessProbe: enabledProbeDataForKnativeService,
     });
+  });
+
+  it('should convert resource health checks data to formData', () => {
+    const readinessProbe = {
+      failureThreshold: 3,
+      httpGet: {
+        scheme: 'HTTP',
+        path: '/',
+        port: 8080,
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      initialDelaySeconds: 0,
+      periodSeconds: 10,
+      timeoutSeconds: 1,
+      successThreshold: 1,
+    };
+    const data = {
+      failureThreshold: '3',
+      requestType: 'httpGet',
+      httpGet: {
+        scheme: undefined,
+        path: '/',
+        port: '8080',
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      initialDelaySeconds: '0',
+      periodSeconds: '10',
+      timeoutSeconds: '1',
+      successThreshold: '1',
+    };
+    const formData = convertResourceDataToFormData(readinessProbe);
+    expect(formData).toEqual(data);
+  });
+
+  it('should convert resource health checks data to formData', () => {
+    const readinessProbe = {
+      httpGet: {
+        scheme: 'HTTPS',
+        path: '/',
+        port: 8080,
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      successThreshold: 1,
+    } as HealthCheckProbeData;
+    const data = {
+      requestType: 'httpGet',
+      httpGet: {
+        scheme: ['HTTPS'],
+        path: '/',
+        port: '8080',
+        httpHeaders: [{ name: 'header', value: 'val' }],
+      },
+      successThreshold: '1',
+      failureThreshold: '',
+      initialDelaySeconds: '',
+      periodSeconds: '',
+      timeoutSeconds: '',
+    };
+    const formData = convertResourceDataToFormData(readinessProbe);
+    expect(formData).toEqual(data);
   });
 });

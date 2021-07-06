@@ -365,6 +365,7 @@
   "No tag": "No tag",
   "Select tag": "Select tag",
   "Cannot update Devfile resources": "Cannot update Devfile resources",
+  "Serverless Deployment": "Serverless Deployment",
   "no application group": "no application group",
   "Import from Devfile": "Import from Devfile",
   "Create Source-to-Image Application": "Create Source-to-Image Application",
