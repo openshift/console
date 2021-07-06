@@ -155,7 +155,7 @@ export const descriptorsToUISchema = (
           mutable.setIn(pathToAdvanced, currentAdvanced.push(advancedPropertyName));
         }
 
-        mutable.setIn(
+        mutable.mergeDeepIn(
           uiSchemaPath,
           Immutable.Map({
             ...(descriptor.description && { 'ui:description': descriptor.description }),
