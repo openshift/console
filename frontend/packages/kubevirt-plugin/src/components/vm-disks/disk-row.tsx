@@ -7,13 +7,14 @@ import {
   LoadingInline,
   ResourceLink,
 } from '@console/internal/components/utils';
-import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
-import { PENDING_RESTART_LABEL } from '../../constants';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';
 import { getDeletetionTimestamp } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
+import { isAutoRemovedHotplugDisk, isHotplugDisk } from '../../selectors/disks/hotplug';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { isVMIRunning } from '../../selectors/vmi';
 import { VMIKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { DASH, dimensifyRow } from '../../utils';
@@ -22,6 +23,7 @@ import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { ValidationCell } from '../table/validation-cell';
 import { VMNicRowActionOpts } from '../vm-nics/types';
+import { VMLabel } from '../VMLabel';
 import {
   StorageBundle,
   StorageSimpleData,
@@ -60,6 +62,7 @@ const menuActionDelete = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
+  vmi?: VMIKind,
 ): KebabOption => ({
   // t('kubevirt-plugin~Delete')
   labelKey: 'kubevirt-plugin~Delete',
@@ -69,6 +72,7 @@ const menuActionDelete = (
         disk: disk.diskWrapper.asResource(true),
         volume: disk.volumeWrapper.asResource(true),
         vmLikeEntity,
+        vmi: vmi || undefined,
       }).result,
     ),
   accessReview: asAccessReview(
@@ -81,20 +85,23 @@ const menuActionDelete = (
 const getActions = (
   disk: CombinedDisk,
   vmLikeEntity: VMLikeEntityKind,
-  vmi: VMIKind,
   opts: VMStorageRowActionOpts,
+  vmi?: VMIKind,
 ) => {
   const actions = [];
-  if (isVMI(vmLikeEntity) || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)) {
+  const isVMRunning = isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  if (isVMI(vmLikeEntity)) {
     return actions;
   }
 
-  if (disk.isEditingSupported()) {
+  if (disk.isEditingSupported() && !isVMRunning) {
     actions.push(menuActionEdit);
   }
 
   actions.push(menuActionDelete);
-  return actions.map((a) => a(disk, vmLikeEntity, opts));
+  return actions.map((a) =>
+    !isVMRunning ? a(disk, vmLikeEntity, opts) : a(disk, vmLikeEntity, opts, vmi),
+  );
 };
 
 export type VMDiskSimpleRowProps = {
@@ -104,7 +111,9 @@ export type VMDiskSimpleRowProps = {
   actionsComponent: React.ReactNode;
   index: number;
   style: object;
-  isPendingRestart?: boolean;
+  isHotplug?: boolean;
+  isAutoRemovedHotplug?: boolean;
+  isVmi?: boolean;
 };
 
 export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
@@ -114,7 +123,9 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   actionsComponent,
   index,
   style,
-  isPendingRestart,
+  isHotplug,
+  isAutoRemovedHotplug,
+  isVmi,
 }) => {
   const dimensify = dimensifyRow(columnClasses);
 
@@ -130,15 +141,16 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
       namespace={pvcNamespace}
     />
   );
-
   return (
     <TableRow id={name} index={index} trKey={name} style={style}>
       <TableData className={dimensify()}>
-        <ValidationCell
-          validation={validation.name}
-          additionalLabel={isPendingRestart ? PENDING_RESTART_LABEL : null}
-        >
-          {name}
+        <ValidationCell validation={validation.name}>
+          {name}{' '}
+          {isHotplug && !isVmi && (
+            <VMLabel
+              indication={isAutoRemovedHotplug ? 'AutoDetachHotplug' : 'PersistingHotplug'}
+            />
+          )}
         </ValidationCell>
       </TableData>
       <TableData className={dimensify()}>
@@ -171,15 +183,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
 
 export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
   obj: { disk, ...restData },
-  customData: {
-    isDisabled,
-    withProgress,
-    vmLikeEntity,
-    vmi,
-    columnClasses,
-    templateValidations,
-    pendingChangesDisks,
-  },
+  customData: { isDisabled, withProgress, vmLikeEntity, vmi, columnClasses, templateValidations },
   index,
   style,
 }) => {
@@ -188,9 +192,20 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
     disk.volumeWrapper,
     disk.dataVolumeWrapper,
     disk.persistentVolumeClaimWrapper,
+
     { templateValidations },
   );
-  const isPendingRestart = !!pendingChangesDisks?.has(restData.name);
+  const isHotplug =
+    isHotplugDisk(vmi, disk.getName()) &&
+    (isVMI(vmLikeEntity)
+      ? isVMIRunning(vmi)
+      : isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi));
+  const isAutoRemovedHotplug =
+    isAutoRemovedHotplugDisk(asVM(vmLikeEntity), vmi, disk.getName()) &&
+    (isVMI(vmLikeEntity)
+      ? isVMIRunning(vmi)
+      : isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi));
+  const isVmi = isVMI(vmLikeEntity);
   return (
     <DiskSimpleRow
       data={{ disk, ...restData }}
@@ -205,21 +220,28 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
             diskValidations.validations.pvc,
         }
       }
-      isPendingRestart={isPendingRestart}
       columnClasses={columnClasses}
       index={index}
       style={style}
+      isHotplug={isHotplug}
+      isAutoRemovedHotplug={isAutoRemovedHotplug}
+      isVmi={isVmi}
       actionsComponent={
         <Kebab
-          options={getActions(disk, vmLikeEntity, vmi, {
-            withProgress,
-            templateValidations,
-          })}
+          options={getActions(
+            disk,
+            vmLikeEntity,
+            {
+              withProgress,
+              templateValidations,
+            },
+            vmi,
+          )}
           isDisabled={
             isDisabled ||
             isVMI(vmLikeEntity) ||
             !!getDeletetionTimestamp(vmLikeEntity) ||
-            isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)
+            (!isHotplug && isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi))
           }
           id={`kebab-for-${disk.getName()}`}
         />
