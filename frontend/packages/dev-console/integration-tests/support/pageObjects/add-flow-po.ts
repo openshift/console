@@ -111,12 +111,12 @@ export const catalogPO = {
   catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
-    helmCharts: 'a[href="/?catalogType=HelmChart"]',
-    builderImage: 'ul:nth-child(3) > li:nth-child(1) > a', // This needs to be changed
-    template: 'a[href="/?catalogType=Template"]',
+    helmCharts: '[data-test="tab HelmChart"]',
+    builderImage: '[data-test="tab BuilderImage"]',
+    template: '[data-test="tab Template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',
     managedServices: '[data-test="kind-managed-service"]',
-    eventSources: 'a[href="/?catalogType=EventSource"]',
+    eventSources: '[data-test="tab EventSource"]',
   },
   cards: {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',

@@ -36,7 +36,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
         {t('devconsole~Type')}
         <FieldLevelHelp>{typeDescriptions}</FieldLevelHelp>
       </Title>
-      <VerticalTabs>
+      <VerticalTabs data-test="catalog-types">
         {catalogTypes.map((type) => {
           const { value, label } = type;
           const typeCount = catalogTypeCounts[value];
@@ -49,7 +49,7 @@ const CatalogTypeSelector: React.FC<CatalogTypeSelectorProps> = ({
           };
 
           return typeCount > 0 ? (
-            <li key={value} className="vertical-tabs-pf-tab">
+            <li key={value} className="vertical-tabs-pf-tab" data-test={`tab ${value}`}>
               <Link to={to}>{`${label} (${typeCount})`}</Link>
             </li>
           ) : null;
