@@ -1,4 +1,11 @@
-import { ExtensionK8sGroupKindModel, PrometheusLabels, PrometheusValue } from '../api/common-types';
+import { RouteComponentProps } from 'react-router';
+import {
+  ExtensionK8sGroupKindModel,
+  PrometheusLabels,
+  PrometheusValue,
+  ResolvedExtension,
+} from '../api/common-types';
+import { Extension, ExtensionTypeGuard } from '../types';
 
 export type OwnerReference = {
   name: string;
@@ -205,4 +212,47 @@ export type FirehoseResult<
 
 export type FirehoseResourcesResult = {
   [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
+};
+
+export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
+
+export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
+  initResource: WatchK8sResource | null,
+) => WatchK8sResult<R>;
+
+export type UseK8sWatchResources = <R extends ResourcesObject>(
+  initResources: WatchK8sResources<R>,
+) => WatchK8sResults<R>;
+
+export type UseResolvedExtensions = <E extends Extension>(
+  ...typeGuards: ExtensionTypeGuard<E>[]
+) => [ResolvedExtension<E>[], boolean, any[]];
+
+export type ConsoleFetch = (
+  url: string,
+  options?: RequestInit,
+  timeout?: number,
+) => Promise<Response>;
+
+export type ConsoleFetchJSON<T = any> = {
+  (url: string, method?: string, options?: RequestInit, timeout?: number): Promise<T>;
+  delete(url: string, json?: any, options?: RequestInit, timeout?: number): Promise<T>;
+  post(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  put(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+  patch(url: string, json: any, options?: RequestInit, timeout?: number): Promise<T>;
+};
+
+export type ConsoleFetchText = (...args: Parameters<ConsoleFetch>) => Promise<string>;
+
+/* Horizontal Nav Types */
+export type NavPage = {
+  href?: string;
+  path?: string;
+  name: string;
+  component: React.ComponentType<RouteComponentProps>;
+};
+
+export type HorizontalNavProps = {
+  resource?: K8sResourceCommon;
+  pages: NavPage[];
 };

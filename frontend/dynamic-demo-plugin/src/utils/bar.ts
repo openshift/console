@@ -1,4 +1,4 @@
-import { SetFeatureFlag } from '@console/dynamic-plugin-sdk';
+import { SetFeatureFlag } from '@openshift-console/dynamic-plugin-sdk';
 
 export default (label: string) => `Hello ${label} Function!`;
 

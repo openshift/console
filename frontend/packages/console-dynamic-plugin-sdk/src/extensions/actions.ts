@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ExtensionHook, ExtensionK8sKindVersionModel } from '../api/common-types';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 import { AccessReviewResourceAttributes } from './console-types';
 
 /** ActionProvider contributes a hook that returns list of actions for specific context */

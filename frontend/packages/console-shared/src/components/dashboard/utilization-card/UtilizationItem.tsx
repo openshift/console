@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { DataPoint } from '@console/internal/components/graphs';
 import {
   AreaChart,

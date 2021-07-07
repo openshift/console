@@ -8,7 +8,7 @@ import {
   ActivityBodyProps,
   OngoingActivityBodyProps,
   RecentEventsBodyProps,
-} from '@console/dynamic-plugin-sdk/src/api/internal';
+} from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { Timestamp } from '@console/internal/components/utils/timestamp';

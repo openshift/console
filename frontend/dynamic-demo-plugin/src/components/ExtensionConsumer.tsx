@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { isModelFeatureFlag, ModelFeatureFlag } from '@console/dynamic-plugin-sdk';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/api';
+import {
+  useResolvedExtensions,
+  isModelFeatureFlag,
+  ModelFeatureFlag,
+} from '@openshift-console/dynamic-plugin-sdk';
 
 const ExtensionConsumer: React.FC = () => {
   const { t } = useTranslation('plugin__console-demo-plugin');
@@ -26,15 +29,17 @@ const ExtensionConsumer: React.FC = () => {
 
 const ModelRenderer: React.FC<ModelRendererProps> = ({ model, flag }) => {
   const { t } = useTranslation('plugin__console-demo-plugin');
-  return <div>
-    <div>{t('Model Flag: {{flag}}', { flag })}</div>
-    <div>{t('Model Group, Version, Kind:')}</div>
-    <ul>
-      <li>{model.group}</li>
-      <li>{model.version}</li>
-      <li>{model.kind}</li>
-    </ul>
-  </div>;
+  return (
+    <div>
+      <div>{t('Model Flag: {{flag}}', { flag })}</div>
+      <div>{t('Model Group, Version, Kind:')}</div>
+      <ul>
+        <li>{model.group}</li>
+        <li>{model.version}</li>
+        <li>{model.kind}</li>
+      </ul>
+    </div>
+  );
 };
 
 type ModelRendererProps = {

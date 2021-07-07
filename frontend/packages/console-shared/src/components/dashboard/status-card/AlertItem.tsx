@@ -3,7 +3,7 @@ import { Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { AlertItemProps } from '@console/dynamic-plugin-sdk/src/api/internal-types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
 import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
