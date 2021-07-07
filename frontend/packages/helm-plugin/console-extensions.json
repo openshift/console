@@ -57,6 +57,16 @@
     }
   },
   {
+    "type": "console.action/provider",
+    "properties": {
+      "contextId": "topology-actions",
+      "provider": { "$codeRef": "actions.useHelmActionProviderForTopology" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
     "type": "console.navigation/href",
     "properties": {
       "id": "helm",
@@ -70,6 +80,79 @@
         "data-quickstart-id": "qs-nav-helm",
         "data-test-id": "helm-releases-header"
       }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/resource-link",
+    "properties": {
+      "priority": 1000,
+      "link": { "$codeRef": "helmTopology.getHelmReleasePanelResourceLink" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab",
+    "properties": {
+      "id": "helm-release-panel-tab-details",
+      "label": "%helm-plugin~Details%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab",
+    "properties": {
+      "id": "helm-release-panel-tab-resource",
+      "label": "%helm-plugin~Resources%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab",
+    "properties": {
+      "id": "helm-release-panel-tab-releaseNotes",
+      "label": "%helm-plugin~Release notes%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-details",
+      "tab": "helm-release-panel-tab-details",
+      "section": { "$codeRef": "helmTopology.getHelmReleasePanelDetailsTabSection" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-resource",
+      "tab": "helm-release-panel-tab-resource",
+      "section": { "$codeRef": "helmTopology.getHelmReleasePanelResourceTabSection" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_HELM"]
+    }
+  },
+  {
+    "type": "topology.details/tab-section",
+    "properties": {
+      "id": "helm-release-panel-tab-section-releaseNotes",
+      "tab": "helm-release-panel-tab-releaseNotes",
+      "section": { "$codeRef": "helmTopology.getHelmReleasePanelReleaseNotesTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
