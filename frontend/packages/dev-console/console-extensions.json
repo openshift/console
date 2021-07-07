@@ -190,7 +190,15 @@
       "href": "/upload-jar/ns/:namespace",
       "label": "%devconsole~Upload JAR file%",
       "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",
-      "icon": { "$codeRef": "icons.uploadJarIconElement" }
+      "icon": { "$codeRef": "icons.uploadJarIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
     }
   },
   {
