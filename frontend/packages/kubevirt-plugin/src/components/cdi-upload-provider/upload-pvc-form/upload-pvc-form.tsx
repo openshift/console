@@ -48,7 +48,6 @@ import {
   StorageClassResourceKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   AccessMode,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
@@ -72,7 +71,7 @@ import {
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
 import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
-import { getParameterValue } from '../../../selectors/selectors';
+import { getName, getNamespace, getParameterValue } from '../../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { OperatingSystemRecord } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';

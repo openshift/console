@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { VMIKind } from '../../../types/vm';
 
 /**

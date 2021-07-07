@@ -1,6 +1,4 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src/selectors/common';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -22,9 +20,9 @@ import {
 import { V1Disk, V1Volume } from '../../types/api';
 import { Devices } from '../../types/vm/devices';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
+import { createBasicLookup, findKeySuffixValue, getSimpleName } from '../../utils';
 import { getDataVolumeStorageClassName, getDataVolumeStorageSize } from '../dv/selectors';
-import { getAnnotations, getLabels, getStatusPhase } from '../selectors';
-import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
+import { getName, getAnnotations, getLabels, getStatusPhase, getValueByPrefix } from '../selectors';
 import {
   getVolumeCloudInitNoCloud,
   getVolumeContainerImage,

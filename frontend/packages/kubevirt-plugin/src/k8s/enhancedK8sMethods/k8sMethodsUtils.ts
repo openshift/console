@@ -1,9 +1,9 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import {
   INSUFFICIENT_PERMISSIONS_ERROR_DESC,
   INSUFFICIENT_PERMISSIONS_ERROR_MESSAGE,
 } from '../../constants/errors/common';
+import { getName } from '../../selectors';
 import { getGeneratedName, getKind } from '../../selectors/selectors';
 import {
   CREATED,

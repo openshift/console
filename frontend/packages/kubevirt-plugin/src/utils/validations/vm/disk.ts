@@ -1,9 +1,4 @@
-import {
-  asValidationObject,
-  validateDNS1123SubdomainValue,
-  ValidationErrorType,
-  ValidationObject,
-} from '@console/shared';
+import { validateDNS1123SubdomainValue } from '../..';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { VolumeType } from '../../../constants';
 import { DiskType } from '../../../constants/vm/storage/disk-type';
@@ -12,6 +7,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { asValidationObject, ValidationErrorType, ValidationObject } from '../../../selectors';
 import { UIStorageValidation } from '../../../types/ui/storage';
 import { validateContainer, validateURL } from '../common';
 import { TemplateValidations } from '../template/template-validations';

@@ -1,11 +1,7 @@
-import {
-  asValidationObject,
-  validateDNS1123SubdomainValue,
-  ValidationErrorType,
-  ValidationObject,
-} from '@console/shared';
+import { validateDNS1123SubdomainValue } from '../..';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
+import { asValidationObject, ValidationErrorType, ValidationObject } from '../../../selectors';
 import { UINetworkInterfaceValidation } from '../../../types/ui/nic';
 import { isValidMAC } from './validations';
 

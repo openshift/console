@@ -14,7 +14,6 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
@@ -28,6 +27,7 @@ import {
   getKubevirtModelAvailableAPIVersion,
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getVolumes } from '../../../selectors/vm';
 import { VMIKind, VMKind, VMSnapshot } from '../../../types/vm';

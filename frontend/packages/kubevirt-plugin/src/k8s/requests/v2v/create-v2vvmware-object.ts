@@ -1,10 +1,9 @@
 import { SecretModel } from '@console/internal/models';
-import { getName, getOwnerReferences } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { V2V_TEMPORARY_LABEL, VCENTER_TYPE_LABEL } from '../../../constants/v2v';
 import { V2VVMwareModel } from '../../../models';
-import { buildOwnerReference } from '../../../utils';
+import { getName, getOwnerReferences } from '../../../selectors';
+import { compareOwnerReference, buildOwnerReference } from '../../../utils';
 import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
 import { SecretWrappper } from '../../wrapper/k8s/secret-wrapper';
 import { V2VVMwareWrappper } from '../../wrapper/v2vvmware/v2vvmware-wrapper';

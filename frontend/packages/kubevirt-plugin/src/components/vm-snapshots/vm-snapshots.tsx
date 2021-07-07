@@ -8,13 +8,14 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { dimensifyHeader, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../selectors';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMSnapshot } from '../../types';
+import { dimensifyHeader } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import SnapshotModal from '../modals/snapshot-modal/SnapshotsModal';
 import { VMTabProps } from '../vms/types';

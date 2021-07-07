@@ -12,12 +12,12 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { dimensifyHeader, getNamespace } from '@console/shared';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
@@ -30,7 +30,7 @@ import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { getResource } from '../../utils';
+import { dimensifyHeader, getResource } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { VMTabProps } from '../vms/types';

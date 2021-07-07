@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared';
 import {
   ANNOTATION_DESCRIPTION,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_VM_NAME_LABEL,
 } from '../../constants/vm';
+import { getName, getNamespace } from '../../selectors';
 import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
@@ -25,7 +25,7 @@ import {
   getVolumePersistentVolumeClaimName,
 } from '../../selectors/vm';
 import { V1DataVolumeTemplateSpec, VMKind } from '../../types/vm';
-import { generateDataVolumeName, getBasicID } from '../../utils';
+import { createBasicLookup, generateDataVolumeName, getBasicID } from '../../utils';
 import { VMWrapper } from '../wrapper/vm/vm-wrapper';
 
 export type CloneTo = {

@@ -1,5 +1,4 @@
 import { Set } from 'immutable';
-import { createBasicLookup, getName } from '@console/shared/src';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import { DiskBus, DiskType, NetworkInterfaceModel, VolumeType } from '../../../../constants/vm';
 import { ROOT_DISK_NAME } from '../../../../constants/vm/constants';
@@ -7,7 +6,7 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { getSimpleName } from '../../../../selectors/utils';
+import { getName } from '../../../../selectors';
 import {
   DEFAULT_CPU,
   getCPU,
@@ -31,6 +30,7 @@ import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/ba
 import { isWinToolsImage } from '../../../../selectors/vm/winimage';
 import { V1alpha1DataVolume, V1Volume } from '../../../../types/api';
 import { V1Network } from '../../../../types/vm';
+import { getSimpleName, createBasicLookup } from '../../../../utils';
 import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
 import { getNextIDResolver } from '../../../../utils/utils';
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';

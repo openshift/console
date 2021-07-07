@@ -8,14 +8,15 @@ import {
   ResourceLink,
 } from '@console/internal/components/utils';
 import { TemplateModel, PersistentVolumeClaimModel } from '@console/internal/models';
-import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { PENDING_RESTART_LABEL } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';
+import { getDeletetionTimestamp } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMIKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
+import { DASH, dimensifyRow } from '../../utils';
 import { validateDisk } from '../../utils/validations/vm/disk';
 import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';

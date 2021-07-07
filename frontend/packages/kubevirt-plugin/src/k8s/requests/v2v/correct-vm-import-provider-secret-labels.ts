@@ -1,13 +1,12 @@
 import * as _ from 'lodash';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet, k8sPatch, SecretKind } from '@console/internal/module/k8s';
-import { getLabels, getOwnerReferences } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VMImportProvider } from '../../../components/create-vm-wizard/types';
 import { V2V_DATA_TTL_KEY, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel, V2VVMwareModel } from '../../../models';
-import { buildOwnerReferenceForModel } from '../../../utils';
+import { getLabels, getOwnerReferences } from '../../../selectors';
+import { buildOwnerReferenceForModel, compareOwnerReference } from '../../../utils';
 
 export const correctVMImportProviderSecretLabels = async ({
   secretName,

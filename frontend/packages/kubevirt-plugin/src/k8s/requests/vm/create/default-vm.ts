@@ -6,11 +6,11 @@ import {
   TEMPLATE_PARAM_VM_NAME,
 } from '../../../../constants/vm';
 import { ProcessedTemplatesModel } from '../../../../models/models';
-import { getAnnotations } from '../../../../selectors/selectors';
-import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
+import { getAnnotations, getValueByPrefix } from '../../../../selectors/selectors';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { VMKind } from '../../../../types/vm';
+import { findHighestKeyBySuffixValue } from '../../../../utils';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
