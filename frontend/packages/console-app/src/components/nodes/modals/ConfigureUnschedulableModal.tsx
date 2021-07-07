@@ -31,16 +31,16 @@ const ConfigureUnschedulableModal: React.FC<ConfigureUnschedulableModalProps> = 
   const { t } = useTranslation();
   return (
     <form onSubmit={handleSubmit} name="form" className="modal-content ">
-      <ModalTitle>{t('nodes~Mark as unschedulable')}</ModalTitle>
+      <ModalTitle>{t('console-app~Mark as unschedulable')}</ModalTitle>
       <ModalBody>
         {t(
-          "nodes~Unschedulable nodes won't accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.",
+          "console-app~Unschedulable nodes won't accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.",
         )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText={t('nodes~Mark unschedulable')}
+        submitText={t('console-app~Mark unschedulable')}
         cancel={cancel}
       />
     </form>

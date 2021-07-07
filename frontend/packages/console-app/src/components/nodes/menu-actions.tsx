@@ -9,7 +9,7 @@ import { makeNodeSchedulable } from '../../k8s/requests/nodes';
 import { createConfigureUnschedulableModal } from './modals';
 
 export const MarkAsUnschedulable: KebabAction = (kind: K8sKind, obj: NodeKind) => ({
-  labelKey: 'nodes~Mark as unschedulable',
+  labelKey: 'console-app~Mark as unschedulable',
   hidden: isNodeUnschedulable(obj),
   callback: () => createConfigureUnschedulableModal({ resource: obj }),
   accessReview: {
@@ -27,7 +27,7 @@ export const MarkAsSchedulable: KebabAction = (
   resources: {},
   { nodeMaintenance } = { nodeMaintenance: false }, // NOTE: used by node actions in metal3-plugin
 ) => ({
-  labelKey: 'nodes~Mark as schedulable',
+  labelKey: 'console-app~Mark as schedulable',
   hidden: !isNodeUnschedulable(obj) || nodeMaintenance,
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
@@ -44,14 +44,14 @@ export const Delete: KebabAction = (kindObj: K8sKind, node: NodeKind) => {
   const message = (
     <p>
       {t(
-        'nodes~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
+        'console-app~This action cannot be undone. Deleting a node will instruct Kubernetes that the node is down or unrecoverable and delete all pods scheduled to that node. If the node is still running but unresponsive and the node is deleted, stateful workloads and persistent volumes may suffer corruption or data loss. Only delete a node that you have confirmed is completely stopped and cannot be restored.',
       )}
     </p>
   );
 
   return {
-    // t('nodes~Delete node')
-    labelKey: 'nodes~Delete node',
+    // t('console-app~Delete node')
+    labelKey: 'console-app~Delete node',
     callback: () =>
       deleteModal({
         kind: kindObj,

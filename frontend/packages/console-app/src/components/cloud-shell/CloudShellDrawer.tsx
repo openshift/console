@@ -31,36 +31,36 @@ const CloudShellDrawer: React.FC<CloudShellDrawerProps> = ({ children, onClose }
   const header = (
     <Flex style={{ flexGrow: 1 }}>
       <FlexItem className="co-cloud-shell-drawer__heading">
-        {t('cloudshell~Command line terminal')}
+        {t('console-app~Command line terminal')}
       </FlexItem>
       <FlexItem>
         <InlineTechPreviewBadge />
       </FlexItem>
       <FlexItem align={{ default: 'alignRight' }}>
-        <Tooltip content={t('cloudshell~Open terminal in new tab')}>
+        <Tooltip content={t('console-app~Open terminal in new tab')}>
           <Button
             variant="plain"
             component="a"
             href="/terminal"
             target="_blank"
-            aria-label={t('cloudshell~Open terminal in new tab')}
+            aria-label={t('console-app~Open terminal in new tab')}
           >
             <ExternalLinkAltIcon />
           </Button>
         </Tooltip>
         <MinimizeRestoreButton
           minimize={expanded}
-          minimizeText={t('cloudshell~Minimize terminal')}
-          restoreText={t('cloudshell~Restore terminal')}
+          minimizeText={t('console-app~Minimize terminal')}
+          restoreText={t('console-app~Restore terminal')}
           onClick={onMRButtonClick}
         />
-        <Tooltip content={t('cloudshell~Close terminal')}>
+        <Tooltip content={t('console-app~Close terminal')}>
           <Button
             variant="plain"
             data-test-id="cloudshell-terminal-close"
             type="button"
             onClick={onClose}
-            aria-label={t('cloudshell~Close terminal')}
+            aria-label={t('console-app~Close terminal')}
           >
             <CloseIcon />
           </Button>

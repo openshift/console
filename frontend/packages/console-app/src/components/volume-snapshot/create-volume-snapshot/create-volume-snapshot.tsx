@@ -234,7 +234,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               data-test="yaml-link"
               replace
             >
-              {t('public~Edit YAML')}
+              {t('console-app~Edit YAML')}
             </Link>
           </div>
         </h1>

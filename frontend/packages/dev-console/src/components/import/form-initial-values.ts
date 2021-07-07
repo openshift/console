@@ -40,6 +40,7 @@ export const getBaseInitialValues = (
         },
         concurrencyutilization: '',
       },
+      domainMapping: [],
     },
     route: {
       disable: false,

@@ -12,6 +12,15 @@ type CatalogDetailsPanelProps = {
 const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
   const { t } = useTranslation();
   const { description, provider, creationTimestamp, supportUrl, documentationUrl, details } = item;
+  const created = Date.parse(creationTimestamp) ? (
+    <Timestamp timestamp={creationTimestamp} />
+  ) : (
+    creationTimestamp
+  );
+  const notAvailable = (
+    <span className="properties-side-panel-pf-property-label">{t('devconsole~N/A')}</span>
+  );
+
   return (
     <div className="modal-body modal-body-border">
       <div className="modal-body-content">
@@ -19,32 +28,37 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
               {details?.properties?.map((property) => (
-                <PropertyItem key={property.label} label={property.label} value={property.value} />
-              ))}
-              {provider && <PropertyItem label={t('devconsole~Provider')} value={provider} />}
-              {supportUrl && (
                 <PropertyItem
-                  label={t('devconsole~Support')}
-                  value={<ExternalLink href={supportUrl} text={t('devconsole~Get support')} />}
+                  key={property.label}
+                  label={property.label}
+                  value={property.value || notAvailable}
                 />
-              )}
-              {documentationUrl && (
-                <PropertyItem
-                  label={t('devconsole~Documentation')}
-                  value={
+              ))}
+              <PropertyItem label={t('devconsole~Provider')} value={provider || notAvailable} />
+              <PropertyItem
+                label={t('devconsole~Support')}
+                value={
+                  supportUrl ? (
+                    <ExternalLink href={supportUrl} text={t('devconsole~Get support')} />
+                  ) : (
+                    notAvailable
+                  )
+                }
+              />
+              <PropertyItem
+                label={t('devconsole~Documentation')}
+                value={
+                  documentationUrl ? (
                     <ExternalLink
                       href={documentationUrl}
                       text={t('devconsole~Refer documentation')}
                     />
-                  }
-                />
-              )}
-              {creationTimestamp && (
-                <PropertyItem
-                  label={t('devconsole~Created at')}
-                  value={<Timestamp timestamp={creationTimestamp} />}
-                />
-              )}
+                  ) : (
+                    notAvailable
+                  )
+                }
+              />
+              <PropertyItem label={t('devconsole~Created at')} value={created || notAvailable} />
             </PropertiesSidePanel>
             {(details?.descriptions?.length || description) && (
               <div className="co-catalog-page__overlay-description">

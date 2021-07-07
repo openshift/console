@@ -72,17 +72,17 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   const available =
     currentValue && totalValue
       ? humanize(totalValue - currentValue).string
-      : t('nodes~Not available');
+      : t('console-app~Not available');
 
   return (
     <Popover
-      title={t('nodes~See breakdown')}
+      title={t('console-app~See breakdown')}
       nodeName={nodeName}
       nodeIp={nodeIp}
-      current={currentError ? t('nodes~Not available') : current.string}
-      total={totalError ? t('nodes~Not available') : total.string}
-      limit={limitError ? t('nodes~Not available') : limit.string}
-      requested={requestedError ? t('nodes~Not available') : requested.string}
+      current={currentError ? t('console-app~Not available') : current.string}
+      total={totalError ? t('console-app~Not available') : total.string}
+      limit={limitError ? t('console-app~Not available') : limit.string}
+      requested={requestedError ? t('console-app~Not available') : requested.string}
       available={available}
       limitState={limitState}
       requestedState={requestedState}
@@ -134,8 +134,8 @@ const HealthChecksLink: React.FC = () => {
   const { t } = useTranslation();
   return (
     <DashboardCardPopupLink
-      linkTitle={t('nodes~See details')}
-      popupTitle={t('nodes~Health checks')}
+      linkTitle={t('console-app~See details')}
+      popupTitle={t('console-app~Health checks')}
       className="co-status-card__popup"
     >
       <HealthChecksPopup
@@ -178,7 +178,7 @@ const NodeAlerts: React.FC = ({ children }) => {
       {!!cpuMessage && (
         <StatusItem
           Icon={cpuMessage.Icon}
-          message={t('nodes~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
+          message={t('console-app~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
         >
           <LimitLink
             humanize={humanizeCpuCores}
@@ -195,7 +195,7 @@ const NodeAlerts: React.FC = ({ children }) => {
       {!!memoryMessage && (
         <StatusItem
           Icon={memoryMessage.Icon}
-          message={t('nodes~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
+          message={t('console-app~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
         >
           <LimitLink
             humanize={humanizeBinaryBytes}

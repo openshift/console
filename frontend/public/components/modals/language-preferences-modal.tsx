@@ -17,7 +17,7 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { setResourceBundle } = props.quickStartContext;
   i18n.on('languageChanged', (lng) => {
     // Update language resource of quick starts components
-    const resourceBundle = i18n.getResourceBundle(lng, 'quickstart');
+    const resourceBundle = i18n.getResourceBundle(lng, 'console-app');
     setResourceBundle(resourceBundle, lng);
   });
   const supportedLocales = {

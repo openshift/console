@@ -96,7 +96,7 @@ const AddHealthChecks: React.FC<FormikProps<FormikValues> & AddHealthChecksProps
         <div className="odc-add-health-checks__body">
           <p>
             <Trans t={t} ns="devconsole">
-              Health checks for &nbsp;
+              Health checks for{' '}
               <ResourceLink
                 kind={referenceFor(resource)}
                 name={name}

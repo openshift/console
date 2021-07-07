@@ -150,6 +150,14 @@ export const serverlessValidationSchema = (t: TFunction) =>
             }),
         }),
       }),
+      domainMapping: yup.array().of(
+        yup.string().matches(hostnameRegex, {
+          message: t(
+            'devconsole~Domain name must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+          ),
+          excludeEmptyString: true,
+        }),
+      ),
     }),
   });
 

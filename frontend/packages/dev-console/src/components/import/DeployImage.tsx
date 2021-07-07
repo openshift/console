@@ -85,6 +85,7 @@ const DeployImage: React.FC<Props> = ({
         },
         concurrencyutilization: '',
       },
+      domainMapping: [],
     },
     route: {
       disable: false,
@@ -163,7 +164,12 @@ const DeployImage: React.FC<Props> = ({
       const requests: Promise<K8sResourceKind[]> = createOrUpdateDeployImageResources(values);
       return requests;
     });
-    resourceActions.then((resources) => postFormCallback(resources)).catch(() => {});
+    resourceActions
+      .then((resources) => postFormCallback(resources))
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
 
     return resourceActions
       .then(() => {

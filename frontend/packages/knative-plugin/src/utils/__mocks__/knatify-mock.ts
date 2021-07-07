@@ -1,3 +1,4 @@
+import { serverlessInitialValues } from '@console/dev-console/src/components/import/__mocks__/serverless-mock';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const ksvcData: K8sResourceKind = {
@@ -43,20 +44,7 @@ export const knatifyFormCommonInitialValues = {
     defaultUnknownPort: 8080,
   },
   resources: 'knative',
-  serverless: {
-    scaling: {
-      minpods: '',
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-      concurrencyutilization: '',
-      autoscale: {
-        autoscalewindow: '',
-        autoscalewindowUnit: 's',
-        defaultAutoscalewindowUnit: 's',
-      },
-    },
-  },
+  serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], replicas: 1, triggers: { image: false } },
   labels: { 'app.kubernetes.io/component': 'ksvc-overlayimage' },

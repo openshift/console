@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'cloudshell';
+const i18nNS = 'console-app';
 
 describe('TerminalLoadingBox', () => {
   it('should send default message if message prop is not there', () => {
