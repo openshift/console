@@ -30,8 +30,6 @@ import {
   getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
-  NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
   GreenCheckCircleIcon,
   getName,
@@ -1111,7 +1109,6 @@ const namespaceBarDropdownDispatchToProps = (dispatch) => ({
 const NamespaceBarDropdowns_ = (props) => {
   const {
     activeNamespace,
-    canCreateProject,
     canListNS,
     children,
     disabled,
@@ -1119,10 +1116,10 @@ const NamespaceBarDropdowns_ = (props) => {
     onNamespaceChange,
     setActiveNamespace,
     showStartGuide,
-    t,
     useProjects,
   } = props;
 
+  // console.log('KKD: props.namespace:', props.namespace);
   React.useEffect(() => {
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
@@ -1134,24 +1131,24 @@ const NamespaceBarDropdowns_ = (props) => {
     return null;
   }
 
-  const { loaded, data } = namespace;
+  //const { loaded, data } = namespace;
   const model = getModel(useProjects);
-  const allNamespacesTitle =
-    model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
+  // const allNamespacesTitle =
+  //   model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
 
-  const title = activeNamespace === ALL_NAMESPACES_KEY ? allNamespacesTitle : activeNamespace;
+  // const title = activeNamespace === ALL_NAMESPACES_KEY ? allNamespacesTitle : activeNamespace;
 
-  const items = data.map((item) => ({ title: item.metadata.name, key: item.metadata.name }));
+  // const items = data.map((item) => ({ title: item.metadata.name, key: item.metadata.name }));
 
-  if (loaded && !items.find((option) => option.title === title) && title !== allNamespacesTitle) {
-    items.push({ title, key: title }); // Add current namespace if it isn't included
-  }
+  // if (loaded && !items.find((option) => option.title === title) && title !== allNamespacesTitle) {
+  //   items.push({ title, key: title }); // Add current namespace if it isn't included
+  // }
 
-  items.sort((a, b) => a.title.localeCompare(b.title));
+  // items.sort((a, b) => a.title.localeCompare(b.title));
 
-  if (canListNS) {
-    items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
-  }
+  // if (canListNS) {
+  //   items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
+  // }
 
   const onChange = (newNamespace) => {
     onNamespaceChange && onNamespaceChange(newNamespace);
@@ -1162,8 +1159,8 @@ const NamespaceBarDropdowns_ = (props) => {
   return (
     <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <NamespaceDropdown
-        canCreateNew={canCreateProject}
-        options={items}
+        // canCreateNew={canCreateProject}
+        // options={items}
         onSelect={(event, newNamespace) => {
           onChange(newNamespace);
         }}
@@ -1177,9 +1174,9 @@ const NamespaceBarDropdowns_ = (props) => {
           })
         }
         selected={activeNamespace || ALL_NAMESPACES_KEY}
-        title={title}
-        userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
-        storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
+        //   title={title}
+        // userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
+        // storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         isProjects={model.label === 'Project'}
         disabled={disabled}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}

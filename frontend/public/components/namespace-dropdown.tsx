@@ -17,7 +17,16 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useUserSettingsCompatibility } from '@console/shared';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect } from 'react-redux';
+import {
+  useUserSettingsCompatibility,
+  FLAGS,
+  withLastNamespace,
+  ALL_NAMESPACES_KEY,
+} from '@console/shared';
 import { createProjectModal } from './modals';
 import { removeQueryArgument } from './utils/router';
 
@@ -181,8 +190,21 @@ const NamespaceMenu: React.FC<{
   selected?: string;
   isProjects: boolean;
   options: { title: string; key: string }[];
-  canCreateNew?: boolean;
-}> = ({ setOpen, onSelect, selected, isProjects, options, canCreateNew }) => {
+  canCreateProject: boolean;
+  namespacesLoaded: boolean;
+  canListNS: boolean;
+  allNamespacesTitle: string;
+}> = ({
+  setOpen,
+  onSelect,
+  selected,
+  isProjects,
+  options,
+  canListNS,
+  canCreateProject,
+  namespacesLoaded,
+  allNamespacesTitle,
+}) => {
   const menuRef = React.useRef(null);
   const filterRef = React.useRef(null);
 
@@ -213,6 +235,20 @@ const NamespaceMenu: React.FC<{
     undefined,
     true,
   );
+
+  const items = [...options];
+  if (
+    namespacesLoaded &&
+    !items.some((option) => option.title === selected) &&
+    selected !== ALL_NAMESPACES_KEY
+  ) {
+    items.push({ title: selected, key: selected }); // Add current namespace if it isn't included
+    items.sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  if (canListNS) {
+    items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
+  }
 
   const hasSystemNamespaces = React.useMemo(
     () => options.some((option) => isSystemNamespace(option)),
@@ -255,7 +291,7 @@ const NamespaceMenu: React.FC<{
 
   const { filteredOptions, filteredFavorites } = React.useMemo(
     () =>
-      options.reduce(
+      items.reduce(
         (filtered, option) => {
           if (isOptionShown(option, false)) {
             filtered.filteredOptions.push(option);
@@ -267,7 +303,7 @@ const NamespaceMenu: React.FC<{
         },
         { filteredOptions: [], filteredFavorites: [] },
       ),
-    [isOptionShown, options],
+    [isOptionShown, items],
   );
   return (
     <Menu
@@ -318,7 +354,7 @@ const NamespaceMenu: React.FC<{
         <NamespaceGroup options={filteredOptions} selectedKey={selected} favorites={favorites} />
       </MenuContent>
       <Footer
-        canCreateNew={canCreateNew}
+        canCreateNew={canCreateProject}
         isProject={isProjects}
         setActiveNamespace={() => {}} //KKD: CHANGE THIS TO BEING PASSED FROM PARENT
         setOpen={setOpen}
@@ -326,6 +362,37 @@ const NamespaceMenu: React.FC<{
     </Menu>
   );
 };
+
+export const featureReducerName = 'FLAGS';
+
+const getItems = (state) => {
+  const items = [];
+
+  state.k8s
+    .get('project.openshift.io~v1~Project')
+    .get('data')
+    .forEach((item) => {
+      const name = item.get('metadata').get('name');
+      items.push({ title: name, key: name });
+    });
+  return items;
+};
+
+const getLoaded = (state) => state.k8s.get('project.openshift.io~v1~Project').get('loaded');
+
+const namespaceBarDropdownStateToProps = (state) => {
+  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
+  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
+  const options = getItems(state);
+  const namespacesLoaded = getLoaded(state);
+
+  return { canListNS, canCreateProject, options, namespacesLoaded };
+};
+
+const NamespaceBarDropdownsWithTranslation = connect(
+  namespaceBarDropdownStateToProps,
+  null,
+)(withLastNamespace(NamespaceMenu));
 
 /* ******************************************************************* */
 
@@ -337,24 +404,28 @@ const NamespaceBarDropdown: React.FC<NamespaceBarDropdownProps> = ({
   options,
   selected,
   shortCut,
-  title,
 }) => {
   const { t } = useTranslation();
 
   const [isOpen, setOpen] = React.useState(false);
+
+  const allNamespacesTitle = isProjects ? t('public~All Projects') : t('public~All Namespaces');
+
+  const title = selected === ALL_NAMESPACES_KEY ? allNamespacesTitle : selected;
 
   return (
     <div className="co-namespace-selector co-namespace-project-selector">
       <NamespaceMenuToggle
         disabled={disabled}
         menu={
-          <NamespaceMenu
+          <NamespaceBarDropdownsWithTranslation
             setOpen={setOpen}
             onSelect={onSelect}
             selected={selected}
             isProjects={isProjects}
             options={options}
             canCreateNew={canCreateNew}
+            allNamespacesTitle={allNamespacesTitle}
           />
         }
         isOpen={isOpen}
@@ -375,7 +446,7 @@ type NamespaceBarDropdownProps = {
   onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
   shortCut?: string;
   selected?: string;
-  title?: string;
+
   canCreateNew?: boolean;
 };
 
