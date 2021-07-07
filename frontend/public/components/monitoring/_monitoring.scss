@@ -211,9 +211,14 @@ $screen-phone-landscape-min-width: 567px;
   overflow-x: auto;
 }
 
-.monitoring-dashboards__variable-dropdown .pf-c-dropdown__menu {
-  max-height: 60vh;
-  overflow-y: auto;
+.monitoring-dashboards__variable-dropdown {
+  .pf-c-dropdown__menu, .pf-c-select__menu {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .pf-m-search {
+    min-width: 140px;
+  }
 }
 
 .monitoring-dashboards__variables {
