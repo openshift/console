@@ -158,6 +158,48 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
 
   const language = localStorage.getItem('bridge/language') || 'en';
   const resourceBundle = i18n.getResourceBundle(language, 'quickstart');
+
+  // https://github.com/i18next/i18next-parser#caveats
+  // Need to reference the t() function here for all the keys used in the quickstarts library
+  // so that the i18n-parser can find them, and keep them in sync with the locale json file.
+  // Changes made in this comment block take effect after `yarn i18n` is run.
+  // const resources = [
+  //   t('quickstart~No results found'),
+  //   t('quickstart~No results match the filter criteria. Remove filters or clear all filters to show results.'),
+  //   t('quickstart~Clear all filters'),
+  //   t('quickstart~Complete ({{statusCount, number}})'),
+  //   t('quickstart~In progress ({{statusCount, number}})'),
+  //   t('quickstart~Not started ({{statusCount, number}})'),
+  //   t('quickstart~Filter by keyword...'),
+  //   t('quickstart~Select filter'),
+  //   t('quickstart~Status'),
+  //   t('quickstart~{{count, number}} item', { count: 0 }),
+  //   t('quickstart~Prerequisites ({{totalPrereqs}})'),
+  //   t('quickstart~Prerequisites'),
+  //   t('quickstart~Show prerequisites'),
+  //   t('quickstart~Complete'),
+  //   t('quickstart~In progress'),
+  //   t('quickstart~Not started'),
+  //   t('quickstart~{{duration, number}} minutes'),
+  //   t('quickstart~One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.'),
+  //   t('quickstart~Start {{nextQSDisplayName}} quick start'),
+  //   t('quickstart~Start'),
+  //   t('quickstart~Continue'),
+  //   t('quickstart~Next'),
+  //   t('quickstart~Close'),
+  //   t('quickstart~Back'),
+  //   t('quickstart~Restart'),
+  //   t('quickstart~In this quick start, you will complete {{count, number}} task', { count: 0 }),
+  //   t('quickstart~{{taskIndex, number}}'),
+  //   t('quickstart~Check your work'),
+  //   t('quickstart~Yes'),
+  //   t('quickstart~No'),
+  //   t('quickstart~{{index, number}} of {{tasks, number}}'),
+  //   t('quickstart~Leave quick start?'),
+  //   t('quickstart~Cancel'),
+  //   t('quickstart~Leave'),
+  //   t('quickstart~Your progress will be saved.'),
+  // ];
   return {
     language,
     resourceBundle,
