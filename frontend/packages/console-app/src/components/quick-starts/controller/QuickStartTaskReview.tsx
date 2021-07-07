@@ -37,7 +37,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
     'co-quick-start-task-review--failed': taskStatus === QuickStartTaskStatus.FAILED,
   });
 
-  const title = <span className={alertClassNames}>{t('quickstart~Check your work')}</span>;
+  const title = <span className={alertClassNames}>{t('console-app~Check your work')}</span>;
 
   return (
     <Alert variant={getAlertVariant(taskStatus)} title={title} isInline>
@@ -46,7 +46,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         <Radio
           id="review-success"
           name="review-success"
-          label={t('quickstart~Yes')}
+          label={t('console-app~Yes')}
           className="co-quick-start-task-review__radio"
           isChecked={taskStatus === QuickStartTaskStatus.SUCCESS}
           onChange={() => onTaskReview(QuickStartTaskStatus.SUCCESS)}
@@ -54,7 +54,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         <Radio
           id="review-failed"
           name="review-failed"
-          label={t('quickstart~No')}
+          label={t('console-app~No')}
           className="co-quick-start-task-review__radio"
           isChecked={taskStatus === QuickStartTaskStatus.FAILED}
           onChange={() => onTaskReview(QuickStartTaskStatus.FAILED)}

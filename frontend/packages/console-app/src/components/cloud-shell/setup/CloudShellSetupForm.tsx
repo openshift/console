@@ -18,9 +18,9 @@ const CloudShellSetupForm: React.FC<Pick<
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('cloudshell~Start')}
+        submitLabel={t('console-app~Start')}
         disableSubmit={!_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('cloudshell~Cancel')}
+        resetLabel={t('console-app~Cancel')}
         sticky
       />
     </Form>

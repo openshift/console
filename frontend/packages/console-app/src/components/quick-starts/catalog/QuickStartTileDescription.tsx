@@ -31,15 +31,15 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
       {prereqs?.length > 0 && (
         <div className="co-quick-start-tile-prerequisites">
           <Text component={TextVariants.h5} className="co-quick-start-tile-prerequisites__text">
-            {t('quickstart~Prerequisites ({{totalPrereqs}})', {
+            {t('console-app~Prerequisites ({{totalPrereqs}})', {
               totalPrereqs: prereqs.length,
             })}{' '}
           </Text>
           <Popover
-            aria-label={t('quickstart~Prerequisites')}
-            headerContent={t('quickstart~Prerequisites')}
+            aria-label={t('console-app~Prerequisites')}
+            headerContent={t('console-app~Prerequisites')}
             bodyContent={
-              <TextList aria-label={t('quickstart~Prerequisites')}>
+              <TextList aria-label={t('console-app~Prerequisites')}>
                 {prereqs.map((prerequisite, index) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <TextListItem key={index}>{prerequisite}</TextListItem>
@@ -55,7 +55,7 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
                 e.preventDefault();
                 e.stopPropagation();
               }}
-              aria-label={t('quickstart~Show prerequisites')}
+              aria-label={t('console-app~Show prerequisites')}
             >
               <InfoCircleIcon />
             </Button>

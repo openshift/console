@@ -30,7 +30,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
     <PageHeaderToolsItem>
       <Button
         variant="plain"
-        aria-label={t('cloudshell~Command line terminal')}
+        aria-label={t('console-app~Command line terminal')}
         onClick={onClick}
         className={open ? 'pf-m-selected' : undefined}
         data-tour-id="tour-cloud-shell-button"

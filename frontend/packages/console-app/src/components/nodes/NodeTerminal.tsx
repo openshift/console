@@ -97,7 +97,7 @@ const NodeTerminalError: React.FC<NodeTerminalErrorProps> = ({ error }) => {
 const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
   const { t } = useTranslation();
   const message = (
-    <Trans t={t} ns="nodes">
+    <Trans t={t} ns="console-app">
       <p>
         To use host binaries, run <code>chroot /host</code>
       </p>
@@ -109,7 +109,7 @@ const NodeTerminalInner: React.FC<NodeTerminalInnerProps> = ({ obj }) => {
         <NodeTerminalError
           error={
             <>
-              {t('nodes~The debug pod failed. ')}
+              {t('console-app~The debug pod failed. ')}
               {obj?.data?.status?.containerStatuses?.[0]?.state?.terminated?.message ||
                 obj?.data?.status?.message}
             </>

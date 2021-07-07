@@ -64,16 +64,16 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) =>
     <EmptyState>
       <EmptyStateIcon icon={SearchIcon} />
       <Title size="lg" headingLevel="h4">
-        {t('quickstart~No results found')}
+        {t('console-app~No results found')}
       </Title>
       <EmptyStateBody>
         {t(
-          'quickstart~No results match the filter criteria. Remove filters or clear all filters to show results.',
+          'console-app~No results match the filter criteria. Remove filters or clear all filters to show results.',
         )}
       </EmptyStateBody>
       <EmptyStatePrimary>
         <Button variant="link" onClick={clearFilters} data-test="clear-filter button">
-          {t('quickstart~Clear all filters')}
+          {t('console-app~Clear all filters')}
         </Button>
       </EmptyStatePrimary>
     </EmptyState>
@@ -81,7 +81,7 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) =>
 
   if (!quickStarts) return <LoadingBox />;
   return quickStarts.length === 0 ? (
-    <EmptyBox label={t('quickstart~Quick Starts')} />
+    <EmptyBox label={t('console-app~Quick Starts')} />
   ) : (
     <>
       <QuickStartCatalogFilter

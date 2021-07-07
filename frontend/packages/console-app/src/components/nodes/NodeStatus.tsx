@@ -54,7 +54,7 @@ const NodeStatus: React.FC<NodeStatusProps> = ({ node, showPopovers = false, cla
               consumers={PressureQueries[item](node.metadata.name)}
               humanize={humanizeMap[item]}
               description={t(
-                "nodes~This node's {{conditionDescription}}. Performance may be degraded.",
+                "console-app~This node's {{conditionDescription}}. Performance may be degraded.",
                 { conditionDescription: conditionDescriptionMap[item] },
               )}
             />

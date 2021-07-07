@@ -42,8 +42,8 @@ const ActivityCard: React.FC = () => {
   return (
     <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={eventsLink}>{t('nodes~View events')}</DashboardCardLink>
+        <DashboardCardTitle>{t('console-app~Activity')}</DashboardCardTitle>
+        <DashboardCardLink to={eventsLink}>{t('console-app~View events')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-project-dashboard__activity-body">

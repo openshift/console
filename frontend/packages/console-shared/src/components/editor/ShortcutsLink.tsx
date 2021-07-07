@@ -13,27 +13,27 @@ const ShortcutsLink: React.FC<ShortcutsLinkProps> = ({ onHideShortcuts }) => {
   const { t } = useTranslation();
   return (
     <Popover
-      aria-label={t('editor~Shortcuts')}
+      aria-label={t('console-shared~Shortcuts')}
       bodyContent={
         <ShortcutTable>
           <Shortcut alt keyName="F1">
-            {t('editor~Accessibility help')}
+            {t('console-shared~Accessibility help')}
           </Shortcut>
-          <Shortcut keyName="F1">{t('editor~View all editor shortcuts')}</Shortcut>
+          <Shortcut keyName="F1">{t('console-shared~View all editor shortcuts')}</Shortcut>
           <Shortcut ctrl keyName="space">
-            {t('editor~Activate auto complete')}
+            {t('console-shared~Activate auto complete')}
           </Shortcut>
           <Shortcut ctrl shift={isMac} keyName="m">
             {t(
-              'editor~Toggle Tab action between insert Tab character and move focus out of editor',
+              'console-shared~Toggle Tab action between insert Tab character and move focus out of editor',
             )}
           </Shortcut>
           <Shortcut ctrlCmd shift keyName="o">
-            {t('editor~View document outline')}
+            {t('console-shared~View document outline')}
           </Shortcut>
-          <Shortcut hover>{t('editor~View property descriptions')}</Shortcut>
+          <Shortcut hover>{t('console-shared~View property descriptions')}</Shortcut>
           <Shortcut ctrlCmd keyName="s">
-            {t('editor~Save')}
+            {t('console-shared~Save')}
           </Shortcut>
         </ShortcutTable>
       }
@@ -43,7 +43,7 @@ const ShortcutsLink: React.FC<ShortcutsLinkProps> = ({ onHideShortcuts }) => {
     >
       <Button type="button" variant="link" isInline>
         <QuestionCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-        {t('editor~View shortcuts')}
+        {t('console-shared~View shortcuts')}
       </Button>
     </Popover>
   );

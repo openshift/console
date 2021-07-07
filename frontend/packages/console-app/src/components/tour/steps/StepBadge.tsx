@@ -11,7 +11,7 @@ const StepBadge: React.FC<StepBadgeProps> = ({ stepNumber, totalSteps }) => {
   const { t } = useTranslation();
   return (
     <span className="co-step-badge">
-      {t('tour~Step {{stepNumber, number}}/{{totalSteps, number}}', {
+      {t('console-app~Step {{stepNumber, number}}/{{totalSteps, number}}', {
         stepNumber,
         totalSteps,
       })}

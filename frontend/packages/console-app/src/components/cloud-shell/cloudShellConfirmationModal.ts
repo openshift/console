@@ -2,16 +2,16 @@ import { confirmModal } from '@console/internal/components/modals/confirm-modal'
 
 const cloudShellConfirmationModal = (action) => {
   return confirmModal({
-    // t('cloudshell~Close terminal?')
-    // t('cloudshell~This will close the terminal session. Content in the terminal will not be restored on next session.')
-    // t('cloudshell~Yes')
-    // t('cloudshell~No')
-    titleKey: 'cloudshell~Close terminal?',
+    // t('console-app~Close terminal?')
+    // t('console-app~This will close the terminal session. Content in the terminal will not be restored on next session.')
+    // t('console-app~Yes')
+    // t('console-app~No')
+    titleKey: 'console-app~Close terminal?',
     messageKey:
-      'cloudshell~This will close the terminal session. Content in the terminal will not be restored on next session.',
-    btnTextKey: 'cloudshell~Yes',
+      'console-app~This will close the terminal session. Content in the terminal will not be restored on next session.',
+    btnTextKey: 'console-app~Yes',
     submitDanger: true,
-    cancelTextKey: 'cloudshell~No',
+    cancelTextKey: 'console-app~No',
     executeFn: () => Promise.resolve(action()),
   });
 };

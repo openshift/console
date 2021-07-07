@@ -14,7 +14,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'quickstart';
+const i18nNS = 'console-app';
 
 type QuickStartConclusionProps = React.ComponentProps<typeof QuickStartConclusion>;
 let wrapper: ShallowWrapper<QuickStartConclusionProps>;

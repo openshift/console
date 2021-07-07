@@ -13,7 +13,7 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('nodes~Images')} />
+      <SectionHeading text={t('console-app~Images')} />
       <div className="co-table-container">
         <table className="table table--layout-fixed">
           <colgroup>
@@ -22,8 +22,8 @@ const NodeDetailsImages: React.FC<NodeDetailsImagesProps> = ({ node }) => {
           </colgroup>
           <thead>
             <tr>
-              <th>{t('nodes~Name')}</th>
-              <th>{t('nodes~Size')}</th>
+              <th>{t('console-app~Name')}</th>
+              <th>{t('console-app~Size')}</th>
             </tr>
           </thead>
           <tbody>

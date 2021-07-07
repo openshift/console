@@ -90,7 +90,7 @@ const TourStepComponent: React.FC<TourStepComponentProps> = ({
       onClose={handleClose}
       id="guided-tour-modal"
       data-test="guided-tour-modal"
-      aria-label={t('tour~guided tour {{step, number}}', { step })}
+      aria-label={t('console-app~guided tour {{step, number}}', { step })}
       isFullScreen
     >
       {stepContent}

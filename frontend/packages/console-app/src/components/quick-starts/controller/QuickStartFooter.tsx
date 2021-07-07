@@ -31,17 +31,17 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
 
   const PrimaryButtonText = React.useMemo(() => {
     return {
-      START: t('quickstart~Start'),
-      CONTINUE: t('quickstart~Continue'),
-      NEXT: t('quickstart~Next'),
-      CLOSE: t('quickstart~Close'),
+      START: t('console-app~Start'),
+      CONTINUE: t('console-app~Continue'),
+      NEXT: t('console-app~Next'),
+      CLOSE: t('console-app~Close'),
     };
   }, [t]);
 
   const SecondaryButtonText = React.useMemo(() => {
     return {
-      BACK: t('quickstart~Back'),
-      RESTART: t('quickstart~Restart'),
+      BACK: t('console-app~Back'),
+      RESTART: t('console-app~Restart'),
     };
   }, [t]);
 

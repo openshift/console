@@ -16,7 +16,7 @@ const CloudShellTab: React.FC = () => {
     <>
       <div className="co-cloud-shell-tab__header">
         <div className="co-cloud-shell-tab__header-text">
-          {t('cloudshell~OpenShift command line terminal')}
+          {t('console-app~OpenShift command line terminal')}
         </div>
         <InlineTechPreviewBadge />
       </div>

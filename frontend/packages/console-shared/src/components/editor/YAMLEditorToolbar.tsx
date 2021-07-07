@@ -19,7 +19,9 @@ const YAMLEditorToolbar: React.FC<YAMLEditorToolbarProps> = ({ showShortcuts, to
         <ShortcutCommand>{isMac ? '⌥ Opt' : 'Alt'}</ShortcutCommand>
         <ShortcutCommand>F1</ShortcutCommand>
       </span>
-      <span className="ocs-yaml-editor-shortcut__text">{t('editor~Accessibility help')}</span>
+      <span className="ocs-yaml-editor-shortcut__text">
+        {t('console-shared~Accessibility help')}
+      </span>
       <div className="co-action-divider">|</div>
       {showShortcuts && (
         <div className="ocs-yaml-editor-toolbar__link">

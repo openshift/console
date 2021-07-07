@@ -14,7 +14,7 @@ const StatusCard: React.FC = () => {
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Status')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('console-app~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <NodeHealth />
