@@ -1001,16 +1001,17 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 >
                   {status.reason === CSVConditionReason.CSVReasonCopied ? (
                     <>
-                      {t(
-                        'olm~This Operator was copied from another namespace. For the reason it failed, see ',
-                      )}
-                      <ResourceLink
-                        name={metadata.name}
-                        kind={referenceForModel(ClusterServiceVersionModel)}
-                        namespace={operatorNamespaceFor(props.obj)}
-                        hideIcon
-                        inline
-                      />
+                      <Trans t={t} ns="olm">
+                        This Operator was copied from another namespace. For the reason it failed,
+                        see{' '}
+                        <ResourceLink
+                          name={metadata.name}
+                          kind={referenceForModel(ClusterServiceVersionModel)}
+                          namespace={operatorNamespaceFor(props.obj)}
+                          hideIcon
+                          inline
+                        />
+                      </Trans>
                     </>
                   ) : (
                     status.message

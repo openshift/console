@@ -57,7 +57,7 @@
   "{{initializationResourceKind}} required": "{{initializationResourceKind}} required",
   "Create a {{initializationResourceKind}} instance to use this Operator.": "Create a {{initializationResourceKind}} instance to use this Operator.",
   "Operator failed": "Operator failed",
-  "This Operator was copied from another namespace. For the reason it failed, see ": "This Operator was copied from another namespace. For the reason it failed, see ",
+  "This Operator was copied from another namespace. For the reason it failed, see <2></2>": "This Operator was copied from another namespace. For the reason it failed, see <2></2>",
   "Description": "Description",
   "Not available": "Not available",
   "Provider": "Provider",
