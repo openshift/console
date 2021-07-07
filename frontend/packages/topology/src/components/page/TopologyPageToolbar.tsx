@@ -7,6 +7,8 @@ import {
   FileUploadContext,
   FileUploadContextType,
 } from '@console/app/src/components/file-upload/file-upload-context';
+import { allImportResourceAccess } from '@console/dev-console/src/actions/add-resources';
+import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { useIsMobile } from '@console/shared';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
@@ -25,6 +27,8 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
     const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
+    const createResourceAccess: string[] = useAddToProjectAccess(namespace);
+    const allImportAccess = createResourceAccess.includes(allImportResourceAccess);
     const viewChangeTooltipContent = showGraphView
       ? t('topology~List view')
       : t('topology~Graph view');
@@ -42,6 +46,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
               supportedFileTypes: extensions,
               isEmptyModel,
               viewType,
+              allImportAccess,
             })}
             position="left"
             maxWidth="100vw"
