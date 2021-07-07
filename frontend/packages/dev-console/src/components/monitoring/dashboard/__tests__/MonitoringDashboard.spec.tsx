@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TFunction } from 'i18next';
-import {
-  TimespanDropdown,
-  PollIntervalDropdown,
-} from '@console/internal/components/monitoring/dashboards';
+import { PollIntervalDropdown } from '@console/internal/components/monitoring/dashboards';
+import TimespanDropdown from '@console/internal/components/monitoring/dashboards/timespan-dropdown';
 import * as link from '@console/internal/components/utils';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { ResourceDropdown } from '@console/shared';
