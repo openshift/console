@@ -64,6 +64,9 @@ set -x
 DBUS_SESSION_BUS_ADDRESS=/dev/null
 export DBUS_SESSION_BUS_ADDRESS
 
+CYPRESS_RECORD_KEY="f0ebb5fa-4b57-458a-9d2e-45078adf849d"
+export CYPRESS_RECORD_KEY
+
 SCENARIO="${1:-e2e}"
 
 if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ] && [ "$SCENARIO" != "ceph" ]; then
