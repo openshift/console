@@ -42,11 +42,13 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
     let fileIsBinary = false;
     const reader = new FileReader();
     reader.onload = () => {
-      const input = reader.result as string;
+      const input = fileIsBinary
+        ? (reader.result as string).split(',')[1]
+        : (reader.result as string);
       // OnLoad, if inputFileIsBinary we have read as a binary string, skip next block
       if (containsNonPrintableCharacters(input) && !fileIsBinary) {
         fileIsBinary = true;
-        reader.readAsBinaryString(file);
+        reader.readAsDataURL(file);
       } else {
         this.props.onChange({
           fileData: input,
@@ -101,7 +103,7 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 disabled
               />
               <span className="pf-c-button pf-m-tertiary co-btn-file">
-                <input type="file" onChange={this.onFileUpload} />
+                <input type="file" onChange={this.onFileUpload} data-test="file-input" />
                 {t('public~Browse...')}
               </span>
             </div>
