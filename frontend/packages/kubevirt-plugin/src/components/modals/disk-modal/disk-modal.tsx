@@ -30,7 +30,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { getAnnotations, getName } from '@console/shared/src';
 import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,
@@ -53,6 +52,7 @@ import {
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
+import { getName, getAnnotations } from '../../../selectors/selectors';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
 import {

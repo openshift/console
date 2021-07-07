@@ -8,7 +8,6 @@ import {
 import { FirehoseResource, FirehoseResult, resourcePath } from '@console/internal/components/utils';
 import { EventModel } from '@console/internal/models';
 import { EventKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import ActivityBody, {
   PauseButton,
   RecentEventsBodyContent,
@@ -20,6 +19,7 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { getVmEventsFilters } from '../../../selectors/event';
 import { VMILikeEntityKind } from '../../../types/vmLike';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';

@@ -17,7 +17,6 @@ import {
 } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { getName, ValidationErrorType } from '@console/shared';
 import {
   NetworkInterfaceModel,
   NetworkInterfaceType,
@@ -26,6 +25,7 @@ import {
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
+import { getName, ValidationErrorType } from '../../../selectors';
 import { UINetworkEditConfig } from '../../../types/ui/nic';
 import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
 import { ignoreCaseSort } from '../../../utils/sort';

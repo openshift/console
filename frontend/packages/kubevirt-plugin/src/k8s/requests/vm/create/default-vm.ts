@@ -6,8 +6,8 @@ import {
   TEMPLATE_PARAM_VM_NAME,
 } from '../../../../constants/vm';
 import { ProcessedTemplatesModel } from '../../../../models/models';
-import { getAnnotations } from '../../../../selectors/selectors';
-import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
+import { getAnnotations, getValueByPrefix } from '../../../../selectors/selectors';
+import { findHighestKeyBySuffixValue } from '../../../../selectors/utils';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { VMKind } from '../../../../types/vm';

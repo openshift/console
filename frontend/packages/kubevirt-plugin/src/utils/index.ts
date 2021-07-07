@@ -14,8 +14,8 @@ import {
   getNamespace,
   getUID,
 } from '@console/shared/src/selectors';
-import { getRandomChars } from '@console/shared/src/utils/utils';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants';
+import { getRandomChars } from '../selectors';
 import { pluralize } from './strings';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>

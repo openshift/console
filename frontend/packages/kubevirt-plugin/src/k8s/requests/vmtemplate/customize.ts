@@ -6,7 +6,7 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
+import { ANNOTATIONS } from '@console/shared/src';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
   AccessMode,
@@ -28,6 +28,7 @@ import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
+import { getRandomChars } from '../../../selectors';
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';

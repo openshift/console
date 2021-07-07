@@ -15,7 +15,6 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { DeviceType } from '../../../constants';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
@@ -23,6 +22,7 @@ import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { createBasicLookup, getName, getNamespace } from '../../../selectors';
 import {
   asVM,
   getBootableDevices,

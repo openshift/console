@@ -8,8 +8,8 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getName, getNamespace, getRandomChars } from '@console/shared';
 import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
+import { getName, getNamespace, getRandomChars } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { VMSnapshot } from '../../../types';
 import { buildOwnerReference } from '../../../utils';

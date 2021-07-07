@@ -1,5 +1,10 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  PodKind,
+  K8sResourceKind,
+  NodeKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
 
 export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'];
 
@@ -16,12 +21,42 @@ export const getValueByPrefix = (obj = {}, keyPrefix: string): string => {
   return objectKey ? obj[objectKey] : null;
 };
 
+export const getName = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.name') as K8sResourceCommon['metadata']['name'];
+
+export const getNamespace = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.namespace') as K8sResourceCommon['metadata']['namespace'];
+
+export const getAPIVersion = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'apiVersion') as K8sResourceCommon['apiVersion'];
+
+export const getUID = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.uid') as K8sResourceCommon['metadata']['uid'];
+
+export const getOwnerReferences = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.ownerReferences') as K8sResourceCommon['metadata']['ownerReferences'];
+
+export const getCreationTimestamp = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.creationTimestamp') as K8sResourceCommon['metadata']['creationTimestamp'];
+
+export const getDeletetionTimestamp = <A extends K8sResourceCommon = K8sResourceCommon>(value: A) =>
+  _.get(value, 'metadata.deletionTimestamp') as K8sResourceCommon['metadata']['deletionTimestamp'];
+
 // Labels
 export const getLabels = (entity: K8sResourceKind, defaultValue?: { [key: string]: string }) =>
   _.get(entity, 'metadata.labels', defaultValue) as K8sResourceKind['metadata']['labels'];
 
+export const getLabel = <A extends K8sResourceKind = K8sResourceKind>(
+  value: A,
+  label: string,
+  defaultValue?: string,
+) => (_.has(value, 'metadata.labels') ? value.metadata.labels[label] : defaultValue);
+
 export const getLabelValue = (entity: K8sResourceKind, label: string): string =>
   _.get(entity, ['metadata', 'labels', label]);
+
+export const hasLabel = (obj: K8sResourceKind, label: string): boolean =>
+  _.has(obj, ['metadata', 'labels', label]);
 
 // Annotations
 export const getAnnotations = (
@@ -63,3 +98,8 @@ export const getStatusConditionOfType = (statusResource: K8sResourceKind, type: 
 export const getConditionReason = (condition) => condition && condition.reason;
 export const isConditionStatusTrue = (condition) => (condition && condition.status) === 'True';
 export const isConditionReason = (condition, reason) => getConditionReason(condition) === reason;
+
+export const getNodeName = (pod: PodKind): PodKind['spec']['nodeName'] =>
+  pod && pod.spec ? pod.spec.nodeName : undefined;
+
+export const getNodeTaints = (node: NodeKind) => node?.spec?.taints;

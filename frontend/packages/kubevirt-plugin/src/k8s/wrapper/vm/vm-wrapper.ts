@@ -1,6 +1,5 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { getLabels } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import {
@@ -11,6 +10,7 @@ import {
   VolumeType,
 } from '../../../constants/vm';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
+import { getLabels } from '../../../selectors';
 import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
 import { findKeySuffixValue } from '../../../selectors/utils';
 import { transformDevices } from '../../../selectors/vm/devices';

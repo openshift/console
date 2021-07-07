@@ -5,7 +5,6 @@ import { Selector } from '@console/internal/components/utils/selector';
 import { PodModel } from '@console/internal/models';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceKind } from '@console/knative-plugin/src/types';
-import { getLabel, getName, getNamespace, getNodeName } from '@console/shared';
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
@@ -13,6 +12,7 @@ import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/gue
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { getLabel, getName, getNamespace, getNodeName } from '../../selectors';
 import { findVMIPod } from '../../selectors/pod/selectors';
 import { getDescription } from '../../selectors/selectors';
 import { getOperatingSystem, getOperatingSystemName, getVMLikeModel } from '../../selectors/vm';

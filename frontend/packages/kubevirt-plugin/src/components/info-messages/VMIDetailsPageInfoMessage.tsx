@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, HintBlock } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getOwnerReferences } from '@console/shared/src';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getOwnerReferences } from '../../selectors';
 import { VMIKind } from '../../types';
 
 const VMIDetailsPageInfoMessage: React.FC<InfoMessageHintBlockProps> = ({ name, namespace }) => {

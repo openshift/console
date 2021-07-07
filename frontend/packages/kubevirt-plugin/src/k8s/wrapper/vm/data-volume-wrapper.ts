@@ -1,4 +1,3 @@
-import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import {
   BinaryUnit,
@@ -7,6 +6,7 @@ import {
 } from '../../../components/form/size-unit-utils';
 import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
+import { getOwnerReferences } from '../../../selectors';
 import {
   getDataVolumeAccessModes,
   getDataVolumePreallocationDisk,

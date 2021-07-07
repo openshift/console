@@ -21,7 +21,7 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ALL_NAMESPACES_KEY, getNamespace, getUID } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
@@ -33,7 +33,7 @@ import useV2VConfigMap from '../../../hooks/use-v2v-config-map';
 import { createVM } from '../../../k8s/requests/vm/create/simple-create';
 import { VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { getDescription } from '../../../selectors/selectors';
+import { getDescription, getNamespace, getUID } from '../../../selectors/selectors';
 import { getTemplateName } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';

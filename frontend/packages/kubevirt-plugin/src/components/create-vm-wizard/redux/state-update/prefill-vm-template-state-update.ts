@@ -1,5 +1,4 @@
 import { Set } from 'immutable';
-import { createBasicLookup, getName } from '@console/shared/src';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import { DiskBus, DiskType, NetworkInterfaceModel, VolumeType } from '../../../../constants/vm';
 import { ROOT_DISK_NAME } from '../../../../constants/vm/constants';
@@ -7,6 +6,7 @@ import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { getName, createBasicLookup } from '../../../../selectors';
 import { getSimpleName } from '../../../../selectors/utils';
 import {
   DEFAULT_CPU,

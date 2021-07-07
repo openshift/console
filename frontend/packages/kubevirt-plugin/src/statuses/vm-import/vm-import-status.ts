@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
 import { K8sResourceCondition } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import {
+  getAnnotations,
   getStatusConditionOfType,
   getStatusConditions,
   isConditionStatusTrue,

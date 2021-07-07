@@ -13,13 +13,13 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { getName, getNamespace } from '../../../selectors';
 import { isTemplate } from '../../../selectors/check-type';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';

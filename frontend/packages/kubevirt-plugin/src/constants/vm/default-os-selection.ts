@@ -1,6 +1,6 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared/src';
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { getName } from '../../selectors';
 import { isUpstream } from '../../utils/common';
 
 export class OSSelection extends ObjectEnum<string> {

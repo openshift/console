@@ -12,12 +12,12 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { dimensifyHeader, getNamespace } from '@console/shared';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { dimensifyHeader, getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';

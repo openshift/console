@@ -4,7 +4,6 @@ import {
   K8sResourceKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { alignWithDNS1123, getName, joinGrammaticallyListOfItems } from '@console/shared/src';
 import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
 import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
 import {
@@ -22,6 +21,11 @@ import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/networ
 import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  alignWithDNS1123,
+  getName,
+  joinGrammaticallyListOfItems,
+} from '../../../../../../selectors';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,

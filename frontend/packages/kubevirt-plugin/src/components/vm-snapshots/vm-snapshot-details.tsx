@@ -13,10 +13,10 @@ import {
   SectionHeading,
   Timestamp,
 } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getName } from '../../selectors';
 import {
   getVmRestoreTime,
   getVmSnapshotVmName,
