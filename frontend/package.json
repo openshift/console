@@ -129,7 +129,7 @@
     "@patternfly/react-tokens": "4.12.0",
     "@patternfly/react-topology": "4.9.6",
     "@patternfly/react-virtualized-extension": "4.8.38",
-    "@patternfly/quickstarts": "1.0.0-rc.28",
+    "@patternfly/quickstarts": "1.0.0-rc.30",
     "abort-controller": "3.0.0",
     "ajv": "^6.12.3",
     "apollo-cache-inmemory": "^1.6.5",
