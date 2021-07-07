@@ -5,17 +5,13 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
-import {
-  CreateOperand as CreateOperandExtension,
-  isCreateOperand,
-} from '@console/dynamic-plugin-sdk';
+import CreateResource from '@console/internal/components/create-resource';
 import {
   PageHeading,
   StatusBox,
   FirehoseResult,
   BreadCrumbs,
   resourcePathFromModel,
-  AsyncComponent,
 } from '@console/internal/components/utils';
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { CustomResourceDefinitionModel } from '@console/internal/models';
@@ -28,10 +24,8 @@ import {
   nameForModel,
   CustomResourceDefinitionKind,
   definitionFor,
-  referenceForExtensionModel,
 } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import { Extension, useExtensions } from '@console/plugin-sdk';
 import { useActivePerspective } from '@console/shared';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
 import {
@@ -76,7 +70,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       ? '/topology'
       : `${resourcePathFromModel(
           ClusterServiceVersionModel,
-          match.params.appName,
+          match.params.csvName,
           match.params.ns,
         )}/${match.params.plural}`;
 
@@ -182,19 +176,6 @@ const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'mod
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => {
   const { t } = useTranslation();
-  const createOperandTypeGuard = React.useCallback(
-    (e: Extension): e is CreateOperandExtension => {
-      return (
-        isCreateOperand(e) &&
-        referenceForExtensionModel(e.properties.model) === props.match.params.plural
-      );
-    },
-    [props.match.params.plural],
-  );
-  const extensionPages = useExtensions(createOperandTypeGuard);
-  if (extensionPages.length) {
-    return <AsyncComponent loader={extensionPages[0].properties.component} match={props.match} />;
-  }
   return (
     <>
       <Helmet>
@@ -207,7 +188,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
           resources={[
             {
               kind: referenceForModel(ClusterServiceVersionModel),
-              name: props.match.params.appName,
+              name: props.match.params.csvName,
               namespace: props.match.params.ns,
               isList: false,
               prop: 'clusterServiceVersion',
@@ -234,17 +215,21 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
   );
 });
 
+export const CreateOperandPageExt: React.FC<Omit<CreateOperandPageProps, 'model'>> = ({
+  match,
+}) => <CreateResource match={match} DefaultPage={CreateOperandPage} />;
+
 export type CreateOperandProps = {
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
   customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
   initialEditorType: EditorType;
   loaded: boolean;
   loadError?: any;
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ csvName: string; ns: string; plural: K8sResourceKindReference }>;
   model: K8sKind;
 };
 
 export type CreateOperandPageProps = {
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: CreateOperandProps['match'];
   model: K8sKind;
 };

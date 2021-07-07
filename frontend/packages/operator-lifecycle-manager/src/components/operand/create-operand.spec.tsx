@@ -35,7 +35,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
 
   beforeEach(() => {
     const match = {
-      params: { appName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
+      params: { csvName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
       isExact: true,
       url: '',
       path: '',
@@ -98,7 +98,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
 
 describe('CreateOperandPage', () => {
   const match = {
-    params: { appName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
+    params: { csvName: 'app', ns: 'default', plural: k8s.referenceFor(testResourceInstance) },
     isExact: true,
     url: '',
     path: '',
@@ -110,7 +110,7 @@ describe('CreateOperandPage', () => {
     expect(wrapper.find(Firehose).props().resources).toEqual([
       {
         kind: k8s.referenceForModel(ClusterServiceVersionModel),
-        name: match.params.appName,
+        name: match.params.csvName,
         namespace: match.params.ns,
         isList: false,
         prop: 'clusterServiceVersion',
@@ -223,7 +223,7 @@ describe(OperandYAML.displayName, () => {
           path: '',
           params: {
             ns: 'default',
-            appName: 'example',
+            csvName: 'example',
             plural: k8s.referenceFor(testResourceInstance),
           },
         }}

@@ -26,6 +26,6 @@ export const OperandYAML: React.FC<OperandYAMLProps> = ({
 export type OperandYAMLProps = {
   initialYAML?: string;
   onChange?: (yaml: string) => void;
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ csvName: string; ns: string; plural: K8sResourceKindReference }>;
   next?: string;
 };
