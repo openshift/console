@@ -62,6 +62,12 @@ export class ConsoleRemotePlugin {
         overridables: sharedVendorModules,
       }).apply(compiler);
       new ConsoleAssetPlugin(this.pkg).apply(compiler);
+
+      // Ignore require calls for modules that reside in Console monorepo packages
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^@console\//,
+        contextRegExp: /node_modules\/@openshift-console\/dynamic-plugin-sdk\//,
+      }).apply(compiler);
     });
 
     // Post-process generated remote entry source

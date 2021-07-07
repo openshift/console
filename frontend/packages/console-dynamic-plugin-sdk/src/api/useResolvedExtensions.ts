@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { Extension, ExtensionTypeGuard } from '@console/plugin-sdk/src/typings/base';
 import { resolveExtension } from '../coderefs/coderef-resolver';
-import { ResolvedExtension } from '../types';
+import { UseResolvedExtensions } from '../extensions/console-types';
+import { Extension, ExtensionTypeGuard, ResolvedExtension } from '../types';
 import { settleAllPromises } from '../utils/promise';
-import { UseResolvedExtensions } from './api-types';
 
 /**
  * React hook for consuming Console extensions with resolved `CodeRef` properties.

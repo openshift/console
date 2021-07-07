@@ -11,10 +11,5 @@
     "skipLibCheck": true,
     "lib": ["es2016", "es2020.promise", "dom"]
   },
-  "files": [
-    "src/webpack/ConsoleRemotePlugin.ts",
-    "src/extensions/index.ts",
-    "src/api/api.ts",
-    "src/api/internal-api.ts"
-  ]
+  "files": ["src/index-webpack.ts", "src/index-lib.ts", "src/api/internal-api.ts"]
 }

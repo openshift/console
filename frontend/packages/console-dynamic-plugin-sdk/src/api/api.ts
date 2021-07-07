@@ -1,40 +1,27 @@
+/* eslint-disable */
 import {
   UseK8sWatchResource,
   UseK8sWatchResources,
-  UseResolvedExtensions,
   ConsoleFetch,
   ConsoleFetchJSON,
   ConsoleFetchText,
-} from './api-types';
-import { HorizontalNavProps } from './component-api-types';
+  HorizontalNavProps,
+  UseResolvedExtensions,
+} from '../extensions/console-types';
 
-export * from './api-types';
-
-const newMockImpl = <T extends (...args: any) => any>(): T => {
-  return ((() => {
-    throw new Error(
-      'You need to configure webpack externals to use this component or function at runtime.',
-    );
-  }) as unknown) as T;
-};
-
-const mockProperties = <T extends any, K extends keyof T>(obj: T, ...keys: K[]) => {
-  keys.forEach((key) => {
-    obj[key] = (newMockImpl() as unknown) as T[K];
-  });
-};
-
-export const useK8sWatchResource: UseK8sWatchResource = newMockImpl();
-export const useK8sWatchResources: UseK8sWatchResources = newMockImpl();
-export const useResolvedExtensions: UseResolvedExtensions = newMockImpl();
-export const consoleFetch: ConsoleFetch = newMockImpl();
-export const consoleFetchJSON: ConsoleFetchJSON = newMockImpl();
-mockProperties(consoleFetchJSON, 'delete', 'post', 'put', 'patch');
-export const consoleFetchText: ConsoleFetchText = newMockImpl();
+export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
+  .useK8sWatchResource;
+export const useK8sWatchResources: UseK8sWatchResources = require('@console/internal/components/utils/k8s-watch-hook')
+  .useK8sWatchResources;
+export const useResolvedExtensions: UseResolvedExtensions = require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
+  .useResolvedExtensions;
+export const consoleFetch: ConsoleFetch = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+  .consoleFetch;
+export const consoleFetchJSON: ConsoleFetchJSON = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+  .consoleFetchJSON;
+export const consoleFetchText: ConsoleFetchText = require('@console/dynamic-plugin-sdk/src/utils/fetch')
+  .consoleFetchText;
 /**
- *
- * @type {import("./component-api-types").NavPage } NavPage
- *
  * A component that creates a Navigation bar. It takes array of NavPage objects and renderes a NavBar.
  * Routing is handled as part of the component.
  * @example
@@ -51,4 +38,5 @@ export const consoleFetchText: ConsoleFetchText = newMockImpl();
  * @param {NavPage[]} pages - An array of page objects
  * @param {object} match - match object provided by React Router
  */
-export const HorizontalNav: React.FC<HorizontalNavProps> = newMockImpl();
+export const HorizontalNav: React.FC<HorizontalNavProps> = require('@console/internal/components/utils/horizontal-nav')
+  .HorizontalNavFacade;

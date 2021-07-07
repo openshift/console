@@ -3,14 +3,12 @@ import { Store } from 'redux';
 import { RootState } from '@console/internal/redux';
 import { initSubscriptionService } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { exposePluginAPI } from './plugin-api';
 import { registerPluginEntryCallback, loadAndEnablePlugin } from './plugin-loader';
 
 export const initConsolePlugins = _.once(
   (pluginStore: PluginStore, reduxStore: Store<RootState>) => {
     initSubscriptionService(pluginStore, reduxStore);
     registerPluginEntryCallback(pluginStore);
-    exposePluginAPI();
 
     pluginStore.getAllowedDynamicPluginNames().forEach((pluginName) => {
       loadAndEnablePlugin(pluginName, pluginStore, () => {

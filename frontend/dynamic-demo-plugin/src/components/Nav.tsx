@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { HorizontalNav } from '@console/dynamic-plugin-sdk/api';
+import { HorizontalNav } from '@openshift-console/dynamic-plugin-sdk';
 
 const Thor: React.FC = () => (
   <div>
