@@ -19,18 +19,18 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
 
   return (
     <>
+      <div className="co-create-operand__breadcrumbs">
+        <BreadCrumbs
+          breadcrumbs={[
+            {
+              name: 'Openshift Container Storage',
+              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+            },
+            { name: t('ceph-storage-plugin~Create BackingStore '), path: match.url },
+          ]}
+        />
+      </div>
       <div className="co-create-operand__header">
-        <div className="co-create-operand__header-buttons">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: 'Openshift Container Storage',
-                path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-              },
-              { name: t('ceph-storage-plugin~Create BackingStore '), path: match.url },
-            ]}
-          />
-        </div>
         <div className="nb-endpoints-page-title">
           <Title size="2xl" headingLevel="h1" className="nb-endpoints-page-title__main">
             {t('ceph-storage-plugin~Create new BackingStore ')}
