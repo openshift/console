@@ -13,4 +13,5 @@ export const serverlessInitialValues: ServerlessData = {
     },
     concurrencyutilization: '',
   },
+  domainMapping: [],
 };

@@ -26,6 +26,7 @@ import {
   EventingBrokerModel,
   EventingTriggerModel,
   CamelKameletBindingModel,
+  DomainMappingModel,
 } from '../../models';
 import {
   RevisionKind,
@@ -763,6 +764,28 @@ export const sampleSourceKameletBinding: FirehoseResult = {
   ],
 };
 
+export const sampleDomainMapping: FirehoseResult = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: 'serving.knative.dev/v1alpha1',
+      kind: 'DomainMapping',
+      metadata: {
+        name: 'example.org',
+        namespace: 'my-app',
+      },
+      spec: {
+        ref: {
+          name: 'overlayimage',
+          kind: ServiceModel.kind,
+          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+        },
+      },
+    },
+  ],
+};
+
 export const sampleServices: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -1089,6 +1112,7 @@ export const MockKnativeResources: TopologyDataResources = {
   triggers: sampleTriggers,
   brokers: sampleBrokers,
   [CamelKameletBindingModel.plural]: sampleSourceKameletBinding,
+  [DomainMappingModel.plural]: sampleDomainMapping,
 };
 
 export const MockKnativeBuildConfig = {

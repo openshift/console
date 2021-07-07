@@ -188,6 +188,7 @@ describe('Edit Application Utils', () => {
           },
           concurrencyutilization: '70',
         },
+        domainMapping: [],
       };
       const serverlessData = getServerlessData(knativeServiceData);
       expect(serverlessData).toEqual(expectedValue);

@@ -12,6 +12,7 @@ import {
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
 import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
+import DomainMappingOverviewList from './domain-mapping/DomainMappingOverviewList';
 import { PubSubResourceOverviewList } from './EventPubSubResources';
 import PubSubSubscribers from './EventPubSubSubscribers';
 import RevisionsOverviewList from './RevisionsOverviewList';
@@ -23,7 +24,14 @@ type KnativeServiceResourceProps = {
 
 const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }) => {
   const { t } = useTranslation();
-  const { revisions, ksroutes, obj, eventSources = [], subscribers = [] } = item;
+  const {
+    revisions,
+    ksroutes,
+    obj,
+    eventSources = [],
+    subscribers = [],
+    domainMappings = [],
+  } = item;
   const { buildConfigs = [] } = useBuildConfigsWatcher(obj);
   const {
     kind: resKind,
@@ -74,6 +82,12 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
       )}
       {brokers.length > 0 && (
         <PubSubSubscribers subscribers={brokers} title={t('knative-plugin~Triggers')} />
+      )}
+      {domainMappings.length > 0 && (
+        <DomainMappingOverviewList
+          domainMappings={domainMappings}
+          title={t('knative-plugin~Domain mappings')}
+        />
       )}
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />

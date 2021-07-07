@@ -9,7 +9,10 @@ import {
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
-import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
+import {
+  getDomainMappingRequests,
+  getKnativeServiceDepResource,
+} from '@console/knative-plugin/src/utils/create-knative-utils';
 import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
 import {
   getAppLabels,
@@ -353,7 +356,7 @@ export const createOrUpdateJarFile = async (
 
   createNewProject && (await createProject(formData.project));
 
-  const responses: K8sResourceKind[] = [];
+  const responses = [];
   let generatedImageStreamName: string = '';
   const imageStreamList = appResImageStream?.data;
   if (
@@ -397,10 +400,6 @@ export const createOrUpdateJarFile = async (
   }
 
   if (resources === Resources.KnativeService) {
-    // knative service doesn't have dry run capability so returning the promises.
-    if (dryRun) {
-      return responses;
-    }
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
     const originalAnnotations = editAppResource?.data?.metadata?.annotations || {};
@@ -423,12 +422,20 @@ export const createOrUpdateJarFile = async (
       annotations,
       editAppResource?.data,
     );
-    if (verb === 'update') {
-      responses.push(await k8sUpdate(KnServiceModel, knDeploymentResource));
-    } else {
-      responses.push(await k8sCreate(KnServiceModel, knDeploymentResource));
-    }
-    return responses;
+    const domainMappingResources = await getDomainMappingRequests(
+      formData,
+      knDeploymentResource,
+      dryRun,
+    );
+    responses.push(
+      ...[
+        verb === 'update'
+          ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
+          : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
+        ...domainMappingResources,
+      ],
+    );
+    return Promise.all(responses);
   }
   if (resources === Resources.Kubernetes) {
     responses.push(

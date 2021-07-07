@@ -231,6 +231,7 @@ export interface DeploymentData {
 
 export interface ServerlessData {
   scaling: ServerlessScaling;
+  domainMapping?: string[];
 }
 
 export interface ServerlessScaling {

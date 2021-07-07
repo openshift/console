@@ -22,7 +22,11 @@ import { getLimitsDataFromResource } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 import { ServiceModel } from '../models';
-import { getKnativeServiceDepResource } from './create-knative-utils';
+import {
+  getKnativeServiceDepResource,
+  getDomainMappingRequests,
+  dryRunOpt,
+} from './create-knative-utils';
 
 const PART_OF = 'app.kubernetes.io/part-of';
 const knatify = 'knatify';
@@ -96,10 +100,11 @@ export const getKnatifyWorkloadData = (obj: K8sResourceKind, relatedHpa?: K8sRes
   return newKnativeDeployResource;
 };
 
-export const knatifyResources = (
+export const knatifyResources = async (
   rawFormData: DeployImageFormData,
   appName: string,
-): Promise<K8sResourceKind> => {
+  dryRun?: boolean,
+): Promise<Promise<K8sResourceKind>[]> => {
   const formData = ensurePortExists(rawFormData);
   const {
     isi: { image },
@@ -123,7 +128,15 @@ export const knatifyResources = (
       },
     },
   };
-  return k8sCreate(ServiceModel, knDeploymentResource);
+  const domainMappingResources = await getDomainMappingRequests(
+    formData,
+    knDeploymentResource,
+    dryRun,
+  );
+  return Promise.all([
+    k8sCreate(ServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
+    ...domainMappingResources,
+  ]);
 };
 
 export const getCommonInitialValues = (ksvcResourceData: K8sResourceKind, namespace: string) => {
