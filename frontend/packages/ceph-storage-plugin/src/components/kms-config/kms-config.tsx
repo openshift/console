@@ -63,7 +63,8 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 
   const setAddressPort = (port: string) => {
     kmsObj.port.value = port;
-    kmsObj.port.valid = port !== '' && !_.isNaN(Number(port)) && Number(port) > 0;
+    kmsObj.port.valid =
+      port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
   };
 
