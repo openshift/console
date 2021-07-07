@@ -4,6 +4,7 @@ import {
   ImportProvidersSettings,
   VMSettings,
 } from '../../../../components/create-vm-wizard/redux/initial-state/types';
+import { SysprepData } from '../../../../components/create-vm-wizard/tabs/advanced-tab/sysprep/utils/sysprep-utils';
 import { VMWizardNetwork, VMWizardStorage } from '../../../../components/create-vm-wizard/types';
 import { ITemplate } from '../../../../types/template';
 import { EnhancedK8sMethods } from '../../../enhancedK8sMethods/enhancedK8sMethods';
@@ -20,6 +21,7 @@ export type CreateVMParams = {
   openshiftFlag: boolean;
   isProviderImport: boolean;
   isTemplate: boolean;
+  sysprepData: SysprepData;
 };
 
 export type DefaultVMLikeEntityParams = {
