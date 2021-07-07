@@ -124,3 +124,10 @@ Feature: Build with guided documentation card in developer console
               And user clicks on Save button
               And user selects Quick Starts from help menu
              Then user will not be able to see "Exploring Serverless applications", "Get started with a sample application", "Install the OpenShift Pipelines Operator" and "Add health checks to your sample application" quick starts in the quick start catalog
+
+
+        @odc-5715 @to-do
+        Scenario: Unique url to a Quick Start
+            Given user is at Quick Start catalog page
+              And user clicks "Exploring Serverless applications" card
+             Then user can see url has "quickstart?quickstart=serverless-application" in the address bar
