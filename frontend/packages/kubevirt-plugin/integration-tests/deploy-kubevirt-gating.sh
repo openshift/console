@@ -5,13 +5,54 @@ export ON_CI="ON_CI"
 # -----------------
 # Install HCO (kubevirt and helper operators)
 
-# Note: installing main brance is dangerous, we may want to look into a better way. 
-HCO_VERSION="master"
+export HOC_IMAGE_VER=1.5.0-unstable
+export HCO_SUBSCRIPTION_CHANNEL="1.5.0"
 
-curl https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/$HCO_VERSION/deploy/deploy.sh | bash
+cat <<EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: hco-unstable-catalog-source
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: quay.io/kubevirt/hyperconverged-cluster-index:${HOC_IMAGE_VER}
+  displayName: Kubevirt Hyperconverged Cluster Operator
+  publisher: Kubevirt Project
+EOF
 
-# Wait for kubevirt to be available
-oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Available --timeout="300s"
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: kubevirt-hyperconverged
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+    name: kubevirt-hyperconverged-group
+    namespace: kubevirt-hyperconverged
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+    name: hco-operatorhub
+    namespace: kubevirt-hyperconverged
+spec:
+    source: hco-unstable-catalog-source
+    sourceNamespace: openshift-marketplace
+    name: community-kubevirt-hyperconverged
+    channel: ${HCO_SUBSCRIPTION_CHANNEL}
+EOF
+
+# Wait
+sleep 300
+
+oc create -f https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/deploy/hco.cr.yaml \
+  -n kubevirt-hyperconverged
+
+# Wait for kubevirt virt-operator to be available
+oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Available --timeout="10m"
 
 # -----------------
 # Create storage class and storage namespace for testing
