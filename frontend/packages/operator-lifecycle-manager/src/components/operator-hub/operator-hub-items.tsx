@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { ExternalLink } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
+import i18n from '@console/internal/i18n';
 import {
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
@@ -92,19 +93,6 @@ const operatorHubFilterGroups = [
   'capabilityLevel',
   'infraFeatures',
 ];
-
-// t('olm~Source')
-// t('olm~Provider')
-// t('olm~Install state')
-// t('olm~Capability level')
-// t('olm~Infrastructure features')
-const operatorHubFilterMap = {
-  catalogSourceDisplayName: 'Source',
-  provider: 'Provider',
-  installState: 'Install state',
-  capabilityLevel: 'Capability level',
-  infraFeatures: 'Infrastructure features',
-};
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
@@ -240,20 +228,6 @@ const sortFilterValues = (values, field) => {
 const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   const filters = _.cloneDeep(initialFilters);
 
-  // Always show both install state filters
-  filters.installState = {
-    Installed: {
-      label: 'Installed',
-      value: 'Installed',
-      active: false,
-    },
-    'Not Installed': {
-      label: 'Not Installed',
-      value: 'Not Installed',
-      active: false,
-    },
-  };
-
   _.each(filterGroups, (field) => {
     const values = [];
     _.each(items, (item) => {
@@ -292,6 +266,25 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
       _.set(filters, [field, nextValue.value], nextValue),
     );
   });
+
+  // Always show both install state filters
+  if (!filters.installState) {
+    filters.installState = {
+      Installed: {
+        label: i18n.t('olm~Installed'),
+        value: 'Installed',
+        active: false,
+      },
+      'Not Installed': {
+        label: i18n.t('olm~Not Installed'),
+        value: 'Not Installed',
+        active: false,
+      },
+    };
+  } else {
+    _.set(filters, 'installState.Installed.label', i18n.t('olm~Installed'));
+    _.set(filters, 'installState.Not Installed.label', i18n.t('olm~Not Installed'));
+  }
 
   return filters;
 };
@@ -467,6 +460,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     );
   }
 
+  const filterGroupNameMap = {
+    catalogSourceDisplayName: t('olm~Source'),
+    provider: t('olm~Provider'),
+    installState: t('olm~Install state'),
+    capabilityLevel: t('olm~Capability level'),
+    infraFeatures: t('olm~Infrastructure features'),
+  };
+
   return (
     <>
       <TileViewPage
@@ -475,9 +476,10 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         getAvailableCategories={determineCategories}
         getAvailableFilters={determineAvailableFilters}
         filterGroups={operatorHubFilterGroups}
-        filterGroupNameMap={operatorHubFilterMap}
+        filterGroupNameMap={filterGroupNameMap}
         keywordCompare={keywordCompare}
         renderTile={renderTile}
+        emptyStateTitle={t('olm~No Results Match the Filter Criteria')}
         emptyStateInfo={t(
           'olm~No OperatorHub items are being shown due to the filters being applied.',
         )}
