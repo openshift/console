@@ -63,16 +63,6 @@ const CloudinitForm: React.FC<CloudinitFormProps> = ({
         <TextInput type="text" id={cloudinitIDGenerator(CloudInitDataFormKeys.HOSTNAME)} />
       </FormGroup>
       <FormGroup
-        label={t('kubevirt-plugin~Name')}
-        fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.NAME)}
-        className="kv-cloudint-advanced-tab-with-editor--validation-text"
-        helperTextInvalid={validationStatus?.name?.message}
-        helperText={t('kubevirt-plugin~Please provide a name.')}
-        validated={validationStatus?.name?.type}
-      >
-        <TextInput type="text" id={cloudinitIDGenerator(CloudInitDataFormKeys.NAME)} />
-      </FormGroup>
-      <FormGroup
         label={t('kubevirt-plugin~Authorized SSH Key')}
         fieldId={cloudinitIDGenerator(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
         className="kv-cloudint-advanced-tab-with-editor--validation-text"

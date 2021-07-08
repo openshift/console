@@ -2,13 +2,10 @@
   padding-left: var(--pf-global--spacer--xs);
 }
 
-.kv-cloudinit-advanced-tab-with-editor--form {
-  width: 50%;
-  margin-left: var(--pf-global--spacer--lg);
-}
-
+.kv-cloudinit-advanced-tab-with-editor--form,
 .kv-cloudinit-advanced-tab-with-editor--main {
-  margin-bottom: var(--pf-global--spacer--lg);
+  max-width: 50vh;
+  margin-left: var(--pf-global--spacer--md);
 }
 
 .kv-cloudinit-advanced-tab-with-editor--title_main {
@@ -30,4 +27,27 @@
 
 .kv-cloudint-advanced-tab-with-editor--ssh-key-row.pf-l-split {
   margin-bottom: var(--pf-global--spacer--sm);
+}
+
+.kv-cloudinit-info-helper--muted {
+  display: inline-flex;
+}
+
+.kv-cloudinit-info-helper--link {
+  margin-left: var(--pf-global--spacer--xs);
+}
+
+.kv-cloudinit-info-helper--main {
+  margin-bottom: var(--pf-global--spacer--md);
+  margin-top: var(--pf-global--spacer--sm);
+}
+
+.kv-cloudint-form-or-yaml-selector--main,
+.kv-cloudinit-info-helper--main {
+  margin-left: var(--pf-global--spacer--lg);
+}
+
+.kv-cloudint-form-or-yaml-selector--main {
+  display: inline-flex;
+  align-items: center;
 }
