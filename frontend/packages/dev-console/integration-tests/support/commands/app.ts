@@ -50,6 +50,7 @@ Cypress.Commands.add(
   'selectByAutoCompleteDropDownText',
   (selector: string, dropdownText: string) => {
     cy.get(selector).click();
+    cy.get('li[role="option"]').should('be.visible');
     cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
     cy.get(`[id*="${dropdownText}-link"]`).click({ force: true });
   },

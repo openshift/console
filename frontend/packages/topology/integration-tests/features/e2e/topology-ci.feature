@@ -14,7 +14,6 @@ Feature: Perform actions on topology
              Then user sees Topology page with message "No resources found"
               And user is able to see Start building your application, Add page links
               And Display options dropdown, Filter by resource and Find by name fields are disabled
-              And Zoom in, Zoom out, Fit to Screen, Reset view, layout icons are displayed
               And switch view is disabled
 
 

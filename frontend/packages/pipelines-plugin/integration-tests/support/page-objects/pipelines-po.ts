@@ -2,6 +2,8 @@ export const pipelineBuilderPO = {
   title: '.odc-pipeline-builder-header h1',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
+  pipeline: '#pipeline-link',
+  repository: '#repository-link',
   add: 'button.pf-c-button.pf-m-link.pf-m-inline',
   configureVia: {
     pipelineBuilder: '#form-radiobutton-editorType-form-field',
@@ -11,6 +13,7 @@ export const pipelineBuilderPO = {
     switchToFormView: '[id="form-radiobutton-editorType-form-field"]',
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
+    quickSearch: '[data-test="quick-search-bar"]',
     task: '[data-type="builder"] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
@@ -217,6 +220,8 @@ export const pipelinesPO = {
   createPipeline: '#yaml-create',
   search: 'input[data-test-id="item-filter"]',
   emptyMessage: '[data-test="empty-message"]',
+  pipelinesTab: '[data-test-id="horizontal-link-Pipelines"]',
+  repositoriesTab: '[data-test-id="horizontal-link-Repositories"]',
   pipelinesTable: {
     table: 'div[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',

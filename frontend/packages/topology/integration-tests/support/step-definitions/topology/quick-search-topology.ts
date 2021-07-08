@@ -12,14 +12,6 @@ Then('Display options dropdown, Filter by resource and Find by name fields are d
   cy.get(topologyPO.search).should('be.disabled');
 });
 
-Then('Zoom in, Zoom out, Fit to Screen, Reset view, layout icons are displayed', () => {
-  cy.get(topologyPO.graph.zoomIn).should('be.visible');
-  cy.get(topologyPO.graph.zoomOut).should('be.visible');
-  cy.get(topologyPO.graph.fitToScreen).should('be.visible');
-  cy.get(topologyPO.graph.reset).should('be.visible');
-  cy.get(topologyPO.graph.layoutViewGroup).should('be.visible');
-});
-
 Then('switch view is disabled', () => {
   cy.get(topologyPO.switcher).should('have.attr', 'aria-disabled', 'true');
 });

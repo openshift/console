@@ -34,6 +34,10 @@ When(
   },
 );
 
+When('user adds parallel task {string}', (taskName: string) => {
+  pipelineBuilderPage.selectParallelTask(taskName);
+});
+
 When('user searches pipeline {string} in pipelines page', (pipelineName: string) => {
   pipelinesPage.search(pipelineName);
 });
@@ -157,6 +161,15 @@ Then('kebab menu displays with options Start, Add Trigger, Edit Pipeline, Delete
   cy.byTestActionID(pipelineActions.DeletePipeline).should('be.visible');
 });
 
+Then('kebab menu contains options Start, Add Trigger, Edit Pipeline, Delete Pipeline', () => {
+  pipelinesPage.verifyKebabMenu();
+  cy.get(pipelinesPO.pipelinesTable.kebabMenu).click({ force: true });
+  cy.byTestActionID(pipelineActions.Start).should('be.visible');
+  cy.byTestActionID(pipelineActions.AddTrigger).should('be.visible');
+  cy.byTestActionID(pipelineActions.EditPipeline).should('be.visible');
+  cy.byTestActionID(pipelineActions.DeletePipeline).should('be.visible');
+});
+
 Then(
   'user will be redirected to Pipeline Details page with header name {string}',
   (pipelineName: string) => {
@@ -189,20 +202,13 @@ Then('Actions menu display with options Start, Add Trigger, Edit Pipeline, Delet
   cy.byTestActionID(pipelineActions.DeletePipeline).should('be.visible');
 });
 
-Then('Pipeline run details page is displayed', () => {
-  // TODO: implement step
+Then('Actions menu contains options Start, Add Trigger, Edit Pipeline, Delete Pipeline', () => {
+  actionsDropdownMenu.clickActionMenu();
+  cy.byTestActionID(pipelineActions.Start).should('be.visible');
+  cy.byTestActionID(pipelineActions.AddTrigger).should('be.visible');
+  cy.byTestActionID(pipelineActions.EditPipeline).should('be.visible');
+  cy.byTestActionID(pipelineActions.DeletePipeline).should('be.visible');
 });
-
-Then('pipeline run status displays as {string} in Pipeline run page', (status: string) => {
-  cy.log(status);
-});
-
-Then(
-  'Last run status of the {string} displays as {string} in pipelines page',
-  (a: string, b: string) => {
-    cy.log(a, b);
-  },
-);
 
 Then('Name field will be disabled', () => {
   cy.get(pipelineBuilderPO.formView.name).should('be.disabled');

@@ -32,7 +32,7 @@ Given('user is at developer perspective', () => {
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
-  projectNameSpace.selectOrCreateProject(`${projectName}`);
+  projectNameSpace.selectOrCreateProject(projectName);
 });
 
 Given('user is at the Topology page', () => {
@@ -40,7 +40,7 @@ Given('user is at the Topology page', () => {
   topologyPage.verifyTopologyPage();
 });
 
-When('user enters Git Repo url as {string}', (gitUrl: string) => {
+When('user enters Git Repo URL as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
   cy.get('body').then(($el) => {

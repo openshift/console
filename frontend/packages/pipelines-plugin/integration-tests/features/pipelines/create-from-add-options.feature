@@ -59,7 +59,7 @@ Feature: Create Pipeline from Add Options
               And user clicks node "<name>" in topology page
              Then pipeline name "<name>" is displayed in topology side bar
               And side bar is displayed with the pipelines section
-              And Last Run status of the "<name>" displays as "Succeeded" in topology page
+              And Last Run status of the workload displays as "Succeeded" in topology page
 
         Examples:
                   | name       |
@@ -78,7 +78,7 @@ Feature: Create Pipeline from Add Options
                   | nodejs-g |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Git form
              When user enters Git Repo URL as "<docker_git_url>"

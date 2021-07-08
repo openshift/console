@@ -14,8 +14,32 @@ export const pipelineRunDetailsPage = {
     cy.contains(pageTitle.PipelineRunDetails).should('be.visible');
     cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
-  verifyPipelineRunStatus: (status: string) =>
-    cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('have.text', status),
+  waitForPipelineRunToComplete: () => {
+    cy.get('.odc-pipeline-vis-task--icon-spin', { timeout: 120000 }).should('not.exist');
+    cy.contains('Running', { timeout: 120000 }).should('not.exist');
+  },
+  verifyPipelineRunStatus: (status: string) => {
+    pipelineRunDetailsPage.waitForPipelineRunToComplete();
+    cy.get(pipelineRunDetailsPO.pipelineRunStatus, { timeout: 60000 }).then((actualStatus) => {
+      if (actualStatus.text().includes('Failed')) {
+        cy.get('dt')
+          .contains('Message')
+          .next('dd')
+          .then((message) => {
+            cy.log(`Pipeline Run status is failed with the following message: ${message.text()}`);
+          });
+        cy.get('dt')
+          .contains('Log snippet')
+          .next('dd pre')
+          .then((logSnippet) => {
+            cy.log(`Pipeline Run status is failed, the logs are as follows: ${logSnippet.text()}`);
+          });
+        expect(actualStatus.text()).toMatch(status);
+      } else {
+        expect(actualStatus.text()).toMatch(status);
+      }
+    });
+  },
   fieldDetails: (fieldName: string, expectedFieldValue: string) =>
     cy
       .get(pipelineRunDetailsPO.details.pipelineRunDetails)
@@ -48,7 +72,7 @@ export const pipelineRunDetailsPage = {
     cy.get(pipelineRunDetailsPO.eventsTab).should('be.visible');
   },
   verifyFields: () => {
-    cy.get('[data-test-id="resource-summary"]').within(() => {
+    cy.byLegacyTestID('resource-summary').within(() => {
       cy.get(pipelineDetailsPO.details.fieldNames.name).should('be.visible');
       cy.get(pipelineDetailsPO.details.fieldNames.namespace).should('be.visible');
       cy.get(pipelineDetailsPO.details.fieldNames.labels).should('be.visible');
@@ -58,14 +82,14 @@ export const pipelineRunDetailsPage = {
     });
     cy.get('.odc-pipeline-run-details__customDetails').within(() => {
       cy.get('dl dt')
-        .eq(0)
-        .should('have.text', 'Status');
+        .contains('Status')
+        .should('be.visible');
       cy.get('dl dt')
-        .eq(1)
-        .should('have.text', 'Pipeline');
+        .contains('Pipeline')
+        .should('be.visible');
       cy.get('dl dt')
-        .eq(2)
-        .should('have.text', 'Triggered by:');
+        .contains('Triggered by:')
+        .should('be.visible');
     });
   },
   selectPipeline: () => cy.get(pipelineRunDetailsPO.details.pipelineLink).click(),
@@ -115,14 +139,12 @@ export const pipelineRunsPage = {
   search: (pipelineRunName: string) => cy.byLegacyTestID('item-filter').type(pipelineRunName),
   selectKebabMenu: (pipelineRunName: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');
-    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).each(($el, index) => {
-      const text = $el.text();
-      if (text.includes(pipelineRunName)) {
-        cy.get('tbody tr')
-          .eq(index)
-          .find('td:nth-child(6) button')
-          .click();
-      }
+    cy.log(`user selects the kebab menu of pipeline : "${pipelineRunName}"`);
+    cy.get(pipelineRunsPO.pipelineRunsTable.pipelineRunName).then(() => {
+      cy.get('tbody tr')
+        .first()
+        .find('td:nth-child(6) button')
+        .click({ force: true });
     });
   },
   verifyPipelineRunsTableDisplay: () =>

@@ -86,6 +86,11 @@ When('user adds another task {string} in parallel', (taskName: string) => {
 
 Given('user is at pipelines page', () => {
   navigateTo(devNavigationMenu.Pipelines);
+  cy.get('body').then(($body) => {
+    if ($body.find(pipelinesPO.repositoriesTab).length !== 0) {
+      cy.get(pipelinesPO.pipelinesTab).click();
+    }
+  });
 });
 
 Given('user has installed OpenShift Pipelines operator using cli', () => {

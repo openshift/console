@@ -65,8 +65,7 @@ Given('{string} is displayed on pipelines page', (pipelineName: string) => {
 });
 
 When('user selects the {string} from Git Provider Type field', (gitProviderType: string) => {
-  cy.get(pipelinesPO.addTrigger.gitProviderType).click();
-  cy.get(`[id$="${gitProviderType}-link"]`).click({ force: true });
+  cy.selectByAutoCompleteDropDownText(pipelinesPO.addTrigger.gitProviderType, gitProviderType);
 });
 
 When('user clicks on Add button present in Add Trigger modal', () => {
@@ -217,10 +216,8 @@ Then(
     pipelinesPage.selectKebabMenu(pipelineName);
     cy.byLegacyTestID('action-items')
       .find('li')
-      .should('have.length', 6)
-      .then(() => {
-        cy.log(`${option} is not available`);
-      });
+      .contains(option)
+      .should('not.exist');
   },
 );
 

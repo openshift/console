@@ -54,6 +54,7 @@ export const topologyPO = {
     nodeName: '#HelmRelease ul li div',
     resourceTitle: 'pf-c-data-list__cell.odc-topology-list-view__kind-label',
     switcher: '[data-test-id="topology-switcher-view"][aria-label="Graph view"]',
+    view: '[aria-label="Topology List View"]',
   },
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',
