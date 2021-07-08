@@ -19,6 +19,7 @@ import FormWithEditor, {
 import { iGetCloudInitNoCloudStorage } from '../../../selectors/immutable/storage';
 import { cloudinitFormChildren } from './CloudinitForm';
 import CloudinitFormOrYamlSelector from './CloudinitFormOrYamlSelector';
+import CloudInitInfoHelper from './CloudinitInfoHelper';
 import { onDataChanged } from './utils/cloudinit-utils';
 
 import './cloud-init.scss';
@@ -27,7 +28,6 @@ const fieldsMapper: FieldsMapper = {
   'cloudint-password': { path: 'password' },
   'cloudint-user': { path: 'user' },
   'cloudint-hostname': { path: 'hostname' },
-  'cloudint-name': { path: 'name' },
   '^cloudint-ssh_authorized_keys-key-[0-9]*$': {
     path: 'ssh_authorized_keys',
     isArray: true,
@@ -106,6 +106,7 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
       <div className="kv-cloudinit-advanced-tab-with-editor--title_main">
         <CloudinitFormOrYamlSelector view={view} setView={setView} />
       </div>
+      <CloudInitInfoHelper />
       <div className="kv-cloudinit-advanced-tab-with-editor--main">
         <FormWithEditor
           data={yaml}
