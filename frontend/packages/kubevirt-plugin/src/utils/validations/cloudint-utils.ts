@@ -100,7 +100,8 @@ export const checkPassword = (
 ) => {
   errorCatcher.removeError('password');
   const isAsciiPassword = obj?.password && validator.isAscii(obj?.password);
-  if (!isAsciiPassword && !isEmpty(obj?.password)) {
+  const hasWhiteSpaces = obj?.password && /\s/g.test(obj?.password as string);
+  if ((hasWhiteSpaces || !isAsciiPassword) && !isEmpty(obj?.password)) {
     errorCatcher.addError(
       t('kubevirt-plugin~Password can be only numbers and letters'),
       'password',

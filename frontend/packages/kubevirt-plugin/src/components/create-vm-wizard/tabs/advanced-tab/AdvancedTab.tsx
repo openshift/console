@@ -7,9 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CLOUD, SSH } from '../../../../utils/strings';
-import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
 import Cloudinit from './cloud-init/Cloudinit';
-import CloudInitInfoHelper from './cloud-init/CloudinitInfoHelper';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
 
 import './advanced-tab.scss';
@@ -35,7 +33,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID }) => {
           isExpanded={expanded === CLOUD}
           id={CLOUD}
         >
-          {t('kubevirt-plugin~Cloud-init')} <CloudInitInfoHelper />
+          {t('kubevirt-plugin~Cloud-init')}
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== CLOUD}>
           <Cloudinit wizardReduxID={wizardReduxID} />
@@ -48,7 +46,7 @@ const AdvancedTab: React.FC<AdvancedTabProps> = ({ wizardReduxID }) => {
           isExpanded={expanded === SSH}
           id={SSH}
         >
-          {t('kubevirt-plugin~SSH access')} <SSHPopover />
+          {t('kubevirt-plugin~SSH access')}
         </AccordionToggle>
         <AccordionContent isHidden={expanded !== SSH}>
           <SSHAdvancedTab />
