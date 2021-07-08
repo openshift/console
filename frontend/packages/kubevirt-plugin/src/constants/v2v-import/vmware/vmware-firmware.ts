@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../object-enum';
 
 export class VMwareFirmware extends ObjectEnum<string> {
   static readonly BIOS = new VMwareFirmware('bios', true);
