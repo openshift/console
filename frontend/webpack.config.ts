@@ -224,6 +224,10 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/kubevirt-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/ceph-storage-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/metal3-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([
+      { from: './packages/network-attachment-definition-plugin/locales', to: 'locales' },
+    ]),
+    new CopyWebpackPlugin([{ from: './packages/patternfly/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/insights-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([
       { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },

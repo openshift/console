@@ -45,6 +45,7 @@ i18n
       'kubevirt-plugin',
       'lso-plugin',
       'metal3-plugin',
+      'notification-drawer',
       'olm',
       'pipelines-plugin',
       'public',
