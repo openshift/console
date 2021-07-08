@@ -4,7 +4,7 @@ import { nodeStatus, volumeSnapshotStatus } from '@console/app/src/status';
 import { getNodeRole, getLabelsAsString } from '@console/shared';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
-import { bindingType, roleType } from '../RBAC';
+import { roleType } from '../RBAC';
 import {
   K8sResourceKind,
   MachineKind,
@@ -83,10 +83,6 @@ export const tableFilters: TableFilterMap = {
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)) || filter.selected.size === 0,
 
-  // Filter role bindings by role kind
-  'role-binding-kind': (filter, binding) =>
-    filter.selected.has(bindingType(binding)) || filter.selected.size === 0,
-
   // Filter role bindings by text match
   'role-binding': (str, { metadata, roleRef, subject }) => {
     const isMatch = (val) => fuzzyCaseInsensitive(str, val);
@@ -113,11 +109,11 @@ export const tableFilters: TableFilterMap = {
   },
 
   labels: (values, obj) => {
-    if (!values.all) {
+    if (!values || values.length === 0) {
       return true;
     }
     const labels = getLabelsAsString(obj);
-    return !!values.all.every((v) => labels.includes(v));
+    return values.every((v) => labels.includes(v));
   },
 
   'pod-status': (phases, pod) => {

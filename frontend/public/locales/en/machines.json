@@ -1,0 +1,17 @@
+{
+  "Machine details": "Machine details",
+  "Phase": "Phase",
+  "Provider state": "Provider state",
+  "Node": "Node",
+  "Machine role": "Machine role",
+  "Instance type": "Instance type",
+  "Region": "Region",
+  "Availability zone": "Availability zone",
+  "Machine addresses": "Machine addresses",
+  "Conditions": "Conditions",
+  "Name": "Name",
+  "Namespace": "Namespace",
+  "Machines": "Machines",
+  "Create machine": "Create machine",
+  "Provisioned as node": "Provisioned as node"
+}
