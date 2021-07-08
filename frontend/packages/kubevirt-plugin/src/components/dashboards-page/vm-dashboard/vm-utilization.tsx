@@ -5,18 +5,14 @@ import {
   PrometheusUtilizationItem,
 } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
-  Dropdown,
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  Duration,
-  useMetricDuration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getCreationTimestamp, getName, getNamespace } from '../../../selectors';
 import { findVMIPod } from '../../../selectors/pod/selectors';
@@ -45,8 +41,6 @@ const adjustDurationForStart = (start: number, createdAt: string): number => {
 
 export const VMUtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
   const { vm, vmi, pods } = React.useContext(VMDashboardContext);
   const vmiLike = vm || vmi;
   const vmName = getName(vmiLike);
@@ -73,30 +67,21 @@ export const VMUtilizationCard: React.FC = () => {
   );
 
   const createdAt = getCreationTimestamp(vmi);
-  const adjustDuration = React.useCallback(
-    (start: number) => adjustDurationForStart(start, createdAt),
-    [createdAt],
-  );
+  const adjustDuration = React.useCallback((start) => adjustDurationForStart(start, createdAt), [
+    createdAt,
+  ]);
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('kubevirt-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown adjustDuration={adjustDuration} />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('kubevirt-plugin~CPU')}
           utilizationQuery={queries[VMQueries.CPU_USAGE]}
           humanizeValue={humanizeCpuCores}
-          duration={duration}
-          adjustDuration={adjustDuration}
-          setTimestamps={setTimestamps}
           namespace={namespace}
           isDisabled={!vmiIsRunning}
         />
@@ -105,9 +90,7 @@ export const VMUtilizationCard: React.FC = () => {
           utilizationQuery={queries[VMQueries.MEMORY_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
-          duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
         />
         <PrometheusMultilineUtilizationItem
@@ -115,9 +98,7 @@ export const VMUtilizationCard: React.FC = () => {
           queries={multilineQueries[VMQueries.FILESYSTEM_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
-          duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
         />
         <PrometheusMultilineUtilizationItem
@@ -125,9 +106,7 @@ export const VMUtilizationCard: React.FC = () => {
           queries={multilineQueries[VMQueries.NETWORK_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
-          duration={duration}
           namespace={namespace}
-          adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
         />
       </UtilizationBody>
