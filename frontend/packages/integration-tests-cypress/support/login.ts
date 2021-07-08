@@ -32,9 +32,13 @@ Cypress.Commands.add('login', (provider: string, username: string, password: str
     const idp = provider || KUBEADMIN_IDP;
     cy.task('log', `  Logging in as ${username || KUBEADMIN_USERNAME}`);
     cy.byLegacyTestID('login').should('be.visible');
-    cy.contains(idp)
-      .should('be.visible')
-      .click();
+    cy.get('body').then(($body) => {
+      if ($body.text().includes(idp)) {
+        cy.contains(idp)
+          .should('be.visible')
+          .click();
+      }
+    });
     cy.get('#inputUsername').type(username || KUBEADMIN_USERNAME);
     cy.get('#inputPassword').type(password || Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
     cy.get(submitButton).click();
