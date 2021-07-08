@@ -1097,10 +1097,8 @@ const RolesPage = ({ obj: { metadata } }) => (
 );
 
 const namespaceBarDropdownStateToProps = (state) => {
-  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
-  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
-
-  return { canListNS, canCreateProject };
+  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS); //
+  return { canListNS };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
@@ -1119,7 +1117,6 @@ const NamespaceBarDropdowns_ = (props) => {
     useProjects,
   } = props;
 
-  // console.log('KKD: props.namespace:', props.namespace);
   React.useEffect(() => {
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
@@ -1131,53 +1128,20 @@ const NamespaceBarDropdowns_ = (props) => {
     return null;
   }
 
-  //const { loaded, data } = namespace;
-  const model = getModel(useProjects);
-  // const allNamespacesTitle =
-  //   model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
-
-  // const title = activeNamespace === ALL_NAMESPACES_KEY ? allNamespacesTitle : activeNamespace;
-
-  // const items = data.map((item) => ({ title: item.metadata.name, key: item.metadata.name }));
-
-  // if (loaded && !items.find((option) => option.title === title) && title !== allNamespacesTitle) {
-  //   items.push({ title, key: title }); // Add current namespace if it isn't included
-  // }
-
-  // items.sort((a, b) => a.title.localeCompare(b.title));
-
-  // if (canListNS) {
-  //   items.unshift({ title: allNamespacesTitle, key: ALL_NAMESPACES_KEY });
-  // }
-
-  const onChange = (newNamespace) => {
-    onNamespaceChange && onNamespaceChange(newNamespace);
-    setActiveNamespace(newNamespace);
-    removeQueryArgument('project-name');
-  };
-
   return (
     <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <NamespaceDropdown
-        // canCreateNew={canCreateProject}
-        // options={items}
         onSelect={(event, newNamespace) => {
-          onChange(newNamespace);
+          onNamespaceChange && onNamespaceChange(newNamespace);
+          setActiveNamespace(newNamespace);
+          removeQueryArgument('project-name');
         }}
-        onCreateNew={() =>
-          createProjectModal({
-            blocking: true,
-            onSubmit: (newProject) => {
-              setActiveNamespace(newProject.metadata.name);
-              removeQueryArgument('project-name');
-            },
-          })
-        }
+        onCreateNew={(newProject) => {
+          setActiveNamespace(newProject.metadata.name);
+          removeQueryArgument('project-name');
+        }}
         selected={activeNamespace || ALL_NAMESPACES_KEY}
-        //   title={title}
-        // userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
-        // storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-        isProjects={model.label === 'Project'}
+        isProjects={getModel(useProjects).label === 'Project'}
         disabled={disabled}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
       />
@@ -1187,12 +1151,10 @@ const NamespaceBarDropdowns_ = (props) => {
   );
 };
 
-const NamespaceBarDropdownsWithTranslation = connect(
+const NamespaceBarDropdowns = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
 )(withLastNamespace(NamespaceBarDropdowns_));
-
-const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
 
 const NamespaceBar_ = ({
   hideProjects = false,

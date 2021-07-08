@@ -296,6 +296,9 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   // component can be used instead of the the following.
   max-height: 60vh;
   overflow: auto;
+
+  // Position is to ensure that the dropdown doesn't push content down when opened
+  position: absolute;
 }
 
 // The .co-namespace-selector__menu-toggle styles are enabled to make the PatternFly
