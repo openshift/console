@@ -4,7 +4,7 @@ import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
+import { devNavigationMenuPO, formPO, gitPO, topologyPO, yamlPO } from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -61,15 +61,11 @@ export const navigateTo = (opt: devNavigationMenu) => {
   switch (opt) {
     case devNavigationMenu.Add: {
       perspective.switchTo(switchPerspective.Developer);
-      cy.get(devNavigationMenuPO.add)
-        .click()
-        .then(() => {
-          cy.url().should('include', 'add');
-          app.waitForLoad();
-          cy.contains(pageTitle.Add).should('be.visible');
-          // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-          // cy.testA11y('Add Page in dev perspective');
-        });
+      cy.get(devNavigationMenuPO.add).click();
+      cy.url().should('include', 'add');
+      app.waitForLoad();
+      cy.contains(pageTitle.Add).should('be.visible');
+      cy.testA11y('Add Page in dev perspective');
       break;
     }
     case devNavigationMenu.Topology: {
@@ -78,6 +74,12 @@ export const navigateTo = (opt: devNavigationMenu) => {
       app.waitForLoad();
       // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Topology Page in dev perspective');
+      cy.get('body').then(($body) => {
+        if ($body.find(topologyPO.graph.fitToScreen).length === 0) {
+          cy.get(topologyPO.switcher).click({ force: true });
+        }
+      });
+      cy.testA11y('Topology Page in dev perspective');
       break;
     }
     case devNavigationMenu.GitOps: {
@@ -101,8 +103,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Pipelines: {
       cy.get(devNavigationMenuPO.pipelines).click();
       detailsPage.titleShouldContain(pageTitle.Pipelines);
-      // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-      // cy.testA11y('Pipelines Page in dev perspective');
+      cy.testA11y('Pipelines Page in dev perspective');
       break;
     }
     case devNavigationMenu.Search: {

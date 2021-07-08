@@ -11,6 +11,7 @@ export const pipelineBuilderPO = {
     switchToFormView: '[id="form-radiobutton-editorType-form-field"]',
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
+    quickSearch: '[data-test="quick-search-bar"]',
     task: '[data-type="builder"] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',

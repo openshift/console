@@ -51,6 +51,9 @@ Given('user is at Pipeline Builder page', () => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.verifyTitle();
+  cy.get(pipelineBuilderPO.configureVia.pipelineBuilder)
+    .check({ force: true })
+    .should('be.checked');
 });
 
 When('user enters pipeline name as {string}', (pipelineName: string) => {
@@ -131,9 +134,27 @@ When('user selects the {string} node', (taskName: string) => {
   pipelineBuilderPage.clickOnTask(taskName);
 });
 
+When('user clicks the {string} node', (taskName: string) => {
+  pipelineBuilderPage.clickOnTask(taskName);
+});
+
 When('user adds the git url in the url Parameter in cluster task sidebar', () => {
   pipelineBuilderSidePane.enterParameterUrl();
 });
+
+When(
+  'user enters the url as {string} under Parameters section in cluster task sidebar',
+  (url: string) => {
+    pipelineBuilderSidePane.enterParameterUrl(url);
+  },
+);
+
+When(
+  'user enters revision as {string} under Parameters section in cluster task sidebar',
+  (revision: string) => {
+    pipelineBuilderSidePane.enterRevision(revision);
+  },
+);
 
 When('user clicks on Add workspace', () => {
   cy.byButtonText('Add workspace').click();
@@ -491,4 +512,23 @@ And('user enters yaml content from yaml file {string}', (yamlFile: string) => {
 
 Then('user will be able to see the output in sum and multipy task', () => {
   cy.get(pipelineRunDetailsPO.logs.logPage).should('be.visible');
+});
+
+When('user clicks Add task button under Tasks section', () => {
+  cy.get(pipelineBuilderPO.formView.taskDropdown).click();
+});
+
+When('user searches {string} in quick search bar', (searchItem: string) => {
+  cy.get(pipelineBuilderPO.formView.quickSearch).type(searchItem);
+});
+
+When('user selects {string} from git community', () => {
+  cy.get('[aria-label="Quick search list"]').should('be.visible');
+  cy.get('li')
+    .contains('git-clone')
+    .click();
+});
+
+When('user clicks on Install and add button', () => {
+  cy.byTestID('task-cta').click();
 });

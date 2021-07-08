@@ -19,11 +19,11 @@
   "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../../gui_test_screenshots/cypress/videos",
   "env": {
-    "TAGS": "@pipelines and not (@manual or @to-do or @un-verified)",
+    "TAGS": "@pipelines and @smoke and not (@manual or @to-do or @un-verified)",
     "NAMESPACE": "aut-pipelines"
   },
   "retries": {
-    "runMode": 1,
+    "runMode": 0,
     "openMode": 0
   }
 }

@@ -12,7 +12,7 @@ Given('user has created pipeline {string} with git resources', (pipelineName: st
   navigateTo(devNavigationMenu.Pipelines);
 });
 
-When('user clicks on Show Credentials link present in Start Pipeline modal', () => {
+When('user clicks on Show credentials link present in Start Pipeline modal', () => {
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.clickShowCredentialOptions();
 });
@@ -45,9 +45,11 @@ When('user enters URL, Revision as {string} and {string}', (gitUrl: string, revi
 });
 
 When('user enters Secret Name as {string}', (secretName: string) => {
-  startPipelineInPipelinesPage.clickShowCredentialOptions();
-  cy.byButtonText('Add Secret').click();
   cy.get(pipelinesPO.startPipeline.advancedOptions.secretName).type(secretName);
+});
+
+When('user clicks on Add Secret link', () => {
+  cy.byButtonText('Add Secret').click();
 });
 
 When('user selects the {string} option from accessTo drop down', (option: string) => {

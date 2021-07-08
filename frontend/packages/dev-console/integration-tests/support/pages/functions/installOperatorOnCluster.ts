@@ -86,7 +86,7 @@ export const verifyAndInstallPipelinesOperator = () => {
   app.waitForNameSpacesToLoad();
   app.waitForLoad();
   cy.get(devNavigationMenuPO.pageSideBar).then(($ele) => {
-    if ($ele.find(devNavigationMenuPO.pipelines).length) {
+    if ($ele.find(devNavigationMenuPO.pipelines).length !== 0) {
       cy.log(`${operators.PipelinesOperator} operator is already installed in the cluster`);
     } else {
       perspective.switchTo(switchPerspective.Administrator);
@@ -95,7 +95,7 @@ export const verifyAndInstallPipelinesOperator = () => {
       cy.get('body', {
         timeout: 50000,
       }).then(($body) => {
-        if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
+        if ($body.find(operatorsPO.installOperators.noOperatorsFound).length !== 0) {
           installOperator(operators.PipelinesOperator);
           // After https://issues.redhat.com/browse/SRVKP-1379 issue fix, will remove below wait time
           // eslint-disable-next-line cypress/no-unnecessary-waiting

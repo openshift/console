@@ -176,9 +176,10 @@ Feature: Create the pipeline from builder page
         Scenario: Create pipeline with Workspaces: P-02-TC12
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user clicks on Add in "git-clone" task
+              And user selects "git-clone" from git community
+              And user clicks on Install and add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
               And user clicks on Add workspace
@@ -194,9 +195,10 @@ Feature: Create the pipeline from builder page
         Scenario: Create pipeline with optional Workspaces: P-02-TC13
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipe-opt-workspace"
-              And user clicks on Add task
+              And user clicks Add task button under Tasks section
               And user searches "git-clone" in quick search bar
-              And user clicks on Add in "git-clone" task
+              And user selects "git-clone" from git community
+              And user clicks on Install and add button
               And user selects the "git-clone" node
               And user adds the git url in the url Parameter in cluster task sidebar
               And user clicks on Add workspace

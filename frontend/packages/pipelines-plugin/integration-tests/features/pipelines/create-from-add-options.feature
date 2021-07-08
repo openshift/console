@@ -59,7 +59,7 @@ Feature: Create Pipeline from Add Options
               And user clicks node "<name>" in topology page
              Then pipeline name "<name>" is displayed in topology side bar
               And side bar is displayed with the pipelines section
-              And Last Run status of the "<name>" displays as "Succeeded" in topology page
+              And Last Run status of the workload displays as "Succeeded" in topology page
 
         Examples:
                   | name       |

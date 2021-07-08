@@ -124,12 +124,17 @@ export const pipelinesPage = {
   selectPipeline: (pipelineName: string) => cy.byLegacyTestID(pipelineName).click(),
 
   selectPipelineRun: (pipelineName: string) => {
-    cy.get(pipelinesPO.pipelinesTable.table, { timeout: 30000 }).should('exist');
-    const pipelineRowId = `[data-test-id="${Cypress.env('NAMESPACE')}-${pipelineName}"]`;
-    cy.get(pipelineRowId)
-      .find('td')
-      .eq(2)
-      .click();
+    cy.get(pipelinesPO.pipelinesTable.table).should('exist');
+    cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
+      if ($el.text().includes(pipelineName)) {
+        cy.get('tbody tr')
+          .eq(index)
+          .find('td')
+          .eq(1)
+          .find('a')
+          .click({ force: true });
+      }
+    });
   },
 
   verifyPipelinesTableDisplay: () => cy.get(pipelinesPO.pipelinesTable.table).should('be.visible'),
@@ -250,8 +255,8 @@ export const startPipelineInPipelinesPage = {
     });
   },
   clickStart: () => cy.get(pipelinesPO.startPipeline.start).click(),
-  clickShowCredentialOptions: () => cy.byButtonText('Show Credential options').click(),
-  clickHideCredentialOptions: () => cy.byButtonText('Hide Credential options').click(),
+  clickShowCredentialOptions: () => cy.byButtonText('Show credential options').click(),
+  clickHideCredentialOptions: () => cy.byButtonText('Hide credential options').click(),
   addSecret: (
     secretName: string,
     serverUrl: string,
