@@ -271,15 +271,10 @@ When('user starts the pipeline from start pipeline modal', () => {
   pipelineRunDetailsPage.verifyTitle();
 });
 
-Then(
-  'Last Run status of the {string} displays as {string} in topology page',
-  (name: string, status: string) => {
-    topologyPage.search(name);
-    topologyPage.clickOnNode(name);
-    topologySidePane.verify();
-    topologyPage.verifyPipelineRunStatus(status);
-  },
-);
+Then('Last Run status of the workload displays as {string} in topology page', (status: string) => {
+  topologySidePane.verify();
+  topologyPage.verifyPipelineRunStatus(status);
+});
 
 When('user clicks Actions menu on the top right corner of the page', () => {
   actionsDropdownMenu.clickActionMenu();

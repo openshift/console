@@ -189,21 +189,6 @@ Then('Actions menu display with options Start, Add Trigger, Edit Pipeline, Delet
   cy.byTestActionID(pipelineActions.DeletePipeline).should('be.visible');
 });
 
-Then('Pipeline run details page is displayed', () => {
-  // TODO: implement step
-});
-
-Then('pipeline run status displays as {string} in Pipeline run page', (status: string) => {
-  cy.log(status);
-});
-
-Then(
-  'Last run status of the {string} displays as {string} in pipelines page',
-  (a: string, b: string) => {
-    cy.log(a, b);
-  },
-);
-
 Then('Name field will be disabled', () => {
   cy.get(pipelineBuilderPO.formView.name).should('be.disabled');
 });
