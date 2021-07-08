@@ -11,7 +11,8 @@ import {
   getUID,
   useDeepCompareMemoize,
 } from '@console/shared';
-import { Table, ListPage, getFilteredRows } from '@console/internal/components/factory';
+import { Table, ListPage, Filter } from '@console/internal/components/factory';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NamespaceStoreKind } from '../../types';
@@ -72,7 +73,7 @@ const NamespaceStoreTable: React.FC<NamespaceStoreTableProps> = (props) => {
   const {
     customData: { onRowsSelected, preSelected },
     data,
-    filters = {},
+    filters,
   } = props;
   const visibleRows = getFilteredRows(filters, null, data);
   const visibleUIDs = React.useMemo(() => new Set<string>(visibleRows?.map(getUID)), [visibleRows]);
@@ -125,7 +126,7 @@ type NamespaceStoreTableProps = {
     onRowsSelected?: (arg: NamespaceStoreKind[]) => void;
     preSelected?: string[];
   };
-  filters?: {};
+  filters?: Filter[];
   preSelected?: string[];
 };
 

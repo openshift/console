@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
-import { getFilteredRows } from '@console/internal/components/factory';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { Rule } from '@console/internal/components/monitoring/types';
