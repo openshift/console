@@ -28,7 +28,7 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at Monitoring page', () => {
-  navigateTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Observe);
 });
 
 Given('user is at namespace {string}', (projectName: string) => {

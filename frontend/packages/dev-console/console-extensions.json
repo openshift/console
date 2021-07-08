@@ -348,10 +348,10 @@
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "monitoring",
+      "id": "observe",
       "perspective": "dev",
       "section": "top",
-      "name": "%devconsole~Monitoring%",
+      "name": "%devconsole~Observe%",
       "href": "/dev-monitoring",
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-monitoring",

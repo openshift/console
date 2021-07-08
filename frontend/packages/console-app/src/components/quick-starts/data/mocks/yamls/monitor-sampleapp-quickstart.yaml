@@ -20,9 +20,9 @@ spec:
         1. Go to the project your sample application was created in.
         2. In the **</> Developer** perspective, go to **Topology** view.
         3. Click on the **nodejs-sample** deployment to view its details.
-        4. Click on the **Monitoring** tab in the side panel.
+        4. Click on the **Observe** tab in the side panel.
 
-        You can see context sensitive metrics and alerts in the **Monitoring** tab.
+        You can see context sensitive metrics and alerts in the **Observe** tab.
       review:
         instructions: |-
           #### To verify you can view the monitoring information:
@@ -51,7 +51,7 @@ spec:
     - title: Viewing custom metrics
       description: |-
         ### To view custom metrics:
-        1. Click on the **Metrics** tab of the **Monitoring** page.
+        1. Click on the **Metrics** tab of the **Observe** page.
         2. Click the **Select Query** drop-down list to see the available queries.
         3. Click on **Filesystem Usage** from the list to run the query.
       review:

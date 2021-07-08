@@ -3,11 +3,11 @@ import { devNavigationMenu, monitoringTabs } from '../../constants';
 import { navigateTo, monitoringPage } from '../../pages';
 
 Given('user is on Monitoring page', () => {
-  navigateTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Observe);
 });
 
 When('user navigates to Monitoring page', () => {
-  navigateTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Observe);
 });
 
 When('user clicks on {string} tab', (tabName: string) => {
