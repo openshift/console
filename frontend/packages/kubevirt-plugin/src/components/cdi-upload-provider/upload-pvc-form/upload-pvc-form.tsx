@@ -87,6 +87,7 @@ import {
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
 import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
+
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -149,6 +150,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
   const [isGolden, setIsGolden] = React.useState(!!osParam);
   const [os, setOs] = React.useState<OperatingSystemRecord>();
+  const [pvcSizeFromTemplate, setPvcSizeFromTemplate] = React.useState<boolean>(false);
   const [osImageExists, setOsImageExists] = React.useState(false);
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
   const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
@@ -179,9 +181,11 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
   React.useEffect(() => {
     const value = getGiBUploadPVCSizeByImage((fileValue as File)?.size);
-    setRequestSizeValue(value?.toString());
-    setRequestSizeUnit(BinaryUnit.Gi);
-  }, [fileValue]);
+    const isIso = (fileValue as File)?.name?.toLowerCase().endsWith('.iso');
+    setPvcSizeFromTemplate(!isIso);
+    setRequestSizeValue(isIso ? value?.toString() : os?.baseImageRecomendedSize[0] || '');
+    setRequestSizeUnit(os?.baseImageRecomendedSize[1] || BinaryUnit.Gi);
+  }, [fileValue, os]);
 
   React.useEffect(() => {
     if (storageClassName) {
@@ -267,10 +271,15 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     if (operatingSystem?.baseImageNamespace) {
       setNamespace(operatingSystem.baseImageNamespace);
     }
-    if (operatingSystem?.baseImageRecomendedSize) {
-      setRequestSizeValue(operatingSystem?.baseImageRecomendedSize[0]);
-      setRequestSizeUnit(operatingSystem?.baseImageRecomendedSize[1]);
-    }
+  };
+
+  const handlePvcSizeTemplate = (checked: boolean) => {
+    setPvcSizeFromTemplate(checked);
+    setRequestSizeValue(
+      checked
+        ? os?.baseImageRecomendedSize[0] || ''
+        : getGiBUploadPVCSizeByImage((fileValue as File)?.size)?.toString(),
+    );
   };
 
   React.useEffect(() => {
@@ -376,6 +385,15 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                 ),
               )}
             </FormSelect>
+            {os && (
+              <Checkbox
+                id="golden-os-checkbox-pvc-size-template"
+                className="kv--create-upload__golden-switch"
+                isChecked={pvcSizeFromTemplate}
+                label={t('kubevirt-plugin~Use template size PVC')}
+                onChange={handlePvcSizeTemplate}
+              />
+            )}
           </div>
           {osImageExists && (
             <div className="form-group">

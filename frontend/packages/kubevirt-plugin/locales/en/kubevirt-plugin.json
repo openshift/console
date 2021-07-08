@@ -34,6 +34,7 @@
   "--- Pick an Operating system ---": "--- Pick an Operating system ---",
   "{{nameOrId}} - Default data image already exists": "{{nameOrId}} - Default data image already exists",
   "{{nameOrId}} - Template missing data image definition": "{{nameOrId}} - Template missing data image definition",
+  "Use template size PVC": "Use template size PVC",
   "Operating system source already defined": "Operating system source already defined",
   "In order to add a new source for {{osName}} you will need to delete the following PVC:": "In order to add a new source for {{osName}} you will need to delete the following PVC:",
   "Namespace": "Namespace",
