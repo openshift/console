@@ -4,7 +4,7 @@ import { K8sKind } from '@console/internal/module/k8s/types';
 
 const VERSIONS = ['v1', 'v1alpha3', 'v1beta1', 'v1alpha1'];
 
-const getKubevirtModelAvailableVersion = (model: K8sKind): string =>
+export const getKubevirtModelAvailableVersion = (model: K8sKind): string =>
   _.uniq([model.apiVersion, ...VERSIONS]).find(
     (v) => !!modelFor(referenceForGroupVersionKind(model.apiGroup)(v)(model.kind)),
   );
