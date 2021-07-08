@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 interface EventSourceAlertProps {
   isValidSource: boolean;

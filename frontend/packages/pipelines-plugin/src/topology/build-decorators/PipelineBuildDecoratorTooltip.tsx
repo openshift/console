@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import HorizontalStackedBars from '../../components/charts/HorizontalStackedBars';
+import { useTaskStatus } from '../../components/pipelineruns/hooks/useTaskStatus';
+import TaskStatusToolTip from '../../components/pipelineruns/status/TaskStatusTooltip';
 import { PipelineRunKind } from '../../types';
 import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
-import HorizontalStackedBars from '../../components/charts/HorizontalStackedBars';
-import TaskStatusToolTip from '../../components/pipelineruns/status/TaskStatusTooltip';
+
 import './PipelineBuildDecoratorTooltip.scss';
-import { useTaskStatus } from '../../components/pipelineruns/hooks/useTaskStatus';
 
 export interface PipelineBuildDecoratorTooltipProps {
   pipelineRun: PipelineRunKind;
@@ -42,7 +43,7 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
       </div>
       <div className="odc-pipeline-build-decorator-tooltip__status-bars-wrapper">
         <div className="odc-pipeline-build-decorator-tooltip__status-bars-title">
-          {t('pipelines-plugin~Task Status')}
+          {t('pipelines-plugin~Task status')}
         </div>
         <div className="odc-pipeline-build-decorator-tooltip__status-bars">{pipelineBars}</div>
       </div>

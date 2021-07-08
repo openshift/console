@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
@@ -9,6 +9,8 @@ import {
 export type RevisionItems = { [name: string]: string };
 
 export const getRevisionItems = (revisions: K8sResourceKind[]): RevisionItems => {
+  if (!revisions) return {} as RevisionItems;
+
   return revisions.reduce((acc, currValue) => {
     acc[currValue.metadata.name] = currValue.metadata.name;
     return acc;

@@ -1,5 +1,4 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-
 import {
   DataVolumeSourceType,
   DEFAULT_DISK_SIZE,

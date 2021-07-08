@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GitOpsAppGroupData } from '../utils/gitops-types';
-import GitOpsTableRow from './GitOpsTableRow';
-import GitOpsTableHeader from './GitOpsTableHeader';
-import GitOpsEmptyState from '../GitOpsEmptyState';
 import { Table, TextFilter } from '@console/internal/components/factory';
 import { fuzzyCaseInsensitive } from '@console/internal/components/factory/table-filters';
+import GitOpsEmptyState from '../GitOpsEmptyState';
+import { GitOpsAppGroupData } from '../utils/gitops-types';
+import GitOpsTableHeader from './GitOpsTableHeader';
+import GitOpsTableRow from './GitOpsTableRow';
 import './GitOpsList.scss';
 
 interface GitOpsListProps {

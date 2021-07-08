@@ -1,6 +1,16 @@
 import * as React from 'react';
+import {
+  Alert,
+  Button,
+  ButtonVariant,
+  Label,
+  Level,
+  LevelItem,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
+import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-
 import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
@@ -13,18 +23,6 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
-import {
-  Alert,
-  Button,
-  ButtonVariant,
-  Label,
-  Level,
-  LevelItem,
-  Stack,
-  StackItem,
-} from '@patternfly/react-core';
-import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
-
 import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';

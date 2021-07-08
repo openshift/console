@@ -1,9 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { connect } from 'react-redux';
-import { action } from 'mobx';
 import {
-  ComponentFactory,
   Visualization,
   VisualizationSurface,
   GraphElement,
@@ -22,21 +18,30 @@ import {
   NODE_POSITIONED_EVENT,
   GRAPH_POSITION_CHANGE_EVENT,
 } from '@patternfly/react-topology';
+import * as _ from 'lodash';
+import { action } from 'mobx';
+import { connect } from 'react-redux';
+import {
+  useResolvedExtensions,
+  isTopologyComponentFactory as isDynamicTopologyComponentFactory,
+  TopologyComponentFactory as DynamicTopologyComponentFactory,
+} from '@console/dynamic-plugin-sdk';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { RootState } from '@console/internal/redux';
 import {
   useQueryParams,
   withUserSettingsCompatibility,
   WithUserSettingsCompatibilityProps,
 } from '@console/shared';
-import { useExtensions } from '@console/plugin-sdk';
-import { RootState } from '@console/internal/redux';
-import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
-import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
-import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
-import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
-import { componentFactory } from './components';
-import { odcElementFactory } from '../../elements';
-import TopologyControlBar from './TopologyControlBar';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY, TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY } from '../../const';
+import { odcElementFactory } from '../../elements';
+import { isTopologyComponentFactory, TopologyComponentFactory } from '../../extensions/topology';
+import { getTopologyGraphModel, setTopologyGraphModel } from '../../redux/action';
+import { SHOW_GROUPING_HINT_EVENT, ShowGroupingHintEventListener } from '../../topology-types';
+import { componentFactory } from './components';
+import { COLA_LAYOUT, layoutFactory } from './layouts/layoutFactory';
+import TopologyControlBar from './TopologyControlBar';
 
 import './Topology.scss';
 
@@ -134,14 +139,13 @@ const Topology: React.FC<TopologyProps &
   const storedLayoutApplied = React.useRef<boolean>(false);
   const queryParams = useQueryParams();
   const selectedId = queryParams.get('selectId');
-  const [componentFactories, setComponentFactories] = React.useState<ComponentFactory[]>([]);
-  const componentFactoryExtensions = useExtensions<TopologyComponentFactory>(
-    isTopologyComponentFactory,
-  );
-  const componentFactoriesPromises = React.useMemo(
-    () => componentFactoryExtensions.map((factory) => factory.properties.getFactory()),
-    [componentFactoryExtensions],
-  );
+  const [componentFactoryExtensions, isStaticResolved] = useResolvedExtensions<
+    TopologyComponentFactory
+  >(isTopologyComponentFactory);
+  const [dynamicComponentFactoryExtensions, isDynamicResolved] = useResolvedExtensions<
+    DynamicTopologyComponentFactory
+  >(isDynamicTopologyComponentFactory);
+
   const createVisualization = () => {
     const storedLayout = topologyLayoutDataJson?.[namespace];
     const newVisualization = new Visualization();
@@ -230,21 +234,13 @@ const Topology: React.FC<TopologyProps &
   }, [model, visualization, visualizationReady]);
 
   React.useEffect(() => {
-    Promise.all(componentFactoriesPromises)
-      .then((res) => {
-        setComponentFactories(res);
-      })
-      .catch(() => {});
-  }, [componentFactoriesPromises]);
-
-  React.useEffect(() => {
-    if (componentFactoriesPromises.length && !componentFactories.length) {
+    if (!isStaticResolved || !isDynamicResolved) {
       return;
     }
 
     visualization.registerComponentFactory(componentFactory);
-    componentFactories.forEach((factory) => {
-      visualization.registerComponentFactory(factory);
+    [...componentFactoryExtensions, ...dynamicComponentFactoryExtensions].forEach((factory) => {
+      visualization.registerComponentFactory(factory.properties.getFactory);
     });
 
     visualization.addEventListener<ShowGroupingHintEventListener>(
@@ -254,7 +250,13 @@ const Topology: React.FC<TopologyProps &
       },
     );
     setVisualizationReady(true);
-  }, [visualization, componentFactoriesPromises, componentFactories]);
+  }, [
+    visualization,
+    isStaticResolved,
+    isDynamicResolved,
+    componentFactoryExtensions,
+    dynamicComponentFactoryExtensions,
+  ]);
 
   React.useEffect(() => {
     if (!applicationRef.current) {
@@ -321,13 +323,19 @@ const TopologyDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-export default connect<StateProps, DispatchProps, TopologyProps>(
-  TopologyStateToProps,
-  TopologyDispatchToProps,
-)(
-  withUserSettingsCompatibility<TopologyProps & WithUserSettingsCompatibilityProps<object>, object>(
-    TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
-    TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
-    {},
-  )(React.memo(Topology)),
+export default withFallback(
+  connect<StateProps, DispatchProps, TopologyProps>(
+    TopologyStateToProps,
+    TopologyDispatchToProps,
+  )(
+    withUserSettingsCompatibility<
+      TopologyProps & WithUserSettingsCompatibilityProps<object>,
+      object
+    >(
+      TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY,
+      TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY,
+      {},
+    )(React.memo(Topology)),
+  ),
+  ErrorBoundaryFallback,
 );

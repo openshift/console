@@ -1,5 +1,4 @@
 import * as React from 'react';
-import i18next from 'i18next';
 import {
   ContextMenuItem,
   ContextSubMenuItem,
@@ -7,6 +6,7 @@ import {
   Graph,
   isGraph,
 } from '@patternfly/react-topology';
+import i18next from 'i18next';
 import {
   history,
   KebabItem,
@@ -15,12 +15,12 @@ import {
   kebabOptionsToMenu,
   isKebabSubMenu,
 } from '@console/internal/components/utils';
-import { workloadActions } from '../../../actions/workloadActions';
-import { groupActions } from '../../../actions/groupActions';
 import { graphActions } from '../../../actions/graphActions';
+import { groupActions } from '../../../actions/groupActions';
+import { workloadActions } from '../../../actions/workloadActions';
+import { TYPE_APPLICATION_GROUP } from '../../../const';
 import { TopologyApplicationObject } from '../../../topology-types';
 import { getResource, isOperatorBackedNode } from '../../../utils/topology-utils';
-import { TYPE_APPLICATION_GROUP } from '../../../const';
 
 export const isWorkloadRegroupable = (node: Node): boolean =>
   isGraph(node?.getParent()) || node?.getParent().getType() === TYPE_APPLICATION_GROUP;

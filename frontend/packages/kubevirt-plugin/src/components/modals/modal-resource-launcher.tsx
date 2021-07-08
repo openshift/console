@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-
 import { createModal, GetModalContainer } from '@console/internal/components/factory';
 import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
 import {

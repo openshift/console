@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { BuildModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
 import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BuildModel } from '@console/internal/models';
 import { Status, useBuildConfigsWatcher } from '@console/shared';
 import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';
@@ -25,6 +25,8 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
     return null;
   }
 
+  const label = t('topology~Build {{status}}', { status: build.status?.phase });
+
   const link = `${resourcePathFromModel(
     BuildModel,
     build.metadata.name,
@@ -32,11 +34,8 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
   )}/logs`;
 
   return (
-    <Tooltip
-      content={t('topology~Build {{status}}', { status: build.status && build.status.phase })}
-      position={TooltipPosition.left}
-    >
-      <BuildDecoratorBubble x={x} y={y} radius={radius} href={link}>
+    <Tooltip content={label} position={TooltipPosition.left}>
+      <BuildDecoratorBubble x={x} y={y} radius={radius} ariaLabel={label} href={link}>
         <Status status={build.status.phase} iconOnly noTooltip />
       </BuildDecoratorBubble>
     </Tooltip>

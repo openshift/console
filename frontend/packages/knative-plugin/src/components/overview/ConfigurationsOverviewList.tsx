@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import ConfigurationsOverviewListItem from './ConfigurationsOverviewListItem';
 
 export type ConfigurationsOverviewListProps = {

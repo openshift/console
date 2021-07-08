@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
-
 import {
   VM_DETAIL_CONSOLES_HREF,
   VM_DETAIL_DETAILS_HREF,
@@ -16,6 +14,7 @@ import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getResource } from '../../utils';
 import VMIDetailsPageInfoMessage from '../info-messages/VMIDetailsPageInfoMessage';
 import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
@@ -90,7 +89,7 @@ export const VirtualMachinesInstanceDetailsPage: React.FC<VirtualMachinesInstanc
       {...props}
       name={name}
       namespace={namespace}
-      kind={VirtualMachineInstanceModel.kind}
+      kind={kubevirtReferenceForModel(VirtualMachineInstanceModel)}
       kindObj={VirtualMachineInstanceModel}
       menuActions={vmiMenuActionsCreator}
       pages={pages}

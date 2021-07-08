@@ -66,7 +66,6 @@ const MarkdownExecuteSnippet: React.FC<MarkdownExecuteCommandProps> = ({
 }) => {
   const elements = docContext.querySelectorAll(`${rootSelector} [${MARKDOWN_EXECUTE_BUTTON_ID}]`);
   const showExecuteButton = useCloudShellAvailable();
-
   return elements.length > 0 && showExecuteButton ? (
     <>
       {Array.from(elements).map((elm) => {

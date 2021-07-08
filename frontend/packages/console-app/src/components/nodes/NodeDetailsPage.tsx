@@ -1,16 +1,16 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { navFactory } from '@console/internal/components/utils';
-import { PodsPage } from '@console/internal/components/pod';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { NodeKind } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
+import { PodsPage } from '@console/internal/components/pod';
+import { navFactory } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
 import { nodeStatus } from '../../status/node';
-import NodeDetails from './NodeDetails';
-import NodeTerminal from './NodeTerminal';
 import { menuActions } from './menu-actions';
 import NodeDashboard from './node-dashboard/NodeDashboard';
+import NodeDetails from './NodeDetails';
+import NodeTerminal from './NodeTerminal';
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { editYaml, events, pods } = navFactory;
@@ -20,12 +20,12 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
     (node: NodeKind) => [
       {
         href: '',
-        name: t('nodes~Overview'),
+        name: t('console-app~Overview'),
         component: NodeDashboard,
       },
       {
         href: 'details',
-        name: t('nodes~Details'),
+        name: t('console-app~Details'),
         component: NodeDetails,
       },
       editYaml(),
@@ -43,7 +43,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
           (k === 'node.openshift.io/os_id' && v === 'Windows') ||
           (k === 'corev1.LabelOSStable' && v === 'windows'),
       )
-        ? [{ href: 'terminal', name: t('nodes~Terminal'), component: NodeTerminal }]
+        ? [{ href: 'terminal', name: t('console-app~Terminal'), component: NodeTerminal }]
         : []),
     ],
     [editYaml, events, pods, t],

@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { initialPipelineFormData, getTaskErrorString, TaskErrorType } from '../const';
 import { validationSchema } from '../validation-utils';
-import { initialPipelineFormData, TASK_ERROR_STRINGS, TaskErrorType } from '../const';
 import {
   createSafeTask,
   embeddedTaskSpec,
@@ -43,7 +43,7 @@ describe('Pipeline Build validation schema', () => {
           formData: initialPipelineFormData,
         })
         .then(shouldHaveFailed)
-        .catch(hasError('formData.tasks', 'Must define at least one Task'));
+        .catch(hasError('formData.tasks', 'Must define at least one task.'));
     });
   });
 
@@ -150,7 +150,7 @@ describe('Pipeline Build validation schema', () => {
         tasks: [{ name: 'test' }],
       })
         .then(shouldHaveFailed)
-        .catch(hasError('formData.tasks[0]', 'TaskSpec or TaskRef must be provided'));
+        .catch(hasError('formData.tasks[0]', 'TaskSpec or TaskRef must be provided.'));
     });
 
     it('should pass if provided a taskSpec and name', async () => {
@@ -297,7 +297,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -322,7 +322,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -394,7 +394,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].params',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+              getTaskErrorString(TaskErrorType.MISSING_REQUIRED_PARAMS),
             ),
           );
       });
@@ -450,7 +450,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -478,7 +478,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -507,7 +507,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -536,7 +536,205 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
+            ),
+          );
+      });
+
+      it('should pass if the task does not contain the optional resources', async () => {
+        const clusterTask = {
+          ...resourceTask,
+          spec: {
+            ...resourceTask.spec,
+            resources: {
+              inputs: [{ name: 'optional-input', type: 'git', optional: true }],
+              outputs: [{ name: 'optional-output', type: 'image', optional: true }],
+            },
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-resources', kind: 'ClusterTask' },
+                resources: {
+                  inputs: [],
+                  outputs: [],
+                },
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task contain the optional resources', async () => {
+        const clusterTask = {
+          ...resourceTask,
+          spec: {
+            ...resourceTask.spec,
+            resources: {
+              inputs: [{ name: 'optional-input', type: 'git', optional: true }],
+              outputs: [{ name: 'optional-output', type: 'image', optional: true }],
+            },
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            resources: [
+              { name: 'git-resource', type: 'git' },
+              { name: 'image-resource', type: 'image' },
+            ],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-resources', kind: 'ClusterTask' },
+                resources: {
+                  inputs: [{ name: 'optional-input', resource: 'git-resource' }],
+                  outputs: [{ name: 'optional-output', resource: 'image-resource' }],
+                },
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task contain the optional resources with an empty string', async () => {
+        const clusterTask = {
+          ...resourceTask,
+          spec: {
+            ...resourceTask.spec,
+            resources: {
+              inputs: [{ name: 'optional-input', type: 'git', optional: true }],
+              outputs: [{ name: 'optional-output', type: 'image', optional: true }],
+            },
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            resources: [
+              { name: 'git-resource', type: 'git' },
+              { name: 'image-resource', type: 'image' },
+            ],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-resources', kind: 'ClusterTask' },
+                resources: {
+                  inputs: [{ name: 'optional-input', resource: '' }],
+                  outputs: [{ name: 'optional-output', resource: '' }],
+                },
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the task contains the required but not the optional resources', async () => {
+        const clusterTask = {
+          ...resourceTask,
+          spec: {
+            ...resourceTask.spec,
+            resources: {
+              inputs: [
+                { name: 'required-input', type: 'git' },
+                { name: 'optional-input', type: 'git', optional: true },
+              ],
+              outputs: [
+                { name: 'required-output', type: 'image' },
+                { name: 'optional-output', type: 'image', optional: true },
+              ],
+            },
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            resources: [
+              { name: 'git-resource', type: 'git' },
+              { name: 'image-resource', type: 'image' },
+            ],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-resources', kind: 'ClusterTask' },
+                resources: {
+                  inputs: [{ name: 'required-input', resource: 'git-resource' }],
+                  outputs: [{ name: 'required-output', resource: 'image-resource' }],
+                },
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should fail if the task contains the optional but not the required resources', async () => {
+        const clusterTask = {
+          ...resourceTask,
+          spec: {
+            ...resourceTask.spec,
+            resources: {
+              inputs: [
+                { name: 'required-input', type: 'git' },
+                { name: 'optional-input', type: 'git', optional: true },
+              ],
+              outputs: [
+                { name: 'required-output', type: 'image' },
+                { name: 'optional-output', type: 'image', optional: true },
+              ],
+            },
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            resources: [
+              { name: 'git-resource', type: 'git' },
+              { name: 'image-resource', type: 'image' },
+            ],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-resources', kind: 'ClusterTask' },
+                resources: {
+                  inputs: [{ name: 'optional-input', resource: 'git-resource' }],
+                  outputs: [{ name: 'optional-output', resource: 'image-resource' }],
+                },
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].resources',
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -595,7 +793,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.outputs[0].resource',
-              'Resource type has changed, reselect',
+              'Resource type has changed, reselect.',
             ),
           );
       });
@@ -627,7 +825,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.inputs[0].resource',
-              'Resource name has changed, reselect',
+              'Resource name has changed, reselect.',
             ),
           );
       });
@@ -651,7 +849,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+              getTaskErrorString(TaskErrorType.MISSING_RESOURCES),
             ),
           );
       });
@@ -710,7 +908,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -736,7 +934,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -765,6 +963,70 @@ describe('Pipeline Build validation schema', () => {
           .catch(shouldHavePassed);
       });
 
+      it('should pass if the task does not contain an optional workspaces', async () => {
+        const clusterTask = {
+          ...workspaceTask,
+          spec: {
+            ...workspaceTask.spec,
+            workspaces: [{ name: 'optional-workspace', optional: true }],
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            workspaces: [],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-workspace', kind: 'ClusterTask' },
+                workspaces: [],
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should fail if the task has a optional workspace but miss a required workspaces', async () => {
+        const clusterTask = {
+          ...workspaceTask,
+          spec: {
+            ...workspaceTask.spec,
+            workspaces: [
+              { name: 'optional-workspace', optional: true },
+              { name: 'required-workspace' },
+            ],
+          },
+        };
+        await withFormData(
+          {
+            ...initialPipelineFormData,
+            workspaces: [{ name: 'workspace' }],
+            tasks: [
+              {
+                name: 'test-task',
+                taskRef: { name: 'external-task-with-workspace', kind: 'ClusterTask' },
+                workspaces: [{ name: 'optional-workspace', workspace: 'workspace' }],
+              },
+            ],
+          },
+          {
+            clusterTasks: [clusterTask],
+          },
+        )
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].workspaces',
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
+            ),
+          );
+      });
+
       it('should fail if the task contains all the required workspaces but a mismatch in name occurs', async () => {
         await withFormData(
           {
@@ -789,7 +1051,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces[0].workspace',
-              'Workspace name has changed, reselect',
+              'Workspace name has changed, reselect.',
             ),
           );
       });
@@ -806,7 +1068,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces',
-              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+              getTaskErrorString(TaskErrorType.MISSING_WORKSPACES),
             ),
           );
       });
@@ -833,7 +1095,7 @@ describe('Pipeline Build validation schema', () => {
     describe('Validate When Expresssions', () => {
       const invalidWhenExpressionCheck = hasError(
         'formData.tasks[0].when',
-        TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS],
+        getTaskErrorString(TaskErrorType.MISSING_REQUIRED_WHEN_EXPRESSIONS),
       );
 
       it('should fail if the when expression is missing input value', async () => {

@@ -1,5 +1,5 @@
-import { Plugin } from '@console/plugin-sdk';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyDecoratorProvider,
   TopologyDataModelFactory,
@@ -21,7 +21,7 @@ export const pipelinesTopologyPlugin: Plugin<PipelineTopologyConsumedExtensions>
       id: 'pipeline-topology-model-factory',
       priority: 800,
       resources: tknPipelineAndPipelineRunsWatchResources,
-      getDataModelReconciler,
+      getDataModelReconciler: applyCodeRefSymbol(getDataModelReconciler),
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],

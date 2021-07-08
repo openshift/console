@@ -1,10 +1,8 @@
-import cn from 'classnames';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Text, TextVariants } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
-
+import cn from 'classnames';
+import { useTranslation } from 'react-i18next';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
 import SSHCreateService from '../SSHCreateService/SSHCreateService';
 import SSHForm from '../SSHForm/SSHForm';

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import {
   NodeLink,
@@ -17,11 +16,11 @@ import DashboardCardLink from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm';
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
@@ -31,6 +30,7 @@ import {
 } from '../../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../../utils/guest-agent-utils';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import VMIP from '../../vms/VMIP';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const { t } = useTranslation();
@@ -49,7 +49,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
 
   const launcherPod = findVMIPod(vmi, pods);
 
-  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
+  const ipAddrs = getVmiIpAddresses(vmi);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
 
   const name = getName(vmiLike);
@@ -57,7 +57,9 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
 
   const viewAllLink = `${resourcePath(
-    vm ? VirtualMachineModel.kind : VirtualMachineInstanceModel.kind,
+    vm
+      ? kubevirtReferenceForModel(VirtualMachineModel)
+      : kubevirtReferenceForModel(VirtualMachineInstanceModel),
     name,
     namespace,
   )}/${VM_DETAIL_DETAILS_HREF}`;
@@ -117,7 +119,7 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             isLoading={!vmiLike}
             valueClassName="co-select-to-copy"
           >
-            {launcherPod && ipAddrs}
+            {launcherPod && ipAddrs && <VMIP data={ipAddrs} />}
           </DetailItem>
           <DetailItem
             title={t('kubevirt-plugin~Operating System')}

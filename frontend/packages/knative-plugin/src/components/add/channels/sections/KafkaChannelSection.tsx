@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NumberSpinnerField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { NumberSpinnerField } from '@console/shared';
 
 const KafkaChannelSection: React.FC = () => {
   const { t } = useTranslation();

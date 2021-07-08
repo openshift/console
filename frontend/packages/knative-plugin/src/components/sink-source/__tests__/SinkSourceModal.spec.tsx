@@ -6,9 +6,9 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import SinkSourceModal from '../SinkSourceModal';
 import { ServiceModel } from '../../../models';
 import { SinkUriResourcesGroup } from '../../add/event-sources/SinkSection';
+import SinkSourceModal from '../SinkSourceModal';
 
 type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
 

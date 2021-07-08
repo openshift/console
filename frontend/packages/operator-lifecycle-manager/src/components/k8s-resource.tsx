@@ -1,33 +1,22 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { Status } from '@console/shared';
-import {
-  ResourceLink,
-  Timestamp,
-  MsgBox,
-  FirehoseResource,
-} from '@console/internal/components/utils';
 import {
   MultiListPage,
   Table,
   TableRow,
   TableData,
   RowFunction,
+  Flatten,
 } from '@console/internal/components/factory';
 import {
-  K8sResourceKind,
-  GroupVersionKind,
-  kindForReference,
-  modelFor,
-  referenceForGroupVersionKind,
-} from '@console/internal/module/k8s';
-import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
-import { providedAPIForReference } from './index';
-import { OperandLink } from './operand/operand-link';
-import { useTranslation } from 'react-i18next';
+  ResourceLink,
+  Timestamp,
+  MsgBox,
+  FirehoseResource,
+} from '@console/internal/components/utils';
 import {
   ConfigMapModel,
   DeploymentModel,
@@ -37,6 +26,18 @@ import {
   SecretModel,
   ServiceModel,
 } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  GroupVersionKind,
+  kindForReference,
+  modelFor,
+  referenceForGroupVersionKind,
+  K8sResourceCommon,
+} from '@console/internal/module/k8s';
+import { Status } from '@console/shared';
+import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
+import { OperandLink } from './operand/operand-link';
+import { providedAPIForReference } from './index';
 
 const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: DeploymentModel.kind, version: DeploymentModel.apiVersion },
@@ -49,10 +50,10 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
 ];
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'hidden-xs'),
+  '',
+  'pf-u-w-16-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-16-on-lg',
+  'pf-m-hidden pf-m-visible-on-sm',
 ];
 
 export const ResourceTableRow: RowFunction<
@@ -120,9 +121,9 @@ export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
   );
 };
 
-export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
-  [kind: string]: { data: K8sResourceKind[] };
-}): K8sResourceKind[] => {
+export const flattenCsvResources = (
+  parentObj: K8sResourceCommon,
+): Flatten<{ [key: string]: K8sResourceCommon[] }, K8sResourceCommon[]> => (resources) => {
   return _.flatMap(resources, (resource, kind: string) =>
     _.map(resource.data, (item) => ({ ...item, kind })),
   ).reduce((owned, resource) => {
@@ -133,7 +134,7 @@ export const flattenCsvResources = (parentObj: K8sResourceKind) => (resources: {
     )
       ? owned.concat([resource])
       : owned;
-  }, [] as K8sResourceKind[]);
+  }, []);
 };
 
 // NOTE: This is us building the `ownerReferences` graph client-side
@@ -147,12 +148,7 @@ export const linkForCsvResource = (
   (providedAPI?.resources ?? []).some(({ kind, name }) => name && kind === obj.kind) ? (
     <OperandLink obj={obj} csvName={csvName} />
   ) : (
-    <ResourceLink
-      kind={obj.kind}
-      name={obj.metadata.name}
-      namespace={obj.metadata.namespace}
-      title={obj.metadata.name}
-    />
+    <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
   );
 
 export const Resources: React.FC<ResourcesProps> = (props) => {

@@ -204,6 +204,7 @@ export type SubscriptionKind = {
     installPlanRef?: ObjectReference;
     state?: SubscriptionState;
     lastUpdated?: string;
+    currentCSV?: string;
   };
 } & K8sResourceCommon;
 

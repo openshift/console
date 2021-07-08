@@ -1,11 +1,9 @@
 import * as React from 'react';
+import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
-
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import {
   getCPU,
@@ -17,10 +15,10 @@ import {
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
-import { isLabeledTemplate, selectVM } from '../../../selectors/vm-template/basic';
+import { selectVM } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
-import { VMTemplateLabel } from '../label';
 import { createVMAction } from '../utils';
+import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 
 import './vm-template-table.scss';
 
@@ -38,14 +36,13 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   const { t } = useTranslation();
   const osName = getOperatingSystemName(template);
   const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
-  const isLabel = isLabeledTemplate(t, template);
   return (
     <Stack hasGutter>
-      {isLabel && (
+      {
         <StackItem>
-          <VMTemplateLabel template={template} />
+          <VMTemplateCommnunityLabel template={template} />
         </StackItem>
-      )}
+      }
       {osName && <StackItem>{osName}</StackItem>}
       <StackItem>
         <div className="kubevirt-vm-template-popover">
@@ -71,7 +68,6 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
         <StackItem>
           <Link
             to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-            title={template.metadata.uid}
             data-test-id={template.metadata.name}
             className="co-resource-item__resource-name"
           >

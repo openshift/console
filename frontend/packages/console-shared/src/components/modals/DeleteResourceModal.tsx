@@ -1,22 +1,23 @@
 import * as React from 'react';
-import { useTranslation, Trans } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
-import { PromiseComponent, history } from '@console/internal/components/utils';
+import { Formik, FormikProps, FormikValues } from 'formik';
+import { useTranslation, Trans } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Formik, FormikProps, FormikValues } from 'formik';
+import { PromiseComponent, history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { YellowExclamationTriangleIcon } from '../status';
 import { InputField } from '../formik-fields';
+import { YellowExclamationTriangleIcon } from '../status';
 
 type DeleteResourceModalProps = {
   resourceName: string;
   resourceType: string;
-  actionLabelKey?: string;
+  actionLabel?: string; // Used to send translated strings as action label.
+  actionLabelKey?: string; // Used to send translation key for action label.
   redirect?: string;
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
@@ -32,6 +33,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   handleSubmit,
   resourceName,
   resourceType,
+  actionLabel,
   // t('console-shared~Delete')
   actionLabelKey = 'console-shared~Delete',
   isSubmitting,
@@ -41,7 +43,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
 }) => {
   const { t } = useTranslation();
   const isValid = values.resourceName === resourceName;
-  const submitLabel = t(actionLabelKey);
+  const submitLabel = actionLabel || t(actionLabelKey);
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>

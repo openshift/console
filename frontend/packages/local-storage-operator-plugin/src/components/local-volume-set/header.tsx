@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Text, TextContent } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const LocalVolumeSetHeader: React.FC<LocalVolumeSetHeaderProps> = ({
   className,
@@ -17,7 +17,7 @@ export const LocalVolumeSetHeader: React.FC<LocalVolumeSetHeaderProps> = ({
       </TextContent>
       <p className="help-block">
         {t(
-          'lso-plugin~A Local Volume Set allows you to filter a set of storage volumes group them and create a dedicated storage class to consume storage for them.',
+          'lso-plugin~A Local Volume Set allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
         )}
       </p>
     </>

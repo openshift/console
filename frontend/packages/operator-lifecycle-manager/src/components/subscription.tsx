@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { match, Link } from 'react-router-dom';
-import { sortable } from '@patternfly/react-table';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { match, Link } from 'react-router-dom';
 import { Conditions } from '@console/internal/components/conditions';
 import {
   DetailsPage,
@@ -66,10 +66,11 @@ import {
   InstallPlanPhase,
   CatalogSourceKind,
 } from '../types';
-import { requireOperatorGroup } from './operator-group';
-import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
-import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
+import { upgradeRequiresApproval } from '../utils';
 import { createInstallPlanApprovalModal } from './modals/installplan-approval-modal';
+import { createSubscriptionChannelModal } from './modals/subscription-channel-modal';
+import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import { requireOperatorGroup } from './operator-group';
 import { getManualSubscriptionsInNamespace, NamespaceIncludesManualApproval } from './index';
 
 export const catalogSourceForSubscription = (
@@ -106,18 +107,12 @@ export const installPlanForSubscription = (
 ): InstallPlanKind =>
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 
-export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
-  subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
-  (subscription.status?.conditions ?? []).filter(
-    ({ status, reason }) => status === 'True' && reason === 'RequiresApproval',
-  ).length > 0;
-
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,
 ];
 
@@ -207,16 +202,10 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, ke
           kind={referenceForModel(SubscriptionModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-          displayName={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <SubscriptionStatus subscription={obj} />

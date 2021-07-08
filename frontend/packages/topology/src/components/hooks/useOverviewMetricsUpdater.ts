@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
-import { METRICS_POLL_INTERVAL } from '@console/shared/src';
+import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import {
   fetchOverviewMetrics,
   METRICS_FAILURE_CODES,
   OverviewMetrics,
 } from '@console/internal/components/overview/metricUtils';
-import { PROMETHEUS_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
+import { METRICS_POLL_INTERVAL } from '@console/shared/src';
 
 type StopOverviewMetricsUpdater = () => void;
 

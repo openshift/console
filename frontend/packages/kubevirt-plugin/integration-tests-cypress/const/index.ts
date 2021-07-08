@@ -55,7 +55,7 @@ export enum VM_STATUS {
 export enum VM_ACTION_TIMEOUT {
   VM_BOOTUP = 180000,
   VM_IMPORT = 360000,
-  VM_IMPORT_AND_BOOTUP = 540000,
+  VM_IMPORT_AND_BOOTUP = 900000,
 }
 
 export enum Flavor {

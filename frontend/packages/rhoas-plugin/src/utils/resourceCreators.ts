@@ -1,5 +1,4 @@
 import { SecretModel } from '@console/internal/models';
-import { getRandomChars } from '@console/shared';
 import { k8sWaitForUpdate } from '@console/internal/module/k8s';
 import {
   k8sCreate,
@@ -8,6 +7,7 @@ import {
   k8sUpdate,
   k8sKillByName,
 } from '@console/internal/module/k8s/resource';
+import { getRandomChars } from '@console/shared';
 import {
   AccessTokenSecretName,
   ServiceAccountCRName,

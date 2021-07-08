@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
-import { LoadingInline } from '@console/internal/components/utils';
 import { AccessConsoles } from '@patternfly/react-console';
 import { Alert, AlertActionCloseButton, Button, Stack, StackItem } from '@patternfly/react-core';
-
+import { Trans, useTranslation } from 'react-i18next';
+import { LoadingInline } from '@console/internal/components/utils';
 import { ConsoleType } from '../../../constants/vm/console-type';
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';

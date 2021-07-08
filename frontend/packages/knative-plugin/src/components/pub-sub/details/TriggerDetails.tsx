@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { Conditions } from '@console/internal/components/conditions';
+import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { EventingBrokerModel } from '../../../models';
-import FilterTable from '../../overview/FilterTable';
 import { getTriggerFilters } from '../../../topology/knative-topology-utils';
+import FilterTable from '../../overview/FilterTable';
 import DynamicResourceLink from './DynamicResourceLink';
 
 import './DynamicResourceLink.scss';

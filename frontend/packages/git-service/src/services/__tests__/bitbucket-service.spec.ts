@@ -7,8 +7,8 @@ import {
   RepoLanguageList,
   RepoStatus,
 } from '../../types';
-import { BitbucketService } from '../bitbucket-service';
 import { DockerFileParser } from '../../utils';
+import { BitbucketService } from '../bitbucket-service';
 
 describe('Bitbucket Service', () => {
   const nockBack = nock.back;

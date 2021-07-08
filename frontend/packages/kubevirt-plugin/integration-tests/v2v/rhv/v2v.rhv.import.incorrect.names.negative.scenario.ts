@@ -4,7 +4,6 @@ import {
   deleteResources,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-
 import { v2vUIDeployment } from '../../tests/mocks/mocks';
 import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
 import { wrongValues } from '../../tests/utils/constants/vm';

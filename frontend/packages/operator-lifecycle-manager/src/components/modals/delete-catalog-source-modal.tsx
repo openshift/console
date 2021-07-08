@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
@@ -7,9 +7,9 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import { YellowExclamationTriangleIcon } from '@console/shared';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
-import { Trans, useTranslation } from 'react-i18next';
+import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const DeleteCatalogSourceModal: React.FC<DeleteCatalogSourceModalProps> = ({
   kind,

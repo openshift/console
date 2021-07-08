@@ -1,6 +1,9 @@
 import { FirehoseResource } from '@console/internal/components/utils';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
-import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
+import {
+  knativeServiceObj,
+  MockKnativeResources,
+} from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
@@ -9,7 +12,11 @@ import {
   knativeServingResourcesServices,
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
+  knativeCamelDomainMappingResourceWatchers,
   knativeServingResourcesRoutes,
+  getTrafficByRevision,
+  getKnativeServingDomainMapping,
+  getDomainMapping,
 } from '../get-knative-resources';
 import { deploymentData, deploymentKnativeData } from './knative-serving-data';
 
@@ -67,6 +74,76 @@ describe('Get knative resources', () => {
       const knEventResource = getKnativeServingServices(deploymentData, MockResources);
       expect(knEventResource).toBeUndefined();
     });
+
+    it('expect getTrafficByRevision to return traffic url with percentage if present', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+        status: {
+          traffic: [
+            {
+              latestRevision: true,
+              percent: 60,
+              revisionName: 'overlayimage-00001',
+              url: 'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+              tag: 'tag1',
+            },
+            {
+              latestRevision: true,
+              percent: 40,
+              revisionName: 'overlayimage-00002',
+              url: 'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+              tag: 'tag2',
+            },
+          ],
+        },
+      };
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData.urls).toHaveLength(1);
+      expect(knTrafficData.urls).toEqual([
+        'http://tag1-overlayimage-cluster.apps.cluster.devcluster.openshift.com',
+      ]);
+      expect(knTrafficData.percent).toEqual('60%');
+    });
+
+    it('expect getTrafficByRevision to not return traffic url with percentage if service status is not present', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+      };
+      delete mockKsvcData.status;
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData).toEqual({});
+    });
+
+    it('expect getTrafficByRevision to not return traffic url with percentage if service status doesnot has traffic', () => {
+      const mockKsvcData = {
+        ...MockKnativeResources.services.data[0],
+      };
+      const knTrafficData = getTrafficByRevision('overlayimage-00001', mockKsvcData);
+      expect(knTrafficData).toEqual({});
+    });
+
+    it('expect getDomainMapping to return domain data for the associated service', () => {
+      const domainMappingResources = getDomainMapping(
+        knativeServiceObj,
+        MockKnativeResources.domainmappings,
+      );
+      expect(domainMappingResources).toBeDefined();
+      expect(domainMappingResources).toHaveLength(1);
+    });
+
+    it('expect getKnativeServingDomainMapping to return domain data', () => {
+      const knServingResource = getKnativeServingDomainMapping(
+        knativeServiceObj,
+        MockKnativeResources,
+      );
+      expect(knServingResource.domainMappings).toBeDefined();
+      expect(knServingResource.domainMappings).toHaveLength(1);
+    });
+
+    it('expect getKnativeServingDomainMapping to return route as undefined', () => {
+      const knServingResource = getKnativeServingDomainMapping(deploymentData, MockResources);
+      expect(knServingResource).toBeUndefined();
+    });
   });
 
   describe('knative Serving Resources', () => {
@@ -105,6 +182,16 @@ describe('Get knative resources', () => {
       expect(routeServingResource).toHaveLength(1);
       expect(routeServingResource[0].namespace).toBe(SAMPLE_NAMESPACE);
       expect(routeServingResource[0].prop).toBe('ksroutes');
+    });
+
+    it('expect knativeCamelDomainMappingResourceWatchers to return watch resources', () => {
+      const domainMappingResource = knativeCamelDomainMappingResourceWatchers(SAMPLE_NAMESPACE);
+      expect(domainMappingResource.domainmappings).toEqual({
+        isList: true,
+        kind: 'serving.knative.dev~v1alpha1~DomainMapping',
+        namespace: 'mynamespace',
+        optional: true,
+      });
     });
   });
 });

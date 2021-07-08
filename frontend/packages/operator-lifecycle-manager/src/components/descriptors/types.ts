@@ -14,7 +14,6 @@ export enum SpecCapability {
   namespaceSelector = 'urn:alm:descriptor:com.tectonic.ui:namespaceSelector',
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
   booleanSwitch = 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch',
-
   password = 'urn:alm:descriptor:com.tectonic.ui:password',
   checkbox = 'urn:alm:descriptor:com.tectonic.ui:checkbox',
   imagePullPolicy = 'urn:alm:descriptor:com.tectonic.ui:imagePullPolicy',
@@ -45,6 +44,13 @@ export enum StatusCapability {
   // Prefix for all kubernetes resource status descriptors.
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
   hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
+}
+
+export enum CommonCapability {
+  podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
+  k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
+  hidden = 'urn:alm:descriptor:com.tectonic.ui:hidden',
+  password = 'urn:alm:descriptor:com.tectonic.ui:password',
 }
 
 export type Descriptor<T = any> = {

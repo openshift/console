@@ -1,24 +1,24 @@
 import * as _ from 'lodash';
-import { ResourceUtil } from '@console/shared';
-import { MockResources, sampleDeploymentConfigs, sampleDeployments } from './test-resource-data';
+import { Alert } from '@console/internal/components/monitoring/types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  sampleKnativeDeployments,
+  MockKnativeResources,
+} from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServingRevisions,
   getKnativeServingConfigurations,
   getKnativeServingRoutes,
   getKnativeServingServices,
 } from '@console/knative-plugin/src/utils/get-knative-resources';
-import {
-  sampleKnativeDeployments,
-  MockKnativeResources,
-} from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Alert } from '@console/internal/components/monitoring/types';
+import { ResourceUtil } from '@console/shared';
+import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 import {
   createOverviewItemsForType,
   getResourceData,
   getWorkloadMonitoringAlerts,
 } from '../resource-utils';
-import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
+import { MockResources, sampleDeploymentConfigs, sampleDeployments } from './test-resource-data';
 
 declare global {
   namespace jest {

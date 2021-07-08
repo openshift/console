@@ -10,7 +10,7 @@ const TerminalLoadingBox: React.FC<TerminalLoadingBoxProps> = ({ message }) => {
   const { t } = useTranslation();
   return (
     <LoadingBox
-      message={message ?? t('cloudshell~Connecting to your OpenShift command line terminal ...')}
+      message={message ?? t('console-app~Connecting to your OpenShift command line terminal ...')}
     />
   );
 };

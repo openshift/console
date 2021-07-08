@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Button, ButtonProps, Popover, PopoverPosition } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
-import { Button, ButtonProps, Popover, PopoverPosition } from '@patternfly/react-core';
 
 export const DashboardCardButtonLink: React.FC<DashboardCardButtonLinkProps> = React.memo(
   ({ children, className, ...rest }) => (
@@ -32,7 +32,7 @@ export const DashboardCardPopupLink: React.FC<DashboardCardPopupLinkProps> = Rea
     onHide,
     position = PopoverPosition.top,
   }) => {
-    if (React.Children.count(children) === 0) {
+    if (React.Children.count(children) === 0 || !linkTitle) {
       return null;
     }
 

@@ -52,7 +52,7 @@ describe('markdown-view', () => {
         .onLoad({} as React.SyntheticEvent);
     });
     expect(renderExtension).toHaveBeenCalledWith(
-      (v1.find('iframe').getDOMNode() as HTMLIFrameElement).contentDocument,
+      (v1.find('iframe').getDOMNode() as HTMLIFrameElement).contentDocument ?? document,
       '',
     );
 

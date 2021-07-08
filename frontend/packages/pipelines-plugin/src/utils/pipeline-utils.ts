@@ -1,5 +1,13 @@
 import * as _ from 'lodash';
+import { errorModal } from '@console/internal/components/modals/error-modal';
+import {
+  LOG_SOURCE_RESTARTING,
+  LOG_SOURCE_WAITING,
+  LOG_SOURCE_RUNNING,
+  LOG_SOURCE_TERMINATED,
+} from '@console/internal/components/utils';
 import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
+import { ServiceAccountModel } from '@console/internal/models';
 import {
   ContainerStatus,
   k8sUpdate,
@@ -9,16 +17,21 @@ import {
   K8sKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import {
-  LOG_SOURCE_RESTARTING,
-  LOG_SOURCE_WAITING,
-  LOG_SOURCE_RUNNING,
-  LOG_SOURCE_TERMINATED,
-} from '@console/internal/components/utils';
-import { ServiceAccountModel } from '@console/internal/models';
-import { errorModal } from '@console/internal/components/modals/error-modal';
 import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
+import {
+  PipelineRunModel,
+  TaskRunModel,
+  PipelineResourceModel,
+  ConditionModel,
+  ClusterTaskModel,
+  TriggerTemplateModel,
+  TriggerBindingModel,
+  ClusterTriggerBindingModel,
+  PipelineModel,
+  TaskModel,
+  EventListenerModel,
+} from '../models';
 import {
   PipelineRunKind,
   PipelineRunParam,
@@ -34,19 +47,6 @@ import {
   pipelineRunStatus,
   SucceedConditionReason,
 } from './pipeline-filter-reducer';
-import {
-  PipelineRunModel,
-  TaskRunModel,
-  PipelineResourceModel,
-  ConditionModel,
-  ClusterTaskModel,
-  TriggerTemplateModel,
-  TriggerBindingModel,
-  ClusterTriggerBindingModel,
-  PipelineModel,
-  TaskModel,
-  EventListenerModel,
-} from '../models';
 
 interface ServiceAccountSecretNames {
   [name: string]: string;
@@ -383,15 +383,35 @@ type KeyValuePair = {
   key: string;
   value: string;
 };
-export const getSecretAnnotations = (annotation: KeyValuePair) => {
-  const annotations = {};
+
+const getAnnotationKey = (secretType: string, suffix: number) => {
   const annotationPrefix = 'tekton.dev';
-  if (annotation?.key === SecretAnnotationId.Git) {
-    annotations[`${annotationPrefix}/${SecretAnnotationId.Git}-0`] = annotation?.value;
-  } else if (annotation?.key === SecretAnnotationId.Image) {
-    annotations[`${annotationPrefix}/${SecretAnnotationId.Image}-0`] = annotation?.value;
+  if (secretType === SecretAnnotationId.Git) {
+    return `${annotationPrefix}/${SecretAnnotationId.Git}-${suffix}`;
   }
-  return annotations;
+  if (secretType === SecretAnnotationId.Image) {
+    return `${annotationPrefix}/${SecretAnnotationId.Image}-${suffix}`;
+  }
+  return null;
+};
+
+export const getSecretAnnotations = (
+  annotation: KeyValuePair,
+  existingAnnotations: { [key: string]: string } = {},
+) => {
+  let count = 0;
+  let annotationKey = getAnnotationKey(annotation?.key, count);
+  if (!annotationKey) {
+    return existingAnnotations;
+  }
+  while (
+    existingAnnotations[annotationKey] &&
+    existingAnnotations[annotationKey] !== annotation?.value
+  ) {
+    annotationKey = getAnnotationKey(annotation?.key, ++count);
+  }
+
+  return { ...existingAnnotations, [annotationKey]: annotation?.value };
 };
 
 export const pipelinesTab = (kindObj: K8sKind) => {

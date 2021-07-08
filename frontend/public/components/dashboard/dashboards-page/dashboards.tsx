@@ -12,6 +12,7 @@ import DashboardGrid, {
   GridPosition,
   GridDashboardCard,
 } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { RestoreGettingStartedButton } from '@console/shared/src/components/getting-started';
 import {
   useExtensions,
   DashboardsCard,
@@ -19,22 +20,38 @@ import {
   isDashboardsCard,
   isDashboardsTab,
 } from '@console/plugin-sdk';
+import {
+  DashboardsCard as DynamicDashboardsCard,
+  DashboardsTab as DynamicDashboardsTab,
+  isDashboardsCard as isDynamicDashboardsCard,
+  isDashboardsTab as isDynamicDashboardsTab,
+} from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../../redux';
+import { USER_SETTINGS_KEY } from './cluster-dashboard/getting-started/constants';
 
 export const getCardsOnPosition = (
   cards: DashboardsCard[],
+  dynamicCards: DynamicDashboardsCard[],
   position: GridPosition,
-): GridDashboardCard[] =>
-  cards
+): GridDashboardCard[] => [
+  ...cards
     .filter((c) => c.properties.position === position)
     .map((c) => ({
       Card: () => <AsyncComponent loader={c.properties.loader} />,
       span: c.properties.span,
-    }));
+    })),
+  ...dynamicCards
+    .filter((c) => c.properties.position === position)
+    .map((c) => ({
+      Card: () => <AsyncComponent loader={c.properties.component} />,
+      span: c.properties.span,
+    })),
+];
 
 export const getPluginTabPages = (
-  tabs: DashboardsTab[],
+  tabs: (DashboardsTab | DynamicDashboardsTab)[],
   cards: DashboardsCard[],
+  dynamicCards: DynamicDashboardsCard[],
   navSection: string,
   firstTabId: string,
 ): Page[] => {
@@ -47,9 +64,9 @@ export const getPluginTabPages = (
       component: () => (
         <Dashboard>
           <DashboardGrid
-            mainCards={getCardsOnPosition(tabCards, GridPosition.MAIN)}
-            leftCards={getCardsOnPosition(tabCards, GridPosition.LEFT)}
-            rightCards={getCardsOnPosition(tabCards, GridPosition.RIGHT)}
+            mainCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.MAIN)}
+            leftCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.LEFT)}
+            rightCards={getCardsOnPosition(tabCards, dynamicCards, GridPosition.RIGHT)}
           />
         </Dashboard>
       ),
@@ -62,22 +79,37 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
   const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
+  const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
+  const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
   const pluginPages = React.useMemo(
-    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
-    [tabExtensions, cardExtensions],
+    () =>
+      getPluginTabPages(
+        [...tabExtensions, ...dynamicTabExtensions],
+        cardExtensions,
+        dynamicCardExtensions,
+        'home',
+        '',
+      ),
+    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
   );
 
-  const allPages = React.useMemo(
+  const allPages: Page[] = React.useMemo(
     () => [
       {
         href: '',
         name: t('public~Cluster'),
         component: ClusterDashboard,
+        badge: <RestoreGettingStartedButton userSettingsKey={USER_SETTINGS_KEY} />,
       },
       ...pluginPages,
     ],
     [pluginPages, t],
+  );
+
+  const badge = React.useMemo(
+    () => allPages.find((page) => `/dashboards${page.href}` === match.path)?.badge,
+    [allPages, match],
   );
 
   return kindsInFlight && k8sModels.size === 0 ? (
@@ -87,7 +119,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} detail={true} />
+      <PageHeading title={title} detail={true} badge={badge} />
       <HorizontalNav match={match} pages={allPages} noStatusBox />
     </>
   );

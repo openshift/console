@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { map } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import {
   parsePrometheusDuration,
   formatPrometheusDuration,

@@ -80,6 +80,7 @@ export type DiscoveryResources = {
   adminResources: string[];
   allResources: string[];
   configResources: K8sKind[];
+  clusterOperatorConfigResources: K8sKind[];
   models: K8sKind[];
   namespacedSet: Set<string>;
   safeResources: string[];
@@ -168,12 +169,17 @@ export const getResources = () =>
         models,
         (m) => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator',
       );
+      const clusterOperatorConfigResources = _.filter(
+        models,
+        (m) => m.apiGroup === 'operator.openshift.io',
+      );
 
       return {
         allResources,
         safeResources,
         adminResources,
         configResources,
+        clusterOperatorConfigResources,
         namespacedSet,
         models,
         groupVersionMap,

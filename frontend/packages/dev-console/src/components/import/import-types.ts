@@ -1,13 +1,12 @@
 import { ValidatedOptions } from '@patternfly/react-core';
-import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
-import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
+import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
-import { ServiceModel } from '@console/knative-plugin/src/models';
-import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
-import { HealthCheckProbe } from '../health-checks/health-checks-types';
+import { HealthCheckFormProbe } from '../health-checks/health-checks-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -89,7 +88,7 @@ export interface DeployImageFormData {
   build: BuildData;
   deployment: DeploymentData;
   limits: LimitsData;
-  healthChecks: HealthChecksData;
+  healthChecks: HealthChecksFormData;
   fileUpload?: FileUploadData;
 }
 
@@ -114,7 +113,7 @@ export interface BaseFormData {
   deployment: DeploymentData;
   labels: { [name: string]: string };
   limits: LimitsData;
-  healthChecks: HealthChecksData;
+  healthChecks: HealthChecksFormData;
 }
 export interface UploadJarFormData extends BaseFormData {
   fileUpload: FileUploadData;
@@ -232,6 +231,7 @@ export interface DeploymentData {
 
 export interface ServerlessData {
   scaling: ServerlessScaling;
+  domainMapping?: string[];
 }
 
 export interface ServerlessScaling {
@@ -272,9 +272,10 @@ export enum Resources {
 }
 
 export const ReadableResourcesNames = {
-  [Resources.OpenShift]: DeploymentConfigModel.label,
-  [Resources.Kubernetes]: DeploymentModel.label,
-  [Resources.KnativeService]: `Knative ${ServiceModel.label}`,
+  [Resources.OpenShift]: DeploymentConfigModel.labelKey,
+  [Resources.Kubernetes]: DeploymentModel.labelKey,
+  // t('devconsole~Serverless Deployment')
+  [Resources.KnativeService]: `devconsole~Serverless Deployment`,
 };
 
 export interface ImportData {
@@ -333,8 +334,8 @@ export enum ImportOptions {
   UPLOADJAR = 'UPLOADJAR',
 }
 
-export interface HealthChecksData {
-  readinessProbe: HealthCheckProbe;
-  livenessProbe: HealthCheckProbe;
-  startupProbe?: HealthCheckProbe;
+export interface HealthChecksFormData {
+  readinessProbe: HealthCheckFormProbe;
+  livenessProbe: HealthCheckFormProbe;
+  startupProbe?: HealthCheckFormProbe;
 }

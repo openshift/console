@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { mergeExtensionProperties } from '../utils/store';
 import {
   Extension,
   RemoteEntryModule,
@@ -11,6 +10,7 @@ import {
   ExtensionProperties,
   UpdateExtensionProperties,
 } from '../types';
+import { mergeExtensionProperties } from '../utils/store';
 
 // TODO(vojtech): support code refs at any level within the properties object
 

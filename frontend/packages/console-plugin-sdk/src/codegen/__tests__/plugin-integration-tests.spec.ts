@@ -1,7 +1,7 @@
 import * as glob from 'glob';
-import { PluginPackage } from '../plugin-resolver';
-import { getTestSuitesForPluginPackage, mergeTestSuites } from '../plugin-integration-tests';
 import { getTemplatePackage } from '../../utils/test-utils';
+import { getTestSuitesForPluginPackage, mergeTestSuites } from '../plugin-integration-tests';
+import { PluginPackage } from '../plugin-resolver';
 
 describe('getTestSuitesForPluginPackage', () => {
   let globMock: jest.SpyInstance<typeof glob.sync>;

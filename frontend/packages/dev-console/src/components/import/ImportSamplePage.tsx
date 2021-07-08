@@ -1,17 +1,18 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Formik } from 'formik';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FirehoseResource,
   LoadingBox,
   history,
   PageHeading,
 } from '@console/internal/components/utils';
-import { ImageStreamModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ImageStreamModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import {
   normalizeBuilderImages,
   NormalizedBuilderImages,
@@ -19,13 +20,12 @@ import {
   getSampleRef,
   getSampleContextDir,
 } from '../../utils/imagestream-utils';
-import { SAMPLE_APPLICATION_GROUP } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import { detectGitType, validationSchema } from './import-validation-utils';
+import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources } from './import-submit-utils';
 import { BaseFormData, GitImportFormData } from './import-types';
+import { detectGitType, validationSchema } from './import-validation-utils';
 import ImportSampleForm from './ImportSampleForm';
-import { getBaseInitialValues } from './form-initial-values';
 
 type ImportSamplePageProps = RouteComponentProps<{ ns?: string; is?: string; isNs?: string }>;
 

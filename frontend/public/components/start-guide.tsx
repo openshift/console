@@ -8,10 +8,8 @@ import { FLAGS } from '@console/shared/src/constants';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/features';
-import { ProjectModel, RoleModel, StorageClassModel } from '../models';
+import { ProjectModel } from '../models';
 import { createProjectModal } from './modals/create-namespace-modal';
-
-const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
   ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => (
@@ -70,9 +68,7 @@ export const withStartGuide = (WrappedComponent, disable: boolean = true) =>
               <OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />
             </HintBlock>
           </div>
-          {// Whitelist certain resource kinds that should not be disabled when no projects are
-          // available. Disabling should also be optional
-          !disable || WHITELIST.includes(kind) ? (
+          {!disable || (rest.kindObj && !rest.kindObj.namespaced) ? (
             <WrappedComponent {...rest} noProjectsAvailable />
           ) : (
             <Disabled>

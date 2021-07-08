@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-
 import { VMIKind } from '../../../types';
 import { findRDPServiceAndPort } from '../../vmi';
 

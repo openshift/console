@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import {
   allModels,
   k8sGet,
@@ -11,7 +12,6 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { createServiceBinding } from '../operators/actions/serviceBindings';
 
 export type ConnectsToData = { apiVersion: string; kind: string; name: string };

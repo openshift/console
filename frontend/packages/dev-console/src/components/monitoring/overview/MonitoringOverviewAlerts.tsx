@@ -1,10 +1,10 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { fromNow } from '@console/internal/components/utils/datetime';
 import { Alert as AlertType } from '@console/internal/components/monitoring/types';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
+import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortMonitoringAlerts, useActivePerspective } from '@console/shared';
 import { getAlertType } from './monitoring-overview-alerts-utils';
 import './MonitoringOverviewAlerts.scss';

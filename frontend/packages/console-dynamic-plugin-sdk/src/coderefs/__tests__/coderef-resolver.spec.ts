@@ -1,5 +1,12 @@
 import * as _ from 'lodash';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { EncodedCodeRef, CodeRef } from '../../types';
+import {
+  getExecutableCodeRefMock,
+  getEntryModuleMocks,
+  ModuleFactoryMock,
+  RemoteEntryModuleMock,
+} from '../../utils/test-utils';
 import {
   applyCodeRefSymbol,
   isEncodedCodeRef,
@@ -12,13 +19,6 @@ import {
   resolveCodeRefProperties,
   resolveExtension,
 } from '../coderef-resolver';
-import { EncodedCodeRef, CodeRef } from '../../types';
-import {
-  getExecutableCodeRefMock,
-  getEntryModuleMocks,
-  ModuleFactoryMock,
-  RemoteEntryModuleMock,
-} from '../../utils/test-utils';
 
 describe('applyCodeRefSymbol', () => {
   it('marks the given function with CodeRef symbol', () => {

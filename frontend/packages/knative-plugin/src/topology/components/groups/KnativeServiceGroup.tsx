@@ -1,6 +1,4 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -18,12 +16,16 @@ import {
   useCombineRefs,
   WithCreateConnectorProps,
 } from '@patternfly/react-topology';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
   nodeDragSourceSpec,
 } from '@console/topology/src/components/graph-view';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   useSearchFilter,
   useDisplayFilters,
@@ -31,12 +33,10 @@ import {
   getFilterById,
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 import { getResource } from '@console/topology/src/utils/topology-utils';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
-import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 import { isServerlessFunction } from '../../knative-topology-utils';
+import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 
 export type KnativeServiceGroupProps = {
   element: Node;

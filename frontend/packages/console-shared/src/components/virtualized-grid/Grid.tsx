@@ -29,6 +29,7 @@ const Grid: React.FC<GridProps> = ({ height, width, scrollTop, items, children }
   const cellRenderer = (data: GridCellProps) => children({ data, columnCount, items, rowCount });
   return (
     <GridComponent
+      containerRole="row"
       autoHeight
       className={classNames('ocs-grid', className)}
       tabIndex={null}

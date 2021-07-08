@@ -16,8 +16,8 @@ import { ListKind } from '@console/internal/module/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 
-import { CephClusterKind, StorageClusterKind, StoragePoolKind } from '../../types';
-import { OCSServiceModel, CephBlockPoolModel } from '../../models';
+import { CephClusterKind, StorageClusterKind } from '../../types';
+import { OCSServiceModel } from '../../models';
 import { CEPH_STORAGE_NAMESPACE, OCS_DEVICE_REPLICA } from '../../constants/index';
 import { checkArbiterCluster } from '../../utils/common';
 import {
@@ -27,7 +27,6 @@ import {
   BlockPoolAction,
   BlockPoolActionType,
   getErrorMessage,
-  isDefaultPool,
 } from '../../utils/block-pool';
 import { POOL_STATE, POOL_PROGRESS } from '../../constants/storage-pool-const';
 
@@ -37,14 +36,16 @@ import './body.scss';
 
 export const BlockPoolStatus: React.FC<BlockPoolStatusProps> = ({ status, name, error = '' }) => {
   const { t } = useTranslation();
-  const statusObj: ProgressStatusProps = PROGRESS_STATUS(t).find((state) => state.name === status);
+  const statusObj: ProgressStatusProps = PROGRESS_STATUS(t, name).find(
+    (state) => state.name === status,
+  );
 
   return (
     <>
       <EmptyState>
         <EmptyStateIcon icon={statusObj.icon} className={statusObj.className} />
         <EmptyStateBody data-test="empty-state-body">
-          {error ? getErrorMessage(error) : statusObj.desc.replace('{name}', name)}
+          {error ? getErrorMessage(error) : statusObj.desc}
         </EmptyStateBody>
       </EmptyState>
     </>
@@ -65,26 +66,19 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
   const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
     ListKind<StorageClusterKind>
   >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
-  const [pools, poolsLoaded, poolsLoadedError] = useK8sGet<ListKind<StoragePoolKind>>(
-    CephBlockPoolModel,
-    null,
-    CEPH_STORAGE_NAMESPACE,
-  );
-
-  React.useMemo(() => {
-    if (!state.failureDomain && poolsLoaded && !poolsLoadedError) {
-      // Fetch failure domain from default pool
-      const pool: StoragePoolKind = pools?.items.find(isDefaultPool);
-      dispatch({
-        type: BlockPoolActionType.SET_FAILURE_DOMAIN,
-        payload: pool?.spec?.failureDomain,
-      });
-    }
-  }, [dispatch, pools, poolsLoaded, poolsLoadedError, state.failureDomain]);
 
   const [isReplicaOpen, setReplicaOpen] = React.useState(false);
   const [isVolumeTypeOpen, setVolumeTypeOpen] = React.useState(false);
   const [availableDeviceClasses, setAvailableDeviceClasses] = React.useState([]);
+
+  // Failure Domain
+  React.useEffect(() => {
+    if (storageClusterLoaded && !storageClusterLoadError)
+      dispatch({
+        type: BlockPoolActionType.SET_FAILURE_DOMAIN,
+        payload: storageCluster.items[0].status?.failureDomain || '',
+      });
+  }, [storageCluster, storageClusterLoaded, storageClusterLoadError, dispatch]);
 
   // Volume Type
   const deviceClasses = cephCluster?.status?.storage?.deviceClasses ?? [];
@@ -114,7 +108,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
               key={`device-${device?.name}`}
               component="button"
               id={device?.name}
-              data-test={device?.name}
+              data-test="volume-type-dropdown-item"
               onClick={(e) => setVolumeType(e.currentTarget.id)}
             >
               {device?.name.toUpperCase()}
@@ -153,7 +147,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
       key={`replica-${OCS_DEVICE_REPLICA[replica]}`}
       component="button"
       id={replica}
-      data-test-id={replica}
+      data-test-id="replica-dropdown-item"
       onClick={(e) =>
         dispatch({ type: BlockPoolActionType.SET_POOL_REPLICA_SIZE, payload: e.currentTarget.id })
       }

@@ -10,13 +10,13 @@ const CloudShellTab: React.FC = () => {
   const { t } = useTranslation();
   const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
 
-  if (!devWorkspaceFlag) return <Redirect to="/" />;
+  if (devWorkspaceFlag === false) return <Redirect to="/" />;
 
   return (
     <>
       <div className="co-cloud-shell-tab__header">
         <div className="co-cloud-shell-tab__header-text">
-          {t('cloudshell~OpenShift command line terminal')}
+          {t('console-app~OpenShift command line terminal')}
         </div>
         <InlineTechPreviewBadge />
       </div>

@@ -88,11 +88,18 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           component: (cProps) => renderAsyncComponent(p, cProps),
         })),
       ...dynamicResourcePageExtensions
-        .filter(
-          (p) =>
-            referenceForExtensionModel(p.properties.model) ===
-            (kindObj ? referenceFor(kindObj) : props.kind),
-        )
+        .filter((p) => {
+          if (p.properties.model.version) {
+            return (
+              referenceForExtensionModel(p.properties.model) ===
+              (kindObj ? referenceFor(kindObj) : props.kind)
+            );
+          }
+          return (
+            p.properties.model.group === kindObj.apiGroup &&
+            p.properties.model.kind === kindObj.kind
+          );
+        })
         .map(({ properties: { href, name, component: Component } }) => ({
           href,
           name,
@@ -136,6 +143,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           titleFunc={props.titleFunc}
           menuActions={props.menuActions}
           buttonActions={props.buttonActions}
+          customActionMenu={props.customActionMenu}
           kind={props.customKind || props.kind}
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
@@ -171,6 +179,7 @@ export type DetailsPageProps = {
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   buttonActions?: any[];
+  customActionMenu?: React.ReactNode; // Renders a custom action menu.
   pages?: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;

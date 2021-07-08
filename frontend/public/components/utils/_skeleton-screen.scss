@@ -27,19 +27,24 @@ $skeleton-overview-tile-padding: 24px;
 
 $skeleton-overview-icon-size: 24px;
 $skeleton-overview-icon-position: 15px $skeleton-overview-tile-padding;
-$skeleton-overview-icon-bone: radial-gradient(circle 12px at center, white 100%, transparent 0
-);
+$skeleton-overview-icon-bone: radial-gradient(circle 12px at center, white 100%, transparent 0);
 
 $skeleton-overview-meta-height: 24px;
 $skeleton-overview-meta-position: 96% $skeleton-overview-tile-padding;
 $skeleton-overview-meta-bone: linear-gradient(white $skeleton-overview-meta-height, transparent 0);
-$skeleton-overview-meta-width:75px;
+$skeleton-overview-meta-width: 75px;
 
-$skeleton-overview-tile-bone: linear-gradient($skeleton-color $skeleton-overview-tile-height, transparent 0);
+$skeleton-overview-tile-bone: linear-gradient(
+  $skeleton-color $skeleton-overview-tile-height,
+  transparent 0
+);
 
 $skeleton-overview-title-height: 24px;
 $skeleton-overview-title-position: 50px $skeleton-overview-tile-padding;
-$skeleton-overview-title-bone: linear-gradient(white $skeleton-overview-title-height, transparent 0);
+$skeleton-overview-title-bone: linear-gradient(
+  white $skeleton-overview-title-height,
+  transparent 0
+);
 $skeleton-overview-title-width: 38%;
 
 $skeleton-tile-height: 240px; // height of catalog tiles
@@ -56,23 +61,23 @@ $skeleton-tile-title-width: 142px;
 $skeleton-tile-title-bone: linear-gradient(#fff $skeleton-tile-title-height, transparent 0);
 
 $skeleton-tile-desc-line-height: 14px;
-$skeleton-tile-desc-line-1-width:168px;
+$skeleton-tile-desc-line-1-width: 168px;
 $skeleton-tile-desc-line-1-position: $skeleton-tile-padding 132px;
-$skeleton-tile-desc-line-2-width:174px;
+$skeleton-tile-desc-line-2-width: 174px;
 $skeleton-tile-desc-line-2-position: $skeleton-tile-padding 152px;
-$skeleton-tile-desc-line-3-width:185px;
+$skeleton-tile-desc-line-3-width: 185px;
 $skeleton-tile-desc-line-3-position: $skeleton-tile-padding 172px;
-$skeleton-tile-desc-line-4-width:125px;
+$skeleton-tile-desc-line-4-width: 125px;
 $skeleton-tile-desc-line-4-position: $skeleton-tile-padding 192px;
 $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-height, transparent 0);
 
 @keyframes loading-skeleton {
   0% {
-    opacity: .15;
+    opacity: 0.15;
   }
 
   25% {
-    opacity: .65;
+    opacity: 0.65;
   }
 
   100% {
@@ -81,7 +86,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 }
 
 .loading-skeleton--catalog {
-  background: #fff;
+  background: var(--pf-global--BackgroundColor--100);
   border: 1px solid var(--pf-global--BorderColor--300);
   display: flex;
   flex: 1;
@@ -113,11 +118,9 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 
 .skeleton-catalog--list {
   &::after {
-    background-image: linear-gradient(
-      $skeleton-color 45%,
-      transparent 0);
+    background-image: linear-gradient($skeleton-color 45%, transparent 0);
     background-size: 100% 40px;
-    content:'';
+    content: '';
     display: block;
     height: 400px;
     left: 15px;
@@ -133,43 +136,30 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   width: $co-m-catalog-tile-width;
   &:empty::after {
     animation: $skeleton-animation;
-    content:"";
-    display:block;
+    content: '';
+    display: block;
     height: 100%;
     opacity: 0;
     width: 100%;
 
-    background-image:
-      $skeleton-tile-title-bone,
-      $skeleton-tile-desc-line-bone,
-      $skeleton-tile-desc-line-bone,
-      $skeleton-tile-desc-line-bone,
-      $skeleton-tile-desc-line-bone,
-      $skeleton-tile-logo-bone,
-      $skeleton-tile-bone;
+    background-image: $skeleton-tile-title-bone, $skeleton-tile-desc-line-bone,
+      $skeleton-tile-desc-line-bone, $skeleton-tile-desc-line-bone, $skeleton-tile-desc-line-bone,
+      $skeleton-tile-logo-bone, $skeleton-tile-bone;
 
-    background-position:
-      $skeleton-tile-title-position,
-      $skeleton-tile-desc-line-1-position,
-      $skeleton-tile-desc-line-2-position,
-      $skeleton-tile-desc-line-3-position,
-      $skeleton-tile-desc-line-4-position,
-      $skeleton-tile-logo-position,
-      0 0;
+    background-position: $skeleton-tile-title-position, $skeleton-tile-desc-line-1-position,
+      $skeleton-tile-desc-line-2-position, $skeleton-tile-desc-line-3-position,
+      $skeleton-tile-desc-line-4-position, $skeleton-tile-logo-position, 0 0;
 
     background-repeat: no-repeat;
 
-    background-size:
-      $skeleton-tile-title-width $skeleton-tile-title-height,
+    background-size: $skeleton-tile-title-width $skeleton-tile-title-height,
       $skeleton-tile-desc-line-1-width $skeleton-tile-desc-line-height,
       $skeleton-tile-desc-line-2-width $skeleton-tile-desc-line-height,
       $skeleton-tile-desc-line-3-width $skeleton-tile-desc-line-height,
       $skeleton-tile-desc-line-4-width $skeleton-tile-desc-line-height,
-      $skeleton-tile-logo-size $skeleton-tile-logo-size,
-      100% 100%;
+      $skeleton-tile-logo-size $skeleton-tile-logo-size, 100% 100%;
   }
 }
-
 
 .skeleton-detail-view {
   padding: $grid-gutter-width;
@@ -178,7 +168,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 }
 
 .skeleton-detail-view--column {
-  display:flex;
+  display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   margin: 10px 0;
@@ -209,8 +199,8 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   width: 95%;
   &::after {
     background-repeat: no-repeat;
-    content:"";
-    display:block;
+    content: '';
+    display: block;
     height: 100%;
     width: 100%;
   }
@@ -220,48 +210,29 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
 }
 
 .skeleton-detail-view--tile.skeleton-detail-view--tile-plain::after {
-  background-image:
-    $skeleton-detail-bone,
-    $skeleton-detail-bone;
+  background-image: $skeleton-detail-bone, $skeleton-detail-bone;
 
-  background-size:
-    $skeleton-detail-name-size,
-    $skeleton-detail-data-size;
+  background-size: $skeleton-detail-name-size, $skeleton-detail-data-size;
 
-  background-position:
-    $skeleton-detail-name-position,
-    $skeleton-detail-data-position;
+  background-position: $skeleton-detail-name-position, $skeleton-detail-data-position;
 }
 
 .skeleton-detail-view--tile.skeleton-detail-view--tile-resource::after {
-  background-image:
-    $skeleton-detail-bone,
-    $skeleton-detail-bone,
-    $skeleton-detail-resource-icon;
+  background-image: $skeleton-detail-bone, $skeleton-detail-bone, $skeleton-detail-resource-icon;
 
-  background-position:
-    $skeleton-detail-name-position,
-    $skeleton-detail-resource-position,
+  background-position: $skeleton-detail-name-position, $skeleton-detail-resource-position,
     $skeleton-detail-resource-icon-position;
 
-  background-size:
-    $skeleton-detail-name-size,
-    $skeleton-detail-resource-size,
+  background-size: $skeleton-detail-name-size, $skeleton-detail-resource-size,
     $skeleton-detail-resource-icon-size;
 }
 
 .skeleton-detail-view--tile.skeleton-detail-view--tile-labels::after {
-  background-image:
-    $skeleton-detail-bone,
-    $skeleton-detail-label;
+  background-image: $skeleton-detail-bone, $skeleton-detail-label;
 
-  background-position:
-    $skeleton-detail-name-position,
-    $skeleton-detail-label-position;
+  background-position: $skeleton-detail-name-position, $skeleton-detail-label-position;
 
-  background-size:
-    $skeleton-detail-name-size,
-    $skeleton-detail-label-size;
+  background-size: $skeleton-detail-name-size, $skeleton-detail-label-size;
 }
 
 .skeleton-overview {
@@ -278,7 +249,7 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   &::after {
     animation: $skeleton-animation;
     background: $skeleton-color;
-    content: "";
+    content: '';
     display: block;
     height: $skeleton-overview-title-height;
     opacity: 0;
@@ -293,32 +264,24 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   width: 100%;
   &::after {
     animation: $skeleton-animation;
-    content:"";
-    display:block;
+    content: '';
+    display: block;
     height: 100%;
     opacity: 0;
     width: 100%;
 
-    background-image:
-      $skeleton-overview-title-bone,
-      $skeleton-overview-meta-bone,
-      $skeleton-overview-icon-bone,
-      $skeleton-overview-tile-bone;
+    background-image: $skeleton-overview-title-bone, $skeleton-overview-meta-bone,
+      $skeleton-overview-icon-bone, $skeleton-overview-tile-bone;
 
-    background-position:
-      $skeleton-overview-title-position,
-      $skeleton-overview-meta-position,
-      $skeleton-overview-icon-position,
-      0 0;
+    background-position: $skeleton-overview-title-position, $skeleton-overview-meta-position,
+      $skeleton-overview-icon-position, 0 0;
 
     background-repeat: no-repeat;
 
-    background-size:
-      $skeleton-overview-title-width $skeleton-overview-title-height,
+    background-size: $skeleton-overview-title-width $skeleton-overview-title-height,
       $skeleton-overview-meta-width $skeleton-overview-meta-height,
-      $skeleton-overview-icon-size $skeleton-overview-icon-size,
-      100% 100%;
-    }
+      $skeleton-overview-icon-size $skeleton-overview-icon-size, 100% 100%;
+  }
 }
 
 .loading-skeleton--table {
@@ -331,33 +294,30 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
   }
   // table rows
   &::after {
-    background-image:
-      linear-gradient(#eee 1px, transparent 0px),
+    background-image: linear-gradient(#eee 1px, transparent 0px),
       linear-gradient($skeleton-color 26px, transparent 26px);
-    background-size:
-      100% 46px,
-      50% 46px;
-    background-position:
-      50px 0%,
-      0px 10px;
+    background-size: 100% 46px, 50% 46px;
+    background-position: 50px 0%, 0px 10px;
     min-height: 320px;
   }
   // table headings
   &::before {
-    background-image: linear-gradient( to right,
+    background-image: linear-gradient(
+      to right,
       $skeleton-color,
       $skeleton-color 75%,
       transparent 75%,
-      transparent 25% );
-      background-position: 0 0;
-      background-repeat: repeat-x;
-      background-size: 57% 40px;
-      height: 53px;
+      transparent 25%
+    );
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-size: 57% 40px;
+    height: 53px;
     @media (min-width: $screen-sm-min) {
       background-size: 21% 40px;
     }
     @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
       background-size: 37% 40px;
     }
-   }
+  }
 }

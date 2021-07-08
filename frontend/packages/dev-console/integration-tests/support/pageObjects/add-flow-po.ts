@@ -1,4 +1,16 @@
-export const cardTitle = '.catalog-tile-pf-title';
+export const cardTitle = '[data-test="title"]';
+
+export const addPagePO = {
+  gettingStarted: '[data-test="getting-started"]',
+  detailsOnOffText: '[data-test="label"]',
+  detailsOnOffSwitch: '.pf-c-switch__toggle',
+  cardDetails: 'p.odc-add-card-item__description',
+  restoreGettingStarted: '[data-test="restore-getting-started"]',
+  kebabMenuGettingStarted: '[data-test="actions"]',
+  hideGettingStarted: '[data-test="hide"]',
+  closeButton: '[aria-label="label-close-button"]',
+  viewAllQuickStarts: '[data-test="item all-quick-starts"]',
+};
 
 export const gitPO = {
   noWorkLoadsText: 'h2.co-hint-block__title',
@@ -49,8 +61,8 @@ export const gitPO = {
       buildTriggerImage: 'input#form-checkbox-build-triggers-image-field',
       buildTriggerConfigField: 'input#form-checkbox-build-triggers-config-field',
       // Add Environment Value
-      envName: '[data-test=pairs-list-name]',
-      envValue: '[data-test=pairs-list-value]',
+      envName: 'input[data-test=pairs-list-name]',
+      envValue: 'input[data-test=pairs-list-value]',
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
       deleteRowButton: 'button[data-test="delete-button"]',
@@ -258,7 +270,7 @@ export const channelPO = {
 };
 
 export const yamlPO = {
-  yamlEditor: '.yaml-editor',
+  yamlEditor: '.react-monaco-editor-container',
 };
 
 export const uploadJarFilePO = {

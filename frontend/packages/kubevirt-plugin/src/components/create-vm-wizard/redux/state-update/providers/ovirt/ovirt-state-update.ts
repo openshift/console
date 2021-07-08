@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
 import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
 import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';

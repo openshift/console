@@ -1,13 +1,13 @@
 import { DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-
 import {
   OVIRT_TYPE_LABEL,
   V2V_TEMPORARY_LABEL,
   V2VVMWARE_DEPLOYMENT_NAME,
 } from '../../../../../../constants/v2v';
 import { OVirtProviderModel } from '../../../../../../models';
+import { kubevirtReferenceForModel } from '../../../../../../models/kubevirtReferenceForModel';
 import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 import { iGetIn } from '../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
@@ -92,7 +92,7 @@ const getQueries = ({
 
   if (activeOvirtProviderCRName) {
     resources.push({
-      kind: OVirtProviderModel.kind,
+      kind: kubevirtReferenceForModel(OVirtProviderModel),
       model: OVirtProviderModel,
       name: activeOvirtProviderCRName,
       namespace,

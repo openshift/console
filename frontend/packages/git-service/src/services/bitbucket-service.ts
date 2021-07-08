@@ -1,4 +1,5 @@
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import {
   GitSource,
   SecretType,
@@ -9,7 +10,6 @@ import {
   RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
-import { coFetchJSON } from '@console/internal/co-fetch';
 
 export class BitbucketService extends BaseService {
   private readonly metadata: RepoMetadata;

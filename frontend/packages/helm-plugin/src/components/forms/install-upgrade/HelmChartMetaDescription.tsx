@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { HelmChart } from '../../../types/helm-types';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { HelmChart } from '../../../types/helm-types';
 
 type HelmChartMetaDescriptionProps = {
   chart: HelmChart;
@@ -21,7 +21,8 @@ const HelmChartMetaDescription: React.FC<HelmChartMetaDescriptionProps> = ({ cha
           <img
             className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
             src={imgSrc}
-            alt=""
+            alt={displayName}
+            aria-hidden
           />
         </div>
         <div className="co-clusterserviceversion-logo__name">

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { FormikValues } from 'formik';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
-import EventSourceSection from '../EventSourceSection';
-import CronJobSection from '../CronJobSection';
-import SinkSection from '../SinkSection';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getDefaultEventingData } from '../../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../../import-types';
+import CronJobSection from '../CronJobSection';
+import EventSourceSection from '../EventSourceSection';
+import SinkSection from '../SinkSection';
 
 const mockEventingData = getDefaultEventingData(EventSources.CronJobSource);
 

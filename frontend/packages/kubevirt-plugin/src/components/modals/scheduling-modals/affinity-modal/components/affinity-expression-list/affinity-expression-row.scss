@@ -1,14 +1,16 @@
-.kv-affinity-expression-row__key-input {
-  min-height: 42px;
-}
-
-.kv-affinity-expression-row__operator-input {
-  min-height: 42px;
-}
-
-.pf-m-typeahead {
-  min-height: 42px;
-  .pf-c-select__toggle-button {
-    display: none;
+.kv-affinity-expression-row {
+  &__key-input {
+    min-height: 42px;
+  }
+  &__operator-input {
+    min-height: 42px;
+  }
+  &__values-input {
+    .pf-m-typeahead {
+      min-height: 42px;
+      .pf-c-select__toggle-button {
+        display: none;
+      }
+    }
   }
 }

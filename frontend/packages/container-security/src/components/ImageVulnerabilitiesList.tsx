@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { MultiListPage } from '@console/internal/components/factory';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
+import { FirehoseResourcesResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ImageManifestVulnModel } from '../models';
 import { Priority, priorityFor } from '../const';
+import { ImageManifestVulnModel } from '../models';
 import { Feature, ImageManifestVuln, Vulnerability } from '../types';
 import ImageVulnerabilitiesTable from './ImageVulnerabilitiesTable';
 
@@ -65,7 +66,9 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
         },
       ]}
       title={t('container-security~Vulnerabilities')}
-      flatten={(resources) => {
+      flatten={(
+        resources: FirehoseResourcesResult<{ imageVulnerabilities: ImageManifestVuln }>,
+      ) => {
         return _.sortBy(
           _.flatten(
             resources?.imageVulnerabilities?.data?.spec.features.map((feature) =>

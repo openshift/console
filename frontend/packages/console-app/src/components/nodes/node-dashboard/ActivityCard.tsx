@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { EventModel, NodeModel } from '@console/internal/models';
+import { EventKind, NodeKind } from '@console/internal/module/k8s';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
-import { EventModel, NodeModel } from '@console/internal/models';
-import { EventKind, NodeKind } from '@console/internal/module/k8s';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 const eventsResource = {
@@ -43,8 +42,8 @@ const ActivityCard: React.FC = () => {
   return (
     <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={eventsLink}>{t('nodes~View events')}</DashboardCardLink>
+        <DashboardCardTitle>{t('console-app~Activity')}</DashboardCardTitle>
+        <DashboardCardLink to={eventsLink}>{t('console-app~View events')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-project-dashboard__activity-body">

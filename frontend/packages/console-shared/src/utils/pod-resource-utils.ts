@@ -1,11 +1,11 @@
-import { apiVersionForModel, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-import { PodRCData } from '../types';
 import {
   CronJobModel,
   DeploymentConfigModel,
   DeploymentModel,
   StatefulSetModel,
 } from '@console/internal/models';
+import { apiVersionForModel, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { PodRCData } from '../types';
 import {
   getJobsForCronJob,
   getPodsForResource,

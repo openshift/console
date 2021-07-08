@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match } from 'react-router';
-import { Button } from '@patternfly/react-core';
+import { ErrorPage404 } from '@console/internal/components/error';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { LoadingBox } from '@console/internal/components/utils';
 import { connectToPlural } from '@console/internal/kinds';
 import {
@@ -10,10 +12,8 @@ import {
   isGroupVersionKind,
   kindForReference,
 } from '@console/internal/module/k8s';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { withStartGuide } from '@console/internal/components/start-guide';
-import CreateProjectListPage from './projects/CreateProjectListPage';
 import { getBadgeFromType } from '@console/shared/src';
+import CreateProjectListPage from './projects/CreateProjectListPage';
 
 export interface ProjectSelectPageProps {
   match: match<any>;

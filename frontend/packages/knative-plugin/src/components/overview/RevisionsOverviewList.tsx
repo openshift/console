@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { Link } from 'react-router-dom';
 import { SidebarSectionHeading, useAccessReview } from '@console/internal/components/utils';
-import { setTrafficDistributionModal } from '../modals';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel, RevisionModel } from '../../models';
+import { setTrafficDistributionModal } from '../modals';
 import RevisionsOverviewListItem from './RevisionsOverviewListItem';
 import './RevisionsOverviewList.scss';
-import { Link } from 'react-router-dom';
 
 export type RevisionsOverviewListProps = {
   revisions: K8sResourceKind[];

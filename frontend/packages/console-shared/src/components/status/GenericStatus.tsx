@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StatusComponentProps } from './types';
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
+import { StatusComponentProps } from './types';
 
 const GenericStatus: React.FC<GenericStatusProps> = (props) => {
   const { Icon, children, popoverTitle, title, noTooltip, iconOnly, ...restProps } = props;

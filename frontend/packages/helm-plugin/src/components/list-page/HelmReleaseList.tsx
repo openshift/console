@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   EmptyState,
   EmptyStateIcon,
@@ -9,20 +7,22 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
-import { CustomResourceList } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { SecretModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { StatusBox } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { StatusBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SecretModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { CustomResourceList } from '@console/shared';
 import {
   helmReleasesRowFilters,
   filterHelmReleasesByName,
   filterHelmReleasesByStatus,
   fetchHelmReleases,
 } from '../../utils/helm-utils';
-import HelmReleaseListRow from './HelmReleaseListRow';
 import HelmReleaseListHeader from './HelmReleaseListHeader';
+import HelmReleaseListRow from './HelmReleaseListRow';
 
 import './HelmReleaseList.scss';
 

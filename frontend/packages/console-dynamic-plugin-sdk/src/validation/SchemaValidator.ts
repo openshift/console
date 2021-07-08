@@ -1,6 +1,6 @@
 import * as Ajv from 'ajv';
-import { ValidationResult } from './ValidationResult';
 import { ValidationAssertions } from './ValidationAssertions';
+import { ValidationResult } from './ValidationResult';
 
 export class SchemaValidator {
   readonly result: ValidationResult;

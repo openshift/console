@@ -1,19 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
-
-import { dropdownUnits } from '@console/internal/components/storage/shared';
-import {
-  convertToBaseValue,
-  history,
-  RequestSizeInput,
-  StatusBox,
-} from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
-import { VMKind } from '@console/kubevirt-plugin/src/types';
 import {
   ActionGroup,
   Alert,
@@ -31,7 +16,20 @@ import {
   TextInput,
   Title,
 } from '@patternfly/react-core';
-
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+import { dropdownUnits } from '@console/internal/components/storage/shared';
+import {
+  convertToBaseValue,
+  history,
+  RequestSizeInput,
+  StatusBox,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
+import { VMKind } from '@console/kubevirt-plugin/src/types';
 import {
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
@@ -47,6 +45,7 @@ import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/custo
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
 import { VirtualMachineModel } from '../../../models/index';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getCPU, vCPUCount } from '../../../selectors/vm';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -96,7 +95,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     loadvmWithCutomBootSource,
     vmWithCustomBootSourceError,
   ] = useK8sWatchResource<VMKind[]>({
-    kind: VirtualMachineModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineModel),
     isList: true,
     namespace,
     selector: {

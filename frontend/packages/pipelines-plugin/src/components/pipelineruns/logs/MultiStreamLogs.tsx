@@ -1,16 +1,16 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
-import { saveAs } from 'file-saver';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { DownloadIcon, CompressIcon, ExpandIcon } from '@patternfly/react-icons';
-import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
-import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
+import * as classNames from 'classnames';
+import { saveAs } from 'file-saver';
+import { useTranslation } from 'react-i18next';
 import { errorModal } from '@console/internal/components/modals/error-modal';
+import { LoadingInline, LOG_SOURCE_WAITING } from '@console/internal/components/utils';
+import { ContainerStatus, PodKind, ContainerSpec } from '@console/internal/module/k8s';
 import { useFullscreen, useScrollDirection, ScrollDirection } from '@console/shared';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
-import { getRenderContainers } from './logs-utils';
 import Logs from './Logs';
+import { getRenderContainers } from './logs-utils';
 import './MultiStreamLogs.scss';
 
 type MultiStreamLogsProps = {

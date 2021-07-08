@@ -1,6 +1,6 @@
 import i18next from 'i18next';
-import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
+import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { ImportOptions } from '../components/import/import-types';
 import {

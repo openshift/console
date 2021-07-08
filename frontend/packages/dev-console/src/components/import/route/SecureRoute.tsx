@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormHelperText } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormHelperText } from '@patternfly/react-core';
 import { DropdownField, DroppableFileInputField, CheckboxField } from '@console/shared';
 import {
   TerminationTypes,

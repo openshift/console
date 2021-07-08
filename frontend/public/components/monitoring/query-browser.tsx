@@ -575,9 +575,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   showLegend,
   showStackedControl = false,
   timespan,
+  wrapperClassName,
 }) => {
   const { t } = useTranslation();
-
   const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
   const tickInterval = useSelector(
     ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
@@ -588,7 +588,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
-
   // If we have both `timespan` and `defaultTimespan`, `timespan` takes precedence
   const [span, setSpan] = React.useState(timespan || parsePrometheusDuration(defaultSpanText));
 
@@ -626,6 +625,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setXDomain(getXDomain(fixedEndTime, span));
     }
   }, [fixedEndTime, span]);
+
+  React.useEffect(() => {
+    if (!fixedEndTime) {
+      setXDomain(undefined);
+    }
+  }, [fixedEndTime]);
 
   // Clear any existing series data when the namespace is changed
   React.useEffect(() => {
@@ -758,17 +763,26 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   if (isRangeVector) {
     return (
-      <GraphEmptyState title="Ungraphable results">
-        Query results include range vectors, which cannot be graphed. Try adding a function to
-        transform the data.
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t(
+          'public~Query results include range vectors, which cannot be graphed. Try adding a function to transform the data.',
+        )}
+      </GraphEmptyState>
+    );
+  }
+
+  if (error?.json?.error?.match(/invalid expression type "string"/)) {
+    return (
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t('public~Query result is a string, which cannot be graphed.')}
       </GraphEmptyState>
     );
   }
 
   if (isDatasetTooBig) {
     return (
-      <GraphEmptyState title="Ungraphable results">
-        The resulting dataset is too large to graph.
+      <GraphEmptyState title={t('public~Ungraphable results')}>
+        {t('public~The resulting dataset is too large to graph.')}
       </GraphEmptyState>
     );
   }
@@ -785,7 +799,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   return (
     <div
-      className={classNames('query-browser__wrapper', {
+      className={classNames('query-browser__wrapper', wrapperClassName, {
         'graph-empty-state': isGraphDataEmpty,
         'graph-empty-state__loaded': isGraphDataEmpty && !updating,
       })}
@@ -819,7 +833,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             <Alert
               isInline
               className="co-alert"
-              title="Displaying with reduced resolution due to large dataset."
+              title={t('public~Displaying with reduced resolution due to large dataset.')}
               variant="info"
             />
           )}
@@ -929,6 +943,7 @@ export type QueryBrowserProps = {
   showLegend?: boolean;
   showStackedControl?: boolean;
   timespan?: number;
+  wrapperClassName?: string;
 };
 
 type SpanControlsProps = {

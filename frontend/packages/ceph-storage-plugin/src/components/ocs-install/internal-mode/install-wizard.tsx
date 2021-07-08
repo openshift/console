@@ -75,7 +75,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
   const [errorMessage, setErrorMessage] = React.useState('');
   const flagDispatcher = useDispatch();
 
-  const title = t('ceph-storage-plugin~create internal mode storage cluster wizard');
+  const title = t('ceph-storage-plugin~create internal mode StorageCluster wizard');
   const scName = getName(state.storageClass);
   const hasConfiguredNetwork =
     state.networkType === NetworkType.MULTUS
@@ -94,7 +94,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGEANDNODES, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Select capacity and nodes')}{' '}
+          {t('ceph-storage-plugin~Capacity and nodes')}{' '}
         </Link>
       ),
       id: CreateStepsSC.STORAGEANDNODES,
@@ -105,7 +105,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.CONFIGURE, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Configure')}{' '}
+          {t('ceph-storage-plugin~Security and network')}{' '}
         </Link>
       ),
       id: CreateStepsSC.CONFIGURE,
@@ -160,7 +160,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
           >
             <p>
               {t(
-                'ceph-storage-plugin~Can be used on any platform, except bare metal. It means that OCS uses an infrastructure storage class, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.',
+                'ceph-storage-plugin~Can be used on any platform, except bare metal. It means that OpenShift Container Storage uses an infrastructure StorageClass, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.',
               )}
             </p>
           </Alert>
@@ -177,10 +177,10 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
           backButtonText={t('ceph-storage-plugin~Back')}
           startAtStep={getStep()}
           onBack={() => {
-            history.push(`~new?${getParamString(getStep(2) - 1, getIndex(MODES, MODES.INTERNAL))}`);
+            history.push(`~new?${getParamString(getStep(3) - 1, getIndex(MODES, MODES.INTERNAL))}`);
           }}
           onNext={() => {
-            history.push(`~new?${getParamString(getStep(2) + 1, getIndex(MODES, MODES.INTERNAL))}`);
+            history.push(`~new?${getParamString(getStep(3) + 1, getIndex(MODES, MODES.INTERNAL))}`);
           }}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))

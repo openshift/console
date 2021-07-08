@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import {
   getFormData,
   getInvalidUsageError,
@@ -11,9 +12,8 @@ import {
   sanitizeHPAToForm,
   sanityForSubmit,
 } from '../hpa-utils';
-import { deploymentConfigExamples, deploymentExamples, hpaExamples } from './hpa-utils-data';
-import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import { HPAFormValues } from '../types';
+import { deploymentConfigExamples, deploymentExamples, hpaExamples } from './hpa-utils-data';
 
 jest.mock('i18next', () => ({
   default: {

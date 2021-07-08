@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { CreateYAML } from '@console/internal/components/create-yaml';
+import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.

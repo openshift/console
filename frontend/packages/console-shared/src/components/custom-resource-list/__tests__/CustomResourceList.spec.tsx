@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { EmptyState } from '@patternfly/react-core';
+import { SortByDirection, sortable } from '@patternfly/react-table';
 import { shallow } from 'enzyme';
 import * as fuzzy from 'fuzzysearch';
-import { SortByDirection, sortable } from '@patternfly/react-table';
 import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
 import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
-import { EmptyState } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import CustomResourceList from '../CustomResourceList';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InputGroup, TextInput, TextArea } from '@patternfly/react-core';
-import { GroupInputProps, GroupTextType } from './field-types';
 import BaseInputField from './BaseInputField';
+import { GroupInputProps, GroupTextType } from './field-types';
 
 const InputGroupField: React.FC<GroupInputProps> = ({
   beforeInput,

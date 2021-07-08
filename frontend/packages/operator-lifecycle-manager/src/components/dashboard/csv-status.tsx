@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { pluralize } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import {
   resourcePathFromModel,
   resourcePath,
 } from '@console/internal/components/utils/resource-link';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { pluralize } from '@patternfly/react-core';
 import { OperatorRowProps } from '@console/plugin-sdk';
 import Status from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { ClusterServiceVersionModel } from '../../models';

@@ -1,18 +1,18 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FlexForm, FormBody, FormFooter } from '@console/shared/src/components/form-utils';
-import IconSection from '../section/IconSection';
-import AppSection from '../app/AppSection';
-import ResourceSection from '../section/ResourceSection';
-import AdvancedSection from '../advanced/AdvancedSection';
-import FormSection from '../section/FormSection';
-import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
 import { BuilderImage } from '../../../utils/imagestream-utils';
+import AdvancedSection from '../advanced/AdvancedSection';
+import AppSection from '../app/AppSection';
+import BuilderImageTagSelector from '../builder/BuilderImageTagSelector';
+import FormSection from '../section/FormSection';
+import IconSection from '../section/IconSection';
+import ResourceSection from '../section/ResourceSection';
 import JarSection from './section/JarSection';
 
 export type UploadJarFormProps = {

@@ -1,24 +1,25 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Model } from '@patternfly/react-topology';
-import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { addToTopologyDataModel } from '@console/topology/src/data-transforms/transform-utils';
+import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { EventSourceKafkaModel } from '../models';
 import {
-  getRevisionsData,
-  transformKnNodeData,
-  getKnativeDynamicResources,
-} from './knative-topology-utils';
+  getDynamicEventSourcesModelRefs,
+  getDynamicChannelModelRefs,
+} from '../utils/fetch-dynamic-eventsources-utils';
 import {
   getKnativeServingConfigurations,
+  getKnativeServingDomainMapping,
   getKnativeServingRevisions,
   getKnativeServingRoutes,
   getKnativeServingServices,
 } from '../utils/get-knative-resources';
 import {
-  getDynamicEventSourcesModelRefs,
-  getDynamicChannelModelRefs,
-} from '../utils/fetch-dynamic-eventsources-utils';
+  getRevisionsData,
+  transformKnNodeData,
+  getKnativeDynamicResources,
+} from './knative-topology-utils';
 import { KnativeUtil, NodeType } from './topology-types';
-import { EventSourceKafkaModel } from '../models';
 
 const addKnativeTopologyData = (
   graphModel: Model,
@@ -45,6 +46,7 @@ export const getKnativeTopologyDataModel = (
     getKnativeServingConfigurations,
     getKnativeServingRoutes,
     getKnativeServingServices,
+    getKnativeServingDomainMapping,
   ];
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   const channelResourceProps = getDynamicChannelModelRefs();

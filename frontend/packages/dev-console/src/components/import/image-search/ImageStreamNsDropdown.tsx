@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField } from '@console/shared';
 import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
-import * as _ from 'lodash';
 
 const ImageStreamNsDropdown: React.FC<{ disabled?: boolean; formContextField?: string }> = ({
   disabled = false,

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import ProgressiveList from '../../progressive-list/ProgressiveList';
-import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
-import FormSection from '../section/FormSection';
-import RouteCheckbox from '../route/RouteCheckbox';
-import { Resources } from '../import-types';
-import LabelSection from './LabelSection';
-import ScalingSection from './ScalingSection';
-import ServerlessScalingSection from './ServerlessScalingSection';
-import BuildConfigSection from './BuildConfigSection';
-import DeploymentConfigSection from './DeploymentConfigSection';
-import ResourceLimitSection from './ResourceLimitSection';
 import { AppResources } from '../../edit-application/edit-application-types';
 import HealthChecks from '../../health-checks/HealthChecks';
+import ProgressiveList from '../../progressive-list/ProgressiveList';
+import ProgressiveListItem from '../../progressive-list/ProgressiveListItem';
+import { Resources } from '../import-types';
+import RouteCheckbox from '../route/RouteCheckbox';
+import FormSection from '../section/FormSection';
+import BuildConfigSection from './BuildConfigSection';
+import DeploymentConfigSection from './DeploymentConfigSection';
+import LabelSection from './LabelSection';
+import ResourceLimitSection from './ResourceLimitSection';
+import ScalingSection from './ScalingSection';
+import ServerlessScalingSection from './ServerlessScalingSection';
 
 export interface AdvancedSectionProps {
   values: FormikValues;

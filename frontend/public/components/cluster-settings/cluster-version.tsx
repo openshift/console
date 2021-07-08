@@ -17,9 +17,7 @@ const ClusterVersionDetails: React.FC<ClusterVersionDetailsProps> = ({ obj }) =>
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', { resource: ClusterVersionModel.label })}
-        />
+        <SectionHeading text={t('public~ClusterVersion details')} />
         <ResourceSummary resource={obj} />
       </div>
       <div className="co-m-pane__body">

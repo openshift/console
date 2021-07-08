@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import { global_palette_black_400 as globalBlack400 } from '@patternfly/react-tokens/dist/js/global_palette_black_400';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
 import { Colors, COLORMAP } from './consts';
@@ -54,7 +55,7 @@ export const addAvailable = (
       link: '',
       color: '',
       label: humanize(availableInBytes).string,
-      fill: '#b8bbbe',
+      fill: globalBlack400.value,
       id: 7,
       ns: '',
     };

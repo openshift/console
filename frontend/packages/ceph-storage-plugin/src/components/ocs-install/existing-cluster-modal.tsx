@@ -64,8 +64,8 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
     >
       <Trans t={t} ns="ceph-storage-plugin">
         <TextContent>
-          A storage cluster <Link to={storageClusterPath}>{{ clusterName }}</Link> already exists.
-          <Text>You cannot create another storage cluster.</Text>
+          A StorageCluster <Link to={storageClusterPath}>{{ clusterName }}</Link> already exists.
+          <Text>You cannot create another StorageCluster.</Text>
         </TextContent>
       </Trans>
     </Modal>

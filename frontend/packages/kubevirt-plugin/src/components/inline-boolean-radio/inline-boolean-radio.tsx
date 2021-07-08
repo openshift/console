@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { Split, SplitItem } from '@patternfly/react-core';
-
 import { prefixedID } from '../../utils';
 
 import './inline-boolean-radio.scss';

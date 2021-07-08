@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Trans } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { Trans } from 'react-i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { k8sKill, K8sResourceKind } from '@console/internal/module/k8s';
 import { NodeMaintenanceModel, NodeMaintenanceOldModel } from '../../models';

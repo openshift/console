@@ -1,13 +1,13 @@
 import { act } from 'react-dom/test-utils';
 import * as k8s from '@console/internal/module/k8s';
-import { getPipelineFromPipelineRun } from '../../../../utils/pipeline-augment';
+import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 import {
   DataState,
   PipelineExampleNames,
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
+import { getPipelineFromPipelineRun } from '../../../../utils/pipeline-augment';
 import { usePipelineFromPipelineRun } from '../usePipelineFromPipelineRun';
-import { testHook } from '../../../../../../../__tests__/utils/hooks-utils';
 
 describe('usePipelineFromPipelineRun', () => {
   const pipelineData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];

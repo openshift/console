@@ -1,11 +1,11 @@
 import * as k8s from '@console/internal/module/k8s';
-import { topologyDataModel } from './topology-test-data';
+import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { OdcNodeModel } from '../topology-types';
 import {
   createTopologyResourceConnection,
   getTopologyResourceObject,
 } from '../utils/topology-utils';
-import { OdcNodeModel } from '../topology-types';
-import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
+import { topologyDataModel } from './topology-test-data';
 
 let patchData = null;
 

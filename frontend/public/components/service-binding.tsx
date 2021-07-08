@@ -169,15 +169,10 @@ const ServiceBindingsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key
           kind={referenceForModel(ServiceBindingModel)}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <StatusWithIcon obj={obj} />

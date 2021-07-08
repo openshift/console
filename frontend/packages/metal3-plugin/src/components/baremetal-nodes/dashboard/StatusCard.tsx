@@ -1,28 +1,27 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { Gallery, GalleryItem, Stack, StackItem } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
+import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
+import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { BlueInfoCircleIcon } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
-import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
-import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import { BlueInfoCircleIcon } from '@console/shared';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-
-import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
-import { bareMetalNodeStatus } from '../../../status/baremetal-node-status';
-import BareMetalNodeStatus from '../BareMetalNodeStatus';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BMO_ENABLED_FLAG } from '../../../features';
-import { hasPowerManagement } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
+import { hasPowerManagement } from '../../../selectors';
+import { bareMetalNodeStatus } from '../../../status/baremetal-node-status';
 import { BareMetalHostKind } from '../../../types';
+import BareMetalNodeStatus from '../BareMetalNodeStatus';
+import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 
 const getDisabledAlert = (
   bmoEnabled: boolean,

@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
-import { match } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
+import { match } from 'react-router';
+import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import {
   Dropdown,
   ExternalLink,
@@ -18,6 +19,14 @@ import {
   ResourceIcon,
   ResourceName,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import {
+  ConsoleOperatorConfigModel,
+  NamespaceModel,
+  RoleBindingModel,
+  RoleModel,
+} from '@console/internal/models';
 import {
   K8sResourceCommon,
   apiVersionForModel,
@@ -31,18 +40,10 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
+import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
-import {
-  ConsoleOperatorConfigModel,
-  NamespaceModel,
-  RoleBindingModel,
-  RoleModel,
-} from '@console/internal/models';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -50,6 +51,9 @@ import {
   InstallPlanApproval,
   InstallModeType,
 } from '../../types';
+import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
+import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
+import { CRDCard } from '../clusterserviceversion';
 import {
   ClusterServiceVersionLogo,
   defaultChannelNameFor,
@@ -61,11 +65,7 @@ import {
   supportedInstallModesFor,
 } from '../index';
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
-import { CRDCard } from '../clusterserviceversion';
 import { OperatorInstallStatusPage } from '../operator-install-page';
-import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
-import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
-import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const [targetNamespace, setTargetNamespace] = React.useState(null);

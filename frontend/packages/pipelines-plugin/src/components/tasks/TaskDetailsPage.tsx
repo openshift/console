@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
 import { navFactory, Kebab } from '@console/internal/components/utils';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskDetails from './TaskDetails';
-import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 const TaskDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { kindObj, match } = props;

@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { requirePrometheus } from '@console/internal/components/graphs';
-import { topWorkloadMetricsQueries } from '../queries';
 import ConnectedMonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
+import { topWorkloadMetricsQueries } from '../queries';
 
 const WorkloadGraphs = requirePrometheus(({ resource }) => {
   const { t } = useTranslation();

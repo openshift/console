@@ -1,20 +1,20 @@
 import * as React from 'react';
-import Measure from 'react-measure';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { ChartVoronoiContainer } from '@patternfly/react-charts';
 import { Grid, GridItem } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { usePipelineSuccessRatioPoll } from '../hooks';
+import { LoadingInline } from '@console/internal/components/utils';
 import { DEFAULT_CHART_HEIGHT } from '../const';
+import { usePipelineSuccessRatioPoll } from '../hooks';
+import SuccessRatioDonut from './charts/successRatioDonut';
+import { TimeSeriesChart } from './charts/TimeSeriesChart';
 import {
   PipelineMetricsGraphProps,
   getRangeVectorData,
   formatDate,
 } from './pipeline-metrics-utils';
-import SuccessRatioDonut from './charts/successRatioDonut';
-import { TimeSeriesChart } from './charts/TimeSeriesChart';
 
 import './pipeline-chart.scss';
 
@@ -101,10 +101,16 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   }
   const successValue = _.find(finalArray, { x: 'success' })?.['count'] ?? 0;
   const successData = _.sortBy(finalArray, 'sortOrder');
+  const OVERLAP = 20;
   return (
     <Grid hasGutter>
       <GridItem xl2={3} xl={3} lg={3} md={3} sm={3}>
-        <div style={{ height: DEFAULT_CHART_HEIGHT }}>
+        <div
+          style={{
+            height: DEFAULT_CHART_HEIGHT,
+            marginTop: OVERLAP * -1,
+          }}
+        >
           <SuccessRatioDonut
             data={successData}
             successValue={successValue}

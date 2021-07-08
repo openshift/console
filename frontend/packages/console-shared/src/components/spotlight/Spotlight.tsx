@@ -12,13 +12,13 @@ const Spotlight: React.FC<SpotlightProps> = ({ selector, interactive }) => {
   const element = React.useMemo(() => {
     const highlightElement = document.querySelector(selector);
     let hiddenElement = highlightElement;
-    while (hiddenElement) {
+    while (hiddenElement && interactive) {
       const ariaHidden = hiddenElement.getAttribute('aria-hidden');
       if (ariaHidden === 'true') return null;
       hiddenElement = hiddenElement.parentElement;
     }
     return highlightElement;
-  }, [selector]);
+  }, [selector, interactive]);
 
   if (!element) return null;
   return interactive ? (

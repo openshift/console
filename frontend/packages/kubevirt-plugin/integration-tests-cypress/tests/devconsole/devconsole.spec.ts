@@ -1,10 +1,3 @@
-import { testName } from '../../support';
-import {
-  switchPerspective,
-  Perspective,
-  addHeader,
-  topologyHeader,
-} from '../../view/dev-perspective';
 import {
   DEFAULTS_VALUES,
   VM_ACTION,
@@ -14,16 +7,23 @@ import {
   TEMPLATE_NAME,
   TEMPLATE_BASE_IMAGE,
 } from '../../const/index';
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
 import {
   detailViewAction,
   detailViewDropdown,
   modalTitle,
-  selectItemFromDropdown,
+  selectActionFromDropdown,
 } from '../../view/actions';
-import { waitForStatus } from '../../view/vm';
 import { alertTitle, confirmCloneButton } from '../../view/clone';
-import { VirtualMachineData } from '../../types/vm';
+import {
+  switchPerspective,
+  Perspective,
+  addHeader,
+  topologyHeader,
+} from '../../view/dev-perspective';
 import { detailsTab } from '../../view/selector';
+import { waitForStatus } from '../../view/vm';
 
 const vm: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,
@@ -76,10 +76,7 @@ describe('test dev console', () => {
   describe('create vm in dev console', () => {
     it('ID(CNV-5699) create virtual machine', () => {
       cy.byLegacyTestID(addHeader).click();
-      cy.get('.odc-namespaced-page__content').scrollTo('bottom');
-      cy.contains('Virtual Machines')
-        .should('be.visible')
-        .click();
+      cy.get('[data-test="item dev-catalog-virtualization"]').click();
       cy.contains(TEMPLATE_NAME)
         .should('be.visible')
         .click();
@@ -158,7 +155,7 @@ describe('test dev console', () => {
     });
 
     it('ID(CNV-5702) clone vm', () => {
-      selectItemFromDropdown(VM_ACTION.Clone, detailViewDropdown);
+      selectActionFromDropdown(VM_ACTION.Clone, detailViewDropdown);
       cy.get(modalTitle)
         .contains('Clone Virtual Machine')
         .should('exist');

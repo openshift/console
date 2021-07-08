@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { SortByDirection } from '@patternfly/react-table';
+import { RowFilter } from '@console/internal/components/filter-toolbar';
 import {
   StateCounts,
   Severity,
@@ -9,8 +10,7 @@ import {
   severityRowFilter,
   alertStateFilter,
 } from '@console/internal/components/monitoring/alerting';
-import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { Kebab } from '@console/internal/components/utils';
+import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
 import {
   alertDescription,
   alertState,
@@ -18,7 +18,7 @@ import {
   alertingRuleStateOrder,
   labelsToParams,
 } from '@console/internal/components/monitoring/utils';
-import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
+import { Kebab } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import SilenceAlert from './SilenceAlert';
 

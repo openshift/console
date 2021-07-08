@@ -29,22 +29,26 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: 'select[id*="tasks-0-resources-inputs-0-resource-field"]',
+      inputResource: 'select[id*="resources-inputs-0-resource-field"]',
       workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
       parameterUrl: '[id$="tasks-0-params-0-value-field"]',
       parameterUrlHelper: '[id$="tasks-0-params-0-value-field-helper"]',
       parameterRevision: '[id$="tasks-0-params-1-value-field"]',
       parameterRevisionHelper: '[id$="tasks-0-params-1-value-field-helper"]',
-      imageName: '#IMAGE',
+      imageName: '#form-input-formData-tasks-0-params-3-value-field',
       script: '#SCRIPT',
       args: '#ARGS-0',
       actions: '[data-test-id="actions-menu-button"]',
       workspaces: '#form-dropdown-formData-tasks-0-workspaces-0-workspace-field',
+      whenExpression: '[data-test="when-expression"]',
+      addWhenExpression: '[data-test="when-expression"] [data-test="add-action"]',
     },
     addWorkspaces: {
       name: '[id$="workspaces-0-name-field"]',
       optionalWorkspace: '#form-checkbox-formData-workspaces-0-optional-field',
     },
+    addFinallyNode: '[data-test="pipeline-builder"] [data-test="add-finally-node"]',
+    finallyTaskList: '[data-test="builder-finally-node"] [data-test="task-list"]',
   },
   yamlView: {
     switchToYAMLView: '[id="form-radiobutton-editorType-yaml-field"]',
@@ -79,10 +83,12 @@ export const pipelineDetailsPO = {
   detailsTab: '[data-test-id$="Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
   yamlTab: '[data-test-id$="YAML"]',
-  pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
+  pipelineRunsTab: '[data-test-id="horizontal-link-PipelineRuns"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
   resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   details: {
+    visualization: '[data-test="pipeline-visualization"]',
+    finallyNode: '[data-test="pipeline-visualization"] [data-test="finally-node"]',
     sectionTitle: '[data-test-section-heading="Pipeline details"]',
     triggerTemplateSection: 'div.odc-trigger-template-list',
     triggerTemplateLink: 'a[data-test-id^="trigger-template-"]',
@@ -124,7 +130,7 @@ export const pipelineDetailsPO = {
 };
 
 export const triggerTemplateDetailsPO = {
-  title: '[data-test-section-heading="Trigger Template details"]',
+  title: '[data-test-section-heading="TriggerTemplate details"]',
   detailsTab: '[data-test-id="horizontal-link-public~Details"]',
   yamlTab: '[data-test-id="horizontal-link-public~YAML"]',
   details: {
@@ -150,7 +156,7 @@ export const triggerTemplateDetailsPO = {
 };
 
 export const eventListenerDetailsPO = {
-  title: '[data-test-section-heading="Event Listener details"]',
+  title: '[data-test-section-heading="EventListener details"]',
   details: {
     triggerBindingLink: '[data-test-id="github-pullreq"]',
     triggerTemplateIcon: '[title="TriggerTemplate"]',
@@ -166,9 +172,9 @@ export const pipelineRunDetailsPO = {
   logsTab: '[data-test-id="horizontal-link-Logs"]',
   yamlTab: '[data-test-id$="YAML"]',
   detailsTab: '[data-test-id$="Details"]',
-  taskRunsTab: '[data-test-id="horizontal-link-Task Runs"]',
+  taskRunsTab: '[data-test-id="horizontal-link-TaskRuns"]',
   eventsTab: '[data-test-id$="Events"]',
-  pipelineRunStatus: 'h1 [data-test="status-text"]',
+  pipelineRunStatus: '[data-test="resource-status"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
     sectionTitle: '[data-test-section-heading="PipelineRun details"]',
@@ -177,6 +183,7 @@ export const pipelineRunDetailsPO = {
     workspacesResources: {
       volumeClaimTemplateResources: '[data-test-id="volumeClaimTemplate-resources-section"]',
       emptyDirectory: '[data-test-id="empty-directory-workspace"]',
+      pvcIcon: '[title="PersistentVolumeClaim"]',
     },
   },
   yaml: {
@@ -218,6 +225,7 @@ export const pipelinesPO = {
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
     pipelineRunIcon: '[title="PipelineRun"]',
+    lastRunStatus: '[data-test="status-text"]',
   },
   addTrigger: {
     add: '#confirm-action',

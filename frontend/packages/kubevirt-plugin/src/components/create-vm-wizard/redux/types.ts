@@ -1,5 +1,4 @@
 import { ValidationObject } from '@console/shared';
-
 import { DeviceType } from '../../../constants/vm';
 import { FirehoseResourceEnhanced } from '../../../types/custom';
 import {

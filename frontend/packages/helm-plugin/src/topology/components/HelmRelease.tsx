@@ -6,11 +6,11 @@ import {
   WithDndDropProps,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils/topology-utils';
-import HelmReleaseNode from './HelmReleaseNode';
 import HelmReleaseGroup from './HelmReleaseGroup';
+import HelmReleaseNode from './HelmReleaseNode';
 
 import './HelmRelease.scss';
 

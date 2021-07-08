@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { BareMetalHostKind } from '../../types';
-import { BareMetalHostModel } from '../../models';
-import { getNodeMachineName, createBasicLookup } from '@console/shared';
-import { getHostMachineName } from '../../selectors';
-import BareMetalHostNICs from '../baremetal-hosts/BareMetalHostNICs';
-import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { PageComponentProps } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
+import { getNodeMachineName, createBasicLookup } from '@console/shared';
+import { BareMetalHostModel } from '../../models';
+import { getHostMachineName } from '../../selectors';
+import { BareMetalHostKind } from '../../types';
+import BareMetalHostNICs from '../baremetal-hosts/BareMetalHostNICs';
 
 const bareMetalHosts = {
   kind: referenceForModel(BareMetalHostModel),

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import {
   DrawerPanelContent,
   DrawerPanelBody,
@@ -9,6 +7,8 @@ import {
   DrawerCloseButton,
   Title,
 } from '@patternfly/react-core';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils';
 import { useScrollShadows, Shadows } from '@console/shared';
 import { QuickStart } from './utils/quick-start-types';
@@ -45,7 +45,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   });
 
   return quickStart ? (
-    <DrawerPanelContent isResizable>
+    <DrawerPanelContent isResizable data-test="quickstart drawer">
       <div className={`co-quick-start-panel-content-head ${headerClasses}`}>
         <DrawerHead>
           <div className="co-quick-start-panel-content__title">
@@ -56,7 +56,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
             >
               {quickStart?.spec.displayName}{' '}
               <small className="co-quick-start-panel-content__duration text-secondary">
-                {t('quickstart~{{duration, number}} minutes', {
+                {t('console-app~{{duration, number}} minutes', {
                   duration: quickStart?.spec.durationMinutes,
                 })}
               </small>
@@ -67,7 +67,11 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
           </DrawerActions>
         </DrawerHead>
       </div>
-      <DrawerPanelBody hasNoPadding className="co-quick-start-panel-content__body">
+      <DrawerPanelBody
+        hasNoPadding
+        className="co-quick-start-panel-content__body"
+        data-test="content"
+      >
         <AsyncComponent
           loader={() => import('./QuickStartController').then((c) => c.default)}
           quickStart={quickStart}

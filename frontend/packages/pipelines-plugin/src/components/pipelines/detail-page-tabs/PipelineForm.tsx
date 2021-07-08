@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Formik } from 'formik';
 import { k8sUpdate, K8sResourceKind } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { removeEmptyDefaultFromPipelineParams } from './utils';
@@ -26,9 +26,7 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
   };
 
   const handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
-
-    k8sUpdate(
+    return k8sUpdate(
       PipelineModel,
       {
         ...obj,
@@ -42,7 +40,6 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
       obj.metadata.name,
     )
       .then((newObj) => {
-        actions.setSubmitting(false);
         actions.resetForm({
           values: {
             parameters: _.get(newObj.spec, 'params', []),
@@ -56,7 +53,6 @@ const PipelineForm: React.FC<PipelineFormProps> = ({
         });
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };

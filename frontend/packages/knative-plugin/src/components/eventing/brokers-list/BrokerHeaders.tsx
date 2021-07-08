@@ -1,5 +1,5 @@
-import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { Kebab } from '@console/internal/components/utils';
 
 const BrokerHeaders = (t: TFunction) => () => {

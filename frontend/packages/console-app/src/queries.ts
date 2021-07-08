@@ -28,7 +28,7 @@ export const PressureQueries = {
       model: PodModel,
       fieldSelector: `spec.nodeName=${node}`,
       metric: 'pod',
-      query: `(sort_desc(topk(25,sum by(pod, namespace) (container_memory_usage_bytes{node="${node}"}))))`,
+      query: `(sort_desc(topk(25,sum by(pod, namespace) (container_memory_working_set_bytes{node="${node}"}))))`,
     },
   ],
 

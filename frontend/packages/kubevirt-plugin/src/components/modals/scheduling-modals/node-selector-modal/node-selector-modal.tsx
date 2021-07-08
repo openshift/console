@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -10,8 +10,6 @@ import {
 } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
-import { Button, ButtonVariant } from '@patternfly/react-core';
-
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
 import { getNodeSelectorPatches } from '../../../../k8s/patches/vm/vm-scheduling-patches';
@@ -122,7 +120,7 @@ export const NSModal = withHandlePromise(
             t('kubevirt-plugin~Node Selector has been updated outside this flow.')
           }
           infoMessage={
-            <Trans t={t} i18nKey="nodeSelectorModal" ns="kubevirt-plugin">
+            <Trans t={t} ns="kubevirt-plugin">
               Saving these changes will override any Node Selector previously saved.
               <br />
               <Button variant={ButtonVariant.link} isInline onClick={onReload}>

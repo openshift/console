@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { InputField } from '@console/shared';
 import { PipelineParameters, PipelineResources, PipelineWorkspaces } from '../detail-page-tabs';
-import PipelineWorkspaceSuggestionIcon from './PipelineWorkspaceSuggestionIcon';
 import PipelineBuilderVisualization from './PipelineBuilderVisualization';
+import PipelineWorkspaceSuggestionIcon from './PipelineWorkspaceSuggestionIcon';
 import {
   PipelineBuilderTaskResources,
   PipelineBuilderTaskGroup,

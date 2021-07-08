@@ -1,8 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
-import { history } from '@console/internal/components/utils';
 import {
   Button,
   ButtonVariant,
@@ -14,7 +10,10 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { CheckIcon } from '@patternfly/react-icons';
-
+import { global_palette_light_green_400 as globalLightGreen400 } from '@patternfly/react-tokens/dist/js/global_palette_light_green_400';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { history } from '@console/internal/components/utils';
 import { getVMLikeModelDetailPath, getVMLikeModelListPath } from '../../../../utils/utils';
 import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
@@ -87,7 +86,7 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   }
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
-      <EmptyStateIcon icon={CheckIcon} color="#92d400" />
+      <EmptyStateIcon icon={CheckIcon} color={globalLightGreen400.value} />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
         {title}
       </Title>

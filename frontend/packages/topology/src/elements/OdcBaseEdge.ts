@@ -1,7 +1,7 @@
-import { observable } from 'mobx';
 import { BaseEdge } from '@patternfly/react-topology';
-import { OdcEdgeModel } from '../topology-types';
+import { observable } from 'mobx';
 import { K8sResourceKind, K8sResourceKindReference } from '@console/internal/module/k8s';
+import { OdcEdgeModel } from '../topology-types';
 
 class OdcBaseEdge extends BaseEdge {
   @observable.ref

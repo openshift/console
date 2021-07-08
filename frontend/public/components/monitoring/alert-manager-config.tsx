@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as fuzzy from 'fuzzysearch';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {
   Alert,
@@ -27,16 +26,20 @@ import {
 import { Helmet } from 'react-helmet';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
-let secret: K8sResourceKind = null; // alertmanager-main Secret which holds alertmanager configuration yaml
-let config: AlertmanagerConfig = null; // alertmanager configuration yaml as object
-
 export enum InitialReceivers {
   Critical = 'Critical',
   Default = 'Default',
   Watchdog = 'Watchdog',
 }
 
-const AlertRouting = () => {
+interface AlertRoutingProps {
+  // alertmanager-main Secret which holds alertmanager configuration yaml
+  secret: K8sResourceKind;
+  // alertmanager configuration yaml as object
+  config: AlertmanagerConfig;
+}
+
+const AlertRouting = ({ secret, config }: AlertRoutingProps) => {
   const groupBy = _.get(config, ['route', 'group_by'], []);
   const { t } = useTranslation();
   return (
@@ -79,9 +82,9 @@ const AlertRouting = () => {
 };
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs', 'text-center', ''),
-  classNames('col-lg-6', 'col-md-6', 'col-sm-6', 'col-xs-6'),
+  'pf-u-w-50-on-xs pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
+  'pf-u-w-50-on-xs',
   Kebab.columnClass,
 ];
 
@@ -134,6 +137,7 @@ const getRoutingLabelsByReceivers = (routes, parentLabels): RoutingLabelsByRecei
  * is receiver not in any route (no routing labels)?
  */
 const hasSimpleRoute = (
+  config: AlertmanagerConfig,
   receiver: AlertmanagerReceiver,
   receiverRoutingLabels: RoutingLabelsByReceivers[],
 ): boolean => {
@@ -150,6 +154,7 @@ const hasSimpleRoute = (
  * No receiver type specified is valid, as well as a single receiver type with no config
  */
 const hasSimpleReceiver = (
+  config: AlertmanagerConfig,
   receiver: AlertmanagerReceiver,
   receiverIntegrationTypes: string[],
 ): boolean => {
@@ -163,9 +168,9 @@ const hasSimpleReceiver = (
   return false;
 };
 
-const numberOfIncompleteReceivers = (): number => {
+export const numberOfIncompleteReceivers = (config: AlertmanagerConfig): number => {
   const { route, receivers } = config;
-  const { receiver: defaultReceiverName } = route;
+  const { receiver: defaultReceiverName } = route || {};
 
   // if no receivers or default receiver, then no longer initial setup, hide info alerts
   if (!receivers || !defaultReceiverName) {
@@ -187,11 +192,12 @@ const numberOfIncompleteReceivers = (): number => {
 // Puts sets of key=value pairs into single comma delimited label
 const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
   let count = 0;
+  const { t } = useTranslation();
   const list = _.map(labels, (value, key) => {
     count++;
     return key === 'default' ? (
       <span key="default" className="co-m-label__value">
-        All (default receiver)
+        {t('public~All (default receiver)')}
       </span>
     ) : (
       <React.Fragment key={`label-${key}-${value}`}>
@@ -209,7 +215,11 @@ const RoutingLabel: React.FC<RoutingLabelProps> = ({ labels }) => {
   );
 };
 
-const deleteReceiver = (receiverName: string) => {
+const deleteReceiver = (
+  secret: K8sResourceKind,
+  config: AlertmanagerConfig,
+  receiverName: string,
+) => {
   // remove any routes which use receiverToDelete
   _.update(config, 'route.routes', (routes) => {
     _.remove(routes, (route: AlertmanagerRoute) => route.receiver === receiverName);
@@ -225,8 +235,15 @@ const deleteReceiver = (receiverName: string) => {
   });
 };
 
-const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
-  const { filterValue } = props;
+interface ReceiversTableProps {
+  secret: K8sResourceKind;
+  config: AlertmanagerConfig;
+  data: AlertmanagerReceiver[];
+  filterValue?: string;
+}
+
+const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
+  const { secret, config, filterValue } = props;
   const { route } = config;
   const { receiver: defaultReceiverName, routes } = route;
   const { t } = useTranslation();
@@ -272,12 +289,12 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
       ', ',
     );
     const isDefaultReceiver = receiver.name === defaultReceiverName;
-    const receiverHasSimpleRoute = hasSimpleRoute(receiver, receiverRoutingLabels);
+    const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
 
     // Receiver form can only handle simple configurations. Can edit via form if receiver
     // has a simple route and receiver
     const canUseEditForm =
-      receiverHasSimpleRoute && hasSimpleReceiver(receiver, receiverIntegrationTypes);
+      receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
 
     // Receivers can be deleted if it has a simple route and not the default receiver
     const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
@@ -305,7 +322,7 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
               receiverName,
             }),
             btnText: t('public~Delete Receiver'),
-            executeFn: () => deleteReceiver(receiverName),
+            executeFn: () => deleteReceiver(secret, config, receiverName),
           }),
       },
     ];
@@ -369,7 +386,12 @@ const ReceiversEmptyState: React.FC = () => {
   );
 };
 
-const Receivers = () => {
+interface ReceiversProps {
+  secret: K8sResourceKind;
+  config: AlertmanagerConfig;
+}
+
+const Receivers = ({ secret, config }: ReceiversProps) => {
   const [receiverFilter, setReceiverFilter] = React.useState('');
   let receivers = _.get(config, 'receivers', []);
   if (receiverFilter) {
@@ -377,7 +399,7 @@ const Receivers = () => {
     receivers = receivers.filter((receiver) => fuzzy(filterStr, _.toLower(receiver.name)));
   }
 
-  const numOfIncompleteReceivers = numberOfIncompleteReceivers();
+  const numOfIncompleteReceivers = numberOfIncompleteReceivers(config);
   const { t } = useTranslation();
   const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
   return (
@@ -416,21 +438,22 @@ const Receivers = () => {
       {_.isEmpty(receivers) && !receiverFilter ? (
         <ReceiversEmptyState />
       ) : (
-        <ReceiversTable filterValue={receiverFilter} data={receivers} />
+        <ReceiversTable
+          secret={secret}
+          config={config}
+          filterValue={receiverFilter}
+          data={receivers}
+        />
       )}
     </div>
   );
 };
 
-const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj }) => {
-  const [errorMsg, setErrorMsg] = React.useState('');
-  secret = obj; // alertmanager-main Secret which holds encoded alertmanager configuration yaml
+const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ obj: secret }) => {
   const { t } = useTranslation();
-  if (!errorMsg) {
-    config = getAlertmanagerConfig(secret, setErrorMsg);
-  }
+  const { config, errorMessage } = getAlertmanagerConfig(secret);
 
-  if (errorMsg) {
+  if (errorMessage) {
     return (
       <Alert
         isInline
@@ -438,15 +461,15 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
         variant="danger"
         title={t('public~An error occurred')}
       >
-        <div className="co-pre-line">{errorMsg}</div>
+        <div className="co-pre-line">{errorMessage}</div>
       </Alert>
     );
   }
 
   return (
     <>
-      <AlertRouting />
-      <Receivers />
+      <AlertRouting secret={secret} config={config} />
+      <Receivers secret={secret} config={config} />
     </>
   );
 };
@@ -517,11 +540,6 @@ export type AlertmanagerConfig = {
   global: { [key: string]: string };
   route: AlertmanagerRoute;
   receivers: AlertmanagerReceiver[];
-};
-
-type ReceiverTableProps = {
-  data: AlertmanagerReceiver[];
-  filterValue?: string;
 };
 
 type RoutingLabelProps = {

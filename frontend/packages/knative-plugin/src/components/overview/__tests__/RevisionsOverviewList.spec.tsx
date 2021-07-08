@@ -1,10 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
+import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import * as utils from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
 import {
   mockRevisions,
@@ -13,7 +14,6 @@ import {
 import * as modal from '../../modals';
 import RevisionsOverviewList, { RevisionsOverviewListProps } from '../RevisionsOverviewList';
 import RevisionsOverviewListItem from '../RevisionsOverviewListItem';
-import { RevisionModel } from '../../../models';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

@@ -1,18 +1,18 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import * as semver from 'semver';
-import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import {
+  getImageStreamIcon,
+  getImageForIconClass,
+} from '@console/internal/components/catalog/catalog-item-icon';
 import {
   isBuilder,
   getMostRecentBuilderTag,
   getBuilderTagsSortedByVersion,
 } from '@console/internal/components/image-stream';
-import {
-  getImageStreamIcon,
-  getImageForIconClass,
-} from '@console/internal/components/catalog/catalog-item-icon';
-import { ProjectModel, ImageStreamModel } from '@console/internal/models';
 import { FirehoseResource } from '@console/internal/components/utils';
+import { ProjectModel, ImageStreamModel } from '@console/internal/models';
+import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 
 export interface ImageTag {
   name: string;

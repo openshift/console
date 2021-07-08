@@ -1,5 +1,15 @@
 import { TFunction } from 'i18next';
 import {
+  mockHelmReleases,
+  mockHelmChartData,
+  mockReleaseResources,
+  flattenedMockReleaseResources,
+  mockChartEntries,
+  mockRedhatHelmChartData,
+  mockHelmChartRepositories,
+} from '../../components/__tests__/helm-release-mock-data';
+import { HelmRelease, HelmReleaseStatus } from '../../types/helm-types';
+import {
   OtherReleaseStatuses,
   releaseStatusReducer,
   filterHelmReleasesByName,
@@ -11,16 +21,6 @@ import {
   getChartEntriesByName,
   loadHelmManifestResources,
 } from '../helm-utils';
-import { HelmRelease, HelmReleaseStatus } from '../../types/helm-types';
-import {
-  mockHelmReleases,
-  mockHelmChartData,
-  mockReleaseResources,
-  flattenedMockReleaseResources,
-  mockChartEntries,
-  mockRedhatHelmChartData,
-  mockHelmChartRepositories,
-} from '../../components/__tests__/helm-release-mock-data';
 
 const t = (key: TFunction) => key;
 

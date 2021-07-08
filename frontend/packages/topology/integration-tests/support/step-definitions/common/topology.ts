@@ -1,23 +1,23 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import {
+  switchPerspective,
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants/global';
+import {
+  createGitWorkload,
+  topologyHelper,
+} from '@console/dev-console/integration-tests/support/pages';
 import {
   perspective,
   projectNameSpace,
   navigateTo,
 } from '@console/dev-console/integration-tests/support/pages/app';
-import {
-  switchPerspective,
-  devNavigationMenu,
-} from '@console/dev-console/integration-tests/support/constants/global';
-import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
-import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-import { nav } from '@console/cypress-integration-tests/views/nav';
-import {
-  createGitWorkload,
-  topologyHelper,
-} from '@console/dev-console/integration-tests/support/pages';
-import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 import { verifyAndInstallKnativeOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
+import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { topologySidePane } from '@console/topology/integration-tests/support/pages/topology/topology-side-pane-page';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);

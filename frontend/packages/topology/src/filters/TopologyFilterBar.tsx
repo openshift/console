@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Trans, useTranslation } from 'react-i18next';
 import {
   Toolbar,
   ToolbarGroup,
@@ -12,25 +10,27 @@ import {
 } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { Visualization } from '@patternfly/react-topology';
-import { useQueryParams } from '@console/shared';
-import { RootState } from '@console/internal/redux';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { Trans, useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { TextFilter } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { TextFilter } from '@console/internal/components/factory';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { useQueryParams } from '@console/shared';
+import QuickSearchButton from '../components/quick-search/QuickSearchButton';
 import { TopologyViewType } from '../topology-types';
+import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
 import {
   getSupportedTopologyFilters,
   getSupportedTopologyKinds,
   onSearchChange,
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
-import KindFilterDropdown from './KindFilterDropdown';
-import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
-import QuickSearchButton from '../components/quick-search/QuickSearchButton';
 import { FilterContext } from './FilterProvider';
+import KindFilterDropdown from './KindFilterDropdown';
 
 import './TopologyFilterBar.scss';
 

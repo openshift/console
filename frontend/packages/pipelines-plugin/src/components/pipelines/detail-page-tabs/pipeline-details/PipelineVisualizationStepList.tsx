@@ -2,8 +2,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
-import { StatusIcon } from './StatusIcon';
 import { StepStatus } from './pipeline-step-utils';
+import { StatusIcon } from './StatusIcon';
 
 import './PipelineVisualizationStepList.scss';
 
@@ -56,7 +56,7 @@ export const PipelineVisualizationStepList: React.FC<PipelineVisualizationStepLi
       <div className="odc-pipeline-visualization-step-list__task-name">{taskName}</div>
       {isFinallyTask && (
         <div className="odc-pipeline-visualization-step-list__task-type">
-          {t('pipelines-plugin~Final task')}
+          {t('pipelines-plugin~Finally task')}
         </div>
       )}
       {steps.map(({ duration, name, runStatus: status }) => {

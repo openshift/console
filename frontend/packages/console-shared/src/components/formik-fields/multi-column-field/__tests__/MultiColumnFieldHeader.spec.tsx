@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { gridItemSpanValueShape } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import MultiColumnFieldHeader, { MultiColumnFieldHeaderProps } from '../MultiColumnFieldHeader';
 
 describe('MultiColumnFieldHeader', () => {

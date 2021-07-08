@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ClusterVersionKind } from '@console/internal/module/k8s';
 import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-
-import { useTranslation } from 'react-i18next';
 
 const getVersion = (cv: ClusterVersionKind) =>
   cv && cv.status.history[0] ? cv.status.history[0].version : null;

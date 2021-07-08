@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import * as fuzzy from 'fuzzysearch';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
 import { getName, ResourceDropdown, useFlag } from '@console/shared';
@@ -24,7 +25,7 @@ const StorageClassEncryptionLabel: React.FC = () => {
   return (
     <div className="ocs-install-encryption__pv-title">
       <span className="ocs-install-encryption__pv-title--padding">
-        {t('ceph-storage-plugin~Storage class encryption')}
+        {t('ceph-storage-plugin~StorageClass encryption')}
       </span>
       <AdvancedSubscription />
     </div>
@@ -60,7 +61,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   );
 
   const encryptionTooltip = t(
-    'ceph-storage-plugin~The storage cluster encryption level can be set to include all components under the cluster (including storage class and PVs) or to include only storage class encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.',
+    'ceph-storage-plugin~The StorageCluster encryption level can be set to include all components under the cluster (including StorageClass and PVs) or to include only StorageClass encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.',
   );
 
   React.useEffect(() => {
@@ -162,7 +163,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               id="storage-class-encryption"
               isChecked={encryption.storageClass}
               label={<StorageClassEncryptionLabel />}
-              aria-label={t('ceph-storage-plugin~Storage class encryption')}
+              aria-label={t('ceph-storage-plugin~StorageClass encryption')}
               description={t(
                 'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled StorageClass.',
               )}
@@ -219,6 +220,10 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
     (device: NetworkAttachmentDefinitionKind) => publicNetworkName !== getName(device),
     [publicNetworkName],
   );
+
+  const autoCompleteFilter = (strText: string, item: React.ReactElement): boolean =>
+    fuzzy(strText, item?.props?.name);
+
   return (
     <>
       <FormGroup
@@ -269,6 +274,7 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
                   setNetwork(NADSelectorType.PUBLIC, selectedResource)
                 }
                 resourceFilter={filterForPublicDevices}
+                autocompleteFilter={autoCompleteFilter}
                 showBadge
               />
             </Firehose>
@@ -288,6 +294,7 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
                   setNetwork(NADSelectorType.CLUSTER, selectedResource)
                 }
                 resourceFilter={filterForClusterDevices}
+                autocompleteFilter={autoCompleteFilter}
                 showBadge
               />
             </Firehose>

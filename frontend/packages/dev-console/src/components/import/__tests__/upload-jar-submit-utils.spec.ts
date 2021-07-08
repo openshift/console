@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as k8s from '@console/internal/module/k8s';
 import {
   DeploymentConfigModel,
   DeploymentModel,
@@ -9,12 +8,12 @@ import {
   BuildConfigModel,
   SecretModel,
 } from '@console/internal/models';
-import { ServiceModel as knServiceModel } from '@console/knative-plugin/src/models';
+import * as k8s from '@console/internal/module/k8s';
+import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
+import * as importSubmitUtils from '../import-submit-utils';
 import { Resources } from '../import-types';
 import * as submitUtils from '../upload-jar-submit-utils';
 import { nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
-import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
-import * as importSubmitUtils from '../import-submit-utils';
 
 const { createOrUpdateDeployment, createOrUpdateJarFile } = submitUtils;
 
@@ -150,7 +149,6 @@ describe('Upload Jar Submit Utils', () => {
       expect(returnValue).toHaveLength(4);
       const models = returnValue.map((data) => _.get(data, 'model.kind'));
       expect(models).toContain(BuildConfigModel.kind);
-      expect(models).toContain(knServiceModel.kind);
       done();
     });
   });

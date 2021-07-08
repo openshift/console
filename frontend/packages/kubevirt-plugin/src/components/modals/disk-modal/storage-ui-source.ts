@@ -1,6 +1,5 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-
 import { VolumeType } from '../../../constants';
 import {
   SelectDropdownData,
@@ -137,6 +136,8 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
     this === StorageUISource.IMPORT_DISK
       ? getStringEnumValues<BinaryUnit>(BinaryUnit)
       : [BinaryUnit.Mi, BinaryUnit.Gi, BinaryUnit.Ti];
+
+  requiresBlankDisk = () => this === StorageUISource.BLANK;
 
   requiresPVC = () =>
     this === StorageUISource.ATTACH_DISK || this === StorageUISource.ATTACH_CLONED_DISK;

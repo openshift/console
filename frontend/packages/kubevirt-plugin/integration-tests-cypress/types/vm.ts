@@ -40,6 +40,7 @@ export type VirtualMachineData = {
   flavor?: Flavor;
   os?: string;
   pvcName?: string;
+  pvcNS?: string;
   pvcSize?: string;
   provisionSource?: ProvisionSource;
   networks?: Network[];
@@ -48,4 +49,5 @@ export type VirtualMachineData = {
   cdrom?: boolean;
   sshEnable?: boolean;
   startOnCreation?: boolean;
+  sourceAvailable?: boolean;
 };

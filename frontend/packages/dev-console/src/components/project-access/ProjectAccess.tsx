@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { Formik } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
-import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import {
   LoadingBox,
   openshiftHelpBase,
@@ -10,9 +11,7 @@ import {
   ExternalLink,
   StatusBox,
 } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { RoleBindingModel, RoleModel } from '@console/internal/models';
-import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
 import {
   getRolesWithNameChange,
   sendRoleBindingRequest,
@@ -21,23 +20,18 @@ import {
   sendK8sRequest,
   getGroupedRole,
 } from './project-access-form-submit-utils';
+import { filterRoleBindings, getUserRoleBindings, Roles } from './project-access-form-utils';
+import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
-import { Verb, UserRoleBinding, roleBinding } from './project-access-form-utils-types';
 
 export interface ProjectAccessProps {
-  formName: string;
   namespace: string;
   roleBindings?: { data: []; loaded: boolean; loadError: {} };
   roles: { data: Roles; loaded: boolean };
 }
 
-const ProjectAccess: React.FC<ProjectAccessProps> = ({
-  formName,
-  namespace,
-  roleBindings,
-  roles,
-}) => {
+const ProjectAccess: React.FC<ProjectAccessProps> = ({ namespace, roleBindings, roles }) => {
   const { t } = useTranslation();
   if ((!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) || !roles.loaded) {
     return <LoadingBox />;
@@ -79,7 +73,6 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       return true;
     });
 
-    actions.setSubmitting(true);
     if (!_.isEmpty(updateRoles)) {
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Patch, updateRoles, roleBinding));
     }
@@ -90,24 +83,22 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
       roleBindingRequests.push(...sendRoleBindingRequest(Verb.Create, newRoles, roleBinding));
     }
 
-    Promise.all(roleBindingRequests)
+    return Promise.all(roleBindingRequests)
       .then(() => {
-        actions.setSubmitting(false);
         actions.resetForm({
           values: {
             projectAccess: values.projectAccess,
           },
-          status: { success: `Successfully updated the ${formName}.` },
+          status: { success: t('devconsole~Successfully updated the project access.') },
         });
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };
 
   const handleReset = (values, actions) => {
-    actions.resetForm({ status: { success: null } });
+    actions.resetForm({ status: { success: null }, values: initialValues });
   };
 
   return (
@@ -128,20 +119,20 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({
           .
         </Trans>
       </PageHeading>
-      <div className="co-m-pane__body">
-        {roleBindings.loadError ? (
-          <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
-        ) : (
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            onReset={handleReset}
-            validationSchema={validationSchema}
-          >
-            {(formikProps) => <ProjectAccessForm {...formikProps} roles={roles.data} />}
-          </Formik>
-        )}
-      </div>
+      {roleBindings.loadError ? (
+        <StatusBox loaded={roleBindings.loaded} loadError={roleBindings.loadError} />
+      ) : (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          onReset={handleReset}
+          validationSchema={validationSchema}
+        >
+          {(formikProps) => (
+            <ProjectAccessForm {...formikProps} roles={roles.data} roleBindings={initialValues} />
+          )}
+        </Formik>
+      )}
     </>
   );
 };

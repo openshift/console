@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { EventListenerKind } from '../resource-types';
-import EventListenerURL from './EventListenerURL';
 import EventListenerTriggers from './EventListenerTriggers';
+import EventListenerURL from './EventListenerURL';
 
 export interface EventListenerDetailsProps {
   obj: EventListenerKind;

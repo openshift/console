@@ -1,19 +1,19 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Button, Alert, FormHelperText } from '@patternfly/react-core';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
   ArrayFieldTemplateProps,
   FieldTemplateProps,
   ObjectFieldTemplateProps,
 } from 'react-jsonschema-form';
-import { Button, Alert, FormHelperText } from '@patternfly/react-core';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { JSON_SCHEMA_GROUP_TYPES } from './const';
 import { getUiOptions, getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { ExpandCollapse } from '@console/internal/components/utils';
+import { JSON_SCHEMA_GROUP_TYPES } from './const';
 import { FieldSet, FormField } from './fields';
-import { useSchemaLabel } from './utils';
 import { UiSchemaOptionsWithDependency } from './types';
+import { useSchemaLabel } from './utils';
 
 export const AtomicFieldTemplate: React.FC<FieldTemplateProps> = ({
   children,

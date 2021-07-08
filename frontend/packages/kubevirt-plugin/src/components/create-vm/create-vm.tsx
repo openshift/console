@@ -1,13 +1,4 @@
-import * as classNames from 'classnames';
-import { isEmpty } from 'lodash';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { RouteComponentProps } from 'react-router';
-
-import { history, LoadingBox } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ProjectModel } from '@console/internal/models';
-import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import {
   Alert,
   AlertActionCloseButton,
@@ -18,13 +9,21 @@ import {
   WizardContextType,
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
-
+import * as classNames from 'classnames';
+import { isEmpty } from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+import { history, LoadingBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
 import useSSHKeys from '../../hooks/use-ssh-keys';
 import useSSHService from '../../hooks/use-ssh-service';
 import { useSupportModal } from '../../hooks/use-support-modal';
+import useV2VConfigMap from '../../hooks/use-v2v-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
@@ -183,6 +182,9 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     kind: ProjectModel.kind,
     isList: true,
   });
+
+  const [V2VConfigMapImages, V2VConfigMapImagesLoaded, V2VConfigMapImagesError] = useV2VConfigMap();
+
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const {
     pods,
@@ -196,8 +198,8 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
 
   const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
-  const loaded = resourcesLoaded && projectsLoaded && scLoaded;
-  const loadError = resourcesLoadError || projectsError || scError;
+  const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
+  const loadError = resourcesLoadError || projectsError || scError || V2VConfigMapImagesError;
 
   const sourceStatus =
     selectedTemplate &&
@@ -426,6 +428,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                       scConfigMap,
                       tempSSHKey,
                       enableSSHService,
+                      V2VConfigMapImages,
                     );
                     if (vm) {
                       enableSSHService && createOrDeleteSSHService(vm);

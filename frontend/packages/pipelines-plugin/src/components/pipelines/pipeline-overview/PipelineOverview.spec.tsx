@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { setPipelineNotStarted } from './pipeline-overview-utils';
 import PipelineOverview from './PipelineOverview';
+import PipelineOverviewAlert from './PipelineOverviewAlert';
 import PipelineStartButton from './PipelineStartButton';
 import TriggerLastRunButton from './TriggerLastRunButton';
-import { setPipelineNotStarted } from './pipeline-overview-utils';
-import PipelineOverviewAlert from './PipelineOverviewAlert';
 
 jest.mock('@console/internal/module/k8s/k8s-models', () => {
   const dependency = require.requireActual('@console/internal/module/k8s/k8s-models');

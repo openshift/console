@@ -1,6 +1,6 @@
 import * as React from 'react';
-import LogSnippetFromPod from './LogSnippetFromPod';
 import { CombinedErrorDetails } from './log-snippet-types';
+import LogSnippetFromPod from './LogSnippetFromPod';
 
 type LogSnippetBlockProps = {
   children: (logSnippet: string) => React.ReactNode;

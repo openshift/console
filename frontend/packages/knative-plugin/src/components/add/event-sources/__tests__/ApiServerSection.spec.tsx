@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { AsyncComponent } from '@console/internal/components/utils/async';
-import ApiServerSection from '../ApiServerSection';
 import ServiceAccountDropdown from '../../../dropdowns/ServiceAccountDropdown';
+import ApiServerSection from '../ApiServerSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

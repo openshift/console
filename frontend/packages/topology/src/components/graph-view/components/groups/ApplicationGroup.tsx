@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { polygonHull } from 'd3-polygon';
-import * as _ from 'lodash';
 import {
   Layer,
   Node,
@@ -19,15 +17,17 @@ import {
   hullPath,
 } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
+import { polygonHull } from 'd3-polygon';
+import * as _ from 'lodash';
 import {
   getFilterById,
   useDisplayFilters,
   useSearchFilter,
   SHOW_LABELS_FILTER_ID,
 } from '../../../../filters';
+import { ApplicationModel } from '../../../../models';
 import SvgBoxedText from '../../../svg/SvgBoxedText';
 import { NodeShadows, NODE_SHADOW_FILTER_ID, NODE_SHADOW_FILTER_ID_HOVER } from '../NodeShadows';
-import { ApplicationModel } from '../../../../models';
 
 type ApplicationGroupProps = {
   element: Node;

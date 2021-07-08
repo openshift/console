@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { referenceForModel, MachineKind, NodeKind } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
+import { MultiListPage } from '@console/internal/components/factory';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
+import { referenceForModel, MachineKind, NodeKind } from '@console/internal/module/k8s';
 import { createLookup, getName, getMachineNodeName } from '@console/shared';
-import { MultiListPage } from '@console/internal/components/factory';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { BareMetalHostModel } from '../../models';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { getNodeServerCSR, getNodeClientCSRs } from '../../selectors/csr';
-import { BareMetalNodeListBundle, BareMetalNodeBundle } from '../types';
-import { BareMetalHostModel } from '../../models';
 import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
+import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';
+import { BareMetalNodeListBundle, BareMetalNodeBundle } from '../types';
 import BareMetalNodesTable from './BareMetalNodesTable';
 import { bareMetalNodeStatusFilter } from './table-filters';
-import { BareMetalHostKind, CertificateSigningRequestKind } from '../../types';
-import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const flattenResources = (resources: {
   hosts: FirehoseResult<BareMetalHostKind[]>;

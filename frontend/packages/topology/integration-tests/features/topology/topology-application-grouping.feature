@@ -8,8 +8,8 @@ Feature: Application groupings in topology
               And user has created or selected namespace "aut-topology-grouping"
 
 
-        @smoke
-        Scenario: Verify Application grouping sidebar: T-04-TC08
+        @smoke @to-do
+        Scenario: Verify Application grouping sidebar: T-05-TC01
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user clicks on an applicaton grouping "nodejs-ex-git-app"
@@ -18,16 +18,16 @@ Feature: Application groupings in topology
               And user can see Add to Application and Delete Application in the Action menu
 
 
-        @smoke
-        Scenario: Verify Application grouping context menu : T-06-TC04
+        @smoke @to-do
+        Scenario: Verify Application grouping context menu: T-05-TC02
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user right clicks on Application "nodejs-ex-git-app" to open context menu
              Then user can view Add to Application and Delete Application options
 
 
-        @regression
-        Scenario: Add to Application in Application grouping from Action menu
+        @regression @to-do
+        Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at the Topolgy page
              When user clicks on an applicaton grouping "nodejs-ex-git-app"
@@ -48,8 +48,8 @@ Feature: Application groupings in topology
              Then user can view options From Git, Container Image, From Dockerfile, From Devfile, Event Source, Channel
 
 
-        @regression
-        Scenario: Delete Application grouping from Action menu
+        @regression @to-do
+        Scenario: Delete Application grouping from Action menu: T-05-TC04
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
               And user is at Topology page
              When user clicks on applicaton grouping "nodejs-ex-git-app"
@@ -59,8 +59,8 @@ Feature: Application groupings in topology
              Then user can see the applicationgroup has been removed
 
 
-        @regression
-        Scenario: Delete Application grouping from context menu
+        @regression @to-do
+        Scenario: Delete Application grouping from context menu: T-05-TC05
             Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
              When user right clicks on applicaton grouping "nodejs-ex-git-app"
               And user clicks on Delete Application

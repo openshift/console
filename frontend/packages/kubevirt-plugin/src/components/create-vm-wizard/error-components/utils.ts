@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { joinGrammaticallyListOfItems } from '@console/shared/src';
-
 import { iGetIn, toJS } from '../../../utils/immutable';
 import { getValidationNameByKey } from '../../../utils/validations/strings';
 import { getEmptyRequiredFields, getInvalidFields } from '../redux/validations/utils';

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Node } from '@patternfly/react-topology';
 import { DataListCell } from '@patternfly/react-core';
+import { Node } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { formatCores } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
-import MetricsTooltip from './MetricsTooltip';
 import { useMetricStats } from '../../../utils/useMetricStats';
+import MetricsTooltip from './MetricsTooltip';
 
 import './MetricsCell.scss';
 

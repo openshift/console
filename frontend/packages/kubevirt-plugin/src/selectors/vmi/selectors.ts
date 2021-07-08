@@ -1,5 +1,4 @@
 import { getName, getNamespace } from '@console/shared';
-
 import { VirtualMachineInstanceModel } from '../../models';
 import { VMIKind } from '../../types/vm';
 import { getConsoleAPIBase } from '../../utils/url';

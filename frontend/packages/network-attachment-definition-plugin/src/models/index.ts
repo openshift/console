@@ -26,16 +26,3 @@ export const SriovNetworkNodePolicyModel: K8sKind = {
   id: 'sriov-network-node-policy',
   crd: true,
 };
-
-export const HyperConvergedModel: K8sKind = {
-  label: 'HyperConverged Cluster',
-  labelPlural: 'HyperConverged Clusters',
-  apiVersion: 'v1alpha1',
-  apiGroup: 'hco.kubevirt.io',
-  plural: 'hyperconvergeds',
-  namespaced: true,
-  abbr: 'HCO',
-  kind: 'HyperConverged',
-  id: 'hyperconverged',
-  crd: true,
-};

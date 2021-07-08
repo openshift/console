@@ -49,7 +49,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
                 noobaaNamespaceStores.find((ns) => ns?.metadata?.name === e.currentTarget.id),
               )
             }
-            data-test={name}
+            data-test={`${name}-dropdown-item`}
             description={t('ceph-storage-plugin~Provider {{provider}} | Region: {{region}}', {
               provider: nns?.spec?.type,
               region: nns?.spec?.awsS3?.region,

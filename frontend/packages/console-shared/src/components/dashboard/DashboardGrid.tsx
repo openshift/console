@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens/dist/js/global_breakpoint_lg';
-import { DashboardCardSpan } from '@console/plugin-sdk';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
+import { DashboardCardSpan } from '@console/plugin-sdk';
 
 export enum GridPosition {
   MAIN = 'MAIN',

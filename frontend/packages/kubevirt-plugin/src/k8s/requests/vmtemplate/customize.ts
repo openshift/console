@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { TemplateModel } from '@console/internal/models';
 import {
   k8sCreate,
@@ -8,7 +7,6 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
-
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
   AccessMode,
@@ -29,6 +27,7 @@ import {
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
@@ -186,6 +185,7 @@ export const createVMForCustomization = async (
     undefined,
     undefined,
     undefined,
+    undefined,
     size,
     false,
   );
@@ -320,5 +320,5 @@ export const createVMForCustomization = async (
     }
   }
 
-  return k8sCreate(VirtualMachineModel, vm);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vm);
 };

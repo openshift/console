@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useUserSettingsCompatibility } from '@console/shared';
-import { DEFAULT_TOPOLOGY_FILTERS } from './const';
-import { DisplayFilters } from '../topology-types';
 import { TOPOLOGY_DISPLAY_FILTERS_LOCAL_STORAGE_KEY } from '../redux/const';
+import { DisplayFilters } from '../topology-types';
+import { DEFAULT_TOPOLOGY_FILTERS } from './const';
 
 const TOPOLOGY_DISPLAY_FILTERS_USER_SETTINGS_KEY = `devconsole.topology.filters`;
 

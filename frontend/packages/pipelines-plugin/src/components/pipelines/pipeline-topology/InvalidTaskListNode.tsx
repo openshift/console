@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Node, NodeModel, observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { BUILDER_NODE_ERROR_RADIUS } from './const';
 import ErrorNodeDecorator from './ErrorNodeDecorator';
 import TaskListNode from './TaskListNode';

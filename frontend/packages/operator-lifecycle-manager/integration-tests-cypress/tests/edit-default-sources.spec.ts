@@ -1,5 +1,5 @@
-import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 
 describe('Create namespace from install operators', () => {
@@ -18,7 +18,7 @@ describe('Create namespace from install operators', () => {
   it('disables default catalog sources from operatorHub details page', () => {
     cy.log('navigate to operatorHub page');
     cy.visit(`/settings/cluster`);
-    cy.byLegacyTestID('horizontal-link-Global configuration').click();
+    cy.byLegacyTestID('horizontal-link-Configuration').click();
     cy.byLegacyTestID('OperatorHub').click();
 
     // verfiy operatorHub details page is open

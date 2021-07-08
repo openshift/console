@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import { FormikValues, useField, useFormikContext } from 'formik';
 import { DroppableFileInput } from '@console/internal/components/utils/file-input';
-import { FormGroup } from '@patternfly/react-core';
 import { FieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -16,7 +16,7 @@ const DroppableFileInputField: React.FC<FieldProps> = ({ name, label, helpText }
         onChange={(fileData: string) => setFieldValue(name, fileData)}
         inputFileData={field.value}
         inputFieldHelpText={helpText}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
       />
     </FormGroup>
   );

@@ -1,9 +1,9 @@
+import { wizard } from '@console/cypress-integration-tests/views/wizard';
 import { ServiceAccountKind } from '@console/internal/module/k8s';
 import '../../../integration-tests-cypress/support/index.ts';
-import { wizard } from '@console/cypress-integration-tests/views/wizard';
 import { CATALOG, PULL_SECRET_PATH, ocsCatalogSource } from '../mocks/install';
-import { commonFlows } from './common';
 import { NS } from '../utils/consts';
+import { commonFlows } from './common';
 
 export const createImagePullSecret = (namespace: string) => {
   cy.log(`Create ${CATALOG.SECRET} in ${namespace}`);

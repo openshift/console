@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   MultiColumnField,
   InputField,
@@ -36,12 +36,19 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
     { value: PipelineResourceType.storage, label: 'Storage' },
   ];
 
+  const nameLabel = t('pipelines-plugin~Name');
+  const resourceTypeLabel = t('pipelines-plugin~Resource type');
+
   return (
     <div className="co-m-pane__form">
       <MultiColumnField
+        data-test="pipeline-resources"
         name={fieldName}
         addLabel={addLabel}
-        headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}
+        headers={[
+          { name: nameLabel, required: true },
+          { name: resourceTypeLabel, required: true },
+        ]}
         emptyValues={{ name: '', type: '' }}
         emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
@@ -49,13 +56,15 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         <InputField
           name="name"
           type={TextInputTypes.text}
-          placeholder={t('pipelines-plugin~Name')}
+          placeholder={nameLabel}
           isReadOnly={isReadOnly}
+          aria-label={nameLabel}
         />
         <FormSelectField
           name="type"
           options={pipelineResourceTypeSelections}
           isDisabled={isReadOnly}
+          aria-label={resourceTypeLabel}
         />
       </MultiColumnField>
     </div>

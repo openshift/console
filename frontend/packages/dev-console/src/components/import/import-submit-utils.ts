@@ -1,5 +1,9 @@
-import * as _ from 'lodash';
+import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { BuildStrategyType } from '@console/internal/components/build';
+import { SecretType } from '@console/internal/components/secrets/create-secret';
+import { history } from '@console/internal/components/utils';
 import {
   ImageStreamModel,
   BuildConfigModel,
@@ -8,22 +12,35 @@ import {
   ProjectRequestModel,
   SecretModel,
   ServiceModel,
+  ServiceAccountModel,
   RouteModel,
 } from '@console/internal/models';
-import { k8sCreate, K8sResourceKind, k8sUpdate, K8sVerb } from '@console/internal/module/k8s';
+import {
+  k8sCreate,
+  k8sGet,
+  K8sResourceKind,
+  k8sUpdate,
+  K8sVerb,
+} from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
-import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { SecretType } from '@console/internal/components/secrets/create-secret';
-import { history } from '@console/internal/components/utils';
-import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
+import {
+  getDomainMappingRequests,
+  getKnativeServiceDepResource,
+} from '@console/knative-plugin/src/utils/create-knative-utils';
 import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
   updatePipelineForImportFlow,
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import { Perspective } from '@console/plugin-sdk';
+import { PIPELINE_SERVICE_ACCOUNT } from '@console/pipelines-plugin/src/components/pipelines/const';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import {
+  updateServiceAccount,
+  getSecretAnnotations,
+} from '@console/pipelines-plugin/src/utils/pipeline-utils';
+import { Perspective } from '@console/plugin-sdk';
+import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -34,8 +51,8 @@ import {
   getTemplateLabels,
 } from '../../utils/resource-label-utils';
 import { createService, createRoute, dryRunOpt } from '../../utils/shared-submit-utils';
-import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
+import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import {
   GitImportFormData,
   ProjectData,
@@ -440,6 +457,29 @@ export const managePipelineResources = async (
     );
   }
 
+  if (git.secret) {
+    const secret = await k8sGet(SecretModel, git.secret, project.name);
+    const gitUrl = GitUrlParse(git.url);
+    secret.metadata.annotations = getSecretAnnotations(
+      {
+        key: 'git',
+        value:
+          gitUrl.protocol === 'ssh' ? gitUrl.resource : `${gitUrl.protocol}://${gitUrl.resource}`,
+      },
+      secret.metadata.annotations,
+    );
+    await k8sUpdate(SecretModel, secret, project.name);
+
+    const pipelineServiceAccount = await k8sGet(
+      ServiceAccountModel,
+      PIPELINE_SERVICE_ACCOUNT,
+      project.name,
+    );
+    if (_.find(pipelineServiceAccount.secrets, (s) => s.name === git.secret) === undefined) {
+      await updateServiceAccount(git.secret, pipelineServiceAccount, false);
+    }
+  }
+
   if (_.has(managedPipeline?.metadata?.labels, 'app.kubernetes.io/instance')) {
     try {
       await createPipelineRunForImportFlow(managedPipeline);
@@ -580,7 +620,7 @@ export const createOrUpdateResources = async (
     generatedImageStreamName = `${name}-${getRandomChars()}`;
   }
 
-  if (buildStrategy === 'Devfile') {
+  if (buildStrategy === BuildStrategyType.Devfile) {
     if (verb !== 'create') {
       throw new Error(t('devconsole~Cannot update Devfile resources'));
     }
@@ -621,10 +661,6 @@ export const createOrUpdateResources = async (
   const defaultAnnotations = getGitAnnotations(repository, ref);
 
   if (formData.resources === Resources.KnativeService) {
-    // knative service doesn't have dry run capability so returning the promises.
-    if (dryRun) {
-      return responses;
-    }
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
@@ -648,10 +684,16 @@ export const createOrUpdateResources = async (
       annotations,
       _.get(appResources, 'editAppResource.data'),
     );
+    const domainMappingResources = await getDomainMappingRequests(
+      formData,
+      knDeploymentResource,
+      dryRun,
+    );
     return Promise.all([
       verb === 'update'
-        ? k8sUpdate(KnServiceModel, knDeploymentResource)
-        : k8sCreate(KnServiceModel, knDeploymentResource),
+        ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
+        : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
+      ...domainMappingResources,
     ]);
   }
 
@@ -677,7 +719,11 @@ export const createOrUpdateResources = async (
     );
   }
 
-  if (!_.isEmpty(ports) || buildStrategy === 'Docker' || buildStrategy === 'Source') {
+  if (
+    !_.isEmpty(ports) ||
+    buildStrategy === BuildStrategyType.Docker ||
+    buildStrategy === BuildStrategyType.Source
+  ) {
     const originalService = _.get(appResources, 'service.data');
     const service = createService(formData, imageStream, originalService);
 

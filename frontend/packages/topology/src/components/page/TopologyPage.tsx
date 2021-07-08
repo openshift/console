@@ -1,26 +1,29 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { matchPath, match as RMatch } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
-import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { Button } from '@patternfly/react-core';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Helmet } from 'react-helmet';
+import { useTranslation, Trans } from 'react-i18next';
+import { matchPath, match as RMatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import TopologyDataRenderer from './TopologyDataRenderer';
+import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
+import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
 } from '../../const';
-import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
 import DataModelProvider from '../../data-transforms/DataModelProvider';
-import TopologyPageToolbar from './TopologyPageToolbar';
+import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
+import { FilterProvider } from '../../filters/FilterProvider';
 import { TopologyViewType } from '../../topology-types';
+import TopologyDataRenderer from './TopologyDataRenderer';
+import TopologyPageToolbar from './TopologyPageToolbar';
 
 interface TopologyPageProps {
   match: RMatch<{
@@ -84,43 +87,45 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   };
 
   return (
-    <DataModelProvider namespace={namespace}>
-      <Helmet>
-        <title>{t('topology~Topology')}</title>
-      </Helmet>
-      <NamespacedPage
-        variant={
-          viewType === TopologyViewType.graph
-            ? NamespacedPageVariants.default
-            : NamespacedPageVariants.light
-        }
-        onNamespaceChange={handleNamespaceChange}
-        hideProjects={hideProjects}
-        toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
-        data-test-id={
-          viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
-        }
-      >
-        <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
-          {namespace ? (
-            <TopologyDataRenderer viewType={viewType} />
-          ) : (
-            <CreateProjectListPage title={t('topology~Topology')}>
-              {(openProjectModal) => (
-                <Trans t={t} ns="topology">
-                  Select a Project to view the topology or{' '}
-                  <Button isInline variant="link" onClick={openProjectModal}>
-                    create a Project
-                  </Button>
-                  .
-                </Trans>
-              )}
-            </CreateProjectListPage>
-          )}
-        </ProjectsExistWrapper>
-      </NamespacedPage>
-    </DataModelProvider>
+    <FilterProvider>
+      <DataModelProvider namespace={namespace}>
+        <Helmet>
+          <title>{t('topology~Topology')}</title>
+        </Helmet>
+        <NamespacedPage
+          variant={
+            viewType === TopologyViewType.graph
+              ? NamespacedPageVariants.default
+              : NamespacedPageVariants.light
+          }
+          onNamespaceChange={handleNamespaceChange}
+          hideProjects={hideProjects}
+          toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
+          data-test-id={
+            viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
+          }
+        >
+          <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
+            {namespace ? (
+              <TopologyDataRenderer viewType={viewType} />
+            ) : (
+              <CreateProjectListPage title={t('topology~Topology')}>
+                {(openProjectModal) => (
+                  <Trans t={t} ns="topology">
+                    Select a Project to view the topology or{' '}
+                    <Button isInline variant="link" onClick={openProjectModal}>
+                      create a Project
+                    </Button>
+                    .
+                  </Trans>
+                )}
+              </CreateProjectListPage>
+            )}
+          </ProjectsExistWrapper>
+        </NamespacedPage>
+      </DataModelProvider>
+    </FilterProvider>
   );
 };
 
-export default TopologyPage;
+export default withFallback(TopologyPage, ErrorBoundaryFallback);

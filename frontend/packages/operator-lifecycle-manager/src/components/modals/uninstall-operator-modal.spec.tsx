@@ -2,11 +2,11 @@ import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { ModalTitle, ModalSubmitFooter } from '@console/internal/components/factory/modal';
-import { testSubscription } from '../../../mocks';
-import { SubscriptionKind } from '../../types';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { testSubscription, dummyPackageManifest } from '../../../mocks';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { SubscriptionKind } from '../../types';
 import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall-operator-modal';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {
@@ -16,6 +16,10 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key) => key }),
   };
 });
+
+jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
 
 describe(UninstallOperatorModal.name, () => {
   let wrapper: ShallowWrapper<UninstallOperatorModalProps>;
@@ -41,6 +45,8 @@ describe(UninstallOperatorModal.name, () => {
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
     subscription = { ..._.cloneDeep(testSubscription), status: { installedCSV: 'testapp.v1.0.0' } };
+
+    (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
 
     wrapper = shallow(
       <UninstallOperatorModal

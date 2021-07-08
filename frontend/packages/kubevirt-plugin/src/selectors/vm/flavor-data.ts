@@ -1,5 +1,4 @@
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-
 import { convertToBytes } from '../../components/form/size-unit-utils';
 import { CUSTOM_FLAVOR } from '../../constants';
 import { CPURaw } from '../../types/vm';

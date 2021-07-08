@@ -1,7 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { referenceFor, modelFor } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
 import {
   Layer,
   Edge,
@@ -11,6 +8,9 @@ import {
   useSelection,
   WithContextMenuProps,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useAccessReview } from '@console/internal/components/utils';
+import { referenceFor, modelFor } from '@console/internal/module/k8s';
 import { getResource } from '../../../../utils/topology-utils';
 import './BaseEdge.scss';
 

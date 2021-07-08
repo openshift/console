@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
 import { addOptions, buildConfigOptions, messages } from '../../constants';
+import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
+import { dockerfilePage } from '../../pages/add-flow/dockerfile-page';
 
 Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
@@ -9,11 +10,6 @@ Given('user is at Import from git page', () => {
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage(gitUrl);
-  cy.get('body').then(($el) => {
-    if ($el.find('[aria-label$="Alert"]').length) {
-      cy.log('Builder image detected');
-    }
-  });
 });
 
 Then('git url gets Validated', () => {
@@ -43,6 +39,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
 Then(
   'user can see the created workload {string} is linked to existing application {string}',
   (workloadName: string, appName: string) => {
+    topologyPage.verifyWorkloadInTopologyPage(workloadName);
     topologyPage.getAppNode(appName).click({ force: true });
     topologySidePane.verifyResource(workloadName);
   },
@@ -62,6 +59,10 @@ When('user unselects the advanced option Create a route to the application', () 
 
 When('user enters name as {string} in General section', (name: string) => {
   gitPage.enterComponentName(name);
+});
+
+When('user enters Name as {string} in General section of Dockerfile page', (name: string) => {
+  dockerfilePage.enterName(name);
 });
 
 When('user clicks {string} link in Advanced Options section', (linkName: string) => {
@@ -180,7 +181,7 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
   topologyPage.verifyWorkloadInTopologyPage(nodeName);
   topologyPage.componentNode(nodeName).click({ force: true });
   topologySidePane.selectTab('Resources');
-  topologySidePane.verifySection('Routes').should('be.visible');
+  topologySidePane.verifySection('Routes');
   cy.get('[role="dialog"] h2')
     .contains('Routes')
     .next('span')
@@ -188,16 +189,13 @@ Then('public url is not created for node {string} in the workload sidebar', (nod
 });
 
 Then(
-  'the route of application {string} contains {string}',
+  'the route of application {string} contains {string} in the Routes section of the workload sidebar',
   (nodeName: string, routeName: string) => {
     topologyPage.verifyWorkloadInTopologyPage(nodeName);
     topologyPage.componentNode(nodeName).click({ force: true });
     topologySidePane.selectTab('Resources');
-    topologySidePane.verifySection('Routes').should('be.visible');
-    cy.get('[role="dialog"] h2')
-      .contains('Routes')
-      .next('span')
-      .should('contain.text', routeName);
+    topologySidePane.verifySection('Routes');
+    cy.get('a.co-external-link.co-external-link--block').should('contain.text', routeName);
   },
 );
 

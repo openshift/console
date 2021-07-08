@@ -110,10 +110,10 @@ const menuActions = [
 const kind = 'ServiceAccount';
 
 const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-sm-2', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-md',
   Kebab.columnClass,
 ];
 

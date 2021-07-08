@@ -1,4 +1,4 @@
-$tooltip-background-color: #151515;
+$tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 
 .co-alert-manager-config__edit-alert-routing-btn {
   margin-bottom: 10px;
@@ -20,7 +20,7 @@ $tooltip-background-color: #151515;
 .graph-empty-state {
   min-height: 310px;
   &__loaded {
-    align-items: center;
+    align-items: stretch;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -85,6 +85,16 @@ $tooltip-background-color: #151515;
   display: flex;
   flex-direction: column;
   margin-right: 20px;
+
+  .monitoring-dashboards__dashboard_dropdown_item {
+    display: flex;
+    justify-content: space-between;
+  }
+  .monitoring-dashboards__dashboard_dropdown_tag {
+    font-weight: var(--pf-global--FontWeight--bold);
+    line-height: 13px;
+    margin-left: 20px;
+  }
 }
 
 .monitoring-dashboards__header {
@@ -111,7 +121,11 @@ $tooltip-background-color: #151515;
     max-height: $legend-content-height; // Required for Chrome to prevent vertical scrolling
   }
   &:after {
-    background: linear-gradient(to left, var(--pf-global--BackgroundColor--100), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to left,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
     content: '';
     height: $legend-content-height;
     pointer-events: none;
@@ -511,6 +525,12 @@ $monitoring-line-height: 18px;
     margin: 0;
     padding-bottom: 0;
     padding-top: 0;
+  }
+
+  &.query-browser__resource-metrics-wrapper {
+    border: none;
+    margin: var(--pf-global--spacer--lg) 0 0 0;
+    padding: 0;
   }
 }
 

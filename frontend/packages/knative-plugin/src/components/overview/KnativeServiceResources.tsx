@@ -1,21 +1,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PodKind, podPhase } from '@console/internal/module/k8s';
 import { BuildOverview } from '@console/internal/components/overview/build-overview';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { PodModel } from '@console/internal/models';
+import { PodKind, podPhase } from '@console/internal/module/k8s';
 import {
   AllPodStatus,
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
 } from '@console/shared';
-import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
-import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
-import { KnativeServiceOverviewItem } from '../../topology/topology-types';
 import { getSubscriberByType } from '../../topology/knative-topology-utils';
-import RevisionsOverviewList from './RevisionsOverviewList';
-import KSRoutesOverviewList from './RoutesOverviewList';
+import { KnativeServiceOverviewItem } from '../../topology/topology-types';
+import { usePodsForRevisions } from '../../utils/usePodsForRevisions';
+import DomainMappingOverviewList from './domain-mapping/DomainMappingOverviewList';
 import { PubSubResourceOverviewList } from './EventPubSubResources';
 import PubSubSubscribers from './EventPubSubSubscribers';
+import RevisionsOverviewList from './RevisionsOverviewList';
+import KSRoutesOverviewList from './RoutesOverviewList';
 
 type KnativeServiceResourceProps = {
   item: KnativeServiceOverviewItem;
@@ -23,7 +24,14 @@ type KnativeServiceResourceProps = {
 
 const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }) => {
   const { t } = useTranslation();
-  const { revisions, ksroutes, obj, eventSources = [], subscribers = [] } = item;
+  const {
+    revisions,
+    ksroutes,
+    obj,
+    eventSources = [],
+    subscribers = [],
+    domainMappings = [],
+  } = item;
   const { buildConfigs = [] } = useBuildConfigsWatcher(obj);
   const {
     kind: resKind,
@@ -74,6 +82,12 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
       )}
       {brokers.length > 0 && (
         <PubSubSubscribers subscribers={brokers} title={t('knative-plugin~Triggers')} />
+      )}
+      {domainMappings.length > 0 && (
+        <DomainMappingOverviewList
+          domainMappings={domainMappings}
+          title={t('knative-plugin~Domain mappings')}
+        />
       )}
       {pluginComponents.map(({ Component, key }) => (
         <Component key={key} item={item} />

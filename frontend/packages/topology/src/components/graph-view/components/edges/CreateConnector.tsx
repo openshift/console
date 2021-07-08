@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { DefaultCreateConnector, Point } from '@patternfly/react-topology';
 
 import './CreateConnector.scss';
 

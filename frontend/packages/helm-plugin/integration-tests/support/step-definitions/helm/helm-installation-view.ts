@@ -1,6 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { catalogPage } from '@console/dev-console/integration-tests/support/pages';
 import { catalogPO, helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { catalogPage } from '@console/dev-console/integration-tests/support/pages';
 
 When('user searches and selects {string} helm chart from catalog page', (helmChartName: string) => {
   catalogPage.search(helmChartName);

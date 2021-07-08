@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PodModel, NodeModel } from '@console/internal/models';
+import { referenceForModel, K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import InventoryItem, {
   ResourceInventoryItem,
   StatusGroupMapper,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { referenceForModel, K8sResourceCommon, K8sKind } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PodModel, NodeModel } from '@console/internal/models';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-
 import { NodeDashboardContext } from './NodeDashboardContext';
 
 export const NodeInventoryItem: React.FC<NodeInventoryItemProps> = ({
@@ -51,7 +50,7 @@ const InventoryCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Inventory')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('console-app~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <NodeInventoryItem
@@ -61,8 +60,8 @@ const InventoryCard: React.FC = () => {
         />
         <InventoryItem
           isLoading={!obj}
-          title={t('nodes~Image')}
-          titlePlural={t('nodes~Images')}
+          title={t('console-app~Image')}
+          titlePlural={t('console-app~Images')}
           count={obj.status?.images?.length}
           error={!obj.status?.images}
         />

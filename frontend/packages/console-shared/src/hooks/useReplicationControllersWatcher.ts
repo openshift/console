@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { getReplicationControllersForResource } from '../utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodControllerOverviewItem } from '../types';
+import { getReplicationControllersForResource } from '../utils';
 
 export const useReplicationControllersWatcher = (
   resource: K8sResourceKind,

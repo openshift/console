@@ -2,20 +2,9 @@ import * as React from 'react';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
-import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
-import ConsumerPopover, {
-  LimitsBody,
-} from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { getNodeAddresses } from '@console/shared/src/selectors/node';
-import { PodModel, ProjectModel } from '@console/internal/models';
+  PrometheusUtilizationItem,
+  PrometheusMultilineUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   humanizeCpuCores,
   humanizeBinaryBytes,
@@ -23,11 +12,22 @@ import {
   humanizeNumber,
   Dropdown,
 } from '@console/internal/components/utils';
+import { PodModel, ProjectModel } from '@console/internal/models';
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import {
-  PrometheusUtilizationItem,
-  PrometheusMultilineUtilizationItem,
-} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-
+  useMetricDuration,
+  Duration,
+} from '@console/shared/src/components/dashboard/duration-hook';
+import ConsumerPopover, {
+  LimitsBody,
+} from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
+import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getNodeAddresses } from '@console/shared/src/selectors/node';
+import { NodeDashboardContext } from './NodeDashboardContext';
 import {
   NodeQueries,
   getUtilizationQueries,
@@ -35,7 +35,6 @@ import {
   getTopConsumerQueries,
   getResourceQutoaQueries,
 } from './queries';
-import { NodeDashboardContext } from './NodeDashboardContext';
 
 const getPodConsumers = (query: string, nodeName: string) => ({
   query,
@@ -69,7 +68,7 @@ export const CPUPopover: React.FC<PopoverProps> = ({
   return (
     <ConsumerPopover
       current={title}
-      title={t('nodes~CPU')}
+      title={t('console-app~CPU')}
       consumers={consumers}
       humanize={humanizeCpuCores}
       position={position}
@@ -98,7 +97,7 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
   return (
     <ConsumerPopover
       current={title}
-      title={t('nodes~Memory')}
+      title={t('console-app~Memory')}
       consumers={consumers}
       humanize={humanizeBinaryBytes}
       position={position}
@@ -158,7 +157,7 @@ const UtilizationCard: React.FC = () => {
   const filesystemPopover = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title={t('nodes~Filesystem')}
+        title={t('console-app~Filesystem')}
         current={current}
         consumers={consumers[0]}
         humanize={humanizeBinaryBytes}
@@ -171,7 +170,7 @@ const UtilizationCard: React.FC = () => {
   const networkPopoverIn = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title={t('nodes~Network in')}
+        title={t('console-app~Network in')}
         current={current}
         consumers={consumers[1]}
         humanize={humanizeDecimalBytesPerSec}
@@ -184,7 +183,7 @@ const UtilizationCard: React.FC = () => {
   const networkPopoverOut = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
-        title={t('nodes~Network out')}
+        title={t('console-app~Network out')}
         current={current}
         consumers={consumers[2]}
         humanize={humanizeDecimalBytesPerSec}
@@ -202,7 +201,7 @@ const UtilizationCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Utilization')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('console-app~Utilization')}</DashboardCardTitle>
         <Dropdown
           items={Duration(t)}
           onChange={setDuration}
@@ -212,7 +211,7 @@ const UtilizationCard: React.FC = () => {
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title={t('nodes~CPU')}
+          title={t('console-app~CPU')}
           humanizeValue={humanizeCpuCores}
           utilizationQuery={queries[NodeQueries.CPU_USAGE]}
           totalQuery={queries[NodeQueries.CPU_TOTAL]}
@@ -224,7 +223,7 @@ const UtilizationCard: React.FC = () => {
           setLimitReqState={setCPULimit}
         />
         <PrometheusUtilizationItem
-          title={t('nodes~Memory')}
+          title={t('console-app~Memory')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[NodeQueries.MEMORY_USAGE]}
           totalQuery={queries[NodeQueries.MEMORY_TOTAL]}
@@ -236,7 +235,7 @@ const UtilizationCard: React.FC = () => {
           setLimitReqState={setMemoryLimit}
         />
         <PrometheusUtilizationItem
-          title={t('nodes~Filesystem')}
+          title={t('console-app~Filesystem')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[NodeQueries.FILESYSTEM_USAGE]}
           totalQuery={queries[NodeQueries.FILESYSTEM_TOTAL]}
@@ -245,14 +244,14 @@ const UtilizationCard: React.FC = () => {
           duration={duration}
         />
         <PrometheusMultilineUtilizationItem
-          title={t('nodes~Network transfer')}
+          title={t('console-app~Network transfer')}
           humanizeValue={humanizeDecimalBytesPerSec}
           queries={multilineQueries[NodeQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
           duration={duration}
         />
         <PrometheusUtilizationItem
-          title={t('nodes~Pod count')}
+          title={t('console-app~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[NodeQueries.POD_COUNT]}
           duration={duration}

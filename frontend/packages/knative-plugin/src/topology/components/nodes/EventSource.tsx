@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import {
   Node,
   observer,
@@ -14,12 +13,13 @@ import {
   WithCreateConnectorProps,
   Edge,
 } from '@patternfly/react-topology';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import * as classNames from 'classnames';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,
   NODE_SHADOW_FILTER_ID,
 } from '@console/topology/src/components/graph-view';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import {
   useSearchFilter,
   useDisplayFilters,
@@ -27,7 +27,6 @@ import {
   SHOW_LABELS_FILTER_ID,
   useAllowEdgeCreation,
 } from '@console/topology/src/filters';
-
 import { getEventSourceIcon } from '../../../utils/get-knative-icon';
 import { TYPE_KAFKA_CONNECTION_LINK } from '../../const';
 

@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { createBasicLookup } from '@console/shared';
-
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';

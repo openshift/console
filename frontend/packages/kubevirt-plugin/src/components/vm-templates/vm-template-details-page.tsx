@@ -1,8 +1,7 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match as routerMatch } from 'react-router';
-
 import { DetailsPage } from '@console/internal/components/factory/details';
 import { navFactory } from '@console/internal/components/utils/horizontal-nav';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -13,11 +12,11 @@ import {
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
-
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../hooks/use-support-modal';
 import { DataVolumeModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../types/api';
@@ -46,7 +45,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const { name } = props.match.params;
   const namespace = props.match.params.ns;
   const [dataVolumes, dvLoaded, dvError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kubevirtReferenceForModel(DataVolumeModel),
     isList: true,
     namespace,
   });

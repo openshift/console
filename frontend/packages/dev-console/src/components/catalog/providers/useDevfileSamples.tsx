@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { APIError } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { APIError } from '@console/shared';
 import { DevfileSample } from '../../import/devfile/devfile-types';
 
 const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction): CatalogItem[] => {
@@ -35,7 +35,7 @@ const normalizeDevfileSamples = (devfileSamples: DevfileSample[], t: TFunction):
 
 const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>([]);
+  const [devfileSamples, setDevfileSamples] = React.useState<DevfileSample[]>();
   const [loadedError, setLoadedError] = React.useState<APIError>();
 
   React.useEffect(() => {
@@ -55,10 +55,10 @@ const useDevfileSamples: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], bool
     return () => (mounted = false);
   }, []);
 
-  const normalizedDevfileSamples = React.useMemo(() => normalizeDevfileSamples(devfileSamples, t), [
-    devfileSamples,
-    t,
-  ]);
+  const normalizedDevfileSamples = React.useMemo(
+    () => normalizeDevfileSamples(devfileSamples || [], t),
+    [devfileSamples, t],
+  );
 
   const loaded = !!devfileSamples;
 

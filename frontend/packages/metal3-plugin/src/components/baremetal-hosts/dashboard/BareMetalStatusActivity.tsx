@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { getName, getNamespace } from '@console/shared';
-import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getHostPowerStatus } from '../../../selectors';
+import { getName, getNamespace } from '@console/shared';
+import ActivityItem from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
 import { BareMetalHostModel } from '../../../models';
+import { getHostPowerStatus } from '../../../selectors';
 import { BareMetalHostKind } from '../../../types';
 
 import './status-activity.scss';

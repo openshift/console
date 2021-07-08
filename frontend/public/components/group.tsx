@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { GroupModel, UserModel } from '../models';
@@ -48,12 +47,7 @@ const removeUser = (group: GroupKind, user: string): KebabOption => {
 
 const menuActions = [addUsers, ...Kebab.factory.common];
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
 const GroupTableRow: RowFunction<GroupKind> = ({ obj, index, key, style }) => {
   return (

@@ -1,7 +1,7 @@
 import { Model } from '@patternfly/react-topology';
+import { isExpanded } from '../filters';
 import { TopologyDisplayFilterType, DisplayFilters } from '../topology-types';
 import { TYPE_OPERATOR_BACKED_SERVICE } from './components/const';
-import { isExpanded } from '../filters';
 
 export const EXPAND_OPERATORS_RELEASE_FILTER = 'operatorGrouping';
 

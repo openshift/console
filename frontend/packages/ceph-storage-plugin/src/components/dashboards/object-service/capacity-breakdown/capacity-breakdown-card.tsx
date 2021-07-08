@@ -24,7 +24,7 @@ import { Colors } from '../../common/capacity-breakdown/consts';
 import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';
 import { RGW_FLAG } from '../../../../features';
 import { getGroupedSelectOptions } from '../../common/capacity-breakdown/breakdown-dropdown';
-import { ServiceType, CapacityBreakdown, Groups } from '../../../../constants';
+import { ServiceType, CapacityBreakdown } from '../../../../constants';
 import { secretResource } from '../../../../resources';
 import { breakdownQueryMap } from '../../../../queries/object-storage-queries';
 import { isFunctionThenApply, decodeRGWPrefix } from '../../../../utils';
@@ -110,7 +110,7 @@ const BreakdownCard: React.FC = () => {
   const breakdownItems = React.useMemo(
     () => [
       {
-        group: Groups.BREAKDOWN,
+        group: t('ceph-storage-plugin~Break by'),
         items: [
           {
             id: CapacityBreakdown.Metrics.TOTAL,
@@ -135,7 +135,7 @@ const BreakdownCard: React.FC = () => {
 
   const ServiceItems = [
     {
-      group: t('ceph-storage-plugin~Service Type'),
+      group: t('ceph-storage-plugin~Service type'),
       items: [
         { name: t('ceph-storage-plugin~All'), id: ServiceType.ALL },
         { name: ServiceType.MCG, id: ServiceType.MCG },

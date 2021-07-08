@@ -9,10 +9,10 @@ import {
   DetailsItem,
   useAccessReview,
 } from '@console/internal/components/utils';
-import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
-import { OperatorHubKind } from '.';
 import { OperatorHubModel } from '../../models';
+import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
 import { editDefaultSourcesModal } from '../modals/edit-default-sources-modal';
+import { OperatorHubKind } from '.';
 
 const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();

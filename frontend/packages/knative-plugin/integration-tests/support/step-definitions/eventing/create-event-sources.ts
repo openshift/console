@@ -1,4 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import {
+  devNavigationMenu,
+  addOptions,
+} from '@console/dev-console/integration-tests/support/constants';
+import { eventSourcePO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   addPage,
   createEventSourcePage,
@@ -9,15 +15,9 @@ import {
   gitPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
-  devNavigationMenu,
-  addOptions,
-} from '@console/dev-console/integration-tests/support/constants';
-import {
   topologyPage,
   topologySidePane,
 } from '@console/topology/integration-tests/support/pages/topology';
-import { eventSourcePO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 Given('user is at Event Sources page', () => {
   navigateTo(devNavigationMenu.Add);

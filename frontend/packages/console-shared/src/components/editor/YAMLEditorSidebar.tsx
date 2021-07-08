@@ -1,8 +1,8 @@
 import * as React from 'react';
-import MonacoEditor from 'react-monaco-editor';
 import { JSONSchema6 } from 'json-schema';
-import { K8sKind } from '@console/internal/module/k8s';
+import MonacoEditor from 'react-monaco-editor';
 import { ResourceSidebar } from '@console/internal/components/sidebars/resource-sidebar';
+import { K8sKind } from '@console/internal/module/k8s';
 import { Sample } from '../../utils';
 import { downloadYaml } from './yaml-download-utils';
 

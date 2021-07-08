@@ -2,8 +2,8 @@ import * as redux from 'react-redux';
 import * as plugins from '@console/plugin-sdk';
 import * as userHooks from '@console/shared/src/hooks/useUserSettingsCompatibility';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
-import * as TourModule from '../tour-context';
 import { TourActions } from '../const';
+import * as TourModule from '../tour-context';
 import { TourDataType } from '../type';
 
 jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({

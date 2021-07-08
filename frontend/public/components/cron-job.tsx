@@ -11,9 +11,9 @@ import {
   TableRow,
   TableData,
   RowFunction,
-  ListPageWrapper_ as ListPageWrapper,
+  ListPageWrapper,
 } from './factory';
-import { CronJobKind, K8sResourceKind } from '../module/k8s';
+import { CronJobKind, K8sResourceCommon, K8sResourceKind } from '../module/k8s';
 import {
   ContainerTable,
   DetailsItem,
@@ -25,6 +25,7 @@ import {
   SectionHeading,
   Timestamp,
   navFactory,
+  FirehoseResourcesResult,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
@@ -37,11 +38,11 @@ export const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), 
 const kind = 'CronJob';
 
 const tableColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
   Kebab.columnClass,
 ];
 
@@ -52,7 +53,6 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
         <ResourceLink
           kind={kind}
           name={cronjob.metadata.name}
-          title={cronjob.metadata.name}
           namespace={cronjob.metadata.namespace}
         />
       </TableData>
@@ -60,11 +60,7 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={cronjob.metadata.namespace}
-          title={cronjob.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{cronjob.spec.schedule}</TableData>
       <TableData className={tableColumnClasses[3]}>
@@ -179,7 +175,12 @@ export const CronJobPodsComponent: React.FC<CronJobPodsComponentProps> = ({ obj 
   <div className="co-m-pane__body">
     <Firehose resources={getPodsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
-        flatten={(_resources) => {
+        flatten={(
+          _resources: FirehoseResourcesResult<{
+            jobs: K8sResourceCommon[];
+            pods: K8sResourceCommon[];
+          }>,
+        ) => {
           if (!_resources.jobs.loaded || !_resources.pods.loaded) {
             return [];
           }
@@ -210,7 +211,7 @@ export const CronJobJobsComponent: React.FC<CronJobJobsComponentProps> = ({ obj 
   <div className="co-m-pane__body">
     <Firehose resources={getJobsWatcher(obj.metadata.namespace)}>
       <ListPageWrapper
-        flatten={(_resources) => {
+        flatten={(_resources: FirehoseResourcesResult<{ jobs: K8sResourceCommon[] }>) => {
           if (!_resources.jobs.loaded) {
             return [];
           }

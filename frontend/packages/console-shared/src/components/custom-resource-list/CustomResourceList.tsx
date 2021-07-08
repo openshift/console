@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Table, RowFunction } from '@console/internal/components/factory';
-import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
+import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 
 interface CustomResourceListProps {
   queryArg?: string;

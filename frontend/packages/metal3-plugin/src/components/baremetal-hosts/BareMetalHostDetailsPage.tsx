@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { MachineModel, MachineSetModel, NodeModel } from '@console/internal/models';
-import { ResourceEventStream } from '@console/internal/components/events';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { BareMetalHostModel } from '../../models';
-import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
-import BareMetalHostNICs from './BareMetalHostNICs';
-import { menuActionsCreator } from './host-menu-actions';
-import BareMetalHostDisks from './BareMetalHostDisks';
-import BareMetalHostDetails from './BareMetalHostDetails';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { BareMetalHostModel } from '../../models';
+import BareMetalHostDetails from './BareMetalHostDetails';
+import BareMetalHostDisks from './BareMetalHostDisks';
+import BareMetalHostNICs from './BareMetalHostNICs';
+import BareMetalHostDashboard from './dashboard/BareMetalHostDashboard';
+import { menuActionsCreator } from './host-menu-actions';
 
 type BareMetalHostDetailsPageProps = {
   namespace: string;

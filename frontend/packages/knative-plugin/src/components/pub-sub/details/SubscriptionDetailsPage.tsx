@@ -2,9 +2,9 @@ import * as React from 'react';
 import { DetailsPage } from '@console/internal/components/factory';
 import { Kebab, navFactory } from '@console/internal/components/utils';
 import { useTabbedTableBreadcrumbsFor } from '@console/shared';
-import SubscriptionDetails from './SubscriptionDetails';
 import { EventingSubscriptionModel } from '../../../models';
 import { serverlessTab } from '../../../utils/serverless-tab-utils';
+import SubscriptionDetails from './SubscriptionDetails';
 
 const SubscriptionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match } = props;

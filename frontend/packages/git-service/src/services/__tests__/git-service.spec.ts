@@ -1,10 +1,10 @@
 // import { Delays, greeter } from '../src/main';
 
 import { GitProvider } from '../../types';
-import { GithubService } from '../github-service';
-import { GitlabService } from '../gitlab-service';
 import { BitbucketService } from '../bitbucket-service';
 import { getGitService } from '../git-service';
+import { GithubService } from '../github-service';
+import { GitlabService } from '../gitlab-service';
 
 describe('Git Service', () => {
   it('should return correct instance of services based on git providers', (done: any) => {

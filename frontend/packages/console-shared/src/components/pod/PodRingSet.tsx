@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 import { global_Color_200 as color200 } from '@patternfly/react-tokens/dist/js/global_Color_200';
-import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { LoadingInline } from '@console/internal/components/utils';
-import { getPodData } from '../../utils';
+import { K8sResourceKind, modelFor } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '../../hooks';
+import { getPodData } from '../../utils';
 import PodRing from './PodRing';
 
 interface PodRingSetProps {

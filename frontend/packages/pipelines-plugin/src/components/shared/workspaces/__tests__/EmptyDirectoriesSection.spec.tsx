@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import EmptyDirectoriesSection from '../EmptyDirectoriesSection';
 import { PipelineRunWorkspace } from '../../../../types';
+import EmptyDirectoriesSection from '../EmptyDirectoriesSection';
 
 describe('EmptyDirectoriesSection', () => {
   it('should handle nulls', () => {

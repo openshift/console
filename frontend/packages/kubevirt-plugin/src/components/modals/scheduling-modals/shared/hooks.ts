@@ -1,10 +1,8 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
+import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getLabels, getNodeTaints } from '@console/shared';
-
 import { getLoadedData, isLoaded } from '../../../../utils';
 import { IDLabel } from '../../../LabelsList/types';
 import { AffinityRowData } from '../affinity-modal/types';

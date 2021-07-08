@@ -1,16 +1,16 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
+  pageTitle,
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants';
+import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
   catalogPage,
   catalogInstallPageObj,
   topologyHelper,
   createHelmReleaseWithName,
   navigateTo,
 } from '@console/dev-console/integration-tests/support/pages';
-import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import {
-  pageTitle,
-  devNavigationMenu,
-} from '@console/dev-console/integration-tests/support/constants';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
 When('user selects YAML view', () => {

@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
-import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
-
+import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
+import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import { getNodeAddresses } from '@console/shared/src/selectors/node';
 import NodeIPList from '../NodeIPList';
 import NodeRoles from '../NodeRoles';
 import { NodeDashboardContext } from './NodeDashboardContext';
@@ -24,24 +23,24 @@ const DetailsCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Details')}</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>{t('nodes~View all')}</DashboardCardLink>
+        <DashboardCardTitle>{t('console-app~Details')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('console-app~View all')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('nodes~Node name')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Node name')}>
             {obj.metadata.name}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Role')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Role')}>
             <NodeRoles node={obj} />
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Instance type')} error={!instanceType}>
+          <DetailItem isLoading={!obj} title={t('console-app~Instance type')} error={!instanceType}>
             {instanceType}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Zone')} error={!zone}>
+          <DetailItem isLoading={!obj} title={t('console-app~Zone')} error={!zone}>
             {zone}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Node addresses')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Node addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
           </DetailItem>
         </DetailsBody>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import WorkspaceDefinitionList from '../WorkspaceDefinitionList';
 import { TektonWorkspace } from '../../../../types';
+import WorkspaceDefinitionList from '../WorkspaceDefinitionList';
 
 describe('WorkspaceDefinitionList', () => {
   it('should handle nulls', () => {

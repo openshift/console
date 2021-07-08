@@ -1,5 +1,5 @@
-import { promqlEmptyResponse, promqlResponse } from './pipeline-metrics-test-data';
 import { getRangeVectorData, getXaxisValues } from '../pipeline-metrics-utils';
+import { promqlEmptyResponse, promqlResponse } from './pipeline-metrics-test-data';
 
 describe('Pipeline Metrics utils: getXaxisValues', () => {
   const ONE_DAY_DURATION = 86400000;

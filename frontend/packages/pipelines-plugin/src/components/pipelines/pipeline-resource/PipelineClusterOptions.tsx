@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { InputField, DroppableFileInputField } from '@console/shared';
 
 type PipelineClusterOptionsProps = { prefixName: string };
@@ -34,7 +34,7 @@ const PipelineClusterOptions: React.FC<PipelineClusterOptionsProps> = ({ prefixN
         type={TextInputTypes.password}
         name={`${prefixName}.params.password`}
         label={t('pipelines-plugin~Password')}
-        helpText={t('pipelines-plugin~Please provide Password.')}
+        helpText={t('pipelines-plugin~Please provide password.')}
       />
       <InputField
         type={TextInputTypes.text}

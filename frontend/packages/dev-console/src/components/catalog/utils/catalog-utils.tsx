@@ -1,8 +1,8 @@
-import { keywordFilter } from '@console/shared';
-import { history } from '@console/internal/components/utils';
-import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { history } from '@console/internal/components/utils';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
+import { keywordFilter } from '@console/shared';
 import { CatalogType, CatalogTypeCounts } from './types';
 
 const catalogItemCompare = (keyword: string, item: CatalogItem): boolean => {
@@ -49,6 +49,20 @@ export const updateURLParams = (paramName: string, value: string | string[]) => 
     params.delete(paramName);
   }
   setURLParams(params);
+};
+
+export const getURLWithParams = (paramName: string, value: string | string[]): string => {
+  const params = new URLSearchParams(window.location.search);
+  const url = new URL(window.location.href);
+
+  if (value) {
+    params.set(paramName, Array.isArray(value) ? JSON.stringify(value) : value);
+  } else {
+    params.delete(paramName);
+  }
+
+  const searchParams = `?${params.toString()}${url.hash}`;
+  return `${url.pathname}${searchParams}`;
 };
 
 export const getCatalogTypeCounts = (

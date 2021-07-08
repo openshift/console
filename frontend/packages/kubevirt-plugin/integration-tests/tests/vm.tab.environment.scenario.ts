@@ -1,11 +1,9 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
 import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
-
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as vmEnv from '../views/vm.environment.view';
 import { getConfigMap, getSecret, getServiceAccount, getVMManifest } from './mocks/mocks';

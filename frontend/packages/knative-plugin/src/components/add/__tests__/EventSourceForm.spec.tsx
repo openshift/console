@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { FormFooter, SyncedEditorField, FlexForm } from '@console/shared';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import EventSourceForm from '../EventSourceForm';
 import { kameletSourceTelegram } from '../../../utils/__tests__/knative-eventing-data';
+import EventSourceForm from '../EventSourceForm';
 
 let eventSourceFormProps: React.ComponentProps<typeof EventSourceForm>;
 

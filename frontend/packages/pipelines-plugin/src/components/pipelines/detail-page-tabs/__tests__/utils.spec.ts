@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-import { pipelineParameters, pipelineParametersWithoutDefaults } from './utils-data';
+import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import { TektonParam } from '../../../../types';
 import { getPipelineTaskLinks, removeEmptyDefaultFromPipelineParams } from '../utils';
-import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
+import { pipelineParameters, pipelineParametersWithoutDefaults } from './utils-data';
 
 describe('removeEmptyDefaultFromPipelineParams omits empty default values', () => {
   it('should return pipline parameters by only omitting empty default values', () => {

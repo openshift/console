@@ -1,8 +1,8 @@
 import { checkErrors, testName } from '../../support';
+import { projectDropdown } from '../../views/common';
+import { detailsPage } from '../../views/details-page';
 import { submitButton, errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
-import { detailsPage } from '../../views/details-page';
-import { projectDropdown } from '../../views/common';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 

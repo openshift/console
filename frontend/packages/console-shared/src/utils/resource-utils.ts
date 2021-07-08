@@ -1,4 +1,13 @@
 import * as _ from 'lodash';
+import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
+import { Alert, Alerts } from '@console/internal/components/monitoring/types';
+import {
+  ReplicationControllerModel,
+  ReplicaSetModel,
+  StatefulSetModel,
+  JobModel,
+  DeploymentConfigModel,
+} from '@console/internal/models';
 import {
   K8sResourceKind,
   K8sResourceCommon,
@@ -11,24 +20,7 @@ import {
   K8sKind,
   JobKind,
 } from '@console/internal/module/k8s';
-import {
-  ReplicationControllerModel,
-  ReplicaSetModel,
-  StatefulSetModel,
-  JobModel,
-  DeploymentConfigModel,
-} from '@console/internal/models';
 import { getBuildNumber } from '@console/internal/module/k8s/builds';
-import { Alert, Alerts } from '@console/internal/components/monitoring/types';
-import { alertMessageResources } from '@console/internal/components/monitoring/alerting';
-import {
-  BuildConfigOverviewItem,
-  OverviewItemAlerts,
-  PodControllerOverviewItem,
-  OverviewItem,
-  ExtPodKind,
-  LimitsData,
-} from '../types';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
   DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION,
@@ -39,8 +31,16 @@ import {
   DEPLOYMENT_PHASE,
   AllPodStatus,
 } from '../constants';
-import { isKnativeServing, isIdled } from './pod-utils';
+import {
+  BuildConfigOverviewItem,
+  OverviewItemAlerts,
+  PodControllerOverviewItem,
+  OverviewItem,
+  ExtPodKind,
+  LimitsData,
+} from '../types';
 import { doesHpaMatch } from './hpa-utils';
+import { isKnativeServing, isIdled } from './pod-utils';
 
 export const WORKLOAD_TYPES = [
   'deployments',

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import cx from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Title, WizardNavItem } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { QuickStartTaskStatus } from '../utils/quick-start-types';
 
 import './QuickStartTaskHeader.scss';
@@ -41,7 +41,7 @@ const TaskIcon: React.FC<{ taskIndex: number; taskStatus: QuickStartTaskStatus }
     default:
       return (
         <span className="co-icon-and-text__icon co-quick-start-task-header__task-icon-init">
-          {t('quickstart~{{taskIndex, number}}', { taskIndex })}
+          {t('console-app~{{taskIndex, number}}', { taskIndex })}
         </span>
       );
   }

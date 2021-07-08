@@ -123,10 +123,10 @@ class Terminal_ extends React.Component {
     const { t } = this.props;
     return (
       <div ref={this.outerRef} style={this.state} className={this.props.className}>
-        <div ref={this.innerRef} className="console">
+        <div ref={this.innerRef} className="co-terminal">
           {this.isFullscreen && (
             <Button
-              className="console-collapse-link"
+              className="co-terminal-collapse-link"
               onClick={() => this.setFullscreen(false)}
               variant="link"
             >

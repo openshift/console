@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Button, Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownToggle, DropdownItem, Label } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -35,6 +35,7 @@ import { history, LoadingInline, useSafeFetch } from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
+import customTimeRangeModal from './custom-time-range-modal';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
@@ -43,6 +44,7 @@ import {
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
   Panel,
 } from './types';
+import { useBoolean } from '../hooks/useBoolean';
 
 const NUM_SAMPLES = 30;
 
@@ -91,14 +93,6 @@ const evaluateTemplate = (
   });
 
   return result;
-};
-
-const useBoolean = (initialValue: boolean): [boolean, () => void, () => void, () => void] => {
-  const [value, setValue] = React.useState(initialValue);
-  const toggle = React.useCallback(() => setValue((v) => !v), []);
-  const setTrue = React.useCallback(() => setValue(true), []);
-  const setFalse = React.useCallback(() => setValue(false), []);
-  return [value, toggle, setTrue, setFalse];
 };
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
@@ -249,23 +243,90 @@ const AllVariableDropdowns = () => {
   );
 };
 
+const DashboardDropdown = ({ items, onChange, selectedKey }) => {
+  const { t } = useTranslation();
+
+  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+
+  const tagColors: ('red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange')[] = [
+    'red',
+    'purple',
+    'blue',
+    'green',
+    'cyan',
+    'orange',
+  ];
+
+  const allTags = _.flatMap(items, 'tags');
+  const uniqueTags = _.uniq(allTags);
+
+  return (
+    <div className="form-group monitoring-dashboards__dropdown-wrap">
+      <label className="monitoring-dashboards__dropdown-title" htmlFor="monitoring-board-dropdown">
+        {t('public~Dashboard')}
+      </label>
+      <Dropdown
+        className="monitoring-dashboards__variable-dropdown"
+        dropdownItems={_.map(items, (item, key) => (
+          <DropdownItem
+            className="monitoring-dashboards__dashboard_dropdown_item"
+            component="button"
+            key={key}
+            onClick={() => onChange(key)}
+          >
+            {item.title}
+            {item.tags.map((tag, i) => (
+              <Label
+                className="monitoring-dashboards__dashboard_dropdown_tag"
+                color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
+                key={i}
+              >
+                {tag}
+              </Label>
+            ))}
+          </DropdownItem>
+        ))}
+        isOpen={isOpen}
+        onSelect={setClosed}
+        toggle={
+          <DropdownToggle
+            className="monitoring-dashboards__dropdown-button"
+            id="monitoring-board-dropdown"
+            onToggle={toggleIsOpen}
+          >
+            {items[selectedKey]?.title}
+          </DropdownToggle>
+        }
+      />
+    </div>
+  );
+};
+
+const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
+
 export const TimespanDropdown = () => {
   const { t } = useTranslation();
 
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'timespan']),
   );
+  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
 
   const dispatch = useDispatch();
   const onChange = React.useCallback(
     (v: string) => {
-      dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
-      dispatch(monitoringDashboardsSetEndTime(null));
+      if (v === CUSTOM_TIME_RANGE_KEY) {
+        customTimeRangeModal({});
+      } else {
+        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
+        dispatch(monitoringDashboardsSetEndTime(null));
+      }
     },
     [dispatch],
   );
 
   const timespanOptions = {
+    [CUSTOM_TIME_RANGE_KEY]: t('public~Custom time range'),
     '5m': t('public~Last {{count}} minute', { count: 5 }),
     '15m': t('public~Last {{count}} minute', { count: 15 }),
     '30m': t('public~Last {{count}} minute', { count: 30 }),
@@ -285,7 +346,7 @@ export const TimespanDropdown = () => {
       items={timespanOptions}
       label={t('public~Time range')}
       onChange={onChange}
-      selectedKey={formatPrometheusDuration(timespan)}
+      selectedKey={endTime ? CUSTOM_TIME_RANGE_KEY : formatPrometheusDuration(timespan)}
     />
   );
 };
@@ -550,9 +611,14 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
       });
   }, [safeFetch, setLoaded, t]);
 
-  const boardItems = React.useMemo(() => _.mapValues(_.mapKeys(boards, 'name'), 'data.title'), [
-    boards,
-  ]);
+  const boardItems = React.useMemo(
+    () =>
+      _.mapValues(_.mapKeys(boards, 'name'), (b) => ({
+        tags: b.data.tags,
+        title: b.data.title,
+      })),
+    [boards],
+  );
 
   const changeBoard = React.useCallback(
     (newBoard: string) => {
@@ -565,13 +631,8 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
             // Look for an option that should be selected by default
             let value = _.find(v.options, { selected: true })?.value;
 
-            // If no default option was found, see if the "All" option should be the default
-            if (
-              value === undefined &&
-              v.includeAll &&
-              v.current.selected === true &&
-              v.current.value === '$__all'
-            ) {
+            // If no default option was found, default to "All" (if present)
+            if (value === undefined && v.includeAll) {
               value = MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY;
             }
 
@@ -645,13 +706,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         </div>
         <div className="monitoring-dashboards__variables">
           {!_.isEmpty(boardItems) && (
-            <VariableDropdown
-              id="monitoring-board-dropdown"
-              items={boardItems}
-              label={t('public~Dashboard')}
-              onChange={changeBoard}
-              selectedKey={board}
-            />
+            <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
           )}
           <AllVariableDropdowns key={board} />
         </div>
@@ -662,10 +717,6 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 };
 
 type TemplateVariable = {
-  current: {
-    selected?: boolean;
-    value?: string;
-  };
   hide: number;
   includeAll: boolean;
   name: string;
@@ -688,6 +739,7 @@ type Board = {
     templating: {
       list: TemplateVariable[];
     };
+    tags: string;
     title: string;
   };
   name: string;

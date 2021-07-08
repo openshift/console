@@ -1,13 +1,13 @@
+import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data/pipeline-data';
+import { resultTask } from '../../../../../test-data/task-data';
+import { PipelineTask } from '../../../../../types';
+import { PipelineBuilderTaskResources } from '../../../../pipelines/pipeline-builder/types';
 import {
   paramToAutoComplete,
   taskToResult,
   taskToStatus,
   workspaceToAutoComplete,
 } from '../autoCompleteUtils';
-import { PipelineTask } from '../../../../../types';
-import { PipelineExampleNames, pipelineTestData } from '../../../../../test-data/pipeline-data';
-import { PipelineBuilderTaskResources } from '../../../../pipelines/pipeline-builder/types';
-import { resultTask } from '../../../../../test-data/task-data';
 
 describe('autoCompleteUtils', () => {
   describe('paramToAutoComplete', () => {

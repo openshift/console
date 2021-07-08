@@ -6,11 +6,11 @@ import {
   sampleKnativeRoutes,
   revisionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import KnativeRevisionResources from '../KnativeRevisionResources';
-import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import KSRoutesOverviewList from '../RoutesOverviewList';
-import DeploymentOverviewList from '../DeploymentOverviewList';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
+import DeploymentOverviewList from '../DeploymentOverviewList';
+import KnativeRevisionResources from '../KnativeRevisionResources';
+import KSRoutesOverviewList from '../RoutesOverviewList';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

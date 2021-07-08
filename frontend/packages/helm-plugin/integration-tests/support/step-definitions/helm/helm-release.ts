@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
   topologySidePane,
@@ -6,7 +7,6 @@ import {
   navigateTo,
   catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
@@ -105,9 +105,10 @@ When('user clicks on the Uninstall button', () => {
   helmDetailsPage.uninstallHelmRelease();
 });
 
-Then('user will be redirected to Topology page with no workloads', () => {
+Then('user will be redirected to Topology page', () => {
+  cy.reload();
   app.waitForDocumentLoad();
-  topologyPage.verifyNoWorkLoadsText('No resources found');
+  topologyPage.verifyTopologyPage();
 });
 When('user clicks on the helm release {string}', (helmReleaseName: string) => {
   topologyPage.clickOnNode(helmReleaseName);

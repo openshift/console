@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 const SwitchToYAMLAlert: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const { t } = useTranslation();

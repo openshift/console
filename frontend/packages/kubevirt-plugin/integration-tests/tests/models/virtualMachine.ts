@@ -1,13 +1,11 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { MatchLabels } from 'public/module/k8s';
-
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
-
+import { MatchLabels } from 'public/module/k8s';
 import { detailViewAction, listViewAction } from '../../views/actions.view';
 import { saveButton } from '../../views/kubevirtUIResource.view';
 import { vmtLinkByName } from '../../views/template.view';

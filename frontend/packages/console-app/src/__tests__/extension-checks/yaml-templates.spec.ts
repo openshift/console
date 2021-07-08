@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-import { referenceForExtensionModel, GroupVersionKind } from '@console/internal/module/k8s';
-import { baseTemplates } from '@console/internal/models/yaml-templates';
+import * as _ from 'lodash';
 import {
   YAMLTemplate,
   isYAMLTemplate,
 } from '@console/dynamic-plugin-sdk/src/extensions/yaml-templates';
+import { baseTemplates } from '@console/internal/models/yaml-templates';
+import { referenceForExtensionModel, GroupVersionKind } from '@console/internal/module/k8s';
 import { testedExtensions, getDuplicates } from '../plugin-test-utils';
 
 type TemplateEntry = [GroupVersionKind, ImmutableMap<string, string>];

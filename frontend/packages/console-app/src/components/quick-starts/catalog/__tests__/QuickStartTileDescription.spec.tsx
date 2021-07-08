@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Popover, Text } from '@patternfly/react-core';
-import QuickStartTileDescription from '../QuickStartTileDescription';
+import { shallow } from 'enzyme';
 import { getQuickStarts } from '../../utils/quick-start-utils';
+import QuickStartTileDescription from '../QuickStartTileDescription';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

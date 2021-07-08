@@ -1,7 +1,8 @@
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as findUp from 'find-up';
 import * as readPkg from 'read-pkg';
+import { getTemplatePackage } from '../../utils/test-utils';
 import {
   Package,
   PluginPackage,
@@ -10,7 +11,6 @@ import {
   filterActivePluginPackages,
   getMonorepoRootDir,
 } from '../plugin-resolver';
-import { getTemplatePackage } from '../../utils/test-utils';
 
 describe('isPluginPackage', () => {
   it('returns false if package.consolePlugin is missing', () => {

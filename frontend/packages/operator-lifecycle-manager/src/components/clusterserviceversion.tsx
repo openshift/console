@@ -1,10 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Link, match as RouterMatch } from 'react-router-dom';
-import * as classNames from 'classnames';
-import { sortable, wrappable } from '@patternfly/react-table';
-import { Helmet } from 'react-helmet';
-import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
 import {
   Alert,
   Button,
@@ -14,14 +8,15 @@ import {
   Popover,
   CardTitle,
 } from '@patternfly/react-core';
-import {
-  ALL_NAMESPACES_KEY,
-  Status,
-  WarningStatus,
-  getNamespace,
-  getUID,
-  StatusIconAndText,
-} from '@console/shared';
+import { AddCircleOIcon, PencilAltIcon } from '@patternfly/react-icons';
+import { sortable, wrappable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import * as _ from 'lodash';
+import { Helmet } from 'react-helmet';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, match as RouterMatch } from 'react-router-dom';
+import { Conditions } from '@console/internal/components/conditions';
+import { ResourceEventStream } from '@console/internal/components/events';
 import {
   DetailsPage,
   Table,
@@ -29,21 +24,8 @@ import {
   TableData,
   MultiListPage,
   RowFunctionArgs,
+  Flatten,
 } from '@console/internal/components/factory';
-import { withFallback } from '@console/shared/src/components/error/error-boundary';
-import {
-  modelFor,
-  referenceForModel,
-  referenceFor,
-  groupVersionFor,
-  k8sKill,
-  k8sPatch,
-  k8sGet,
-  K8sResourceCommon,
-  K8sResourceKind,
-} from '@console/internal/module/k8s';
-import { ResourceEventStream } from '@console/internal/components/events';
-import { Conditions } from '@console/internal/components/conditions';
 import {
   Kebab,
   MsgBox,
@@ -66,13 +48,40 @@ import {
   KebabAction,
   openshiftHelpBase,
 } from '@console/internal/components/utils';
+import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { ConsoleOperatorConfigModel } from '@console/internal/models';
+import {
+  modelFor,
+  referenceForModel,
+  referenceFor,
+  groupVersionFor,
+  k8sKill,
+  k8sPatch,
+  k8sGet,
+  K8sResourceCommon,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
+import {
+  ALL_NAMESPACES_KEY,
+  Status,
+  WarningStatus,
+  getNamespace,
+  getUID,
+  StatusIconAndText,
+} from '@console/shared';
+import { withFallback } from '@console/shared/src/components/error/error-boundary';
+import { consolePluginModal } from '@console/shared/src/components/modals';
+import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
-
+import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { isPluginEnabled } from '@console/shared/src/utils';
+import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../const';
 import {
   ClusterServiceVersionModel,
   SubscriptionModel,
@@ -81,40 +90,37 @@ import {
   InstallPlanModel,
   OperatorGroupModel,
 } from '../models';
+import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
 import {
   APIServiceDefinition,
   CatalogSourceKind,
   ClusterServiceVersionKind,
   ClusterServiceVersionPhase,
   CRDDescription,
+  CSVConditionReason,
   InstallPlanKind,
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
-import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../const';
-import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
-import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
+import {
+  getClusterServiceVersionPlugins,
+  isCatalogSourceTrusted,
+  upgradeRequiresApproval,
+} from '../utils';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
+import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
+import { CreateInitializationResourceButton } from './operator-install-page';
 import {
   SubscriptionDetails,
   catalogSourceForSubscription,
-  upgradeRequiresApproval,
   UpgradeApprovalLink,
 } from './subscription';
-import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
-import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
-import { CreateInitializationResourceButton } from './operator-install-page';
-import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { Trans, useTranslation } from 'react-i18next';
-import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
-import { ConsoleOperatorConfigModel } from '@console/internal/models';
-import { getClusterServiceVersionPlugins, isPluginEnabled } from '../utils';
-import { consolePluginModal } from './modals/console-plugin-modal';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
-const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
+const isCSV = (obj): obj is ClusterServiceVersionKind =>
+  referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const isPackageServer = (obj) =>
   obj.metadata.name === 'packageserver' &&
   obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
@@ -260,7 +266,7 @@ const ManagedNamespaces: React.FC<ManagedNamespacesProps> = ({ obj }) => {
   }
 };
 
-const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, subscription }) => {
+const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) => {
   const console: WatchK8sResource = {
     kind: referenceForModel(ConsoleOperatorConfigModel),
     isList: false,
@@ -295,7 +301,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, subscriptio
                     consoleOperatorConfig,
                     csvPluginsCount,
                     plugin,
-                    subscription,
+                    trusted,
                   })
                 }
                 variant="link"
@@ -557,10 +563,10 @@ const CSVListNoDataEmptyMsg = () => {
   const { t } = useTranslation();
   const project = useActiveNamespace();
   const noOperatorsInSingleNamespaceMessage = t(
-    'olm~No Operators are availalble for project {{project}}.',
+    'olm~No Operators are available for project {{project}}.',
     { project },
   );
-  const noOperatorsInAllNamespacesMessage = t('olm~No Operators are availalble.');
+  const noOperatorsInAllNamespacesMessage = t('olm~No Operators are available.');
   const detail = (
     <>
       <div>
@@ -749,7 +755,10 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
     </Trans>
   );
 
-  const flatten = ({ clusterServiceVersions, subscriptions }) =>
+  const flatten: Flatten<{
+    clusterServiceVersions: ClusterServiceVersionKind[];
+    subscriptions: SubscriptionKind[];
+  }> = ({ clusterServiceVersions, subscriptions }) =>
     [
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(
@@ -973,6 +982,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
 
   const csvPlugins = getClusterServiceVersionPlugins(metadata?.annotations);
   const subscription = subscriptionForCSV(props.subscriptions, props.obj);
+  const permissions = _.uniqBy(spec?.install?.spec?.permissions, 'serviceAccountName');
 
   return (
     <>
@@ -987,8 +997,25 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   isInline
                   className="co-alert"
                   variant="danger"
-                  title={`${status.phase}: ${status.message}`}
-                />
+                  title={t('olm~Operator failed')}
+                >
+                  {status.reason === CSVConditionReason.CSVReasonCopied ? (
+                    <>
+                      {t(
+                        'olm~This Operator was copied from another namespace. For the reason it failed, see ',
+                      )}
+                      <ResourceLink
+                        name={metadata.name}
+                        kind={referenceForModel(ClusterServiceVersionModel)}
+                        namespace={operatorNamespaceFor(props.obj)}
+                        hideIcon
+                        inline
+                      />
+                    </>
+                  ) : (
+                    status.message
+                  )}
+                </Alert>
               )}
               {initializationResource && (
                 <InitializationResourceAlert
@@ -1023,7 +1050,10 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 </dd>
               </dl>
               {csvPlugins.length > 0 && subscription && (
-                <ConsolePlugins csvPlugins={csvPlugins} subscription={subscription} />
+                <ConsolePlugins
+                  csvPlugins={csvPlugins}
+                  trusted={isCatalogSourceTrusted(subscription?.spec?.source)}
+                />
               )}
               <dl className="co-clusterserviceversion-details__field">
                 <dt>{t('olm~Links')}</dt>
@@ -1084,11 +1114,7 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   {olmTargetNamespaces === '' ? (
                     t('olm~All Namespaces')
                   ) : (
-                    <ResourceLink
-                      kind="Namespace"
-                      name={props.obj.metadata.namespace}
-                      title={props.obj.metadata.uid}
-                    />
+                    <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} />
                   )}
                 </dd>
               </ResourceSummary>
@@ -1110,11 +1136,11 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                   />
                 </dd>
               ))}
-              {spec?.install?.spec?.permissions && (
+              {!_.isEmpty(permissions) && (
                 <>
                   <dt>{t('olm~Operator ServiceAccounts')}</dt>
-                  {spec.install.spec.permissions.map(({ serviceAccountName }) => (
-                    <dd key={serviceAccountName}>
+                  {permissions.map(({ serviceAccountName }) => (
+                    <dd key={serviceAccountName} data-service-account-name={serviceAccountName}>
                       <ResourceLink
                         name={serviceAccountName}
                         kind="ServiceAccount"
@@ -1333,7 +1359,7 @@ export type ClusterServiceVersionDetailsProps = {
 
 type ConsolePluginsProps = {
   csvPlugins: string[];
-  subscription: SubscriptionKind;
+  trusted: boolean;
 };
 
 type ConsolePluginStatusProps = {

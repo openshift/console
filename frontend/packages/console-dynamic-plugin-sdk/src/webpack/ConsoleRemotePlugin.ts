@@ -1,12 +1,12 @@
+import * as _ from 'lodash';
+import * as readPkg from 'read-pkg';
 import * as webpack from 'webpack';
 import { ReplaceSource } from 'webpack-sources';
-import * as readPkg from 'read-pkg';
-import * as _ from 'lodash';
-import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
-import { ConsolePackageJSON } from '../schema/plugin-package';
-import { SchemaValidator } from '../validation/SchemaValidator';
-import { sharedVendorModules } from '../shared-modules';
 import { remoteEntryFile } from '../constants';
+import { ConsolePackageJSON } from '../schema/plugin-package';
+import { sharedVendorModules } from '../shared-modules';
+import { SchemaValidator } from '../validation/SchemaValidator';
+import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 
 export const validatePackageFileSchema = (
   pkg: ConsolePackageJSON,

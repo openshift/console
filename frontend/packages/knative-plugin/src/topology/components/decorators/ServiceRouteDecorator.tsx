@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Decorator } from '@console/topology/src/components/graph-view';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { Decorator } from '@console/topology/src/components/graph-view';
 
 type ServiceRouteDecoratorProps = {
   url: string;

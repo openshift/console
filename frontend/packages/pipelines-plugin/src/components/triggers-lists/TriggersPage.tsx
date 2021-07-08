@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge, MultiTabListPage } from '@console/shared';
-import { DefaultPage } from '@console/internal/components/default-resource';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { DefaultPage } from '@console/internal/components/default-resource';
+import { Page } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { TechPreviewBadge, MultiTabListPage } from '@console/shared';
 import {
   EventListenerModel,
   TriggerTemplateModel,

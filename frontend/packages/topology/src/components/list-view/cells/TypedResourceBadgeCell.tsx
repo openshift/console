@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { observer } from '@patternfly/react-topology';
-import { isValidUrl } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { isValidUrl } from '@console/shared';
 
 interface TypedResourceBadgeCellProps {
   kind: string;

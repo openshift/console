@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import MonitoringEvents from '../MonitoringEvents';
 import { EventsList } from '@console/internal/components/events';
+import MonitoringEvents from '../MonitoringEvents';
 
 type MonitoringEventsProps = React.ComponentProps<typeof MonitoringEvents>;
 

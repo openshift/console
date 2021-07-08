@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourcesEventStream } from '@console/internal/components/events';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunModel } from '../../../../models';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
-import TaskRunEvents from '../TaskRunEvents';
 import * as utils from '../../../pipelineruns/events/event-utils';
+import TaskRunEvents from '../TaskRunEvents';
 
 const pipeline = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
 const { pods } = pipeline;

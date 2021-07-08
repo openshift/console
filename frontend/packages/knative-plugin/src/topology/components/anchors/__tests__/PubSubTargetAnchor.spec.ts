@@ -1,6 +1,6 @@
 import { Node, Point, Rect, Anchor } from '@patternfly/react-topology';
-import PubSubTargetAnchor from '../PubSubTargetAnchor';
 import { EVENT_MARKER_RADIUS } from '../../../const';
+import PubSubTargetAnchor from '../PubSubTargetAnchor';
 
 function createMockNode(bounds: Rect): Node {
   return ({

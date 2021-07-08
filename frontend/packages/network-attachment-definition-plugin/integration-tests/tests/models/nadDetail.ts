@@ -1,12 +1,12 @@
+import { createYAMLLink, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { createYAMLLink, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { isLoaded as yamlPageIsLoaded } from '@console/internal-integration-tests/views/yaml.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import { listViewAction, detailViewAction } from '@console/shared/src/test-utils/actions.view';
+import { click } from '@console/shared/src/test-utils/utils';
 import * as NADListView from '../../views/nad.list.view';
-import { NADForm } from './nadForm';
 import { NAD_ACTION } from '../utils/constants';
+import { NADForm } from './nadForm';
 
 const noConfirmDialogActions: NAD_ACTION[] = [
   NAD_ACTION.Edit,

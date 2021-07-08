@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer, Node, NodeModel } from '@patternfly/react-topology';
-import { TaskListNodeModelData } from './types';
 import TaskList from './TaskList';
+import { TaskListNodeModelData } from './types';
 
 import './TaskListNode.scss';
 

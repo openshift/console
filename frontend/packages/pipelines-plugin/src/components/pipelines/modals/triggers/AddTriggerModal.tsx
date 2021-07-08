@@ -39,11 +39,8 @@ const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) =>
   };
 
   const handleSubmit = (values: AddTriggerFormValues, actions) => {
-    actions.setSubmitting(true);
-
-    submitTrigger(pipeline, values)
+    return submitTrigger(pipeline, values)
       .then(() => {
-        actions.setSubmitting(false);
         close();
       })
       .catch((error) => {

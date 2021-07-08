@@ -33,16 +33,27 @@ export const vm = {
       name,
       namespace,
       provisionSource,
+      pvcName,
+      pvcNS,
       pvcSize,
       sshEnable,
       startOnCreation,
       template,
+      sourceAvailable,
     } = vmData;
     virtualization.vms.visit();
     wizard.vm.open();
     wizard.vm.processSelectTemplate(template);
-    wizard.vm.processBootSource(provisionSource, cdrom, pvcSize);
+    if (!sourceAvailable) {
+      wizard.vm.processBootSource(provisionSource, cdrom, pvcSize, pvcName, pvcNS);
+    }
     wizard.vm.processReview(namespace, name, flavor, sshEnable, startOnCreation);
+    if (startOnCreation) {
+      waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    } else {
+      waitForStatus(VM_STATUS.Off, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+    }
   },
   start: (vmData: VirtualMachineData) => {
     waitForStatus(VM_STATUS.Off);

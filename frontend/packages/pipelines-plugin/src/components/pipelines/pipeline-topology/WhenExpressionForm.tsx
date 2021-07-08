@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext } from 'formik';
 import { Grid, GridItem, TextInputTypes } from '@patternfly/react-core';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { InputField, DropdownField, TextColumnField } from '@console/shared';
 import AutoCompletePopover from '../../shared/common/auto-complete/AutoCompletePopover';
-import { PipelineBuilderFormikValues } from '../pipeline-builder/types';
 import { WhenExpressionOperatorType } from '../pipeline-builder/const';
+import { PipelineBuilderFormikValues } from '../pipeline-builder/types';
 
 type WhenExpressionFormProps = {
   namePrefix?: string;
@@ -29,6 +29,7 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
           {(ref) => (
             <InputField
               ref={ref}
+              data-test="input"
               type={TextInputTypes.text}
               name={`${namePrefix}.input`}
               label={t('pipelines-plugin~Input')}
@@ -39,16 +40,21 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
       </GridItem>
       <GridItem span={6}>
         <DropdownField
+          dataTest="operator"
           name={`${namePrefix}.operator`}
           label={t('pipelines-plugin~Operator')}
           items={WhenExpressionOperatorType}
-          title={t('pipelines-plugin~Select Operator')}
+          title={t('pipelines-plugin~Select operator')}
           onChange={(operator: string) => setFieldValue(`${namePrefix}.operator`, operator)}
           fullWidth
         />
       </GridItem>
       <GridItem>
-        <TextColumnField name={`${namePrefix}.values`} label={t('pipelines-plugin~Values')}>
+        <TextColumnField
+          data-test="values"
+          name={`${namePrefix}.values`}
+          label={t('pipelines-plugin~Values')}
+        >
           {({ name: arrayName, ...additionalProps }) => (
             <AutoCompletePopover
               autoCompleteValues={autoCompleteValues}
@@ -57,7 +63,13 @@ const WhenExpressionForm: React.FC<WhenExpressionFormProps> = ({
               }}
             >
               {(ref) => (
-                <InputField ref={ref} name={arrayName} {...additionalProps} autoComplete="off" />
+                <InputField
+                  data-test={`${arrayName} value`}
+                  ref={ref}
+                  name={arrayName}
+                  {...additionalProps}
+                  autoComplete="off"
+                />
               )}
             </AutoCompletePopover>
           )}

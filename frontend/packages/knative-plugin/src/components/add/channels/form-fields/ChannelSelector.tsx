@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useField } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { DropdownField, DropdownFieldProps } from '@console/shared';
-import { getChannelKind } from '../../../../utils/create-channel-utils';
 import { EventingChannelModel } from '../../../../models';
+import { getChannelKind } from '../../../../utils/create-channel-utils';
 
 type ChannelSelectorProps = {
   channels: string[];

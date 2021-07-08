@@ -30,7 +30,7 @@ import {
 } from '../module/k8s';
 import { RouteModel } from '../models';
 import { Conditions } from './conditions';
-import { RouteCharts } from './routes/route-charts';
+import { RouteMetrics } from './routes/route-metrics';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = [...Kebab.getExtensionsActionsForKind(RouteModel), ...Kebab.factory.common];
@@ -156,22 +156,13 @@ const RouteTableRow: RowFunction<RouteKind> = ({ obj: route, index, key, style }
   return (
     <TableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={route.metadata.name}
-          namespace={route.metadata.namespace}
-          title={route.metadata.uid}
-        />
+        <ResourceLink kind={kind} name={route.metadata.name} namespace={route.metadata.namespace} />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={route.metadata.namespace}
-          title={route.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={route.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <RouteStatus obj={route} />
@@ -396,7 +387,6 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Route details')} />
-        <RouteCharts namespace={route.metadata.namespace} route={route.metadata.name} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={route}>
@@ -494,7 +484,15 @@ export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
     getResourceStatus={routeStatus}
     kind={RoutesReference}
     menuActions={menuActions}
-    pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
+    pages={[
+      navFactory.details(detailsPage(RouteDetails)),
+      {
+        href: 'metrics',
+        nameKey: 'public~Metrics',
+        component: RouteMetrics,
+      },
+      navFactory.editYaml(),
+    ]}
   />
 );
 

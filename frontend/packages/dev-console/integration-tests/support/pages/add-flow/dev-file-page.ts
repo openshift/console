@@ -1,5 +1,5 @@
-import { devFilePO, createSourceSecret, gitPO } from '../../pageObjects';
 import { authenticationType, messages } from '../../constants';
+import { devFilePO, createSourceSecret, gitPO } from '../../pageObjects';
 
 export const devFilePage = {
   clickTrySample: () =>

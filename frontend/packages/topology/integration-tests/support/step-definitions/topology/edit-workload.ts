@@ -1,8 +1,8 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { topologyPO } from '../../page-objects/topology-po';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { addSecret } from '@console/topology/integration-tests/support/pages/functions/add-secret';
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
+import { topologyPO } from '../../page-objects/topology-po';
 import { editDeployment } from '../../pages/topology/topology-edit-deployment';
 
 When('user edits application groupings to {string}', (newAppName: string) => {
@@ -187,4 +187,24 @@ When('user enters value of Image name as {string}', (imageLink: string) => {
   cy.get(topologyPO.deploymentStrategy.imageName)
     .clear()
     .type(imageLink);
+});
+
+When('user enters key as {string}', (annotationKey: string) => {
+  cy.get(topologyPO.graph.addNewAnnotations).click();
+  cy.get(topologyPO.deploymentStrategy.envName)
+    .last()
+    .clear()
+    .type(annotationKey);
+});
+
+When('user enters value as {string} to which it will be connected', (annotationValue: string) => {
+  cy.get(topologyPO.deploymentStrategy.envValue)
+    .last()
+    .clear()
+    .type(annotationValue);
+  cy.get(topologyPO.graph.deleteWorkload).click();
+});
+
+Then('user can see that two workloads are connected with arrow', () => {
+  cy.get(topologyPO.graph.connector).should('be.visible');
 });

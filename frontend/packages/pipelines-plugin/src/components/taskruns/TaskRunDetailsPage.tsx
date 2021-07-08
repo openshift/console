@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { navFactory, viewYamlComponent } from '@console/internal/components/utils';
-import TaskRunDetails from './TaskRunDetails';
-import TaskRunEvents from './events/TaskRunEvents';
-import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
-import TaskRunLog from './TaskRunLog';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
+import TaskRunEvents from './events/TaskRunEvents';
+import TaskRunDetails from './TaskRunDetails';
+import TaskRunLog from './TaskRunLog';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();

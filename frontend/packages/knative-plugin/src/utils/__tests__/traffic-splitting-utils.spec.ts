@@ -1,4 +1,3 @@
-import { constructObjForUpdate, getRevisionItems } from '../traffic-splitting-utils';
 import {
   mockServiceData,
   mockUpdateRequestObj,
@@ -6,6 +5,7 @@ import {
   mockRevisions,
   mockRevisionItems,
 } from '../__mocks__/traffic-splitting-utils-mock';
+import { constructObjForUpdate, getRevisionItems } from '../traffic-splitting-utils';
 
 describe('Traffic Splitting', () => {
   it('should construct the object for Update Request', async () => {

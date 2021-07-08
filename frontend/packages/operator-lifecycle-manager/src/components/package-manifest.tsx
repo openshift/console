@@ -1,28 +1,29 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { Link, match } from 'react-router-dom';
+import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  MsgBox,
-  Timestamp,
-  ResourceLink,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
+import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
+import { Link, match } from 'react-router-dom';
 import {
   MultiListPage,
   Table,
   TableRow,
   TableData,
   RowFunction,
+  Flatten,
 } from '@console/internal/components/factory';
+import {
+  MsgBox,
+  Timestamp,
+  ResourceLink,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
+import i18n from '@console/internal/i18n';
+import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
 import { ClusterServiceVersionLogo, visibilityLabel, iconFor, defaultChannelFor } from './index';
-import { sortable } from '@patternfly/react-table';
-import { Trans, useTranslation } from 'react-i18next';
-import i18n from '@console/internal/i18n';
 
 const tableColumnClasses = [
   '',
@@ -141,7 +142,6 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
   const { catalogSource } = props;
   const namespace = _.get(props.match, 'params.ns');
 
-  type Flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
   const helpText = (
@@ -170,7 +170,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
           prop: 'packageManifest',
           selector: {
             matchExpressions: [
-              ...(catalogSource
+              ...((catalogSource
                 ? [
                     {
                       key: 'catalog',
@@ -183,7 +183,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
                       values: [catalogSource?.metadata.namespace],
                     },
                   ]
-                : []),
+                : []) as MatchExpression[]),
               { key: visibilityLabel, operator: 'DoesNotExist' },
               { key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist' },
             ],

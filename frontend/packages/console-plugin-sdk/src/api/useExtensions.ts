@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
-import { subscribeToExtensions } from './subscribeToExtensions';
+import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import useTranslationExt from '../utils/useTranslationExt';
+import { subscribeToExtensions } from './pluginSubscriptionService';
 
 const translate = (obj: any, t: (str: string) => string): typeof obj => {
   if (typeof obj === 'string') {
@@ -38,7 +38,7 @@ const translate = (obj: any, t: (str: string) => string): typeof obj => {
  *   values
  *
  * When the list of matching extensions changes, the React component is re-rendered
- * with the hook returning an updated list of extensions.
+ * with the hook returning an up-to-date list of extensions.
  *
  * Example usage:
  *

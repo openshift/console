@@ -1,10 +1,10 @@
-import * as path from 'path';
 import * as fs from 'fs';
-import * as ejs from 'ejs';
+import * as path from 'path';
 import chalk from 'chalk';
-import { getProgramFromFile, printJSDocComments } from './utils/typescript';
-import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
+import * as ejs from 'ejs';
 import { resolvePath, relativePath } from './utils/path';
+import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
+import { getProgramFromFile, printJSDocComments } from './utils/typescript';
 
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));

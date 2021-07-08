@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
-import { LoadingInline } from '@console/internal/components/utils';
 import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/EmptyState/empty-state';
-
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { LoadingInline } from '@console/internal/components/utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMWizardProps } from '../../types';
 

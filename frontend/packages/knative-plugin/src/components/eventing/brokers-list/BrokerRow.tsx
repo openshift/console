@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { NamespaceModel } from '@console/internal/models';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
+import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingBrokerModel } from '../../../models';
 import { EventBrokerKind, BrokerConditionTypes } from '../../../types';

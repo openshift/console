@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { history } from '@console/internal/components/utils';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   FlexForm,
   FormBody,
@@ -10,15 +13,12 @@ import {
   SyncedEditorField,
   YAMLEditorField,
 } from '@console/shared/src';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import { history } from '@console/internal/components/utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import EditDeploymentFormEditor from './EditDeploymentFormEditor';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { Resources } from '../import/import-types';
+import EditDeploymentFormEditor from './EditDeploymentFormEditor';
 import {
   convertDeploymentToEditForm,
   convertEditFormToDeployment,
@@ -105,7 +105,9 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
         infoMessage={t('devconsole~Click reload to see the new version.')}
         isSubmitting={isSubmitting}
         submitLabel={t('devconsole~Save')}
-        disableSubmit={editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)}
+        disableSubmit={
+          (editorType === EditorType.YAML ? !dirty : !dirty || !_.isEmpty(errors)) || isSubmitting
+        }
         handleCancel={history.goBack}
         handleDownload={editorType === EditorType.YAML && (() => downloadYaml(yamlData))}
         sticky

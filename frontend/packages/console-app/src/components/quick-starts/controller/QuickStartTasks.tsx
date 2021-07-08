@@ -37,7 +37,7 @@ const QuickStartTasks: React.FC<QuickStartTaskProps> = ({
                 taskIndex={index + 1}
                 title={title}
                 size="md"
-                subtitle={t('quickstart~{{index, number}} of {{tasks, number}}', {
+                subtitle={t('console-app~{{index, number}} of {{tasks, number}}', {
                   index: index + 1,
                   tasks: tasks.length,
                 })}

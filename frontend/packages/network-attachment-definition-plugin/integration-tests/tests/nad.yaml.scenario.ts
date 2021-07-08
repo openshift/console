@@ -1,11 +1,11 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { errorMessage, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import {
   saveButton,
   cancelButton,
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { errorMessage, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { click } from '@console/shared/src/test-utils/utils';
 import { NADDetail } from './models/nadDetail';
 import { getNADConfigs } from './nad.form.configs';

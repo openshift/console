@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PodStatus, usePodsWatcher } from '@console/shared';
 import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
@@ -62,15 +63,16 @@ export const JobsOverview: React.SFC<JobsOverviewProps> = ({
   const {
     metadata: { name, namespace },
   } = obj;
+  const { t } = useTranslation();
   const linkTo = allJobsLink || `${resourcePath(referenceFor(obj), name, namespace)}/jobs`;
-  const emptyMessage = emptyText || 'No Jobs found for this resource.';
+  const emptyMessage = emptyText || t('public~No Jobs found for this resource.');
 
   return (
     <>
       <SidebarSectionHeading text="Jobs">
         {_.size(jobs) > MAX_JOBS && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {`View all (${_.size(jobs)})`}
+            {t('public~View all ({{jobCount}})', { jobCount: _.size(jobs) })}
           </Link>
         )}
       </SidebarSectionHeading>

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import {
   Alert,
   ClipboardCopy,
@@ -10,6 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
@@ -18,8 +18,8 @@ import {
 } from '../../../utils/imagestream-utils';
 import { ImageStreamState, ImageStreamAction, ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
-import ImageStreamNsDropdown from './ImageStreamNsDropdown';
 import ImageStreamDropdown from './ImageStreamDropdown';
+import ImageStreamNsDropdown from './ImageStreamNsDropdown';
 import ImageStreamTagDropdown from './ImageStreamTagDropdown';
 
 import './ImageStream.scss';

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { PipelineRunKind } from '../../../types';
-import PipelineRunVisualization from './PipelineRunVisualization';
 import PipelineRunCustomDetails from './PipelineRunCustomDetails';
+import PipelineRunVisualization from './PipelineRunVisualization';
 
 export interface PipelineRunDetailsSectionProps {
   pipelineRun: PipelineRunKind;

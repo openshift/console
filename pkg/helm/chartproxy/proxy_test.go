@@ -29,6 +29,7 @@ func TestProxy_IndexFile(t *testing.T) {
 		mergedFile     string
 		kubeVersion    string
 		helmCRS        []*unstructured.Unstructured
+		repoNames      []string
 		onlyCompatible bool
 	}{
 		{
@@ -91,9 +92,20 @@ func TestProxy_IndexFile(t *testing.T) {
 			mergedFile: "testdata/mergedRepoIndex.yaml",
 		},
 		{
+			name:       "returned merged index file without library chart entries",
+			indexFiles: []string{"testdata/sampleRepoLibrary.yaml"},
+			mergedFile: "testdata/mergedRepoLibrary.yaml",
+		},
+		{
 			name:       "returned merged index contains all entries from source repos - helm names are appended with repo names to avoid duplicate removal",
 			indexFiles: []string{"testdata/sampleRepoIndex2.yaml", "testdata/sampleRepoIndex2.yaml"},
 			mergedFile: "testdata/mergedRepoIndexWithDuplicates.yaml",
+		},
+		{
+			name:       "returned merged index contains partial entries from source repos - duplicate charts will not show under overwriten repo",
+			indexFiles: []string{"testdata/sampleOverwrite1.yaml", "testdata/sampleOverwrite2.yaml"},
+			mergedFile: "testdata/mergedRepoOverwriteNoDups.yaml",
+			repoNames:  []string{"redhat-helm-repo", "openshift-helm-charts"},
 		},
 		{
 			name:       "return empty index file when no repositories declared in cluster",
@@ -134,7 +146,11 @@ func TestProxy_IndexFile(t *testing.T) {
 				}
 				indexFileContents = append(indexFileContents, string(content))
 			}
+
 			dynamicClient := fake.K8sDynamicClient(indexFileContents...)
+			if len(tt.repoNames) == len(indexFileContents) {
+				dynamicClient = fake.K8sDynamicClientWithRepoNames(tt.repoNames, indexFileContents...)
+			}
 			for _, helmcr := range tt.helmCRS {
 				_, err := dynamicClient.Resource(helmChartRepositoryGVK).Create(context.TODO(), helmcr, v1.CreateOptions{})
 				if err != nil {

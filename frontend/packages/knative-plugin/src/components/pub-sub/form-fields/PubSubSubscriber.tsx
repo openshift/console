@@ -1,10 +1,10 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import * as fuzzy from 'fuzzysearch';
-import { useTranslation } from 'react-i18next';
 import { FormGroup, Alert } from '@patternfly/react-core';
-import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { useFormikContext, FormikValues } from 'formik';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { ResourceDropdownField, getFieldId } from '@console/shared';
 import { knativeServingResourcesServices } from '../../../utils/get-knative-resources';
 
 const PubSubSubscriber: React.FC = () => {

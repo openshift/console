@@ -1,21 +1,20 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { ShallowWrapper, shallow } from 'enzyme';
-import * as k8sModels from '@console/internal/module/k8s';
+import * as _ from 'lodash';
 import {
   ModalTitle,
   ModalSubmitFooter,
   ModalBody,
 } from '@console/internal/components/factory/modal';
 import { RadioInput } from '@console/internal/components/radio';
-import { SubscriptionKind, InstallPlanApproval } from '../../types';
-import { SubscriptionModel, InstallPlanModel } from '../../models';
+import * as k8sModels from '@console/internal/module/k8s';
 import { testSubscription, testInstallPlan } from '../../../mocks';
+import { SubscriptionModel, InstallPlanModel } from '../../models';
+import { SubscriptionKind, InstallPlanApproval } from '../../types';
 import {
   InstallPlanApprovalModal,
   InstallPlanApprovalModalProps,
 } from './installplan-approval-modal';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {

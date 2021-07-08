@@ -64,7 +64,7 @@ $co-affinity-row-margin: 15px;
 
 .co-clusterserviceversion-logo__icon {
   align-items: center;
-  background: #fff;
+  background: var(--pf-global--BackgroundColor--100);
   display: flex;
   flex: 0 0 auto;
   height: 40px;
@@ -305,7 +305,7 @@ $co-affinity-row-margin: 15px;
 }
 
 .co-operator-install-page__main {
-  background-color: #f0f0f0;
+  background-color: var(--pf-global--BackgroundColor--200);
   height: 100%;
 }
 

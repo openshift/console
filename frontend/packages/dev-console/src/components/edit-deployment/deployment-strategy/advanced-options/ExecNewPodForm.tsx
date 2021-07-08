@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
-import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getContainerNames } from '../../utils/edit-deployment-utils';
 import { FormSection } from '@patternfly/react-core';
+import { useFormikContext, FormikValues } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { DropdownField, EnvironmentField, InputField, TextColumnField } from '@console/shared/src';
+import { getContainerNames } from '../../utils/edit-deployment-utils';
 
 interface ExecNewPodFormProps {
   resourceObj: K8sResourceKind;

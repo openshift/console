@@ -1,5 +1,5 @@
-import i18n from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import i18n from 'i18next';
 import { tableColumnClasses } from './pipelinerun-table';
 
 const PipelineRunHeader = () => {

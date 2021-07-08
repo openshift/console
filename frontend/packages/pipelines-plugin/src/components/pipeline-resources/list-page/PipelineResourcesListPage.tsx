@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import PipelineResourcesList from './PipelineResourcesList';
 import { PipelineResourceModel } from '../../../models';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import {
   pipelineResourceFilterReducer,
   pipelineResourceTypeFilter,
 } from '../../../utils/pipeline-filter-reducer';
-import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import {
   PipelineResourceListFilterId,
   PipelineResourceListFilterLabels,
 } from '../../../utils/pipeline-utils';
+import PipelineResourcesList from './PipelineResourcesList';
 
 const pipelineResourceFilters = [
   {

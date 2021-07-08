@@ -1,9 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-
 import { getLabels } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import {
   CLOUD_INIT_CONFIG_DRIVE,

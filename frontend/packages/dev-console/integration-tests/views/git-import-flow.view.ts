@@ -1,12 +1,12 @@
 /* eslint-disable no-console, promise/catch-or-return */
 import { browser, $, ExpectedConditions as until, by, element, Key } from 'protractor';
+import { ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
 import {
   enterText,
   selectByIndex,
   selectByVisibleText,
   click,
 } from '../utilities/elementInteractions';
-import { ELEMENT_WAIT as WAIT } from '../utilities/appFunctions';
 
 export const addNavigate = element(by.css('[data-test-id="+Add-header"]'));
 export const gitImportButton = element(by.css('[data-test-id="import-from-git"]'));

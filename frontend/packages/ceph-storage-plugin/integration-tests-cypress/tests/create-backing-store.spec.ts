@@ -1,6 +1,6 @@
-import { commonFlows } from '../views/common';
-import { bs, Providers, testName } from '../views/bs';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { commonFlows } from '../views/common';
+import { createStore, Providers, testName } from '../views/store';
 
 describe('Tests creation of Backing Stores', () => {
   before(() => {
@@ -28,25 +28,25 @@ describe('Tests creation of Backing Stores', () => {
   });
 
   it('Test creation of AWS backing store', () => {
-    bs.createStore(Providers.AWS);
+    createStore(Providers.AWS);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
   it('Test creation of Azure backing store', () => {
-    bs.createStore(Providers.AZURE);
+    createStore(Providers.AZURE);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
   it('Test creation of S3 Endpoint Type', () => {
-    bs.createStore(Providers.S3);
+    createStore(Providers.S3);
     cy.byLegacyTestID('resource-title').contains(testName);
     cy.exec(`oc delete secrets ${testName}-secret -n openshift-storage`);
   });
 
   it('Test creation of PVC Endpoint Type', () => {
-    bs.createStore(Providers.PVC);
+    createStore(Providers.PVC);
     cy.byLegacyTestID('resource-title').contains(testName);
   });
 });

@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { useFormikContext, FormikValues } from 'formik';
-import * as _ from 'lodash';
-import { JSONSchema6 } from 'json-schema';
 import { TextVariants, Text } from '@patternfly/react-core';
-import { DynamicFormField, useFormikValidationFix } from '@console/shared';
-import { capabilityWidgetMap } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/spec-descriptor-input';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useFormikContext, FormikValues } from 'formik';
+import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
-import CronJobSection from './CronJobSection';
-import SinkBindingSection from './SinkBindingSection';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { capabilityWidgetMap } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/spec-descriptor-input';
+import { DynamicFormField, useFormikValidationFix } from '@console/shared';
+import { EventSources } from '../import-types';
 import ApiServerSection from './ApiServerSection';
 import ContainerSourceSection from './ContainerSourceSection';
-import PingSourceSection from './PingSourceSection';
+import CronJobSection from './CronJobSection';
 import KafkaSourceSection from './KafkaSourceSection';
-import { EventSources } from '../import-types';
+import PingSourceSection from './PingSourceSection';
+import SinkBindingSection from './SinkBindingSection';
 import SinkSection from './SinkSection';
 
 interface EventSourceSectionProps {

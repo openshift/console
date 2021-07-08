@@ -1,0 +1,27 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleQuickStart
+metadata:
+  name: copy-execute-demo
+spec:
+  description: Create a resource using command line
+  displayName: Create ruby app
+  durationMinutes: 1
+  introduction: Introduction here
+  tasks:
+    - description: >
+        ### Create a Project
+
+        Execute `oc new-project sample-sclorg-app`{{execute}} command to create
+        a new project
+
+
+        In next step we will create a resource using
+        `https://github.com/sclorg/ruby-ex.git`{{copy}}
+
+
+        Deploy app using commad `oc new-app
+        ruby~https://github.com/sclorg/ruby-ex.git`{{execute}}  
+
+
+        Expose route using `oc expose svc/ruby-ex`{{execute}}
+      title: Create Ruby App

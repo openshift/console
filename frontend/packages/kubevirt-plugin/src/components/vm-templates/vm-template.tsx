@@ -1,13 +1,11 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-
-import { ListPage, MultiListPage } from '@console/internal/components/factory';
+import { Flatten, ListPage, MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { CDI_APP_LABEL } from '../../constants';
 import {
   TEMPLATE_CUSTOMIZED_ANNOTATION,
@@ -17,6 +15,7 @@ import {
   VM_CUSTOMIZE_LABEL,
 } from '../../constants/vm';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
 import { VMKind } from '../../types';
 import { getLoadedData } from '../../utils';
@@ -56,7 +55,10 @@ const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
   },
 ];
 
-const flatten = ({ vmTemplates, vmCommonTemplates, vms }): VirtualMachineTemplateBundle[] => {
+const flatten: Flatten<
+  { vmTemplates: TemplateKind[]; vmCommonTemplates: TemplateKind[]; vms: VMKind[] },
+  VirtualMachineTemplateBundle[]
+> = ({ vmTemplates, vmCommonTemplates, vms }) => {
   const user = getLoadedData<TemplateKind[]>(vmTemplates, []);
   const common = getLoadedData<TemplateKind[]>(vmCommonTemplates, []);
   return [
@@ -108,7 +110,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       },
     },
     {
-      kind: DataVolumeModel.kind,
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       isList: true,
       namespace,
       prop: 'dataVolumes',
@@ -129,7 +131,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'pods',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
       selector: {
         matchLabels: { [VM_CUSTOMIZE_LABEL]: 'true' },
       },
@@ -138,7 +140,7 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       prop: 'vms',
     },
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
       namespace,
       isList: true,
       prop: 'vmis',

@@ -1,11 +1,9 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { AlertVariant } from '@patternfly/react-core';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-
 import { ExternalLink } from '@console/internal/components/utils';
-import { AlertVariant } from '@patternfly/react-core';
-
 import {
   OVIRT_DOCURL,
   V2VProviderErrorSpecialUIMessageRequest,

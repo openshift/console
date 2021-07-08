@@ -1,12 +1,12 @@
-import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
-import { getName } from '@console/shared/src/selectors/common';
 import { NodeKind } from '@console/internal/module/k8s';
+import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getNodeMaintenanceNodeName } from '../../../selectors';
-import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
+import { getName } from '@console/shared/src/selectors/common';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { NODE_STATUS_TITLE_KEYS } from '../../../constants';
+import { getNodeMaintenanceNodeName } from '../../../selectors';
 import { getNodeServerCSR } from '../../../selectors/csr';
+import { bareMetalNodeStatus, NODE_STATUS_SERVER_CSR } from '../../../status/baremetal-node-status';
 import { CertificateSigningRequestKind } from '../../../types';
 
 const BMN_STATUS_GROUP_MAPPER = {

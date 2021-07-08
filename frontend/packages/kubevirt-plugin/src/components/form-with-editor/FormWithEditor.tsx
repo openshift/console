@@ -1,115 +1,120 @@
+import * as React from 'react';
 import cn from 'classnames';
 import yamlParser from 'js-yaml';
-import { cloneDeep, get, set } from 'lodash';
-import * as React from 'react';
-import { monaco as MonacoAPI, MonacoEditorProps } from 'react-monaco-editor';
-
+import { MonacoEditorProps } from 'react-monaco-editor';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
+import { EditorPosition, formModifier, ViewComponent } from './form-with-editor-utils';
 
 import './form-with-editor.scss';
 
-type EditorProps = {
+type FieldsMapper = {
+  [key: string]: { path: string; isArray?: boolean };
+};
+
+type FormWithEditorProps = {
   className?: string;
   classNameForm?: string;
   data: string;
   theme?: string;
   language?: string;
-  onChange: (value?: string, event?: MonacoAPI.editor.IModelContentChangedEvent) => void;
-  fieldsMapper: { [key: string]: string };
+  onChange: (data: string, dataAsJS?: object) => void;
+  fieldsMapper: FieldsMapper;
+  onFormChange?: (
+    id: string,
+    accessKey: number,
+    newValue: string,
+    event: React.SyntheticEvent,
+  ) => void;
   editorPosition?: EditorPosition;
   editorProps?: MonacoEditorProps;
+  view?: string;
+  alertTitle: string;
+  setIsYamlValid?: Function;
 };
 
-export enum EditorPosition {
-  top = 'top',
-  bottom = 'bottom',
-  left = 'left',
-  right = 'right',
-}
-
-const FormWithEditor: React.FC<EditorProps> = ({
+const FormWithEditor: React.FC<FormWithEditorProps> = ({
   className,
   classNameForm,
-  data,
+  data: initialData,
   theme = 'console',
   language = 'yaml',
   onChange,
+  onFormChange,
   children,
   fieldsMapper,
   editorPosition = EditorPosition.right,
   editorProps = {},
+  view = ViewComponent.sideBySide,
+  alertTitle,
+  setIsYamlValid,
 }) => {
-  const [yamlToJS, setYamlToJs] = React.useState<{ [key: string]: string }>();
-  const [JSToYaml, setJSToYaml] = React.useState<string>();
+  const [data, setData] = React.useState<string>();
+  const [alert, setAlert] = React.useState<string>();
 
-  const Form = (formChildren: React.ReactNode): React.ReactNode[] => {
-    return React.Children.map(formChildren, (child) => {
-      const props = {};
+  const Form = React.useMemo(
+    () =>
+      formModifier(
+        children,
+        fieldsMapper,
+        data,
+        setData,
+        setAlert,
+        alert,
+        alertTitle,
+        onFormChange,
+      ),
+    [children, fieldsMapper, data, alert, alertTitle, onFormChange],
+  );
 
-      if (!React.isValidElement(child)) return child;
-
-      const onChangeValue = (newValue: any, event: any) => {
-        const deep = cloneDeep(yamlToJS);
-        const updatedData = set(deep, fieldsMapper[child?.props?.id], newValue);
-        setYamlToJs(updatedData);
-        child?.props?.onChange && child.props.onChange(newValue, event);
-      };
-
-      if (child?.props?.id) {
-        switch ((child?.type as React.ComponentType)?.displayName) {
-          case 'Switch':
-            Object.assign(props, {
-              isChecked: get(yamlToJS, fieldsMapper[child?.props?.id]),
-              onChange: onChangeValue,
-            });
-            break;
-          default: {
-            Object.assign(props, {
-              value: get(yamlToJS, fieldsMapper[child?.props?.id]),
-              onChange: onChangeValue,
-            });
-          }
-        }
-      }
-
-      return React.cloneElement(
-        child,
-        props,
-        child?.props?.children ? Form(child?.props?.children) : null,
-      );
-    });
-  };
+  React.useMemo(() => {
+    initialData && setData(initialData);
+  }, [initialData]);
 
   React.useEffect(() => {
-    data && setYamlToJs(yamlParser.load(data));
-  }, [data]);
+    try {
+      data && onChange && onChange(data, yamlParser.load(data));
+      setIsYamlValid && setIsYamlValid(true);
+    } catch (e) {
+      setIsYamlValid && setIsYamlValid(false);
+      console.log(e?.message); // eslint-disable-line no-console
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, setIsYamlValid]);
 
-  React.useEffect(() => {
-    yamlToJS && setJSToYaml(yamlParser.dump(yamlToJS));
-  }, [yamlToJS]);
-
-  React.useEffect(() => {
-    JSToYaml && onChange(JSToYaml);
-  }, [JSToYaml, onChange]);
-
-  const onChangeYaml = (newValue: any, event: any) => {
-    onChange(newValue, event);
-    setYamlToJs(yamlParser.load(newValue));
-    return {};
-  };
+  const onChangeYaml = React.useCallback(
+    (newValue: any) => {
+      setData(newValue);
+      return {};
+    },
+    [setData],
+  );
 
   return (
-    <div className={cn('kv-editor--main', { className, editorPosition })}>
-      <YAMLEditor
-        value={JSToYaml || data}
-        theme={theme}
-        language={language}
-        {...editorProps}
-        onChange={onChangeYaml}
-      />
-      <div className={classNameForm}>{Form(children)}</div>
+    <div
+      className={cn('kv-editor--main', {
+        [className]: className,
+        [editorPosition]: editorPosition,
+      })}
+    >
+      {(view === ViewComponent.sideBySide || view === ViewComponent.editor) && (
+        <YAMLEditor
+          value={data}
+          minHeight={'100%'}
+          theme={theme}
+          language={language}
+          {...editorProps}
+          onChange={onChangeYaml}
+        />
+      )}
+      {(view === ViewComponent.sideBySide || view === ViewComponent.form) && (
+        <div className={classNameForm}>
+          {alert && <div>{alert}</div>}
+          {Form}
+        </div>
+      )}
     </div>
   );
 };
 
+export { FieldsMapper, EditorPosition, ViewComponent };
 export default FormWithEditor;

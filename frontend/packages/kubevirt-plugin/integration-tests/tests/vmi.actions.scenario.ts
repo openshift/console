@@ -1,5 +1,4 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   addLeakableResource,
@@ -7,7 +6,6 @@ import {
   removeLeakableResource,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-
 import { vmLinkByName } from '../views/vms.list.view';
 import { getVMIManifest } from './mocks/mocks';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';

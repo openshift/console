@@ -12,6 +12,7 @@ import {
   apiVersionCompare,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
+import * as operatorLogo from '../operator.svg';
 import {
   APIServiceDefinition,
   ClusterServiceVersionIcon,
@@ -24,7 +25,6 @@ import {
   StepResource,
   SubscriptionKind,
 } from '../types';
-import * as operatorLogo from '../operator.svg';
 import { getInternalObjects } from '../utils';
 
 export const visibilityLabel = 'olm-visibility';
@@ -116,7 +116,8 @@ export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps>
         <img
           className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
           src={imgSrc}
-          alt=""
+          alt={displayName}
+          aria-hidden
         />
       </div>
       <div className="co-clusterserviceversion-logo__name">

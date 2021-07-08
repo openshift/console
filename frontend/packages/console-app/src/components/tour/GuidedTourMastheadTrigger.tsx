@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TourContext } from './tour-context';
 import { TourActions } from './const';
+import { TourContext } from './tour-context';
 
 type GuidedTourMastheadTriggerProps = {
   className?: string;
@@ -18,7 +18,7 @@ const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = ({ c
       type="button"
       onClick={() => tourDispatch({ type: TourActions.start })}
     >
-      {t('tour~Guided tour')}
+      {t('console-app~Guided tour')}
     </button>
   );
 };

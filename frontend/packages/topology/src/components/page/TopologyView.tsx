@@ -1,26 +1,48 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
-import { connect } from 'react-redux';
-import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
-import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
-import { RootState } from '@console/internal/redux';
+import * as classNames from 'classnames';
+import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import {
+  FileUploadContextType,
+  FileUploadContext,
+} from '@console/app/src/components/file-upload/file-upload-context';
+import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
+import {
+  useResolvedExtensions,
+  isTopologyCreateConnector as isDynamicTopologyCreateConnector,
+  isTopologyDecoratorProvider as isDynamicTopologyDecoratorProvider,
+  isTopologyDisplayFilters as isDynamicTopologyDisplayFilters,
+  TopologyCreateConnector as DynamicTopologyCreateConnector,
+  TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
+  TopologyDisplayFilters as DynamicTopologyDisplayFilters,
+} from '@console/dynamic-plugin-sdk';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
-import { getActiveApplication } from '@console/internal/reducers/ui';
 import {
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
-import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
+import { getActiveApplication } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
 import {
-  FileUploadContextType,
-  FileUploadContext,
-} from '@console/app/src/components/file-upload/file-upload-context';
+  isTopologyCreateConnector,
+  isTopologyDecoratorProvider,
+  isTopologyDisplayFilters,
+  TopologyCreateConnector,
+  TopologyDecoratorProvider,
+  TopologyDisplayFilters,
+} from '../../extensions/topology';
+import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from '../../filters';
+import { FilterContext } from '../../filters/FilterProvider';
+import TopologyFilterBar from '../../filters/TopologyFilterBar';
+import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
 import {
   GraphData,
   TopologyDecorator,
@@ -28,26 +50,12 @@ import {
   TopologyDisplayFilterType,
   TopologyViewType,
 } from '../../topology-types';
-import {
-  isTopologyCreateConnector,
-  isTopologyDecoratorProvider,
-  isTopologyDisplayFilter,
-  TopologyCreateConnector,
-  TopologyDecoratorProvider,
-  TopologyDisplayFilters,
-} from '../../extensions/topology';
-import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from '../../filters';
-import { updateModelFromFilters } from '../../data-transforms/updateModelFromFilters';
-import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../redux/action';
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
-import TopologyFilterBar from '../../filters/TopologyFilterBar';
-import TopologySideBar from '../side-bar/TopologySideBar';
-import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
-import { FilterContext } from '../../filters/FilterProvider';
-import TopologyEmptyState from './TopologyEmptyState';
 import QuickSearch from '../quick-search/QuickSearch';
-import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
+import TopologySideBar from '../side-bar/TopologySideBar';
+import TopologyEmptyState from './TopologyEmptyState';
 
 import './TopologyView.scss';
 
@@ -115,13 +123,26 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
     TopologyDisplayFilters
-  >(isTopologyDisplayFilter);
+  >(isTopologyDisplayFilters);
+
   const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
     TopologyCreateConnector
   >(isTopologyCreateConnector);
   const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
     TopologyDecoratorProvider
   >(isTopologyDecoratorProvider);
+
+  const [
+    dynamicDisplayFilterExtensions,
+    dynamicDisplayFilterExtensionsResolved,
+  ] = useResolvedExtensions<DynamicTopologyDisplayFilters>(isDynamicTopologyDisplayFilters);
+  const [dynamicCreateConnectors, dynamicCreateConnectorsResolved] = useResolvedExtensions<
+    DynamicTopologyCreateConnector
+  >(isDynamicTopologyCreateConnector);
+  const [dynamicExtensionDecorators, dynamicExtensionDecoratorsResolved] = useResolvedExtensions<
+    DynamicTopologyDecoratorProvider
+  >(isDynamicTopologyDecoratorProvider);
+
   const [topologyDecorators, setTopologyDecorators] = React.useState<{
     [key: string]: TopologyDecorator[];
   }>({});
@@ -150,15 +171,20 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       createResourceAccess,
       namespace,
       eventSourceEnabled,
-      createConnectorExtensions: createConnectorsResolved
-        ? createConnectors.map((creator) => creator.properties.getCreateConnector)
-        : [],
+      createConnectorExtensions:
+        createConnectorsResolved && dynamicCreateConnectorsResolved
+          ? [...createConnectors, ...dynamicCreateConnectors].map(
+              (creator) => creator.properties.getCreateConnector,
+            )
+          : [],
       decorators: topologyDecorators,
     }),
     [
       createConnectors,
       createConnectorsResolved,
       createResourceAccess,
+      dynamicCreateConnectors,
+      dynamicCreateConnectorsResolved,
       eventSourceEnabled,
       namespace,
       topologyDecorators,
@@ -172,8 +198,8 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   }, [visualization, graphData]);
 
   React.useEffect(() => {
-    if (extensionDecoratorsResolved) {
-      const allDecorators = extensionDecorators.reduce(
+    if (extensionDecoratorsResolved && dynamicExtensionDecoratorsResolved) {
+      const allDecorators = [...extensionDecorators, ...dynamicExtensionDecorators].reduce(
         (acc, extensionDecorator) => {
           const decorator: TopologyDecorator = extensionDecorator.properties;
           if (!acc[decorator.quadrant]) {
@@ -194,12 +220,17 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       );
       setTopologyDecorators(allDecorators);
     }
-  }, [extensionDecorators, extensionDecoratorsResolved]);
+  }, [
+    dynamicExtensionDecorators,
+    dynamicExtensionDecoratorsResolved,
+    extensionDecorators,
+    extensionDecoratorsResolved,
+  ]);
 
   React.useEffect(() => {
-    if (displayFilterExtensionsResolved) {
+    if (displayFilterExtensionsResolved && dynamicDisplayFilterExtensionsResolved) {
       const updateFilters = [...filters];
-      displayFilterExtensions.forEach((extension) => {
+      [...displayFilterExtensions, ...dynamicDisplayFilterExtensions].forEach((extension) => {
         const extFilters = extension.properties.getTopologyFilters();
         extFilters.forEach((filter) => {
           if (!updateFilters.find((f) => f.id === filter.id)) {
@@ -215,7 +246,12 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
     // Only update on extension changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayFilterExtensionsResolved, displayFilterExtensions]);
+  }, [
+    displayFilterExtensionsResolved,
+    dynamicDisplayFilterExtensionsResolved,
+    displayFilterExtensions,
+    dynamicDisplayFilterExtensions,
+  ]);
 
   React.useEffect(() => {
     if (filtersLoaded) {

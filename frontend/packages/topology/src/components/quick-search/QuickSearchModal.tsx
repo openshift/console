@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Modal, ModalVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import QuickSearchModalBody from './QuickSearchModalBody';
 import { QuickSearchData } from './utils/quick-search-types';
 

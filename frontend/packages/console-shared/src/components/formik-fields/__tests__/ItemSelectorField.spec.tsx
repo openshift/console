@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { EmptyState } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import ItemSelectorField from '../item-selector-field/ItemSelectorField';
-import { EmptyState } from '@patternfly/react-core';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

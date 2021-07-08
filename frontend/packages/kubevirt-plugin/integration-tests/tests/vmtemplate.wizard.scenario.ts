@@ -2,7 +2,6 @@ import { execSync } from 'child_process';
 /* eslint-disable max-nested-callbacks */
 import { isEqual } from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import {
@@ -12,7 +11,6 @@ import {
   removeLeakedResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-
 import * as templateView from '../views/template.view';
 import * as detailView from '../views/virtualMachine.view';
 import { flavorConfigs, getTestDataVolume, multusNAD } from './mocks/mocks';

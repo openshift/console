@@ -1,3 +1,4 @@
+import { serverlessInitialValues } from '@console/dev-console/src/components/import/__mocks__/serverless-mock';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const ksvcData: K8sResourceKind = {
@@ -31,7 +32,7 @@ export const ksvcData: K8sResourceKind = {
   },
 };
 
-export const knatifyFormCommonInitailValues = {
+export const knatifyFormCommonInitialValues = {
   name: 'ksvc-overlayimage',
   formType: 'knatify',
   application: { name: 'application-3', selectedKey: 'application-3' },
@@ -43,20 +44,7 @@ export const knatifyFormCommonInitailValues = {
     defaultUnknownPort: 8080,
   },
   resources: 'knative',
-  serverless: {
-    scaling: {
-      minpods: '',
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-      concurrencyutilization: '',
-      autoscale: {
-        autoscalewindow: '',
-        autoscalewindowUnit: 's',
-        defaultAutoscalewindowUnit: 's',
-      },
-    },
-  },
+  serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], replicas: 1, triggers: { image: false } },
   labels: { 'app.kubernetes.io/component': 'ksvc-overlayimage' },
@@ -85,15 +73,15 @@ export const knatifyFormCommonInitailValues = {
       modified: false,
       enabled: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
-        httpGet: { scheme: 'HTTP', path: '/', port: 8080, httpHeaders: [] },
-        tcpSocket: { port: 8080 },
+        httpGet: { scheme: undefined, path: '/', port: '8080', httpHeaders: [] },
+        tcpSocket: { port: '8080' },
         exec: { command: [''] },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
     livenessProbe: {
@@ -101,15 +89,15 @@ export const knatifyFormCommonInitailValues = {
       modified: false,
       enabled: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
-        httpGet: { scheme: 'HTTP', path: '/', port: 8080, httpHeaders: [] },
-        tcpSocket: { port: 8080 },
+        httpGet: { scheme: undefined, path: '/', port: '8080', httpHeaders: [] },
+        tcpSocket: { port: '8080' },
         exec: { command: [''] },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
     startupProbe: {
@@ -117,15 +105,15 @@ export const knatifyFormCommonInitailValues = {
       modified: false,
       enabled: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
-        httpGet: { scheme: 'HTTP', path: '/', port: 8080, httpHeaders: [] },
-        tcpSocket: { port: 8080 },
+        httpGet: { scheme: undefined, path: '/', port: '8080', httpHeaders: [] },
+        tcpSocket: { port: '8080' },
         exec: { command: [''] },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
   },

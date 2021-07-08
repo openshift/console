@@ -1,5 +1,5 @@
-import { Plugin } from '@console/plugin-sdk';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -9,14 +9,6 @@ import {
 } from '@console/topology/src/extensions';
 import { TopologyDecoratorQuadrant } from '@console/topology/src/topology-types';
 import {
-  getIsKnativeResource,
-  getKnativeComponentFactory,
-  getKnativeTopologyDataModel,
-  getTopologyFilters,
-  applyDisplayOptions,
-  getCreateConnector,
-} from './index';
-import {
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_CONFIGURATION,
@@ -24,44 +16,21 @@ import {
   FLAG_KNATIVE_SERVING_ROUTE,
   FLAG_KNATIVE_SERVING_SERVICE,
 } from '../const';
+import { fetchEventSourcesCrd, fetchChannelsCrd } from '../utils/fetch-dynamic-eventsources-utils';
+import { getKnativeResources } from '../utils/get-knative-resources';
+import { getRevisionRouteDecorator, getServiceRouteDecorator } from './components/decorators';
 import {
-  knativeServingResourcesConfigurationsWatchers,
-  knativeServingResourcesRevisionWatchers,
-  knativeServingResourcesRoutesWatchers,
-  knativeServingResourcesServicesWatchers,
-  knativeEventingResourcesSubscriptionWatchers,
-  knativeEventingBrokerResourceWatchers,
-  knativeEventingTriggerResourceWatchers,
-  knativeCamelIntegrationsResourceWatchers,
-  knativeCamelKameletBindingResourceWatchers,
-} from '../utils/get-knative-resources';
-import {
-  getDynamicEventSourcesWatchers,
-  getDynamicEventingChannelWatchers,
-  fetchEventSourcesCrd,
-  fetchChannelsCrd,
-} from '../utils/fetch-dynamic-eventsources-utils';
-import { getServiceRouteDecorator } from './components/decorators';
+  getIsKnativeResource,
+  getKnativeComponentFactory,
+  getKnativeTopologyDataModel,
+  getTopologyFilters,
+  applyDisplayOptions,
+  getCreateConnector,
+} from './index';
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();
 fetchChannelsCrd();
-
-export const getKnativeResources = (namespace: string) => {
-  return {
-    ...knativeServingResourcesRevisionWatchers(namespace),
-    ...knativeServingResourcesConfigurationsWatchers(namespace),
-    ...knativeServingResourcesRoutesWatchers(namespace),
-    ...knativeServingResourcesServicesWatchers(namespace),
-    ...knativeEventingResourcesSubscriptionWatchers(namespace),
-    ...getDynamicEventSourcesWatchers(namespace),
-    ...getDynamicEventingChannelWatchers(namespace),
-    ...knativeEventingBrokerResourceWatchers(namespace),
-    ...knativeEventingTriggerResourceWatchers(namespace),
-    ...knativeCamelIntegrationsResourceWatchers(namespace),
-    ...knativeCamelKameletBindingResourceWatchers(namespace),
-  };
-};
 
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory
@@ -74,7 +43,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getKnativeComponentFactory,
+      getFactory: applyCodeRefSymbol(getKnativeComponentFactory),
     },
     flags: {
       required: [
@@ -94,8 +63,8 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       resources: getKnativeResources,
       workloadKeys: ['ksservices'],
-      getDataModel: getKnativeTopologyDataModel,
-      isResourceDepicted: getIsKnativeResource,
+      getDataModel: applyCodeRefSymbol(getKnativeTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKnativeResource),
     },
     flags: {
       required: [
@@ -131,6 +100,25 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 100,
       quadrant: TopologyDecoratorQuadrant.upperRight,
       decorator: applyCodeRefSymbol(getServiceRouteDecorator),
+    },
+    flags: {
+      required: [
+        FLAG_KNATIVE_SERVING_CONFIGURATION,
+        FLAG_KNATIVE_SERVING,
+        FLAG_KNATIVE_SERVING_REVISION,
+        FLAG_KNATIVE_SERVING_ROUTE,
+        FLAG_KNATIVE_SERVING_SERVICE,
+        FLAG_KNATIVE_EVENTING,
+      ],
+    },
+  },
+  {
+    type: 'Topology/Decorator',
+    properties: {
+      id: 'revision-url-decorator',
+      priority: 100,
+      quadrant: TopologyDecoratorQuadrant.upperRight,
+      decorator: applyCodeRefSymbol(getRevisionRouteDecorator),
     },
     flags: {
       required: [

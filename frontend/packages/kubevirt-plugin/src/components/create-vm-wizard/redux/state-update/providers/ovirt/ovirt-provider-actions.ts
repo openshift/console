@@ -1,5 +1,4 @@
 import { getName } from '@console/shared/src';
-
 import { EnhancedK8sMethods } from '../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import {
   cleanupAndGetResults,

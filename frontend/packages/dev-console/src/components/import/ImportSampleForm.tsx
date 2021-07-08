@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { TextInputTypes } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
+import { InputField, FormBody } from '@console/shared';
 import { FormFooter } from '@console/shared/src/components/form-utils';
-import { TextInputTypes } from '@patternfly/react-core';
 import { BuilderImage } from '../../utils/imagestream-utils';
 import BuilderImageTagSelector from './builder/BuilderImageTagSelector';
-import { InputField, FormBody } from '@console/shared';
 import FormSection from './section/FormSection';
 
 type ImportSampleFormProps = {

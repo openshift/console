@@ -1,38 +1,42 @@
-@gitOps
+@gitops
 Feature: Applications managed by GitOps and Create secret
     User should be able to see list of applications managed by GitOps
 
-
         Background:
-            Given user has installed gitOps operator
+            Given user has installed GitOps operator
+              And user has installed Pipelines operator
+              And user has installed Sealed Secrets operator in "cicd" namespace
+              And user has created Sealed Secrets instance of name "sealedsecretcontroller"
               And user is at developer perspective
 
-
         @smoke
-        Scenario: No GitOps Manifest URLs found
+        Scenario: No GitOps Manifest URLs found: GO-01-TC01
              When user navigates to Environments page
              Then user will see the message No GitOps manifest URLs found
 
-
         @regression @manual
-        Scenario: Create Secret
+        Scenario: Create Secret: GO-01-TC02
             Given user has imported gitops repo
              When user creates the namespace in pattern of "pipelines-{username}-github"
               And user creates the secret in pattern of "{username}-github-token"
               And user navigates to Environments page
              Then user will see the list GitOps application groupings on the page
 
-
         @regression @manual
-        Scenario: Application Details page for Applications
+        Scenario: Application Details page for Applications: GO-01-TC04
             Given user is on the Environments page
               And user can see the Applications on the page
-             When user clicks on the application
-             Then user can see the application Details page
+             Then user can add new environments using kam cli
+
+        @regression @manual
+        Scenario: Application Details page for Applications: GO-01-TC03
+            Given user is on the Environments page
+              And user can see the Applications on the page
+             Then user can see the columns attributes depending upon the GitOps "version"
               And user can see various environments for that application
               And user can see how many application or workloads are deployed in each environment
               And user can see status of the application or workloads
-
+             Then user can click application name and see the application Details page
 
 # scenario is commented, as we don't need to add Manifest URLs manually now
         # @regression @manual

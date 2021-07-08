@@ -1,12 +1,13 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
+import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { operators, switchPerspective } from '../../constants';
 import {
   perspective,
   operatorsPage,
   installOperator,
   verifyAndInstallKnativeOperator,
+  verifyAndInstallPipelinesOperator,
 } from '../../pages';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user has installed Web Terminal operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
@@ -28,4 +29,8 @@ Given('user has installed Web Terminal operator', () => {
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
+});
+
+Given('user has installed OpenShift Pipelines Operator', () => {
+  verifyAndInstallPipelinesOperator();
 });

@@ -48,14 +48,15 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
       <Text>
         <Trans t={t} ns="ceph-storage-plugin">
           If not labeled, the selected nodes are labeled <Label color="blue">{{ label }}</Label> to
-          make them target hosts for OCS components.
+          make them target hosts for OpenShift Container Storage
+          {/* eslint-disable react/no-unescaped-entities */}'s components.
         </Trans>
       </Text>
     </TextContent>
   );
 });
 
-type SelectNodesTextProps = { text: string };
+type SelectNodesTextProps = { text: JSX.Element };
 
 export const SelectNodesDetails: React.FC<SelectNodesDetailsProps> = React.memo(
   ({ nodes, cpu, zones, memory }) => {
@@ -89,8 +90,21 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispa
 
   return (
     <Checkbox
-      label={t('ceph-storage-plugin~Enable taint nodes')}
-      description={t('ceph-storage-plugin~Selected nodes will be dedicated to OCS use only')}
+      label={
+        <>
+          {t('ceph-storage-plugin~Mark nodes as dedicated')}{' '}
+          <FieldLevelHelp>
+            <Trans t={t} ns="ceph-storage-plugin">
+              This will taint the nodes with the
+              <code>key: node.ocs.openshift.io/storage</code>, <code>value: true</code>, and{' '}
+              <code>effect: NoSchedule</code>
+            </Trans>
+          </FieldLevelHelp>
+        </>
+      }
+      description={t(
+        'ceph-storage-plugin~Selected nodes will be dedicated to OpenShift Container Storage use only',
+      )}
       className="ocs-enable-taint"
       id="taint-nodes"
       isChecked={state.enableTaint}
@@ -163,7 +177,7 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
       }
     >
       <Checkbox
-        aria-label={t('ceph-storage-plugin~Enable Arbiter')}
+        aria-label={t('ceph-storage-plugin~Enable arbiter')}
         id="arbiter-cluster"
         isChecked={stretchClusterChecked}
         label={<EnableArbiterLabel />}
@@ -191,7 +205,7 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
         <Grid hasGutter>
           <GridItem span={5}>
             <FormGroup
-              label={t('ceph-storage-plugin~Select an arbiter zone')}
+              label={t('ceph-storage-plugin~Select arbiter zone')}
               fieldId="arbiter-zone-dropdown"
               className="ceph-ocs-install__select-arbiter-zone"
             >

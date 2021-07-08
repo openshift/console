@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import { knativeServingResourcesTrafficSplitting } from '../../utils/traffic-splitting-utils';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getKnativeRevisionsData } from '../../topology/knative-topology-utils';
+import { knativeServingResourcesTrafficSplitting } from '../../utils/traffic-splitting-utils';
 import TrafficSplitting from './TrafficSplitting';
 
 type ControllerProps = {

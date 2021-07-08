@@ -1,7 +1,7 @@
-import { TFunction } from 'i18next';
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import { routeDecoratorIcon } from '../render-utils';
+import { TFunction } from 'i18next';
 import CheIcon from '../CheIcon';
+import { routeDecoratorIcon } from '../render-utils';
 
 const t = (key): TFunction => key;
 

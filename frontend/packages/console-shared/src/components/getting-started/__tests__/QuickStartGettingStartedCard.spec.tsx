@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
-import { useActiveNamespace } from '@console/shared/src';
-
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-
+import { useActiveNamespace } from '@console/shared/src';
+import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
 import { loadingQuickStarts, loadedQuickStarts } from './QuickStartGettingStartedCard.data';
 
@@ -42,11 +40,11 @@ describe('QuickStartGettingStartedCard', () => {
       'Build with guided documentation',
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      { key: 'quarkus-with-s2i', loading: true },
-      { key: 'spring-with-s2i', loading: true },
+      { id: 'quarkus-with-s2i', loading: true },
+      { id: 'spring-with-s2i', loading: true },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'quick-starts',
+      id: 'all-quick-starts',
       title: 'View all quick starts',
       href: '/quickstart',
     });
@@ -65,18 +63,18 @@ describe('QuickStartGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toMatchObject([
       {
-        key: 'quarkus-with-s2i',
+        id: 'quarkus-with-s2i',
         title: 'Get started with Quarkus using s2i',
         onClick: expect.any(Function),
       },
       {
-        key: 'spring-with-s2i',
+        id: 'spring-with-s2i',
         title: 'Get started with Spring',
         onClick: expect.any(Function),
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'quick-starts',
+      id: 'all-quick-starts',
       title: 'View all quick starts',
       href: '/quickstart',
     });
@@ -93,18 +91,18 @@ describe('QuickStartGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toMatchObject([
       {
-        key: 'spring-with-s2i',
+        id: 'spring-with-s2i',
         title: 'Get started with Spring',
         onClick: expect.any(Function),
       },
       {
-        key: 'monitor-sampleapp',
+        id: 'monitor-sampleapp',
         title: 'Monitor your sample application',
         onClick: expect.any(Function),
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'quick-starts',
+      id: 'all-quick-starts',
       title: 'View all quick starts',
       href: '/quickstart',
     });

@@ -1,12 +1,12 @@
-import * as webpack from 'webpack';
 import * as _ from 'lodash';
-import { ValidationResult } from './ValidationResult';
-import { ConsolePluginMetadata } from '../schema/plugin-package';
-import { SupportedExtension } from '../schema/console-extensions';
+import * as webpack from 'webpack';
 import {
   filterEncodedCodeRefProperties,
   parseEncodedCodeRefValue,
 } from '../coderefs/coderef-resolver';
+import { SupportedExtension } from '../schema/console-extensions';
+import { ConsolePluginMetadata } from '../schema/plugin-package';
+import { ValidationResult } from './ValidationResult';
 
 type ExtensionCodeRefData = {
   index: number;

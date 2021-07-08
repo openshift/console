@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { history } from '@console/internal/components/utils';
-import { FormikProps } from 'formik';
 import { Form, TextInputTypes } from '@patternfly/react-core';
+import { FormikProps } from 'formik';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { history } from '@console/internal/components/utils';
 import {
   InputField,
   TextAreaField,

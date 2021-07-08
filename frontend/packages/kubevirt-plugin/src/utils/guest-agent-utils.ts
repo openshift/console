@@ -1,5 +1,4 @@
 import { VMIKind } from '@console/kubevirt-plugin/src/types';
-
 import { getVMIConditionsByType } from '../selectors/vmi';
 
 // Based on: https://github.com/kubevirt/kubevirt/blob/f71e9c9615a6c36178169d66814586a93ba515b5/staging/src/kubevirt.io/client-go/api/v1/types.go#L337

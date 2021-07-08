@@ -1,6 +1,18 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
+import {
+  Alert,
+  AlertVariant,
+  Checkbox,
+  ExpandableSection,
+  Form,
+  FormSelect,
+  FormSelectOption,
+  SelectOption,
+  Stack,
+  StackItem,
+  TextInput,
+} from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   ExternalLink,
@@ -19,19 +31,6 @@ import {
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { getAnnotations, getName } from '@console/shared/src';
-import {
-  Alert,
-  AlertVariant,
-  ExpandableSection,
-  Form,
-  FormSelect,
-  FormSelectOption,
-  SelectOption,
-  Stack,
-  StackItem,
-  TextInput,
-} from '@patternfly/react-core';
-
 import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,
@@ -62,6 +61,7 @@ import {
   getSequenceName,
   STORAGE_CLASS_SUPPORTED_RHV_LINK,
   STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
+  PREALLOCATION_DATA_VOLUME_LINK,
 } from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
@@ -69,6 +69,7 @@ import { TemplateValidations } from '../../../utils/validations/template/templat
 import { validateDisk } from '../../../utils/validations/vm';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { VMImportProvider } from '../../create-vm-wizard/types';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
 import {
@@ -82,7 +83,7 @@ import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { StorageUISource } from './storage-ui-source';
-import { VMImportProvider } from '../../create-vm-wizard/types';
+
 import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
@@ -187,6 +188,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (isEditing && combinedDisk.getVolumeMode()) || null,
   );
 
+  const [enablePreallocation, setEnablePreallocation] = React.useState<boolean>(
+    dataVolume.getPreallocation(),
+  );
+
   React.useEffect(() => {
     if (source.requiresPVC()) {
       const pvcNameDataVolume = dataVolume.getPersistentVolumeClaimName();
@@ -269,7 +274,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
       .setVolumeMode(volumeMode || null)
-      .setAccessModes(accessMode ? [accessMode] : null);
+      .setAccessModes(accessMode ? [accessMode] : null)
+      .setPreallocationDisk(enablePreallocation);
   }
 
   let resultPersistentVolumeClaim;
@@ -344,9 +350,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       if (newVolumeMode !== volumeMode) {
         setVolumeMode(newVolumeMode);
       }
-      if (newAccessMode !== accessMode || newVolumeMode !== volumeMode) {
-        setAdvancedDrawerIsOpen(true); // notify the user that the hidden values were changed by force
-      }
     }
   };
 
@@ -387,6 +390,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       setBus(DiskBus.SATA);
     }
   };
+
+  const onTogglePreallocation = () => setEnablePreallocation(!enablePreallocation);
 
   const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
 
@@ -621,8 +626,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       text={t('kubevirt-plugin~Supported Storage classes for selected provider')}
                       href={
                         importProvider === VMImportProvider.OVIRT
-                          ? STORAGE_CLASS_SUPPORTED_VMWARE_LINK
-                          : STORAGE_CLASS_SUPPORTED_RHV_LINK
+                          ? STORAGE_CLASS_SUPPORTED_RHV_LINK
+                          : STORAGE_CLASS_SUPPORTED_VMWARE_LINK
                       }
                     />
                   </Alert>
@@ -644,6 +649,26 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       ? t('kubevirt-plugin~{{name}} (default)', { name: getName(sc) })
                       : getName(sc)
                   }
+                />
+              </StackItem>
+              <StackItem>
+                <Checkbox
+                  id="cnv668"
+                  description={
+                    <Trans t={t} ns="kubevirt-plugin">
+                      Refer to the{' '}
+                      <ExternalLink
+                        text={t('kubevirt-plugin~Documentation')}
+                        href={PREALLOCATION_DATA_VOLUME_LINK}
+                      />{' '}
+                      or contact your system administrator for more information. Enabling
+                      preallocation is available only for blank disk source.
+                    </Trans>
+                  }
+                  isDisabled={!source.requiresBlankDisk()}
+                  isChecked={enablePreallocation}
+                  label={t('kubevirt-plugin~Enable preallocation')}
+                  onChange={() => onTogglePreallocation()}
                 />
               </StackItem>
             </Stack>

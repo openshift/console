@@ -1313,3 +1313,20 @@ export const VolumeSnapshotContentModel: K8sKind = {
   labelPluralKey: 'public~VolumeSnapshotContents',
   crd: true,
 };
+
+export const ConsolePluginModel: K8sKind = {
+  label: 'ConsolePlugin',
+  // t('public~ConsolePlugin')
+  labelKey: 'public~ConsolePlugin',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'console.openshift.io',
+  plural: 'consoleplugins',
+  abbr: 'CP',
+  namespaced: false,
+  kind: 'ConsolePlugin',
+  id: 'consoleplugin',
+  labelPlural: 'ConsolePlugins',
+  // t('public~ConsolePlugins')
+  labelPluralKey: 'public~ConsolePlugins',
+  crd: true,
+};

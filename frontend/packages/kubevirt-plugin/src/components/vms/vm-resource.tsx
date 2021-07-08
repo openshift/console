@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { NodeLink, ResourceLink, ResourceSummary } from '@console/internal/components/utils';
 import { Selector } from '@console/internal/components/utils/selector';
 import { PodModel } from '@console/internal/models';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceKind } from '@console/knative-plugin/src/types';
 import { getLabel, getName, getNamespace, getNodeName } from '@console/shared';
-
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
@@ -43,6 +41,7 @@ import SSHDetailsPage from '../ssh-service/SSHDetailsPage/SSHDetailsPage';
 import { VMStatus } from '../vm-status/vm-status';
 import VMDetailsItem from './VMDetailsItem';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
+import VMIP from './VMIP';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -127,7 +126,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
   const id = getBasicID(vmiLike);
   const devices = vmiLikeWrapper?.getLabeledDevices() || [];
   const nodeName = getVMINodeName(vmi) || getNodeName(launcherPod);
-  const ipAddrs = getVmiIpAddresses(vmi).join(', ');
+  const ipAddrs = getVmiIpAddresses(vmi);
   const workloadProfile = vmiLikeWrapper?.getWorkloadProfile();
 
   return (
@@ -176,7 +175,7 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
         idValue={prefixedID(id, 'ip-addresses')}
         isNotAvail={!launcherPod || !ipAddrs}
       >
-        {launcherPod && ipAddrs}
+        {launcherPod && ipAddrs && <VMIP data={ipAddrs} />}
       </VMDetailsItem>
 
       <VMDetailsItem

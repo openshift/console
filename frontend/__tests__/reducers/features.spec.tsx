@@ -45,6 +45,7 @@ describe('featureReducer', () => {
       adminResources: [],
       allResources: [],
       configResources: [],
+      clusterOperatorConfigResources: [],
       namespacedSet: null,
       safeResources: [],
       groupVersionMap: {},

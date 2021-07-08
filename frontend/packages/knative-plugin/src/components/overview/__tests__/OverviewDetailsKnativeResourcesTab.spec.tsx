@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
-import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
-import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
-import KnativeServiceResources from '../KnativeServiceResources';
-import KnativeRevisionResources from '../KnativeRevisionResources';
-import RevisionsOverviewList from '../RevisionsOverviewList';
-import KSRoutesOverviewList from '../RoutesOverviewList';
-import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import EventSourceResources from '../EventSourceResources';
-import EventPubSubResources from '../EventPubSubResources';
+import { EventSourceCronJobModel } from '../../../models';
 import {
   MockKnativeResources,
   getEventSourceResponse,
@@ -18,7 +10,15 @@ import {
   EventIMCObj,
   EventSubscriptionObj,
 } from '../../../topology/__tests__/topology-knative-test-data';
-import { EventSourceCronJobModel } from '../../../models';
+import * as fetchDynamicEventSources from '../../../utils/fetch-dynamic-eventsources-utils';
+import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
+import EventPubSubResources from '../EventPubSubResources';
+import EventSourceResources from '../EventSourceResources';
+import KnativeRevisionResources from '../KnativeRevisionResources';
+import KnativeServiceResources from '../KnativeServiceResources';
+import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
+import RevisionsOverviewList from '../RevisionsOverviewList';
+import KSRoutesOverviewList from '../RoutesOverviewList';
 
 type OverviewDetailsKnativeResourcesTabProps = React.ComponentProps<
   typeof OverviewDetailsKnativeResourcesTab

@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-
 import { Checkbox, TextInput } from '@patternfly/react-core';
-
+import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { FormField, FormFieldType } from '../../../../form/form-field';
 import { FormFieldMemoRow } from '../../../../form/form-field-row';

@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { observer } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   ActionsMenu,
@@ -9,10 +10,9 @@ import {
   resourcePathFromModel,
   SimpleTabNav,
 } from '@console/internal/components/utils';
-import { modelFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils';
-import { observer } from '@patternfly/react-topology';
-
+import { VirtualMachineModel } from '../models';
+import { getKubevirtAvailableModel } from '../models/kubevirtReferenceForModel';
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';
@@ -59,7 +59,11 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
             <ResourceIcon className="co-m-resource-icon--lg" kind={vmObj.kind} />
             {name && (
               <Link
-                to={resourcePathFromModel(modelFor(vmObj.kind), name, namespace)}
+                to={resourcePathFromModel(
+                  getKubevirtAvailableModel(VirtualMachineModel),
+                  name,
+                  namespace,
+                )}
                 className="co-resource-item__resource-name"
               >
                 {name}

@@ -44,6 +44,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
     [OperatorStatus.Progressing]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
@@ -58,10 +59,10 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
 };
 
 const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-4', 'col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-md',
   Kebab.columnClass,
 ];
 
@@ -75,7 +76,6 @@ const ClusterOperatorTableRow: RowFunction<ClusterOperator> = ({ obj, index, key
           kind={clusterOperatorReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
@@ -132,6 +132,7 @@ const allStatuses = [
   OperatorStatus.Available,
   OperatorStatus.Progressing,
   OperatorStatus.Degraded,
+  OperatorStatus.CannotUpdate,
   OperatorStatus.Unknown,
 ];
 
@@ -190,7 +191,7 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
 const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
   const { t } = useTranslation();
   return _.isEmpty(versions) ? (
-    <EmptyBox label="Versions" />
+    <EmptyBox label={t('public~versions')} />
   ) : (
     <div className="co-table-container">
       <table className="table">
@@ -224,11 +225,7 @@ const ClusterOperatorDetails: React.FC<ClusterOperatorDetailsProps> = ({ obj }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', {
-            resource: ClusterOperatorModel.label,
-          })}
-        />
+        <SectionHeading text={t('public~ClusterOperator details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />
@@ -279,11 +276,12 @@ export const ClusterOperatorDetailsPage: React.FC<ClusterOperatorDetailsPageProp
         },
       ]}
       breadcrumbsFor={() => [
-        { name: ClusterOperatorModel.labelPlural, path: '/settings/cluster/clusteroperators' },
         {
-          name: t('public~{{resource}} details', {
-            resource: ClusterOperatorModel.label,
-          }),
+          name: t(ClusterOperatorModel.labelPluralKey),
+          path: '/settings/cluster/clusteroperators',
+        },
+        {
+          name: t('public~ClusterOperator details'),
           path: props.match.url,
         },
       ]}

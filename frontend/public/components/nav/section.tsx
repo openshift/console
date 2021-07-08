@@ -218,7 +218,7 @@ export const NavSection = connect(navSectionStateToProps)(
 
           if (isGrouped) {
             return (
-              <NavGroup className="oc-nav-group" title="" data-quickstart-id={dataQuickStartId}>
+              <NavGroup title="" data-quickstart-id={dataQuickStartId}>
                 {children}
               </NavGroup>
             );

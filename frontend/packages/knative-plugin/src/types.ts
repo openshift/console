@@ -182,3 +182,14 @@ export type EventTriggerKind = {
     conditions?: TriggerCondition[];
   };
 } & K8sResourceKind;
+
+export type DomainMappingResponse = {
+  action: string;
+  resource: K8sResourceKind;
+};
+
+export enum DomainMappingResponseAction {
+  Create = 'Create',
+  Update = 'Update',
+  Delete = 'Delete',
+}

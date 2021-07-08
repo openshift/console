@@ -1,6 +1,6 @@
 import * as React from 'react';
-import cx from 'classnames';
 import { TableVariant, Table, TableBody } from '@patternfly/react-table';
+import cx from 'classnames';
 import './FilterTable.scss';
 
 export type FilterTableRowProps = { key: string; value: string }[];

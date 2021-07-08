@@ -4,8 +4,8 @@ import NodeDetailsImages from '@console/app/src/components/nodes/NodeDetailsImag
 import { getNodeMachineName, getName, createBasicLookup } from '@console/shared';
 import { getNodeMaintenanceNodeName, getHostMachineName } from '../../selectors';
 import { getNodeServerCSR } from '../../selectors/csr';
-import BareMetalNodeDetailsOverview from './BareMetalNodeDetailsOverview';
 import { BareMetalNodeDetailsPageProps } from '../types';
+import BareMetalNodeDetailsOverview from './BareMetalNodeDetailsOverview';
 
 const BareMetalNodeDetails: React.FC<BareMetalNodeDetailsPageProps> = ({
   obj: node,

@@ -1,9 +1,9 @@
 import { checkErrors, testName } from '../../support';
-import { listPage } from '../../views/list-page';
+import { projectDropdown } from '../../views/common';
 import { detailsPage } from '../../views/details-page';
+import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
-import { projectDropdown } from '../../views/common';
 
 describe('Namespace', () => {
   before(() => {
@@ -63,6 +63,7 @@ describe('Namespace', () => {
       'List page to details page should change Project from "All Projects" to resource specific project',
     );
     listPage.filter.byName('kubernetes');
+    listPage.rows.countShouldBe(1);
     listPage.rows.clickRowByName('kubernetes');
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);
@@ -71,6 +72,7 @@ describe('Namespace', () => {
     projectDropdown.shouldContain(allProjectsDropdownLabel);
     cy.log('Details page to list page via breadcrumb should change Project back to "All Projects"');
     listPage.filter.byName('kubernetes');
+    listPage.rows.countShouldBe(1);
     listPage.rows.clickRowByName('kubernetes');
     detailsPage.isLoaded();
     projectDropdown.shouldContain(defaultProjectName);

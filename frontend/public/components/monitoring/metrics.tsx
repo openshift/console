@@ -43,11 +43,9 @@ import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PrometheusData, PrometheusLabels, PROMETHEUS_BASE_PATH } from '../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
-import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import {
   ActionsMenu,
   Dropdown,
-  ExternalLink,
   getURLSearchParams,
   Kebab,
   LoadingInline,
@@ -185,30 +183,6 @@ const MetricsActionsMenu = connect(
     setAllExpanded: UIActions.queryBrowserSetAllExpanded,
   },
 )(MetricsActionsMenu_);
-
-const headerPrometheusLinkStateToProps = ({ UI }: RootState) => {
-  const liveQueries = UI.getIn(['queryBrowser', 'queries']).filter(
-    (q) => q.get('isEnabled') && q.get('query'),
-  );
-  const queryStrings = _.map(liveQueries.toJS(), 'query');
-  const url = window.SERVER_FLAGS.prometheusPublicURL;
-  return {
-    url:
-      getPrometheusExpressionBrowserURL(url, queryStrings) ||
-      window.SERVER_FLAGS.prometheusPublicURL,
-  };
-};
-
-const HeaderPrometheusLink_ = ({ url }) => {
-  const { t } = useTranslation();
-
-  return url ? (
-    <span className="monitoring-header-link">
-      <ExternalLink href={url} text={t('public~Platform Prometheus UI')} />
-    </span>
-  ) : null;
-};
-const HeaderPrometheusLink = connect(headerPrometheusLinkStateToProps)(HeaderPrometheusLink_);
 
 const graphStateToProps = ({ UI }: RootState) => ({
   hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
@@ -702,6 +676,9 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   if (data.resultType === 'scalar') {
     columns = ['', { title: t('public~Value'), ...cellProps }];
     rows = [[buttonCell({}), _.get(result, '[1]')]];
+  } else if (data.resultType === 'string') {
+    columns = [{ title: t('public~Value'), ...cellProps }];
+    rows = [[result?.[1]]];
   } else {
     const allLabelKeys = _.uniq(_.flatMap(result, ({ metric }) => Object.keys(metric))).sort();
 
@@ -986,10 +963,7 @@ const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
-          <span>
-            {t('public~Metrics')}
-            <HeaderPrometheusLink />
-          </span>
+          <span>{t('public~Metrics')}</span>
           <div className="co-actions">
             <PollIntervalDropdown />
             <MetricsActionsMenu />

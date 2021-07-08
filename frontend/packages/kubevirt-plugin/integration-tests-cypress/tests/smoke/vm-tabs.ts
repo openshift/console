@@ -1,8 +1,8 @@
-import { testName } from '../../support';
 import { TEMPLATE_NAME, VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
-import { virtualization } from '../../view/virtualization';
-import { VirtualMachineData } from '../../types/vm';
 import { ProvisionSource } from '../../enums/provisionSource';
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
+import { virtualization } from '../../view/virtualization';
 import { waitForStatus, vm } from '../../view/vm';
 
 const vmData: VirtualMachineData = {

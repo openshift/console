@@ -1,5 +1,5 @@
-import { AddTriggerFormValues } from '../components/pipelines/modals/triggers/types';
 import { VolumeTypes } from '../components/pipelines/const';
+import { AddTriggerFormValues } from '../components/pipelines/modals/triggers/types';
 
 export const formValues: AddTriggerFormValues = {
   namespace: 'test-ns',

@@ -1,3 +1,4 @@
+import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
 import {
   k8sPatch,
   k8sCreate,
@@ -6,19 +7,18 @@ import {
   k8sKill,
   SecretKind,
 } from '@console/internal/module/k8s';
-import { MachineModel, MachineSetModel, SecretModel } from '@console/internal/models';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { getAnnotations } from '@console/shared/src';
-import { BareMetalHostModel } from '../../models';
-import { BareMetalHostKind } from '../../types';
+import { PatchBuilder } from '@console/shared/src/k8s';
+import { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 import { DELETE_MACHINE_ANNOTATION } from '../../constants/machine';
+import { BareMetalHostModel } from '../../models';
 import { getReplicas } from '../../selectors/machine-set';
+import { BareMetalHostKind } from '../../types';
 import {
   buildBareMetalHostObject,
   buildBareMetalHostSecret,
   getSecretName,
 } from '../objects/bare-metal-host';
-import { AddBareMetalHostFormValues } from '../../components/baremetal-hosts/add-baremetal-host/types';
 
 export const powerOffHost = (host: BareMetalHostKind) =>
   k8sPatch(BareMetalHostModel, host, [{ op: 'replace', path: '/spec/online', value: false }]);

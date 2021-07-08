@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import Helmet from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Button } from '@patternfly/react-core';
-import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
 import CatalogController from '../catalog/CatalogController';
-import CreateProjectListPage from '../projects/CreateProjectListPage';
+import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 
 type SampleCatalogProps = RouteComponentProps<{ ns?: string }>;
 

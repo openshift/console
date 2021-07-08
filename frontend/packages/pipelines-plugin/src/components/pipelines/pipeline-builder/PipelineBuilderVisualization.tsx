@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext } from 'formik';
 import { Alert } from '@patternfly/react-core';
+import { useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { LoadingBox } from '@console/internal/components/utils';
 import { PipelineLayout } from '../pipeline-topology/const';
 import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
@@ -36,7 +36,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
     onUpdateTasks,
     taskGroup,
     taskResources,
-    getBuilderTasksErrorGroup(errors?.formData),
+    getBuilderTasksErrorGroup(errors?.formData, status),
   );
   const taskCount = taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
   const hasWhenExpression = nodesHasWhenExpression(nodes);
@@ -63,6 +63,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
       // TODO: fix this; the graph layout isn't properly laying out nodes
       key={`${nodes.map((n) => n.id).join('-')}${hasWhenExpression ? '-spaced' : ''}`}
       id="pipeline-builder"
+      data-test="pipeline-builder"
       fluid
       nodes={nodes}
       edges={getEdgesFromNodes(nodes)}

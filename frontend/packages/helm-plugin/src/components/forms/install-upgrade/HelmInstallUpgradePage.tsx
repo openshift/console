@@ -1,21 +1,20 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import * as Ajv from 'ajv';
-import { JSONSchema6 } from 'json-schema';
-import { safeDump, safeLoad } from 'js-yaml';
 import { Formik } from 'formik';
+import { safeDump, safeLoad } from 'js-yaml';
+import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
-import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { history, LoadingBox } from '@console/internal/components/utils';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import { SecretModel } from '@console/internal/models';
-import { k8sGet } from '@console/internal/module/k8s';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { RouteComponentProps } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-
+import { coFetchJSON } from '@console/internal/co-fetch';
+import { history, LoadingBox } from '@console/internal/components/utils';
+import { SecretModel } from '@console/internal/models';
+import { k8sGet } from '@console/internal/module/k8s';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   HelmActionType,
   HelmChart,
@@ -23,10 +22,10 @@ import {
   HelmActionConfigType,
   HelmActionOrigins,
 } from '../../../types/helm-types';
-import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
 import { getHelmActionConfig, getChartValuesYAML, getChartReadme } from '../../../utils/helm-utils';
-import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
+import { getHelmActionValidationSchema } from '../../../utils/helm-validation-utils';
 import HelmChartMetaDescription from './HelmChartMetaDescription';
+import HelmInstallUpgradeForm from './HelmInstallUpgradeForm';
 
 export type HelmInstallUpgradePageProps = RouteComponentProps<{
   ns?: string;
@@ -141,7 +140,6 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
   };
 
   const handleSubmit = (values, actions) => {
-    actions.setStatus({ isSubmitting: true });
     const {
       releaseName,
       chartURL,
@@ -164,14 +162,14 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             errorsText: ajv.errorsText(),
           }),
         });
-        return;
+        return Promise.reject();
       }
     } else if (yamlData) {
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
         actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
-        return;
+        return Promise.reject();
       }
     }
 
@@ -185,7 +183,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
     const isGoingToTopology =
       helmAction === HelmActionType.Install || helmActionOrigin === HelmActionOrigins.topology;
 
-    config
+    return config
       .fetch('/api/helm/release', payload, null, -1)
       .then(async (res: HelmRelease) => {
         let redirect = config.redirectURL;
@@ -206,12 +204,10 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
           }
         }
 
-        actions.setStatus({ isSubmitting: false });
         history.push(redirect);
       })
       .catch((err) => {
-        actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message, isSubmitting: false });
+        actions.setStatus({ submitError: err.message });
       });
   };
 

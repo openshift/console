@@ -41,11 +41,11 @@ const ServiceIP = ({ s }) => {
 const kind = 'Service';
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
+  'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,
 ];
 
@@ -53,18 +53,13 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
   return (
     <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={s.metadata.name}
-          namespace={s.metadata.namespace}
-          title={s.metadata.uid}
-        />
+        <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink kind="Namespace" name={s.metadata.namespace} title={s.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={s.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={s.metadata.labels} />

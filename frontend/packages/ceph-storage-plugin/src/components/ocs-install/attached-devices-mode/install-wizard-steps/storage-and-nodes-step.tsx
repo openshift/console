@@ -157,7 +157,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       )}
       <FormGroup
         fieldId="storage-class-dropdown"
-        label={t('ceph-storage-plugin~Storage Class')}
+        label={t('ceph-storage-plugin~StorageClass')}
         labelIcon={<FieldLevelHelp>{attachedDevicesStorageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
@@ -192,7 +192,11 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       <Grid>
         <GridItem span={11}>
           <SelectNodesText
-            text={hasStretchClusterChecked ? attachDevicesWithArbiter(t) : attachDevices(t)}
+            text={
+              hasStretchClusterChecked
+                ? attachDevicesWithArbiter(t, scName)
+                : attachDevices(t, scName)
+            }
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">

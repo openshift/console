@@ -37,9 +37,9 @@ const createInstance = (kindObj, serviceClass) => {
 const actionButtons = [createInstance];
 
 const tableColumnClasses = [
-  classNames('col-sm-6', 'col-xs-12'),
-  classNames('col-sm-3', 'hidden-xs'),
-  classNames('col-sm-3', 'hidden-xs'),
+  'pf-u-w-50-on-md',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-md',
 ];
 
 const ClusterServiceClassTableHeader = () => {

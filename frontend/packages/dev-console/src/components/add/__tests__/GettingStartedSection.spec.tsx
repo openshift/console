@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-
-import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   GettingStartedGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
-
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { GettingStartedSection } from '../GettingStartedSection';
 
 jest.mock('@console/shared/src/hooks/flag', () => ({

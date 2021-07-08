@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormGroup } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { useField } from 'formik';
-import { FormGroup } from '@patternfly/react-core';
 import { RadioGroupFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 import RadioButtonField from './RadioButtonField';
@@ -50,7 +50,7 @@ const RadioGroupField: React.FC<RadioGroupFieldProps> = ({
               value={option.value}
               label={option.label}
               isDisabled={option.isDisabled}
-              aria-describedby={`${fieldId}-helper`}
+              aria-describedby={helpText ? `${fieldId}-helper` : undefined}
               description={description}
               onChange={onChange}
             />

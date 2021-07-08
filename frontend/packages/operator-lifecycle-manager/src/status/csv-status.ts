@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18n from '@console/internal/i18n';
 import { getName } from '@console/shared/src/selectors/common';
 import {
   ClusterServiceVersionKind,
@@ -7,9 +8,9 @@ import {
   ClusterServiceVersionPhase,
   ClusterServiceVersionStatus,
 } from '../types';
-import i18n from '@console/internal/i18n';
+import { upgradeRequiresApproval } from '../utils';
 
-const pedingPhases = [
+const pendingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,
   ClusterServiceVersionPhase.CSVPhaseInstalling,
   ClusterServiceVersionPhase.CSVPhaseReplacing,
@@ -38,7 +39,7 @@ export const getCSVStatus = (
   const statusPhase = csv?.status?.phase ?? ClusterServiceVersionPhase.CSVPhaseUnknown;
   // TODO Get rid of let.
   let status: ClusterServiceVersionStatus;
-  if (pedingPhases.includes(statusPhase)) {
+  if (pendingPhases.includes(statusPhase)) {
     status = i18n.t('olm~Pending');
   } else {
     switch (statusPhase) {
@@ -72,7 +73,9 @@ export const getSubscriptionStatus = (subscription: SubscriptionKind): Subscript
     case SubscriptionState.SubscriptionStateUpgradePending:
       return {
         status,
-        title: i18n.t('olm~Upgrading'),
+        title: upgradeRequiresApproval(subscription)
+          ? i18n.t('olm~Upgrade available')
+          : i18n.t('olm~Upgrading'),
       };
     case SubscriptionState.SubscriptionStateAtLatest:
       return {

@@ -1,6 +1,5 @@
 import { K8sKind } from '@console/internal/module/k8s';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-
 import { CloudInitConfig, Disk, FlavorConfig, Network } from '../types/types';
 import { BaseVMBuilderData } from '../types/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';

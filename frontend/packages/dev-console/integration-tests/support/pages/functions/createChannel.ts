@@ -1,7 +1,7 @@
-import { addPage, channelPage } from '../add-flow';
 import { addOptions } from '../../constants/add';
-import { app, createForm, navigateTo } from '../app';
 import { devNavigationMenu } from '../../constants/global';
+import { addPage, channelPage } from '../add-flow';
+import { app, createForm, navigateTo } from '../app';
 
 export const createChannel = (
   channelName: string = 'channel-one',

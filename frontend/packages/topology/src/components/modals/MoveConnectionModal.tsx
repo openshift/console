@@ -1,18 +1,18 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { FormGroup, Title, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
+import { Edge, Node } from '@patternfly/react-topology';
 import { Formik, FormikProps, FormikValues } from 'formik';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
+import { TFunction } from 'i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import { Edge, Node } from '@patternfly/react-topology';
+import { PromiseComponent, ResourceIcon } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KAFKA_CONNECTION_LINK,
@@ -108,7 +108,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> &
       </ModalBody>
       <ModalSubmitFooter
         submitText={t('topology~Move')}
-        submitDisabled={!isDirty}
+        submitDisabled={!isDirty || isSubmitting}
         cancel={cancel}
         inProgress={isSubmitting}
         errorMessage={status && status.submitError}
@@ -146,15 +146,12 @@ class MoveConnectionModal extends PromiseComponent<
   };
 
   private handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
     const { close } = this.props;
-    this.handlePromise(this.onSubmit(values.target))
+    return this.handlePromise(this.onSubmit(values.target))
       .then(() => {
-        actions.setSubmitting(false);
         close();
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err });
       });
   };

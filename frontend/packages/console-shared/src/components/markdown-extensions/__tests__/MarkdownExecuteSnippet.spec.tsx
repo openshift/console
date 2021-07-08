@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { htmlDocumentForExecuteButton } from './test-data';
-import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippet';
 import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useCloudShellAvailable';
+import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippet';
+import { htmlDocumentForExecuteButton } from './test-data';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

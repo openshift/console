@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src';
-
+import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider';
-
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 
@@ -38,7 +36,22 @@ jest.mock(
 const useActiveNamespaceMock = useActiveNamespace as jest.Mock;
 const CatalogServiceProviderMock = CatalogServiceProvider as jest.Mock;
 
+afterEach(() => {
+  delete window.SERVER_FLAGS.addPage;
+});
+
 describe('SampleGettingStartedCard', () => {
+  it('should not render when Samples add card is disabled', () => {
+    window.SERVER_FLAGS.addPage = '{ "disabledActions": "import-from-samples" }';
+
+    useActiveNamespaceMock.mockReturnValue(['active-namespace']);
+    CatalogServiceProviderMock.mockImplementation((props) => props.children(loadedCatalogService));
+
+    const wrapper = shallow(<SampleGettingStartedCard />);
+
+    expect(wrapper.text()).toEqual('');
+  });
+
   it('should render loading links until catalog service is loaded', () => {
     useActiveNamespaceMock.mockReturnValue(['active-namespace']);
     CatalogServiceProviderMock.mockImplementation((props) => props.children(loadingCatalogService));
@@ -51,11 +64,11 @@ describe('SampleGettingStartedCard', () => {
       'Create applications using samples',
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
-      { key: 'code-with-quarkus', loading: true },
-      { key: 'java-springboot-basic', loading: true },
+      { id: 'code-with-quarkus', loading: true },
+      { id: 'java-springboot-basic', loading: true },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });
@@ -74,20 +87,20 @@ describe('SampleGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'code-with-quarkus',
+        id: 'code-with-quarkus',
         title: 'Basic Quarkus',
         href:
           '/import?importType=devfile&formType=sample&devfileName=code-with-quarkus&gitRepo=https://github.com/elsony/devfile-sample-code-with-quarkus.git',
       },
       {
-        key: 'java-springboot-basic',
+        id: 'java-springboot-basic',
         title: 'Basic Spring Boot',
         href:
           '/import?importType=devfile&formType=sample&devfileName=java-springboot-basic&gitRepo=https://github.com/elsony/devfile-sample-java-springboot-basic.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });
@@ -104,19 +117,19 @@ describe('SampleGettingStartedCard', () => {
     );
     expect(wrapper.find(GettingStartedCard).props().links).toEqual([
       {
-        key: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',
+        id: 'Sample-7755a465-a923-4393-a102-9876c110dbb4',
         title: '.NET Core',
         href: '/samples/ns/active-namespace/dotnet/openshift',
       },
       {
-        key: 'nodejs-basic',
+        id: 'nodejs-basic',
         title: 'Basic NodeJS',
         href:
           '/import?importType=devfile&formType=sample&devfileName=nodejs-basic&gitRepo=https://github.com/redhat-developer/devfile-sample.git',
       },
     ]);
     expect(wrapper.find(GettingStartedCard).props().moreLink).toEqual({
-      key: 'all-samples',
+      id: 'all-samples',
       title: 'View all samples',
       href: '/samples/ns/active-namespace',
     });

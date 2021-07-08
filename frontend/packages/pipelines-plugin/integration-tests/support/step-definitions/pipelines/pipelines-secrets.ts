@@ -1,10 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage, pipelineBuilderPage } from '../../pages';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { pipelinesPO } from '../../page-objects/pipelines-po';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
 import { pipelineActions } from '../../constants';
+import { pipelinesPO } from '../../page-objects/pipelines-po';
+import { pipelinesPage, startPipelineInPipelinesPage, pipelineBuilderPage } from '../../pages';
 
 Given('user has created pipeline {string} with git resources', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
+import * as _ from 'lodash';
+import { coFetchJSON } from '@console/internal/co-fetch';
 import { InputField, SyncedEditorField, FormHeader, FormFooter } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
-import { HelmActionType } from '../../../types/helm-types';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { formikFormProps } from '@console/shared/src/test-utils/formik-props-utils';
-import { Alert } from '@patternfly/react-core';
+import { HelmActionType } from '../../../types/helm-types';
+import HelmInstallUpgradeForm from '../install-upgrade/HelmInstallUpgradeForm';
 
 const formValues = {
   releaseName: 'helm-release',

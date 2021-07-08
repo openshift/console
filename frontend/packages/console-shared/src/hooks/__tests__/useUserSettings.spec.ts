@@ -1,11 +1,10 @@
+import { act } from 'react-dom/test-utils';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector } from 'react-redux';
-import { act } from 'react-dom/test-utils';
-import { ConfigMapKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import { ConfigMapKind } from '@console/internal/module/k8s';
 import { testHook } from '../../../../../__tests__/utils/hooks-utils';
 import {
   createConfigMap,
@@ -82,7 +81,9 @@ describe('useUserSettings', () => {
 
     // Mock ConfigMap not found
     await act(async () => {
-      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('ConfigMap not found')]);
+      const k8sError: Error & { response?: any } = new Error('ConfigMap Not Found');
+      k8sError.response = { ok: false, status: 404 };
+      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
       rerender();
     });
 
@@ -469,7 +470,7 @@ describe('useUserSettings', () => {
     );
   });
 
-  it('should fallback to localStorage if creation fails with 403 (must not call updateConfigMap)', async () => {
+  it('should fallback to localStorage if fetch fails with 403 (must not call updateConfigMap or createConfigMapMock)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
@@ -480,26 +481,22 @@ describe('useUserSettings', () => {
 
     // Mock that createConfigMap is 403 Forbidden and that ConfigMap is not found.
     await act(async () => {
-      createConfigMapMock.mockImplementation(async () => {
-        const error: Error & { response?: any } = new Error('Forbidden');
-        error.response = {
-          ok: false,
-          status: 403,
-        };
-        throw error;
-      });
-      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('ConfigMap not found')]);
+      const error: Error & { response?: any } = new Error('Forbidden');
+      error.response = {
+        ok: false,
+        status: 403,
+      };
+      useK8sWatchResourceMock.mockReturnValue([null, false, error]);
       rerender();
     });
 
     // Should call createConfigMap, but not updateConfigMap
     expect(result.current).toEqual(['default value', expect.any(Function), true]);
-    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
-    expect(createConfigMapMock).toHaveBeenCalledWith();
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
   });
 
-  it('should fallback to localStorage if creation fails with 404 (must not call updateConfigMap)', async () => {
+  it('should fallback to localStorage if creation fails with 404 (must call createConfigMapMock)', async () => {
     // Mock loading
     useK8sWatchResourceMock.mockReturnValue([null, false, null]);
 
@@ -518,7 +515,9 @@ describe('useUserSettings', () => {
         };
         throw error;
       });
-      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('ConfigMap not found')]);
+      const k8sError: Error & { response?: any } = new Error('ConfigMap Not Found');
+      k8sError.response = { ok: false, status: 404 };
+      useK8sWatchResourceMock.mockReturnValue([null, false, k8sError]);
       rerender();
     });
 

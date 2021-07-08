@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import { useEffect } from 'react';
+import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
+import * as _ from 'lodash';
 import { coFetch } from '@console/internal/co-fetch';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
@@ -8,7 +9,6 @@ import {
   referenceForModel,
   getLatestVersionForCRD,
 } from '@console/internal/module/k8s';
-import { chart_color_red_300 as knativeEventingColor } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
 import { EventingSubscriptionModel, EventingTriggerModel } from '../models';
 
 interface EventSourcetData {
@@ -28,6 +28,8 @@ interface EventChannelData {
   channels: string[];
 }
 
+export const getLabelPlural = (kind: string, plural: string) => kind + plural.slice(kind.length);
+
 export const fetchEventSourcesCrd = async () => {
   const url = 'api/console/knative-event-sources';
   try {
@@ -43,8 +45,8 @@ export const fetchEventSourcesCrd = async () => {
             names: { kind, plural, singular },
           },
         } = crd;
-        const label = kind.replace(/([A-Z])/g, ' $1').trim();
         const crdLatestVersion = getLatestVersionForCRD(crd);
+        const labelPlural = getLabelPlural(kind, plural);
         if (crdLatestVersion) {
           const sourceModel = {
             apiGroup: group,
@@ -52,8 +54,8 @@ export const fetchEventSourcesCrd = async () => {
             kind,
             plural,
             id: singular,
-            label,
-            labelPlural: `${label}s`,
+            label: kind,
+            labelPlural,
             abbr: kindToAbbr(kind),
             namespaced: true,
             crd: true,
@@ -172,15 +174,15 @@ export const fetchChannelsCrd = async () => {
           },
         } = crd;
         const crdLatestVersion = getLatestVersionForCRD(crd);
-        const label = kind.replace(/([A-Z])/g, ' $1').trim();
+        const labelPlural = getLabelPlural(kind, plural);
         const sourceModel = {
           apiGroup: group,
           apiVersion: crdLatestVersion,
           kind,
           plural,
           id: singular,
-          label,
-          labelPlural: `${label}s`,
+          label: kind,
+          labelPlural,
           abbr: kindToAbbr(kind),
           namespaced: true,
           crd: true,

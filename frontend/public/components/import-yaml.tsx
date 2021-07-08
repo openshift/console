@@ -12,6 +12,7 @@ export const ImportYamlPage = () => {
       </Helmet>
       <AsyncComponent
         loader={() => import('./droppable-edit-yaml').then((c) => c.DroppableEditYAML)}
+        allowMultiple
         create={true}
         download={false}
         header={title}

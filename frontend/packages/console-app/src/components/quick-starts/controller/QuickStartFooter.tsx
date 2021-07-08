@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
-import { QuickStartStatus } from '../utils/quick-start-types';
+import { useTranslation } from 'react-i18next';
 import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
+import { QuickStartStatus } from '../utils/quick-start-types';
 
 import './QuickStartFooter.scss';
 
@@ -31,17 +31,17 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
 
   const PrimaryButtonText = React.useMemo(() => {
     return {
-      START: t('quickstart~Start'),
-      CONTINUE: t('quickstart~Continue'),
-      NEXT: t('quickstart~Next'),
-      CLOSE: t('quickstart~Close'),
+      START: t('console-app~Start'),
+      CONTINUE: t('console-app~Continue'),
+      NEXT: t('console-app~Next'),
+      CLOSE: t('console-app~Close'),
     };
   }, [t]);
 
   const SecondaryButtonText = React.useMemo(() => {
     return {
-      BACK: t('quickstart~Back'),
-      RESTART: t('quickstart~Restart'),
+      BACK: t('console-app~Back'),
+      RESTART: t('console-app~Restart'),
     };
   }, [t]);
 
@@ -66,7 +66,12 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
 
   const getPrimaryButton = React.useMemo(
     () => (
-      <Button variant="primary" className="co-quick-start-footer__actionbtn" onClick={onNext}>
+      <Button
+        variant="primary"
+        className="co-quick-start-footer__actionbtn"
+        onClick={onNext}
+        data-test={`${getPrimaryButtonText} button`}
+      >
         {getPrimaryButtonText}
       </Button>
     ),

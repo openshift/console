@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ResourceIcon } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
+import { ResourceIcon } from '@console/internal/components/utils';
 
 export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(

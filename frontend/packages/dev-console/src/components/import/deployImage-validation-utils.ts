@@ -1,6 +1,7 @@
-import * as yup from 'yup';
 import { TFunction } from 'i18next';
+import * as yup from 'yup';
 import { nameValidationSchema } from '@console/shared';
+import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 import {
   projectNameValidationSchema,
   applicationNameValidationSchema,
@@ -11,7 +12,6 @@ import {
   isiValidationSchema,
   resourcesValidationSchema,
 } from './validation-schema';
-import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
 export const deployValidationSchema = (t: TFunction) =>
   yup.object().shape({

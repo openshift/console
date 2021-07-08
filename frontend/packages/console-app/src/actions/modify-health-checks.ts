@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { K8sKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
+import { K8sKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 
 const healthChecksAdded = (resource: K8sResourceKind): boolean => {
   const containers = resource?.spec?.template?.spec?.containers;

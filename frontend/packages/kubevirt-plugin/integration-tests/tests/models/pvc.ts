@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { PVC_STATUS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import {
   namespaceDropdown,
@@ -11,7 +10,6 @@ import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { click } from '@console/shared/src/test-utils/utils';
-
 import { listViewAction } from '../../views/actions.view';
 import * as pvcView from '../../views/pvc.view';
 import { getTestDataVolume } from '../mocks/mocks';

@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
-import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
 import { V2VProviderStatus } from '../../../../../statuses/v2v';
 import { iGet } from '../../../../../utils/immutable';
 import { FormFieldRow } from '../../../form/form-field-row';

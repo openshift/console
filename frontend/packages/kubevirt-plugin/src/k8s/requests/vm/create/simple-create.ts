@@ -1,7 +1,5 @@
 import { isEmpty } from 'lodash';
-
 import { ConfigMapKind, k8sCreate, TemplateKind } from '@console/internal/module/k8s';
-
 import { windowsToolsStorage } from '../../../../components/create-vm-wizard/redux/initial-state/storage-tab-initial-state';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import { BootSourceState } from '../../../../components/create-vm/forms/boot-source-form-reducer';
@@ -20,7 +18,9 @@ import {
 } from '../../../../constants';
 import { CLOUDINIT_DISK } from '../../../../constants/vm/constants';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { VirtualMachineModel } from '../../../../models';
+import { getKubevirtAvailableModel } from '../../../../models/kubevirtReferenceForModel';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import {
@@ -105,6 +105,7 @@ export const prepareVM = async (
   scConfigMap: ConfigMapKind,
   sshKey?: string,
   enableSSHService?: boolean,
+  containerImagesNames?: { [key: string]: string },
   emptyDiskSize?: string,
   referenceTemplate = true,
 ): Promise<VMKind> => {
@@ -194,8 +195,8 @@ export const prepareVM = async (
 
     if (isWindowsTemplate(template)) {
       vmWrapper.prependStorage({
-        disk: windowsToolsStorage.disk,
-        volume: windowsToolsStorage.volume,
+        disk: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).disk,
+        volume: windowsToolsStorage(winToolsContainerNames(containerImagesNames)).volume,
       });
     } else if (!isEmpty(sshKey) && enableSSHService) {
       vmWrapper.updateVolume(
@@ -242,6 +243,7 @@ export const createVM = async (
   scConfigMap: ConfigMapKind,
   sshKey?: string,
   enableSSHService?: boolean,
+  containerImages?: { [key: string]: string },
 ) => {
   const vm = await prepareVM(
     template,
@@ -251,6 +253,7 @@ export const createVM = async (
     scConfigMap,
     sshKey,
     enableSSHService,
+    containerImages,
   );
-  return k8sCreate(VirtualMachineModel, vm);
+  return k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), vm);
 };

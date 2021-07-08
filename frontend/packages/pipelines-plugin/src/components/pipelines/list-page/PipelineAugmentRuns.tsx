@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import { inject } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { augmentRunsToData, PropPipelineData, KeyedRuns } from '../../../utils/pipeline-augment';
-import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
 import {
   pipelineFilterReducer,
   pipelineStatusFilter,
 } from '../../../utils/pipeline-filter-reducer';
+import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
 
 interface ListPipelineData extends K8sKind {
   data: PropPipelineData[];

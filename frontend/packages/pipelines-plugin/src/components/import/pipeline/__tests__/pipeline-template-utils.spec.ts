@@ -1,5 +1,5 @@
-import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
+import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,

@@ -1,7 +1,7 @@
 import { PIPELINE_GA_VERSION } from '../../components/pipelines/const';
+import * as operatorUtils from '../../components/pipelines/utils/pipeline-operator';
 import { testHook } from '../../test-data/test-utils';
 import { usePipelineTechPreviewBadge } from '../hooks';
-import * as operatorUtils from '../../components/pipelines/utils/pipeline-operator';
 
 describe('usePipelineTechPreviewBadge:', () => {
   it('should return the badge if pipeline GA opertaor is installed', () => {

@@ -28,23 +28,32 @@ export const gitPage = {
       .should('be.visible');
   },
   enterAppName: (appName: string) => {
-    cy.get(gitPO.appName).then(($el) => {
-      if ($el.prop('tagName').includes('button')) {
-        cy.get(gitPO.appName).click();
-        cy.get(`li #${appName}-link`).click();
-        cy.log(`Application Name "${appName}" is selected`);
-      } else if ($el.prop('tagName').includes('input')) {
-        cy.get(gitPO.appName)
+    cy.get('body').then(($body) => {
+      if ($body.find('#form-input-application-name-field').length) {
+        cy.get('#form-input-application-name-field')
           .scrollIntoView()
           .invoke('val')
           .should('not.be.empty');
-        cy.get(gitPO.appName).clear();
-        cy.get(gitPO.appName)
+        cy.get('#form-input-application-name-field')
+          .clear()
           .type(appName)
           .should('have.value', appName);
         cy.log(`Application Name "${appName}" is created`);
-      } else {
-        cy.log(`App name doesn't contain button or input tags`);
+      } else if ($body.find('#form-dropdown-application-name-field').length) {
+        cy.get(gitPO.appName).click();
+        cy.get('[data-test-id="dropdown-text-filter"]').type(appName);
+        cy.get('[role="listbox"]').then(($el) => {
+          if ($el.find('li[role="option"]').length === 0) {
+            cy.get('[data-test-dropdown-menu="#CREATE_APPLICATION_KEY#"]').click();
+            cy.get('#form-input-application-name-field')
+              .clear()
+              .type(appName)
+              .should('have.value', appName);
+          } else {
+            cy.get(`li #${appName}-link`).click();
+            cy.log(`Application Name "${appName}" is selected`);
+          }
+        });
       }
     });
   },
@@ -72,6 +81,7 @@ export const gitPage = {
       .type(newAppName);
   },
   enterComponentName: (name: string) => {
+    app.waitForLoad();
     cy.get(gitPO.nodeName)
       .scrollIntoView()
       .invoke('val')
@@ -222,14 +232,8 @@ export const gitPage = {
     cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
     cy.get('body').then(($body) => {
       if (
-        $body
-          .find(gitPO.gitSection.validatedMessage)
-          .text()
-          .includes(messages.addFlow.privateGitRepoMessage) ||
-        $body
-          .find(gitPO.gitSection.validatedMessage)
-          .text()
-          .includes(messages.addFlow.rateLimitExceeded) ||
+        $body.text().includes(messages.addFlow.privateGitRepoMessage) ||
+        $body.text().includes(messages.addFlow.rateLimitExceeded) ||
         $body.find('[aria-label="Warning Alert"]').length
       ) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);

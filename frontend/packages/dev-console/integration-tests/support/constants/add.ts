@@ -9,7 +9,7 @@ export enum addOptions {
   HelmChart = 'Helm Chart',
   Pipeline = 'Pipeline',
   EventSource = 'Event Source',
-  DevFile = 'Import from Devfile',
+  DevFile = 'From Devfile',
   Channel = 'Channel',
   UploadJARFile = 'Upload JAR file',
 }

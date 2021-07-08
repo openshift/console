@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { css } from '@patternfly/react-styles';
 import { FocusTrap } from '@patternfly/react-core';
-import styles from '@patternfly/react-styles/css/components/Popover/popover';
 import { PopoverArrow } from '@patternfly/react-core/dist/js/components/Popover/PopoverArrow';
 import { PopoverBody } from '@patternfly/react-core/dist/js/components/Popover/PopoverBody';
 import { PopoverCloseButton } from '@patternfly/react-core/dist/js/components/Popover/PopoverCloseButton';
 import { PopoverContent } from '@patternfly/react-core/dist/js/components/Popover/PopoverContent';
-import { PopoverHeader } from '@patternfly/react-core/dist/js/components/Popover/PopoverHeader';
 import { PopoverFooter } from '@patternfly/react-core/dist/js/components/Popover/PopoverFooter';
+import { PopoverHeader } from '@patternfly/react-core/dist/js/components/Popover/PopoverHeader';
+import { css } from '@patternfly/react-styles';
+import styles from '@patternfly/react-styles/css/components/Popover/popover';
+import { useTranslation } from 'react-i18next';
 import { Popper } from '../popper';
 import { PopoverPlacement } from './const';
 import './Popover.scss';

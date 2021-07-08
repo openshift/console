@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
-import { ProjectRequestModel } from '@console/internal/models';
-import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-
-import { k8sCreate } from '@console/internal/module/k8s';
+import { ProjectRequestModel } from '@console/internal/models';
+import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
+import { RootState } from '@console/internal/redux';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
+import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 import {
   CloudShellSetupFormData,
   CREATE_NAMESPACE_KEY,
   cloudShellSetupValidation,
 } from './cloud-shell-setup-utils';
 import CloudSehellSetupForm from './CloudShellSetupForm';
-import { WorkspaceModel } from '../../../models';
-import { newCloudShellWorkSpace, createCloudShellResourceName } from '../cloud-shell-utils';
 
 interface StateProps {
   activeNamespace: string;
@@ -24,10 +22,12 @@ interface StateProps {
 type Props = StateProps & {
   onSubmit?: (namespace: string) => void;
   onCancel?: () => void;
+  workspaceModel: K8sKind;
 };
 
 const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   activeNamespace,
+  workspaceModel,
   onSubmit,
   onCancel,
 }) => {
@@ -37,7 +37,6 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
   const { t } = useTranslation();
 
   const handleSubmit = async (values: CloudShellSetupFormData, actions) => {
-    actions.setSubmitting(true);
     const createNamespace = values.namespace === CREATE_NAMESPACE_KEY;
     const namespace = createNamespace ? values.newNamespace : values.namespace;
 
@@ -50,19 +49,22 @@ const CloudShellDeveloperSetup: React.FunctionComponent<Props> = ({
         });
       }
       await k8sCreate(
-        WorkspaceModel,
-        newCloudShellWorkSpace(createCloudShellResourceName(), namespace),
+        workspaceModel,
+        newCloudShellWorkSpace(
+          createCloudShellResourceName(),
+          namespace,
+          workspaceModel.apiVersion,
+        ),
       );
       onSubmit && onSubmit(namespace);
     } catch (err) {
       actions.setStatus({ submitError: err.message });
     }
-    actions.setSubmitting(false);
   };
 
   return (
     <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-      <h2>{t('cloudshell~Initialize terminal')}</h2>
+      <h2>{t('console-app~Initialize terminal')}</h2>
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}

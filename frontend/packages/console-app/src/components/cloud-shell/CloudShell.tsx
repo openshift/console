@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import { WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
-import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { RootState } from '@console/internal/redux';
+import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
+import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import CloudShellDrawer from './CloudShellDrawer';
 import CloudShellTerminal from './CloudShellTerminal';
-import { FLAG_DEVWORKSPACE } from '../../consts';
 
 type StateProps = {
   open: boolean;

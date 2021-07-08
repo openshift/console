@@ -1,26 +1,26 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { match as RMatch } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { RootState } from '@console/internal/redux';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { match as RMatch } from 'react-router-dom';
+import {
+  TimespanDropdown,
+  PollIntervalDropdown,
+} from '@console/internal/components/monitoring/dashboards';
 import {
   getURLSearchParams,
   setQueryArguments,
   removeQueryArguments,
 } from '@console/internal/components/utils';
-import {
-  TimespanDropdown,
-  PollIntervalDropdown,
-} from '@console/internal/components/monitoring/dashboards';
-import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
+import { RootState } from '@console/internal/redux';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import {
   monitoringDashboardQueries,
   workloadMetricsQueries,
   topWorkloadMetricsQueries,
 } from '../queries';
+import ConnectedMonitoringDashboardGraph from './MonitoringDashboardGraph';
 import { MonitoringWorkloadFilter, OptionTypes } from './MonitoringWorkloadFilter';
 import './MonitoringDashboard.scss';
 
@@ -33,11 +33,17 @@ type MonitoringDashboardProps = {
 type StateProps = {
   timespan: number;
   pollInterval: number;
+  endTime: number;
 };
 
 type Props = MonitoringDashboardProps & StateProps;
 
-export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInterval }) => {
+export const MonitoringDashboard: React.FC<Props> = ({
+  match,
+  timespan,
+  pollInterval,
+  endTime,
+}) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
   const params = getURLSearchParams();
@@ -104,6 +110,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
               key={q.title}
               timespan={timespan}
               pollInterval={pollInterval}
+              endTime={endTime}
             />
           ))}
         </Dashboard>
@@ -115,6 +122,7 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
 const mapStateToProps = (state: RootState): StateProps => ({
   timespan: state.UI.getIn(['monitoringDashboards', 'timespan']),
   pollInterval: state.UI.getIn(['monitoringDashboards', 'pollInterval']),
+  endTime: state.UI.getIn(['monitoringDashboards', 'endTime']),
 });
 
 export default connect<StateProps, MonitoringDashboardProps>(mapStateToProps)(MonitoringDashboard);

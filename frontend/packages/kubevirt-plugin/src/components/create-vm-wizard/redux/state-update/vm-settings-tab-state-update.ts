@@ -1,5 +1,4 @@
 import { FLAGS } from '@console/shared';
-
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
@@ -16,7 +15,10 @@ import {
   iGetTemplateGuestToolsDisk,
 } from '../../../../selectors/immutable/template/combined';
 import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
-import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
+import {
+  CDI_UPLOAD_POD_ANNOTATION,
+  CDI_PVC_PHASE_RUNNING,
+} from '../../../cdi-upload-provider/consts';
 import {
   getInitialData,
   iGetCommonData,
@@ -172,7 +174,7 @@ const baseImageUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) 
         .valueSeq()
         .find((iPVC) => iGetName(iPVC) === pvcName && iGetNamespace(iPVC) === pvcNamespace);
     iBaseImageUploading =
-      iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_UPLOAD_RUNNING;
+      iGetAnnotation(iBaseImage, CDI_UPLOAD_POD_ANNOTATION) === CDI_PVC_PHASE_RUNNING;
   }
 
   dispatch(

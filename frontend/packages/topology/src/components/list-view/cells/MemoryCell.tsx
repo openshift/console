@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Node } from '@patternfly/react-topology';
 import { DataListCell } from '@patternfly/react-core';
+import { Node } from '@patternfly/react-topology';
 import { formatBytesAsMiB } from '@console/internal/components/utils';
 import { getTopologyResourceObject } from '../../../utils/topology-utils';
 import { useMetricStats } from '../../../utils/useMetricStats';

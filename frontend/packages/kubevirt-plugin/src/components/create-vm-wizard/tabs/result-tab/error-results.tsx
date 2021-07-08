@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-
 import {
   EmptyState,
   EmptyStateBody,
@@ -10,7 +7,9 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
-
+import { global_danger_color_200 as globalDanger200 } from '@patternfly/react-tokens/dist/js/global_danger_color_200';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
@@ -28,7 +27,7 @@ const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
 
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
-      <EmptyStateIcon icon={ExclamationCircleIcon} color="#a30000" />
+      <EmptyStateIcon icon={ExclamationCircleIcon} color={globalDanger200.value} />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-error-result">
         {iGet(mainError, 'title') || title}
       </Title>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { NavItemSeparator } from '@patternfly/react-core';
+import { NavList, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 import { FLAGS, useActiveNamespace } from '@console/shared';
@@ -65,37 +65,29 @@ const monitoringNavSectionStateToProps = (state) => ({
 
 const MonitoringNavSection_ = ({ canAccess }) => {
   const { t } = useTranslation();
-  const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
-  const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
-  return canAccessPrometheus || showSilences ? (
+  return canAccess && !!window.SERVER_FLAGS.prometheusBaseURL ? (
     <NavSection
       id="monitoring"
       title={t('public~Monitoring')}
       data-quickstart-id="qs-nav-monitoring"
     >
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringalerts"
-          href="/monitoring/alerts"
-          name={t('public~Alerting')}
-          startsWith={monitoringAlertsStartsWith}
-        />
-      )}
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringmetrics"
-          href="/monitoring/query-browser?query0="
-          name={t('public~Metrics')}
-          startsWith={['monitoring/query-browser']}
-        />
-      )}
-      {canAccessPrometheus && (
-        <HrefLink
-          id="monitoringdashboards"
-          href="/monitoring/dashboards"
-          name={t('public~Dashboards')}
-        />
-      )}
+      <HrefLink
+        id="monitoringalerts"
+        href="/monitoring/alerts"
+        name={t('public~Alerting')}
+        startsWith={monitoringAlertsStartsWith}
+      />
+      <HrefLink
+        id="monitoringmetrics"
+        href="/monitoring/query-browser?query0="
+        name={t('public~Metrics')}
+        startsWith={['monitoring/query-browser']}
+      />
+      <HrefLink
+        id="monitoringdashboards"
+        href="/monitoring/dashboards"
+        name={t('public~Dashboards')}
+      />
     </NavSection>
   ) : null;
 };
@@ -109,7 +101,7 @@ const AdminNav = () => {
   const machineNS = lastNamespace === ALL_NAMESPACES_KEY ? lastNamespace : 'openshift-machine-api';
   const { t } = useTranslation();
   return (
-    <>
+    <NavList>
       <NavSection id="home" title={t('public~Home')} data-quickstart-id="qs-nav-home">
         <HrefLink
           id="dashboards"
@@ -420,7 +412,7 @@ const AdminNav = () => {
           required={FLAGS.CAN_LIST_CRD}
         />
       </NavSection>
-    </>
+    </NavList>
   );
 };
 

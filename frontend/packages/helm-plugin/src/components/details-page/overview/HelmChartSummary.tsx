@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { HelmRelease } from '../../../types/helm-types';
 import { Timestamp } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { HelmRelease } from '../../../types/helm-types';
 
 interface HelmChartSummaryProps {
   obj: K8sResourceKind;

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { useRelatedHPA } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
+import { getGroupVersionKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { useRelatedHPA } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 import HPAFormikForm from './HPAFormikForm';
 import HPAPageHeader from './HPAPageHeader';
-import { getLimitWarning, VALID_HPA_TARGET_KINDS } from './hpa-utils';
 
 const HPAPage: React.FC<PageComponentProps> = (props) => {
   const { t } = useTranslation();

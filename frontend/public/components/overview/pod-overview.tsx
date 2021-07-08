@@ -8,6 +8,7 @@ import { NetworkingOverview } from './networking-overview';
 import { KebabAction } from '../utils';
 import { PodsOverview } from './pods-overview';
 import { PodKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
 
 const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({ item: { obj: pod } }) => {
   return (
@@ -32,25 +33,28 @@ const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({ item: { obj } }) => 
   </div>
 );
 
-const tabs = [
-  {
-    name: 'Details',
-    component: PodOverviewDetails,
-  },
-  {
-    name: 'Resources',
-    component: PodResourcesTab,
-  },
-];
+export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({ item, customActions }) => {
+  const { t } = useTranslation();
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: PodOverviewDetails,
+    },
+    {
+      name: t('public~Resources'),
+      component: PodResourcesTab,
+    },
+  ];
 
-export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({ item, customActions }) => (
-  <ResourceOverviewDetails
-    item={item}
-    kindObj={PodModel}
-    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
-    tabs={tabs}
-  />
-);
+  return (
+    <ResourceOverviewDetails
+      item={item}
+      kindObj={PodModel}
+      menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+      tabs={tabs}
+    />
+  );
+};
 
 type PodOverviewItem = {
   obj: PodKind;

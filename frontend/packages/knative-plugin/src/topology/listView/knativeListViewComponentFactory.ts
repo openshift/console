@@ -10,10 +10,10 @@ import {
   TYPE_KNATIVE_REVISION,
   TYPE_EVENT_SOURCE_KAFKA,
 } from '../const';
-import { KnativeServiceListViewNode } from './KnativeServiceListViewNode';
-import { SinkUriListViewNode } from './SinkUriListViewNode';
-import { NoStatusListViewNode } from './NoStatusListViewNode';
 import { KnativeRevisionListViewNode } from './KnativeRevisionListViewNode';
+import { KnativeServiceListViewNode } from './KnativeServiceListViewNode';
+import { NoStatusListViewNode } from './NoStatusListViewNode';
+import { SinkUriListViewNode } from './SinkUriListViewNode';
 
 export const knativeListViewNodeComponentFactory = (
   type,

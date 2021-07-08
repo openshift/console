@@ -30,18 +30,13 @@ const ConfigMapTableRow = ({ obj: configMap, index, key, style }) => {
           kind="ConfigMap"
           name={configMap.metadata.name}
           namespace={configMap.metadata.namespace}
-          title={configMap.metadata.uid}
         />
       </TableData>
       <TableData
         className={classNames(tableColumnClasses[1], 'co-break-word')}
         columnID="namespace"
       >
-        <ResourceLink
-          kind="Namespace"
-          name={configMap.metadata.namespace}
-          title={configMap.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={configMap.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         {_.size(configMap.data) + _.size(configMap.binaryData)}

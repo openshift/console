@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
-import { K8sKind } from '@console/internal/module/k8s';
+import { getActiveNamespace } from '@console/internal/actions/ui';
+import { useAccessReview } from '@console/internal/components/utils';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { K8sKind } from '@console/internal/module/k8s';
+import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { FLAG_KNATIVE_SERVING_SERVICE, ServiceModel } from '@console/knative-plugin';
 import { RadioGroupField, RadioGroupOption } from '@console/shared';
-import { useAccessReview } from '@console/internal/components/utils';
-import { getActiveNamespace } from '@console/internal/actions/ui';
 import { Resources, ReadableResourcesNames } from '../import-types';
 import FormSection from './FormSection';
 import './ResourceSection.scss';
@@ -35,7 +35,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const radioOptions: RadioGroupOption[] = [];
   if (!invalidTypes.includes(Resources.Kubernetes)) {
     radioOptions.push({
-      label: ReadableResourcesNames[Resources.Kubernetes],
+      label: t(ReadableResourcesNames[Resources.Kubernetes]),
       value: Resources.Kubernetes,
       children: createHelpText(
         DeploymentModel,
@@ -48,7 +48,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   }
   if (!invalidTypes.includes(Resources.OpenShift)) {
     radioOptions.push({
-      label: ReadableResourcesNames[Resources.OpenShift],
+      label: t(ReadableResourcesNames[Resources.OpenShift]),
       value: Resources.OpenShift,
       children: createHelpText(
         DeploymentConfigModel,
@@ -72,7 +72,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
     knativeServiceAccess;
   if (canIncludeKnative) {
     radioOptions.push({
-      label: ReadableResourcesNames[Resources.KnativeService],
+      label: t(ReadableResourcesNames[Resources.KnativeService]),
       value: Resources.KnativeService,
       children: createHelpText(
         ServiceModel,

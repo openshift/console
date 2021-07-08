@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import Measure from 'react-measure';
-import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { LoadingInline } from '@console/internal/components/utils';
-import * as hookUtils from '../../hooks';
-import { DEFAULT_REFRESH_INTERVAL } from '../../const';
+import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
-import PipelineSuccessRatioDonut from '../PipelineSuccessRatioDonut';
+import { DEFAULT_REFRESH_INTERVAL } from '../../const';
+import * as hookUtils from '../../hooks';
 import SuccessRatioDonut from '../charts/successRatioDonut';
 import { TimeSeriesChart } from '../charts/TimeSeriesChart';
 import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
+import PipelineSuccessRatioDonut from '../PipelineSuccessRatioDonut';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),

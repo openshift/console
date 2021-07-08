@@ -103,7 +103,7 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
           {t('ceph-storage-plugin~Buckets')}
           <FieldLevelHelp>
             {t(
-              'ceph-storage-plugin~The number of buckets managed on Multicloud Object Gateway, Object bucket claims and the object bucket created as a result of object bucket claims on both Multicloud Object Gateway and RGW (if deployed).',
+              'ceph-storage-plugin~Buckets card represents the number of S3 buckets managed on Multicloud Object Gateway and the number of ObjectBucketClaims and the ObjectBuckets managed on both Multicloud Object Gateway and RGW (if deployed).',
             )}
           </FieldLevelHelp>
         </DashboardCardTitle>

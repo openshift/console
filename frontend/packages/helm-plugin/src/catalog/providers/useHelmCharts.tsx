@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { safeLoad } from 'js-yaml';
-import { coFetch } from '@console/internal/co-fetch';
-import { APIError } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { coFetch } from '@console/internal/co-fetch';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { APIError } from '@console/shared';
+import { HelmChartRepositoryModel } from '../../models';
 import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
-import { HelmChartRepositoryModel } from '../../models';
 
 const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,

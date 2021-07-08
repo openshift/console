@@ -1,6 +1,6 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import {
   TopologyApplyDisplayOptions,
   TopologyDataModelDepicted,
@@ -93,7 +93,7 @@ export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConn
   return e.type === 'Topology/CreateConnector';
 };
 
-export const isTopologyDisplayFilter = (e: Extension): e is TopologyDisplayFilters => {
+export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters => {
   return e.type === 'Topology/DisplayFilters';
 };
 

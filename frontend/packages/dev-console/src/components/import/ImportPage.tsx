@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import Helmet from 'react-helmet';
 import { TFunction } from 'i18next';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router-dom';
 import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
-import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
 import { ImageStreamModel, ProjectModel } from '@console/internal/models';
+import DevPreviewBadge from '@console/shared/src/components/badges/DevPreviewBadge';
 import { QUERY_PROPERTIES } from '../../const';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import QueryFocusApplication from '../QueryFocusApplication';
-import ImportForm from './ImportForm';
 import { ImportTypes, ImportData } from './import-types';
+import ImportForm from './ImportForm';
 
 export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
 

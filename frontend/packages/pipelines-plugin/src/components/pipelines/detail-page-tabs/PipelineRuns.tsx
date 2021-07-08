@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
-import PipelineRunsList from '../../pipelineruns/list-page/PipelineRunList';
+import { PipelineRunModel } from '../../../models';
 import {
   pipelineRunFilterReducer,
   pipelineRunStatusFilter,
 } from '../../../utils/pipeline-filter-reducer';
 import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
-import { PipelineRunModel } from '../../../models';
+import PipelineRunsList from '../../pipelineruns/list-page/PipelineRunList';
 import { PipelineDetailsTabProps } from './types';
 
 export const runFilters = [
@@ -38,7 +38,7 @@ const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => (
     kind={referenceForModel(PipelineRunModel)}
     namespace={obj.metadata.namespace}
     selector={{
-      'tekton.dev/pipeline': obj.metadata.name,
+      matchLabels: { 'tekton.dev/pipeline': obj.metadata.name },
     }}
     ListComponent={PipelineRunsList}
     rowFilters={runFilters}

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import KafkaSourceSection from '../KafkaSourceSection';
 import KafkaSourceNetSection from '../KafkaSourceNetSection';
+import KafkaSourceSection from '../KafkaSourceSection';
 
 type KafkaSourceSectionProps = React.ComponentProps<typeof KafkaSourceSection>;
 

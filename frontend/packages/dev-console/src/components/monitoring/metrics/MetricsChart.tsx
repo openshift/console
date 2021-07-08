@@ -1,15 +1,15 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import { queryBrowserDeleteAllQueries } from '@console/internal/actions/ui';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { QueryTable } from '@console/internal/components/monitoring/metrics';
 import {
   QueryBrowser,
   QueryObj,
   QueryBrowserProps,
 } from '@console/internal/components/monitoring/query-browser';
-import { QueryTable } from '@console/internal/components/monitoring/metrics';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
 import EmptyStateQuery from './EmptyStateQuery';
 import './MetricsChart.scss';
 

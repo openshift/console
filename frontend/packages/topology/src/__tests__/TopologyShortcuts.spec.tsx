@@ -1,7 +1,7 @@
 import { mount, shallow } from 'enzyme';
 import { Shortcut } from '@console/shared';
-import { TopologyViewType } from '../topology-types';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
+import { TopologyViewType } from '../topology-types';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

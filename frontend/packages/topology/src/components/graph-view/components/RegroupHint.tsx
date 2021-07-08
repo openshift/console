@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { ShortcutTable, Shortcut } from '@console/shared';
 
 import './RegroupHint.scss';

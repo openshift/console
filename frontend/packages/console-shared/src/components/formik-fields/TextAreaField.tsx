@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useField } from 'formik';
 import { FormGroup, TextArea } from '@patternfly/react-core';
+import { useField } from 'formik';
 import { TextAreaProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -29,7 +29,7 @@ const TextAreaField: React.FC<TextAreaProps> = (
         style={{ resize: 'vertical' }}
         validated={isValid ? 'default' : 'error'}
         isRequired={required}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
         onChange={(value, event) => {
           onChange && onChange(value);
           field.onChange(event);

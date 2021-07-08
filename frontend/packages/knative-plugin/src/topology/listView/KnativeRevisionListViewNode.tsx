@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Node, observer } from '@patternfly/react-topology';
 import { DataListCell } from '@patternfly/react-core';
+import { Node, observer } from '@patternfly/react-topology';
 import {
   CpuCellComponent,
   MemoryCellComponent,

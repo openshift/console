@@ -1,4 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { pipelineActions } from '../../constants';
+import { pipelinesPO } from '../../page-objects/pipelines-po';
 import {
   pipelinesPage,
   startPipelineInPipelinesPage,
@@ -8,19 +14,12 @@ import {
   eventListenerDetailsPage,
   clusterTriggerBindingDetailsPage,
 } from '../../pages';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
-import { modal } from '@console/cypress-integration-tests/views/modal';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { pipelinesPO } from '../../page-objects/pipelines-po';
-import { pipelineActions } from '../../constants';
 import { actionsDropdownMenu } from '../../pages/functions/common';
 
 When(
   'user selects {string} from the kebab menu for {string}',
   (option: string, pipelineName: string) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(option).click();
+    pipelinesPage.selectActionForPipeline(pipelineName, option);
   },
 );
 
@@ -34,8 +33,7 @@ Then('Add button is disabled', () => {
 });
 
 Given('user selected Add Trigger from kebab menu of pipeline {string}', (pipelineName: string) => {
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Add Trigger').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.AddTrigger);
 });
 
 When('user clicks on {string} link', (linkName: string) => {
@@ -204,7 +202,7 @@ Then('modal is displayed with header message {string}', (headerName: string) => 
 });
 
 Then('trigger template dropdown displayed with help text Select Trigger Template', () => {
-  cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('have.text', 'Select Trigger Template');
+  cy.get(pipelinesPO.removeTrigger.triggerTemplate).should('have.text', 'Select TriggerTemplate');
 });
 
 Then('Remove button will be disabled', () => {

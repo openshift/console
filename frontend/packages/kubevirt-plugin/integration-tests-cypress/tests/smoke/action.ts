@@ -1,8 +1,8 @@
-import { testName } from '../../support';
 import { TEMPLATE_NAME, VM_STATUS } from '../../const/index';
-import { virtualization } from '../../view/virtualization';
-import { VirtualMachineData } from '../../types/vm';
 import { ProvisionSource } from '../../enums/provisionSource';
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
+import { virtualization } from '../../view/virtualization';
 import { vm, waitForStatus } from '../../view/vm';
 
 const vmData: VirtualMachineData = {
@@ -118,6 +118,7 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-3693) Test VMI list view action', () => {
       vm.delete();
+      cy.byLegacyTestID('vmi-ephemeral').should('not.exist');
     });
 
     it('ID(CNV-3699) Test VMI detail view action', () => {
@@ -127,6 +128,7 @@ describe('Test VM/VMI actions', () => {
       cy.byLegacyTestID('horizontal-link-Details').click();
       cy.get('.loading-box__loaded').should('be.visible');
       vm.delete();
+      cy.byLegacyTestID('vmi-ephemeral').should('not.exist');
     });
   });
 });

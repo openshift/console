@@ -1,3 +1,4 @@
+import { HIGHLIGHT_REGEXP, LINK_LABEL, SELECTOR_ID } from '../highlight-consts';
 import {
   INVALID_HIGHLIGHT_LABELS,
   INVALID_HIGHLIGHT_LINKS,
@@ -6,7 +7,6 @@ import {
   VALID_HIGHLIGHT_LINKS,
   VALID_IDS,
 } from './test-data';
-import { HIGHLIGHT_REGEXP, LINK_LABEL, SELECTOR_ID } from '../highlight-consts';
 
 const createTestLoop = (
   shouldPass: boolean,

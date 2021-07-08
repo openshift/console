@@ -1,12 +1,11 @@
 import * as React from 'react';
-
-import { asAccessReview, useAccessReview } from '@console/internal/components/utils';
-import { PodKind } from '@console/internal/module/k8s/types';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { observer } from '@patternfly/react-topology';
-
+import { asAccessReview, useAccessReview } from '@console/internal/components/utils';
+import { PodKind } from '@console/internal/module/k8s/types';
 import { VMDetailsList, VMResourceSummary } from '../components/vms/vm-resource';
 import { VirtualMachineModel } from '../models';
+import { getKubevirtAvailableModel } from '../models/kubevirtReferenceForModel';
 import { VMKind } from '../types/vm';
 import { usePodsForVm } from '../utils/usePodsForVm';
 import { VMNode } from './types';
@@ -22,7 +21,9 @@ export const TopologyVmDetailsPanel: React.FC<TopologyVmDetailsPanelProps> = obs
     const { podData: { pods = [] } = {} } = usePodsForVm(vmObj);
     const { vmi, vmStatusBundle } = vmData.data;
     const canUpdate =
-      useAccessReview(asAccessReview(VirtualMachineModel, vmObj || {}, 'patch')) && !!vmObj;
+      useAccessReview(
+        asAccessReview(getKubevirtAvailableModel(VirtualMachineModel), vmObj || {}, 'patch'),
+      ) && !!vmObj;
     return (
       <div className="overview__sidebar-pane-body resource-overview__body">
         <Grid hasGutter>

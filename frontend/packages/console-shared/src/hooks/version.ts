@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
-import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
-import { ClusterVersionModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ClusterVersionModel } from '@console/internal/models';
+import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
 import { getFlagsObject } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
 import { FLAGS } from '../constants';
@@ -20,12 +20,12 @@ export const useClusterVersion = (): ClusterVersionKind => {
   return cvLoaded && !cvLoadError ? cvData : null;
 };
 
-export const useOpenshiftVersion = (): string => {
-  const [openshiftVersion, setOpenshiftVersion] = useState<string>();
+export const useOpenShiftVersion = (): string => {
+  const [openshiftVersion, setOpenShiftVersion] = useState<string>();
   const clusterVersion = useClusterVersion();
   const version = clusterVersion?.status?.history?.[0]?.version;
   useEffect(() => {
-    setOpenshiftVersion(version);
+    setOpenShiftVersion(version);
   }, [version]);
   return openshiftVersion;
 };

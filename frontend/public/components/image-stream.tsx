@@ -167,21 +167,21 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
         <div>
           <p>
             {t(
-              'public~Create a new Image Stream Tag by pushing an image to this Image Stream with the desired tag.',
+              'public~Create a new ImageStreamTag by pushing an image to this ImageStream with the desired tag.',
             )}
           </p>
           <br />
           <p>{t('public~Authenticate to the internal registry')}</p>
           <CopyToClipboard value={loginCommand} />
           <br />
-          <p>{t('public~Push an image to this Image Stream')}</p>
+          <p>{t('public~Push an image to this ImageStream')}</p>
           <CopyToClipboard value={pushCommand} />
           <br />
-          <p>{t('public~Pull an image from this Image Stream')}</p>
+          <p>{t('public~Pull an image from this ImageStream')}</p>
           <CopyToClipboard value={pullCommand} />
           <br />
           <p>
-            <Trans i18nKey="public~use the equivalent podman commands">
+            <Trans t={t} ns="public">
               Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong>{' '}
               commands.{' '}
             </Trans>
@@ -192,7 +192,7 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
     >
       <Button className="hidden-sm hidden-xs" type="button" variant="link">
         <QuestionCircleIcon className="co-icon-space-r" />
-        {t('public~Do you need to work with this Image Stream outside of the web console?')}
+        {t('public~Do you need to work with this ImageStream outside of the web console?')}
       </Button>
     </Popover>
   );
@@ -303,10 +303,10 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
 const tableColumnClasses = [
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'col-xs-6'),
-  classNames('col-sm-3', 'hidden-xs'),
-  classNames('col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -318,7 +318,6 @@ const ImageStreamsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
           kind={ImageStreamsReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData

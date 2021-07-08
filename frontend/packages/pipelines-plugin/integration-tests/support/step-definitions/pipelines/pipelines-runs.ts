@@ -1,13 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
-  pipelinesPage,
-  startPipelineInPipelinesPage,
-  pipelineBuilderPage,
-  pipelineRunDetailsPage,
-  pipelineDetailsPage,
-  pipelineRunsPage,
-} from '../../pages';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+  devNavigationMenu,
+  pageTitle,
+} from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
   topologySidePane,
@@ -15,9 +10,17 @@ import {
   app,
 } from '@console/dev-console/integration-tests/support/pages';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import { pipelineActions, pipelineBuilderText } from '../../constants';
+import { pipelineRunDetailsPO, pipelineRunsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import {
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
+  pipelineRunDetailsPage,
+  pipelineDetailsPage,
+  pipelineRunsPage,
+} from '../../pages';
 import { actionsDropdownMenu } from '../../pages/functions/common';
-import { pipelineBuilderText } from '../../constants';
 
 Given(
   'pipeline {string} consists of task {string} with one git resource',
@@ -51,7 +54,22 @@ Then('page will be redirected to pipeline Run details page', () => {
 });
 
 Then('user is able to see the pipelineRuns with status as {string}', (PipelineStatus: string) => {
+  cy.contains('Running').should('not.exist');
+  app.waitForLoad();
   pipelineRunDetailsPage.fieldDetails('Status', PipelineStatus);
+});
+
+Then(
+  'user is able to see the filtered results with pipelineRuns status {string}',
+  (PipelineStatus: string) => {
+    cy.get(pipelineRunsPO.pipelineRunsTable.status).each(($el) => {
+      expect($el.text()).toContain(PipelineStatus);
+    });
+  },
+);
+
+Then('user is able to see the pipelineRuns with status as Running', () => {
+  pipelineRunDetailsPage.fieldDetails('Status', 'Running');
 });
 
 Then('pipeline run details for {string} display in Pipelines page', (pipelineName: string) => {
@@ -63,8 +81,7 @@ Then('pipeline run details for {string} display in Pipelines page', (pipelineNam
 Given('user started the pipeline {string} in pipelines page', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(pipelineName);
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.clickStart();
   pipelineRunDetailsPage.verifyTitle();
@@ -74,8 +91,7 @@ Given('pipeline run is displayed for {string} without resource', (pipelineName: 
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   cy.byLegacyTestID('breadcrumb-link-0').click();
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   pipelineRunDetailsPage.verifyTitle();
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(pipelineName);
@@ -86,8 +102,7 @@ Given('pipeline run is displayed for {string} with resource', (pipelineName: str
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
   cy.byLegacyTestID('breadcrumb-link-0').click();
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.addGitResource('https://github.com/sclorg/nodejs-ex.git');
   modal.submit();
@@ -114,8 +129,8 @@ When(
 );
 
 Then('user is able to see kebab menu options Rerun, Delete Pipeline Run', () => {
-  cy.byTestActionID('Rerun').should('be.visible');
-  cy.byTestActionID('Delete Pipeline Run').should('be.visible');
+  cy.byTestActionID(pipelineActions.Rerun).should('be.visible');
+  cy.byTestActionID('Delete PipelineRun').should('be.visible');
 });
 
 Then('user is able to see Details, YAML, TaskRuns, Logs and Events tabs', () => {
@@ -139,7 +154,7 @@ When('user selects the Pipeline Run for {string}', (pipelineName: string) => {
 
 When('user selects Rerun option from kebab menu of {string}', (pipelineName: string) => {
   pipelineRunsPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Rerun').click();
+  cy.byTestActionID(pipelineActions.Rerun).click();
 });
 
 Given('user is at the Pipeline Run Details page of pipeline {string}', (pipelineName: string) => {
@@ -152,10 +167,6 @@ When('user navigates to Pipeline runs page', () => {
   cy.byLegacyTestID('breadcrumb-link-0').click();
 });
 
-Given('5 pipeline runs are completed with the git workload', () => {
-  // TODO: implement step
-});
-
 When('user selects {string} option from Actions menu', (option: string) => {
   pipelineRunDetailsPage.selectFromActionsDropdown(option);
 });
@@ -165,7 +176,7 @@ When('user selects {string} option from pipeline Details Actions menu', (option:
 });
 
 When('user selects Rerun option from the Actions menu', () => {
-  pipelineRunDetailsPage.selectFromActionsDropdown('Rerun');
+  pipelineRunDetailsPage.selectFromActionsDropdown(pipelineActions.Rerun);
 });
 
 Then('status displays as {string} in pipeline run details page', (PipelineStatus: string) => {
@@ -182,7 +193,7 @@ Then('page will be redirected to pipeline runs page', () => {
 
 Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
-  topologySidePane.verifySection('Pipeline Runs');
+  topologySidePane.verifySection(pageTitle.PipelineRuns);
 });
 
 Then('3 pipeline runs are displayed under pipelines section of topology page', () => {
@@ -193,38 +204,20 @@ Then('View all link is displayed', () => {
   cy.get('a.sidebar__section-view-all').should('contain.text', 'View all');
 });
 
-Given(
-  'pipeline run is available with cancelled tasks for pipeline {string}',
-  (pipelineName: string) => {
-    // TODO: implement step
-    cy.log(pipelineName);
-  },
-);
-
-Given(
-  'pipeline run is available with failed tasks for pipeline {string}',
-  (pipelineName: string) => {
-    // TODO: implement step
-    cy.log(pipelineName);
-  },
-);
-
-Given('user is at the Pipeline Details page', () => {});
-
 Given('pipeline {string} is executed for 3 times', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   actionsDropdownMenu.clickActionMenu();
-  cy.byTestActionID('Start').click();
+  cy.byTestActionID(pipelineActions.Start).click();
   pipelineRunDetailsPage.verifyTitle();
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
-  cy.selectActionsMenuOption('Rerun');
+  cy.waitFor('[data-test-id="actions-menu-button"]');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
-  cy.selectActionsMenuOption('Rerun');
+  cy.waitFor('[data-test-id="actions-menu-button"]');
+  cy.selectActionsMenuOption(pipelineActions.Rerun);
   pipelineRunDetailsPage.verifyTitle();
-  cy.get(pipelineRunDetailsPO.pipelineRunStatus).contains('Succeeded', {
-    timeout: 50000,
-  });
+  pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
 });
 
 Given('user is at the Pipeline Runs page', () => {
@@ -239,6 +232,7 @@ When(
     pipelinesPage.selectPipelineRun(pipelineName);
     cy.byLegacyTestID('breadcrumb-link-0').click();
     pipelineRunsPage.filterByStatus(status);
+    cy.get('[aria-label="close"]').should('be.visible');
   },
 );
 
@@ -259,15 +253,10 @@ When('user navigates to Pipelines page', () => {
   navigateTo(devNavigationMenu.Pipelines);
 });
 
-Given('one pipeline run is completed with the workload', () => {
-  // TODO: implement step
-});
-
 Given('pipeline run is displayed for {string} in pipelines page', (name: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(name);
-  pipelinesPage.selectKebabMenu(name);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.selectActionForPipeline(name, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
   startPipelineInPipelinesPage.addGitResource('https://github.com/sclorg/dancer-ex.git');
   startPipelineInPipelinesPage.clickStart();
@@ -291,14 +280,6 @@ Then(
     topologyPage.verifyPipelineRunStatus(status);
   },
 );
-
-Given('pipeline run is available with cancelled tasks', () => {
-  // TODO: implement step
-});
-
-Given('pipeline run is available with failed tasks', () => {
-  // TODO: implement step
-});
 
 When('user clicks Actions menu on the top right corner of the page', () => {
   actionsDropdownMenu.clickActionMenu();
@@ -402,6 +383,10 @@ When('user clicks Show VolumeClaimTemplate options', () => {
     .click();
 });
 
+When('user selects StorageClass as {string}', (storageClassName: string) => {
+  cy.selectByAutoCompleteDropDownText('#storageclass-dropdown', storageClassName);
+});
+
 Then(
   'user will see PVC Workspace {string} mentioned in the VolumeClaimTemplate Resources section of Pipeline Run Details page',
   (workspace: string) => {
@@ -411,6 +396,12 @@ Then(
     cy.log(`${workspace} is visible`);
   },
 );
+
+Then('user will see VolumeClaimTemplate Workspace in Pipeline Run Details page', () => {
+  cy.get(pipelineRunDetailsPO.details.workspacesResources.volumeClaimTemplateResources).should(
+    'be.visible',
+  );
+});
 
 When('user clicks on Start', () => {
   modal.submit();

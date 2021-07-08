@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
+import { KNATIVE_SERVING_LABEL } from '../const';
 import {
   ServiceModel,
   RevisionModel,
@@ -15,8 +16,13 @@ import {
   KafkaTopicModel,
   CamelIntegrationModel,
   CamelKameletBindingModel,
+  DomainMappingModel,
 } from '../models';
-import { KNATIVE_SERVING_LABEL } from '../const';
+import { Traffic } from '../types';
+import {
+  getDynamicEventSourcesWatchers,
+  getDynamicEventingChannelWatchers,
+} from './fetch-dynamic-eventsources-utils';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -31,6 +37,7 @@ export type KnativeItem = {
   eventSourceCamel?: K8sResourceKind[];
   eventSourceKafka?: K8sResourceKind[];
   eventSourceSinkbinding?: K8sResourceKind[];
+  domainMappings?: K8sResourceKind[];
   pods?: PodKind[];
 };
 
@@ -58,6 +65,25 @@ const getRevisions = (dc: K8sResourceKind, { data }): K8sResourceKind[] => {
   return revisionResource;
 };
 
+export const getDomainMapping = (res: K8sResourceKind, { data }): K8sResourceKind[] => {
+  const { apiVersion, kind, metadata } = res;
+  let domainMappingResource = [];
+  if (!metadata || !data.length) return domainMappingResource;
+  if (
+    kind === ServiceModel.kind &&
+    apiVersion === `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`
+  ) {
+    domainMappingResource = data.filter((domainMapping) => {
+      return (
+        domainMapping.spec.ref.apiVersion === apiVersion &&
+        domainMapping.spec.ref.kind === kind &&
+        domainMapping.spec.ref.name === metadata.name
+      );
+    });
+  }
+  return domainMappingResource;
+};
+
 export const getKnativeServingRevisions = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const revisions = props && props.revisions && getRevisions(dc, props.revisions);
   return revisions && revisions.length > 0 ? { revisions } : undefined;
@@ -74,6 +100,12 @@ export const getKnativeServingConfigurations = (
 export const getKnativeServingRoutes = (dc: K8sResourceKind, props): KnativeItem | undefined => {
   const ksroutes = props && props.ksroutes && getKsResource(dc, props.ksroutes);
   return ksroutes && ksroutes.length > 0 ? { ksroutes } : undefined;
+};
+
+export const getKnativeServingDomainMapping = (res: K8sResourceKind, props) => {
+  const domainMappings =
+    props && props.domainmappings && getDomainMapping(res, props.domainmappings);
+  return domainMappings?.length > 0 ? { domainMappings } : undefined;
 };
 
 export const getKnativeServingServices = (dc: K8sResourceKind, props): KnativeItem | undefined => {
@@ -304,5 +336,57 @@ export const knativeCamelKameletBindingResourceWatchers = (
       namespace,
       optional: true,
     },
+  };
+};
+
+export const knativeCamelDomainMappingResourceWatchers = (
+  namespace: string,
+): WatchK8sResources<{ [key: string]: K8sResourceKind[] }> => {
+  return {
+    [DomainMappingModel.plural]: {
+      isList: true,
+      kind: referenceForModel(DomainMappingModel),
+      namespace,
+      optional: true,
+    },
+  };
+};
+
+export const getTrafficByRevision = (revName: string, service: K8sResourceKind) => {
+  if (!service.status?.traffic?.length) {
+    return {};
+  }
+  const trafficPercent = service.status.traffic
+    .filter((t: Traffic) => t.revisionName === revName)
+    .reduce(
+      (acc, tr: Traffic) => {
+        acc.percent += tr.percent ? tr.percent : 0;
+        if (tr.url) {
+          acc.urls.push(tr.url);
+        }
+        return acc;
+      },
+      { urls: [], percent: 0 },
+    );
+  return {
+    ...trafficPercent,
+    percent: trafficPercent.percent ? `${trafficPercent.percent}%` : null,
+  };
+};
+
+export const getKnativeResources = (namespace: string) => {
+  return {
+    ...knativeServingResourcesRevisionWatchers(namespace),
+    ...knativeServingResourcesConfigurationsWatchers(namespace),
+    ...knativeServingResourcesRoutesWatchers(namespace),
+    ...knativeServingResourcesServicesWatchers(namespace),
+    ...knativeEventingResourcesSubscriptionWatchers(namespace),
+    ...getDynamicEventSourcesWatchers(namespace),
+    ...getDynamicEventingChannelWatchers(namespace),
+    ...knativeEventingBrokerResourceWatchers(namespace),
+    ...knativeEventingTriggerResourceWatchers(namespace),
+    ...knativeCamelIntegrationsResourceWatchers(namespace),
+    ...knativeCamelKameletBindingResourceWatchers(namespace),
+    ...knativeCamelDomainMappingResourceWatchers(namespace),
   };
 };

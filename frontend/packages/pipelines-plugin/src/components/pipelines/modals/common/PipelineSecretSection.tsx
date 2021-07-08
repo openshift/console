@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Formik, useField, useFormikContext, FormikValues } from 'formik';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { ExpandCollapse } from '@console/internal/components/utils';
+import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Formik, useField, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
+import { ExpandCollapse } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
 import {
@@ -12,9 +12,10 @@ import {
   getSecretAnnotations,
 } from '../../../../utils/pipeline-utils';
 import { SecretAnnotationId } from '../../const';
-import { advancedSectionValidationSchema } from './validation-utils';
 import SecretForm from './SecretForm';
 import SecretsList from './SecretsList';
+import { CommonPipelineModalFormikValues } from './types';
+import { advancedSectionValidationSchema } from './validation-utils';
 
 import './PipelineSecretSection.scss';
 
@@ -25,17 +26,15 @@ const initialValues = {
   formData: {},
 };
 
-type PipelineSecretSectionProps = {
-  namespace: string;
-};
-
-const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace }) => {
+const PipelineSecretSection: React.FC = () => {
   const { t } = useTranslation();
   const [secretOpenField] = useField<boolean>('secretOpen');
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const {
+    setFieldValue,
+    values: { namespace },
+  } = useFormikContext<CommonPipelineModalFormikValues>();
 
   const handleSubmit = (values, actions) => {
-    actions.setSubmitting(true);
     const newSecret = {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
@@ -47,9 +46,8 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
       type: values.type,
       stringData: values.formData,
     };
-    k8sCreate(SecretModel, newSecret)
+    return k8sCreate(SecretModel, newSecret)
       .then((resp) => {
-        actions.setSubmitting(false);
         setFieldValue(secretOpenField.name, false);
         associateServiceAccountToSecret(
           resp,
@@ -58,7 +56,6 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
         );
       })
       .catch((err) => {
-        actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
   };
@@ -70,8 +67,8 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
 
   return (
     <ExpandCollapse
-      textExpanded={t('pipelines-plugin~Hide Credential options')}
-      textCollapsed={t('pipelines-plugin~Show Credential options')}
+      textExpanded={t('pipelines-plugin~Hide credential options')}
+      textCollapsed={t('pipelines-plugin~Show credential options')}
     >
       <div className="odc-pipeline-secret-section">
         <p>

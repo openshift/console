@@ -16,7 +16,8 @@ export const getBreadcrumbPath = (match: any, customPlural?: string) => {
 };
 
 export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () =>
-  kindObj.apiGroup === 'config.openshift.io' && match.params.name === 'cluster'
+  (kindObj.apiGroup === 'config.openshift.io' && match.params.name === 'cluster') ||
+  kindObj.apiGroup === 'operator.openshift.io'
     ? breadcrumbsForGlobalConfig(i18next.t(kindObj.labelKey) || kindObj.label, match.url)
     : [
         {

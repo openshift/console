@@ -24,6 +24,14 @@ import {
   isDashboardsOverviewResourceActivity,
   isDashboardsOverviewPrometheusActivity,
 } from '@console/plugin-sdk';
+import {
+  useResolvedExtensions,
+  DashboardsOverviewResourceActivity as DynamicDashboardsOverviewResourceActivity,
+  DashboardsOverviewPrometheusActivity as DynamicDashboardsOverviewPrometheusActivity,
+  isDashboardsOverviewResourceActivity as isDynamicDashboardsOverviewResourceActivity,
+  isDashboardsOverviewPrometheusActivity as isDynamicDashboardsOverviewPrometheusActivity,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
 
@@ -65,28 +73,37 @@ const OngoingActivity = connect(mapStateToProps)(
       const resourceActivityExtensions = useExtensions<DashboardsOverviewResourceActivity>(
         isDashboardsOverviewResourceActivity,
       );
+      const [dynamicResourceActivityExtensions] = useResolvedExtensions<
+        DynamicDashboardsOverviewResourceActivity
+      >(isDynamicDashboardsOverviewResourceActivity);
 
       const resourceActivities = React.useMemo(
-        () => resourceActivityExtensions.filter((e) => !!models.get(e.properties.k8sResource.kind)),
-        [resourceActivityExtensions, models],
+        () =>
+          [...resourceActivityExtensions, ...dynamicResourceActivityExtensions].filter(
+            (e) => !!models.get(e.properties.k8sResource.kind),
+          ),
+        [dynamicResourceActivityExtensions, models, resourceActivityExtensions],
       );
 
       const prometheusActivities = useExtensions<DashboardsOverviewPrometheusActivity>(
         isDashboardsOverviewPrometheusActivity,
       );
+      const [dynamicPrometheusActivities] = useResolvedExtensions<
+        DynamicDashboardsOverviewPrometheusActivity
+      >(isDynamicDashboardsOverviewPrometheusActivity);
 
       React.useEffect(() => {
         resourceActivities.forEach((a, index) => {
           watchK8sResource(uniqueResource(a.properties.k8sResource, index));
         });
-        prometheusActivities.forEach((a) =>
+        [...prometheusActivities, ...dynamicPrometheusActivities].forEach((a) =>
           a.properties.queries.forEach((q) => watchPrometheus(q)),
         );
         return () => {
           resourceActivities.forEach((a, index) => {
             stopWatchK8sResource(uniqueResource(a.properties.k8sResource, index));
           });
-          prometheusActivities.forEach((a) =>
+          [...prometheusActivities, ...dynamicPrometheusActivities].forEach((a) =>
             a.properties.queries.forEach(stopWatchPrometheusQuery),
           );
         };
@@ -97,6 +114,7 @@ const OngoingActivity = connect(mapStateToProps)(
         stopWatchPrometheusQuery,
         resourceActivities,
         prometheusActivities,
+        dynamicPrometheusActivities,
       ]);
 
       const allResourceActivities = React.useMemo(
@@ -113,7 +131,9 @@ const OngoingActivity = connect(mapStateToProps)(
                 .map((r) => ({
                   resource: r,
                   timestamp: a.properties.getTimestamp ? a.properties.getTimestamp(r) : null,
-                  loader: a.properties.loader,
+                  loader: (a as DashboardsOverviewResourceActivity)?.properties?.loader,
+                  component: (a as ResolvedExtension<DynamicDashboardsOverviewResourceActivity>)
+                    ?.properties?.component,
                 }));
             }),
           ),
@@ -122,7 +142,7 @@ const OngoingActivity = connect(mapStateToProps)(
 
       const allPrometheusActivities = React.useMemo(
         () =>
-          prometheusActivities
+          [...prometheusActivities, ...dynamicPrometheusActivities]
             .filter((a) => {
               const queryResults = a.properties.queries.map(
                 (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
@@ -134,11 +154,13 @@ const OngoingActivity = connect(mapStateToProps)(
                 (q) => prometheusResults.getIn([q, 'data']) as PrometheusResponse,
               );
               return {
-                loader: a.properties.loader,
+                loader: (a as DashboardsOverviewPrometheusActivity)?.properties.loader,
+                component: (a as ResolvedExtension<DynamicDashboardsOverviewPrometheusActivity>)
+                  ?.properties.component,
                 results: queryResults,
               };
             }),
-        [prometheusActivities, prometheusResults],
+        [dynamicPrometheusActivities, prometheusActivities, prometheusResults],
       );
 
       const resourcesLoaded = React.useMemo(

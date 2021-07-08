@@ -124,7 +124,7 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
     readOnly={false}
   />
 );
-const { details, pods, editYaml, envEditor, events } = navFactory;
+const { details, pods, editYaml, envEditor, events, metrics } = navFactory;
 export const DaemonSets: React.FC = (props) => {
   const { t } = useTranslation();
   const DaemonSetTableHeader = () => [
@@ -178,18 +178,13 @@ export const DaemonSets: React.FC = (props) => {
             kind={kind}
             name={daemonset.metadata.name}
             namespace={daemonset.metadata.namespace}
-            title={daemonset.metadata.uid}
           />
         </TableData>
         <TableData
           className={classNames(tableColumnClasses[1], 'co-break-word')}
           columnID="namespace"
         >
-          <ResourceLink
-            kind="Namespace"
-            name={daemonset.metadata.namespace}
-            title={daemonset.metadata.namespace}
-          />
+          <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
           <Link
@@ -241,6 +236,7 @@ export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (prop
     menuActions={menuActions}
     pages={[
       details(detailsPage(DaemonSetDetails)),
+      metrics(),
       editYaml(),
       pods(DaemonSetPods),
       envEditor(EnvironmentTab),

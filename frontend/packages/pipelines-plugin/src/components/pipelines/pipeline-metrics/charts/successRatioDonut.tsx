@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { ChartDonut, ChartDonutProps, ChartThemeColor } from '@patternfly/react-charts';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
+import * as _ from 'lodash';
 
 interface SuccessRatioDonutProps {
   successValue: number;

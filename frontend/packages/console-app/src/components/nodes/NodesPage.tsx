@@ -2,11 +2,33 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect } from 'react-redux';
-import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
+import { coFetchJSON } from '@console/internal/co-fetch';
+import {
+  Table,
+  TableRow,
+  TableData,
+  ListPage,
+  RowFunctionArgs,
+} from '@console/internal/components/factory';
+import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
+import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import {
+  Kebab,
+  ResourceKebab,
+  ResourceLink,
+  Timestamp,
+  humanizeBinaryBytes,
+  formatCores,
+  LabelList,
+} from '@console/internal/components/utils';
+import { NodeModel, MachineModel } from '@console/internal/models';
+import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   getName,
   getUID,
@@ -19,107 +41,85 @@ import {
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
 } from '@console/shared';
-import { NodeModel, MachineModel } from '@console/internal/models';
-import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import {
-  Table,
-  TableRow,
-  TableData,
-  ListPage,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceKebab,
-  ResourceLink,
-  Timestamp,
-  humanizeBinaryBytes,
-  formatCores,
-  LabelList,
-} from '@console/internal/components/utils';
-import { NodeMetrics, setNodeMetrics } from '@console/internal/actions/ui';
-import { PROMETHEUS_BASE_PATH } from '@console/internal/components/graphs';
-import { coFetchJSON } from '@console/internal/co-fetch';
-import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { nodeStatus } from '../../status/node';
-import NodeRoles from './NodeRoles';
 import { menuActions } from './menu-actions';
+import NodeRoles from './NodeRoles';
 import NodeStatus from './NodeStatus';
 import MarkAsSchedulablePopover from './popovers/MarkAsSchedulablePopover';
 
-// t('nodes~Name')
-// t('nodes~Status')
-// t('nodes~Role')
-// t('nodes~Pods')
-// t('nodes~Memory')
-// t('nodes~CPU')
-// t('nodes~Filesystem')
-// t('nodes~Created')
-// t('nodes~Instance type')
-// t('nodes~Machine')
-// t('nodes~Labels')
-// t('nodes~Zone')
+// t('console-app~Name')
+// t('console-app~Status')
+// t('console-app~Role')
+// t('console-app~Pods')
+// t('console-app~Memory')
+// t('console-app~CPU')
+// t('console-app~Filesystem')
+// t('console-app~Created')
+// t('console-app~Instance type')
+// t('console-app~Machine')
+// t('console-app~Labels')
+// t('console-app~Zone')
 
 const nodeColumnInfo = Object.freeze({
   name: {
     classes: '',
     id: 'name',
-    title: 'nodes~Name',
+    title: 'console-app~Name',
   },
   status: {
     classes: '',
     id: 'status',
-    title: 'nodes~Status',
+    title: 'console-app~Status',
   },
   role: {
     classes: '',
     id: 'role',
-    title: 'nodes~Role',
+    title: 'console-app~Role',
   },
   pods: {
     classes: '',
     id: 'pods',
-    title: 'nodes~Pods',
+    title: 'console-app~Pods',
   },
   memory: {
     classes: '',
     id: 'memory',
-    title: 'nodes~Memory',
+    title: 'console-app~Memory',
   },
   cpu: {
     classes: '',
     id: 'cpu',
-    title: 'nodes~CPU',
+    title: 'console-app~CPU',
   },
   filesystem: {
     classes: '',
     id: 'filesystem',
-    title: 'nodes~Filesystem',
+    title: 'console-app~Filesystem',
   },
   created: {
     classes: '',
     id: 'created',
-    title: 'nodes~Created',
+    title: 'console-app~Created',
   },
   instanceType: {
     classes: '',
     id: 'instanceType',
-    title: 'nodes~Instance type',
+    title: 'console-app~Instance type',
   },
   machine: {
     classes: '',
     id: 'machine',
-    title: 'nodes~Machine',
+    title: 'console-app~Machine',
   },
   labels: {
     classes: '',
     id: 'labels',
-    title: 'nodes~Labels',
+    title: 'console-app~Labels',
   },
   zone: {
     classes: '',
     id: 'zone',
-    title: 'nodes~Zone',
+    title: 'console-app~Zone',
   },
 });
 
@@ -418,7 +418,7 @@ const NodesTable: React.FC<NodesTableProps &
         {...props}
         activeColumns={selectedColumns}
         columnManagementID={columnManagementID}
-        aria-label={t('nodes~Nodes')}
+        aria-label={t('console-app~Nodes')}
         showNamespaceOverride
         Header={NodeTableHeader}
         Row={Row}
@@ -456,11 +456,12 @@ const fetchNodeMetrics = (): Promise<NodeMetrics> => {
     {
       key: 'usedStorage',
       query:
-        'sum by (instance) (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"})',
+        'sum by (instance) ((max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"})) - (max by (device, instance) (node_filesystem_free_bytes{device=~"/.*"})))',
     },
     {
       key: 'totalStorage',
-      query: 'sum by (instance) (node_filesystem_size_bytes{mountpoint="/"})',
+      query:
+        'sum by (instance) (max by (device, instance) (node_filesystem_size_bytes{device=~"/.*"}))',
     },
     {
       key: 'cpu',
@@ -527,26 +528,26 @@ const NodesPage = connect<{}, MapDispatchToProps>(
     const { t } = useTranslation();
     const filters = [
       {
-        filterGroupName: t('nodes~Status'),
+        filterGroupName: t('console-app~Status'),
         type: 'node-status',
         reducer: nodeStatus,
         items: [
-          { id: 'Ready', title: t('nodes~Ready') },
-          { id: 'Not Ready', title: t('nodes~Not Ready') },
+          { id: 'Ready', title: t('console-app~Ready') },
+          { id: 'Not Ready', title: t('console-app~Not Ready') },
         ],
       },
       {
-        filterGroupName: t('nodes~Role'),
+        filterGroupName: t('console-app~Role'),
         type: 'node-role',
         reducer: getNodeRole,
         items: [
           {
             id: 'master',
-            title: t('nodes~Master'),
+            title: t('console-app~Master'),
           },
           {
             id: 'worker',
-            title: t('nodes~Worker'),
+            title: t('console-app~Worker'),
           },
         ],
       },

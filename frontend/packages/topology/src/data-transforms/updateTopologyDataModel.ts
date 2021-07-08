@@ -1,9 +1,9 @@
-import { ExtensibleModel } from './ModelContext';
 import { Model } from '@patternfly/react-topology';
-import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { Alerts } from '@console/internal/components/monitoring/types';
+import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { baseDataModelGetter } from './data-transformer';
+import { ExtensibleModel } from './ModelContext';
 
 export const updateTopologyDataModel = (
   dataModelContext: ExtensibleModel,

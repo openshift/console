@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
+import { shallow } from 'enzyme';
 import ProgressiveList from '../ProgressiveList';
-import ProgressiveListItem from '../ProgressiveListItem';
 import ProgressiveListFooter from '../ProgressiveListFooter';
+import ProgressiveListItem from '../ProgressiveListItem';
 
 const DummyComponent: React.FC = () => <div id="dummy">Dummy Component</div>;
 const BarComponent: React.FC = () => <div id="bar">Bar Component</div>;

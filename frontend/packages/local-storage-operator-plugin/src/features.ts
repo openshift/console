@@ -1,7 +1,7 @@
-import { FeatureDetector } from '@console/plugin-sdk';
-import { K8sKind, k8sList } from '@console/internal/module/k8s';
-import { getAnnotations } from '@console/shared/src/selectors/common';
 import { setFlag, handleError } from '@console/internal/actions/features';
+import { K8sKind, k8sList } from '@console/internal/module/k8s';
+import { FeatureDetector } from '@console/plugin-sdk';
+import { getAnnotations } from '@console/shared/src/selectors/common';
 
 export const OCSServiceModel: K8sKind = {
   label: 'Storage Cluster',

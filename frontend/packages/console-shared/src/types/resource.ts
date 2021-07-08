@@ -1,6 +1,6 @@
+import { Alert } from '@console/internal/components/monitoring/types';
 import { HorizontalPodAutoscalerKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { DEPLOYMENT_STRATEGY } from '../constants';
-import { Alert } from '@console/internal/components/monitoring/types';
 
 export type APIError = {
   status?: string;

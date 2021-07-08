@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { PodStatus } from '@console/shared';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { PodStatus } from '@console/shared';
 import { RevisionModel } from '../../../models';
 import { MockKnativeResources } from '../../../topology/__tests__/topology-knative-test-data';
+import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
 import RevisionsOverviewListItem, {
   RevisionsOverviewListItemProps,
 } from '../RevisionsOverviewListItem';
-import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import RoutesUrlLink from '../RoutesUrlLink';
 
 jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
@@ -154,5 +155,19 @@ describe('RevisionsOverviewListItem', () => {
           .props().title,
       ).toEqual(1);
     });
+  });
+
+  it('should not render RoutesUrlLink if status is not present', () => {
+    const mockKsvc = {
+      ...MockKnativeResources.ksservices.data[0],
+    };
+    delete mockKsvc.status;
+    wrapper = shallow(
+      <RevisionsOverviewListItem
+        revision={MockKnativeResources.revisions.data[0]}
+        service={mockKsvc}
+      />,
+    );
+    expect(wrapper.find(RoutesUrlLink).exists()).toBe(false);
   });
 });

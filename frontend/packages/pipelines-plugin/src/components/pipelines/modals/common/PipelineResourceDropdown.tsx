@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { FormikValues, useField, useFormikContext } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikValues, useField, useFormikContext } from 'formik';
-import { FormSelectField, FormSelectFieldOption } from '@console/shared';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingInline } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { FormSelectField, FormSelectFieldOption } from '@console/shared';
 import { PipelineResourceModel } from '../../../../models';
 import { PipelineResourceKind } from '../../../../types';
 import { CREATE_PIPELINE_RESOURCE } from './const';

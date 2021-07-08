@@ -1,5 +1,5 @@
-const webpack = require('@cypress/webpack-preprocessor');
 const fs = require('fs');
+const webpack = require('@cypress/webpack-preprocessor');
 
 module.exports = (on, config) => {
   const options = {

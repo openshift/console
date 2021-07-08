@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
-import { LoadingBox } from '@console/internal/components/utils';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { StatusBox } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   useK8sWatchResources,
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/knative-plugin';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
@@ -121,7 +121,7 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
       <Helmet>
         <title>{t('devconsole~Edit')}</title>
       </Helmet>
-      {isResourcesLoaded ? (
+      <StatusBox loaded={isResourcesLoaded} data={editResData}>
         <EditApplicationComponent
           namespace={namespace}
           appName={appName}
@@ -135,9 +135,7 @@ const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = (
             pipeline: resources.pipeline as WatchK8sResultsObject<PipelineKind[]>,
           }}
         />
-      ) : (
-        <LoadingBox />
-      )}
+      </StatusBox>
     </NamespacedPage>
   );
 };

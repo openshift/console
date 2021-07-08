@@ -1,14 +1,14 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { DeployImageFormProps } from './import-types';
-import ImageSearchSection from './image-search/ImageSearchSection';
-import IconSection from './section/IconSection';
-import AppSection from './app/AppSection';
+import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 import AdvancedSection from './advanced/AdvancedSection';
+import AppSection from './app/AppSection';
+import ImageSearchSection from './image-search/ImageSearchSection';
+import { DeployImageFormProps } from './import-types';
+import IconSection from './section/IconSection';
 import ResourceSection from './section/ResourceSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({

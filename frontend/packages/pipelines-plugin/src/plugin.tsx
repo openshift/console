@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelDefinition,
@@ -10,8 +12,6 @@ import {
   OverviewResourceTab,
   OverviewTabSection,
 } from '@console/plugin-sdk';
-import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { FLAG_OPENSHIFT_PIPELINE } from './const';
 import * as models from './models';
 import {

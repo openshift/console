@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-import { mockFormData } from '../../components/import/__mocks__/import-validation-mock';
 import { mockDeployImageFormData } from '../../components/import/__mocks__/deployImage-validation-mock';
-import { createService, createRoute } from '../shared-submit-utils';
+import { mockFormData } from '../../components/import/__mocks__/import-validation-mock';
 import { GitImportFormData, DeployImageFormData } from '../../components/import/import-types';
+import { createService, createRoute } from '../shared-submit-utils';
 
 describe('Shared submit utils', () => {
   describe('Create Service', () => {

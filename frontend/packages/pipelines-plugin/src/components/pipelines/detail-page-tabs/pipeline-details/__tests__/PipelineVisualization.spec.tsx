@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import { mockPipelinesJSON } from '../../../../../utils/__tests__/pipeline-test-data';
 import PipelineTopologyGraph from '../../../pipeline-topology/PipelineTopologyGraph';
 import PipelineVisualization from '../PipelineVisualization';

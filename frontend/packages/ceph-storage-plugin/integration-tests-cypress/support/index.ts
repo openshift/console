@@ -1,7 +1,7 @@
-import { NS } from '../utils/consts';
 import '../../../integration-tests-cypress/support/index.ts';
-import { CATALOG } from '../mocks/install';
 import { OCS_OP } from '../consts';
+import { CATALOG } from '../mocks/install';
+import { NS } from '../utils/consts';
 import {
   createImagePullSecret,
   createCustomCatalogSource,

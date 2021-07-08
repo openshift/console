@@ -1,10 +1,16 @@
 import * as React from 'react';
+import {
+  Checkbox,
+  ExpandableSection,
+  FileUpload,
+  Form,
+  SelectOption,
+  TextInput,
+} from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
-  provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
 import {
   FieldLevelHelp,
@@ -14,15 +20,6 @@ import {
 } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import {
-  Checkbox,
-  ExpandableSection,
-  FileUpload,
-  Form,
-  SelectOption,
-  TextInput,
-} from '@patternfly/react-core';
-
 import { AccessMode, ANNOTATION_SOURCE_PROVIDER, VolumeMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
@@ -34,6 +31,7 @@ import {
 } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
+import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
 import { FormPFSelect } from '../../form/form-pf-select';
@@ -73,8 +71,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
   );
   const storageClassName = updatedStorageClass?.metadata?.name;
   const provisioner = updatedStorageClass?.provisioner || '';
-  let accessModes: string[] =
-    provisionerAccessModeMapping[provisioner] || getAccessModeForProvisioner(provisioner);
+  let accessModes: string[] = getAccessModeForProvisioner(provisioner);
 
   if (!scAllowedLoading && !scAllowed && scConfigMap) {
     accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
@@ -296,12 +293,16 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             id="file-upload"
             value={state.file?.value.value}
             filename={state.file?.value.name}
-            onChange={(file: File, name: string) =>
+            onChange={(file: File, name: string) => {
               dispatch({
                 type: BOOT_ACTION_TYPE.SET_FILE,
                 payload: { value: file, name },
-              })
-            }
+              });
+              dispatch({
+                type: BOOT_ACTION_TYPE.SET_PVC_SIZE,
+                payload: getGiBUploadPVCSizeByImage(state.file?.value?.value?.size).toString(),
+              });
+            }}
             hideDefaultPreview
             isRequired
             isDisabled={disabled}

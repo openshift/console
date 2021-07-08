@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingBox, PageHeading } from '@console/internal/components/utils';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import UploadJarPage from '../UploadJarPage';
 
 let UploadJarPageProps: React.ComponentProps<typeof UploadJarPage>;

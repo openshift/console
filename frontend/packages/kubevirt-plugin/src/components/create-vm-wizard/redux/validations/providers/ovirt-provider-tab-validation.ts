@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { asValidationObject, ValidationErrorType } from '@console/shared/src';
-
 import { iGetFieldValue } from '../../../selectors/immutable/field';
 import {
   hasOvirtSettingsChanged,

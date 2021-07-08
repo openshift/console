@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import {
   ColaGroup,
   ColaLink,
@@ -6,6 +5,7 @@ import {
   getGroupPadding,
   LayoutOptions,
 } from '@patternfly/react-topology';
+import * as _ from 'lodash';
 import {
   TYPE_EVENT_SOURCE_LINK,
   TYPE_KNATIVE_SERVICE,

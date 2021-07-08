@@ -1,7 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
-import { calculateRadius } from '@console/shared';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, LinkIcon } from '@patternfly/react-icons';
 import {
@@ -17,6 +14,9 @@ import {
   createSvgIdUrl,
   EllipseAnchor,
 } from '@patternfly/react-topology';
+import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { calculateRadius } from '@console/shared';
 import {
   NodeShadows,
   NODE_SHADOW_FILTER_ID_HOVER,

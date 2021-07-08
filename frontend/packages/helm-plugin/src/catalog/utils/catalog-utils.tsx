@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { toTitleCase } from '@console/shared';
-import { ExternalLink } from '@console/internal/components/utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { toTitleCase } from '@console/shared';
 import * as certifiedIcon from '../../../icons/certified.svg';
 import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
 import { getChartRepositoryTitle } from '../../utils/helm-utils';
@@ -30,16 +30,7 @@ export const normalizeHelmCharts = (
       const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
 
       charts.forEach((chart: HelmChartMetaData) => {
-        const {
-          name,
-          digest,
-          created,
-          version,
-          appVersion,
-          description,
-          keywords,
-          annotations,
-        } = chart;
+        const { name, created, version, appVersion, description, keywords, annotations } = chart;
 
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
         const providerType = annotations?.[PROVIDER_TYPE_ANNOTATION] ?? '';
@@ -107,7 +98,7 @@ export const normalizeHelmCharts = (
         ];
 
         const helmChart = {
-          uid: `${chartRepoName}--${digest}`,
+          uid: `${chartRepoName}--${chartURL}`,
           type: 'HelmChart',
           name: displayName,
           title,

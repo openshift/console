@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import KafkaSourceNetSection from '../KafkaSourceNetSection';
 import SecretKeySelector from '../../SecretKeySelector';
+import KafkaSourceNetSection from '../KafkaSourceNetSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

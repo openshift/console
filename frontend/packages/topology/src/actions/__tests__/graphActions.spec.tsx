@@ -1,12 +1,12 @@
-import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
-import { topologyDataModel } from '../../__tests__/topology-test-data';
 import {
   allCatalogImageResourceAccess,
   allImportResourceAccess,
 } from '@console/dev-console/src/actions/add-resources';
+import { knativeTopologyDataModel } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
+import { topologyDataModel } from '../../__tests__/topology-test-data';
+import OdcBaseNode from '../../elements/OdcBaseNode';
 import { GraphData } from '../../topology-types';
 import { graphActions } from '../graphActions';
-import OdcBaseNode from '../../elements/OdcBaseNode';
 
 describe('graphActions: ', () => {
   it('should return the correct menu items when all permissions are allowed', () => {

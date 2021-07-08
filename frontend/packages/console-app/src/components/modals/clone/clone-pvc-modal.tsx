@@ -1,15 +1,18 @@
-import './_clone-pvc-modal.scss';
-
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Form, FormGroup, TextInput } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
-  k8sCreate,
-  referenceFor,
-  PersistentVolumeClaimKind,
-  StorageClassResourceKind,
-} from '@console/internal/module/k8s';
+  ModalBody,
+  ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
+  createModalLauncher,
+} from '@console/internal/components/factory';
+import { DataPoint } from '@console/internal/components/graphs';
+import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
+import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
+import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import { dropdownUnits } from '@console/internal/components/storage/shared';
 import {
   LoadingInline,
   ResourceIcon,
@@ -21,28 +24,24 @@ import {
   resourceObjPath,
   convertToBaseValue,
 } from '@console/internal/components/utils';
-import {
-  ModalBody,
-  ModalComponentProps,
-  ModalSubmitFooter,
-  ModalTitle,
-  createModalLauncher,
-} from '@console/internal/components/factory';
-import { DataPoint } from '@console/internal/components/graphs';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
-import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
-import { getRequestedPVCSize } from '@console/shared/src/selectors';
-import { dropdownUnits } from '@console/internal/components/storage/shared';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import {
+  k8sCreate,
+  referenceFor,
+  PersistentVolumeClaimKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import { isCephProvisioner } from '@console/shared';
+import { getRequestedPVCSize } from '@console/shared/src/selectors';
 import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
+
+import './_clone-pvc-modal.scss';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
@@ -62,8 +61,6 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
     StorageClassModel,
     resource?.spec?.storageClassName,
   );
-
-  const handleAccessMode = (value: string) => setCloneAccessMode(value);
 
   const pvcUsedCapacityQuery: string = `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
   const [response, error, loading] = usePrometheusPoll({
@@ -139,12 +136,13 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
             />
           </FormGroup>
           <AccessModeSelector
-            onChange={handleAccessMode}
-            formClassName="co-clone-pvc-modal__form--space"
+            onChange={setCloneAccessMode}
+            className="co-clone-pvc-modal__form--space"
             pvcResource={resource}
             provisioner={scResource?.provisioner}
             loaded={scResourceLoaded}
             loadError={scResourceLoadError}
+            filterByVolumeMode
           />
           <FormGroup
             label={t('console-app~Size')}

@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
 import {
   Button,
   EmptyState,
@@ -12,17 +10,19 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import { EmptyBox, LoadingBox, removeQueryArgument } from '@console/internal/components/utils';
 import { useQueryParams } from '@console/shared';
+import { QUICKSTART_SEARCH_FILTER_KEY, QUICKSTART_STATUS_FILTER_KEY } from '../utils/const';
+import { QuickStartContext, QuickStartContextValues } from '../utils/quick-start-context';
 import { QuickStart } from '../utils/quick-start-types';
 import {
   getQuickStartStatus,
   getQuickStartStatusCount,
   filterQuickStarts,
 } from '../utils/quick-start-utils';
-import { QUICKSTART_SEARCH_FILTER_KEY, QUICKSTART_STATUS_FILTER_KEY } from '../utils/const';
-import QuickStartTile from './QuickStartTile';
 import QuickStartCatalogFilter from './QuickStartCatalogFilter';
+import QuickStartTile from './QuickStartTile';
 
 import './QuickStartCatalog.scss';
 
@@ -64,16 +64,16 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) =>
     <EmptyState>
       <EmptyStateIcon icon={SearchIcon} />
       <Title size="lg" headingLevel="h4">
-        {t('quickstart~No results found')}
+        {t('console-app~No results found')}
       </Title>
       <EmptyStateBody>
         {t(
-          'quickstart~No results match the filter criteria. Remove filters or clear all filters to show results.',
+          'console-app~No results match the filter criteria. Remove filters or clear all filters to show results.',
         )}
       </EmptyStateBody>
       <EmptyStatePrimary>
-        <Button variant="link" onClick={clearFilters}>
-          {t('quickstart~Clear all filters')}
+        <Button variant="link" onClick={clearFilters} data-test="clear-filter button">
+          {t('console-app~Clear all filters')}
         </Button>
       </EmptyStatePrimary>
     </EmptyState>
@@ -81,7 +81,7 @@ const QuickStartCatalog: React.FC<QuickStartCatalogProps> = ({ quickStarts }) =>
 
   if (!quickStarts) return <LoadingBox />;
   return quickStarts.length === 0 ? (
-    <EmptyBox label={t('quickstart~Quick Starts')} />
+    <EmptyBox label={t('console-app~Quick Starts')} />
   ) : (
     <>
       <QuickStartCatalogFilter

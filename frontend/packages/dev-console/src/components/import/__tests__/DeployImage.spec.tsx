@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { Radio } from '@patternfly/react-core';
 import { mount, ReactWrapper } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Radio } from '@patternfly/react-core';
-import store from '@console/internal/redux';
 import { PageHeading, ButtonBar } from '@console/internal/components/utils/';
+import store from '@console/internal/redux';
 import NamespacedPage from '../../NamespacedPage';
-import DeployImagePage from '../DeployImagePage';
-import DeployImage from '../DeployImage';
-import ImageSearchSection from '../image-search/ImageSearchSection';
-import AppSection from '../app/AppSection';
 import AdvancedSection from '../advanced/AdvancedSection';
+import AppSection from '../app/AppSection';
+import DeployImage from '../DeployImage';
+import DeployImagePage from '../DeployImagePage';
+import ImageSearchSection from '../image-search/ImageSearchSection';
 import ResourceSection from '../section/ResourceSection';
 
 jest.mock('react-i18next', () => {

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { SortByDirection } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { PipelineRunModel } from '../../../models';
 import PipelineRunHeader from './PipelineRunHeader';

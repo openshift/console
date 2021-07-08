@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
 import { TriggerBindingKind, TriggerBindingParam } from '../../resource-types';
+import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
 import TriggerBindingSelector from './TriggerBindingSelector';
 import { AddTriggerFormValues } from './types';
 
@@ -36,15 +36,15 @@ const TriggerBindingSection: React.FC = () => {
       <FormSection title={t('pipelines-plugin~Webhook')} fullWidth>
         <TriggerBindingSelector
           description={t(
-            'pipelines-plugin~Select your Git provider type to be associated with the Trigger',
+            'pipelines-plugin~Select your Git provider type to be associated with the Trigger.',
           )}
-          label={t('pipelines-plugin~Git Provider type')}
+          label={t('pipelines-plugin~Git provider type')}
           onChange={updateTriggerBindingVariables}
         />
         {bindingVars && (
           <ExpandableSection
-            toggleTextExpanded="Hide Variables"
-            toggleTextCollapsed="Show Variables"
+            toggleTextExpanded="Hide variables"
+            toggleTextCollapsed="Show variables"
           >
             <div className="odc-trigger-binding-section__variable-container">
               <p className="odc-trigger-binding-section__variable-descriptor">
@@ -62,7 +62,7 @@ const TriggerBindingSection: React.FC = () => {
               isHidden={false}
               className="odc-trigger-binding-section__variable-help-text"
             >
-              {t('pipelines-plugin~Use this format when referencing variables in this form: ')}
+              {t('pipelines-plugin~Use this format when you reference variables in this form: ')}
               <code>{`$(${paramPrefix}parameter)`}</code>
             </FormHelperText>
           </ExpandableSection>

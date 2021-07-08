@@ -8,7 +8,7 @@ Feature: Knative Eventing Broker and Trigger
 
 
         @smoke @to-do
-        Scenario: Add Trigger to Broker
+        Scenario: Add Trigger to Broker: KE-04-TC01
             Given user created Broker "broker-name"
               And user is at Topology page
              When user right clicks on the Broker to open the context menu
@@ -21,7 +21,7 @@ Feature: Knative Eventing Broker and Trigger
 
 
         @regression @manual
-        Scenario: Add multiple trigger to Broker with multiple services
+        Scenario: Add multiple trigger to Broker with multiple services: KE-04-TC02
             Given user is having Broker subscribed to a service on the Topology page
              When user right clicks on the Broker to open the context menu
               And user clicks on the Add Trigger
@@ -33,8 +33,8 @@ Feature: Knative Eventing Broker and Trigger
               And user will see a single Broker subscribed to multiple services
 
 
-        @regression
-        Scenario: Delete Trigger
+        @regression @to-do
+        Scenario: Delete Trigger: KE-04-TC03
             Given user is having Broker on the Topology page
               And user has already added the trigger
              When user right clicks on the trigger to open the context menu
@@ -43,8 +43,8 @@ Feature: Knative Eventing Broker and Trigger
              Then subscription will get deleted
 
 
-        @regression
-        Scenario: Move Trigger
+        @regression @to-do
+        Scenario: Move Trigger: KE-04-TC04
             Given user is having Broker on the Topology page
               And user has already added the trigger
              When user right clicks on the Trigger to open the context menu
@@ -55,7 +55,7 @@ Feature: Knative Eventing Broker and Trigger
 
 
         @regression @manual
-        Scenario: Add Trigger using connector
+        Scenario: Add Trigger using connector: KE-04-TC05
             Given user is having Broker on the Topology page
              When user drags the connector and drops it on graph
               And user clicks on Add Trigger
@@ -66,8 +66,8 @@ Feature: Knative Eventing Broker and Trigger
              Then user will see connection between Broker and Subscriber
 
 
-        @regression
-        Scenario: Sidebar for the Event Source sinked Broker subscribed to Knative Service
+        @regression @to-do
+        Scenario: Sidebar for the Event Source sinked Broker subscribed to Knative Service: KE-04-TC06
             Given user is having Broker subscribed to Knative Service on the Topology page
              When user clicks on the Subscription to open the sidebar
              Then user will see the Resources tab

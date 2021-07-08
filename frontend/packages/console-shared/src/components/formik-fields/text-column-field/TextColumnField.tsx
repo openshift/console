@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { FieldArray, useField } from 'formik';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { FieldArray, useField } from 'formik';
 import { useFormikValidationFix } from '@console/shared';
-import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
 import { getFieldId } from '../field-utils';
+import MultiColumnFieldFooter from '../multi-column-field/MultiColumnFieldFooter';
+import DragAndDrop from './DragAndDrop';
+import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
 import TextColumnItem from './TextColumnItem';
 import TextColumnItemWithDnd from './TextColumnItemWithDnd';
-import { TextColumnFieldProps, TextColumnItemProps } from './text-column-types';
-import DragAndDrop from './DragAndDrop';
 
 const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
   const {
@@ -40,6 +40,7 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
             label={label}
             validated={isValid ? ValidatedOptions.default : ValidatedOptions.error}
             isRequired={required}
+            data-test={props['data-test'] || 'text-column-field'}
           >
             {helpText && <div className="pf-c-form__helper-text">{helpText}</div>}
             {dndEnabled ? (
@@ -67,16 +68,16 @@ const TextColumnField: React.FC<TextColumnFieldProps> = (props) => {
                 })}
               </>
             )}
+            {!isReadOnly && (
+              <MultiColumnFieldFooter
+                addLabel={addLabel}
+                onAdd={() => {
+                  arrayHelpers.push('');
+                  onChange && onChange([...rowValues, '']);
+                }}
+              />
+            )}
           </FormGroup>
-          {!isReadOnly && (
-            <MultiColumnFieldFooter
-              addLabel={addLabel}
-              onAdd={() => {
-                arrayHelpers.push('');
-                onChange && onChange([...rowValues, '']);
-              }}
-            />
-          )}
         </>
       )}
     />

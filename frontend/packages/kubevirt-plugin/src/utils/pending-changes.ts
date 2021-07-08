@@ -1,6 +1,7 @@
 import { vmFlavorModal } from '../components/modals';
 import { BootOrderModal } from '../components/modals/boot-order-modal';
 import { IsPendingChange, PendingChanges, VMTabEnum, VMTabURLEnum } from '../components/vms/types';
+import { VMIPhase } from '../constants/vmi/phase';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../k8s/wrapper/vm/vmi-wrapper';
 import {
@@ -12,7 +13,6 @@ import {
 } from '../selectors/vm-like/next-run-changes';
 import { VMIKind, VMKind } from '../types';
 import { getVMTabURL, redirectToTab } from './url';
-import { VMIPhase } from '../constants/vmi/phase';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {
   const vm = vmWrapper.asResource();

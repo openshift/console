@@ -1,5 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
@@ -16,7 +17,6 @@ import {
   projectNameSpace,
   verifyAndInstallKnativeOperator,
 } from '@console/dev-console/integration-tests/support/pages';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   verifyAndInstallKnativeOperator();
@@ -24,12 +24,10 @@ Given('user has installed OpenShift Serverless Operator', () => {
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
+  cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
-  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective');
+  cy.testA11y('Developer perspective');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {

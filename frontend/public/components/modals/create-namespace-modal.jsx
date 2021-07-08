@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { Popover, Button } from '@patternfly/react-core';
+import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
@@ -114,6 +116,23 @@ const CreateNamespaceModalWithTranslation = connect(
         [allow]: t('public~No restrictions'),
         [deny]: t('public~Deny all inbound traffic'),
       };
+
+      const popoverText = () => {
+        const type = this.props.createProject ? t('public~Project') : t('public~Namespace');
+        const nameFormat = t(
+          "public~A {{type}} name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
+          { type },
+        );
+        const createNamespace = t(
+          "public~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
+        );
+        return (
+          <>
+            <p>{nameFormat}</p>
+            {this.props.createProject ? <p>{createNamespace}</p> : null}
+          </>
+        );
+      };
       return (
         <form
           onSubmit={this._submit.bind(this)}
@@ -127,7 +146,12 @@ const CreateNamespaceModalWithTranslation = connect(
             <div className="form-group">
               <label htmlFor="input-name" className="control-label co-required">
                 {t('public~Name')}
-              </label>
+              </label>{' '}
+              <Popover aria-label="Naming information" bodyContent={popoverText}>
+                <Button variant="plain" aria-label="View naming information">
+                  <OutlinedQuestionCircleIcon />
+                </Button>
+              </Popover>
               <div className="modal-body__field">
                 <input
                   id="input-name"

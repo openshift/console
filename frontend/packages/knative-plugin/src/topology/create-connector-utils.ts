@@ -1,29 +1,31 @@
-import i18next from 'i18next';
 import { Node } from '@patternfly/react-topology';
-import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
+import i18next from 'i18next';
 import {
   addResourceMenuWithoutCatalog,
   addResourceMenu,
   addGroupResourceMenu,
+  disabledFilter,
+  actionMapper,
 } from '@console/dev-console/src/actions/add-resources';
+import { MenuOptions } from '@console/dev-console/src/utils/add-resources-menu-utils';
+import { errorModal } from '@console/internal/components/modals';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { GraphData } from '@console/topology/src/topology-types';
 import { getResource } from '@console/topology/src/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { errorModal } from '@console/internal/components/modals';
-import { addEventSource } from '../actions/add-event-source';
-import { addTrigger } from '../actions/add-trigger';
 import { addChannels } from '../actions/add-channel';
+import { addEventSource } from '../actions/add-event-source';
 import { addSubscription } from '../actions/add-subscription';
+import { addTrigger } from '../actions/add-trigger';
 import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLauncher';
-import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import {
   ServiceModel,
   EventingBrokerModel,
   EventingSubscriptionModel,
   EventingTriggerModel,
 } from '../models';
-import { createEventSourceKafkaConnection } from './knative-topology-utils';
+import { isEventingChannelResourceKind } from '../utils/fetch-dynamic-eventsources-utils';
 import { TYPE_EVENT_SOURCE_KAFKA } from './const';
+import { createEventSourceKafkaConnection } from './knative-topology-utils';
 
 export const getKnativeContextMenuAction = (
   graphData: GraphData,
@@ -34,14 +36,17 @@ export const getKnativeContextMenuAction = (
   if (connectorSource?.getData().type === TYPE_EVENT_SOURCE_KAFKA) {
     return [];
   }
+  const knativeActions = [addEventSource, addChannels].filter(disabledFilter).map(actionMapper);
+  const knativeConnectorActions = [addEventSource].filter(disabledFilter).map(actionMapper);
+
   if (!connectorSource && isGroupActions) {
     if (graphData.eventSourceEnabled) {
-      return [...addGroupResourceMenu, addEventSource, addChannels];
+      return [...addGroupResourceMenu, ...knativeActions];
     }
   }
   if (!connectorSource) {
     if (graphData.eventSourceEnabled) {
-      return [...addResourceMenu, addEventSource, addChannels];
+      return [...addResourceMenu, ...knativeActions];
     }
     return menu;
   }
@@ -52,9 +57,10 @@ export const getKnativeContextMenuAction = (
   switch (sourceKind) {
     case referenceForModel(ServiceModel):
       return graphData.eventSourceEnabled
-        ? isGroupActions
-          ? [...addGroupResourceMenu, addEventSource]
-          : [...addResourceMenuWithoutCatalog, addEventSource]
+        ? [
+            ...(isGroupActions ? addGroupResourceMenu : addResourceMenuWithoutCatalog),
+            ...knativeConnectorActions,
+          ]
         : menu;
     case referenceForModel(EventingBrokerModel):
       return [addTrigger(EventingTriggerModel, connectorSource.getData().resource)];

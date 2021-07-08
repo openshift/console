@@ -1,6 +1,5 @@
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-
 import {
   BinaryUnit,
   stringValueUnitSplit,

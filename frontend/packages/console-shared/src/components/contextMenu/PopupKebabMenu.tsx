@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { DropdownMenu } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
-import { DropdownMenu } from '@patternfly/react-core';
 import { history, KebabItem, KebabOption } from '@console/internal/components/utils';
 import './PopupKebabMenu.scss';
 

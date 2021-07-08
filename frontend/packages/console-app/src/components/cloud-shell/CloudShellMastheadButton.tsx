@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
+import { Button, PageHeaderToolsItem } from '@patternfly/react-core';
 import { TerminalIcon } from '@patternfly/react-icons';
-import { Button, PageHeaderToolsItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
+import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import useCloudShellAvailable from './useCloudShellAvailable';
 
 type DispatchProps = {
@@ -28,25 +28,16 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
 
   return (
     <PageHeaderToolsItem>
-      <Tooltip
-        content={
-          open
-            ? t('cloudshell~Close command line terminal')
-            : t('cloudshell~Open command line terminal')
-        }
-        position={TooltipPosition.bottom}
+      <Button
+        variant="plain"
+        aria-label={t('console-app~Command line terminal')}
+        onClick={onClick}
+        className={open ? 'pf-m-selected' : undefined}
+        data-tour-id="tour-cloud-shell-button"
+        data-quickstart-id="qs-masthead-cloudshell"
       >
-        <Button
-          variant="plain"
-          aria-label={t('cloudshell~Command line terminal')}
-          onClick={onClick}
-          className={open ? 'pf-m-selected' : undefined}
-          data-tour-id="tour-cloud-shell-button"
-          data-quickstart-id="qs-masthead-cloudshell"
-        >
-          <TerminalIcon className="co-masthead-icon" />
-        </Button>
-      </Tooltip>
+        <TerminalIcon className="co-masthead-icon" />
+      </Button>
     </PageHeaderToolsItem>
   );
 };

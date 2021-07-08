@@ -1,14 +1,14 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import { BuildStrategyType } from '@console/internal/components/build';
+import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import {
   K8sResourceKind,
   referenceFor,
   referenceForModel,
   ImagePullPolicy,
 } from '@console/internal/module/k8s';
-import { BuildStrategyType } from '@console/internal/components/build';
-import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
-import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   KNATIVE_AUTOSCALEWINDOW_ANNOTATION,
   KNATIVE_CONCURRENCYTARGET_ANNOTATION,
@@ -18,37 +18,56 @@ import {
   KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
-import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import {
   PIPELINE_RUNTIME_LABEL,
   PIPELINE_RUNTIME_VERSION_LABEL,
 } from '@console/pipelines-plugin/src/const';
-import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
-import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { getLimitsDataFromResource } from '@console/shared/src';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { RegistryType } from '../../utils/imagestream-utils';
+import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
+import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import {
   Resources,
   DeploymentData,
   GitReadableTypes,
   ServerlessData,
 } from '../import/import-types';
-import { AppResources } from './edit-application-types';
-import { RegistryType } from '../../utils/imagestream-utils';
-import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import {
   detectGitType,
   validationSchema as importValidationSchema,
 } from '../import/import-validation-utils';
 import { getAutoscaleWindow } from '../import/serverless/serverless-utils';
-import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import { validationSchema as jarValidationSchema } from '../import/upload-jar-validation-utils';
+import { AppResources } from './edit-application-types';
 
-export enum CreateApplicationFlow {
+export enum ApplicationFlowType {
   Git = 'Import from Git',
   Dockerfile = 'Import from Dockerfile',
   Container = 'Deploy Image',
   JarUpload = 'Upload JAR file',
 }
+
+export const getFlowTypePageTitle = (flowType: ApplicationFlowType): string => {
+  switch (flowType) {
+    case ApplicationFlowType.Git:
+      // t('devconsole~Import from Git')
+      return 'devconsole~Import from Git';
+    case ApplicationFlowType.Dockerfile:
+      // t('devconsole~Import from Dockerfile')
+      return 'devconsole~Import from Dockerfile';
+    case ApplicationFlowType.Container:
+      // t('devconsole~Deploy Image')
+      return 'devconsole~Deploy Image';
+    case ApplicationFlowType.JarUpload:
+      // t('devconsole~Upload JAR file')
+      return 'devconsole~Upload JAR file';
+    default:
+      return flowType;
+  }
+};
 
 export enum BuildSourceType {
   Git = 'Git',
@@ -73,16 +92,16 @@ export const getResourcesType = (resource: K8sResourceKind): Resources => {
   }
 };
 
-export const getPageHeading = (buildStrategy: string, buildType?: string): string => {
+export const getFlowType = (buildStrategy: string, buildType?: string): ApplicationFlowType => {
   switch (buildStrategy) {
     case BuildStrategyType.Source:
       return buildType === BuildSourceType.Binary
-        ? CreateApplicationFlow.JarUpload
-        : CreateApplicationFlow.Git;
+        ? ApplicationFlowType.JarUpload
+        : ApplicationFlowType.Git;
     case BuildStrategyType.Docker:
-      return CreateApplicationFlow.Dockerfile;
+      return ApplicationFlowType.Dockerfile;
     default:
-      return CreateApplicationFlow.Container;
+      return ApplicationFlowType.Container;
   }
 };
 
@@ -231,6 +250,7 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
       },
       concurrencyutilization: '',
     },
+    domainMapping: [],
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
     const {
@@ -256,6 +276,7 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
         },
         concurrencyutilization: annotations?.[KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION] || '',
       },
+      domainMapping: [],
     };
   }
   return serverlessData;
@@ -316,7 +337,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',
     'app.openshift.io/runtime-namespace',
-    'serving.knative.dev/visibility',
+    'networking.knative.dev/visibility',
   ];
   const allLabels = _.get(resource, 'metadata.labels', {});
   const userLabels = _.omit(allLabels, defaultLabels);

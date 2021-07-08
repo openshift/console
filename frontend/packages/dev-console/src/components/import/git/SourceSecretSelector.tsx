@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues, useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { useFormikContext, FormikValues, useField } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';

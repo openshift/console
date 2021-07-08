@@ -11,6 +11,7 @@ import {
   PipelineRunResource,
   VolumeClaimTemplateType,
   TektonWorkspace,
+  PipelineRunParam,
 } from '../../../../types';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
 import { TektonResourceLabel, VolumeTypes, preferredNameAnnotation } from '../../const';
@@ -192,7 +193,10 @@ export const convertPipelineToModalData = (
 
   return {
     namespace,
-    parameters: params || [],
+    parameters: (params || []).map((param) => ({
+      ...param,
+      value: param.default, // setup the default if it exists
+    })),
     resources: (resources || []).map((resource: TektonResource) => ({
       name: resource.name,
       selection: alwaysCreateResources ? CREATE_PIPELINE_RESOURCE : '',
@@ -251,7 +255,7 @@ export const getPipelineRunFromForm = (
       pipelineRef: {
         name: pipeline.metadata.name,
       },
-      params: getPipelineRunParams(parameters),
+      params: parameters.map(({ name, value }): PipelineRunParam => ({ name, value })),
       resources: resources.map(convertResources),
       workspaces: getPipelineRunWorkspaces(workspaces),
     },

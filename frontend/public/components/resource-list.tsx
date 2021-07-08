@@ -15,6 +15,7 @@ import {
   K8sKind,
   K8sResourceKindReference,
   kindForReference,
+  referenceForExtensionModel,
   referenceForModel,
 } from '../module/k8s';
 import {
@@ -99,10 +100,15 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     props.match.path.indexOf('customresourcedefinitions') === -1
       ? referenceForModel(kindObj)
       : null;
-  const componentLoader = getResourceDetailsPages(
-    detailsPageExtensions,
-    dynamicResourceListPageExtensions,
-  ).get(ref, () => Promise.resolve(DefaultDetailsPage));
+  const componentLoader =
+    getResourceDetailsPages(detailsPageExtensions, dynamicResourceListPageExtensions).get(ref) ||
+    getResourceDetailsPages(detailsPageExtensions, dynamicResourceListPageExtensions).get(
+      referenceForExtensionModel({
+        group: kindObj.apiGroup,
+        kind: kindObj.kind,
+      }),
+    );
+  const defaultPage = () => Promise.resolve(DefaultDetailsPage);
 
   return (
     <>
@@ -110,7 +116,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         <title>{`${decodedName} · Details`}</title>
       </Helmet>
       <AsyncComponent
-        loader={componentLoader}
+        loader={componentLoader || defaultPage}
         match={props.match}
         namespace={ns}
         kind={props.modelRef}

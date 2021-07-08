@@ -1,19 +1,20 @@
 import * as React from 'react';
+import { Alert, TextInputTypes } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { FormikProps, FormikValues } from 'formik';
-import { Alert, TextInputTypes } from '@patternfly/react-core';
+import { BuildStrategyType } from '@console/internal/components/build';
 import { InputField, FormFooter, FormBody } from '@console/shared';
-import { DevfileImportFormProps } from '../import-types';
-import GitSection from '../git/GitSection';
 import AppSection from '../app/AppSection';
+import GitSection from '../git/GitSection';
+import { DevfileImportFormProps } from '../import-types';
+import FormSection from '../section/FormSection';
 import {
   useDevfileServer,
   useDevfileDirectoryWatcher,
   useDevfileSource,
   useSelectedDevfileSample,
 } from './devfileHooks';
-import FormSection from '../section/FormSection';
 import DevfileSampleInfo from './DevfileSampleInfo';
 
 const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormProps> = ({
@@ -45,8 +46,8 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
             {devfileParseError}
           </Alert>
         )}
-        <FormSection>
-          {formType === 'sample' ? (
+        {formType === 'sample' ? (
+          <FormSection>
             <InputField
               type={TextInputTypes.text}
               name="git.url"
@@ -54,17 +55,18 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
               data-test-id="git-form-input-url"
               isDisabled
             />
-          ) : (
-            <GitSection
-              buildStrategy="Devfile"
-              builderImages={builderImages}
-              defaultSample={{
-                url: gitRepoUrl || 'https://github.com/redhat-developer/devfile-sample',
-              }}
-            />
-          )}
-          {selectedSample && <DevfileSampleInfo devfileSample={selectedSample} />}
-        </FormSection>
+          </FormSection>
+        ) : (
+          <GitSection
+            buildStrategy={BuildStrategyType.Devfile}
+            builderImages={builderImages}
+            defaultSample={{
+              url: gitRepoUrl || 'https://github.com/redhat-developer/devfile-sample',
+            }}
+          />
+        )}
+        {selectedSample && <DevfileSampleInfo devfileSample={selectedSample} />}
+
         <AppSection
           project={values.project}
           noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}

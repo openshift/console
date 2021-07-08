@@ -1,19 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Form,
-  Alert,
-  Button,
-  Grid,
-  GridItem,
-  TextVariants,
-  WizardContextConsumer,
-} from '@patternfly/react-core';
+import { Form, Alert, Button, Grid, GridItem, WizardContextConsumer } from '@patternfly/react-core';
 import { Modal, useFlag } from '@console/shared';
 import { k8sCreate, NodeKind } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
-
-import { LocalVolumeSetHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-set/header';
 import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/components/local-volume-set/body';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
@@ -66,13 +56,15 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
   const [errorMessage, setErrorMessage] = React.useState('');
 
   const allNodesSelectorTxt = t(
-    'ceph-storage-plugin~Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.',
+    'ceph-storage-plugin~Uses the available disks that match the selected filters on all nodes selected in the previous step.',
+  );
+  const lvsNameSelectorTxt = t(
+    'ceph-storage-plugin~A Local Volume Set allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
   );
   const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
 
   return (
     <>
-      <LocalVolumeSetHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
       <Grid className="ceph-ocs-install__form-wrapper">
         <GridItem lg={10} md={12} sm={12}>
           <Form noValidate={false}>
@@ -81,6 +73,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
               dispatch={dispatch}
               diskModeOptions={diskModeDropdownItems}
               allNodesHelpTxt={allNodesSelectorTxt}
+              lvsNameHelpTxt={lvsNameSelectorTxt}
               taintsFilter={hasOCSTaint}
             />
           </Form>
@@ -113,7 +106,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
           isInline
         >
           {t(
-            'ceph-storage-plugin~The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.',
+            "ceph-storage-plugin~The OpenShift Container Storage's StorageCluster requires a minimum of 3 nodes for the initial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.",
             { nodes: state.chartNodes.size },
           )}
         </Alert>
@@ -156,7 +149,7 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
           <>
             <span>
               {t(
-                "ceph-storage-plugin~After the volume set and storage class are created you won't be able to go back to this step.",
+                "ceph-storage-plugin~After the LocalVolumeSet and StorageClass are created you won't be able to go back to this step.",
               )}
             </span>
             {isArbiterSupported && (
@@ -170,7 +163,7 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
 
         return (
           <Modal
-            title={t('ceph-storage-plugin~Create Storage Class')}
+            title={t('ceph-storage-plugin~Create StorageClass')}
             isOpen={state.showConfirmModal}
             onClose={cancel}
             variant="small"

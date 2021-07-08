@@ -1,5 +1,5 @@
-import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { tableColumnClasses } from './revision-table';
 
 const RevisionHeader = (t: TFunction) => () => {

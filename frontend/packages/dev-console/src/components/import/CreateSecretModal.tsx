@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  SecretFormWrapper,
-  SecretTypeAbstraction,
-} from '@console/internal/components/secrets/create-secret';
-import {
   createModalLauncher,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
+import {
+  SecretFormWrapper,
+  SecretTypeAbstraction,
+} from '@console/internal/components/secrets/create-secret';
 
 export interface CreateSecretModalProps {
   save?: (name: string) => void;

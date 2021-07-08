@@ -117,6 +117,7 @@ const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
 
 const pages = [
   navFactory.details(StatefulSetDetails),
+  navFactory.metrics(),
   navFactory.editYaml(),
   navFactory.pods(StatefulSetPods),
   navFactory.envEditor(EnvironmentTab),

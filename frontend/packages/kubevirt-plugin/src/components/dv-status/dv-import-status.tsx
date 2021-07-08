@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Alert, Progress, ProgressSize, Stack, StackItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
 import { ErrorStatus, ProgressStatus } from '@console/shared';
-import { Alert, Progress, ProgressSize, Stack, StackItem } from '@patternfly/react-core';
 import { DataVolumeSourceType } from '../../constants/vm';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { DVStatusType, getDVStatus } from '../../statuses/dv/dv-status';

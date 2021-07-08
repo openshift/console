@@ -2,7 +2,6 @@ import { execSync } from 'child_process';
 /* eslint-disable no-undef, max-nested-callbacks */
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   filterForName,
@@ -21,7 +20,6 @@ import {
   waitForCount,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-
 import { getDataVolumeTemplates, getVolumes } from '../../src/selectors/vm/selectors';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';

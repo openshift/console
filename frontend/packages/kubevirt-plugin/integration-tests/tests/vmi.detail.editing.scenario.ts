@@ -1,9 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceRows } from '@console/internal-integration-tests/views/crud.view';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
-
 import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
 import { vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
 import * as disksView from '../views/vm.disks.view';

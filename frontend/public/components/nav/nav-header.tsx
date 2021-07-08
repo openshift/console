@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  NavItemSeparator,
-  Title,
-} from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { history } from '../utils';
@@ -25,11 +19,15 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-  const [acmLink] = useK8sWatchResource<K8sResourceKind>({
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
     kind: referenceForModel(ConsoleLinkModel),
-    name: ACM_LINK_ID,
     optional: true,
   });
+  const acmLink = consoleLinks.find(
+    (link: K8sResourceKind) =>
+      link.spec.location === 'ApplicationMenu' && link.metadata.name === ACM_LINK_ID,
+  );
   const { t } = useTranslation();
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
@@ -112,21 +110,18 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   );
 
   return (
-    <>
-      <div
-        className="oc-nav-header"
-        data-tour-id="tour-perspective-dropdown"
-        data-quickstart-id="qs-perspective-switcher"
-      >
-        <Dropdown
-          isOpen={isPerspectiveDropdownOpen}
-          toggle={renderToggle(icon, name)}
-          dropdownItems={perspectiveItems}
-          data-test-id="perspective-switcher-menu"
-        />
-      </div>
-      <NavItemSeparator key={`separator-nav-header`} inset={{ default: 'insetNone' }} />
-    </>
+    <div
+      className="oc-nav-header"
+      data-tour-id="tour-perspective-dropdown"
+      data-quickstart-id="qs-perspective-switcher"
+    >
+      <Dropdown
+        isOpen={isPerspectiveDropdownOpen}
+        toggle={renderToggle(icon, name)}
+        dropdownItems={perspectiveItems}
+        data-test-id="perspective-switcher-menu"
+      />
+    </div>
   );
 };
 

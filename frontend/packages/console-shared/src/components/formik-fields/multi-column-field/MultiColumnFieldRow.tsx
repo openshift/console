@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
   Tooltip,
   Button,
@@ -10,6 +8,8 @@ import {
   Grid,
   gridItemSpanValueShape,
 } from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import './MultiColumnField.scss';
 
 export interface RowRendererProps {
@@ -40,7 +40,7 @@ const DEFAULT_ROW_RENDERER = ({
 }): React.ReactNode => {
   const { t } = useTranslation();
   return (
-    <div className="odc-multi-column-field__row">
+    <div className="odc-multi-column-field__row" data-test={`row ${fieldName}`}>
       <Grid>
         {React.Children.map(children, (child: React.ReactElement, i) => {
           let newProps = child.props;
@@ -62,6 +62,7 @@ const DEFAULT_ROW_RENDERER = ({
         <div className={'odc-multi-column-field__col--button'}>
           <Tooltip content={toolTip || t('console-shared~Remove')}>
             <Button
+              data-test="delete-row"
               aria-label={toolTip || t('console-shared~Remove')}
               variant={ButtonVariant.plain}
               type={ButtonType.button}

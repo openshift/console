@@ -1,15 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Prompt } from 'react-router';
-
-import { history } from '@console/internal/components/utils';
-import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
-import {
-  ErrorStatus,
-  GreenCheckCircleIcon,
-  ProgressStatus,
-  SuccessStatus,
-} from '@console/shared/src';
 import {
   Alert,
   Bullseye,
@@ -23,9 +12,19 @@ import {
   StackItem,
   Title,
 } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
+import { Prompt } from 'react-router';
+import { history } from '@console/internal/components/utils';
+import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
+import {
+  ErrorStatus,
+  GreenCheckCircleIcon,
+  ProgressStatus,
+  SuccessStatus,
+} from '@console/shared/src';
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
 import { VirtualMachineModel } from '../../../models';
+import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
 import { VMKind } from '../../../types';
 
 type ItemStatusProps = {
@@ -71,7 +70,7 @@ const CustomizeSourceFinish: React.FC<CustomizeSourceFinishProps> = ({ vm }) => 
   const deleteVM = async () => {
     setVMError(undefined);
     try {
-      await k8sKill(VirtualMachineModel, vm);
+      await k8sKill(getKubevirtAvailableModel(VirtualMachineModel), vm);
       setVMSuccess(true);
     } catch (err) {
       setVMError(err.message);

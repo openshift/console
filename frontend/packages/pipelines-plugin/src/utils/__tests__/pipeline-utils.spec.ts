@@ -8,9 +8,9 @@ import {
 import * as k8s from '@console/internal/module/k8s';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
+import { PipelineRunModel } from '../../models';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { runStatus } from '../pipeline-augment';
-import { PipelineRunModel } from '../../models';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -24,13 +24,13 @@ import {
   appendPipelineRunStatus,
   getMatchedPVCs,
 } from '../pipeline-utils';
+import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 import {
   constructPipelineData,
   mockPipelinesJSON,
   mockRunDurationTest,
   pvcWithPipelineOwnerRef,
 } from './pipeline-test-data';
-import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 
 beforeAll(() => {
   jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
@@ -141,6 +141,55 @@ describe('pipeline-utils ', () => {
     });
     expect(annotation).toEqual({
       'tekton.dev/docker-0': 'docker.io',
+    });
+  });
+
+  it('should have correct annotation key prefix when there are existing annotations', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'gitlab.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: SecretAnnotationId.Git,
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'gitlab.com',
+      'tekton.dev/git-1': 'github.com',
+    });
+  });
+
+  it('should avoid adding duplicate annotations to secret', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'github.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: SecretAnnotationId.Git,
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'github.com',
+    });
+  });
+
+  it('should return unmodified annotations if invalid key is provided', () => {
+    const existingAnnotations = {
+      'tekton.dev/git-0': 'gitlab.com',
+    };
+    const annotations = getSecretAnnotations(
+      {
+        key: 'invalid-type',
+        value: 'github.com',
+      },
+      existingAnnotations,
+    );
+    expect(annotations).toEqual({
+      'tekton.dev/git-0': 'gitlab.com',
     });
   });
 

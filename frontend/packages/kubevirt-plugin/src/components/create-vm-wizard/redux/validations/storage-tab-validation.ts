@@ -1,5 +1,4 @@
 import { getName } from '@console/shared/src';
-
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';

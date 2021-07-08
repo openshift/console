@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { ResourceDropdownField } from '@console/shared';
+import { connect } from 'react-redux';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
+import { ResourceDropdownField } from '@console/shared';
 import './PVCDropdown.scss';
 
 interface PVCDropdownProps {

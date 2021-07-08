@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared';
-import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { EventSources } from '../import-types';
 import { useTranslation } from 'react-i18next';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { InputField } from '@console/shared';
+import { EventSources } from '../import-types';
 
 interface CronJobSectionProps {
   title: string;

@@ -1,10 +1,8 @@
-export const testDeployment = 'test-deployment';
-
 export const deployment = {
   apiVersion: 'apps/v1',
   kind: 'Deployment',
   metadata: {
-    name: testDeployment,
+    name: 'test-deployment',
   },
   spec: {
     selector: {

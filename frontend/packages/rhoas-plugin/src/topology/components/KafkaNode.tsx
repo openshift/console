@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import {
   observer,
   Node,
@@ -9,13 +8,15 @@ import {
   WithDragNodeProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
-import { calculateRadius } from '@console/shared';
+import { connect } from 'react-redux';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { calculateRadius } from '@console/shared';
 import { getServiceBindingStatus } from '@console/topology/src/utils';
-import { KafkaConnectionModel } from '../../models';
 import { kafkaIcon } from '../../const';
-import TrapezoidBaseNode from './TrapezoidBaseNode';
+import { KafkaConnectionModel } from '../../models';
 import { obsOrKafkaConnectionDropTargetSpec } from './rhoasComponentUtils';
+import TrapezoidBaseNode from './TrapezoidBaseNode';
 
 import './KafkaNode.scss';
 
@@ -57,7 +58,7 @@ const KafkaNode: React.FC<KafkaNodeProps> = ({
       icon={kafkaIcon}
       innerRadius={iconRadius}
       selected={selected}
-      kind={KafkaConnectionModel.kind}
+      kind={referenceForModel(KafkaConnectionModel)}
       element={element}
       outerRadius={radius}
       {...props}

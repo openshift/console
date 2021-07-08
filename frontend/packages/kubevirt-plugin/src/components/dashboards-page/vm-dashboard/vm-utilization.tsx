@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
   PrometheusMultilineUtilizationItem,
   PrometheusUtilizationItem,
@@ -20,7 +19,6 @@ import {
 } from '@console/shared/src/components/dashboard/duration-hook';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';
@@ -103,7 +101,7 @@ export const VMUtilizationCard: React.FC = () => {
           isDisabled={!vmiIsRunning}
         />
         <PrometheusUtilizationItem
-          title={t('kubevirt-plugin~Memory')}
+          title={t('kubevirt-plugin~Memory (RSS)')}
           utilizationQuery={queries[VMQueries.MEMORY_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -112,9 +110,9 @@ export const VMUtilizationCard: React.FC = () => {
           adjustDuration={adjustDuration}
           isDisabled={!vmiIsRunning}
         />
-        <PrometheusUtilizationItem
-          title={t('kubevirt-plugin~Filesystem')}
-          utilizationQuery={queries[VMQueries.FILESYSTEM_USAGE]}
+        <PrometheusMultilineUtilizationItem
+          title={t('kubevirt-plugin~Storage')}
+          queries={multilineQueries[VMQueries.FILESYSTEM_USAGE]}
           humanizeValue={humanizeBinaryBytes}
           byteDataType={ByteDataTypes.BinaryBytes}
           duration={duration}

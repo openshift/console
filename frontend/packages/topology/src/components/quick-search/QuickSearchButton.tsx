@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Tooltip, Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import QuickSearchIcon from './QuickSearchIcon';
 import './QuickSearchButton.scss';
 

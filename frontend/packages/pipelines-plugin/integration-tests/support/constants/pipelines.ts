@@ -8,5 +8,5 @@ export enum pipelineActions {
   DeletePipeline = 'Delete Pipeline',
   StartLastRun = 'Start Last Run',
   Rerun = 'Rerun',
-  DeletePipelineRun = 'Delete Pipeline Run',
+  DeletePipelineRun = 'Delete PipelineRun',
 }

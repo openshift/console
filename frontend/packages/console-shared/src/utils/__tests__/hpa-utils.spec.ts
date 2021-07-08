@@ -1,9 +1,9 @@
+import { doesHpaMatch } from '../hpa-utils';
 import {
   deploymentHasCpuAndMemoryLimits,
   deploymentConfigHasCpuAndMemoryLimits,
   cpuScaled,
 } from './hpa-utils-data';
-import { doesHpaMatch } from '../hpa-utils';
 
 describe('doesHpaMatch checks if it aligns to a workload', () => {
   it('expect not to match when hpa does not target workload', () => {

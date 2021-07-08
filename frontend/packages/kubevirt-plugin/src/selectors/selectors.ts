@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const getKind = (value) => _.get(value, 'kind') as K8sResourceKind['kind'];

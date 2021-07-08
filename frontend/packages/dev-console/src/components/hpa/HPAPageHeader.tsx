@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Alert, Flex } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { PageHeading, ResourceLink } from '@console/internal/components/utils';
 
 type HPAPageHeaderProps = {

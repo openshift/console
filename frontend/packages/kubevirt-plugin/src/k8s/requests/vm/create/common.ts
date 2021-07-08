@@ -1,6 +1,5 @@
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getAnnotations, getName, getNamespace } from '@console/shared/src';
-
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   ANNOTATION_DESCRIPTION,

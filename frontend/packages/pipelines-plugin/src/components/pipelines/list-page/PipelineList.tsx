@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { SortByDirection } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
-import { PropPipelineData } from '../../../utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
+import { PropPipelineData } from '../../../utils/pipeline-augment';
 import PipelineHeader from './PipelineHeader';
 import PipelineRow from './PipelineRow';
 

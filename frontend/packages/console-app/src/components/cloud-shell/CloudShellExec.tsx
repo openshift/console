@@ -1,25 +1,25 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
+import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
+import { connect, Dispatch } from 'react-redux';
+import { PodModel } from '@console/internal/models';
+import { resourceURL, K8sKind } from '@console/internal/module/k8s';
+import { WSFactory } from '@console/internal/module/ws-factory';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { FLAGS } from '@console/shared';
-import { WSFactory } from '@console/internal/module/ws-factory';
-import { resourceURL } from '@console/internal/module/k8s';
-import { PodModel } from '@console/internal/models';
-import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
-import Terminal, { ImperativeTerminalType } from './Terminal';
-import TerminalLoadingBox from './TerminalLoadingBox';
-import useActivityTick from './useActivityTick';
-import ExecuteCommand from './ExecuteCommand';
 import {
   getCloudShellCR,
   CLOUD_SHELL_STOPPED_BY_ANNOTATION,
   startWorkspace,
   CloudShellResource,
 } from './cloud-shell-utils';
+import ExecuteCommand from './ExecuteCommand';
+import Terminal, { ImperativeTerminalType } from './Terminal';
+import TerminalLoadingBox from './TerminalLoadingBox';
+import useActivityTick from './useActivityTick';
 
 import './CloudShellExec.scss';
 
@@ -35,6 +35,7 @@ type Props = {
   podname: string;
   namespace: string;
   shcommand?: string[];
+  workspaceModel: K8sKind;
 };
 
 type StateProps = {
@@ -60,6 +61,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   shcommand,
   flags,
   impersonate,
+  workspaceModel,
   onActivate,
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
@@ -75,13 +77,18 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   const onData = React.useCallback(
     (data: string): void => {
       tick();
-      ws.current && ws.current.send(`0${Base64.encode(data)}`);
+      ws.current?.send(`0${Base64.encode(data)}`);
     },
     [tick],
   );
 
+  const handleResize = React.useCallback((cols: number, rows: number) => {
+    const data = Base64.encode(JSON.stringify({ Height: rows, Width: cols }));
+    ws.current?.send(`4${data}`);
+  }, []);
+
   const onCommand = React.useCallback((command: string): void => {
-    ws.current && ws.current.send(`0${Base64.encode(`${command}\n`)}`);
+    ws.current?.send(`0${Base64.encode(`${command}\n`)}`);
   }, []);
 
   React.useEffect(() => {
@@ -156,14 +163,14 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
         setWsOpen(false);
 
         // Check the Cloud Shell to see if it has any hints as to why the terminal connection was closed
-        const cloudShellCR = getCloudShellCR(workspaceName, namespace);
+        const cloudShellCR = getCloudShellCR(workspaceModel, workspaceName, namespace);
         let stoppedByError;
         cloudShellCR
           .then((cr) => {
             const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
             if (stopReason) {
               stoppedByError = t(
-                'cloudshell~The terminal connection has closed due to {{reason}}.',
+                'console-app~The terminal connection has closed due to {{reason}}.',
                 { reason: stopReason },
               );
             }
@@ -174,7 +181,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           })
           .finally(() => {
             const error =
-              evt.reason || stoppedByError || t('cloudshell~The terminal connection has closed.');
+              evt.reason || stoppedByError || t('console-app~The terminal connection has closed.');
             const currentTerminal = terminal.current;
             currentTerminal && currentTerminal.onConnectionClosed(error);
             websocket.destroy();
@@ -193,7 +200,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       const currentTerminal = terminal.current;
       currentTerminal &&
         currentTerminal.onConnectionClosed(
-          t('cloudshell~connecting to {{container}}', { container }),
+          t('console-app~connecting to {{container}}', { container }),
         );
     }
 
@@ -213,6 +220,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     shcommand,
     t,
     workspaceName,
+    workspaceModel,
     wsReopening,
   ]);
 
@@ -233,8 +241,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             }}
           >
             {customResource.status.phase === 'Running'
-              ? t('cloudshell~Reconnect to terminal')
-              : t('cloudshell~Restart terminal')}
+              ? t('console-app~Reconnect to terminal')
+              : t('console-app~Restart terminal')}
           </Button>
         </EmptyState>
       </div>
@@ -245,7 +253,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     return (
       <>
         <div className="co-cloudshell-terminal__container">
-          <Terminal onData={onData} ref={terminal} />
+          <Terminal onData={onData} onResize={handleResize} ref={terminal} />
         </div>
         <ExecuteCommand onCommand={onCommand} />
       </>

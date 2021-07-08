@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { FormikErrors } from 'formik';
 import i18n from 'i18next';
+import * as _ from 'lodash';
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
 import { ClusterTaskModel, PipelineModel, TaskModel } from '../../../models';
@@ -13,15 +13,22 @@ import {
 } from '../../../types';
 import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs';
 import { getTaskParameters } from '../resource-utils';
-import { TASK_ERROR_STRINGS, TASK_FIELD_ERROR_TYPE_MAPPING, TaskErrorType } from './const';
+import {
+  getTaskErrorString,
+  STATUS_KEY_NAME_ERROR,
+  TASK_FIELD_ERROR_TYPE_MAPPING,
+  TaskErrorType,
+} from './const';
 import {
   BuilderTasksErrorGroup,
   GetErrorMessage,
+  PipelineBuilderFormikStatus,
   PipelineBuilderFormValues,
   PipelineBuilderFormYamlValues,
   PipelineBuilderTaskBase,
   PipelineBuilderTaskResources,
   TaskErrors,
+  TaskType,
 } from './types';
 
 const isTaskArrayErrors = (errors: string | string[] | TaskErrors): errors is TaskErrors => {
@@ -29,11 +36,27 @@ const isTaskArrayErrors = (errors: string | string[] | TaskErrors): errors is Ta
 };
 
 export const getBuilderTasksErrorGroup = (
-  formikFormErrors: FormikErrors<PipelineBuilderFormValues>,
-): BuilderTasksErrorGroup => ({
-  tasks: isTaskArrayErrors(formikFormErrors?.tasks) ? formikFormErrors?.tasks : [],
-  finally: isTaskArrayErrors(formikFormErrors?.finallyTasks) ? formikFormErrors?.finallyTasks : [],
-});
+  formikFormErrors?: FormikErrors<PipelineBuilderFormValues>,
+  status?: PipelineBuilderFormikStatus,
+): BuilderTasksErrorGroup => {
+  const paths = Object.keys(status?.[STATUS_KEY_NAME_ERROR] || {});
+  const nameErrorString = getTaskErrorString(TaskErrorType.NAME_ERROR);
+  const { formData } = paths.reduce((data, path) => {
+    _.set(data, path, nameErrorString);
+    return data;
+  }, {} as FormikErrors<PipelineBuilderFormYamlValues>);
+
+  const getErrorsForType = (type: TaskType): TaskErrors => {
+    const formErrors = isTaskArrayErrors(formikFormErrors?.[type]) ? formikFormErrors[type] : [];
+    const displayNameErrors = formData?.[type];
+    return _.merge([], formErrors, displayNameErrors);
+  };
+
+  return {
+    tasks: getErrorsForType('tasks'),
+    finally: getErrorsForType('finallyTasks'),
+  };
+};
 
 export const getTopLevelErrorMessage: GetErrorMessage = (errors) => (taskIndex) => {
   const errorObj = errors[taskIndex] || {};
@@ -42,19 +65,21 @@ export const getTopLevelErrorMessage: GetErrorMessage = (errors) => (taskIndex) 
   if (taskErrors.length === 0) return null;
 
   // Check if it's one of the known error messages
-  const errorMsg = Object.values(TASK_ERROR_STRINGS).find((value) => taskErrors.includes(value));
-  if (errorMsg) return errorMsg;
+  const matchingErrorType: TaskErrorType = Object.values(
+    TaskErrorType,
+  ).find((errorType: TaskErrorType) => taskErrors.includes(getTaskErrorString(errorType)));
+  if (matchingErrorType) return getTaskErrorString(matchingErrorType);
 
   // Not one of the top-level known ones, is it a problem with a known area?
   const keys = Object.keys(TASK_FIELD_ERROR_TYPE_MAPPING) as TaskErrorType[];
-  const errorType = keys.find((key) => {
+  const mappingErrorType: TaskErrorType = keys.find((key) => {
     const properties: string[] = TASK_FIELD_ERROR_TYPE_MAPPING[key];
     return properties?.some((propertyPath) => _.get(errorObj, propertyPath));
-  }, '');
-  if (!errorType) return null;
+  });
+  if (!mappingErrorType) return null;
 
   // Problem with a known area, get the area based error for a high-level error (more specific error will be on the field)
-  return TASK_ERROR_STRINGS[errorType];
+  return getTaskErrorString(mappingErrorType);
 };
 
 export const findTask = (
@@ -86,7 +111,7 @@ export const findTask = (
       apiVersion: apiVersionForModel(TaskModel),
       kind: 'EmbeddedTask',
       metadata: {
-        name: i18n.t('pipelines-plugin~Embedded Task'),
+        name: i18n.t('pipelines-plugin~Embedded task'),
       },
       spec: task.taskSpec,
     };
@@ -209,10 +234,6 @@ export const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
   };
 };
 
-export const taskParamIsRequired = (param: TektonParam): boolean => {
-  return !('default' in param);
-};
-
 export const safeName = (reservedNames: string[], desiredName: string): string => {
   if (reservedNames.includes(desiredName)) {
     const newName = `${desiredName}-${getRandomChars(3)}`;
@@ -262,16 +283,25 @@ const removeListRunAfters = (task: PipelineTask, listIds: string[]): PipelineTas
   return task;
 };
 
-const removeEmptyDefaultParams = (task: PipelineTask): PipelineTask => {
+export const removeEmptyFormFields = (task: PipelineTask): PipelineTask => {
+  let trimmedTask = task;
+  // Since we can submit, this param has a default; check for empty values and remove
   if (task.params?.length > 0) {
-    // Since we can submit, this param has a default; check for empty values and remove
-    return {
-      ...task,
-      params: task.params.filter((param) => !!param.value),
-    };
+    const params = task.params?.filter((param) => !!param.value);
+    trimmedTask = { ...trimmedTask, params };
   }
-
-  return task;
+  // Drop input/output resources which are not linked to an (optional) resource.
+  if (task.resources?.inputs?.length > 0 || task.resources?.outputs?.length > 0) {
+    const inputs = task.resources?.inputs?.filter((resource) => resource.resource);
+    const outputs = task.resources?.outputs?.filter((resource) => resource.resource);
+    trimmedTask = { ...trimmedTask, resources: { ...trimmedTask.resources, inputs, outputs } };
+  }
+  // Drop workspaces which are not linked to an (optional) workspace.
+  if (task.workspaces?.length > 0) {
+    const workspaces = task.workspaces?.filter((workspace) => workspace.workspace);
+    trimmedTask = { ...trimmedTask, workspaces };
+  }
+  return trimmedTask;
 };
 
 export const convertBuilderFormToPipeline = (
@@ -308,7 +338,7 @@ export const convertBuilderFormToPipeline = (
       params: removeEmptyDefaultFromPipelineParams(params),
       resources,
       workspaces,
-      tasks: tasks.map((task) => removeEmptyDefaultParams(removeListRunAfters(task, listIds))),
+      tasks: tasks.map((task) => removeEmptyFormFields(removeListRunAfters(task, listIds))),
       finally: finallyTasks,
     },
   };

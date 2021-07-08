@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
-import PipelineBuilderPage from '../PipelineBuilderPage';
 import { pipelineTestData, PipelineExampleNames } from '../../../../test-data/pipeline-data';
+import PipelineBuilderPage from '../PipelineBuilderPage';
 
 type PipelineBuilderPageProps = React.ComponentProps<typeof PipelineBuilderPage>;
 type BuilderProps = React.ComponentProps<typeof Formik>;

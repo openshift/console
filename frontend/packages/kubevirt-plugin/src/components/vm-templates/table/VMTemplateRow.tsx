@@ -1,30 +1,26 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Button } from '@patternfly/react-core';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
 import { dimensifyRow } from '@console/shared';
-import { StarIcon } from '@patternfly/react-icons';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
-import {
-  getTemplateProvider,
-  getTemplateName,
-  isLabeledTemplate,
-} from '../../../selectors/vm-template/basic';
+import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { TemplateItem } from '../../../types/template';
 import { menuActionsCreator } from '../menu-actions';
 import { getTemplateOSIcon } from '../os-icons';
 import { TemplateSource } from '../vm-template-source';
+import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';
 import RowActions from './RowActions';
 import { VMTemplateRowProps } from './types';
 import { tableColumnClasses } from './utils';
 
 import './vm-template-table.scss';
-import { VMTemplateLabel } from '../label';
 
 const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
   obj,
@@ -63,7 +59,6 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
           to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-          title={template.metadata.uid}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
         >
@@ -71,18 +66,10 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
         </Link>
       </TableData>
       <TableData data-test="template-provider" className={dimensify()}>
-        {isLabeledTemplate(t, template) ? (
-          <VMTemplateLabel template={template} showProvider />
-        ) : (
-          provider
-        )}
+        {provider} <VMTemplateCommnunityLabel template={template} />
       </TableData>
       <TableData className={dimensify()}>
-        <ResourceLink
-          kind={NamespaceModel.kind}
-          name={template.metadata.namespace}
-          title={template.metadata.namespace}
-        />
+        <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />
       </TableData>
       <TableData className={dimensify()} data-test="template-source">
         <TemplateSource

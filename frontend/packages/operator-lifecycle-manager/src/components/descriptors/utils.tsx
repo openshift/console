@@ -1,6 +1,7 @@
-import * as _ from 'lodash';
 import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
+import { getSchemaAtPath } from '@console/shared';
 import {
   ARRAY_COMPATIBLE_CAPABILITIES,
   DEPRECATED_CAPABILITIES,
@@ -10,8 +11,7 @@ import {
   REGEXP_CAPTURE_GROUP_SUBGROUP,
   REGEXP_NESTED_ARRAY_PATH,
 } from './const';
-import { Descriptor, SpecCapability, StatusCapability } from './types';
-import { getSchemaAtPath } from '@console/shared';
+import { Descriptor, SpecCapability, StatusCapability, CommonCapability } from './types';
 
 export const useCalculatedDescriptorProperties = (descriptorType, descriptor, schema, obj) => {
   const propertySchema = getSchemaAtPath(schema, `${descriptorType}.${descriptor.path}`);
@@ -78,8 +78,11 @@ export const groupDescriptorDetails = (
           };
     };
 
-    // Nested arrays are not supported
-    if (REGEXP_NESTED_ARRAY_PATH.test(descriptor.path)) {
+    // Ignore nested arrays and hidden descriptors.
+    if (
+      REGEXP_NESTED_ARRAY_PATH.test(descriptor.path) ||
+      descriptor?.['x-descriptors']?.includes(CommonCapability.hidden)
+    ) {
       return acc;
     }
 

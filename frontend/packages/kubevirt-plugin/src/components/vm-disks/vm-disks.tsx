@@ -1,20 +1,23 @@
-import { TFunction } from 'i18next';
 import * as React from 'react';
+import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-
-import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
+import { Flatten, MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  TemplateKind,
+} from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
-import { sortable } from '@patternfly/react-table';
-
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
@@ -172,14 +175,18 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
       prop: 'pvcs',
       optional: true,
     }),
-    getResource(DataVolumeModel, {
+    {
+      kind: kubevirtReferenceForModel(DataVolumeModel),
       namespace,
       prop: 'datavolumes',
       optional: true,
-    }),
+    },
   ];
 
-  const flatten = ({ datavolumes, pvcs }) =>
+  const flatten: Flatten<{
+    datavolumes: V1alpha1DataVolume[];
+    pvcs: PersistentVolumeClaimKind[];
+  }> = ({ datavolumes, pvcs }) =>
     getStoragesData({
       vmLikeEntity,
       datavolumes,

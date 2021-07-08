@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { chart_color_blue_300 as blueColor } from '@patternfly/react-tokens';
 import { observer, Node, NodeModel, Point } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
 import { PipelineVisualizationTask } from '../detail-page-tabs/pipeline-details/PipelineVisualizationTask';
 import {
   BUILDER_NODE_ADD_RADIUS,
@@ -14,11 +14,11 @@ import {
   FINALLY_ADD_LINK_SIZE,
   WHEN_EXPRESSION_SPACING,
 } from './const';
-import PlusNodeDecorator from './PlusNodeDecorator';
-import ErrorNodeDecorator from './ErrorNodeDecorator';
-import { BuilderFinallyNodeModel } from './types';
-import TaskList from './TaskList';
 import { integralShapePath, straightPath } from './draw-utils';
+import ErrorNodeDecorator from './ErrorNodeDecorator';
+import PlusNodeDecorator from './PlusNodeDecorator';
+import TaskList from './TaskList';
+import { BuilderFinallyNodeModel } from './types';
 
 import './BuilderFinallyNode.scss';
 
@@ -41,7 +41,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
     (allTasksLength === 0 ? 0 : WHEN_EXPRESSION_SPACING);
 
   return (
-    <>
+    <g data-test="builder-finally-node">
       <rect className="opp-builder-finally-node" width={width} height={height} rx="20" ry="20" />
 
       {finallyTasks.map((ft, i) => (
@@ -58,6 +58,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             }
           />
           <g
+            data-test={`finally-task-node ${ft.name}`}
             transform={`translate(${leftPadding}, ${NODE_HEIGHT * i +
               FINALLY_NODE_VERTICAL_SPACING * i +
               FINALLY_NODE_PADDING})`}
@@ -83,7 +84,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
         </g>
       ))}
       {finallyListTasks.map((flt, i) => (
-        <g key={flt.name}>
+        <g key={flt.name} data-test={`finally-task-list-node ${flt.name}`}>
           <path
             className="opp-builder-finally-node__task-connectors"
             d={
@@ -125,15 +126,15 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             <PlusNodeDecorator
               x={0}
               y={FINALLY_ADD_LINK_TEXT_HEIGHT - FINALLY_ADD_LINK_SIZE}
-              tooltip={t('pipelines-plugin~Add final task')}
+              tooltip={t('pipelines-plugin~Add finally task')}
             />
-            <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE}>
-              {t('pipelines-plugin~Add final task')}
+            <text fill={blueColor.value} x={FINALLY_ADD_LINK_SIZE} data-test="add-finally-node">
+              {t('pipelines-plugin~Add finally task')}
             </text>
           </g>
         </g>
       }
-    </>
+    </g>
   );
 };
 

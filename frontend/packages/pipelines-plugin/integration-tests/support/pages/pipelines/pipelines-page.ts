@@ -1,11 +1,7 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { pipelineActions } from '../../constants/pipelines';
-import {
-  pipelineRunDetailsPO,
-  pipelinesPO,
-  pipelineBuilderPO,
-} from '../../page-objects/pipelines-po';
+import { pipelinesPO, pipelineBuilderPO } from '../../page-objects/pipelines-po';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
@@ -16,16 +12,27 @@ export const pipelinesPage = {
         if ($el.text().includes(pipelineName)) {
           cy.get('tbody tr')
             .eq(index)
-            .find('td:nth-child(6) button')
-            .click();
+            .find(pipelinesPO.pipelinesTable.kebabMenu)
+            .click({ force: true });
         }
       });
     });
   },
 
   selectActionForPipeline: (pipelineName: string, action: string | pipelineActions) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(action).click();
+    cy.get(pipelinesPO.pipelinesTable.table).within(() => {
+      cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
+        if ($el.text().includes(pipelineName)) {
+          cy.get('tbody tr')
+            .eq(index)
+            .find(pipelinesPO.pipelinesTable.kebabMenu)
+            .then(($ele1) => {
+              cy.wrap($ele1).click({ force: true });
+            });
+        }
+      });
+    });
+    cy.byTestActionID(action).click({ force: true });
   },
 
   verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
@@ -47,35 +54,35 @@ export const pipelinesPage = {
   selectAction: (action: pipelineActions) => {
     switch (action) {
       case pipelineActions.Start: {
-        cy.byTestActionID('Start').click();
+        cy.byTestActionID(pipelineActions.Start).click();
         cy.get('[data-test-section-heading="Pipeline Run Details"]').should('be.visible');
         break;
       }
       case pipelineActions.AddTrigger: {
-        cy.byTestActionID('Add Trigger').click();
+        cy.byTestActionID(pipelineActions.AddTrigger).click();
         cy.get('form').should('be.visible');
         modal.modalTitleShouldContain('Add Trigger');
         break;
       }
       case pipelineActions.EditLabels: {
-        cy.byTestActionID('Edit Labels').click();
+        cy.byTestActionID(pipelineActions.EditLabels).click();
         cy.get('form').should('be.visible');
         modal.modalTitleShouldContain('Labels');
         break;
       }
       case pipelineActions.EditAnnotations: {
-        cy.byTestActionID('Edit Annotations').click();
+        cy.byTestActionID(pipelineActions.EditAnnotations).click();
         cy.get('form').should('be.visible');
         modal.modalTitleShouldContain('Edit Annotations');
         break;
       }
       case pipelineActions.EditPipeline: {
-        cy.byTestActionID('Edit Pipeline').click();
+        cy.byTestActionID(pipelineActions.EditPipeline).click();
         cy.get('h1.odc-pipeline-builder-header__title').should('contain.text', 'Pipeline Builder');
         break;
       }
       case pipelineActions.DeletePipeline: {
-        cy.byTestActionID('Delete Pipeline').click();
+        cy.byTestActionID(pipelineActions.DeletePipeline).click();
         cy.get('form').should('be.visible');
         modal.modalTitleShouldContain('Delete Pipeline?');
         break;
@@ -91,6 +98,8 @@ export const pipelinesPage = {
       .should('be.visible')
       .clear()
       .type(pipelineName);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
   },
 
   search: (pipelineName: string) => {
@@ -116,14 +125,11 @@ export const pipelinesPage = {
 
   selectPipelineRun: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table, { timeout: 30000 }).should('exist');
-    cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
-      if ($el.text().includes(pipelineName)) {
-        cy.get(pipelinesPO.pipelinesTable.pipelineRunName)
-          .eq(index)
-          .click();
-        cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
-      }
-    });
+    const pipelineRowId = `[data-test-id="${Cypress.env('NAMESPACE')}-${pipelineName}"]`;
+    cy.get(pipelineRowId)
+      .find('td')
+      .eq(2)
+      .click();
   },
 
   verifyPipelinesTableDisplay: () => cy.get(pipelinesPO.pipelinesTable.table).should('be.visible'),
@@ -161,7 +167,7 @@ export const pipelinesPage = {
   },
 
   verifyLastRunStatusInPipelinesTable: (lastRunStatus: string) => {
-    cy.get('tbody td:nth-child(4) span span').should('have.text', lastRunStatus);
+    cy.get(pipelinesPO.pipelinesTable.lastRunStatus).should('have.text', lastRunStatus);
   },
 
   verifyOptionInKebabMenu: (option: string) => {

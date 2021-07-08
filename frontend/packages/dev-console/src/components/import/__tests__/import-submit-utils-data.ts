@@ -1,8 +1,8 @@
-import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { GitImportFormData, Resources } from '../import-types';
-import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { serverlessInitialValues } from '../__mocks__/serverless-mock';
+import { GitImportFormData, Resources } from '../import-types';
 
 export const mockPipelineTemplate: PipelineKind = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -590,24 +590,24 @@ export const defaultDevfileFormData: GitImportFormData = {
       enabled: false,
       modified: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: 'HTTP',
+          scheme: undefined,
           path: '/',
-          port: 8080,
+          port: '8080',
           httpHeaders: [],
         },
         tcpSocket: {
-          port: 8080,
+          port: '8080',
         },
         exec: {
           command: [''],
         },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
     livenessProbe: {
@@ -615,24 +615,24 @@ export const defaultDevfileFormData: GitImportFormData = {
       enabled: false,
       modified: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: 'HTTP',
+          scheme: undefined,
           path: '/',
-          port: 8080,
+          port: '8080',
           httpHeaders: [],
         },
         tcpSocket: {
-          port: 8080,
+          port: '8080',
         },
         exec: {
           command: [''],
         },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
     startupProbe: {
@@ -640,24 +640,24 @@ export const defaultDevfileFormData: GitImportFormData = {
       enabled: false,
       modified: false,
       data: {
-        failureThreshold: 3,
+        failureThreshold: '3',
         requestType: 'httpGet',
         httpGet: {
-          scheme: 'HTTP',
+          scheme: undefined,
           path: '/',
-          port: 8080,
+          port: '8080',
           httpHeaders: [],
         },
         tcpSocket: {
-          port: 8080,
+          port: '8080',
         },
         exec: {
           command: [''],
         },
-        initialDelaySeconds: 0,
-        periodSeconds: 10,
-        timeoutSeconds: 1,
-        successThreshold: 1,
+        initialDelaySeconds: '0',
+        periodSeconds: '10',
+        timeoutSeconds: '1',
+        successThreshold: '1',
       },
     },
   },

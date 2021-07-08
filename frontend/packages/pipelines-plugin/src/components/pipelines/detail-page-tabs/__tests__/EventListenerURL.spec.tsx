@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { ClipboardCopy } from '@patternfly/react-core';
-import EventListenerURL from '../EventListenerURL';
-import { useEventListenerURL } from '../../utils/triggers';
+import { shallow, ShallowWrapper } from 'enzyme';
 import {
   EventlistenerTestData,
   EventlistenerTypes,
 } from '../../../../test-data/event-listener-data';
+import { useEventListenerURL } from '../../utils/triggers';
+import EventListenerURL from '../EventListenerURL';
 
 jest.mock('../../utils/triggers', () => ({ useEventListenerURL: jest.fn<string | null>() }));
 

@@ -12,6 +12,7 @@ import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
 import { CloseButton } from '../utils/close-button';
+import i18next from 'i18next';
 
 export const createModal: CreateModal = (getModalContainer) => {
   const modalContainer = document.getElementById('modal-container');
@@ -120,7 +121,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
   cancelText,
   submitDisabled,
   submitDanger,
-  resetText = 'Reset',
+  resetText = i18next.t('public~Reset'),
   reset,
 }) => {
   const { t } = useTranslation();
@@ -147,7 +148,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
           variant="secondary"
           data-test-id="modal-cancel-action"
           onClick={onCancelClick}
-          aria-label="Cancel"
+          aria-label={t('public~Cancel')}
         >
           {cancelText || t('public~Cancel')}
         </Button>

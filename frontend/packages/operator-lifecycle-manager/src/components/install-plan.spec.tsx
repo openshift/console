@@ -1,8 +1,8 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { shallow, ShallowWrapper } from 'enzyme';
-import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
+import * as _ from 'lodash';
+import { Link } from 'react-router-dom';
 import {
   Table,
   MultiListPage,
@@ -35,11 +35,8 @@ import {
   InstallPlanDetails,
   InstallPlanDetailsProps,
 } from './install-plan';
-
 import * as modal from './modals/installplan-preview-modal';
-
 import { referenceForStepResource } from '.';
-
 import Spy = jasmine.Spy;
 
 jest.mock('react-i18next', () => {
@@ -99,13 +96,6 @@ describe('InstallPlanTableRow', () => {
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.metadata.name);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(0)
-        .find(ResourceLink)
-        .props().title,
-    ).toEqual(testInstallPlan.metadata.uid);
   });
 
   it('renders column for install plan namespace', () => {
@@ -116,20 +106,6 @@ describe('InstallPlanTableRow', () => {
         .find(ResourceLink)
         .props().kind,
     ).toEqual('Namespace');
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .find(ResourceLink)
-        .props().title,
-    ).toEqual(testInstallPlan.metadata.namespace);
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(1)
-        .find(ResourceLink)
-        .props().displayName,
-    ).toEqual(testInstallPlan.metadata.namespace);
   });
 
   it('renders column for install plan status', () => {

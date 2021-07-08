@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-
 import { Conditions } from '@console/internal/components/conditions';
 import { DetailsPage } from '@console/internal/components/factory';
 import {
@@ -15,9 +14,9 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
-
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import {
   getVmRestoreTime,
   getVmSnapshotVmName,
@@ -95,7 +94,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
   const { ns: namespace, name: snapshotName } = match.params;
 
   const resource: FirehoseResource = {
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
     prop: 'snapshot',
     isList: false,
     name: snapshotName,
@@ -144,7 +143,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
       match={match}
       name={snapshotName}
       namespace={namespace}
-      kind={VirtualMachineSnapshotModel.kind}
+      kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
       kindObj={VirtualMachineSnapshotModel}
       resources={[resource]}
       menuActions={menuActions}

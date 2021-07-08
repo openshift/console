@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
-const webpack = require('@cypress/webpack-preprocessor');
 const fs = require('fs');
-const deepmerge = require('deepmerge');
 const path = require('path');
+const webpack = require('@cypress/webpack-preprocessor');
+const deepmerge = require('deepmerge');
 
 module.exports = (on, config) => {
   const options = {

@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
-import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
-import { Resources } from '@console/dev-console/src/components/import/import-types';
-import { RequestType } from '@console/dev-console/src/components/health-checks/health-checks-types';
 import { healthChecksDefaultValues } from '@console/dev-console/src/components/health-checks/health-checks-probe-utils';
+import { RequestType } from '@console/dev-console/src/components/health-checks/health-checks-types';
+import { Resources } from '@console/dev-console/src/components/import/import-types';
+import { K8sResourceKind, ImagePullPolicy } from '@console/internal/module/k8s';
 import { getKnativeServiceDepResource } from '../create-knative-utils';
 import { defaultData } from './knative-serving-data';
 
@@ -63,7 +63,7 @@ describe('Create knative Utils', () => {
         'imgStream',
       );
       expect(
-        knDeploymentResource.metadata.labels['serving.knative.dev/visibility'],
+        knDeploymentResource.metadata.labels['networking.knative.dev/visibility'],
       ).toBeUndefined();
     });
 
@@ -73,8 +73,10 @@ describe('Create knative Utils', () => {
         defaultData,
         'imgStream',
       );
-      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toBeDefined();
-      expect(knDeploymentResource.metadata.labels['serving.knative.dev/visibility']).toEqual(
+      expect(
+        knDeploymentResource.metadata.labels['networking.knative.dev/visibility'],
+      ).toBeDefined();
+      expect(knDeploymentResource.metadata.labels['networking.knative.dev/visibility']).toEqual(
         'cluster-local',
       );
     });

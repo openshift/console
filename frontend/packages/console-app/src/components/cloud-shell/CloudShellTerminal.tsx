@@ -1,20 +1,26 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
+import { connect } from 'react-redux';
+import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
-import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
-import CloudshellExec from './CloudShellExec';
-import TerminalLoadingBox from './TerminalLoadingBox';
+import { RootState } from '@console/internal/redux';
+import {
+  useFlag,
+  withUserSettingsCompatibility,
+  WithUserSettingsCompatibilityProps,
+} from '@console/shared';
+import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
+import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 import { TerminalInitData, initTerminal } from './cloud-shell-utils';
-import useCloudShellWorkspace from './useCloudShellWorkspace';
+import CloudshellExec from './CloudShellExec';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
-
-import './CloudShellTerminal.scss';
 import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
 import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
-import { useAccessReview2 } from '@console/internal/components/utils/rbac';
+import TerminalLoadingBox from './TerminalLoadingBox';
+import useCloudShellWorkspace from './useCloudShellWorkspace';
+
+import './CloudShellTerminal.scss';
 
 type StateProps = {
   user: UserKind;
@@ -40,7 +46,14 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     verb: 'create',
     resource: 'pods',
   });
-  const [workspace, loaded, loadError] = useCloudShellWorkspace(user, isAdmin, namespace);
+  const isv1Alpha2Available = useFlag(FLAG_V1ALPHA2DEVWORKSPACE);
+  const workspaceModel = !isv1Alpha2Available ? v1alpha1WorkspaceModel : WorkspaceModel;
+  const [workspace, loaded, loadError] = useCloudShellWorkspace(
+    user,
+    isAdmin,
+    workspaceModel,
+    namespace,
+  );
 
   const workspacePhase = workspace?.status?.phase;
   const workspaceName = workspace?.metadata?.name;
@@ -76,7 +89,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         .catch((e) => {
           if (!unmounted) {
             const defaultError = t(
-              'cloudshell~Failed to connect to your OpenShift command line terminal',
+              'console-app~Failed to connect to your OpenShift command line terminal',
             );
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
               // eslint-disable-next-line promise/no-nesting
@@ -106,7 +119,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
       <StatusBox
         loaded={loaded}
         loadError={loadError}
-        label={t('cloudshell~OpenShift command line terminal')}
+        label={t('console-app~OpenShift command line terminal')}
       />
     );
   }
@@ -114,7 +127,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // failed to init the terminal
   if (initError) {
     return (
-      <LoadError message={initError} label={t('cloudshell~OpenShift command line terminal')} />
+      <LoadError message={initError} label={t('console-app~OpenShift command line terminal')} />
     );
   }
 
@@ -140,6 +153,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         container={initData.container}
         podname={initData.pod}
         shcommand={initData.cmd || []}
+        workspaceModel={workspaceModel}
       />
     );
   }
@@ -150,6 +164,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         onInitialize={(ns: string) => {
           setNamespace(ns);
         }}
+        workspaceModel={workspaceModel}
       />
     );
   }
@@ -157,6 +172,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // show the form to let the user create a new workspace
   return (
     <CloudShellDeveloperSetup
+      workspaceModel={workspaceModel}
       onCancel={onCancel}
       onSubmit={(ns: string) => {
         setNamespace(ns);

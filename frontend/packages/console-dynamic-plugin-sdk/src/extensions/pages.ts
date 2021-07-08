@@ -1,10 +1,11 @@
 import { RouteComponentProps } from 'react-router';
-import { ExtensionK8sModel } from '../api/common-types';
+import { ExtensionK8sGroupKindModel, ExtensionK8sModel } from '../api/common-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 type ResourcePageProperties = {
   /** The model for which this resource page links to. */
-  model: ExtensionK8sModel;
+  model: ExtensionK8sGroupKindModel;
+  /** The component to be rendered when the route matches. */
   component: CodeRef<
     React.ComponentType<{
       match: RouteComponentProps['match'];

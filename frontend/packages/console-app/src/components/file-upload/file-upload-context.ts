@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { AlertVariant } from '@patternfly/react-core';
-import { useToast } from '@console/shared/src/components/toast';
 import { FileUpload, isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { useToast } from '@console/shared/src/components/toast';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
 

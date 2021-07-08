@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
-import { useActiveNamespace, useToast, getOwnedResources } from '@console/shared';
+import { useTranslation } from 'react-i18next';
+import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { BuildConfigModel, BuildModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { history, resourcePathFromModel } from '@console/internal/components/utils';
+import { useActiveNamespace, useToast, getOwnedResources } from '@console/shared';
 
 export const useUploadJarFormToast = () => {
   const toast = useToast();

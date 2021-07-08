@@ -14,8 +14,8 @@
   &__column {
     flex: 1;
     padding-left: var(--pf-global--spacer--lg); /* gutter size */
-    background-clip: padding-box;
     margin-bottom: var(--pf-global--spacer--xl);
+    background-clip: content-box;
   }
 }
 

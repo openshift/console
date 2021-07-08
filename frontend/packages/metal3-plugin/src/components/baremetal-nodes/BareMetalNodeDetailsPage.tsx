@@ -1,19 +1,21 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { navFactory, FirehoseResource } from '@console/internal/components/utils';
-import { PodsPage } from '@console/internal/components/pod';
+import { useTranslation } from 'react-i18next';
+import NodeTerminal from '@console/app/src/components/nodes/NodeTerminal';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
-import { connectToPlural } from '@console/internal/kinds';
+import { PodsPage } from '@console/internal/components/pod';
 import { ResourceDetailsPageProps } from '@console/internal/components/resource-list';
+import { navFactory, FirehoseResource } from '@console/internal/components/utils';
+import { connectToPlural } from '@console/internal/kinds';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
+import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
+import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 import { BareMetalHostModel } from '../../models';
-import { menuActionsCreator } from './menu-actions';
 import BareMetalNodeDetails from './BareMetalNodeDetails';
 import BareMetalNodeDashboard from './dashboard/BareMetalNodeDashboard';
-import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { menuActionsCreator } from './menu-actions';
 
 const { editYaml, events, pods } = navFactory;
 
@@ -25,23 +27,34 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
   const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
 
-  const pages = [
-    {
-      href: '',
-      name: t('metal3-plugin~Overview'),
-      component: BareMetalNodeDashboard,
-    },
-    {
-      href: 'details',
-      name: t('metal3-plugin~Details'),
-      component: BareMetalNodeDetails,
-    },
-    editYaml(),
-    pods(({ obj }) => (
-      <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
-    )),
-    events(ResourceEventStream),
-  ];
+  const pagesFor = React.useCallback(
+    (node: NodeKind) => [
+      {
+        href: '',
+        name: t('metal3-plugin~Overview'),
+        component: BareMetalNodeDashboard,
+      },
+      {
+        href: 'details',
+        name: t('metal3-plugin~Details'),
+        component: BareMetalNodeDetails,
+      },
+      editYaml(),
+      pods(({ obj }) => (
+        <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
+      )),
+      events(ResourceEventStream),
+      ...(!_.some(
+        node?.metadata?.labels,
+        (v, k) =>
+          (k === 'node.openshift.io/os_id' && v === 'Windows') ||
+          (k === 'corev1.LabelOSStable' && v === 'windows'),
+      )
+        ? [{ href: 'terminal', name: t('metal3-plugin~Terminal'), component: NodeTerminal }]
+        : []),
+    ],
+    [t],
+  );
 
   const resources: FirehoseResource[] = [
     {
@@ -85,7 +98,7 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
         {...props}
         name={name}
         menuActions={menuActionsCreator}
-        pages={pages}
+        pagesFor={pagesFor}
         resources={resources}
         kind={modelRef}
         customData={{ hasNodeMaintenanceCapability, maintenanceModel, t }}

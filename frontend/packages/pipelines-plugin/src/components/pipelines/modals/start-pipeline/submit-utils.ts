@@ -1,6 +1,7 @@
 import { k8sCreate, K8sResourceCommon } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../../models';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
+import { VolumeTypes } from '../../const';
 import {
   createPipelineResource,
   createSecretResource,
@@ -9,7 +10,6 @@ import { CREATE_PIPELINE_RESOURCE } from '../common/const';
 import { PipelineModalFormResource } from '../common/types';
 import { getPipelineRunFromForm } from '../common/utils';
 import { StartPipelineFormValues } from './types';
-import { VolumeTypes } from '../../const';
 
 export const resourceSubmit = async (
   resourceValues: PipelineModalFormResource,

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 import { OutlinedWindowMinimizeIcon, OutlinedWindowRestoreIcon } from '@patternfly/react-icons';
+import { shallow } from 'enzyme';
 import MinimizeRestoreButton from '../MinimizeRestoreButton';
 
 describe('MinimizeRestoreButton', () => {

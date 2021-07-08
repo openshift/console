@@ -37,7 +37,7 @@ export const dataResiliencyQueryMap = {
   [ObjectServiceDashboardQuery.MCG_REBUILD_TIME_QUERY]: 'NooBaa_rebuild_time',
   [ObjectServiceDashboardQuery.RGW_REBUILD_PROGRESS_QUERY]: (rgwPrefix: string = '') =>
     _.template(
-      'sum(ceph_pool_metadata{name=~"<%= name %>"}*on (job, namesapce, pool_id) group_right(name) (ceph_pg_active and ceph_pg_clean)) / sum(ceph_pool_metadata{name=~"<%= name %>"} *on (job, namesapce, pool_id) group_right(name) ceph_pg_total)',
+      'sum(ceph_pool_metadata{name=~"<%= name %>"}*on (job, namespace, pool_id) group_right(name) (ceph_pg_active and ceph_pg_clean)) / sum(ceph_pool_metadata{name=~"<%= name %>"} *on (job, namespace, pool_id) group_right(name) ceph_pg_total)',
     )({
       name: rgwPrefix
         ? `${rgwPrefix}.rgw.*`
@@ -62,11 +62,11 @@ export const CAPACITY_BREAKDOWN_QUERIES = {
   [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: 'sum(NooBaa_providers_physical_size)',
   [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: (rgwPrefix: string = '') =>
     _.template(
-      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored) - max(NooBaa_providers_physical_size{type="S3_COMPATIBLE"} or vector(0))',
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namespace, pool_id) group_right(name) ceph_pool_stored) - max(NooBaa_providers_physical_size{type="S3_COMPATIBLE"} or vector(0))',
     )({ name: rgwPrefix ? `${rgwPrefix}.` : '.*' }),
   [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]: (rgwPrefix: string = '') =>
     _.template(
-      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored) + max(sum(NooBaa_providers_physical_size{type!="S3_COMPATIBLE"}) or vector(0))',
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namespace, pool_id) group_right(name) ceph_pool_stored) + max(sum(NooBaa_providers_physical_size{type!="S3_COMPATIBLE"}) or vector(0))',
     )({
       name: rgwPrefix ? `${rgwPrefix}.` : '.*',
     }),

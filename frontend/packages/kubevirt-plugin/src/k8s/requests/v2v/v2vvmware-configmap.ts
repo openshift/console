@@ -1,6 +1,5 @@
 import { ConfigMapModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
-
 import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,

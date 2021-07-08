@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
-
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import { getSimpleV2VPRoviderStatus, V2VProviderStatus } from '../../../../statuses/v2v';
 
 export const getVms = (providerCR: K8sResourceKind, defaultValue) =>

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
-import { Router } from 'react-router';
 import { Provider } from 'react-redux';
-import { StatusCapability } from '../types';
-import { DescriptorConditions } from './conditions';
-import { testResourceInstance } from '../../../../mocks';
+import { Router } from 'react-router';
 import { history, SectionHeading } from '@console/internal/components/utils';
 import store from '@console/internal/redux';
+import { testResourceInstance } from '../../../../mocks';
+import { StatusCapability } from '../types';
+import { DescriptorConditions } from './conditions';
 
 describe('Conditions descriptor', () => {
   it('Renders a conditions table for conditions status descriptor', () => {

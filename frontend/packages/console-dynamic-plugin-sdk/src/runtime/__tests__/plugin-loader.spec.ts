@@ -1,14 +1,14 @@
 import { Simulate } from 'react-dom/test-utils';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import * as pluginLoaderModule from '../plugin-loader';
-import * as pluginManifestModule from '../plugin-manifest';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ConsolePluginManifestJSON } from '../../schema/plugin-manifest';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
   getEntryModuleMocks,
 } from '../../utils/test-utils';
+import * as pluginLoaderModule from '../plugin-loader';
+import * as pluginManifestModule from '../plugin-manifest';
 
 const {
   scriptIDPrefix,
@@ -132,7 +132,7 @@ describe('loadDynamicPlugin', () => {
 
 describe('registerPluginEntryCallback', () => {
   it('adds loadPluginEntry function to window global object', () => {
-    const pluginStore = new PluginStore([]);
+    const pluginStore = new PluginStore();
     expect(window.loadPluginEntry).toBeUndefined();
 
     registerPluginEntryCallback(pluginStore);
@@ -142,7 +142,7 @@ describe('registerPluginEntryCallback', () => {
 
 describe('window.loadPluginEntry', () => {
   it('marks the plugin as loaded, resolves its extensions and adds it to plugin store', () => {
-    const pluginStore = new PluginStore([]);
+    const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
     const extensions: Extension[] = [
@@ -196,7 +196,7 @@ describe('window.loadPluginEntry', () => {
   });
 
   it('does nothing if the plugin ID is not registered', () => {
-    const pluginStore = new PluginStore([]);
+    const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
     const [, entryModule] = getEntryModuleMocks({});
@@ -218,7 +218,7 @@ describe('window.loadPluginEntry', () => {
   });
 
   it('does nothing if called a second time for the same plugin', () => {
-    const pluginStore = new PluginStore([]);
+    const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
     const manifest = getPluginManifest('Test', '1.2.3');
@@ -249,7 +249,7 @@ describe('window.loadPluginEntry', () => {
   });
 
   it('does nothing if overriding shared modules throws an error', () => {
-    const pluginStore = new PluginStore([]);
+    const pluginStore = new PluginStore();
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
     const manifest = getPluginManifest('Test', '1.2.3');
@@ -295,7 +295,7 @@ describe('loadAndEnablePlugin', () => {
   let setDynamicPluginEnabled: jest.SpyInstance<typeof pluginStore.setDynamicPluginEnabled>;
 
   beforeEach(() => {
-    pluginStore = new PluginStore([]);
+    pluginStore = new PluginStore();
     setDynamicPluginEnabled = jest.spyOn(pluginStore, 'setDynamicPluginEnabled');
     setDynamicPluginEnabled.mockImplementation(() => {});
   });
@@ -329,6 +329,6 @@ describe('loadAndEnablePlugin', () => {
     await loadAndEnablePlugin('Test', pluginStore, onError);
 
     expect(setDynamicPluginEnabled).not.toHaveBeenCalled();
-    expect(onError).toHaveBeenCalledWith(new Error('boom'));
+    expect(onError).toHaveBeenCalledWith();
   });
 });

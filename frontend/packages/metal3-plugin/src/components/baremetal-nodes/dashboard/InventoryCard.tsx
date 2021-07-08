@@ -1,19 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { NodeInventoryItem } from '@console/app/src/components/nodes/node-dashboard/InventoryCard';
+import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { PodModel, NodeModel } from '@console/internal/models';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { PodModel, NodeModel } from '@console/internal/models';
-import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
-import { NodeInventoryItem } from '@console/app/src/components/nodes/node-dashboard/InventoryCard';
-import { resourcePathFromModel } from '@console/internal/components/utils';
-
-import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
+import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 
 const InventoryCard: React.FC = () => {
   const { t } = useTranslation();

@@ -131,16 +131,16 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         onClick: cancel,
       },
       {
-        id: 'modal-confirm-action',
+        id: 'confirm-action',
         label: t(`ceph-storage-plugin~${primaryAction}`),
         type: ButtonType.submit,
         variant:
-          primaryAction === FooterPrimaryActions.DELETE
+          primaryAction === FooterPrimaryActions(t).DELETE
             ? ButtonVariant.danger
             : ButtonVariant.primary,
         onClick: onSubmit,
         disable:
-          primaryAction !== FooterPrimaryActions.DELETE &&
+          primaryAction !== FooterPrimaryActions(t).DELETE &&
           checkRequiredValues(
             state.poolName,
             state.replicaSize,
@@ -160,7 +160,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
             variant={buttonProp.variant}
             isDisabled={buttonProp.disable}
             id={buttonProp.id}
-            data-test={buttonProp.id}
+            data-test-id={buttonProp.id}
             onClick={buttonProp.onClick}
           >
             {buttonProp.label}
@@ -174,7 +174,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
 type BlockPoolModalFooterProps = {
   state: BlockPoolState;
   dispatch: React.Dispatch<BlockPoolAction>;
-  primaryAction: FooterPrimaryActions;
+  primaryAction: string;
   onSubmit: () => void;
   cancel: () => void;
   close: () => void;

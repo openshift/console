@@ -1,5 +1,4 @@
 import { k8sCreate } from '@console/internal/module/k8s';
-
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   TEMPLATE_OS_LABEL,

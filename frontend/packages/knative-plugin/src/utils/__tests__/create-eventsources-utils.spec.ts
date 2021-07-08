@@ -1,8 +1,9 @@
-import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
-import * as k8sModels from '@console/internal/module/k8s';
+import * as _ from 'lodash';
 import * as utils from '@console/internal/components/utils';
+import * as k8sModels from '@console/internal/module/k8s';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
+import { EventSourceFormData, EventSources } from '../../components/add/import-types';
 import {
   EventSourceCronJobModel,
   EventSourceSinkBindingModel,
@@ -10,6 +11,7 @@ import {
   EventSourceCamelModel,
   EventSourcePingModel,
 } from '../../models';
+import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 import {
   getBootstrapServers,
   loadYamlData,
@@ -22,8 +24,6 @@ import {
   getKafkaSourceResource,
 } from '../create-eventsources-utils';
 import { getDefaultEventingData, Kafkas } from './knative-serving-data';
-import { EventSourceFormData, EventSources } from '../../components/add/import-types';
-import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 
 describe('Create knative Utils', () => {
   it('should return bootstrapServers', () => {

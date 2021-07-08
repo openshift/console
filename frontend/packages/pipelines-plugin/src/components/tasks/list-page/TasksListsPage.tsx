@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
-import { Page } from '@console/internal/components/utils';
-import { MenuActions, MultiTabListPage } from '@console/shared';
-import { DefaultPage } from '@console/internal/components/default-resource';
-import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { DefaultPage } from '@console/internal/components/default-resource';
+import { Page } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { MenuActions, MultiTabListPage } from '@console/shared';
+import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
+import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 
 interface TasksListsPageProps {
   match: Rmatch<any>;

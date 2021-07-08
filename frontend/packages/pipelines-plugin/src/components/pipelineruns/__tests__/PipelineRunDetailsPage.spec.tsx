@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../models';
-import * as utils from '../triggered-by';
-import * as hookUtils from '../../pipelines/hooks';
-import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
-import PipelineRunEvents from '../events/PipelineRunEvents';
+import * as hookUtils from '../../pipelines/hooks';
 import TaskRuns from '../detail-page-tabs/TaskRuns';
+import PipelineRunEvents from '../events/PipelineRunEvents';
+import PipelineRunDetailsPage from '../PipelineRunDetailsPage';
+import * as utils from '../triggered-by';
 
 const menuActions = jest.spyOn(utils, 'useMenuActionsWithUserAnnotation');
 const breadCrumbs = jest.spyOn(hookUtils, 'usePipelinesBreadcrumbsFor');

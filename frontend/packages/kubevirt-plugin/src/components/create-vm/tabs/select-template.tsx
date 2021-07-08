@@ -1,12 +1,4 @@
-import * as classnames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
-import { ProjectModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { FLAGS, VirtualizedGrid } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
   Alert,
@@ -30,7 +22,15 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
+import * as classnames from 'classnames';
+import * as fuzzy from 'fuzzysearch';
+import { Trans, useTranslation } from 'react-i18next';
 import { createProjectModal } from '@console/internal/components/modals';
+import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
+import { ProjectModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { FLAGS, VirtualizedGrid } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import {
@@ -41,7 +41,6 @@ import {
   getTemplateName,
   getTemplateProvider,
   getTemplateProviderType,
-  isLabeledTemplate,
   templateProviders,
 } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
@@ -49,9 +48,9 @@ import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/t
 import { V1alpha1DataVolume } from '../../../types/api';
 import { TemplateItem } from '../../../types/template';
 import { FormPFSelect } from '../../form/form-pf-select';
-import { VMTemplateLabel } from '../../vm-templates/label';
 import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
 import { TemplateSource } from '../../vm-templates/vm-template-source';
+import { VMTemplateCommnunityLabel } from '../../vm-templates/VMTemplateCommnunityLabel';
 import VMTemplateSupport from '../../vm-templates/VMTemplateSupport';
 import { useVmTemplatesFilters } from '../hooks/use-vm-templates-filters';
 
@@ -89,12 +88,7 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         'pf-m-selectable pf-m-selected': isSelected,
       })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
-      badges={[
-        isLabeledTemplate(t, template) && (
-          <VMTemplateLabel template={template} className="kv-select-template__support-label" />
-        ),
-        isPinned && <PinnedIcon />,
-      ]}
+      badges={[<VMTemplateCommnunityLabel template={template} />, isPinned && <PinnedIcon />]}
       title={
         <Stack>
           <StackItem>

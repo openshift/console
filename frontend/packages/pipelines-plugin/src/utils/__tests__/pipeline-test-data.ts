@@ -1,8 +1,8 @@
-import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
-import { PipelineKind } from '../../types';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
+import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
+import { PipelineKind } from '../../types';
 
 export const mockPipelinesJSON: PipelineKind[] = [
   {

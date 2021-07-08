@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
@@ -248,10 +249,11 @@ export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = (
   serviceClass,
   iconSize,
 }) => {
+  const { t } = useTranslation();
   const iconClass = getServiceClassIcon(serviceClass);
   const imageUrl = getServiceClassImage(serviceClass);
   return (
-    <span className="co-catalog-item-icon">
+    <span className="co-catalog-item-icon" aria-hidden>
       {imageUrl ? (
         <img
           className={classNames(
@@ -259,6 +261,7 @@ export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = (
             iconSize && `co-catalog-item-icon__img--${iconSize}`,
           )}
           src={imageUrl}
+          alt={t('public~Icon')}
         />
       ) : (
         <span
@@ -280,10 +283,11 @@ export type ClusterServiceClassIconProps = {
 };
 
 export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize }) => {
+  const { t } = useTranslation();
   const iconClass = getImageStreamIcon(tag);
   const iconClassImg = getImageForIconClass(iconClass);
   return (
-    <span className="co-catalog-item-icon">
+    <span className="co-catalog-item-icon" aria-hidden>
       {iconClassImg ? (
         <img
           className={classNames(
@@ -291,6 +295,7 @@ export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize 
             iconSize && `co-catalog-item-icon__img--${iconSize}`,
           )}
           src={iconClassImg}
+          alt={t('public~Icon')}
         />
       ) : (
         <span

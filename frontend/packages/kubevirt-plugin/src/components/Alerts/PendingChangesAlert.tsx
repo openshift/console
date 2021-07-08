@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Alert, AlertVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import './PendingChangesAlert.scss';
 

@@ -1,5 +1,4 @@
 import { $, $$, by, element } from 'protractor';
-
 import { K8sKind } from '@console/internal/module/k8s/types';
 import { click } from '@console/shared/src/test-utils/utils';
 

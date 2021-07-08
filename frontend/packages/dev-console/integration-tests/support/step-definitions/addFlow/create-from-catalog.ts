@@ -1,8 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { addPage, catalogPage, gitPage } from '../../pages';
 import { addOptions, pageTitle } from '../../constants';
 import { catalogPO } from '../../pageObjects';
+import { addPage, catalogPage, gitPage } from '../../pages';
 
 When('user selects From Catalog card from add page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);

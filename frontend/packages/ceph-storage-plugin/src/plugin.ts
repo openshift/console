@@ -3,7 +3,6 @@ import {
   ClusterServiceVersionAction,
   DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
-  DashboardsOverviewUtilizationItem,
   DashboardsTab,
   HorizontalNavTab,
   ModelDefinition,
@@ -49,7 +48,6 @@ type ConsumedExtensions =
   | DashboardsTab
   | DashboardsCard
   | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
-  | DashboardsOverviewUtilizationItem
   | RoutePage
   | CustomFeatureFlag
   | ClusterServiceVersionAction
@@ -323,7 +321,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'edit',
       kind: models.CephBlockPoolModel.kind,
-      label: '%ceph-storage-plugin~Edit Block Pool%',
+      label: '%ceph-storage-plugin~Edit BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
         const props = { kind, blockPoolConfig: obj };
@@ -763,7 +761,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'delete',
       kind: models.CephBlockPoolModel.kind,
-      label: '%ceph-storage-plugin~Delete Block Pool%',
+      label: '%ceph-storage-plugin~Delete BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
         const props = { kind, blockPoolConfig: obj };

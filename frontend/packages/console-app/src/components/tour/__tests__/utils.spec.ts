@@ -1,6 +1,6 @@
+import { FeatureState } from '@console/internal/reducers/features';
 import { Step } from '../type';
 import { filterTourBasedonPermissionAndFlag } from '../utils';
-import { FeatureState } from '@console/internal/reducers/features';
 
 describe('guided-tour-utils', () => {
   it('should return steps that has access true', () => {

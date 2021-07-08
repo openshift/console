@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Edge, isNode, Node } from '@patternfly/react-topology';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { Edge, isNode, Node } from '@patternfly/react-topology';
 import { ActionsMenu } from '@console/internal/components/utils';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import { edgeActions } from '../../actions/edgeActions';
+import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../../const';
 import TopologyEdgeResourcesPanel from './TopologyEdgeResourcesPanel';
 
 type TopologyEdgePanelProps = {

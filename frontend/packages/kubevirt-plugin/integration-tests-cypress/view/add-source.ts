@@ -1,5 +1,5 @@
-import { ProvisionSource } from '../enums/provisionSource';
 import { TEST_PROVIDER } from '../const';
+import { ProvisionSource } from '../enums/provisionSource';
 
 export const provisionSourceInputs = {
   [ProvisionSource.URL.getValue()]: 'input[id="provision-source-url"]',

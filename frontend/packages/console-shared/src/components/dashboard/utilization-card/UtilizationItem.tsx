@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { Humanize } from '@console/internal/components/utils/types';
+import { useTranslation } from 'react-i18next';
+import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import {
   AreaChart,
   AreaChartStatus,
   chartStatusColors,
 } from '@console/internal/components/graphs/area';
-import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
-import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
+import { Humanize } from '@console/internal/components/utils/types';
+import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
   ColoredIconProps,
 } from '../../status';
-import { useTranslation } from 'react-i18next';
 
 export enum LIMIT_STATE {
   ERROR = 'ERROR',

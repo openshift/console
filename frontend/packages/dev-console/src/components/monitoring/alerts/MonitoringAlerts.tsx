@@ -1,24 +1,24 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
+import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
-import { FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
+import { getFilteredRows } from '@console/internal/components/factory';
+import { FilterToolbar } from '@console/internal/components/filter-toolbar';
+import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { Rule } from '@console/internal/components/monitoring/types';
 import {
   alertingRuleStateOrder,
   getAlertsAndRules,
 } from '@console/internal/components/monitoring/utils';
-import { RootState } from '@console/internal/redux';
 import { getURLSearchParams, EmptyBox, LoadingBox } from '@console/internal/components/utils';
-import { getFilteredRows } from '@console/internal/components/factory';
-import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
+import { RootState } from '@console/internal/redux';
 import { monitoringAlertRows, alertFilters, applyListSort } from './monitoring-alerts-utils';
 import { MonitoringAlertColumn } from './MonitoringAlertColumn';
 

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
 import {
   PageHeading,
   skeletonCatalog,
@@ -10,13 +11,12 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
 import { useQueryParams } from '@console/shared';
-
-import { CatalogService } from './service/CatalogServiceProvider';
 import CatalogView from './catalog-view/CatalogView';
-import CatalogDetailsModal from './details/CatalogDetailsModal';
 import CatalogTile from './CatalogTile';
+import CatalogDetailsModal from './details/CatalogDetailsModal';
+import { CatalogService } from './service/CatalogServiceProvider';
+import { getURLWithParams } from './utils/catalog-utils';
 import { determineAvailableFilters } from './utils/filter-utils';
 import {
   CatalogCategory,
@@ -156,7 +156,11 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
             ? () => item.cta.callback()
             : null
         }
-        href={!enableDetailsPanel ? item.cta?.href : null}
+        href={
+          !enableDetailsPanel
+            ? item.cta?.href
+            : getURLWithParams(CatalogQueryParams.SELECTED_ID, item.uid)
+        }
       />
     ),
     [catalogTypes, openDetailsPanel, enableDetailsPanel],

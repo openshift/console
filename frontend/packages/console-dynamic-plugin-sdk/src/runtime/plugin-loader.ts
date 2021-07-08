@@ -2,10 +2,10 @@
 
 import * as _ from 'lodash';
 import { PluginStore } from '@console/plugin-sdk/src/store';
-import { overrideSharedModules } from '../shared-modules';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { resolveEncodedCodeRefs } from '../coderefs/coderef-resolver';
 import { remoteEntryFile } from '../constants';
+import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
+import { overrideSharedModules } from '../shared-modules';
 import { RemoteEntryModule } from '../types';
 import { resolveURL } from '../utils/url';
 import { fetchPluginManifest } from './plugin-manifest';
@@ -93,7 +93,10 @@ export const getPluginEntryCallback = (
     pluginData.manifest.extensions,
     entryModule,
     pluginID,
-    () => pluginStore.setDynamicPluginEnabled(pluginID, false),
+    () => {
+      console.error(`Code reference resolution failed for plugin ${pluginID}`);
+      pluginStore.setDynamicPluginEnabled(pluginID, false);
+    },
   );
 
   pluginStore.addDynamicPlugin(pluginID, pluginData.manifest, resolvedExtensions);
@@ -115,7 +118,7 @@ export const loadPluginFromURL = async (baseURL: string) => {
 export const loadAndEnablePlugin = async (
   pluginName: string,
   pluginStore: PluginStore,
-  onError: (error: any) => void = _.noop,
+  onError: VoidFunction = _.noop,
 ) => {
   const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}/`;
 
@@ -123,8 +126,8 @@ export const loadAndEnablePlugin = async (
     const pluginID = await loadPluginFromURL(url);
     pluginStore.setDynamicPluginEnabled(pluginID, true);
   } catch (e) {
-    onError(e);
     console.error(`Error while loading plugin from ${url}`, e);
+    onError();
   }
 };
 

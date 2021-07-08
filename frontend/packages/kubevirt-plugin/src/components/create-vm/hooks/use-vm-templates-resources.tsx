@@ -1,9 +1,7 @@
 import * as React from 'react';
-
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-
 import {
   CDI_APP_LABEL,
   TEMPLATE_TYPE_BASE,
@@ -12,6 +10,7 @@ import {
 } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { DataVolumeModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { V1alpha1DataVolume } from '../../../types/api';
 
 export const useVmTemplatesResources = (namespace: string): useVmTemplatesResourcesValues => {
@@ -40,7 +39,7 @@ export const useVmTemplatesResources = (namespace: string): useVmTemplatesResour
     },
   });
   const [dvs, dvsLoaded, dvsError] = useK8sWatchResource<V1alpha1DataVolume[]>({
-    kind: DataVolumeModel.kind,
+    kind: kubevirtReferenceForModel(DataVolumeModel),
     namespace,
     isList: true,
   });

@@ -1,19 +1,20 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
-import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import { Accordion } from '@patternfly/react-core';
-import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
-import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { AsyncComponent } from '@console/internal/components/utils/async';
-import { FirehoseResult } from '@console/internal/components/utils/types';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+import { AsyncComponent } from '@console/internal/components/utils/async';
+import { Timestamp } from '@console/internal/components/utils/timestamp';
+import { FirehoseResult } from '@console/internal/components/utils/types';
+import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
+import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
 import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
+
 import './activity-card.scss';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 
 export const Activity: React.FC<ActivityProps> = ({ timestamp, children }) => {
   const { t } = useTranslation();
@@ -165,18 +166,28 @@ export const OngoingActivityBody: React.FC<OngoingActivityBodyProps> = ({
       </div>
     );
   } else {
-    const allActivities = prometheusActivities.map(({ results, loader }, idx) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <Activity key={idx}>
-        <AsyncComponent loader={loader} results={results} />
-      </Activity>
-    ));
+    const allActivities = prometheusActivities.map(
+      ({ results, loader, component: Component }, idx) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <Activity key={idx}>
+          {loader ? (
+            <AsyncComponent loader={loader} results={results} />
+          ) : (
+            <Component results={results} />
+          )}
+        </Activity>
+      ),
+    );
     resourceActivities
       .sort((a, b) => +b.timestamp - +a.timestamp)
-      .forEach(({ resource, timestamp, loader }) =>
+      .forEach(({ resource, timestamp, loader, component: Component }) =>
         allActivities.push(
           <Activity key={resource.metadata.uid} timestamp={timestamp}>
-            <AsyncComponent loader={loader} resource={resource} />
+            {loader ? (
+              <AsyncComponent loader={loader} resource={resource} />
+            ) : (
+              <Component resource={resource} />
+            )}
           </Activity>,
         ),
       );
@@ -218,11 +229,13 @@ type OngoingActivityBodyProps = {
   resourceActivities?: {
     resource: K8sResourceKind;
     timestamp: Date;
-    loader: LazyLoader<K8sActivityProps>;
+    loader?: LazyLoader<K8sActivityProps>;
+    component?: React.ComponentType<K8sActivityProps>;
   }[];
   prometheusActivities?: {
     results: PrometheusResponse[];
-    loader: LazyLoader<PrometheusActivityProps>;
+    loader?: LazyLoader<PrometheusActivityProps>;
+    component?: React.ComponentType<PrometheusActivityProps>;
   }[];
   loaded: boolean;
 };

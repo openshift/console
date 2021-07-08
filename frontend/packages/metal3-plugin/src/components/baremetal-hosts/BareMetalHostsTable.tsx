@@ -1,10 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
-import { getName, getUID, getNamespace, DASH } from '@console/shared';
+import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import {
   TableRow,
   TableData,
@@ -12,26 +9,28 @@ import {
   RowFunction,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { getName, getUID, getNamespace, DASH } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { BareMetalHostBundle } from '../types';
-import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
-import { BareMetalHostModel } from '../../models';
-import NodeLink from './NodeLink';
-import BareMetalHostStatus from './BareMetalHostStatus';
-import BareMetalHostRole from './BareMetalHostRole';
-import { menuActions } from './host-menu-actions';
-import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
 import { BMO_ENABLED_FLAG } from '../../features';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
+import { BareMetalHostModel } from '../../models';
+import { getHostBMCAddress, getHostVendorInfo } from '../../selectors';
+import { BareMetalHostBundle } from '../types';
+import BareMetalHostRole from './BareMetalHostRole';
+import BareMetalHostSecondaryStatus from './BareMetalHostSecondaryStatus';
+import BareMetalHostStatus from './BareMetalHostStatus';
+import { menuActions } from './host-menu-actions';
+import NodeLink from './NodeLink';
 
 const tableColumnClasses = {
-  name: classNames('col-lg-2', 'col-md-4', 'col-sm-12', 'col-xs-12'),
-  status: classNames('col-lg-2', 'col-md-4', 'col-sm-6', 'hidden-xs'),
-  node: classNames('col-lg-2', 'col-md-4', 'hidden-sm', 'hidden-xs'),
-  role: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  address: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  serialNumber: classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  name: '',
+  status: 'pf-m-hidden pf-m-visible-on-sm',
+  node: 'pf-m-hidden pf-m-visible-on-md',
+  role: 'pf-m-hidden pf-m-visible-on-lg',
+  address: 'pf-m-hidden pf-m-visible-on-lg',
+  serialNumber: 'pf-m-hidden pf-m-visible-on-lg',
   kebab: Kebab.columnClass,
 };
 

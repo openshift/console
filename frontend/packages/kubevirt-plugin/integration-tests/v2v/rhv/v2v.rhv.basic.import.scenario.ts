@@ -4,7 +4,6 @@ import {
   removeLeakedResources,
   withResource,
 } from '@console/shared/src/test-utils/utils';
-
 import { multusNAD, v2vUIDeployment } from '../../tests/mocks/mocks';
 import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
 import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';

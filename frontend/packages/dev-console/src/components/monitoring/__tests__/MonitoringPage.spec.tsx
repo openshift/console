@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as utils from '@console/internal/components/utils';
-import { PageContents } from '../MonitoringPage';
 import CreateProjectListPage from '../../projects/CreateProjectListPage';
+import { PageContents } from '../MonitoringPage';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

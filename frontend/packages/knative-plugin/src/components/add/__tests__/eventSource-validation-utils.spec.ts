@@ -1,7 +1,7 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { eventSourceValidationSchema } from '../eventSource-validation-utils';
+import * as _ from 'lodash';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
+import { eventSourceValidationSchema } from '../eventSource-validation-utils';
 import { EventSources } from '../import-types';
 
 const t = (key): TFunction => key;

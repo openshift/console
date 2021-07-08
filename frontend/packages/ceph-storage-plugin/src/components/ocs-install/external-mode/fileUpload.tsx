@@ -3,7 +3,7 @@ import { Button } from '@patternfly/react-core';
 import './fileUpload.scss';
 
 const FileUpload: React.FC<FileUploadProps> = (props) => {
-  const { onUpload } = props;
+  const { onUpload, role } = props;
 
   return (
     <div className="upload-component">
@@ -17,6 +17,7 @@ const FileUpload: React.FC<FileUploadProps> = (props) => {
           className="upload-btn__input"
           onChange={onUpload}
           aria-label="Upload File"
+          role={role}
         />
       </div>
     </div>
@@ -25,6 +26,7 @@ const FileUpload: React.FC<FileUploadProps> = (props) => {
 
 type FileUploadProps = {
   onUpload: (param: React.ChangeEvent<HTMLInputElement>) => void;
+  role: string;
 };
 
 export default FileUpload;

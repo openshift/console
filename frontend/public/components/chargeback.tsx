@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { match as RMatch } from 'react-router-dom';
 
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '@console/shared';
@@ -59,11 +60,11 @@ const ChargebackNavBar: React.SFC<{ match: { url: string; path: string } }> = (p
 );
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-2', 'col-md-3', 'col-xs-4'),
-  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-xl',
+  '',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-25-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -113,16 +114,10 @@ const ReportsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style 
           kind={ReportReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          namespace={undefined}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <ResourceLink
@@ -507,16 +502,10 @@ const ReportGenerationQueriesTableRow: RowFunction<K8sResourceKind> = ({
           kind={ReportGenerationQueryReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
         />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          namespace={undefined}
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} />
       </TableData>
       <TableData className={reportsGenerationColumnClasses[2]}>
         <LabelList
@@ -654,10 +643,10 @@ export type DataTableRowsProps = {
 export type ReportsPageProps = {
   filterLabel: string;
   flags: { [_: string]: boolean };
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportsDetailsPageProps = {
@@ -674,10 +663,10 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string;
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {

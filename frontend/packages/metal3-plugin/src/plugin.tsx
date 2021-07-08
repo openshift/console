@@ -1,6 +1,9 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import { MaintenanceIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import '@console/internal/i18n.js';
+import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
@@ -13,17 +16,11 @@ import {
   DashboardsOverviewInventoryItemReplacement,
   DashboardsInventoryItemGroup,
   CustomFeatureFlag,
-  ResourceTabPage,
+  HorizontalNavTab,
 } from '@console/plugin-sdk';
-import '@console/internal/i18n.js';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
-import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
-import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
-import { BareMetalHostKind } from './types';
 import {
   detectBaremetalPlatform,
   BAREMETAL_FLAG,
@@ -31,6 +28,9 @@ import {
   detectBMOEnabled,
   NODE_MAINTENANCE_OLD_FLAG,
 } from './features';
+import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
+import { getHostPowerStatus, hasPowerManagement } from './selectors';
+import { BareMetalHostKind } from './types';
 
 type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
@@ -43,7 +43,7 @@ type ConsumedExtensions =
   | ModelDefinition
   | CustomFeatureFlag
   | DashboardsOverviewResourceActivity
-  | ResourceTabPage;
+  | HorizontalNavTab;
 
 const METAL3_FLAG = 'METAL3';
 
@@ -292,12 +292,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Tab',
+    type: 'HorizontalNavTab',
     properties: {
-      href: 'nics',
+      page: {
+        href: 'nics',
+        name: '%metal3-plugin~Network Interfaces%',
+      },
       model: NodeModel,
-      // t('metal3-plugin~Network Interfaces')
-      name: '%metal3-plugin~Network Interfaces%',
       loader: () =>
         import('./components/baremetal-nodes/NICsPage').then(
           (m) => m.default,
@@ -308,12 +309,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Tab',
+    type: 'HorizontalNavTab',
     properties: {
-      href: 'disks',
+      page: {
+        href: 'disks',
+        name: '%metal3-plugin~Disks%',
+      },
       model: NodeModel,
-      // t('metal3-plugin~Disks')
-      name: '%metal3-plugin~Disks%',
       loader: () =>
         import('./components/baremetal-nodes/DisksPage').then(
           (m) => m.default,
@@ -321,6 +323,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [BAREMETAL_FLAG, METAL3_FLAG],
+      disallowed: ['LSO_DEVICE_DISCOVERY'],
     },
   },
 ];

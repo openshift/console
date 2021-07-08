@@ -1,33 +1,36 @@
-@import "~xterm/css/xterm.css";
+@import '~xterm/css/xterm.css';
 
 $console-z-index: $zindex-navbar-fixed + 20;
 $console-collapse-link-z-index: $console-z-index + 20;
 
-.console > .terminal {
+.co-terminal > .terminal {
   color: $color-pf-white;
   padding: 10px;
   background-color: $color-pf-black;
 }
 
-.console > .terminal.fullscreen {
+.co-terminal > .terminal.fullscreen {
   z-index: $console-z-index; // in fullscreen mode, to get above $zindex-navbar-fixed
 }
 
-.console {
+.co-terminal {
   width: 100%;
   height: 100%;
   padding: 0;
   background-color: $color-pf-black;
   position: relative;
+  > .terminal {
+    height: 100%;
+  }
 }
 
-.console-collapse-link.pf-c-button {
-  background:rgba(0, 0, 0, 0.75) !important;
+.co-terminal-collapse-link.pf-c-button {
+  background: rgba(0, 0, 0, 0.75) !important;
   color: $color-pf-blue-300;
   position: fixed;
   right: 18px;
   top: 4px;
-  z-index: $console-collapse-link-z-index;  // in fullscreen mode, to get above console's z-index
+  z-index: $console-collapse-link-z-index; // in fullscreen mode, to get above console's z-index
 }
 
 .default-overflow {

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { checkErrors } from '../../../integration-tests-cypress/support';
+import { modal } from '../../../integration-tests-cypress/views/modal';
 import { CLUSTER_STATUS } from '../../integration-tests/utils/consts';
 import {
   createOSDTreeMap,

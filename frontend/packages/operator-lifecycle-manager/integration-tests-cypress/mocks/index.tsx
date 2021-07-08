@@ -75,7 +75,7 @@ const prefixedCapabilities = new Set([
 ]);
 
 export const testCRD = {
-  apiVersion: 'apiextensions.k8s.io/v1beta1',
+  apiVersion: 'apiextensions.k8s.io/v1',
   kind: 'CustomResourceDefinition',
   metadata: {
     name: 'apps.test.tectonic.com',
@@ -83,7 +83,6 @@ export const testCRD = {
   },
   spec: {
     group: 'test.tectonic.com',
-    version: 'v1',
     scope: 'Namespaced',
     names: {
       plural: 'apps',
@@ -91,61 +90,72 @@ export const testCRD = {
       kind: 'App',
       listKind: 'Apps',
     },
-    validation: {
-      openAPIV3Schema: {
-        properties: {
-          spec: {
+    versions: [
+      {
+        name: 'v1',
+        subresources: {
+          status: {},
+        },
+        served: true,
+        storage: true,
+        schema: {
+          openAPIV3Schema: {
             type: 'object',
-            required: ['password', 'select'],
             properties: {
-              password: {
-                type: 'string',
-                minLength: 1,
-                maxLength: 25,
-                pattern: '^[a-zA-Z0-9._\\-%]*$',
-              },
-              number: {
-                type: 'integer',
-                minimum: 2,
-                maximum: 4,
-              },
-              select: {
-                type: 'string',
-                title: 'Select',
-                enum: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'],
-              },
-              fieldGroup: {
+              spec: {
                 type: 'object',
+                required: ['password', 'select'],
                 properties: {
-                  itemOne: {
+                  password: {
                     type: 'string',
+                    minLength: 1,
+                    maxLength: 25,
+                    pattern: '^[a-zA-Z0-9._\\-%]*$',
                   },
-                  itemTwo: {
+                  number: {
                     type: 'integer',
+                    minimum: 2,
+                    maximum: 4,
                   },
-                },
-              },
-              arrayFieldGroup: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    itemOne: {
-                      title: 'Item One',
-                      type: 'string',
-                    },
-                    itemTwo: {
-                      title: 'Item Two',
-                      type: 'integer',
-                    },
+                  select: {
+                    type: 'string',
+                    title: 'Select',
+                    enum: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'],
                   },
-                },
-              },
-              hiddenFieldGroup: {
-                type: 'object',
-                properties: {
-                  hiddenItem: {
+                  fieldGroup: {
                     type: 'object',
+                    properties: {
+                      itemOne: {
+                        type: 'string',
+                      },
+                      itemTwo: {
+                        type: 'integer',
+                      },
+                    },
+                  },
+                  arrayFieldGroup: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        itemOne: {
+                          title: 'Item One',
+                          type: 'string',
+                        },
+                        itemTwo: {
+                          title: 'Item Two',
+                          type: 'integer',
+                        },
+                      },
+                    },
+                  },
+                  hiddenFieldGroup: {
+                    type: 'object',
+                    properties: {
+                      hiddenItem: {
+                        type: 'object',
+                      },
+                    },
                   },
                 },
               },
@@ -153,12 +163,12 @@ export const testCRD = {
           },
         },
       },
-    },
+    ],
   },
 };
 
 export const testCR = {
-  apiVersion: `${testCRD.spec.group}/${testCRD.spec.version}`,
+  apiVersion: `${testCRD.spec.group}/${testCRD.spec.versions[0].name}`,
   kind: testCRD.spec.names.kind,
   metadata: {
     name: 'olm-descriptors-test',
@@ -251,7 +261,7 @@ export const testCSV = {
       owned: [
         {
           name: testCRD.metadata.name,
-          version: testCRD.spec.version,
+          version: testCRD.spec.versions[0].name,
           kind: testCRD.spec.names.kind,
           displayName: testCRD.spec.names.kind,
           description: 'Application instance for testing descriptors',

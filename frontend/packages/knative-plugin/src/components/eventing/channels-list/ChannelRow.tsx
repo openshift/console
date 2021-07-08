@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
 import { NamespaceModel } from '@console/internal/models';
-import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
+import { referenceFor } from '@console/internal/module/k8s';
 import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
+import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) => {
   const {

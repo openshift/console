@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-
 import { GettingStartedGrid } from '../GettingStartedGrid';
 
 jest.mock('react', () => ({

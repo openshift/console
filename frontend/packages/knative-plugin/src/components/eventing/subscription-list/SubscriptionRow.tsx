@@ -3,8 +3,8 @@ import { TableRow, TableData, RowFunction } from '@console/internal/components/f
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { EventingSubscriptionModel } from '../../../models';
-import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { EventSubscriptionKind, SubscriptionConditionTypes } from '../../../types';
+import { getConditionString, getCondition } from '../../../utils/condition-utils';
 import { tableColumnClasses } from './subscription-table';
 
 type SubscriptionRowType = {

@@ -7,7 +7,7 @@ Feature: Actions on Helm release in topology page
 
 
         @smoke
-        Scenario: Open Side Bar for the Helm release: HR-10-TC01, HR-10-TC02
+        Scenario: Open Side Bar for the Helm release: HR-07-TC01
             Given helm release "nodejs-ex-k" is present in topology page
              When user clicks on the helm release "nodejs-ex-k"
              Then user will see the sidebar for the helm release
@@ -15,7 +15,7 @@ Feature: Actions on Helm release in topology page
 
 
         @regression
-        Scenario: Deployment Configs link on the sidebar for the Helm Release: HR-10-TC03
+        Scenario: Deployment Configs link on the sidebar for the Helm Release: HR-07-TC02
             Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-ex-k"
              When user switches to the "Resources" tab
@@ -24,7 +24,7 @@ Feature: Actions on Helm release in topology page
 
 
         @regression
-        Scenario: Build Configs link on the sidebar for the Helm Release: HR-10-TC04
+        Scenario: Build Configs link on the sidebar for the Helm Release: HR-07-TC03
             Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-ex-k"
              When user switches to the "Resources" tab
@@ -33,7 +33,7 @@ Feature: Actions on Helm release in topology page
 
 
         @regression
-        Scenario: Services link on the sidebar for the Helm Release: HR-10-TC05
+        Scenario: Services link on the sidebar for the Helm Release: HR-07-TC04
             Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-ex-k"
              When user switches to the "Resources" tab
@@ -42,7 +42,7 @@ Feature: Actions on Helm release in topology page
 
 
         @regression
-        Scenario: Image Streams link on the sidebar for the Helm Release: HR-10-TC06
+        Scenario: Image Streams link on the sidebar for the Helm Release: HR-07-TC05
             Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-ex-k"
              When user switches to the "Resources" tab
@@ -51,7 +51,7 @@ Feature: Actions on Helm release in topology page
 
 
         @regression
-        Scenario: Routes link on the sidebar for the Helm Release: HR-10-TC07
+        Scenario: Routes link on the sidebar for the Helm Release: HR-07-TC06
             Given user is at the Topology page
               And user is on the topology sidebar of the helm release "nodejs-ex-k"
              When user switches to the "Resources" tab

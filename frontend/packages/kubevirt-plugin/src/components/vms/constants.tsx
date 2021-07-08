@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { K8sResourceCommon } from '@console/internal/module/k8s/types';
 import { getName, getNamespace } from '@console/shared';
 

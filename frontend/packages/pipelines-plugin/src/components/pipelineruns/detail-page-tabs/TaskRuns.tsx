@@ -1,6 +1,6 @@
 import * as React from 'react';
-import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import { TaskRunKind } from '../../../types';
+import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 
 interface TaskRunsProps {
   obj: TaskRunKind;
@@ -9,7 +9,7 @@ interface TaskRunsProps {
 const TaskRuns: React.FC<TaskRunsProps> = ({ obj }) => (
   <TaskRunsListPage
     showTitle={false}
-    selector={{ 'tekton.dev/pipelineRun': obj.metadata.name }}
+    selector={{ matchLabels: { 'tekton.dev/pipelineRun': obj.metadata.name } }}
     showPipelineColumn={false}
     namespace={obj.metadata.namespace}
     hideBadge

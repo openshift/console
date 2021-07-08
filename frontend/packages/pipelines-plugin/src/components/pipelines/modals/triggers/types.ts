@@ -1,6 +1,6 @@
 import { FormikValues } from 'formik';
-import { CommonPipelineModalFormikValues } from '../common/types';
 import { TriggerBindingKind } from '../../resource-types';
+import { CommonPipelineModalFormikValues } from '../common/types';
 
 export type RemoveTriggerFormValues = FormikValues & {
   selectedTrigger: string;

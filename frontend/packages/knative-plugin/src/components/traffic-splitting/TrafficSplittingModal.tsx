@@ -7,8 +7,8 @@ import {
   ModalSubmitFooter,
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
-import TrafficSplittingFields from './TrafficSplittingFields';
 import { RevisionItems } from '../../utils/traffic-splitting-utils';
+import TrafficSplittingFields from './TrafficSplittingFields';
 
 interface TrafficSplittingModalProps {
   revisionItems: RevisionItems;
@@ -30,6 +30,7 @@ const TrafficSplittingModal: React.FC<Props> = (props) => {
       </ModalBody>
       <ModalSubmitFooter
         inProgress={isSubmitting}
+        submitDisabled={isSubmitting}
         submitText={t('knative-plugin~Save')}
         cancelText={t('knative-plugin~Cancel')}
         cancel={cancel}

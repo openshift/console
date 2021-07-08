@@ -1,7 +1,10 @@
 import * as React from 'react';
+import { Badge } from '@patternfly/react-core';
 import * as _ from 'lodash';
-import { match as RMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { match as RMatch } from 'react-router';
+import { ErrorPage404 } from '@console/internal/components/error';
+import { DetailsPage } from '@console/internal/components/factory';
 import {
   navFactory,
   LoadingBox,
@@ -9,22 +12,14 @@ import {
   FirehoseResult,
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { Status } from '@console/shared';
-import { Badge } from '@patternfly/react-core';
-import {
-  deleteHelmRelease,
-  upgradeHelmRelease,
-  rollbackHelmRelease,
-} from '../../actions/modify-helm-release';
+import { ActionMenu, ActionsLoader, ActionMenuVariant, Status } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmReleases } from '../../utils/helm-utils';
-import HelmReleaseResources from './resources/HelmReleaseResources';
-import HelmReleaseOverview from './overview/HelmReleaseOverview';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
 import HelmReleaseNotes from './notes/HelmReleaseNotes';
+import HelmReleaseOverview from './overview/HelmReleaseOverview';
+import HelmReleaseResources from './resources/HelmReleaseResources';
 
 const SecretReference: K8sResourceKindReference = 'Secret';
 const HelmReleaseReference = 'HelmRelease';
@@ -78,17 +73,31 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
     </>
   );
 
-  const menuActions = [
-    () => upgradeHelmRelease(releaseName, namespace, HelmActionOrigins.details),
-    () => rollbackHelmRelease(releaseName, namespace, HelmActionOrigins.details),
-    () => deleteHelmRelease(releaseName, namespace, `/helm-releases/ns/${namespace}`),
-  ];
+  const actionsScope = {
+    releaseName,
+    namespace,
+    actionOrigin: HelmActionOrigins.details,
+  };
+
+  const customActionMenu = (
+    <ActionsLoader contextId="helm-actions" scope={actionsScope}>
+      {(loader) =>
+        loader.loaded && (
+          <ActionMenu
+            actions={loader.actions}
+            options={loader.options}
+            variant={ActionMenuVariant.DROPDOWN}
+          />
+        )
+      }
+    </ActionsLoader>
+  );
 
   return (
     <DetailsPage
       kindObj={SecretModel}
       match={match}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       name={secretName}
       namespace={namespace}
       customData={helmReleaseData}

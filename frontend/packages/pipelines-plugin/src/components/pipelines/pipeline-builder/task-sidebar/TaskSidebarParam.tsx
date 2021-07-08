@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { TektonParam } from '../../../../types';
-import { taskParamIsRequired } from '../utils';
 import { TextAreaField, TextColumnField, MergeNewValueUtil } from '@console/shared';
-import { PipelineBuilderFormikValues, SelectedBuilderTask } from '../types';
+import { TektonParam } from '../../../../types';
+import { paramIsRequired } from '../../../../utils/common';
 import AutoCompletePopover from '../../../shared/common/auto-complete/AutoCompletePopover';
 import { useBuilderParams } from '../../../shared/common/auto-complete/autoCompleteValueParsers';
+import { PipelineBuilderFormikValues, SelectedBuilderTask } from '../types';
 
 import './TaskSidebarParam.scss';
 
@@ -21,7 +21,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   const { hasParam, name, resourceParam, selectedData } = props;
   const autoCompleteOptions = useBuilderParams(selectedData);
 
-  const emptyIsInvalid = taskParamIsRequired(resourceParam);
+  const emptyIsInvalid = paramIsRequired(resourceParam);
 
   const resourceParamName = resourceParam.name;
   const fieldName = `${name}.value`;
@@ -43,7 +43,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
   };
 
   return (
-    <div className="opp-task-sidebar-param">
+    <div className="opp-task-sidebar-param" data-test={`parameter ${resourceParamName}`}>
       {resourceParam.type === 'array' ? (
         <TextColumnField name={fieldName} label={resourceParam.name} required={emptyIsInvalid}>
           {({ name: arrayName, ...additionalProps }, mergeNewValue: MergeNewValueUtil) => (
@@ -57,6 +57,8 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
               {(ref) => (
                 <TextAreaField
                   ref={ref}
+                  data-test={`value ${arrayName}`}
+                  aria-label={resourceParam.name}
                   name={arrayName}
                   {...additionalProps}
                   {...textAreaSettings}
@@ -76,6 +78,7 @@ const TaskSidebarParam: React.FC<TaskSidebarParamProps> = (props) => {
           {(ref) => (
             <TextAreaField
               ref={ref}
+              data-test={`value ${fieldName}`}
               name={fieldName}
               label={resourceParam.name}
               placeholder={resourceParam.default as string}

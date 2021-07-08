@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   getResourcesType,
-  getPageHeading,
-  CreateApplicationFlow,
+  getFlowType,
+  ApplicationFlowType,
   getInitialValues,
   getExternalImagelValues,
   getServerlessData,
@@ -12,7 +13,6 @@ import {
   getFileUploadValues,
   BuildSourceType,
 } from '../edit-application-utils';
-import { GitImportFormData, Resources } from '../../import/import-types';
 import {
   knativeService,
   knAppResources,
@@ -29,13 +29,13 @@ describe('Edit Application Utils', () => {
     expect(getResourcesType(knativeService)).toEqual(Resources.KnativeService);
   });
 
-  it('getPageHeading should return page heading based on the create flow used to create the application', () => {
-    expect(getPageHeading(BuildStrategyType.Source)).toEqual(CreateApplicationFlow.Git);
+  it('getFlowType should return page heading based on the create flow used to create the application', () => {
+    expect(getFlowType(BuildStrategyType.Source)).toEqual(ApplicationFlowType.Git);
   });
 
-  it('getPageHeading should return JarUpload based on the build type of resource', () => {
-    expect(getPageHeading(BuildStrategyType.Source, BuildSourceType.Binary)).toEqual(
-      CreateApplicationFlow.JarUpload,
+  it('getFlowType should return JarUpload based on the build type of resource', () => {
+    expect(getFlowType(BuildStrategyType.Source, BuildSourceType.Binary)).toEqual(
+      ApplicationFlowType.JarUpload,
     );
   });
 
@@ -188,6 +188,7 @@ describe('Edit Application Utils', () => {
           },
           concurrencyutilization: '70',
         },
+        domainMapping: [],
       };
       const serverlessData = getServerlessData(knativeServiceData);
       expect(serverlessData).toEqual(expectedValue);
@@ -218,7 +219,7 @@ describe('KSVC Route Data', () => {
       metadata: {
         ...knativeService.metadata,
         labels: {
-          'serving.knative.dev/visibility': 'cluster-local',
+          'networking.knative.dev/visibility': 'cluster-local',
         },
       },
       spec: {

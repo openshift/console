@@ -1,17 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-
-import { ResourceLink, resourcePath } from '@console/internal/components/utils';
-import { history } from '@console/internal/components/utils/router';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
-import GenericStatus from '@console/shared/src/components/status/GenericStatus';
-import {
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
 import {
   Button,
   ButtonVariant,
@@ -30,13 +17,25 @@ import {
   SyncAltIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ResourceLink, resourcePath } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { PodKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared/src';
+import GenericStatus from '@console/shared/src/components/status/GenericStatus';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
 import { VM_DETAIL_EVENTS_HREF } from '../../constants';
 import { StatusGroup } from '../../constants/status-group';
 import { VMImportType } from '../../constants/v2v-import/ovirt/vm-import-type';
 import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMLikeModel } from '../../selectors/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';
@@ -191,10 +190,39 @@ export const getPodLink = (pod: PodKind) =>
 
 export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
   `${resourcePath(
-    getVMLikeModel(vmLike).kind,
+    kubevirtReferenceForModel(getVMLikeModel(vmLike)),
     getName(vmLike),
     getNamespace(vmLike),
   )}/${VM_DETAIL_EVENTS_HREF}`;
+
+export const getVMStatusIcon = (
+  isPaused: boolean,
+  status: VMStatusEnum,
+  arePendingChanges: boolean,
+): React.ComponentClass | React.FC => {
+  let icon: React.ComponentClass | React.FC = UnknownIcon;
+
+  if (isPaused) {
+    icon = PausedIcon;
+  } else if (status === VMStatusEnum.RUNNING) {
+    icon = SyncAltIcon;
+  } else if (status === VMStatusEnum.OFF) {
+    icon = OffIcon;
+  } else if (status.isError()) {
+    icon = RedExclamationCircleIcon;
+  } else if (status.isPending()) {
+    // should be called before inProgress
+    icon = HourglassHalfIcon;
+  } else if (status.isInProgress()) {
+    icon = InProgressIcon;
+  }
+
+  if (arePendingChanges) {
+    icon = YellowExclamationTriangleIcon;
+  }
+
+  return icon;
+};
 
 export const VMStatus: React.FC<VMStatusProps> = ({
   vm,
@@ -226,29 +254,10 @@ export const VMStatus: React.FC<VMStatusProps> = ({
     links.push({ to: `${getPodLink(pod)}/logs`, message: VIEW_POD_LOGS });
   }
 
-  let icon: React.ComponentClass | React.FC = UnknownIcon;
-
-  if (isPaused) {
-    icon = PausedIcon;
-  } else if (status === VMStatusEnum.RUNNING) {
-    icon = SyncAltIcon;
-  } else if (status === VMStatusEnum.OFF) {
-    icon = OffIcon;
-  } else if (status.isError()) {
-    icon = RedExclamationCircleIcon;
-  } else if (status.isPending()) {
-    // should be called before inProgress
-    icon = HourglassHalfIcon;
-  } else if (status.isInProgress()) {
-    icon = InProgressIcon;
-  }
-
-  if (arePendingChanges) {
-    icon = YellowExclamationTriangleIcon;
-  }
+  const Icon = getVMStatusIcon(isPaused, status, arePendingChanges);
 
   return (
-    <GenericStatus title={title} Icon={icon} popoverTitle={popoverTitle}>
+    <GenericStatus title={title} Icon={Icon} popoverTitle={popoverTitle}>
       {(message || isPaused) && (
         <VMStatusPopoverContent key="popover" message={message} links={links} progress={progress}>
           {isPaused && (

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { BootableDeviceType } from '../../types/types';
 import { VMIKind } from '../../types/vm';
 import { transformDevices } from '../vm/devices';

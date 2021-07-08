@@ -1,7 +1,7 @@
-import { PodRCData } from '@console/shared/src';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
 import { NamespaceMetrics } from '@console/internal/actions/ui';
+import { formatBytesAsMiB, formatCores } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PodRCData } from '@console/shared/src';
 
 export type PodStats = {
   name: string;

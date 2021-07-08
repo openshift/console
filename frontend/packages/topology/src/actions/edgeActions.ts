@@ -1,7 +1,7 @@
+import { Edge, Node } from '@patternfly/react-topology';
+import { asAccessReview } from '@console/internal/components/utils';
 import { KebabOption } from '@console/internal/components/utils/kebab';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { asAccessReview } from '@console/internal/components/utils';
-import { Edge, Node } from '@patternfly/react-topology';
 import {
   TYPE_EVENT_SOURCE,
   TYPE_EVENT_SOURCE_LINK,
@@ -12,10 +12,10 @@ import {
   TYPE_KAFKA_CONNECTION_LINK,
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
-import { getResource } from '../utils/topology-utils';
-import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import { moveConnectionModal } from '../components/modals/MoveConnectionModal';
+import { TYPE_CONNECTS_TO, TYPE_SERVICE_BINDING, TYPE_TRAFFIC_CONNECTOR } from '../const';
 import { removeConnection } from '../utils';
+import { getResource } from '../utils/topology-utils';
 
 const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   const resourceObj = getResource(edge.getSource());

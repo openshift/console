@@ -5,22 +5,22 @@ import { KebabOption } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { MockResources } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
+import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
+import { TopologyDataResources } from '@console/topology/src/topology-types';
 import {
   getTopologyResourceObject,
   WORKLOAD_TYPES,
 } from '@console/topology/src/utils/topology-utils';
-import { baseDataModelGetter } from '@console/topology/src/data-transforms/data-transformer';
-import { getWorkloadResources } from '@console/topology/src/data-transforms/transform-utils';
-import { TopologyDataResources } from '@console/topology/src/topology-types';
+import { TEST_KINDS_MAP } from '../../../../topology/src/__tests__/topology-test-data';
+import { ImportOptions } from '../../components/import/import-types';
+import { INCONTEXT_ACTIONS_CONNECTS_TO } from '../../const';
 import {
   getMenuPath,
   getAddPageUrl,
   createKebabAction,
   KebabAction,
 } from '../add-resources-menu-utils';
-import { INCONTEXT_ACTIONS_CONNECTS_TO } from '../../const';
-import { ImportOptions } from '../../components/import/import-types';
-import { TEST_KINDS_MAP } from '../../../../topology/src/__tests__/topology-test-data';
 
 const getTopologyData = (mockData: TopologyDataResources, name: string) => {
   const model = { nodes: [], edges: [] };

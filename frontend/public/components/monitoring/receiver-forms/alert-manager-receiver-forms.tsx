@@ -222,12 +222,9 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   editReceiverNamed,
   alertmanagerGlobals, // contains default props not in alertmanager.yaml's config.global
 }) => {
-  const [errorMsg, setErrorMsg] = React.useState<string>();
+  const [saveErrorMsg, setSaveErrorMsg] = React.useState<string>();
   const [inProgress, setInProgress] = React.useState<boolean>(false);
-  let config: AlertmanagerConfig;
-  if (!errorMsg) {
-    config = getAlertmanagerConfig(secret, setErrorMsg);
-  }
+  const { config, errorMessage: loadErrorMsg } = getAlertmanagerConfig(secret);
 
   const doesReceiverNameAlreadyExist = (receiverName: string): boolean => {
     if (!config?.receivers) {
@@ -299,7 +296,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   INITIAL_STATE.routeLabels = getRouteLabelsForEditor(
     isDefaultReceiver,
     receiverToEdit,
-    route.routes,
+    route?.routes ?? [],
   );
 
   const [formValues, dispatchFormChange] = React.useReducer(formReducer, INITIAL_STATE);
@@ -319,9 +316,16 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
   const save = (e) => {
     e.preventDefault();
+    const updateConfig: AlertmanagerConfig = _.isObject(config)
+      ? _.cloneDeep(config)
+      : {
+          global: {},
+          route: {},
+          receivers: [],
+        };
 
     // Update Global params
-    _.assign(config.global, SubForm.updateGlobals(defaultGlobals, formValues));
+    _.assign(updateConfig.global, SubForm.updateGlobals(defaultGlobals, formValues));
 
     // Update Receivers
     const newReceiver = createReceiver(
@@ -330,7 +334,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
       SubForm.createReceiverConfig,
       receiverToEdit,
     );
-    _.update(config, 'receivers', (receivers = []) => {
+    _.update(updateConfig, 'receivers', (receivers = []) => {
       if (editReceiverNamed) {
         const index = _.findIndex(receivers, { name: editReceiverNamed });
         receivers.splice(index, 1, newReceiver);
@@ -342,13 +346,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
     // Update Route & RouteLabels
     if (isDefaultReceiver) {
-      _.set(route, 'receiver', newReceiver.name);
+      _.set(updateConfig, 'route.receiver', newReceiver.name);
     }
 
     const newRoute = _.isEmpty(formValues.routeLabels)
       ? undefined
       : createRoute(newReceiver, formValues.routeLabels);
-    _.update(route, 'routes', (routes = []) => {
+    _.update(updateConfig, 'route.routes', (routes = []) => {
       if (editReceiverNamed) {
         const index = _.findIndex(routes, { receiver: editReceiverNamed });
         if (index !== -1) {
@@ -372,14 +376,14 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
 
     // Update 'alertmanager-main' Secret with new alertmanager.yaml configuration
     setInProgress(true);
-    patchAlertmanagerConfig(secret, config).then(
+    patchAlertmanagerConfig(secret, updateConfig).then(
       () => {
-        setErrorMsg('');
+        setSaveErrorMsg('');
         setInProgress(false);
         history.push('/monitoring/alertmanagerconfig');
       },
       (err) => {
-        setErrorMsg(err.message);
+        setSaveErrorMsg(err.message);
         setInProgress(false);
       },
     );
@@ -476,7 +480,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           </>
         )}
 
-        <ButtonBar errorMessage={errorMsg} inProgress={inProgress}>
+        <ButtonBar errorMessage={saveErrorMsg || loadErrorMsg} inProgress={inProgress}>
           <ActionGroup className="pf-c-form">
             <Button
               type="submit"

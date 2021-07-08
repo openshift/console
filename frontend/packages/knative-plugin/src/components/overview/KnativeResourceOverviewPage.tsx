@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Kebab, LoadingBox } from '@console/internal/components/utils';
+import { connect } from 'react-redux';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
+import { Kebab, LoadingBox } from '@console/internal/components/utils';
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
 import { OverviewItem } from '@console/shared';
 import { ModifyApplication } from '@console/topology/src/actions';
+import { editSinkUri } from '../../actions/edit-sink-uri';
+import { getRevisionActions } from '../../actions/getRevisionActions';
 import {
   KNATIVE_SERVING_APIGROUP,
   KNATIVE_EVENT_MESSAGE_APIGROUP,
@@ -14,17 +16,15 @@ import {
   CAMEL_APIGROUP,
 } from '../../const';
 import { RevisionModel } from '../../models';
-import { getRevisionActions } from '../../actions/getRevisionActions';
-import { editSinkUri } from '../../actions/edit-sink-uri';
+import { URI_KIND } from '../../topology/const';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
   isEventingPubSubLinkKind,
 } from '../../utils/fetch-dynamic-eventsources-utils';
-import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
+import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
-import { URI_KIND } from '../../topology/const';
 
 interface StateProps {
   kindsInFlight?: boolean;

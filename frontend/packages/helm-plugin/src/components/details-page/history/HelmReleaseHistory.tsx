@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import { SortByDirection } from '@patternfly/react-table';
-import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
+import { match as RMatch } from 'react-router';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { StatusBox } from '@console/internal/components/utils';
-import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { CustomResourceList, useDeepCompareMemoize } from '@console/shared';
 import HelmReleaseHistoryHeader from './HelmReleaseHistoryHeader';
+import HelmReleaseHistoryRow from './HelmReleaseHistoryRow';
 
 interface HelmReleaseHistoryProps {
   match: RMatch<{

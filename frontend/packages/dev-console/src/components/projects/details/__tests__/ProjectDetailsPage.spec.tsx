@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import * as utils from '@console/internal/components/utils';
-import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
-import CreateProjectListPage from '../../CreateProjectListPage';
 import { DetailsPage } from '@console/internal/components/factory';
+import * as utils from '@console/internal/components/utils';
+import CreateProjectListPage from '../../CreateProjectListPage';
+import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 
 const testProjectMatch = { url: '', params: { ns: 'test-project' }, isExact: true, path: '' };
 const allNamespaceMatch = { url: '', params: {}, isExact: true, path: '' };

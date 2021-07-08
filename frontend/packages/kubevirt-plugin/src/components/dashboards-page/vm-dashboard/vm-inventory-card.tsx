@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { resourcePath } from '@console/internal/components/utils';
 import {
@@ -14,7 +13,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import InventoryItem from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-
 import {
   DiskType,
   VM_DETAIL_DISKS_HREF,
@@ -22,6 +20,7 @@ import {
   VM_DETAIL_SNAPSHOTS,
 } from '../../../constants';
 import { VirtualMachineSnapshotModel } from '../../../models';
+import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getDisks, getNetworks } from '../../../selectors/vm';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
@@ -49,7 +48,7 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const snapshotResource: WatchK8sResource = React.useMemo(
     () => ({
       isList: true,
-      kind: VirtualMachineSnapshotModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
       namespaced: true,
       namespace,
     }),
@@ -60,7 +59,11 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
     snapshotResource,
   );
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === name);
-  const basePath = resourcePath(getVMLikeModel(vmiLike).kind, name, namespace);
+  const basePath = resourcePath(
+    kubevirtReferenceForModel(getVMLikeModel(vmiLike)),
+    name,
+    namespace,
+  );
   const DisksTitle = React.useCallback(
     ({ children }) => (
       <Link

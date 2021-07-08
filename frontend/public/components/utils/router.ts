@@ -96,3 +96,6 @@ export const removeQueryArguments = (...keys: string[]) => {
     history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
   }
 };
+
+export const setOrRemoveQueryArgument = (k: string, v: string) =>
+  v ? setQueryArgument(k, v) : removeQueryArgument(k);

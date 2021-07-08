@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Flex, FlexItem, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import PipelineMetricsTimeRangeDropdown from './PipelineMetricsTimeRangeDropdown';
-import PipelineMetricsRefreshDropdown from './PipelineMetricsRefreshDropdown';
-import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
-import PipelineSuccessRatioDonut from './PipelineSuccessRatioDonut';
-import PipelineRunDurationGraph from './PipelineRunDurationGraph';
-import PipelineRunTaskRunGraph from './PipelineRunTaskRunGraph';
-import { GraphData } from './pipeline-metrics-utils';
-import PipelineRunCount from './PipelineRunCount';
 import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
+import { GraphData } from './pipeline-metrics-utils';
+import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
+import PipelineMetricsRefreshDropdown from './PipelineMetricsRefreshDropdown';
+import PipelineMetricsTimeRangeDropdown from './PipelineMetricsTimeRangeDropdown';
+import PipelineRunCount from './PipelineRunCount';
+import PipelineRunDurationGraph from './PipelineRunDurationGraph';
+import PipelineRunTaskRunGraph from './PipelineRunTaskRunGraph';
+import PipelineSuccessRatioDonut from './PipelineSuccessRatioDonut';
 
 import './PipelineMetrics.scss';
 

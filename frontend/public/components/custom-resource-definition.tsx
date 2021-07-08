@@ -64,11 +64,11 @@ const menuActions: KebabAction[] = [
 ];
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  'pf-m-u-w-33-on-md pf-u-w-25-on-lg',
+  'pf-m-u-w-33-on-md pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,
 ];
 
@@ -158,11 +158,7 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={t('public~{{resource}} details', {
-            resource: CustomResourceDefinitionModel.label,
-          })}
-        />
+        <SectionHeading text={t('public~CustomResourceDefinition details')} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

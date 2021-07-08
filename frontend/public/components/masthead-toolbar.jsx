@@ -18,8 +18,6 @@ import {
   PageHeaderTools,
   PageHeaderToolsGroup,
   PageHeaderToolsItem,
-  TooltipPosition,
-  Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
@@ -589,6 +587,7 @@ class MastheadToolbarContents_ extends React.Component {
             {!_.isEmpty(launchActions) && (
               <PageHeaderToolsItem>
                 <ApplicationLauncher
+                  aria-label={t('public~Application launcher')}
                   className="co-app-launcher"
                   data-test-id="application-launcher"
                   onSelect={this._onApplicationLauncherDropdownSelect}
@@ -607,7 +606,7 @@ class MastheadToolbarContents_ extends React.Component {
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  isRead
+                  variant="read"
                   count={notificationAlerts?.data?.length || 0}
                   data-quickstart-id="qs-masthead-notifications"
                 >
@@ -616,16 +615,15 @@ class MastheadToolbarContents_ extends React.Component {
               </PageHeaderToolsItem>
             )}
             <PageHeaderToolsItem>
-              <Tooltip content={t('public~Import YAML')} position={TooltipPosition.bottom}>
-                <Link
-                  to={this._getImportYAMLPath()}
-                  className="pf-c-button pf-m-plain"
-                  aria-label={t('public~Import YAML')}
-                  data-quickstart-id="qs-masthead-import"
-                >
-                  <PlusCircleIcon className="co-masthead-icon" alt="" />
-                </Link>
-              </Tooltip>
+              <Link
+                to={this._getImportYAMLPath()}
+                className="pf-c-button pf-m-plain"
+                aria-label={t('public~Import YAML')}
+                data-quickstart-id="qs-masthead-import"
+                data-test="import-yaml"
+              >
+                <PlusCircleIcon className="co-masthead-icon" alt="" />
+              </Link>
             </PageHeaderToolsItem>
             <CloudShellMastheadButton />
             <PageHeaderToolsItem>
@@ -658,7 +656,7 @@ class MastheadToolbarContents_ extends React.Component {
                 <NotificationBadge
                   aria-label={t('public~Notification drawer')}
                   onClick={drawerToggle}
-                  isRead
+                  variant="read"
                   count={notificationAlerts?.data?.length}
                   data-quickstart-id="qs-masthead-notifications"
                 >

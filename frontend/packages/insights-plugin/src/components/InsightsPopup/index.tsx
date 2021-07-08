@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
 import { useTranslation } from 'react-i18next';
-
+import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
   riskIcons,
   colorScale,
@@ -11,9 +13,6 @@ import {
   isWaitingOrDisabled as _isWaitingOrDisabled,
   isError as _isError,
 } from './mappers';
-import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
 import './style.scss';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
@@ -46,6 +45,11 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
 
   return (
     <div className="co-insights__box">
+      <p>
+        {t(
+          'insights-plugin~Insights Advisor identifies and prioritizes risks to security, performance, availability, and stability of your clusters.',
+        )}
+      </p>
       {isError && (
         <div className="co-status-popup__section">
           {t('insights-plugin~Temporary unavailable.')}
@@ -98,7 +102,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         )}
       </div>
       <div className="co-status-popup__section">
-        {!isWaitingOrDisabled && !isError && (
+        {!isWaitingOrDisabled && !isError && clusterID && (
           <>
             <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
             <div>
@@ -108,6 +112,14 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               />
             </div>
           </>
+        )}
+        {!isWaitingOrDisabled && !isError && !clusterID && (
+          <div>
+            <ExternalLink
+              href={`https://cloud.redhat.com/openshift/`}
+              text={t('insights-plugin~Go to OpenShift Cluster Manager')}
+            />
+          </div>
         )}
         {(isWaitingOrDisabled || isError) && (
           <ExternalLink

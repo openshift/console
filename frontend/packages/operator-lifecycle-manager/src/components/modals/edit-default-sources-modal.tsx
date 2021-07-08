@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { Alert, Form, FormGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Checkbox } from '@console/internal/components/checkbox';
 import {
   ModalTitle,
   ModalBody,
@@ -8,11 +10,9 @@ import {
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
-import { OperatorHubKind } from '../operator-hub';
-import { Alert, Form, FormGroup } from '@patternfly/react-core';
+import { k8sPatch } from '@console/internal/module/k8s';
 import { OperatorHubModel } from '../../models';
-import { Checkbox } from '@console/internal/components/checkbox';
-import { useTranslation } from 'react-i18next';
+import { OperatorHubKind } from '../operator-hub';
 
 const EditDefaultSourcesModal: React.FC<EditDefaultSourcesModalProps> = ({
   cancel,

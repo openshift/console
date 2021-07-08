@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
@@ -67,11 +66,11 @@ export const AlertManagersDetailsPage = (props) => (
 );
 
 const tableColumnClasses = [
-  classNames('col-md-2', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-2', 'col-sm-3', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
 ];
 
 const AlertManagerTableRow: RowFunction<K8sResourceKind> = ({

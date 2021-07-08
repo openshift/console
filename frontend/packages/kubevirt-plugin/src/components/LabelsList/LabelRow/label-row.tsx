@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { Button, GridItem, TextInput } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
 import { IDLabel } from '../types';
 
 export const LabelRow = <T extends IDLabel = IDLabel>({

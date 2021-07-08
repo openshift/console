@@ -1,5 +1,13 @@
 import * as _ from 'lodash';
 import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
+import {
+  ClusterTaskModel,
+  PipelineRunModel,
+  TaskModel,
+  PipelineModel,
+  ClusterTriggerBindingModel,
+  TriggerBindingModel,
+} from '../../models';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
 import { PipelineKind } from '../../types';
 import {
@@ -15,15 +23,8 @@ import {
   totalPipelineRunTasks,
   getResourceModelFromTaskKind,
   getResourceModelFromBindingKind,
+  shouldHidePipelineRunStop,
 } from '../pipeline-augment';
-import {
-  ClusterTaskModel,
-  PipelineRunModel,
-  TaskModel,
-  PipelineModel,
-  ClusterTriggerBindingModel,
-  TriggerBindingModel,
-} from '../../models';
 import { testData } from './pipeline-augment-test-data';
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {
@@ -219,6 +220,22 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
       expect(sumInProgressTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(expectedTaskCount);
       expect(taskCount).toEqual(expectedTaskCount);
+    });
+
+    it('should not hide the pipelinerun stop action ', () => {
+      const pipelineRun =
+        pipelineTestData[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].pipelineRuns[
+          DataState.IN_PROGRESS
+        ];
+      expect(shouldHidePipelineRunStop(pipelineRun)).toEqual(false);
+    });
+
+    it('should hide the pipelinerun stop action ', () => {
+      const pipelineRun =
+        pipelineTestData[PipelineExampleNames.EMBEDDED_TASK_SPEC_MOCK_APP].pipelineRuns[
+          DataState.SUCCESS
+        ];
+      expect(shouldHidePipelineRunStop(pipelineRun)).toEqual(true);
     });
   });
 

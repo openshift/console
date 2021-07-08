@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import TopologyGroupResourceList from './TopologyGroupResourceList';
 
 type TopologyGroupResourcesPanelProps = {

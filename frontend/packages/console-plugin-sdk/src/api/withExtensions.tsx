@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as hoistStatics from 'hoist-non-react-statics';
-import { useExtensions } from './useExtensions';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
+import { useExtensions } from './useExtensions';
 
 /**
  * React higher-order component (HOC) for consuming Console extensions.

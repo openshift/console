@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { Node } from '@patternfly/react-topology';
+import * as _ from 'lodash';
 import {
   k8sCreate,
   K8sResourceKind,

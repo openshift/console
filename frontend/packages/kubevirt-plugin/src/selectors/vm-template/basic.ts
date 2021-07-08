@@ -1,8 +1,6 @@
 import { TFunction } from 'i18next';
-
 import { TemplateKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared/src/constants/common';
-
 import {
   TEMPLATE_DEPRECATED_ANNOTATION,
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,
@@ -18,8 +16,8 @@ import {
 import { VirtualMachineModel } from '../../models';
 import { TemplateItem } from '../../types/template';
 import { VMKind } from '../../types/vm';
-import { getAnnotation } from '../selectors';
 import { isUpstream } from '../../utils/common';
+import { getAnnotation } from '../selectors';
 
 export const selectVM = (vmTemplate: TemplateKind): VMKind =>
   vmTemplate && vmTemplate.objects
@@ -99,13 +97,3 @@ export const getTemplateKindProviderType = (template: TemplateKind): ProvidedTyp
 
 export const getTemplateProviderType = (templateItem: TemplateItem): ProvidedType =>
   getTemplateKindProviderType(templateItem?.variants?.[0]);
-
-export const isLabeledTemplate = (t: TFunction, template: TemplateKind): boolean => {
-  const provider = getTemplateProvider(t, template);
-  const support = getTemplateSupport(template);
-  const isSupported = support.parent === 'Full' || support.provider === 'Full';
-  const upstream = isUpstream();
-  const isUserProvider = provider && provider !== (upstream ? 'KubeVirt' : 'Red Hat');
-
-  return (!isSupported || upstream) && !isUserProvider;
-};

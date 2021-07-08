@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Button, Level, LevelItem, Stack, StackItem } from '@patternfly/react-core';
+import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -9,13 +10,10 @@ import {
   LoadingInline,
   ResourceLink,
 } from '@console/internal/components/utils';
-import { StarIcon } from '@patternfly/react-icons';
 import { NamespaceModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyRow, PendingStatus } from '@console/shared';
 import { SuccessStatus } from '@console/shared/src/components/status/statuses';
-import { Button, Level, LevelItem, Stack, StackItem } from '@patternfly/react-core';
-
 import { getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { isVMIRunning } from '../../../selectors/vmi';
 import { VMIKind, VMKind } from '../../../types';
@@ -141,11 +139,7 @@ const VMCustomizeRow: RowFunction<{ vm: VMKind; template: TemplateKind }, VMTemp
         {getTemplateProvider(t, template)}
       </TableData>
       <TableData className={dimensify()}>
-        <ResourceLink
-          kind={NamespaceModel.kind}
-          name={template.metadata.namespace}
-          title={template.metadata.namespace}
-        />
+        <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />
       </TableData>
       <TableData className={dimensify()} data-test="template-source">
         <VMCustomizeStatus vmis={vmis} vm={vm} pods={pods} pvcs={pvcs} dataVolumes={dataVolumes} />

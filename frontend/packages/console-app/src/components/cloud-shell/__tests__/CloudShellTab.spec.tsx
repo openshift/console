@@ -20,8 +20,14 @@ describe('CloudShellTab', () => {
     expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(true);
   });
 
-  it('should render redirect component if terminal operator is not installed', () => {
+  it('should not render redirect component if flag check is pending', () => {
     spyOn(shared, 'useFlag').and.returnValue(undefined);
+    const cloudShellTabWrapper = shallow(<CloudShellTab />);
+    expect(cloudShellTabWrapper.find(Redirect).exists()).toBe(false);
+  });
+
+  it('should render redirect component if terminal operator is not installed', () => {
+    spyOn(shared, 'useFlag').and.returnValue(false);
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
     expect(cloudShellTabWrapper.find(Redirect).exists()).toBe(true);
   });

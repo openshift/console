@@ -1,8 +1,8 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
-import { modal } from '../../../integration-tests-cypress/views/modal';
 import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
-import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
+import { modal } from '../../../integration-tests-cypress/views/modal';
 import { nav } from '../../../integration-tests-cypress/views/nav';
+import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
 
 const operatorName = 'Portworx Essentials';
 const catalogSourceName = 'console-e2e';
@@ -14,7 +14,8 @@ const operatorInstance = 'StorageCluster';
 const openshiftOperatorsNS = 'openshift-operators';
 const operandLink = 'portworx';
 
-describe(`Interacting with a global install mode Operator (${operatorName})`, () => {
+// TODO: Disable until https://github.com/libopenstorage/operator/pull/323 is merged
+xdescribe(`Interacting with a global install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
     cy.visit('/');

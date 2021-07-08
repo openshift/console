@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { match as Rmatch } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { match as Rmatch } from 'react-router-dom';
 import {
   history,
   PageHeading,
@@ -48,9 +48,9 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
 
   const items = Object.keys(menuActions).reduce((acc, key) => {
     const menuAction: MenuAction = menuActions[key];
-    const label = menuAction.model?.labelKey
-      ? t(menuAction.model.labelKey)
-      : menuAction.model?.label || menuAction.label;
+    const label =
+      menuAction.label ||
+      (menuAction.model?.labelKey ? t(menuAction.model.labelKey) : menuAction.model?.label);
     if (!label) return acc;
 
     return {

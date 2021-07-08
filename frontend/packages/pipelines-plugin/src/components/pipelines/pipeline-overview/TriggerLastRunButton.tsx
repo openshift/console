@@ -1,14 +1,14 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Button } from '@patternfly/react-core';
-import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
-import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
+import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { PipelineRunModel } from '../../../models';
 import { PipelineRunKind } from '../../../types';
+import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
 import { getLatestRun } from '../../../utils/pipeline-augment';
 import { usePipelineRunWithUserAnnotation } from '../../pipelineruns/triggered-by';
 

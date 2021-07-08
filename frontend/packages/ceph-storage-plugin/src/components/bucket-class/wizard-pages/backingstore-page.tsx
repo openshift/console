@@ -21,7 +21,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             className="nb-create-bc-step-page__info"
             isInline
             variant="info"
-            title={t('ceph-storage-plugin~What is a BackingStore ?')}
+            title={t('ceph-storage-plugin~What is a BackingStore?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>

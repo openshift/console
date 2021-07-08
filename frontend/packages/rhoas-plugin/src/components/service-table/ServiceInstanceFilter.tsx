@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   TextInput,
   Toolbar,
@@ -7,6 +6,7 @@ import {
   ToolbarItem,
   ToolbarGroup,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { KEYBOARD_SHORTCUTS } from '@console/shared';
 
 type ServiceInstanceFilterProps = {

@@ -31,30 +31,33 @@ export const LoadingComponent: React.FC = () => {
   );
 };
 
-export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
+export const PROGRESS_STATUS = (t: TFunction, poolName: string): ProgressStatusProps[] => [
   {
     name: POOL_PROGRESS.PROGRESS,
     icon: LoadingComponent,
-    desc: t('ceph-storage-plugin~Pool {name} creation in progress'),
+    desc: t('ceph-storage-plugin~Pool {{name}} creation in progress', { name: poolName }),
     className: '',
   },
   {
     name: POOL_PROGRESS.CREATED,
     icon: CheckCircleIcon,
-    desc: t('ceph-storage-plugin~Pool {name} was successfully created'),
+    desc: t('ceph-storage-plugin~Pool {{name}} was successfully created', { name: poolName }),
     className: 'ceph-block-pool__check-icon',
   },
   {
     name: POOL_PROGRESS.FAILED,
     icon: ExclamationCircleIcon,
-    desc: t('ceph-storage-plugin~An error occurred Pool {name} was not created'),
+    desc: t('ceph-storage-plugin~An error occurred Pool {{name}} was not created', {
+      name: poolName,
+    }),
     className: 'ceph-block-pool__error-icon',
   },
   {
     name: POOL_PROGRESS.TIMEOUT,
     icon: DisconnectedIcon,
     desc: t(
-      'ceph-storage-plugin~Pool {name} creation timed out. Please check if ocs-operator and rook operator are running',
+      'ceph-storage-plugin~Pool {{name}} creation timed out. Please check if ocs-operator and rook operator are running',
+      { name: poolName },
     ),
     className: '',
   },
@@ -62,7 +65,7 @@ export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
     name: POOL_PROGRESS.CLUSTERNOTREADY,
     icon: LockIcon,
     desc: t(
-      'ceph-storage-plugin~The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.',
+      'ceph-storage-plugin~The creation of a StorageCluster is still in progress or has failed. Try again after the StorageCuster is ready to use.',
     ),
     className: '',
   },
@@ -70,14 +73,14 @@ export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
     name: POOL_PROGRESS.NOTALLOWED,
     icon: LockIcon,
     desc: t(
-      "ceph-storage-plugin~Pool management tasks are not supported for default pool and Openshift Container Storage's  external mode.",
+      "ceph-storage-plugin~Pool management tasks are not supported for default pool and OpenShift Container Storage's external mode.",
     ),
     className: '',
   },
   {
     name: POOL_PROGRESS.NOTREADY,
     icon: ExclamationCircleIcon,
-    desc: t('ceph-storage-plugin~Pool {name} got created with errors.'),
+    desc: t('ceph-storage-plugin~Pool {{name}} was created with errors.', { name: poolName }),
     className: 'ceph-block-pool__error-icon',
   },
 ];
@@ -226,11 +229,11 @@ export const checkRequiredValues = (
   isPoolManagementSupported: boolean,
 ): boolean => !poolName || !replicaSize || (isPoolManagementSupported && !volumeType);
 
-export enum FooterPrimaryActions {
-  CREATE = 'Create',
-  DELETE = 'Delete',
-  UPDATE = 'Save',
-}
+export const FooterPrimaryActions = (t: TFunction) => ({
+  CREATE: t('ceph-storage-plugin~Create'),
+  DELETE: t('ceph-storage-plugin~Delete'),
+  UPDATE: t('ceph-storage-plugin~Save'),
+});
 
 export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
   !!blockPoolConfig?.metadata.ownerReferences?.find(

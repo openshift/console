@@ -3,9 +3,9 @@ import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
+import { Traffic } from '../../types';
 import { getRevisionItems, constructObjForUpdate } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
-import { Traffic } from '../../types';
 
 export interface TrafficSplittingProps {
   service: K8sResourceKind;
@@ -47,9 +47,8 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
     const obj = constructObjForUpdate(values.trafficSplitting, service);
-    k8sUpdate(ServiceModel, obj)
+    return k8sUpdate(ServiceModel, obj)
       .then(() => {
-        action.setSubmitting(false);
         action.setStatus({ error: '' });
         close();
       })

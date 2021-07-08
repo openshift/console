@@ -1,12 +1,22 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import * as UIActions from '@console/internal/actions/ui';
-import { navFactory, SimpleTabNav } from '@console/internal/components/utils';
-import { ResourcesComponent } from './ResourceComponent';
+import {
+  ActionsMenu,
+  Kebab,
+  navFactory,
+  ResourceIcon,
+  resourcePath,
+  SimpleTabNav,
+} from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import { KafkaConnectionModel } from '../../models';
 import { DetailsComponent } from './DetailsComponent';
+import { ResourcesComponent } from './ResourceComponent';
 
 import './TopologyKafkaPanel.scss';
 
@@ -49,12 +59,35 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
     setShowAlert(false);
   };
 
+  const kindRef = referenceFor(akc);
+  const kindObj = modelFor(kindRef);
+
+  const commonActions = Kebab.factory.common.map((action) => action);
+  const menuActions = commonActions.map((a) => a(kindObj, akc));
+  const menuActionsCreator = [
+    ...Kebab.getExtensionsActionsForKind(KafkaConnectionModel),
+    ...menuActions,
+  ];
+
   return (
     <div className="overview__sidebar-pane resource-overview">
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            <h3>{t('rhoas-plugin~Kafka Connection')}</h3>
+            <ResourceIcon className="co-m-resource-icon--lg" kind={kindRef} />
+            <Link
+              to={resourcePath(
+                kindObj.crd ? kindRef : akc.kind,
+                akc.metadata.name,
+                akc.metadata.namespace,
+              )}
+              className="co-resource-item__resource-name"
+            >
+              {akc.metadata.name}
+            </Link>
+          </div>
+          <div className="co-actions">
+            <ActionsMenu actions={menuActionsCreator} />
           </div>
         </h1>
         {showAlert && (

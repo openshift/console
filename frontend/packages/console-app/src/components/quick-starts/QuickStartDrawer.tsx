@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Drawer, DrawerContent, DrawerContentBody } from '@patternfly/react-core';
+import QuickStartsLoader from './loader/QuickStartsLoader';
+import QuickStartCloseModal from './QuickStartCloseModal';
+import QuickStartPanelContent from './QuickStartPanelContent';
 import { QuickStartContext, QuickStartContextValues } from './utils/quick-start-context';
 import { QuickStartStatus } from './utils/quick-start-types';
-import QuickStartPanelContent from './QuickStartPanelContent';
-import QuickStartCloseModal from './QuickStartCloseModal';
-import QuickStartsLoader from './loader/QuickStartsLoader';
 import './QuickStartDrawer.scss';
 
 const QuickStartDrawer: React.FC = ({ children }) => {

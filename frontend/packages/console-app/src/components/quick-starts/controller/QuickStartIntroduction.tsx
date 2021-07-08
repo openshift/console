@@ -22,7 +22,7 @@ const QuickStartIntroduction: React.FC<QuickStartIntroductionProps> = ({
     <>
       <QuickStartMarkdownView content={introduction} />
       <p style={{ marginBottom: 'var(--pf-global--spacer--md)' }}>
-        {t('quickstart~In this quick start, you will complete {{count, number}} task', {
+        {t('console-app~In this quick start, you will complete {{count, number}} task', {
           count: tasks.length,
         })}
         :

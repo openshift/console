@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { chart_color_red_400 as red400 } from '@patternfly/react-tokens/dist/js/chart_color_red_400';
-import { chart_color_red_300 as red300 } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
-import { chart_color_red_100 as red100 } from '@patternfly/react-tokens/dist/js/chart_color_red_100';
-import { chart_color_orange_300 as orange300 } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
-import { chart_color_gold_400 as gold400 } from '@patternfly/react-tokens/dist/js/chart_color_gold_400';
 import { chart_color_black_500 as black500 } from '@patternfly/react-tokens/dist/js/chart_color_black_500';
+import { chart_color_gold_400 as gold400 } from '@patternfly/react-tokens/dist/js/chart_color_gold_400';
+import { chart_color_orange_300 as orange300 } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
+import { chart_color_red_100 as red100 } from '@patternfly/react-tokens/dist/js/chart_color_red_100';
+import { chart_color_red_300 as red300 } from '@patternfly/react-tokens/dist/js/chart_color_red_300';
+import { chart_color_red_400 as red400 } from '@patternfly/react-tokens/dist/js/chart_color_red_400';
 /* eslint-enable @typescript-eslint/camelcase */
 import { Map as ImmutableMap } from 'immutable';
 import { ImageManifestVuln } from './types';

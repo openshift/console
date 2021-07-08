@@ -1,10 +1,10 @@
-import * as _ from 'lodash';
 import * as Immutable from 'immutable';
 import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import { UiSchema } from 'react-jsonschema-form';
 import { getSchemaType, getUiOptions } from 'react-jsonschema-form/lib/utils';
-import { DynamicFormSchemaError, JSONSchemaType } from './types';
 import { THOUSAND, MILLION, BILLION } from './const';
+import { DynamicFormSchemaError, JSONSchemaType } from './types';
 
 const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
 

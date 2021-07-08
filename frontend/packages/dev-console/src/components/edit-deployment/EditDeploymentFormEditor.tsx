@@ -3,8 +3,8 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
 import AdvancedSection from './AdvancedSection';
 import DeploymentStrategySection from './deployment-strategy/DeploymentStrategySection';
-import ImagesSection from './images/ImagesSection';
 import EnvironmentVariablesSection from './EnvironmentVariablesSection';
+import ImagesSection from './images/ImagesSection';
 
 export type EditDeploymentFormEditorProps = {
   resourceType: string;

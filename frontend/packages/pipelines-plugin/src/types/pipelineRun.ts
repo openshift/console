@@ -1,6 +1,6 @@
 import { K8sResourceCommon, ObjectMetadata } from '@console/internal/module/k8s';
-import { PipelineKind, PipelineSpec } from './pipeline';
 import { TektonResultsRun, TektonTaskSpec } from './coreTekton';
+import { PipelineKind, PipelineSpec } from './pipeline';
 
 export type PLRTaskRunStep = {
   container: string;

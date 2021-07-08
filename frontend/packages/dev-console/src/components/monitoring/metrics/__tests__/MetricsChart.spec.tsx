@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MetricsChart } from '../MetricsChart';
 import EmptyStateQuery from '../EmptyStateQuery';
+import { MetricsChart } from '../MetricsChart';
 
 describe('Metrics Chart', () => {
   let props: React.ComponentProps<typeof MetricsChart>;

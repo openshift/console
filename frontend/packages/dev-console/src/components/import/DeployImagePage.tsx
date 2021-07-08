@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router-dom';
 import { PageHeading, Firehose } from '@console/internal/components/utils';
 import { QUERY_PROPERTIES } from '../../const';
-import QueryFocusApplication from '../QueryFocusApplication';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
+import QueryFocusApplication from '../QueryFocusApplication';
 import DeployImage from './DeployImage';
 
 export type DeployImagePageProps = RouteComponentProps<{ ns?: string }>;

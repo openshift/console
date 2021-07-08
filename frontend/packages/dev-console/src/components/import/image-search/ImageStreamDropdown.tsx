@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useFormikContext, FormikValues } from 'formik';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
 import { getImageStreamResource } from '../../../utils/imagestream-utils';

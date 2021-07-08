@@ -32,9 +32,9 @@ const menuActions = [...Kebab.factory.common];
 const OBStatus: React.FC<OBStatusProps> = ({ ob }) => <Status status={getPhase(ob)} />;
 
 const tableColumnClasses = [
-  classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-6', 'hidden-xs'),
-  classNames('col-lg-4', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  '',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-25-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
   Kebab.columnClass,
 ];
 
@@ -42,12 +42,7 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
-        />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <OBStatus ob={obj} />
@@ -84,7 +79,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
               <dd>
                 <OBStatus ob={obj} />
               </dd>
-              <dt>{t('ceph-storage-plugin~Storage Class')}</dt>
+              <dt>{t('ceph-storage-plugin~StorageClass')}</dt>
               <dd>
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -126,7 +121,7 @@ const ObjectBucketsList: React.FC = (props) => {
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('ceph-storage-plugin~Storage Class'),
+        title: t('ceph-storage-plugin~StorageClass'),
         sortField: 'spec.storageClassName',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },

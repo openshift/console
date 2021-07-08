@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
+  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+} from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
-import { ResourceDropdown } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk/src';
-import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
+import { ResourceDropdown } from '@console/shared';
+import { getNamespacedDynamicModelFactories } from '../../data-transforms/DataModelProvider';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
+import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
 
 interface ApplicationDropdownProps {
   id?: string;
+  ariaLabel?: string;
   className?: string;
   dropDownClassName?: string;
   menuClassName?: string;
@@ -40,10 +46,18 @@ interface ApplicationDropdownProps {
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
   const { t } = useTranslation();
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
+  const dynamicModelFactories = useExtensions<DynamicTopologyDataModelFactory>(
+    isDynamicTopologyDataModelFactory,
+  );
+
+  const namespacedDynamicFactories = React.useMemo(
+    () => getNamespacedDynamicModelFactories(dynamicModelFactories),
+    [dynamicModelFactories],
+  );
 
   const resources = React.useMemo(() => {
     let watchedBaseResources = getBaseWatchedResources(namespace);
-    modelFactories.forEach((modelFactory) => {
+    [...modelFactories, ...namespacedDynamicFactories].forEach((modelFactory) => {
       const factoryResources = modelFactory.properties.resources?.(namespace);
       if (factoryResources) {
         watchedBaseResources = {
@@ -56,7 +70,7 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
       ...watchedBaseResources[key],
       prop: key,
     }));
-  }, [modelFactories, namespace]);
+  }, [namespacedDynamicFactories, modelFactories, namespace]);
 
   return (
     <Firehose resources={resources}>

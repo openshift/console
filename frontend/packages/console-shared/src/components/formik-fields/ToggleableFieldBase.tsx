@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
+import { useField } from 'formik';
 import { CheckboxFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
 
@@ -35,7 +35,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
       {children({
         ...field,
         ...props,
-        value: field.value,
+        value: field.value ?? false,
         id: fieldId,
         label,
         isChecked: field.checked,

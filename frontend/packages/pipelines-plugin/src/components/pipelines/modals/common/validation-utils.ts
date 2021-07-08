@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import * as yup from 'yup';
+import { paramIsRequired } from '../../../../utils/common';
 import { PipelineResourceType, VolumeTypes } from '../../const';
 import { CREATE_PIPELINE_RESOURCE } from './const';
 
@@ -124,8 +125,15 @@ const commonPipelineSchema = () =>
     parameters: yup.array().of(
       yup.object().shape({
         name: yup.string().required(i18next.t('pipelines-plugin~Required')),
+        default: yup.string(),
         description: yup.string(),
-        default: yup.string().required(i18next.t('pipelines-plugin~Required')),
+        value: yup
+          .string()
+          .test('test-if-param-can-be-empty', i18next.t('pipelines-plugin~Required'), function(
+            value: string,
+          ) {
+            return paramIsRequired(this.parent) ? !!value : true;
+          }),
       }),
     ),
     resources: formResources(),

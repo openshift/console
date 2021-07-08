@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useField, useFormikContext, FormikValues } from 'formik';
 import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { useField, useFormikContext, FormikValues } from 'formik';
 import { useFormikValidationFix } from '../../hooks';
 import { FormSelectFieldOption, FormSelectFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
@@ -44,7 +44,7 @@ const FormSelectField: React.FC<FormSelectFieldProps> = ({
       <FormSelect
         {...props}
         id={fieldId}
-        aria-describedby={`${fieldId}-helper`}
+        aria-describedby={helpText ? `${fieldId}-helper` : undefined}
         onChange={(value: any) => {
           props.onChange && props.onChange(value);
           // Validation is automatically done by the useFormikValidationFix above

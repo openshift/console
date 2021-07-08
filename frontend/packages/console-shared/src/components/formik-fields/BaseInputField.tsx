@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useField } from 'formik';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import { useField } from 'formik';
+import { useFormikValidationFix } from '../../hooks';
 import { BaseInputFieldProps } from './field-types';
 import { getFieldId } from './field-utils';
-import { useFormikValidationFix } from '../../hooks';
 
 const BaseInputField: React.FC<BaseInputFieldProps & {
   children: (props) => React.ReactNode;
@@ -39,7 +39,7 @@ const BaseInputField: React.FC<BaseInputFieldProps & {
         id: fieldId,
         label,
         validated: !isValid ? ValidatedOptions.error : validated,
-        'aria-describedby': `${fieldId}-helper`,
+        'aria-describedby': helpText ? `${fieldId}-helper` : undefined,
         onChange: (value, event) => {
           field.onChange(event);
           onChange && onChange(event);

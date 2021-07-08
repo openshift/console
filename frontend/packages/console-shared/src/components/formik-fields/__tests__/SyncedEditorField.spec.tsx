@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
+import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import { useField } from 'formik';
-import { Alert } from '@patternfly/react-core';
-import SyncedEditorField from '../SyncedEditorField';
-import RadioGroupField from '../RadioGroupField';
+import * as _ from 'lodash';
 import DynamicFormField from '../DynamicFormField';
+import RadioGroupField from '../RadioGroupField';
+import SyncedEditorField from '../SyncedEditorField';
 import YAMLEditorField from '../YAMLEditorField';
 
 jest.mock('react-i18next', () => {

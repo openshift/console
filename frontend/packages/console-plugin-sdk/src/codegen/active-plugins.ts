@@ -5,9 +5,9 @@ import {
   parseEncodedCodeRefValue,
 } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { ConsoleExtensionsJSON } from '@console/dynamic-plugin-sdk/src/schema/console-extensions';
-import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { EncodedCodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { parseJSONC } from '@console/dynamic-plugin-sdk/src/utils/jsonc';
+import { ValidationResult } from '@console/dynamic-plugin-sdk/src/validation/ValidationResult';
 import { validateExtensionsFileSchema } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleAssetPlugin';
 import { Extension, ActivePlugin } from '../typings';
 import { trimStartMultiLine } from '../utils/string';

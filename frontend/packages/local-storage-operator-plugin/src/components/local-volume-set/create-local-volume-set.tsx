@@ -1,21 +1,21 @@
 import * as React from 'react';
+import { Form, TextVariants } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { Form, TextVariants } from '@patternfly/react-core';
 import { resourcePathFromModel, BreadCrumbs } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { history } from '@console/internal/components/utils/router';
 import { k8sCreate, NodeKind, referenceForModel } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { LocalVolumeSetModel } from '../../models';
-import { reducer, initialState } from './state';
 import { nodeResource } from '../../resources';
 import { hasNoTaints, getNodesByHostNameLabel } from '../../utils';
-import { getLocalVolumeSetRequestData } from './request';
+import { FormFooter } from '../common/form-footer';
 import { LocalVolumeSetBody } from './body';
 import { LocalVolumeSetHeader } from './header';
-import { FormFooter } from '../common/form-footer';
+import { getLocalVolumeSetRequestData } from './request';
+import { reducer, initialState } from './state';
 import './create-local-volume-set.scss';
 
 const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) => {

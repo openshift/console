@@ -1,5 +1,5 @@
 .co-suggestion-box {
-  background-color: #fff;
+  background-color: var(--pf-global--BackgroundColor--100);
   z-index: 5;
   width: 100%;
   @media (max-width: $screen-xs-min) {
@@ -11,7 +11,7 @@
 }
 
 .co-suggestion-box__suggestions {
-  background-color: #fff;
+  background-color: var(--pf-global--BackgroundColor--100);
   /* To make the suggestion box hover on top of the table */
   margin-bottom: -19em;
   display: flex;
@@ -28,7 +28,7 @@
 
 .co-suggestion-line {
   border: 1px solid #ededed;
-  background-color: #f5f5f5;
+  background-color: var(--pf-global--palette--black-150);
   border-radius: 12px;
   overflow: hidden;
   display: inline;

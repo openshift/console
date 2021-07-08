@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import CloudShellDrawer from '../CloudShellDrawer';
 import { Drawer } from '@console/shared';
+import CloudShellDrawer from '../CloudShellDrawer';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'cloudshell';
+const i18nNS = 'console-app';
 
 describe('CloudShellDrawerComponent', () => {
   it('should render children as Drawer children when present', () => {

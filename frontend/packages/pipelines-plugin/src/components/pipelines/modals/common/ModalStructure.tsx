@@ -1,7 +1,7 @@
 import * as React from 'react';
-import * as _ from 'lodash';
-import { FormikProps, FormikValues } from 'formik';
 import { Form } from '@patternfly/react-core';
+import { FormikProps, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import {
   ModalBody,
   ModalComponentProps,
@@ -44,7 +44,7 @@ const ModalStructure: React.FC<ModalStructureCombinedProps> = (props) => {
           errorMessage={status?.submitError}
           inProgress={isSubmitting}
           submitText={submitBtnText}
-          submitDisabled={!_.isEmpty(errors)}
+          submitDisabled={!_.isEmpty(errors) || isSubmitting}
           submitDanger={submitDanger}
           cancel={close}
         />

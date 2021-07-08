@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 import { Conditions } from '@console/internal/components/conditions';
-import { useCalculatedDescriptorProperties } from '../utils';
-import { DescriptorType, StatusDescriptor } from '../types';
 import { SectionHeading } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { JSONSchema6 } from 'json-schema';
+import { DescriptorType, StatusDescriptor } from '../types';
+import { useCalculatedDescriptorProperties } from '../utils';
 
 // Determines if the descriptor points to an array value.
 const validateConditionsDescriptor = (descriptor: StatusDescriptor, value: any): boolean => {

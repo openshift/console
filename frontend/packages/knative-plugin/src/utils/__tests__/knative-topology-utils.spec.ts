@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
+import { SERVERLESS_FUNCTION_LABEL } from '../../const';
+import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
 import {
   MockKnativeResources,
   getEventSourceResponse,
@@ -27,9 +29,7 @@ import {
 } from '../../topology/knative-topology-utils';
 import { EdgeType, NodeType } from '../../topology/topology-types';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
-import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
 import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
-import { SERVERLESS_FUNCTION_LABEL } from '../../const';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {

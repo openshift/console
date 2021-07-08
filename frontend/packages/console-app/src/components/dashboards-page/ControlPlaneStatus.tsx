@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import {
   HealthState,
   healthStateMapping,
   healthStateMessage,
 } from '@console/shared/src/components/dashboard/status-card/states';
-import { getControlPlaneComponentHealth } from './status';
 import Status, {
   StatusPopupSection,
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
-import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
+import { getControlPlaneComponentHealth } from './status';
 
 const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) => {
   const { t } = useTranslation();

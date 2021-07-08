@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import DraggableCoreIFrameFix from '../DraggableCoreIFrameFix';
 import { DraggableCore, DraggableEvent, DraggableData } from 'react-draggable';
+import DraggableCoreIFrameFix from '../DraggableCoreIFrameFix';
 
 describe('DraggableCoreIFrameFix', () => {
   it('should execute handlers and apply fix class', () => {

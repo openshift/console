@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
-import * as _ from 'lodash';
 import {
   CatalogTile,
   VerticalTabsTab,
   FilterSidePanelCategoryItem,
 } from '@patternfly/react-catalog-view-extension';
 import { Modal } from '@patternfly/react-core';
-import { MarkdownView } from '../clusterserviceversion';
+import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import * as _ from 'lodash';
+import { MemoryRouter } from 'react-router-dom';
 import {
   operatorHubListPageProps,
   operatorHubTileViewPageProps,
@@ -19,13 +18,14 @@ import {
   itemWithLongDescription,
   filterCounts,
 } from '../../../mocks';
+import { MarkdownView } from '../clusterserviceversion';
+import { OperatorHubItemDetails, OperatorHubItemDetailsProps } from './operator-hub-item-details';
 import {
   OperatorHubTileView,
   getProviderValue,
   keywordCompare,
   OperatorHubTileViewProps,
 } from './operator-hub-items';
-import { OperatorHubItemDetails, OperatorHubItemDetailsProps } from './operator-hub-item-details';
 import { OperatorHubList, OperatorHubListProps } from './operator-hub-page';
 
 jest.mock('react-i18next', () => {

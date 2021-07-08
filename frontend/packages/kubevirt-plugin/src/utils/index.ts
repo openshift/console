@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { FirehoseResult } from '@console/internal/components/utils';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
@@ -16,7 +15,6 @@ import {
   getUID,
 } from '@console/shared/src/selectors';
 import { getRandomChars } from '@console/shared/src/utils/utils';
-
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants';
 import { pluralize } from './strings';
 

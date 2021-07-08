@@ -1,4 +1,4 @@
-@topology @regression @manual
+@topology
 Feature: Display options in topology
               As a user, I want to see display options
 
@@ -7,7 +7,8 @@ Feature: Display options in topology
               And user is at Topology page
 
 
-        Scenario: Display options menu in topology with defaut options: T-07-TC10
+        @regression @manual
+        Scenario: Display options menu in topology with defaut options: T-08-TC01
             Given user has created deployment, deployment-config and knative-service type resources
              When user clicks on Display Options
               And user sees "Pod Count" and "Labels" under "Show" and "Expand" have options according to their presence which are "Application Groupings" and "knative Services"

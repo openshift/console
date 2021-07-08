@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { coFetch } from '@console/internal/co-fetch';
-import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { pluginManifestFile } from '../constants';
+import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { resolveURL } from '../utils/url';
 
 export const validatePluginManifestSchema = async (

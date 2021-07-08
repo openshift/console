@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
 import { CheckIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
 import useCloudShellAvailable from './useCloudShellAvailable';
@@ -31,7 +31,7 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
     >
-      {t('cloudshell~OpenShift command line')}
+      {t('console-app~OpenShift command line')}
       {open ? (
         <span
           style={{

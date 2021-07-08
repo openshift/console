@@ -1,6 +1,6 @@
-import { deleteResourceModal } from '@console/shared';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { history } from '@console/internal/components/utils';
+import { deleteResourceModal } from '@console/shared';
 
 export const deleteHelmRelease = (releaseName: string, namespace: string, redirect?: string) => {
   return {

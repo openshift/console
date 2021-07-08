@@ -220,7 +220,7 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
   );
 };
 
-const { details, editYaml, pods, envEditor, events } = navFactory;
+const { details, editYaml, pods, envEditor, events, metrics } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => {
   const ns = useSelector((state: RootState) => getActiveNamespace(state));
 
@@ -233,6 +233,7 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
       menuActions={menuActions}
       pages={[
         details(DeploymentDetails),
+        metrics(),
         editYaml(),
         {
           href: 'replicasets',

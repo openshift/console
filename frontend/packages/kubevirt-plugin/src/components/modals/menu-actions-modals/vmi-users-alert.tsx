@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { Alert, Button } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-
 import { history } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
-import { Alert, Button } from '@patternfly/react-core';
-
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMIKind } from '../../../types';
@@ -38,12 +36,7 @@ export const VMIUsersAlert: React.FC<VMIUsersAlertProps> = ({
   };
 
   const alertBody = (
-    <Trans
-      t={t}
-      i18nKey="Guest agent logged in users alert"
-      ns="kubevirt-plugin"
-      count={userListLength}
-    >
+    <Trans t={t} ns="kubevirt-plugin" count={userListLength}>
       <Button variant="link" isInline onClick={onLinkClick}>
         {{ count: userListLength }} User
       </Button>{' '}

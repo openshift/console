@@ -21,6 +21,8 @@ export const topologyPO = {
     deleteWorkload: '[data-test="confirm-action"]',
     eventSourceWorkload: '[data-type="event-source"]',
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
+    addNewAnnotations: '[data-test="add-button"]',
+    connector: '[data-test-id="edge-handler"]',
     filterByResource: {
       filterByResourceDropDown: '.pf-c-select__toggle-text',
       deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
@@ -40,7 +42,7 @@ export const topologyPO = {
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
     tabs: '[role="dialog"] li button',
-    sectionTitle: '[role="dialog"] h2',
+    sectionTitle: '[role="dialog"] h2.sidebar__section-heading',
     close: 'button[aria-label="Close"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',

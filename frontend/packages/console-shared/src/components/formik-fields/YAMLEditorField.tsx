@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { isEmpty } from 'lodash';
-import { FormikValues, useField, useFormikContext } from 'formik';
 import { Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
+import { FormikValues, useField, useFormikContext } from 'formik';
+import { isEmpty } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
-import { YAMLEditorFieldProps } from './field-types';
-
-import './YAMLEditorField.scss';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleYAMLSampleModel } from '@console/internal/models';
+import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import { getResourceSidebarSamples } from '../../utils';
+import { YAMLEditorFieldProps } from './field-types';
+
+import './YAMLEditorField.scss';
 
 const SampleResource: WatchK8sResource = {
   kind: referenceForModel(ConsoleYAMLSampleModel),

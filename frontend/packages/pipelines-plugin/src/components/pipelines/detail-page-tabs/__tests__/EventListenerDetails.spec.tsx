@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import EventListenerDetails from '../EventListenerDetails';
 import {
   EventlistenerTestData,
   EventlistenerTypes,
 } from '../../../../test-data/event-listener-data';
+import EventListenerDetails from '../EventListenerDetails';
 import EventListenerTriggers from '../EventListenerTriggers';
 
 type EventListenerDetailsProps = React.ComponentProps<typeof EventListenerDetails>;

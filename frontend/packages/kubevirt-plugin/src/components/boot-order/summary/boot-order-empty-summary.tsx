@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { ExpandableSection, Text, TextVariants } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
 import { BootableDeviceType } from '../../../types';
 import { deviceKey, deviceLabel } from '../constants';
 

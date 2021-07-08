@@ -6,10 +6,8 @@
  * The vmwareToKubevirtOsConfigMap is usually created by the web-ui-operator and can be missing.
  */
 import * as _ from 'lodash';
-
 import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { alignWithDNS1123 } from '@console/shared/src';
-
 import { VMwareFirmware } from '../../../../../../constants/v2v-import/vmware/vmware-firmware';
 import {
   CUSTOM_FLAVOR,

@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
-import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
 import {
   ActionGroup,
   Alert,
@@ -11,6 +8,11 @@ import {
   CardBody,
   Spinner,
 } from '@patternfly/react-core';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import { errorModal } from '@console/internal/components/modals';
 import {
   Firehose,
   FirehoseResult,
@@ -25,7 +27,12 @@ import {
   referenceFor,
   K8sResourceKind,
 } from '@console/internal/module/k8s';
-import { errorModal } from '@console/internal/components/modals';
+import { parseJSONAnnotation, StatusIconAndText } from '@console/shared';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
 import {
   ClusterServiceVersionModel,
   InstallPlanModel,
@@ -38,15 +45,8 @@ import {
   InstallPlanKind,
   PackageManifestKind,
 } from '../types';
-import { parseJSONAnnotation, StatusIconAndText } from '@console/shared';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { InstallPlanPreview } from './install-plan';
-import { useTranslation } from 'react-i18next';
+import { ClusterServiceVersionLogo, iconFor, InstallPlanReview } from './index';
 
 const INITIALIZATION_RESOURCE_ANNOTATION = 'operatorframework.io/initialization-resource';
 const getInitializationResource = (

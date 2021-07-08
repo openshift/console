@@ -7,7 +7,7 @@ import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/
 import {
   subscribeToExtensions,
   extensionDiffListener,
-} from '@console/plugin-sdk/src/api/subscribeToExtensions';
+} from '@console/plugin-sdk/src/api/pluginSubscriptionService';
 import {
   FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,

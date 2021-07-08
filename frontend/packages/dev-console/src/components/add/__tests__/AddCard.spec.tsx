@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
 import { Title } from '@patternfly/react-core';
+import { shallow, ShallowWrapper } from 'enzyme';
 import AddCard from '../AddCard';
 import { addActionExtensions } from './add-page-test-data';
 
@@ -11,7 +11,8 @@ describe('AddCard', () => {
 
   beforeEach(() => {
     props = {
-      title: 'title',
+      id: 'id',
+      title: 'Title',
       items: addActionExtensions,
       namespace: 'ns',
     };

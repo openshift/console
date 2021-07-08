@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { Gallery, GalleryItem, Alert } from '@patternfly/react-core';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { Gallery, GalleryItem, Alert } from '@patternfly/react-core';
-import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+import { ResourceLink } from '@console/internal/components/utils';
+import { pluralize } from '@console/internal/components/utils/details-page';
 import {
-  HealthState,
-  healthStateMapping,
-} from '@console/shared/src/components/dashboard/status-card/states';
-import { getNodeMachineNameAndNamespace } from '@console/shared';
+  useK8sWatchResource,
+  WatchK8sResult,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { MachineModel, MachineHealthCheckModel } from '@console/internal/models';
 import {
   referenceForModel,
@@ -18,22 +18,21 @@ import {
   MachineHealthCheckKind,
   MachineHealthCondition,
 } from '@console/internal/module/k8s';
-import {
-  useK8sWatchResource,
-  WatchK8sResult,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
-import { pluralize } from '@console/internal/components/utils/details-page';
 import { LabelSelector } from '@console/internal/module/k8s/label-selector';
+import { getNodeMachineNameAndNamespace } from '@console/shared';
+import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
+import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
+import {
+  HealthState,
+  healthStateMapping,
+} from '@console/shared/src/components/dashboard/status-card/states';
 import Status, {
   StatusPopupSection,
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
-import { ResourceLink } from '@console/internal/components/utils';
-
-import { NodeDashboardContext } from './NodeDashboardContext';
 import NodeStatus from '../NodeStatus';
-import { CONDITIONS_WARNING } from './messages';
 import MarkAsSchedulablePopover from '../popovers/MarkAsSchedulablePopover';
+import { CONDITIONS_WARNING } from './messages';
+import { NodeDashboardContext } from './NodeDashboardContext';
 
 import './node-health.scss';
 
@@ -69,9 +68,12 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
   const { t } = useTranslation();
   return (
     <>
-      {t('nodes~{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.', {
-        machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
-      })}
+      {t(
+        'console-app~{{ machineHealthCheckLabelPlural }} automatically remediate node health issues.',
+        {
+          machineHealthCheckLabelPlural: MachineHealthCheckModel.labelPlural,
+        },
+      )}
       {!!machineHealthChecks?.length && (
         <StatusPopupSection
           firstColumn={pluralize(
@@ -94,7 +96,10 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
         </StatusPopupSection>
       )}
       {!!conditions.length && (
-        <StatusPopupSection firstColumn={t('nodes~Conditions')} secondColumn={t('nodes~Status')}>
+        <StatusPopupSection
+          firstColumn={t('console-app~Conditions')}
+          secondColumn={t('console-app~Status')}
+        >
           {grouppedConditions.map((c) => (
             <Status {...c} key={c.title}>
               {c.title}
@@ -106,7 +111,7 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
         <Alert
           variant="warning"
           isInline
-          title={reboot ? t('nodes~Reboot pending') : t('nodes~Reprovision pending')}
+          title={reboot ? t('console-app~Reboot pending') : t('console-app~Reprovision pending')}
           className="co-node-health__popup-alert"
         >
           {CONDITIONS_WARNING(reboot)}
@@ -119,9 +124,12 @@ export const HealthChecksPopup: React.FC<HealthChecksPopupProps> = ({
           title="Multiple resources"
           className="co-node-health__popup-alert"
         >
-          {t('nodes~Only one {{ machineHealthCheckLabel }} resource should match this node.', {
-            machineHealthCheckLabel: MachineHealthCheckModel.label,
-          })}
+          {t(
+            'console-app~Only one {{ machineHealthCheckLabel }} resource should match this node.',
+            {
+              machineHealthCheckLabel: MachineHealthCheckModel.label,
+            },
+          )}
         </Alert>
       )}
       {disabledAlert && (
@@ -177,7 +185,7 @@ export const getMachineHealth = (
     return {
       state: HealthState.NOT_AVAILABLE,
       noIcon: true,
-      details: i18next.t('nodes~Not configured'),
+      details: i18next.t('console-app~Not configured'),
     };
   }
   let failingConditions: number = 0;
@@ -255,8 +263,8 @@ export const HealthChecksItem: React.FC<HealthChecksItemProps> = ({ disabledAler
 
   return (
     <HealthItem
-      title={t('nodes~Health checks')}
-      popupTitle={t('nodes~Health checks')}
+      title={t('console-app~Health checks')}
+      popupTitle={t('console-app~Health checks')}
       {...healthState}
     >
       <HealthChecksPopup

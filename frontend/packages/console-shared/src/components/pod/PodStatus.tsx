@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { ChartDonut } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
-import { ExtPodKind } from '../../types';
-import { useForceUpdate } from '../../hooks/useForceUpdate';
-import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';
+import * as _ from 'lodash';
 import { podColor, AllPodStatus } from '../../constants';
+import { useForceUpdate } from '../../hooks/useForceUpdate';
+import { ExtPodKind } from '../../types';
+import { calculateRadius, podStatus, getPodStatus } from '../../utils/pod-utils';
 
 import './PodStatus.scss';
 

@@ -7,28 +7,28 @@ Feature: Topology chart area
               And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @smoke
-        Scenario: Empty state of topology : T-01-TC01
+        @smoke @to-do
+        Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
 
 
         @regression @to-do
-        Scenario: Navigate to Add page from Empty state of topology
+        Scenario: Navigate to Add page from Empty state of topology: T-06-TC02
             Given user is at the Topology page
              When user clicks on "Add page" link in the topology page
              Then user will be redirected too Add page
 
 
-        @regression @todo
-        Scenario: Add to project option in Empty state of topology
+        @regression @to-do
+        Scenario: Add to project option in Empty state of topology: T-06-TC03
             Given user is at the Topology page
              When user clicks on "Start building your application" link in the topology page
              Then user will be able to see Add to project search bar
 
 
-        @smoke
-        Scenario: Topology with workloads : T-02-TC01
+        @smoke @to-do
+        Scenario: Topology with workloads: T-06-TC04
             Given user has created a workload named "nodejs-ex-git"
               And user has created knative workload "nodejs-ex-git-1"
              When user navigates to Topology page
@@ -36,7 +36,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for deployment : T-02-TC01
+        Scenario: Visual for deployment: T-06-TC05
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user checks nodes and the decorators associated with them
@@ -49,7 +49,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for deployment-config : T-02-TC01
+        Scenario: Visual for deployment-config: T-06-TC06
             Given user is at the Topology page
               And deployment-config workload is present in topology
              When user checks nodes and the decorators associated with them
@@ -62,7 +62,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for knative service with no revision : T-02-TC03
+        Scenario: Visual for knative service with no revision: T-06-TC07
             Given user is at the Topology page
               And knative workload without revision is present in topology
              When user checks nodes and the decorators associated with them
@@ -74,7 +74,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Visual for knative service with revisions : T-02-TC03
+        Scenario: Visual for knative service with revisions: T-06-TC08
             Given user is at the Topology page
               And knative workload with revison is present in topology
              When user checks nodes and the decorators associated with them
@@ -90,8 +90,8 @@ Feature: Topology chart area
               And user checks knative service having label "KSVC" and then the name of service
 
 
-        @smoke
-        Scenario: Context menu of node : T-06-TC10
+        @smoke @to-do
+        Scenario: Context menu of node: T-06-TC09
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user right clicks on the node "nodejs-ex-git" to open context menu
@@ -99,7 +99,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Zoom In in topology : T-07-TC01
+        Scenario: Zoom In in topology: T-06-TC10
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -107,7 +107,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Zoom Out in topology : T-07-TC01
+        Scenario: Zoom Out in topology: T-06-TC11
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom Out option
@@ -115,7 +115,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Fit to Screen in topology : T-07-TC03
+        Scenario: Fit to Screen in topology: T-06-TC12
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -125,7 +125,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Reset view in topology: T-07-TC02
+        Scenario: Reset view in topology: T-06-TC13
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
              When user clicks on Zoom In option
@@ -134,8 +134,8 @@ Feature: Topology chart area
              Then user sees the chart area is reset to original
 
 
-        @regression
-        Scenario: Topology filter by resource: T-07-TC06, T-07-TC07
+        @regression @to-do
+        Scenario: Topology filter by resource: T-06-TC14
             Given user created two workloads with resource type "Deployment" and "Deployment-Config"
              When user is at Topology page chart view
               And user clicks the filter by resource on top
@@ -146,16 +146,16 @@ Feature: Topology chart area
              Then user can see only the deployment-config workload
 
 
-        @regression
-        Scenario: Context menu on empty area
+        @regression @to-do
+        Scenario: Context menu on empty area: T-06-TC15
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
              Then user is able to see options like Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression
-        Scenario: Add to Project in topology
+        @regression @to-do
+        Scenario: Add to Project in topology: T-06-TC16
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user hovers on Add to Project
@@ -189,8 +189,8 @@ Feature: Topology chart area
              Then user is able to see different applications created from Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
-        @regression, @manual
-        Scenario: Upload JAR file form
+        @regression @manual
+        Scenario: Upload JAR file form: T-06-TC17
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -201,8 +201,8 @@ Feature: Topology chart area
               And user can see Resources and Advanced options sections
 
 
-        @regression, @manual
-        Scenario: Drag and drop jar file in topology chart view
+        @regression @manual
+        Scenario: Drag and drop jar file in topology chart view: T-06-TC18
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology page
              When user drags and drop jar file on topology
@@ -214,7 +214,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project to upload JAR file in topology
+        Scenario: Add to Project to upload JAR file in topology: T-06-TC19
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -230,7 +230,7 @@ Feature: Topology chart area
 
 
         @regression @manual
-        Scenario: Add to Project through drag and drop to upload JAR file in topology
+        Scenario: Add to Project through drag and drop to upload JAR file in topology: T-06-TC20
             Given user is at the Topology page
              When user right clicks on the empty chart area
               And user clicks on Add to Project
@@ -243,24 +243,24 @@ Feature: Topology chart area
               And user can see deployment "sample-yaml-upload-1" in application "sample-upload-app" is created in topology
 
 
-        @regression, @manual
-        Scenario: Drag and drop Incompatible file in topology chart view
+        @regression @manual
+        Scenario: Drag and drop Incompatible file in topology chart view: T-06-TC21
             Given user has a incompatible file
               And user is at the Topology chart view
              When user drags and drops the file on topology
              Then a toast warning message will appear stating that the file is invalid.
 
 
-        @regression, @manual
-        Scenario: Exiting the browser while an upload is in progress
+        @regression @manual
+        Scenario: Exiting the browser while an upload is in progress: T-06-TC22
             Given user is uploading a jar file
               And user is at the Topology chart view
              When user tries to exist the browser
              Then a web alert would appear asking the user if they really wanted to leave the page with Leave and Skip button
 
 
-        @regression, @manual
-        Scenario: View shortcuts menu
+        @regression @manual
+        Scenario: View shortcuts menu: T-06-TC23
             Given user has uploaded a jar file
              When user clicks on View shortcuts
              Then user sees shortcut for Move

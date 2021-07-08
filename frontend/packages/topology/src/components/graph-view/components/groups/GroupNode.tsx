@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Node, useSize, useHover } from '@patternfly/react-topology';
 import {
   truncateMiddle,
   shouldTruncate,
   TruncateOptions,
 } from '@console/internal/components/utils';
-import { Node, useSize, useHover } from '@patternfly/react-topology';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared';
+import { OdcNodeModel } from '../../../../topology-types';
 import SvgCircledIcon from '../../../svg/SvgCircledIcon';
 import SvgResourceIcon from '../../../svg/SvgResourceIcon';
-import { OdcNodeModel } from '../../../../topology-types';
 import ResourceKindsInfo from './ResourceKindsInfo';
 
 import './GroupNode.scss';

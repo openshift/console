@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { match as RMatch } from 'react-router';
 import * as _ from 'lodash';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -8,6 +7,9 @@ import { Location } from 'history';
 import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
+import { match as RMatch } from 'react-router';
+import { monitoringSetRules, monitoringLoaded } from '@console/internal/actions/ui';
+import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import {
   AlertsDetailsPage,
   AlertRulesDetailsPage,
@@ -16,8 +18,9 @@ import {
   alertingRuleStateOrder,
   getAlertsAndRules,
 } from '@console/internal/components/monitoring/utils';
-import { monitoringSetRules, monitoringLoaded } from '@console/internal/actions/ui';
-import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
+import { history, StatusBox, LoadingBox } from '@console/internal/components/utils';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
+import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 
 interface MonitoringAlertsDetailsPageProps {
   match: RMatch<{

@@ -1,11 +1,11 @@
+import * as React from 'react';
+import { Wizard, WizardStep } from '@patternfly/react-core';
 import { Location } from 'history';
 import * as _ from 'lodash';
-import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
-
 import { Firehose, history } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -17,8 +17,6 @@ import {
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-import { Wizard, WizardStep } from '@patternfly/react-core';
-
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,

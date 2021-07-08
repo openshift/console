@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'redux';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
-import { Form, FormGroup, TextInput, TextContent } from '@patternfly/react-core';
+import { FormGroup, TextInput, TextContent } from '@patternfly/react-core';
 import {
   createModalLauncher,
   ModalTitle,
@@ -22,6 +22,7 @@ import { FieldLevelHelp } from '@console/internal/components/utils/field-level-h
 import { CAPACITY_INFO_QUERIES } from '@console/ceph-storage-plugin/src/queries';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
@@ -34,13 +35,12 @@ import {
   storageClassTooltip,
   defaultRequestSize,
 } from '../../../constants';
-import { OCSStorageClassDropdown } from '../storage-class-dropdown';
+import { filterSC, isArbiterSC, isValidTopology } from '../../../utils/install';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { pvResource, nodeResource } from '../../../resources';
 import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
-import { isArbiterSC, isValidTopology } from '../../../utils/install';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
@@ -55,12 +55,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
-  const [nodesData] = useK8sWatchResource<NodeKind[]>(nodeResource);
+  const [nodesData, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
-  /* TBD(Afreen): Show installation storage class as preselected
-                  Change state metadata
-  */
-
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
@@ -78,6 +74,9 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const usedCapacityMetric = values?.[1];
   const usedCapacity = humanizeBinaryBytes(usedCapacityMetric);
   const totalCapacity = humanizeBinaryBytes(totalCapacityMetric);
+  /** Name of the installation storageClass which will be the pre-selected value for the dropdown */
+  const installStorageClass = deviceSets?.[0]?.dataPVCTemplate?.spec?.storageClassName;
+  const nodesError = nodesLoadError || !nodesData.length || !nodesLoaded;
 
   const validateSC = React.useCallback(() => {
     if (!selectedSCName) return t('ceph-storage-plugin~No StorageClass selected');
@@ -116,8 +115,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       </div>
     );
   }
-
-  const onChange = (sc: StorageClassResourceKind) => setStorageClass(sc);
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
@@ -172,79 +169,92 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      className="pf-u-display-block modal-content modal-content--no-inner-scroll"
-    >
-      <ModalTitle>{t('ceph-storage-plugin~Add Capacity')}</ModalTitle>
-      <ModalBody>
-        <Trans t={t} ns="ceph-storage-plugin" values={{ name }}>
-          Adding capacity for <strong>{{ name }}</strong>, may increase your expenses.
-        </Trans>
-        <FormGroup
-          className="pf-u-pt-md pf-u-pb-sm"
-          id="add-cap-sc-dropdown__FormGroup"
-          fieldId="add-capacity-dropdown"
-          label={t('ceph-storage-plugin~Storage Class')}
-          labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
-          isRequired
-        >
-          <div id="add-capacity-dropdown" className="ceph-add-capacity__sc-dropdown">
-            <OCSStorageClassDropdown onChange={onChange} data-test="add-cap-sc-dropdown" />
-          </div>
-        </FormGroup>
-        {isNoProvionerSC ? (
-          <PVsAvailableCapacity
-            replica={replica}
-            data-test-id="ceph-add-capacity-pvs-available-capacity"
-            storageClass={storageClass}
-            data={pvData}
-            loaded={pvLoaded}
-            loadError={pvLoadError}
-          />
-        ) : (
-          <>
-            <FormGroup
-              className="pf-u-py-sm"
-              fieldId="request-size"
-              id="requestSize__FormGroup"
-              label={t('ceph-storage-plugin~Raw Capacity')}
-              labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
-            >
-              <TextInput
-                isDisabled
-                id="request-size"
-                className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-                type="number"
-                name="requestSize"
-                value={osdSizeWithoutUnit}
-                aria-label="requestSize"
-                data-test-id="requestSize"
+    /** https://bugzilla.redhat.com/show_bug.cgi?id=1968690
+     * The quickest and safest fix for now is to not use <Form> and use a straight <form> instead.
+     */
+    <form onSubmit={submit} name="form">
+      {/** Modal is spanning across entire screen (for small screen sizes)
+       * Wrapped components inside a <div> to fix it.
+       */}
+      <div className="modal-content modal-content--no-inner-scroll">
+        <ModalTitle>{t('ceph-storage-plugin~Add Capacity')}</ModalTitle>
+        <ModalBody>
+          <Trans t={t} ns="ceph-storage-plugin" values={{ name }}>
+            Adding capacity for <strong>{{ name }}</strong>, may increase your expenses.
+          </Trans>
+          <FormGroup
+            className="pf-u-pt-md pf-u-pb-sm"
+            id="add-cap-sc-dropdown__FormGroup"
+            fieldId="add-capacity-dropdown"
+            label={t('ceph-storage-plugin~StorageClass')}
+            labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
+            isRequired
+          >
+            <div id="add-capacity-dropdown" className="ceph-add-capacity__sc-dropdown">
+              <StorageClassDropdown
+                onChange={(sc: StorageClassResourceKind) => setStorageClass(sc)}
+                noSelection
+                selectedKey={selectedSCName || installStorageClass}
+                filter={filterSC}
+                hideClassName="ceph-add-capacity__sc-dropdown--hide"
+                data-test="add-cap-sc-dropdown"
               />
-              {provisionedCapacity && (
-                <TextContent className="ceph-add-capacity__provisioned-capacity">
-                  {' '}
-                  {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
-                    replica,
-                  })}{' '}
-                  <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
+            </div>
+          </FormGroup>
+          {isNoProvionerSC ? (
+            <PVsAvailableCapacity
+              replica={replica}
+              data-test-id="ceph-add-capacity-pvs-available-capacity"
+              storageClass={storageClass}
+              data={pvData}
+              loaded={pvLoaded}
+              loadError={pvLoadError}
+            />
+          ) : (
+            <>
+              <FormGroup
+                className="pf-u-py-sm"
+                fieldId="request-size"
+                id="requestSize__FormGroup"
+                label={t('ceph-storage-plugin~Raw Capacity')}
+                labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
+              >
+                <TextInput
+                  isDisabled
+                  id="request-size"
+                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+                  type="number"
+                  name="requestSize"
+                  value={osdSizeWithoutUnit}
+                  aria-label="requestSize"
+                  data-test-id="requestSize"
+                />
+                {provisionedCapacity && (
+                  <TextContent className="ceph-add-capacity__provisioned-capacity">
+                    {' '}
+                    {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
+                      replica,
+                    })}{' '}
+                    <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
+                  </TextContent>
+                )}
+                <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
+                  {t('ceph-storage-plugin~Currently Used:')}&nbsp;
+                  {currentCapacity}
                 </TextContent>
-              )}
-              <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
-                {t('ceph-storage-plugin~Currently Used:')}&nbsp;
-                {currentCapacity}
-              </TextContent>
-            </FormGroup>
-          </>
-        )}
-      </ModalBody>
-      <ModalSubmitFooter
-        inProgress={inProgress}
-        errorMessage={errorMessage}
-        submitText={t('ceph-storage-plugin~Add')}
-        cancel={cancel}
-      />
-    </Form>
+              </FormGroup>
+            </>
+          )}
+        </ModalBody>
+        <ModalSubmitFooter
+          inProgress={inProgress}
+          errorMessage={errorMessage}
+          submitText={t('ceph-storage-plugin~Add')}
+          cancel={cancel}
+          submitDisabled={isNoProvionerSC && (!availablePvsCount || nodesError)}
+        />
+      </div>
+    </form>
   );
 };
 

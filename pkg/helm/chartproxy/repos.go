@@ -52,6 +52,13 @@ func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	return client, nil
 }
 
+func (hr helmRepo) OverwrittenRepoName() string {
+	if hr.Name == "openshift-helm-charts" {
+		return "redhat-helm-repo"
+	}
+	return ""
+}
+
 func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	var indexFile repo.IndexFile
 	httpClient, err := hr.httpClient()

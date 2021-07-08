@@ -78,7 +78,9 @@ func (p *proxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
 	}
 
 	indexFile := repo.NewIndexFile()
+	var delKeys []string = make([]string, 0, 20)
 	for _, helmRepo := range helmRepos {
+		overwrites := helmRepo.OverwrittenRepoName()
 		if !helmRepo.Disabled {
 			idxFile, err := helmRepo.IndexFile()
 			if err != nil {
@@ -87,20 +89,32 @@ func (p *proxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
 			}
 
 			for key, entry := range idxFile.Entries {
-				if onlyCompatible {
-					for i := len(entry) - 1; i >= 0; i-- {
-						if entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
-							if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
-								entry = append(entry[:i], entry[i+1:]...)
-							}
+				for i := len(entry) - 1; i >= 0; i-- {
+					if entry[i].Type == "library" {
+						entry = append(entry[:i], entry[i+1:]...)
+						continue
+					}
+					if onlyCompatible && entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
+						if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
+							entry = append(entry[:i], entry[i+1:]...)
 						}
 					}
 				}
 				if len(entry) > 0 {
+					if overwrites != "" {
+						// Adding potential duplicates to the list
+						delKeys = append(delKeys, entry[0].Name+"--"+overwrites)
+					}
+
 					indexFile.Entries[key+"--"+helmRepo.Name] = entry
 				}
 			}
 		}
+	}
+
+	for _, delKey := range delKeys {
+		// If duplicate is found in entries it will delete it, if not found it is a noop
+		delete(indexFile.Entries, delKey)
 	}
 	return indexFile, nil
 }

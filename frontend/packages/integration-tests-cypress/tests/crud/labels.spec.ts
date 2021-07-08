@@ -1,14 +1,13 @@
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
-import { checkErrors, testName } from '../../support';
-import { nav } from '../../views/nav';
-import { detailsPage } from '../../views/details-page';
-import * as yamlEditor from '../../views/yaml-editor';
-import { errorMessage } from '../../views/form';
-import { modal } from '../../views/modal';
-import { labels } from '../../views/labels';
 import { ConfigMapKind } from '@console/internal/module/k8s';
+import { checkErrors, testName } from '../../support';
+import { detailsPage } from '../../views/details-page';
+import { errorMessage } from '../../views/form';
+import { labels } from '../../views/labels';
+import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
+import * as yamlEditor from '../../views/yaml-editor';
 
 describe('Editing labels', () => {
   const name = `${testName}-editlabels`;

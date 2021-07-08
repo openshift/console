@@ -1,10 +1,9 @@
 import * as React from 'react';
-
+import { Button, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { ErrorStatus, getName, getNamespace, ProgressStatus, Status } from '@console/shared';
-import { Button, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
-
 import { VirtualMachineRestoreModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import {
   getVMRestoreError,
   getVMSnapshotError,
@@ -43,7 +42,7 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
                   onClick={() =>
                     history.push(
                       resourcePath(
-                        VirtualMachineRestoreModel.kind,
+                        kubevirtReferenceForModel(VirtualMachineRestoreModel),
                         getName(restore),
                         getNamespace(restore),
                       ),
@@ -72,7 +71,7 @@ export const VMSnapshotStatus: React.FC<VMSnapshotStatusProps> = ({ snapshot, re
               onClick={() =>
                 history.push(
                   resourcePath(
-                    VirtualMachineRestoreModel.kind,
+                    kubevirtReferenceForModel(VirtualMachineRestoreModel),
                     getName(restore),
                     getNamespace(restore),
                   ),

@@ -1,10 +1,10 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { nav } from '@console/cypress-integration-tests/views/nav';
-import { modal } from '@console/cypress-integration-tests/views/modal';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
 import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
-import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -15,6 +15,9 @@ export const app = {
   waitForLoad: (timeout: number = 80000) => {
     cy.get('.co-m-loader', { timeout }).should('not.exist');
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
+    cy.get('.skeleton-catalog--grid', { timeout }).should('not.exist');
+    cy.get('.loading-skeleton--table', { timeout }).should('not.exist');
+    cy.byTestID('skeleton-detail-view', { timeout }).should('not.exist');
     app.waitForDocumentLoad();
   },
   waitForNameSpacesToLoad: () => {
@@ -31,13 +34,20 @@ export const perspective = {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
     if (switchPerspective.Developer) {
-      // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-      // cy.testA11y('Developer perspective with guider tour modal');
+      cy.testA11y('Developer perspective with guide tour modal');
       guidedTour.close();
-      // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
+      // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
     }
     nav.sidenav.switcher.shouldHaveText(perspectiveName);
+    cy.get('body').then(($body) => {
+      if ($body.find('[aria-label="Close drawer panel"]').length) {
+        cy.get('[aria-label="Close drawer panel"]').click();
+        cy.get('button')
+          .contains('Leave')
+          .click();
+      }
+    });
   },
 };
 
@@ -165,6 +175,7 @@ export const projectNameSpace = {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         projectNameSpace.enterProjectName(projectName);
         cy.byTestID('confirm-action').click();
+        app.waitForLoad();
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
@@ -181,6 +192,7 @@ export const projectNameSpace = {
             cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
             projectNameSpace.enterProjectName(projectName);
             cy.byTestID('confirm-action').click();
+            app.waitForLoad();
           }
         });
       }

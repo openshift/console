@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-
 import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import {
@@ -8,16 +9,14 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { dimensifyHeader, getName, getNamespace } from '@console/shared';
-import { Button } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
-
 import { VirtualMachineSnapshotModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMSnapshot } from '../../types';
 import { wrapWithProgress } from '../../utils/utils';
-import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
+import SnapshotModal from '../modals/snapshot-modal/SnapshotsModal';
 import { VMTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
 import { snapshotsTableColumnClasses } from './utils';
@@ -72,6 +71,9 @@ export const VMSnapshotsTable: React.FC<VMSnapshotsTableProps> = ({
               transforms: [sortable],
             },
             {
+              title: t('kubevirt-plugin~Indications'),
+            },
+            {
               title: '',
             },
             {
@@ -96,7 +98,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
 
   const snapshotResource: WatchK8sResource = {
     isList: true,
-    kind: VirtualMachineSnapshotModel.kind,
+    kind: kubevirtReferenceForModel(VirtualMachineSnapshotModel),
     namespaced: true,
     namespace,
   };
@@ -109,7 +111,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
   const filteredSnapshots = snapshots.filter((snap) => getVmSnapshotVmName(snap) === vmName);
-  const isDisabled = isLocked || isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi);
+  const isDisabled = isLocked;
 
   return (
     <div className="co-m-list">
@@ -148,6 +150,7 @@ export const VMSnapshotsPage: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis:
             withProgress,
             restores: mappedRelevantRestores,
             isDisabled,
+            isVMRunning: isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi),
           }}
           row={VMSnapshotRow}
           columnClasses={snapshotsTableColumnClasses}

@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
-import { ValidationErrorType } from '@console/shared';
 import { Button, ButtonVariant, SelectOption, Text, TextContent } from '@patternfly/react-core';
-
+import { Trans, useTranslation } from 'react-i18next';
+import { ValidationErrorType } from '@console/shared';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';

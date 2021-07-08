@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Radio,
   Select,
@@ -8,6 +7,7 @@ import {
   SelectVariant,
   Switch,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { DisplayFilters, TopologyDisplayFilterType, TopologyViewType } from '../topology-types';
 import { EXPAND_GROUPS_FILTER_ID, SHOW_GROUPS_FILTER_ID } from './const';
 

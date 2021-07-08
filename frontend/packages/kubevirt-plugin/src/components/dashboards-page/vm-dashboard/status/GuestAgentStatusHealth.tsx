@@ -1,11 +1,9 @@
 import * as React from 'react';
+import { OffIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-
 import { VMIKind } from '@console/kubevirt-plugin/src/types';
 import HealthItem from '@console/shared/src/components/dashboard/status-card/HealthItem';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
-import { OffIcon } from '@patternfly/react-icons';
-
 import {
   isGuestAgentInstalled,
   isGuestAgentVersionSupported,
@@ -41,8 +39,8 @@ const GuestAgentStatusHealth: React.FC<GuestAgentProps> = ({ vmi }) => {
     : HealthState.OK;
 
   const details =
-    (guestAgentNotSupportedMessage && t('kubevirt-plugin~Not Supported')) ||
-    (guestAgentNotInstalledMessage && t('kubevirt-plugin~No Guest agent')) ||
+    (guestAgentNotSupportedMessage && t('kubevirt-plugin~Unsupported version')) ||
+    (guestAgentNotInstalledMessage && t('kubevirt-plugin~Guest agent is unavailable')) ||
     (!vmi?.status && t('kubevirt-plugin~Virtual machine not running')) ||
     HealthState.OK;
 

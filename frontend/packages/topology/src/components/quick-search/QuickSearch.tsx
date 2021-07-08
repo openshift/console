@@ -1,12 +1,12 @@
 import * as React from 'react';
+import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import CatalogServiceProvider, {
   CatalogService,
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import QuickSearchController from './QuickSearchController';
-import { useTransformedQuickStarts } from './utils/quick-search-utils';
 import { QuickSearchProviders } from './utils/quick-search-types';
+import { useTransformedQuickStarts } from './utils/quick-search-utils';
 
 interface QuickSearchProps {
   namespace: string;

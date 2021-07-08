@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { useAccessReview } from '@console/internal/components/utils';
 import {
   Edge,
   EdgeConnectorArrow,
@@ -8,8 +6,10 @@ import {
   WithSourceDragProps,
   WithTargetDragProps,
 } from '@patternfly/react-topology';
-import { getResource } from '@console/topology/src/utils';
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { BaseEdge } from '@console/topology/src/components/graph-view';
+import { getResource } from '@console/topology/src/utils';
 import './KafkaConnectionLink.scss';
 
 type KafkaConnectionLinkProps = {

@@ -4,7 +4,6 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { VolumeType } from '../../../constants';
 import { DiskType } from '../../../constants/vm/storage/disk-type';

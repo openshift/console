@@ -48,7 +48,7 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             {t(
-              'ceph-storage-plugin~Caching is a policy that creates local copies of the data. It saves the copies locally to improve performance for frequently accessed data. Each cached copy has a TTL and is verified against the hub. Each non-read operation(upload, overwrite, delete) is performed on the hub',
+              'ceph-storage-plugin~Caching is a policy that creates local copies of the data. It saves the copies locally to improve performance for frequently accessed data. Each cached copy has a TTL and is verified against the hub. Each non-read operation (upload, overwrite, delete) is performed on the hub',
             )}
           </Alert>
         )}
@@ -59,7 +59,7 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
           </Title>
           <p className="nb-create-bc-step-page-form__element--light-text">
             {t(
-              'ceph-storage-plugin~A single namespace-store, defines the read and write target of the namespace bucket',
+              'ceph-storage-plugin~A single NamespaceStore that defines the read and write target of the namespace bucket.',
             )}
           </p>
           <FormGroup

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
-import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
+import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { useRelatedHPA } from '../../hooks/hpa-hooks';
-import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
 import { ExtPodKind } from '../../types';
+import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
 import PodStatus from './PodStatus';
 import './PodRing.scss';
 

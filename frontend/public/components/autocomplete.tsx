@@ -68,16 +68,12 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = (props) => {
 
   return (
     <div className="co-suggestion-box" ref={ref}>
-      <div className="has-feedback">
-        <TextFilter
-          data-test-id="list-page-search-input"
-          aria-label="Enter Query"
-          value={textValue}
-          onChange={handleInput}
-          placeholder={placeholder}
-          onFocus={activate}
-        />
-      </div>
+      <TextFilter
+        value={textValue}
+        onChange={handleInput}
+        placeholder={placeholder}
+        onFocus={activate}
+      />
       {showSuggestions && (
         <div
           className={classNames('co-suggestion-box__suggestions', {

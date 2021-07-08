@@ -1,5 +1,12 @@
 import * as React from 'react';
-
+import {
+  GraphElement,
+  Node,
+  withCreateConnector,
+  withDndDrop,
+  withDragNode,
+  withSelection,
+} from '@patternfly/react-topology';
 import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { ModifyApplication } from '@console/topology/src/actions';
@@ -14,16 +21,6 @@ import {
 } from '@console/topology/src/components/graph-view';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { getResource, withEditReviewAccess } from '@console/topology/src/utils';
-import {
-  ComponentFactory,
-  GraphElement,
-  Node,
-  withCreateConnector,
-  withDndDrop,
-  withDragNode,
-  withSelection,
-} from '@patternfly/react-topology';
-
 import { vmMenuActions } from '../../components/vms/menu-actions';
 import { VMNodeData } from '../types';
 import { TYPE_VIRTUAL_MACHINE } from './const';
@@ -56,29 +53,30 @@ export const vmContextMenu = (element: Node) => {
   return createMenuItems(kebabOptionsToMenu(vmActions(getResource(element), element.getData())));
 };
 
-export const getKubevirtComponentFactory = (): ComponentFactory => {
-  return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-    switch (type) {
-      case TYPE_VIRTUAL_MACHINE:
-        return withCreateConnector(
-          createConnectorCallback(),
-          CreateConnector,
-        )(
-          withDndDrop<
-            any,
-            any,
-            { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-            NodeComponentProps
-          >(nodeDropTargetSpec)(
-            withEditReviewAccess('patch')(
-              withDragNode(nodeDragSourceSpec(type))(
-                withSelection({ controlled: true })(withContextMenu(vmContextMenu)(VmNode)),
-              ),
+export const getKubevirtComponentFactory = (
+  kind,
+  type,
+): React.ComponentType<{ element: GraphElement }> | undefined => {
+  switch (type) {
+    case TYPE_VIRTUAL_MACHINE:
+      return withCreateConnector(
+        createConnectorCallback(),
+        CreateConnector,
+      )(
+        withDndDrop<
+          any,
+          any,
+          { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+          NodeComponentProps
+        >(nodeDropTargetSpec)(
+          withEditReviewAccess('patch')(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection({ controlled: true })(withContextMenu(vmContextMenu)(VmNode)),
             ),
           ),
-        );
-      default:
-        return undefined;
-    }
-  };
+        ),
+      );
+    default:
+      return undefined;
+  }
 };

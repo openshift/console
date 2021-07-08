@@ -1,7 +1,4 @@
-import * as _ from 'lodash';
 import * as React from 'react';
-
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
   Breadcrumb,
   BreadcrumbHeading,
@@ -11,10 +8,12 @@ import {
   List,
   ListItem,
 } from '@patternfly/react-core';
-
+import * as _ from 'lodash';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { asVM } from '../../selectors/vm';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { PENDING_CHANGES_WARNING_MESSAGE } from '../../strings/vm/status';
@@ -145,13 +144,13 @@ export const PendingChangesWarningFirehose: React.FC<PendingChangeWarningFirehos
 }) => {
   const resources = [
     {
-      kind: VirtualMachineInstanceModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
       name,
       namespace,
       prop: 'vmi',
     },
     {
-      kind: VirtualMachineModel.kind,
+      kind: kubevirtReferenceForModel(VirtualMachineModel),
       name,
       namespace,
       prop: 'vmLikeEntity',

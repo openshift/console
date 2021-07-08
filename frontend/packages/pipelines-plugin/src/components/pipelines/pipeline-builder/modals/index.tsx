@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 import i18next from 'i18next';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import ModalContent from './ModalContent';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens/dist/js/global_warning_color_100';
 
 type ModalCallback = () => void;
 
 export const removeTaskModal = (taskName: string, onRemove: ModalCallback) => {
   confirmModal({
-    title: i18next.t('pipelines-plugin~Remove Task'),
+    title: i18next.t('pipelines-plugin~Remove task'),
     message: (
       <ModalContent
         icon={<ExclamationTriangleIcon size="lg" color={warningColor.value} />}

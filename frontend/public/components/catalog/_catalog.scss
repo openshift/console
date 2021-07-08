@@ -177,9 +177,9 @@ $catalog-tile-width: $co-m-catalog-tile-width;
 
   &__info-icon {
     vertical-align: middle;
-    color: #6a6e73;
+    color: var(--pf-global--icon--Color--light);
     &:hover {
-      color: #151515;
+      color: var(--pf-global--icon--Color--dark);
     }
   }
 
@@ -207,7 +207,7 @@ $catalog-tile-width: $co-m-catalog-tile-width;
       display: flex;
       flex-direction: column;
       margin: 0 !important;
-      padding: 0;
+      padding: 0 !important;
     }
 
     .modal-body-inner-shadow-covers {

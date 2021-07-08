@@ -1,4 +1,5 @@
 import { RouteComponentProps, RouteProps } from 'react-router-dom';
+import { PageComponentProps } from '@console/internal/components/utils';
 import {
   K8sKind,
   K8sResourceKindReference,
@@ -6,7 +7,6 @@ import {
   K8sResourceCommon,
 } from '@console/internal/module/k8s';
 import { Extension, LazyLoader } from './base';
-import { PageComponentProps } from '@console/internal/components/utils';
 
 namespace ExtensionProperties {
   export interface ResourcePage<T> {

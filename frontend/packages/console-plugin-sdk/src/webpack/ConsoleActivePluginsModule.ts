@@ -1,9 +1,9 @@
-import * as webpack from 'webpack';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
+import * as webpack from 'webpack';
 import { extensionsFile } from '@console/dynamic-plugin-sdk/src/constants';
-import { PluginPackage } from '../codegen/plugin-resolver';
 import { getActivePluginsModule, getDynamicExtensions } from '../codegen/active-plugins';
+import { PluginPackage } from '../codegen/plugin-resolver';
 
 type VirtualModulesPluginAPI = {
   writeModule: (filePath: string, source: string) => void;

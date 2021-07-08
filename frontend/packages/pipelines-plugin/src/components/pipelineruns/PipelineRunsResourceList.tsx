@@ -2,9 +2,9 @@ import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../models';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { runFilters } from '../pipelines/detail-page-tabs/PipelineRuns';
 import PipelineRunsList from './list-page/PipelineRunList';
-import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 interface PipelineRunsResourceListProps {
   hideBadge?: boolean;

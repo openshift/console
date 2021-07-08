@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const minimist = require('minimist');
 const { i18nextToPo } = require('i18next-conv');
+const minimist = require('minimist');
 const common = require('./common.js');
 
 function save(target) {
@@ -42,11 +42,6 @@ function consolidateWithExistingTranslations(filePath, fileName, language, packa
 
     for (let i = 0; i < matchingKeys.length; i++) {
       englishFile[matchingKeys[i]] = existingTranslationsFile[matchingKeys[i]];
-    }
-
-    const untrackedKeys = existingKeys.filter((k) => englishKeys.indexOf(k) === -1);
-    for (let i = 0; i < untrackedKeys.length; i++) {
-      englishFile[untrackedKeys[i]] = existingTranslationsFile[untrackedKeys[i]];
     }
 
     fs.writeFileSync(filePath, JSON.stringify(englishFile, null, 2));

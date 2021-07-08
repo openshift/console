@@ -1,19 +1,19 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { usePodsWatcher } from '@console/shared';
-import {
-  K8sResourceKind,
-  referenceForGroupVersionKind,
-  groupVersionFor,
-} from '@console/internal/module/k8s';
+import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
   ResourceLink,
   ExternalLink,
   SidebarSectionHeading,
 } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
-import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import {
+  K8sResourceKind,
+  referenceForGroupVersionKind,
+  groupVersionFor,
+} from '@console/internal/module/k8s';
+import { usePodsWatcher } from '@console/shared';
 import EventSourceOwnedList from './EventSourceOwnedList';
 
 type EventSourceResourcesProps = {

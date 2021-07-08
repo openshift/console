@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { MultiColumnField, InputField, DropdownField, FormFooter } from '@console/shared';
-import ProjectAccessForm from '../ProjectAccessForm';
 import { defaultAccessRoles } from '../project-access-form-utils';
+import ProjectAccessForm from '../ProjectAccessForm';
 
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
@@ -22,6 +22,20 @@ describe('Project Access Form', () => {
   beforeEach(() => {
     formProps = {
       values: {
+        projectAccess: [
+          {
+            roleBindingName: 'abc-admin',
+            user: 'abc',
+            role: 'admin',
+          },
+          {
+            roleBindingName: 'xyz-edit',
+            user: 'xyz',
+            role: 'edit',
+          },
+        ],
+      },
+      roleBindings: {
         projectAccess: [
           {
             roleBindingName: 'abc-admin',

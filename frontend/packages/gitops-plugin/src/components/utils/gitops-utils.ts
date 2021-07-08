@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { GitOpsManifestData, GitOpsAppGroupData } from './gitops-types';

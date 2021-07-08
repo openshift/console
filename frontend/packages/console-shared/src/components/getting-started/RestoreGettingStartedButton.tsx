@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Label } from '@patternfly/react-core';
-
+import { useTranslation } from 'react-i18next';
 import { useGettingStartedShowState, GettingStartedShowState } from './useGettingStartedShowState';
 
 interface RestoreGettingStartedButtonProps {
@@ -30,6 +29,7 @@ export const RestoreGettingStartedButton: React.FC<RestoreGettingStartedButtonPr
         setShowState(GettingStartedShowState.DISAPPEAR);
       }}
       style={{ cursor: 'pointer' }}
+      data-test="restore-getting-started"
     >
       {t('console-shared~Show getting started resources')}
     </Label>

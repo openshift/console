@@ -1,8 +1,8 @@
 import { Given, When } from 'cypress-cucumber-preprocessor/steps';
-import { addPage, yamlPage, navigateTo } from '../../pages';
-import { addOptions, devNavigationMenu } from '../../constants';
-import { app, yamlEditor } from '../../pages/app';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addOptions, devNavigationMenu } from '../../constants';
+import { addPage, yamlPage, navigateTo } from '../../pages';
+import { app, yamlEditor } from '../../pages/app';
 
 Given('user is at Import YAML page', () => {
   navigateTo(devNavigationMenu.Add);

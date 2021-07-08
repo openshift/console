@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-
 import {
   GettingStartedLink,
   GettingStartedCard,
@@ -13,14 +12,19 @@ describe('GettingStartedCard', () => {
   });
 
   it('should render the title', () => {
-    const wrapper = shallow(<GettingStartedCard title="Card title" links={[]} />);
+    const wrapper = shallow(<GettingStartedCard id="card" title="Card title" links={[]} />);
 
     expect(wrapper.render().text()).toContain('Card title');
   });
 
   it('should render the title and description', () => {
     const wrapper = shallow(
-      <GettingStartedCard title="Card title" description="Some more details..." links={[]} />,
+      <GettingStartedCard
+        id="card"
+        title="Card title"
+        description="Some more details..."
+        links={[]}
+      />,
     );
 
     expect(wrapper.render().text()).toContain('Card title');
@@ -29,44 +33,44 @@ describe('GettingStartedCard', () => {
 
   it('should render all link as button or link', () => {
     const links: GettingStartedLink[] = [
-      { key: 'button', title: 'Button', onClick: () => null },
-      { key: 'internallink', title: 'Internal link', href: '/' },
+      { id: 'button', title: 'Button', onClick: () => null },
+      { id: 'internallink', title: 'Internal link', href: '/' },
       {
-        key: 'externallink',
+        id: 'externallink',
         title: 'External link',
         href: 'https://www.openshift.com/',
         external: true,
       },
     ];
-    const wrapper = shallow(<GettingStartedCard title="Card title" links={links} />);
+    const wrapper = shallow(<GettingStartedCard id="card" title="Card title" links={links} />);
 
     expect(wrapper.find('SimpleListItem')).toHaveLength(3);
   });
 
   it('should render internal more link', () => {
-    const moreLink: GettingStartedLink = { key: 'moreLink', title: 'Another link', href: '/' };
+    const moreLink: GettingStartedLink = { id: 'moreLink', title: 'Another link', href: '/' };
 
     const wrapper = shallow(
-      <GettingStartedCard title="Card title" links={[]} moreLink={moreLink} />,
+      <GettingStartedCard id="card" title="Card title" links={[]} moreLink={moreLink} />,
     );
 
     expect(wrapper.find('Link')).toHaveLength(1);
-    expect(wrapper.find('ExternalLinkAltIcon')).toHaveLength(0);
+    expect(wrapper.find('.co-external-link')).toHaveLength(0);
   });
 
   it('should render external more link', () => {
     const moreLink: GettingStartedLink = {
-      key: 'moreLink',
+      id: 'moreLink',
       title: 'OpenShift',
       href: 'https://www.openshift.com/',
       external: true,
     };
 
     const wrapper = shallow(
-      <GettingStartedCard title="Card title" links={[]} moreLink={moreLink} />,
+      <GettingStartedCard id="card" title="Card title" links={[]} moreLink={moreLink} />,
     );
 
     expect(wrapper.find('a')).toHaveLength(1);
-    expect(wrapper.find('ExternalLinkAltIcon')).toHaveLength(1);
+    expect(wrapper.find('.co-external-link')).toHaveLength(1);
   });
 });

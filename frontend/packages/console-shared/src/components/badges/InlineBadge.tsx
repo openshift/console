@@ -7,7 +7,7 @@ export const InlineTechPreviewBadge: React.FC = () => {
   const { t } = useTranslation();
   return (
     <Badge className="ocs-badge__inline" isRead>
-      {t('badge~Tech preview')}
+      {t('console-shared~Tech preview')}
     </Badge>
   );
 };
@@ -16,7 +16,7 @@ export const InlineDevPreviewBadge: React.FC = () => {
   const { t } = useTranslation();
   return (
     <Badge className="ocs-badge__inline" isRead>
-      {t('badge~Dev preview')}
+      {t('console-shared~Dev preview')}
     </Badge>
   );
 };

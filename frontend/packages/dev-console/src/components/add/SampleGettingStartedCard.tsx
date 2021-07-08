@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { CatalogIcon } from '@patternfly/react-icons';
-
+import { useTranslation } from 'react-i18next';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import {
   GettingStartedLink,
   GettingStartedCard,
 } from '@console/shared/src/components/getting-started';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
-
+import { fromSamples } from '../../actions/add-resources';
+import { getDisabledAddActions } from '../../utils/useAddActionExtensions';
 import CatalogServiceProvider from '../catalog/service/CatalogServiceProvider';
 
 interface SampleGettingStartedCardProps {
@@ -46,8 +46,13 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
   const { t } = useTranslation();
   const [activeNamespace] = useActiveNamespace();
 
+  const disabledAddActions = getDisabledAddActions();
+  if (disabledAddActions?.includes(fromSamples.id)) {
+    return null;
+  }
+
   const moreLink: GettingStartedLink = {
-    key: 'all-samples',
+    id: 'all-samples',
     title: t('devconsole~View all samples'),
     href:
       activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY
@@ -64,7 +69,7 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
         const links: GettingStartedLink[] = service.loaded
           ? slicedCatalogItems.map((item) => {
               return {
-                key: item.uid,
+                id: item.uid,
                 title: item.name,
                 href: item.cta?.href,
                 onClick: item.cta?.callback,
@@ -72,13 +77,14 @@ export const SampleGettingStartedCard: React.FC<SampleGettingStartedCardProps> =
             })
           : featured.map((uid) => {
               return {
-                key: uid,
+                id: uid,
                 loading: true,
               };
             });
 
         return (
           <GettingStartedCard
+            id="samples"
             icon={<CatalogIcon color="var(--pf-global--primary-color--100)" aria-hidden="true" />}
             title={t('devconsole~Create applications using samples')}
             titleColor={'var(--pf-global--palette--blue-600)'}

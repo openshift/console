@@ -1,15 +1,15 @@
 import * as React from 'react';
-import Measure from 'react-measure';
-import { useTranslation } from 'react-i18next';
 import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
 import { Bullseye, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
-import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
+import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
+import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
 import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
-import { usePipelineRunDurationPoll } from '../hooks';
 import { DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
-import { getRangeVectorData, PipelineMetricsGraphProps } from './pipeline-metrics-utils';
+import { usePipelineRunDurationPoll } from '../hooks';
 import { LineChart } from './charts/lineChart';
+import { getRangeVectorData, PipelineMetricsGraphProps } from './pipeline-metrics-utils';
 
 import './pipeline-chart.scss';
 

@@ -1,47 +1,46 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { PopoverPosition } from '@patternfly/react-core';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import { useTranslation } from 'react-i18next';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
-import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
-import {
-  LIMIT_STATE,
-  LimitRequested,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import {
   getUtilizationQueries,
   getResourceQutoaQueries,
   NodeQueries,
 } from '@console/app/src/components/nodes/node-dashboard/queries';
 import {
-  getNodeAddresses,
-  getNodeMachineNameAndNamespace,
-} from '@console/shared/src/selectors/node';
-import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
-import {
-  humanizeCpuCores,
-  humanizeBinaryBytes,
-  Humanize,
-} from '@console/internal/components/utils';
-import {
   CPUPopover,
   PopoverProps,
   MemoryPopover,
 } from '@console/app/src/components/nodes/node-dashboard/UtilizationCard';
 import {
-  YellowResourcesAlmostFullIcon,
-  RedResourcesFullIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+  humanizeCpuCores,
+  humanizeBinaryBytes,
+  Humanize,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { MachineModel } from '@console/internal/models';
 import {
   referenceForModel,
   MachineKind,
   MachineHealthCheckKind,
 } from '@console/internal/module/k8s';
-import { MachineModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
+import { DashboardCardPopupLink } from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
+import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+import { usePrometheusQuery } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
+import {
+  LIMIT_STATE,
+  LimitRequested,
+} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import {
+  YellowResourcesAlmostFullIcon,
+  RedResourcesFullIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
+import {
+  getNodeAddresses,
+  getNodeMachineNameAndNamespace,
+} from '@console/shared/src/selectors/node';
 import * as msg from './messages';
 import { getMachineHealth, HealthChecksPopup, machineHealthChecksResource } from './NodeHealth';
 
@@ -73,17 +72,17 @@ const LimitLink: React.FC<LimitLinkProps> = ({
   const available =
     currentValue && totalValue
       ? humanize(totalValue - currentValue).string
-      : t('nodes~Not available');
+      : t('console-app~Not available');
 
   return (
     <Popover
-      title={t('nodes~See breakdown')}
+      title={t('console-app~See breakdown')}
       nodeName={nodeName}
       nodeIp={nodeIp}
-      current={currentError ? t('nodes~Not available') : current.string}
-      total={totalError ? t('nodes~Not available') : total.string}
-      limit={limitError ? t('nodes~Not available') : limit.string}
-      requested={requestedError ? t('nodes~Not available') : requested.string}
+      current={currentError ? t('console-app~Not available') : current.string}
+      total={totalError ? t('console-app~Not available') : total.string}
+      limit={limitError ? t('console-app~Not available') : limit.string}
+      requested={requestedError ? t('console-app~Not available') : requested.string}
       available={available}
       limitState={limitState}
       requestedState={requestedState}
@@ -135,8 +134,8 @@ const HealthChecksLink: React.FC = () => {
   const { t } = useTranslation();
   return (
     <DashboardCardPopupLink
-      linkTitle={t('nodes~See details')}
-      popupTitle={t('nodes~Health checks')}
+      linkTitle={t('console-app~See details')}
+      popupTitle={t('console-app~Health checks')}
       className="co-status-card__popup"
     >
       <HealthChecksPopup
@@ -179,7 +178,7 @@ const NodeAlerts: React.FC = ({ children }) => {
       {!!cpuMessage && (
         <StatusItem
           Icon={cpuMessage.Icon}
-          message={t('nodes~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
+          message={t('console-app~{{ cpuMessage }}', { cpuMessage: cpuMessage.message })}
         >
           <LimitLink
             humanize={humanizeCpuCores}
@@ -196,7 +195,7 @@ const NodeAlerts: React.FC = ({ children }) => {
       {!!memoryMessage && (
         <StatusItem
           Icon={memoryMessage.Icon}
-          message={t('nodes~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
+          message={t('console-app~{{ memoryMessage }}', { memoryMessage: memoryMessage.message })}
         >
           <LimitLink
             humanize={humanizeBinaryBytes}

@@ -1,6 +1,13 @@
 import * as _ from 'lodash';
-import { getName } from '@console/shared/src/selectors/common';
 import { MachineKind } from '@console/internal/module/k8s';
+import { getName } from '@console/shared/src/selectors/common';
+import {
+  HOST_POWER_STATUS_POWERED_ON,
+  HOST_POWER_STATUS_POWERING_OFF,
+  HOST_POWER_STATUS_POWERING_ON,
+  HOST_POWER_STATUS_POWERED_OFF,
+  HOST_STATUS_UNMANAGED,
+} from '../constants';
 import {
   BareMetalHostDisk,
   BareMetalHostNIC,
@@ -9,13 +16,6 @@ import {
   BareMetalHostBios,
   BareMetalHostKind,
 } from '../types';
-import {
-  HOST_POWER_STATUS_POWERED_ON,
-  HOST_POWER_STATUS_POWERING_OFF,
-  HOST_POWER_STATUS_POWERING_ON,
-  HOST_POWER_STATUS_POWERED_OFF,
-  HOST_STATUS_UNMANAGED,
-} from '../constants';
 
 const ANNOTATION_HOST_RESTART = 'reboot.metal3.io';
 

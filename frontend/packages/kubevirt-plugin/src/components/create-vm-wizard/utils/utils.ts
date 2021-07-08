@@ -1,6 +1,5 @@
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-
 import { ResultContentType } from '../../../k8s/enhancedK8sMethods/types';
 import { VMSettingsField } from '../types';
 

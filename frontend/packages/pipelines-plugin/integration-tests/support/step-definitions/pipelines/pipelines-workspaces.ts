@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
+import { yamlEditor } from '@console/dev-console/integration-tests/support/pages';
 import { pipelinesPO, pipelineBuilderPO, pipelineRunDetailsPO } from '../../page-objects';
 import {
   pipelineDetailsPage,
@@ -8,6 +9,7 @@ import {
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
+import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 
 When('user enters yaml content {string} in editor', (pipelineYamlFile: string) => {
   cy.fixture(`pipelines/pipelines-workspaces/${pipelineYamlFile}`).then((yaml) => {
@@ -24,24 +26,25 @@ Given('user is at Edit Yaml page', () => {
   pipelineBuilderPage.clickYaml();
 });
 
-Given('user created pipeline with workspace', () => {
+Given('user created pipeline with workspace using yaml {string}', (yamlFileName: string) => {
   pipelineBuilderPage.clickYaml();
-  pipelineBuilderPage.selectSampleInYamlView('s2i-build-and-deploy-pipeline-using-workspace');
-  // Instead of copy parseTwoDigitYear, we are using samples
-  // cy.fixture(`pipelines/pipelines-workspaces/pipeline-with-workspace.yaml`).then((yaml) => {
-  //   cy.log(yaml);
-  //   pipelineBuilderPage.enterYaml(yaml);
-  // });
+  yamlEditor.isLoaded();
+  pipelinesPage.clearYAMLEditor();
+  pipelinesPage.setEditorContent(yamlFileName);
+  cy.get(pipelineBuilderPO.create).click();
   cy.get(pipelineBuilderPO.yamlCreatePipeline.create).click();
+  detailsPage.titleShouldContain('s2i-build-and-deploy').should('be.visible');
 });
 
 Then(
-  'user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC',
+  'user is able to see different shared workspaces like Empty Directory, Config Map, Secret, PVC, VolumeClaimTemplate',
   () => {
-    cy.byTestDropDownMenu('EmptyDirectory').should('be.visible');
-    cy.byTestDropDownMenu('ConfigMap').should('be.visible');
-    cy.byTestDropDownMenu('Secret').should('be.visible');
-    cy.byTestDropDownMenu('PVC').should('be.visible');
+    cy.byTestDropDownMenu('emptyDirectory').should('be.visible');
+    cy.byTestDropDownMenu('configMap').should('be.visible');
+    cy.byTestDropDownMenu('secret').should('be.visible');
+    cy.byTestDropDownMenu('pvc').should('be.visible');
+    cy.byTestDropDownMenu('volumeClaimTemplate').should('be.visible');
+    modal.cancel();
   },
 );
 

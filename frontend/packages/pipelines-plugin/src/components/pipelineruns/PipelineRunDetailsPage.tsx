@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage, DetailsPageProps } from '@console/internal/components/factory';
 import { KebabAction, navFactory, viewYamlComponent } from '@console/internal/components/utils';
-import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { getPipelineRunKebabActions } from '../../utils/pipeline-actions';
+import { pipelineRunStatus } from '../../utils/pipeline-filter-reducer';
+import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import { PipelineRunDetails } from './detail-page-tabs/PipelineRunDetails';
 import { PipelineRunLogsWithActiveTask } from './detail-page-tabs/PipelineRunLogs';
-import { useMenuActionsWithUserAnnotation } from './triggered-by';
-import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
-import { usePipelineTechPreviewBadge } from '../../utils/hooks';
+import { useMenuActionsWithUserAnnotation } from './triggered-by';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
