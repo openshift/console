@@ -50,6 +50,7 @@ const AlertLogs: React.FC<AlertLogsProps> = (props) => {
 
   const constructApiUrl = (infrastructureInfo) => {
     const apiServerURL = infrastructureInfo?.status?.apiServerURL;
+    //add token here
     const logExplorationApiUrl = `http://log-exploration-api-route-openshift-logging.apps.${
       apiServerURL.split('.')[1]
     }.devcluster.openshift.com/logs/filter?`;
