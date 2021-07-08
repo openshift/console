@@ -102,7 +102,7 @@ describe('test custom template creation support', () => {
     );
   });
 
-  it('ID(CNV-5729) create custom template from common template with a boot source', () => {
+  xit('ID(CNV-5729) create custom template from common template with a boot source', () => {
     const NEW_TEMPLATE_NAME = `foo-with-source-${testName}`;
     const VM_NAME_WITH_BOOT_SOURCE = `foo-vm-with-source-${testName}`;
 
