@@ -1565,7 +1565,9 @@ const CreateButton: React.FC = () => {
 
   return (
     <Link className="co-m-primary-action" to="/monitoring/silences/~new">
-      <Button variant="primary">{t('public~Create silence')}</Button>
+      <Button variant="primary" data-test="create-silence-btn">
+        {t('public~Create silence')}
+      </Button>
     </Link>
   );
 };
