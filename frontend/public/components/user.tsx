@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 
+import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/hooks/oauth';
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
@@ -67,33 +68,54 @@ const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
   );
 };
 
+const UsersHelpText = () => {
+  const { t } = useTranslation();
+  return <>{t('public~Users are automatically added the first time they log in.')}</>;
+};
+
 const EmptyMsg = () => {
   const { t } = useTranslation();
   return <MsgBox title={t('public~No Users found')} />;
 };
 const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
+const NoDataEmptyMsgDetail = () => {
+  const { t } = useTranslation();
+  const canEditIdentityProviders = useCanEditIdentityProviders();
+  const [oauth, oauthLoaded] = useOAuthData(canEditIdentityProviders);
+  return (
+    <>
+      {canEditIdentityProviders && oauthLoaded ? (
+        oauth?.spec?.identityProviders?.length > 0 ? (
+          <p>
+            <UsersHelpText />
+          </p>
+        ) : (
+          <>
+            <p>
+              {t(
+                'public~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
+              )}
+            </p>
+            <p>
+              <Link to={oAuthResourcePath}>
+                <Button variant="primary">{t('public~Add IDP')}</Button>
+              </Link>
+            </p>
+          </>
+        )
+      ) : (
+        <p>
+          <UsersHelpText />
+        </p>
+      )}
+    </>
+  );
+};
+
 const NoDataEmptyMsg = () => {
   const { t } = useTranslation();
-  return (
-    <MsgBox
-      title={t('public~No Users found')}
-      detail={
-        <>
-          <p>
-            {t(
-              'public~Add identity providers (IDPs) to the OAuth configuration to allow others to log in.',
-            )}
-          </p>
-          <p>
-            <Link to={oAuthResourcePath}>
-              <Button variant="primary">{t('public~Add IDP')}</Button>
-            </Link>
-          </p>
-        </>
-      }
-    />
-  );
+  return <MsgBox title={t('public~No Users found')} detail={<NoDataEmptyMsgDetail />} />;
 };
 
 export const UserList: React.FC = (props) => {
@@ -144,7 +166,7 @@ export const UserPage: React.FC<UserPageProps> = (props) => {
     <ListPage
       {...props}
       title={t('public~Users')}
-      helpText={<>{t('public~Users are automatically added the first time they log in.')}</>}
+      helpText={<UsersHelpText />}
       kind={referenceForModel(UserModel)}
       ListComponent={UserList}
       canCreate={false}
