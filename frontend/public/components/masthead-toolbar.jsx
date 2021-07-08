@@ -309,6 +309,7 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, cv, t, fireTelemetryEvent } = this.props;
     const helpActions = [];
     const reportBugLink = cv && cv.data ? getReportBugLink(cv.data) : null;
+    const { multicluster } = window.SERVER_FLAGS;
 
     helpActions.push({
       name: '',
@@ -318,13 +319,27 @@ class MastheadToolbarContents_ extends React.Component {
           component: <Link to="/quickstart">{t('public~Quick Starts')}</Link>,
         },
         {
-          label: t('public~Documentation'),
+          label: multicluster ? t('public~OCP Documentation') : t('public~Documentation'),
           externalLink: true,
           href: openshiftHelpBase,
           callback: () => {
             fireTelemetryEvent('Documentation Clicked');
           },
         },
+        ...(multicluster
+          ? [
+              {
+                label: t('public~ACM Documentation'),
+                externalLink: true,
+                // TODO:  add version number to end of URL
+                href:
+                  'https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes',
+                callback: () => {
+                  fireTelemetryEvent('ACM Documentation Clicked');
+                },
+              },
+            ]
+          : []),
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
               {
