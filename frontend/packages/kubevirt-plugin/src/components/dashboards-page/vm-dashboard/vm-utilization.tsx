@@ -9,7 +9,6 @@ import {
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import { getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -19,6 +18,7 @@ import {
 } from '@console/shared/src/components/dashboard/duration-hook';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { getCreationTimestamp, getName, getNamespace } from '../../../selectors';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';

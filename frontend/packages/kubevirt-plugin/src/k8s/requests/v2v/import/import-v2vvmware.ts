@@ -1,8 +1,6 @@
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { createBasicLookup, getName, getNamespace } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
 import { getFieldValue } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
@@ -16,13 +14,13 @@ import {
   CONVERSION_SERVICEACCOUNT_DELAY,
 } from '../../../../constants/v2v';
 import { VolumeMode, VolumeType } from '../../../../constants/vm/storage';
-import { getGeneratedName } from '../../../../selectors/selectors';
+import { getName, getNamespace, getGeneratedName } from '../../../../selectors';
 import {
   getKubevirtV2vConversionContainerImage,
   getV2vImagePullPolicy,
   getVddkInitContainerImage,
 } from '../../../../selectors/v2v';
-import { buildOwnerReference } from '../../../../utils';
+import { createBasicLookup, compareOwnerReference, buildOwnerReference } from '../../../../utils';
 import { delay } from '../../../../utils/utils';
 import { PodWrappper } from '../../../wrapper/k8s/pod-wrapper';
 import { RoleBindingWrappper } from '../../../wrapper/k8s/role-binding-wrapper';

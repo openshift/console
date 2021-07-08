@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { ValidationErrorType, ValidationObject } from '@console/shared';
+import { ValidationErrorType, ValidationObject } from '../../selectors';
 
 import './validation-cell.scss';
 

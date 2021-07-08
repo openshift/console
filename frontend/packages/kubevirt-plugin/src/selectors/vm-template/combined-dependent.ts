@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getLabel } from '@console/shared';
 import {
   CUSTOM_FLAVOR,
   TEMPLATE_DEFAULT_LABEL,
@@ -8,7 +7,7 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { getLabelValue } from '../selectors';
+import { getLabel, getLabelValue } from '../selectors';
 import { isCustomFlavor } from '../vm-like/flavor';
 import {
   getTemplateFlavors,

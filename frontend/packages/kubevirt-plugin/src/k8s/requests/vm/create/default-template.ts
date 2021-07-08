@@ -11,9 +11,9 @@ import {
   VolumeType,
 } from '../../../../constants/vm';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
-import { getAnnotations } from '../../../../selectors/selectors';
-import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
+import { getAnnotations, getValueByPrefix } from '../../../../selectors/selectors';
 import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
+import { findHighestKeyBySuffixValue } from '../../../../utils';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,

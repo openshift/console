@@ -1,5 +1,4 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getAnnotations, getName, getNamespace } from '@console/shared/src';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   ANNOTATION_DESCRIPTION,
@@ -24,6 +23,7 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../../constants/vm';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
+import { getAnnotations, getName, getNamespace } from '../../../../selectors/selectors';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';

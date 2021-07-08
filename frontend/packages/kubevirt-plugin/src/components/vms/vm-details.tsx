@@ -13,10 +13,10 @@ import {
 } from '@console/internal/components/utils';
 import { ServiceModel } from '@console/internal/models';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
-import { getNamespace } from '@console/shared';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { getServicesForVmi } from '../../selectors/service';
 import { isWindows } from '../../selectors/vm/combined';

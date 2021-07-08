@@ -36,7 +36,7 @@ import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic'
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
 import { TemplateItem } from '../../../types/template';
-import { generateVMName } from '../../../utils/strings';
+import { generateVMName } from '../../../utils';
 import { validateVmLikeEntityName } from '../../../utils/validations';
 import { helpKeyResolver } from '../../create-vm-wizard/strings/renderable-field';
 import { VMSettingsField } from '../../create-vm-wizard/types';

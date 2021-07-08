@@ -1,9 +1,9 @@
-import { ValidationErrorType } from '@console/shared/src';
 import { CLOUDINIT_DISK } from '../../../../constants';
 import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { ValidationErrorType } from '../../../../selectors';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,

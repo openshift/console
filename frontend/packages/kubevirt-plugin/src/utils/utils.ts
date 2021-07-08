@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import { VirtualMachineModel } from '../models';
+import { getName, getNamespace } from '../selectors';
 
 export const getSequence = (from, to) => Array.from({ length: to - from + 1 }, (v, i) => i + from);
 

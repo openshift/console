@@ -4,9 +4,9 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { asValidationObject, ValidationErrorType } from '@console/shared/src/utils/validation';
 import { getPVCUploadURL } from '../../../../constants';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
+import { asValidationObject, ValidationErrorType } from '../../../../selectors';
 import { iGetAnnotation } from '../../../../selectors/immutable/common';
 import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/advanced';
 import {

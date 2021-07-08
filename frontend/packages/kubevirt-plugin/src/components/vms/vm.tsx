@@ -39,16 +39,6 @@ import {
   PodModel,
 } from '@console/internal/models';
 import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import {
-  createLookup,
-  dimensifyHeader,
-  dimensifyRow,
-  getCreationTimestamp,
-  getLabels,
-  getName,
-  getNamespace,
-  getUID,
-} from '@console/shared';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';
@@ -61,6 +51,7 @@ import {
   VirtualMachineModel,
 } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getCreationTimestamp, getLabels, getName, getNamespace, getUID } from '../../selectors';
 import { isVM, isVMI, isVMImport } from '../../selectors/check-type';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
@@ -70,7 +61,13 @@ import { VMIKind, VMKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VMILikeEntityKind } from '../../types/vmLike';
-import { getBasicID, getLoadedData } from '../../utils';
+import {
+  createLookup,
+  dimensifyHeader,
+  dimensifyRow,
+  getBasicID,
+  getLoadedData,
+} from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VMStatus } from '../vm-status/vm-status';

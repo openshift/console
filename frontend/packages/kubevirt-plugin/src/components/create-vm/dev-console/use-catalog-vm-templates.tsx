@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { getNamespace } from '@console/shared';
 import { BOOT_SOURCE_AVAILABLE } from '../../../constants';
-import { getDescription } from '../../../selectors/selectors';
+import { getNamespace, getDescription } from '../../../selectors/selectors';
 import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm';
 import {
   getTemplateFlavorData,

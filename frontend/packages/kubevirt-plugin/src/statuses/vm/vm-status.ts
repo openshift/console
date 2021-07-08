@@ -1,17 +1,10 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import {
-  getDeletetionTimestamp,
-  getName,
-  getNamespace,
-  getOwnerReferences,
-} from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
 import { VMStatus } from '../../constants/vm/vm-status';
 import { VMIPhase } from '../../constants/vmi/phase';
 import { VirtualMachineImportModel } from '../../models';
+import { getDeletetionTimestamp, getName, getNamespace, getOwnerReferences } from '../../selectors';
 import {
   findVMIPod,
   getPodStatusPhase,
@@ -43,6 +36,8 @@ import { VMIKind, VMKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import {
+  compareOwnerReference,
+  createBasicLookup,
   buildOwnerReference,
   buildOwnerReferenceForModel,
   parseNumber,

@@ -1,12 +1,12 @@
 import { coFetch } from '@console/internal/co-fetch';
 import { groupVersionFor, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
-import { getAPIVersion, getName, getNamespace } from '@console/shared/src';
 import { VirtualMachineModel } from '../../../models';
 import {
   getKubevirtAvailableModel,
   getKubevirtModelAvailableAPIVersion,
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
+import { getAPIVersion, getName, getNamespace } from '../../../selectors';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';

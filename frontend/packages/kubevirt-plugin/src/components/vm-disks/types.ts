@@ -1,6 +1,6 @@
-import { ValidationObject } from '@console/shared';
 import { DiskType } from '../../constants';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
+import { ValidationObject } from '../../selectors';
 import { VMIKind } from '../../types';
 import { UIStorageValidation } from '../../types/ui/storage';
 import { VMLikeEntityKind } from '../../types/vmLike';

@@ -12,7 +12,7 @@ import {
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { StatusGroup } from '../../constants/status-group';
 import { VMStatus } from '../../constants/vm/vm-status';
 import useSSHCommand from '../../hooks/use-ssh-command';
@@ -24,6 +24,7 @@ import { cancelMigration } from '../../k8s/requests/vmim';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
+import { getName, getNamespace } from '../../selectors';
 import {
   isVMCreated,
   isVMExpectedRunning,
