@@ -132,6 +132,8 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     componentWillUnmount() {
+      const exitCode = 'exit\r';
+      this.ws && exitCode.split('').map((t) => this.ws.send(`0${Base64.encode(t)}`));
       this.ws && this.ws.destroy();
       delete this.ws;
     }
