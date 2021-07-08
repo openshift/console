@@ -1,8 +1,5 @@
-import {
-  validateDNS1123SubdomainValue,
-  ValidationErrorType,
-  ValidationObject,
-} from '@console/shared';
+import { validateDNS1123SubdomainValue } from '../..';
+import { ValidationErrorType, ValidationObject } from '../../../selectors';
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 import { validateEntityAlreadyExists } from '../common';
 

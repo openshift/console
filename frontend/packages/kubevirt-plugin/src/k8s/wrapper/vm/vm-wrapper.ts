@@ -1,7 +1,5 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { getLabels } from '@console/shared/src/selectors/common';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
 import {
   CLOUD_INIT_CONFIG_DRIVE,
@@ -11,8 +9,8 @@ import {
   VolumeType,
 } from '../../../constants/vm';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
+import { getLabels } from '../../../selectors';
 import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
-import { findKeySuffixValue } from '../../../selectors/utils';
 import { transformDevices } from '../../../selectors/vm/devices';
 import {
   getAffinity,
@@ -35,7 +33,11 @@ import {
   VMKind,
 } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
-import { buildOwnerReferenceForModel } from '../../../utils';
+import {
+  findKeySuffixValue,
+  buildOwnerReferenceForModel,
+  compareOwnerReference,
+} from '../../../utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { BootDevice, VMILikeMethods } from './types';
 import { VolumeWrapper } from './volume-wrapper';

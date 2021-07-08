@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ExpandableSection, FormGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp, LoadingInline } from '@console/internal/components/utils';
-import { ValidationErrorType, ValidationObject } from '@console/shared';
+import { ValidationErrorType, ValidationObject } from '../../selectors';
 
 import './form-row.scss';
 

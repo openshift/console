@@ -1,5 +1,5 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ValidationObject } from '@console/shared';
+import { ValidationObject } from '../../../selectors';
 
 export type FormState = {
   template: TemplateKind;

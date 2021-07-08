@@ -11,7 +11,6 @@ import {
 import { connectToPlural } from '@console/internal/kinds';
 import { TemplateModel } from '@console/internal/models';
 import { k8sList, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,
@@ -23,6 +22,7 @@ import { OSSelection } from '../../constants/vm/default-os-selection';
 import { resolveDefaultVMTemplate } from '../../k8s/requests/vm/create/default-template';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VMTemplateYAMLTemplates } from '../../models/templates';
+import { getName, getNamespace } from '../../selectors';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {

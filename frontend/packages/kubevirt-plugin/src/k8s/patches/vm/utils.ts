@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { getSimpleName } from '../../../selectors/utils';
 import { getDeviceBootOrder } from '../../../selectors/vm';
+import { getSimpleName } from '../../../utils';
 
 export const getShiftBootOrderPatches = (
   path: string,

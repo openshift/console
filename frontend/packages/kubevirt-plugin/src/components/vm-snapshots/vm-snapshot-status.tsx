@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Button, Split, SplitItem, Stack, StackItem } from '@patternfly/react-core';
 import { history, resourcePath } from '@console/internal/components/utils';
-import { ErrorStatus, getName, getNamespace, ProgressStatus, Status } from '@console/shared';
+import { ErrorStatus, ProgressStatus, Status } from '@console/shared';
 import { VirtualMachineRestoreModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../selectors';
 import {
   getVMRestoreError,
   getVMSnapshotError,

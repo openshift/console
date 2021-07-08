@@ -8,7 +8,6 @@ import {
   resourcePath,
   Timestamp,
 } from '@console/internal/components/utils';
-import { getCreationTimestamp, getName, getNamespace, getNodeName, getUID } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -21,6 +20,13 @@ import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import {
+  getCreationTimestamp,
+  getName,
+  getNamespace,
+  getNodeName,
+  getUID,
+} from '../../../selectors';
 import { findVMIPod } from '../../../selectors/pod/selectors';
 import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm';
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';

@@ -18,8 +18,8 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
+import { getName, getNamespace } from '../../../selectors';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
 import { VMSnapshot } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';

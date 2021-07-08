@@ -1,19 +1,23 @@
 import * as _ from 'lodash';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s/types';
-import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
 import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
-import { getSimpleName } from '../../../selectors/utils';
+import { getName, getNamespace, getOwnerReferences } from '../../../selectors';
 import { asVM, getDataVolumeTemplates } from '../../../selectors/vm';
 import { isWinToolsImage } from '../../../selectors/vm/winimage';
 import { V1DataVolumeTemplateSpec } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1PersistentVolumeClaim, V1Volume } from '../../../types/api';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
-import { getLoadedData, isLoaded } from '../../../utils';
+import {
+  createBasicLookup,
+  compareOwnerReference,
+  getSimpleName,
+  getLoadedData,
+  isLoaded,
+} from '../../../utils';
 import { DYNAMIC } from '../../../utils/strings';
 import { asVMILikeWrapper } from '../utils/convert';
 import { DataVolumeWrapper } from './data-volume-wrapper';

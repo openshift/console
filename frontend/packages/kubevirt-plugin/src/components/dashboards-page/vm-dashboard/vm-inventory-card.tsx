@@ -7,7 +7,6 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -21,6 +20,7 @@ import {
 } from '../../../constants';
 import { VirtualMachineSnapshotModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { getDisks, getNetworks } from '../../../selectors/vm';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';

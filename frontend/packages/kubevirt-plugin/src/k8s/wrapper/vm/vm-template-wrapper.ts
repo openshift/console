@@ -7,8 +7,8 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 import { VirtualMachineModel } from '../../../models';
-import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../selectors/utils';
 import { selectVM } from '../../../selectors/vm-template/basic';
+import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { VMWrapper } from './vm-wrapper';

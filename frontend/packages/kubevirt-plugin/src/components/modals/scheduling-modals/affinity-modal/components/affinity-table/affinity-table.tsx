@@ -2,7 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { RowFunction, Table } from '@console/internal/components/factory';
-import { dimensifyHeader } from '@console/shared';
+import { dimensifyHeader } from '../../../../../../utils';
 import { AffinityRowData } from '../../types';
 
 export type AffinityTableProps = {

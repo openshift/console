@@ -17,7 +17,6 @@ import {
 } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { CUSTOM_FLAVOR } from '../../../constants';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
@@ -25,6 +24,7 @@ import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import {
   asVM,
   getCPU,
@@ -40,9 +40,8 @@ import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/sele
 import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import { VMIKind } from '../../../types/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getLoadedData } from '../../../utils';
+import { getLoadedData, getDialogUIError } from '../../../utils';
 import { flavorSort } from '../../../utils/sort';
-import { getDialogUIError } from '../../../utils/strings';
 import { isValidationError } from '../../../utils/validations/common';
 import { validateFlavor } from '../../../utils/validations/vm/flavor';
 import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';

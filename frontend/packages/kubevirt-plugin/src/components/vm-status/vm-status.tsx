@@ -23,7 +23,6 @@ import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import {
   RedExclamationCircleIcon,
@@ -36,6 +35,7 @@ import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../selectors';
 import { getVMLikeModel } from '../../selectors/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';

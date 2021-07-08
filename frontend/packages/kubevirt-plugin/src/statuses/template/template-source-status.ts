@@ -1,5 +1,4 @@
 import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { getCreationTimestamp } from '@console/shared';
 import {
   ANNOTATION_SOURCE_PROVIDER,
   BOOT_SOURCE_AVAILABLE,
@@ -15,6 +14,7 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { getCreationTimestamp } from '../../selectors';
 import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/selectors';
 import { getAnnotation, getParameterValue } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';

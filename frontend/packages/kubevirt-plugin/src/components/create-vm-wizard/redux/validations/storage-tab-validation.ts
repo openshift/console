@@ -1,9 +1,9 @@
-import { getName } from '@console/shared/src';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { getName } from '../../../../selectors/selectors';
 import { iGetIn } from '../../../../utils/immutable';
 import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { validateDisk } from '../../../../utils/validations/vm';

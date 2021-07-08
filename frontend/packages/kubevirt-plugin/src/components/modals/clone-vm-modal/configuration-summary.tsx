@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { DASH, getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '../../../selectors';
 import {
   getDataVolumeResources,
   getDataVolumeStorageClassName,
@@ -22,6 +22,7 @@ import {
 import { getFlavorData } from '../../../selectors/vm/flavor-data';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { VMKind } from '../../../types/vm';
+import { DASH } from '../../../utils';
 
 import './_clone-vm-modal.scss';
 

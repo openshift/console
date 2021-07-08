@@ -1,4 +1,4 @@
-import { ValidationObject } from '@console/shared/src';
+import { ValidationObject } from '../../selectors';
 
 export type UINetworkInterfaceValidation = {
   validations: {

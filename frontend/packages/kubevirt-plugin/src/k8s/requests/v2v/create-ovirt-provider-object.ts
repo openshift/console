@@ -1,10 +1,9 @@
 import { SecretModel } from '@console/internal/models';
-import { getName, getOwnerReferences } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { OVIRT_TYPE_LABEL, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel } from '../../../models';
-import { buildOwnerReference } from '../../../utils';
+import { getName, getOwnerReferences } from '../../../selectors';
+import { buildOwnerReference, compareOwnerReference } from '../../../utils';
 import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
 import { SecretWrappper } from '../../wrapper/k8s/secret-wrapper';
 import { OVirtProviderWrappper } from '../../wrapper/ovirt-provider/ovirt-provider-wrapper';

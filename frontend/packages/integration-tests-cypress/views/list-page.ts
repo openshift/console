@@ -35,6 +35,19 @@ export const listPage = {
         cy.byLegacyTestID('dropdown-button').click();
       });
     },
+    clickFilterDropdown: () => {
+      cy.byLegacyTestID('filter-dropdown-toggle').within(() => {
+        cy.get('button').click();
+      });
+    },
+    clearAllFilters: () => {
+      cy.log('Clearing all filters');
+      cy.get('.pf-c-toolbar__content').within(() => {
+        cy.get('button')
+          .last()
+          .click();
+      });
+    },
     by: (rowFilter: string) => {
       cy.get('.pf-c-toolbar__content-section').within(() => {
         cy.byLegacyTestID('filter-dropdown-toggle')
