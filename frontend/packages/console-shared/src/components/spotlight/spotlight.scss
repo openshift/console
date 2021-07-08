@@ -32,8 +32,12 @@
 .ocs-spotlight {
   pointer-events: none;
   position: absolute;
+  &__with-backdrop {
+    mix-blend-mode: hard-light;
+  }
   &__element-highlight-noanimate {
-    border: var(--pf-global--BorderWidth--xl) solid var(--pf-global--palette--blue-200);
+    border: var(--pf-global--BorderWidth--xl) solid var(--pf-global--palette--blue-100);
+    background-color: var(--pf-global--palette--black-500);
     z-index: 9999;
   }
   &__element-highlight-animate {
