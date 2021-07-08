@@ -1,6 +1,6 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle, operators, switchPerspective } from '../../constants';
-import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
+import { operatorsPO } from '../../pageObjects';
 import { app, perspective, projectNameSpace, sidePane } from '../app';
 import { operatorsPage } from '../operators-page';
 import { installCRW, waitForCRWToBeAvailable } from './installCRW';
@@ -26,6 +26,14 @@ export const installOperator = (operatorName: operators) => {
       cy.get(operatorsPO.operatorHub.installingOperatorModal).should('be.visible');
       app.waitForLoad();
       cy.byTestID('success-icon').should('be.visible');
+      // Added below cy.request to verify the pipelines subscriptions
+      if (operatorName === operators.PipelinesOperator) {
+        cy.request(
+          'api/kubernetes/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operators/subscriptions/openshift-pipelines-operator-rh',
+        ).then((resp) => {
+          expect(resp.status).toEqual(200);
+        });
+      }
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
@@ -88,36 +96,15 @@ export const verifyAndInstallOperator = (operator: operators, namespace?: string
   performPostInstallationSteps(operator);
 };
 
-// If pipelines not available in left side navigation menu of developer navigation menu, then install from Operator Hub
 export const verifyAndInstallPipelinesOperator = () => {
-  perspective.switchTo(switchPerspective.Developer);
-  app.waitForNameSpacesToLoad();
-  app.waitForLoad();
-  cy.get(devNavigationMenuPO.pageSideBar).then(($ele) => {
-    if ($ele.find(devNavigationMenuPO.pipelines).length) {
-      cy.log(`${operators.PipelinesOperator} operator is already installed in the cluster`);
-    } else {
-      perspective.switchTo(switchPerspective.Administrator);
-      operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.searchOperatorInInstallPage(operators.PipelinesOperator);
-      cy.get('body', {
-        timeout: 50000,
-      }).then(($body) => {
-        if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
-          installOperator(operators.PipelinesOperator);
-          // After https://issues.redhat.com/browse/SRVKP-1379 issue fix, will remove below wait time
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(30000);
-        }
-      });
-      perspective.switchTo(switchPerspective.Developer);
-    }
-  });
+  perspective.switchTo(switchPerspective.Administrator);
+  verifyAndInstallOperator(operators.PipelinesOperator);
 };
 
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
-  verifyAndInstallOperator(operators.ServerlessOperator);
+  installOperator(operators.ServerlessOperator);
+  performPostInstallationSteps(operators.ServerlessOperator);
 };
 
 export const verifyAndInstallGitopsPrimerOperator = () => {

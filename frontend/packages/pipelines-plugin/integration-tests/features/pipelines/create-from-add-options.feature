@@ -78,7 +78,7 @@ Feature: Create Pipeline from Add Options
                   | nodejs-g |
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create a workload with pipeline from Docker file: P-01-TC06
             Given user is on Import from Git form
              When user enters Git Repo URL as "<docker_git_url>"

@@ -15,7 +15,6 @@ after(() => {
     failOnNonZeroExit: false,
     timeout: 180000,
   });
-  // cy.logout();
 });
 
 afterEach(() => {

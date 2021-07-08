@@ -57,6 +57,7 @@ Given('user is at Pipeline Builder page', () => {
 });
 
 When('user enters pipeline name as {string}', (pipelineName: string) => {
+  Cypress.env('PIPELINE_NAME', pipelineName);
   pipelineBuilderPage.enterPipelineName(pipelineName);
 });
 
@@ -131,6 +132,10 @@ When('user clicks on Add parameter link', () => {
 });
 
 When('user selects the {string} node', (taskName: string) => {
+  pipelineBuilderPage.clickOnTask(taskName);
+});
+
+When('user clicks the {string} node', (taskName: string) => {
   pipelineBuilderPage.clickOnTask(taskName);
 });
 
@@ -511,7 +516,7 @@ Then('user will be able to see the output in sum and multiply task', () => {
 });
 
 When('user clicks Add task button under Tasks section', () => {
-  cy.get(pipelineBuilderPO.formView.taskDropdown).click();
+  pipelineBuilderPage.clickAddTask();
 });
 
 When('user searches {string} in quick search bar', (searchItem: string) => {
@@ -526,5 +531,9 @@ When('user selects {string} from git community', () => {
 });
 
 When('user clicks on Install and add button', () => {
+  cy.byTestID('task-cta').click();
+});
+
+When('user clicks on Add button', () => {
   cy.byTestID('task-cta').click();
 });

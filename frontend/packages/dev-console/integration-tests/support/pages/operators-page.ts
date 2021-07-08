@@ -63,7 +63,7 @@ export const operatorsPage = {
       .clear()
       .type(operatorName);
     cy.get(operatorsPO.installOperators.operatorStatus, {
-      timeout: 50000,
+      timeout: 100000,
     }).should('contain.text', 'Succeeded');
   },
 

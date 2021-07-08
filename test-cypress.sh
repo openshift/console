@@ -70,6 +70,7 @@ if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   # disabled serverless as serverless operator is not availavle in operatorhub
   # yarn run test-cypress-knative-headless
   yarn run test-cypress-topology-headless
+  yarn run test-cypress-pipelines-headless
   exit;
 fi
 

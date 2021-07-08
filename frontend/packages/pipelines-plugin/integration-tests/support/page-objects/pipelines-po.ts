@@ -225,6 +225,8 @@ export const pipelinesPO = {
   createPipeline: '#yaml-create',
   search: 'input[data-test-id="item-filter"]',
   emptyMessage: '[data-test="empty-message"]',
+  pipelinesTab: '[data-test-id="horizontal-link-Pipelines"]',
+  repositoriesTab: '[data-test-id="horizontal-link-Repositories"]',
   pipelinesTable: {
     table: 'div[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',

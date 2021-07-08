@@ -32,7 +32,7 @@ Given('user is at developer perspective', () => {
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
-  projectNameSpace.selectOrCreateProject(`${projectName}`);
+  projectNameSpace.selectOrCreateProject(projectName);
 });
 
 Given('user is at the Topology page', () => {
