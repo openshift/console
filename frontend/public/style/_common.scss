@@ -48,12 +48,12 @@ dl.co-inline {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  .btn-group,
+  .co-m-pane__filter-bar-dropdown,
   .co-m-primary-action,
   .pf-c-form-control {
     margin-bottom: 10px;
   }
-  .btn-group {
+  .co-m-pane__filter-bar-dropdown {
     margin-right: 10px;
     min-width: 0; // enables truncation of selected item, if needed
   }
@@ -330,7 +330,7 @@ dl.co-inline {
 .co-toolbar__item {
   max-width: 100%;
   padding: 5px 0;
-  .btn-group {
+  .co-toolbar__item-dropdown {
     max-width: 100%;
   }
 }

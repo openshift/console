@@ -4,14 +4,6 @@ $color-bookmarker--hover: $color-pf-black-500;
 $color-bookmarker: $color-pf-black-400;
 $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
 
-.btn-dropdown__content-wrap {
-  align-items: center;
-  display: flex;
-  flex: 1 1 auto;
-  justify-content: space-between;
-  min-width: 0;
-}
-
 .dropdown--full-width {
   &,
   .pf-c-dropdown__toggle {
@@ -231,6 +223,14 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 
 .pf-c-dropdown .co-m-resource-icon {
   margin-left: 2px;
+}
+
+.pf-c-dropdown__content-wrap {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .pf-c-dropdown__menu {

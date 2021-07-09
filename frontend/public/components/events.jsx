@@ -210,7 +210,7 @@ export const EventsList = (props) => {
             className="co-search-group__resource"
           />
           <Dropdown
-            className="btn-group co-search-group__resource"
+            className="co-search-group__resource"
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
