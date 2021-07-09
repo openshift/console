@@ -310,7 +310,7 @@ const APIResourcesList = compose(
             selectedKey={groupFilter}
             spacerBefore={groupSpacer}
             title={groupOptions[groupFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
           <Dropdown
             items={versionOptions}
@@ -318,7 +318,7 @@ const APIResourcesList = compose(
             selectedKey={versionFilter}
             spacerBefore={versionSpacer}
             title={versionOptions[versionFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
           <Dropdown
             items={scopeOptions}
@@ -326,7 +326,7 @@ const APIResourcesList = compose(
             selectedKey={scopeFilter}
             spacerBefore={scopeSpacer}
             title={scopeOptions[scopeFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
