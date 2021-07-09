@@ -32,6 +32,7 @@ export enum StorageDashboardQuery {
   POOL_MAX_CAPACITY_AVAILABLE = 'POOL_MAX_CAPACITY_AVAILABLE',
   POOL_UTILIZATION_IOPS_QUERY = 'POOL_UTILIZATION_IOPS_QUERY',
   POOL_UTILIZATION_THROUGHPUT_QUERY = 'POOL_UTILIZATION_THROUGHPUT_QUERY',
+  POOL_COMPRESSION_SAVINGS = 'POOL_COMPRESSION_SAVINGS',
   // Capacity Info Card
   RAW_CAPACITY_TOTAL = 'RAW_TOTAL_CAPACITY',
   RAW_CAPACITY_USED = 'RAW_CAPACITY_USED',
@@ -226,6 +227,7 @@ export const getPoolQuery = (poolNames: string[], queryName: StorageDashboardQue
     [StorageDashboardQuery.POOL_MAX_CAPACITY_AVAILABLE]: `ceph_pool_max_avail * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${names}'}`,
     [StorageDashboardQuery.POOL_UTILIZATION_IOPS_QUERY]: `(rate(ceph_pool_wr[1m]) + rate(ceph_pool_rd[1m])) * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${names}'}`,
     [StorageDashboardQuery.POOL_UTILIZATION_THROUGHPUT_QUERY]: `(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])) * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${names}'}`,
+    [StorageDashboardQuery.POOL_COMPRESSION_SAVINGS]: `(ceph_pool_compress_under_bytes - ceph_pool_compress_bytes_used) * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${names}'}`,
   };
   return queries[queryName];
 };
