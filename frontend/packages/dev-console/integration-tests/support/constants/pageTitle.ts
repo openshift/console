@@ -13,7 +13,7 @@ export const pageTitle = {
   Channel: 'Channel',
   Add: 'Add',
   GitOPs: 'GitOps',
-  Monitoring: 'Monitoring',
+  Observe: 'Observe',
   BuildConfigs: 'Build Configs',
   Search: 'Search',
   HelmReleases: 'Helm Releases',

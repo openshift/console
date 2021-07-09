@@ -17,6 +17,7 @@ import {
   TableData,
   RowFunctionArgs,
   Flatten,
+  Filter,
 } from '@console/internal/components/factory';
 import { deleteModal } from '@console/internal/components/modals';
 import {
@@ -680,7 +681,7 @@ export type OperandListProps = {
   loaded: boolean;
   kinds?: GroupVersionKind[];
   data: K8sResourceKind[];
-  filters: { [key: string]: any };
+  filters?: Filter[];
   reduxID?: string;
   reduxIDs?: string[];
   rowSplitter?: any;

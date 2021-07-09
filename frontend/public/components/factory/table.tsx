@@ -1,8 +1,25 @@
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
+import { useDispatch } from 'react-redux';
+import { match as RMatch } from 'react-router-dom';
+import {
+  Table as PfTable,
+  TableHeader,
+  TableBody,
+  TableGridBreakpoint,
+  SortByDirection,
+  OnSelect,
+  TableProps as PfTableProps,
+} from '@patternfly/react-table';
+import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+import {
+  AutoSizer,
+  VirtualTableBody,
+  WindowScroller,
+} from '@patternfly/react-virtualized-extension';
+import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/components/Virtualized/types';
 import {
   getNodeRoles,
   getMachinePhase,
@@ -18,7 +35,10 @@ import {
   snapshotSource,
   ALL_NAMESPACES_KEY,
   getName,
+  useDeepCompareMemoize,
 } from '@console/shared';
+import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
+import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 import * as UIActions from '../../actions/ui';
 import {
   alertingRuleSource,
@@ -51,73 +71,8 @@ import {
   MachineKind,
   VolumeSnapshotKind,
 } from '../../module/k8s';
-
-import {
-  IRowData, // eslint-disable-line no-unused-vars
-  IExtraData, // eslint-disable-line no-unused-vars
-  Table as PfTable,
-  TableHeader,
-  TableBody,
-  TableGridBreakpoint,
-  SortByDirection,
-  OnSelect,
-} from '@patternfly/react-table';
-
-import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-
-import {
-  AutoSizer,
-  VirtualTableBody,
-  WindowScroller,
-} from '@patternfly/react-virtualized-extension';
-
-import { tableFilters } from './table-filters';
-import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
-import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
-
-const rowFiltersToFilterFuncs = (rowFilters) => {
-  return (rowFilters || [])
-    .filter((f) => f.type && _.isFunction(f.filter))
-    .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
-};
-
-const getAllTableFilters = (rowFilters) => ({
-  ...tableFilters,
-  ...rowFiltersToFilterFuncs(rowFilters),
-});
-
-export const getFilteredRows = (_filters, rowFilters, objects) => {
-  if (_.isEmpty(_filters)) {
-    return objects;
-  }
-
-  const allTableFilters = getAllTableFilters(rowFilters);
-  let filteredObjects = objects;
-  _.each(_filters, (value, name) => {
-    const filter = allTableFilters[name];
-    if (_.isFunction(filter)) {
-      filteredObjects = _.filter(filteredObjects, (o) => filter(value, o));
-    }
-  });
-
-  return filteredObjects;
-};
-
-const filterPropType = (props, propName, componentName) => {
-  if (!props) {
-    return;
-  }
-
-  const allTableFilters = getAllTableFilters(props.rowFilters);
-  for (const key of _.keys(props[propName])) {
-    if (key in allTableFilters || key === 'loadTest') {
-      continue;
-    }
-    return new Error(
-      `Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`,
-    );
-  }
-};
+import { useTableData } from './table-data-hook';
+import { RowFilter } from '../filter-toolbar';
 
 const sorts = {
   alertingRuleSource,
@@ -180,91 +135,8 @@ const sorts = {
   },
 };
 
-const stateToProps = (
-  { UI },
-  {
-    customData = {},
-    customSorts = {},
-    data = [],
-    defaultSortField = 'metadata.name',
-    defaultSortFunc = undefined,
-    defaultSortOrder = SortByDirection.asc,
-    filters = {},
-    loaded = false,
-    reduxID = null,
-    reduxIDs = null,
-    staticFilters = [{}],
-    rowFilters = [],
-    isPinned,
-  }: TableProps,
-) => {
-  const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  const newData = getFilteredRows(allFilters, rowFilters, data);
-
-  const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
-  // Only default to 'metadata.name' if no `defaultSortFunc`
-  const currentSortField = UI.getIn(
-    ['listSorts', listId, 'field'],
-    defaultSortFunc ? undefined : defaultSortField,
-  );
-  const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
-  const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
-  if (loaded) {
-    let sortBy: string | Function = 'metadata.name';
-    if (currentSortField) {
-      sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
-    } else if (currentSortFunc && customSorts[currentSortFunc]) {
-      // Sort resources by a function in the 'customSorts' prop
-      sortBy = customSorts[currentSortFunc];
-    } else if (currentSortFunc && sorts[currentSortFunc]) {
-      // Sort resources by a function in the 'sorts' object
-      sortBy = sorts[currentSortFunc];
-    }
-
-    const getSortValue = (resource) => {
-      const val = _.isFunction(sortBy)
-        ? sortBy(resource, customData)
-        : _.get(resource, sortBy as string);
-      return val ?? '';
-    };
-    newData?.sort((a, b) => {
-      const lang = navigator.languages[0] || navigator.language;
-      // Use `localCompare` with `numeric: true` for a natural sort order (e.g., pv-1, pv-9, pv-10)
-      const compareOpts = { numeric: true, ignorePunctuation: true };
-      const aValue = getSortValue(a);
-      const bValue = getSortValue(b);
-      const aPinned = isPinned?.(a);
-      const bPinned = isPinned?.(b);
-      if (aPinned !== bPinned) {
-        return aPinned ? -1 : +1;
-      }
-      const result: number =
-        Number.isFinite(aValue) && Number.isFinite(bValue)
-          ? aValue - bValue
-          : `${aValue}`.localeCompare(`${bValue}`, lang, compareOpts);
-      if (result !== 0) {
-        return currentSortOrder === SortByDirection.asc ? result : result * -1;
-      }
-
-      // Use name as a secondary sort for a stable sort.
-      const aName = a?.metadata?.name || '';
-      const bName = b?.metadata?.name || '';
-      return aName.localeCompare(bName, lang, compareOpts);
-    });
-  }
-
-  return {
-    currentSortField,
-    currentSortFunc,
-    currentSortOrder,
-    data: newData,
-    unfilteredData: data,
-    listId,
-  };
-};
-
 // Common table row/columns helper SFCs for implementing accessible data grid
-export const TableRow: React.SFC<TableRowProps> = ({
+export const TableRow: React.FC<TableRowProps> = ({
   id,
   index,
   trKey,
@@ -286,8 +158,9 @@ export const TableRow: React.SFC<TableRowProps> = ({
   );
 };
 TableRow.displayName = 'TableRow';
+
 export type TableRowProps = {
-  id: any;
+  id: React.ReactText;
   index: number;
   title?: string;
   trKey: string;
@@ -307,6 +180,7 @@ const MAX_COL_LG = 6;
 const MAX_COL_XL = 8;
 
 const isColumnVisible = (
+  widthInPixels: number,
   columnID: string,
   columns: Set<string> = new Set(),
   showNamespaceOverride,
@@ -321,7 +195,6 @@ const isColumnVisible = (
   if (!columns.has(columnID) || !showNamespace) {
     return false;
   }
-  const widthInPixels = window.innerWidth;
   const columnIndex = [...columns].indexOf(columnID);
   if (widthInPixels < BREAKPOINT_SM) {
     return columnIndex < MAX_COL_XS;
@@ -341,14 +214,14 @@ const isColumnVisible = (
   return true;
 };
 
-export const TableData: React.SFC<TableDataProps> = ({
+export const TableData: React.FC<TableDataProps> = ({
   className,
   columnID,
   columns,
   showNamespaceOverride,
   ...props
 }) => {
-  return isColumnVisible(columnID, columns, showNamespaceOverride) ? (
+  return isColumnVisible(window.innerWidth, columnID, columns, showNamespaceOverride) ? (
     <td {...props} className={className} role="gridcell" />
   ) : null;
 };
@@ -361,7 +234,7 @@ export type TableDataProps = {
   showNamespaceOverride?: boolean;
 };
 
-const TableWrapper: React.SFC<TableWrapperProps> = ({
+const TableWrapper: React.FC<TableWrapperProps> = ({
   virtualize,
   ariaLabel,
   ariaRowCount,
@@ -376,10 +249,10 @@ const TableWrapper: React.SFC<TableWrapperProps> = ({
 export type TableWrapperProps = {
   virtualize: boolean;
   ariaLabel: string;
-  ariaRowCount: number | undefined;
+  ariaRowCount: number;
 };
 
-const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
+const VirtualBody: React.FC<VirtualBodyProps> = (props) => {
   const {
     customData,
     Row,
@@ -460,67 +333,24 @@ export type RowFunctionArgs<T = any, C = any> = {
 
 export type RowFunction<T = any, C = any> = (args: RowFunctionArgs<T, C>) => React.ReactElement;
 
-export type VirtualBodyProps = {
-  customData?: any;
+export type VirtualBodyProps<D = any, C = any> = {
+  customData?: C;
   Row: RowFunction;
   height: number;
   isScrolling: boolean;
-  onChildScroll: (...args) => any;
-  data: any[];
+  onChildScroll: (params: Scroll) => void;
+  data: D[];
   columns: any[];
   scrollTop: number;
   width: number;
   expand: boolean;
 };
 
-export type TableProps = {
-  customData?: any;
-  customSorts?: { [key: string]: any };
-  data?: any[];
-  defaultSortFunc?: string;
-  defaultSortField?: string;
-  defaultSortOrder?: SortByDirection;
-  showNamespaceOverride?: boolean;
-  filters?: { [key: string]: any };
-  Header: (...args) => any[];
-  loadError?: string | Object;
-  Row?: RowFunction;
-  Rows?: (...args) => any[];
-  'aria-label': string;
-  onSelect?: OnSelect;
-  virtualize?: boolean;
-  NoDataEmptyMsg?: React.ComponentType<{}>;
-  EmptyMsg?: React.ComponentType<{}>;
-  loaded?: boolean;
-  reduxID?: string;
-  reduxIDs?: string[];
-  rowFilters?: any[];
-  label?: string;
-  columnManagementID?: string;
-  isPinned?: (val: any) => boolean;
-  staticFilters?: any[];
-  activeColumns?: Set<string>;
-  kinds?: string[];
-};
-
-type TablePropsFromState = {};
-
-type TablePropsFromDispatch = {};
-
-type TableOptionProps = {
-  UI: any;
-};
-
-type ComponentProps = {
-  data?: any[];
-  filters?: Object;
-  selected?: any;
-  match?: any;
-  kindObj?: K8sResourceKindReference;
-};
+type HeaderFunc = (componentProps: ComponentProps) => any[];
 
 const getActiveColumns = (
-  Header: any,
+  windowWidth: number,
+  Header: HeaderFunc,
   componentProps: ComponentProps,
   activeColumns: Set<string>,
   columnManagementID: string,
@@ -538,7 +368,9 @@ const getActiveColumns = (
   }
   if (columnManagementID) {
     columns = columns?.filter(
-      (col) => isColumnVisible(col.id, activeColumns, showNamespaceOverride) || col.title === '',
+      (col) =>
+        isColumnVisible(windowWidth, col.id, activeColumns, showNamespaceOverride) ||
+        col.title === '',
     );
   } else {
     columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
@@ -552,320 +384,296 @@ const getActiveColumns = (
   return columns;
 };
 
-export const Table = connect<
-  TablePropsFromState,
-  TablePropsFromDispatch,
-  TableProps,
-  TableOptionProps
->(stateToProps, { sortList: UIActions.sortList }, null, {
-  areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
-})(
-  withTranslation()(
-    class TableInner extends React.Component<TableInnerProps, TableInnerState> {
-      static propTypes = {
-        customData: PropTypes.any,
-        data: PropTypes.array,
-        showNamespaceOverride: PropTypes.bool,
-        unfilteredData: PropTypes.array,
-        NoDataEmptyMsg: PropTypes.func,
-        EmptyMsg: PropTypes.func,
-        expand: PropTypes.bool,
-        fieldSelector: PropTypes.string,
-        filters: filterPropType,
-        Header: PropTypes.func.isRequired,
-        Row: PropTypes.func,
-        Rows: PropTypes.func,
-        loaded: PropTypes.bool,
-        loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-        mock: PropTypes.bool,
-        namespace: PropTypes.string,
-        reduxID: PropTypes.string,
-        reduxIDs: PropTypes.array,
-        selector: PropTypes.object,
-        staticFilters: PropTypes.array,
-        virtualize: PropTypes.bool,
-        currentSortField: PropTypes.string,
-        currentSortFunc: PropTypes.string,
-        currentSortOrder: PropTypes.any,
-        defaultSortField: PropTypes.string,
-        defaultSortFunc: PropTypes.string,
-        label: PropTypes.string,
-        listId: PropTypes.string,
-        sortList: PropTypes.func,
-        onSelect: PropTypes.func,
-        scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
-        columnManagementID: PropTypes.string, // for column management should use gvk for workloads
-      };
-      _columnShift: number;
+const getComponentProps = (
+  data: any[],
+  filters: Filter[],
+  selected: boolean,
+  match: RMatch<any>,
+  kindObj: K8sResourceKindReference,
+): ComponentProps => ({
+  data,
+  filters,
+  selected,
+  match,
+  kindObj,
+});
 
-      constructor(props) {
-        super(props);
-        const componentProps: ComponentProps = _.pick(props, [
-          'data',
-          'filters',
-          'selected',
-          'match',
-          'kindObj',
-        ]);
-        const columns = getActiveColumns(
-          this.props.Header,
-          componentProps,
-          this.props.activeColumns,
-          this.props.columnManagementID,
-          this.props.showNamespaceOverride,
-        );
-        const { currentSortField, currentSortFunc, currentSortOrder } = props;
+export const Table: React.FC<TableProps> = ({
+  onSelect,
+  filters: initFilters,
+  selected,
+  match,
+  kindObj,
+  Header: initHeader,
+  activeColumns,
+  columnManagementID,
+  showNamespaceOverride,
+  scrollElement,
+  Rows,
+  Row,
+  expand,
+  label,
+  mock,
+  selectedResourcesForKind,
+  'aria-label': ariaLabel,
+  virtualize = true,
+  customData,
+  gridBreakPoint = TableGridBreakpoint.none,
+  loaded,
+  loadError,
+  NoDataEmptyMsg,
+  EmptyMsg,
+  defaultSortOrder,
+  customSorts,
+  data: propData,
+  defaultSortFunc,
+  reduxID,
+  reduxIDs,
+  staticFilters,
+  rowFilters,
+  isPinned,
+  defaultSortField,
+}) => {
+  const filters = useDeepCompareMemoize(initFilters);
+  const Header = useDeepCompareMemoize(initHeader);
+  const { currentSortField, currentSortFunc, currentSortOrder, data, listId } = useTableData({
+    reduxID,
+    reduxIDs,
+    defaultSortFunc,
+    defaultSortField,
+    defaultSortOrder,
+    staticFilters,
+    filters,
+    rowFilters,
+    propData,
+    loaded,
+    isPinned,
+    customData,
+    customSorts,
+    sorts,
+  });
 
-        this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
-        this._applySort = this._applySort.bind(this);
-        this._onSort = this._onSort.bind(this);
-        this._handleResize = _.debounce(this._handleResize.bind(this), 100);
+  const dispatch = useDispatch();
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [sortBy, setSortBy] = React.useState({});
 
-        let sortBy = {};
-        if (currentSortField && currentSortOrder) {
-          const columnIndex = _.findIndex(columns, { sortField: currentSortField });
-          if (columnIndex > -1) {
-            sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
-          }
-        } else if (currentSortFunc && currentSortOrder) {
-          const columnIndex = _.findIndex(columns, { sortFunc: currentSortFunc });
-          if (columnIndex > -1) {
-            sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
-          }
-        }
-        this.state = { sortBy, columns };
-        props.i18n.on('languageChanged', () => {
-          this.setState({
-            columns: props.Header(componentProps, props.t),
-          });
-        });
-      }
+  const [columns, componentProps] = React.useMemo(() => {
+    const cProps = getComponentProps(data, filters, selected, match, kindObj);
+    return [
+      getActiveColumns(
+        windowWidth,
+        Header,
+        cProps,
+        activeColumns,
+        columnManagementID,
+        showNamespaceOverride,
+      ),
+      cProps,
+    ];
+  }, [
+    windowWidth,
+    Header,
+    data,
+    filters,
+    selected,
+    match,
+    kindObj,
+    activeColumns,
+    columnManagementID,
+    showNamespaceOverride,
+  ]);
 
-      componentDidMount() {
-        const componentProps: ComponentProps = _.pick(this.props, [
-          'data',
-          'filters',
-          'selected',
-          'match',
-          'kindObj',
-        ]);
-        const columns = getActiveColumns(
-          this.props.Header,
-          componentProps,
-          this.props.activeColumns,
-          this.props.columnManagementID,
-          this.props.showNamespaceOverride,
-        );
-        const sp = new URLSearchParams(window.location.search);
-        const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
+  const columnShift = onSelect ? 1 : 0; //shift indexes by 1 if select provided
 
+  React.useEffect(() => {
+    if (!sortBy) {
+      let newSortBy = {};
+      if (currentSortField && currentSortOrder) {
+        const columnIndex = _.findIndex(columns, { sortField: currentSortField });
         if (columnIndex > -1) {
-          const sortOrder = sp.get('orderBy') || SortByDirection.asc;
-          const column = columns[columnIndex];
-          this._applySort(column.sortField, column.sortFunc, sortOrder, column.title);
-          this.setState({
-            sortBy: {
-              index: columnIndex + this._columnShift,
-              direction: sortOrder,
-            },
-          });
+          newSortBy = { index: columnIndex + columnShift, direction: currentSortOrder };
         }
-
-        // re-render after resize
-        window.addEventListener('resize', this._handleResize);
+      } else if (currentSortFunc && currentSortOrder) {
+        const columnIndex = _.findIndex(columns, { sortFunc: currentSortFunc });
+        if (columnIndex > -1) {
+          newSortBy = { index: columnIndex + columnShift, direction: currentSortOrder };
+        }
       }
+      setSortBy(newSortBy);
+    }
+  }, [columnShift, columns, currentSortField, currentSortFunc, currentSortOrder, sortBy]);
 
-      componentWillUnmount() {
-        window.removeEventListener('resize', this._handleResize);
-      }
-
-      _handleResize() {
-        this.forceUpdate();
-      }
-
-      _applySort(sortField, sortFunc, direction, columnTitle) {
-        const { sortList, listId, currentSortFunc } = this.props;
-        const applySort = _.partial(sortList, listId);
-        applySort(sortField, sortFunc || currentSortFunc, direction, columnTitle);
-      }
-
-      _onSort(event, index, direction) {
-        event.preventDefault();
-        const componentProps: ComponentProps = _.pick(this.props, [
-          'data',
-          'filters',
-          'selected',
-          'match',
-          'kindObj',
-        ]);
-        const columns = getActiveColumns(
-          this.props.Header,
-          componentProps,
-          this.props.activeColumns,
-          this.props.columnManagementID,
-          this.props.showNamespaceOverride,
-        );
-        const sortColumn = columns[index - this._columnShift];
-        this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
-        this.setState({
-          sortBy: {
-            index,
-            direction,
-          },
-        });
-      }
-
-      render() {
-        const {
-          columnManagementID,
-          scrollElement,
-          Rows,
-          Row,
-          expand,
-          label,
-          mock,
-          onSelect,
-          selectedResourcesForKind,
-          'aria-label': ariaLabel,
-          virtualize = true,
-          customData,
-          gridBreakPoint = TableGridBreakpoint.none,
-          Header,
-          activeColumns,
-          showNamespaceOverride,
-        } = this.props;
-        const { sortBy } = this.state;
-        const componentProps: any = _.pick(this.props, [
-          'data',
-          'filters',
-          'selected',
-          'match',
-          'kindObj',
-        ]);
-        const columns = getActiveColumns(
-          Header,
-          componentProps,
-          activeColumns,
-          columnManagementID,
-          showNamespaceOverride,
-        );
-        const ariaRowCount = componentProps.data && componentProps.data.length;
-        const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
-        const renderVirtualizedTable = (scrollContainer) => (
-          <WindowScroller scrollElement={scrollContainer}>
-            {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
-              <AutoSizer disableHeight>
-                {({ width }) => (
-                  <div ref={registerChild}>
-                    <VirtualBody
-                      Row={Row}
-                      customData={customData}
-                      height={height}
-                      isScrolling={isScrolling}
-                      onChildScroll={onChildScroll}
-                      data={componentProps.data}
-                      columns={columns}
-                      scrollTop={scrollTop}
-                      width={width}
-                      expand={expand}
-                    />
-                  </div>
-                )}
-              </AutoSizer>
-            )}
-          </WindowScroller>
-        );
-        const children = mock ? (
-          <EmptyBox label={label} />
-        ) : (
-          <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
-            <PfTable
-              cells={columns}
-              rows={
-                virtualize ? [] : Rows({ componentProps, selectedResourcesForKind, customData })
-              }
-              gridBreakPoint={gridBreakPoint}
-              onSort={this._onSort}
-              onSelect={onSelect}
-              sortBy={sortBy}
-              className="pf-m-compact pf-m-border-rows"
-              role={virtualize ? 'presentation' : 'grid'}
-              aria-label={virtualize ? null : ariaLabel}
-            >
-              <TableHeader role="rowgroup" />
-              {!virtualize && <TableBody />}
-            </PfTable>
-            {virtualize &&
-              (scrollNode ? (
-                renderVirtualizedTable(scrollNode)
-              ) : (
-                <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-              ))}
-          </TableWrapper>
-        );
-        return (
-          <div className="co-m-table-grid co-m-table-grid--bordered">
-            {mock ? (
-              children
-            ) : (
-              <StatusBox skeleton={<div className="loading-skeleton--table" />} {...this.props}>
-                {children}
-              </StatusBox>
-            )}
-          </div>
-        );
-      }
+  const applySort = React.useCallback(
+    (sortField, sortFunc, direction, columnTitle) => {
+      dispatch(
+        UIActions.sortList(listId, sortField, sortFunc || currentSortFunc, direction, columnTitle),
+      );
     },
-  ),
-);
+    [currentSortFunc, dispatch, listId],
+  );
 
-export type TableInnerProps = {
-  'aria-label': string;
-  customData?: any;
-  currentSortField?: string;
-  currentSortFunc?: string;
-  currentSortOrder?: any;
-  data?: any[];
-  defaultSortField?: string;
-  defaultSortFunc?: string;
-  showNamespaceOverride?: boolean;
-  activeColumns?: Set<string>;
-  unfilteredData?: any[];
-  NoDataEmptyMsg?: React.ComponentType<{}>;
-  EmptyMsg?: React.ComponentType<{}>;
-  expand?: boolean;
-  fieldSelector?: string;
-  filters?: { [name: string]: any };
-  Header: (...args) => any[];
-  label?: string;
-  listId?: string;
-  loaded?: boolean;
-  loadError?: string | Object;
-  mock?: boolean;
-  namespace?: string;
-  reduxID?: string;
-  reduxIDs?: string[];
-  Row?: RowFunction;
-  Rows?: (...args) => any[];
-  selector?: Object;
-  sortList?: (listId: string, field: string, func: any, orderBy: string, column: string) => any;
-  selectedResourcesForKind?: string[];
-  onSelect?: (
-    event: React.FormEvent<HTMLInputElement>,
-    isSelected: boolean,
-    rowIndex: number,
-    rowData: IRowData,
-    extraData: IExtraData,
-  ) => void;
-  staticFilters?: any[];
-  rowFilters?: any[];
-  virtualize?: boolean;
-  gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
-  scrollElement?: HTMLElement | (() => HTMLElement);
-  columnManagementID?: string;
+  const onSort = React.useCallback(
+    (event, index, direction) => {
+      event.preventDefault();
+      const sortColumn = columns[index - columnShift];
+      applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
+      setSortBy({
+        index,
+        direction,
+      });
+    },
+    [applySort, columnShift, columns],
+  );
+
+  React.useEffect(() => {
+    const handleResize = _.debounce(() => setWindowWidth(window.innerWidth), 100);
+    const sp = new URLSearchParams(window.location.search);
+    const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
+
+    if (columnIndex > -1) {
+      const sortOrder = sp.get('orderBy') || SortByDirection.asc;
+      const column = columns[columnIndex];
+      applySort(column.sortField, column.sortFunc, sortOrder, column.title);
+      setSortBy({
+        index: columnIndex + columnShift,
+        direction: sortOrder,
+      });
+    }
+
+    // re-render after resize
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const ariaRowCount = data && data.length;
+  const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
+  const renderVirtualizedTable = (scrollContainer) => (
+    <WindowScroller scrollElement={scrollContainer}>
+      {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
+        <AutoSizer disableHeight>
+          {({ width }) => (
+            <div ref={registerChild}>
+              <VirtualBody
+                Row={Row}
+                customData={customData}
+                height={height}
+                isScrolling={isScrolling}
+                onChildScroll={onChildScroll}
+                data={data}
+                columns={columns}
+                scrollTop={scrollTop}
+                width={width}
+                expand={expand}
+              />
+            </div>
+          )}
+        </AutoSizer>
+      )}
+    </WindowScroller>
+  );
+  const children = mock ? (
+    <EmptyBox label={label} />
+  ) : (
+    <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
+      <PfTable
+        cells={columns}
+        rows={
+          virtualize
+            ? []
+            : Rows({
+                componentProps,
+                selectedResourcesForKind,
+                customData,
+              })
+        }
+        gridBreakPoint={gridBreakPoint}
+        onSort={onSort}
+        onSelect={onSelect}
+        sortBy={sortBy}
+        className="pf-m-compact pf-m-border-rows"
+        role={virtualize ? 'presentation' : 'grid'}
+        aria-label={virtualize ? null : ariaLabel}
+      >
+        <TableHeader role="rowgroup" />
+        {!virtualize && <TableBody />}
+      </PfTable>
+      {virtualize &&
+        (scrollNode ? (
+          renderVirtualizedTable(scrollNode)
+        ) : (
+          <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
+        ))}
+    </TableWrapper>
+  );
+  return (
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      {mock ? (
+        children
+      ) : (
+        <StatusBox
+          skeleton={<div className="loading-skeleton--table" />}
+          data={data}
+          loaded={loaded}
+          loadError={loadError}
+          unfilteredData={propData}
+          label={label}
+          NoDataEmptyMsg={NoDataEmptyMsg}
+          EmptyMsg={EmptyMsg}
+        >
+          {children}
+        </StatusBox>
+      )}
+    </div>
+  );
 };
 
-export type TableInnerState = {
-  sortBy: object;
-  columns?: any;
+export type Filter = { key: string; value: string };
+
+type RowsArgs<C = any> = {
+  componentProps: ComponentProps;
+  selectedResourcesForKind: string[];
+  customData: C;
+};
+
+export type TableProps<D = any, C = any> = Partial<ComponentProps<D>> & {
+  customData?: C;
+  customSorts?: { [key: string]: (obj: D) => number | string };
+  defaultSortFunc?: string;
+  defaultSortField?: string;
+  defaultSortOrder?: SortByDirection;
+  showNamespaceOverride?: boolean;
+  Header: HeaderFunc;
+  loadError?: string | Object;
+  Row?: RowFunction<D, C>;
+  Rows?: (args: RowsArgs<C>) => PfTableProps['rows'];
+  'aria-label': string;
+  onSelect?: OnSelect;
+  virtualize?: boolean;
+  NoDataEmptyMsg?: React.ComponentType<{}>;
+  EmptyMsg?: React.ComponentType<{}>;
+  loaded?: boolean;
+  reduxID?: string;
+  reduxIDs?: string[];
+  rowFilters?: RowFilter[];
+  label?: string;
+  columnManagementID?: string;
+  isPinned?: (val: D) => boolean;
+  staticFilters?: Filter[];
+  activeColumns?: Set<string>;
+  gridBreakPoint?: TableGridBreakpoint;
+  selectedResourcesForKind?: string[];
+  mock?: boolean;
+  expand?: boolean;
+  scrollElement?: HTMLElement | (() => HTMLElement);
+};
+
+export type ComponentProps<D = any> = {
+  data: D[];
+  filters: Filter[];
+  selected: boolean;
+  match: RMatch<any>;
+  kindObj: K8sResourceKindReference;
 };

@@ -33,7 +33,7 @@
   "**Devfiles** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.": "**Devfiles** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.",
   "+Add": "+Add",
   "Topology": "Topology",
-  "Monitoring": "Monitoring",
+  "Observe": "Observe",
   "Search": "Search",
   "Project": "Project",
   "Builds": "Builds",

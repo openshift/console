@@ -67,6 +67,11 @@ export default (state: UIState, action: UIAction): UIState => {
         filterValue: '',
       }),
       user: {},
+      utilizationDuration: ImmutableMap({
+        duration: null,
+        endTime: null,
+        selectedKey: null,
+      }),
       monitoringDashboards: ImmutableMap({
         endTime: null,
         pollInterval: 30 * 1000,
@@ -332,6 +337,12 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.setIn(['metrics', 'node'], action.payload.nodeMetrics);
     case ActionType.SetPVCMetrics:
       return state.setIn(['metrics', 'pvc'], action.payload.pvcMetrics);
+    case ActionType.SetUtilizationDuration:
+      return state.setIn(['utilizationDuration', 'duration'], action.payload.duration);
+    case ActionType.SetUtilizationDurationSelectedKey:
+      return state.setIn(['utilizationDuration', 'selectedKey'], action.payload.key);
+    case ActionType.SetUtilizationDurationEndTime:
+      return state.setIn(['utilizationDuration', 'endTime'], action.payload.endTime);
     default:
       break;
   }

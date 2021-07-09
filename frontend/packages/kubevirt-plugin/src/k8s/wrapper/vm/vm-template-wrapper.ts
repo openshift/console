@@ -6,7 +6,6 @@ import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
-import { VirtualMachineModel } from '../../../models';
 import { selectVM } from '../../../selectors/vm-template/basic';
 import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
@@ -37,14 +36,7 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
 
   getParameters = (defaultValue = []) => (this.data && this.data.parameters) || defaultValue;
 
-  getVM = (copy = false) => {
-    const vm = selectVM(this.data);
-    if (vm && vm.apiVersion) {
-      vm.apiVersion = `${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}`; // Override template api version
-    }
-
-    return new VMWrapper(vm, copy);
-  };
+  getVM = (copy = false) => new VMWrapper(selectVM(this.data), copy);
 
   setParameter = (name, value) => {
     const parameter = this.getParameters().find((param) => param.name === name);

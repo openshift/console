@@ -10,20 +10,16 @@ import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
   humanizeNumber,
-  Dropdown,
 } from '@console/internal/components/utils';
 import { PodModel, ProjectModel } from '@console/internal/models';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  useMetricDuration,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
 import ConsumerPopover, {
   LimitsBody,
 } from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
+import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { TopConsumerPopoverProp } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import { getNodeAddresses } from '@console/shared/src/selectors/node';
@@ -109,9 +105,6 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration(t);
-
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
@@ -202,14 +195,9 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('console-app~Utilization')}</DashboardCardTitle>
-        <Dropdown
-          items={Duration(t)}
-          onChange={setDuration}
-          selectedKey={duration}
-          title={duration}
-        />
+        <UtilizationDurationDropdown />
       </DashboardCardHeader>
-      <UtilizationBody timestamps={timestamps}>
+      <UtilizationBody>
         <PrometheusUtilizationItem
           title={t('console-app~CPU')}
           humanizeValue={humanizeCpuCores}
@@ -218,8 +206,6 @@ const UtilizationCard: React.FC = () => {
           limitQuery={resourceQuotaQueries[NodeQueries.POD_RESOURCE_LIMIT_CPU]}
           requestQuery={resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_CPU]}
           TopConsumerPopover={cpuPopover}
-          duration={duration}
-          setTimestamps={setTimestamps}
           setLimitReqState={setCPULimit}
         />
         <PrometheusUtilizationItem
@@ -231,7 +217,6 @@ const UtilizationCard: React.FC = () => {
           requestQuery={resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_MEMORY]}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
-          duration={duration}
           setLimitReqState={setMemoryLimit}
         />
         <PrometheusUtilizationItem
@@ -241,20 +226,17 @@ const UtilizationCard: React.FC = () => {
           totalQuery={queries[NodeQueries.FILESYSTEM_TOTAL]}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={filesystemPopover}
-          duration={duration}
         />
         <PrometheusMultilineUtilizationItem
           title={t('console-app~Network transfer')}
           humanizeValue={humanizeDecimalBytesPerSec}
           queries={multilineQueries[NodeQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
-          duration={duration}
         />
         <PrometheusUtilizationItem
           title={t('console-app~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[NodeQueries.POD_COUNT]}
-          duration={duration}
         />
       </UtilizationBody>
     </DashboardCard>

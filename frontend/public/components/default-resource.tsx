@@ -78,7 +78,7 @@ export const DetailsForKind = (
     );
   };
 
-export const DefaultList: React.FC<TableProps> = (props) => {
+export const DefaultList: React.FC<TableProps & { kinds: string[] }> = (props) => {
   const { t } = useTranslation();
 
   const { kinds } = props;
@@ -159,7 +159,6 @@ export const DefaultList: React.FC<TableProps> = (props) => {
     <Table
       {...props}
       aria-label={getAriaLabel(kinds[0])}
-      kinds={[kinds[0]]}
       customData={{ kind: kinds[0] }}
       Header={TableHeader}
       Row={TableRowForKind}

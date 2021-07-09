@@ -25,7 +25,7 @@ export const listPage = {
   },
   filter: {
     byName: (name: string) => {
-      cy.byLegacyTestID('item-filter').type(name);
+      cy.byTestID('name-filter-input').type(name);
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);

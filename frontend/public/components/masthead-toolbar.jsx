@@ -308,7 +308,7 @@ class MastheadToolbarContents_ extends React.Component {
   _helpActions(additionalHelpActions) {
     const { flags, cv, t, fireTelemetryEvent } = this.props;
     const helpActions = [];
-    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data) : null;
+    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data, t) : null;
 
     helpActions.push({
       name: '',

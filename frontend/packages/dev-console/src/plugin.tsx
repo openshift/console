@@ -40,8 +40,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/Resource',
     properties: {
-      // t('devconsole~Monitoring')
-      name: '%devconsole~Monitoring%',
+      // t('devconsole~Observe')
+      name: '%devconsole~Observe%',
       key: 'isMonitorable',
       loader: () =>
         import(

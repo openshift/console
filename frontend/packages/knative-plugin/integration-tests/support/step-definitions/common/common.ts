@@ -42,7 +42,7 @@ Given('user is at Topology page', () => {
 });
 
 Given('user is at Monitoring page', () => {
-  navigateTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Observe);
 });
 
 When('user clicks create button', () => {

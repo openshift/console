@@ -79,7 +79,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
   if (alerts?.length > 0) {
     const onAlertClick = () => {
       onSelect([item.getId()]);
-      onSelectTab('Monitoring');
+      onSelectTab('Observe');
     };
     const severityAlertType = getSeverityAlertType(alerts);
     alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (

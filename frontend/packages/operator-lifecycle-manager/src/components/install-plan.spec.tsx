@@ -9,6 +9,7 @@ import {
   DetailsPage,
   RowFunctionArgs,
   TableRow,
+  ComponentProps,
 } from '@console/internal/components/factory';
 import {
   ResourceKebab,
@@ -191,7 +192,7 @@ describe('InstallPlansList', () => {
     const headerTitles = wrapper
       .find(Table)
       .props()
-      .Header()
+      .Header({} as ComponentProps)
       .map((header) => header.title);
     expect(headerTitles).toEqual([
       'olm~Name',
