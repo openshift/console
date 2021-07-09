@@ -362,6 +362,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     />
                   ) : (
                     <TextFilter
+                      data-test="name-filter-input"
                       value={nameInputText}
                       onChange={(value: string) => {
                         setNameInputText(value);

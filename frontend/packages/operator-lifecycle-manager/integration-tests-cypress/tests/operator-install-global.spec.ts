@@ -2,20 +2,19 @@ import { checkErrors } from '../../../integration-tests-cypress/support';
 import { nav } from '../../../integration-tests-cypress/views/nav';
 import { operator, GlobalInstalledNamespace, TestOperandProps } from '../views/operator.view';
 
-// TODO find light-weight RH global operator!
 const testOperator = {
-  name: '',
-  operatorHubCardTestID: '',
+  name: 'Service Binding Operator',
+  operatorHubCardTestID: 'rh-service-binding-operator-redhat-operators-openshift-marketplace',
 };
 
 const testOperand: TestOperandProps = {
-  name: '',
-  kind: '',
-  tabName: '',
-  exampleName: ``,
+  name: 'ServiceBinding',
+  kind: 'ServiceBinding',
+  tabName: 'Service Binding',
+  exampleName: `example-servicebinding`,
 };
 
-xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
@@ -43,6 +42,7 @@ xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstal
     cy.byLegacyTestID('resource-summary').should('exist');
 
     operator.createOperand(testOperator.name, testOperand);
+    cy.byTestOperandLink(testOperand.exampleName).should('exist');
     operator.operandShouldExist(testOperator.name, testOperand);
 
     operator.deleteOperand(testOperator.name, testOperand);
