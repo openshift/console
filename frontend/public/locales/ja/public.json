@@ -1095,6 +1095,8 @@
   "Critical Alerts": "重大アラート",
   "Other Alerts": "他のアラート",
   "Recommendations": "推奨事項",
+  "Notifications": "ニュース？センター",
+  "{{count}} unread": "{{count}} 未読",
   "Build {link} was cancelled": "ビルド {link} はキャンセルされました",
   "Build {link} was complete": "ビルド {link} は完成しています",
   "Build {link} encountered an error": "ビルド {link} でエラーが発生しました",

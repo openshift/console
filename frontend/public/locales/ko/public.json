@@ -1095,6 +1095,8 @@
   "Critical Alerts": "심각한 상태 알림",
   "Other Alerts": "기타 알림",
   "Recommendations": "권장 사항",
+  "Notifications": "메시지 센터",
+  "{{count}} unread": "{{count}} 미 독",
   "Build {link} was cancelled": "{link} 빌드가 취소되었습니다",
   "Build {link} was complete": "{link} 빌드가 완료되었습니다",
   "Build {link} encountered an error": "{link} 빌드에 오류가 발생했습니다",

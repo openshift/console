@@ -11,11 +11,11 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
     <div className="pf-c-notification-drawer">
       <div className="pf-c-notification-drawer__header">
         <h1 className="pf-c-notification-drawer__header-title">
-          {t('notification-drawer~Notifications')}
+          {t('public~Notifications')}
         </h1>
         {count && (
           <span className="pf-c-notification-drawer__header-status">
-            {t('notification-drawer~{{count}} unread', { count })}
+            {t('public~{{count}} unread', { count })}
           </span>
         )}
         <div className="pf-c-notification-drawer__header-action">
@@ -23,7 +23,7 @@ const NotificationDrawerHeading: React.FC<NotificationDrawerHeadingProps> = ({
             <button
               className="pf-c-button pf-m-plain"
               type="button"
-              aria-label={t('notification-drawer~Close')}
+              aria-label={t('public~Close')}
               onClick={onClose}
             >
               <i className="fas fa-times" aria-hidden="true"></i>

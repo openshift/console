@@ -1098,6 +1098,8 @@
   "Critical Alerts": "Critical Alerts",
   "Other Alerts": "Other Alerts",
   "Recommendations": "Recommendations",
+  "Notifications": "Notifications",
+  "{{count}} unread": "{{count}} unread",
   "Build {link} was cancelled": "Build {link} was cancelled",
   "Build {link} was complete": "Build {link} was complete",
   "Build {link} encountered an error": "Build {link} encountered an error",

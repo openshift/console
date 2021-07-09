@@ -1080,6 +1080,8 @@
   "Critical Alerts": "关键警报",
   "Other Alerts": "其他警报",
   "Recommendations": "建议",
+  "Notifications": "消息中心",
+  "{{count}} unread": "{{count}} 未读",
   "Build {link} was cancelled": "取消构建 {link}",
   "Build {link} was complete": "构建 {link} 已完成",
   "Build {link} encountered an error": "构建 {link} 遇到错误",
