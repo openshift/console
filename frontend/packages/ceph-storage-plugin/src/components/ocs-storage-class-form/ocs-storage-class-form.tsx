@@ -196,7 +196,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({
               {t('ceph-storage-plugin~Storage Pool')}
             </label>
             <Dropdown
-              className="dropdown dropdown--full-width"
+              className="dropdown--full-width"
               toggle={
                 <DropdownToggle
                   id="pool-dropdown-id"

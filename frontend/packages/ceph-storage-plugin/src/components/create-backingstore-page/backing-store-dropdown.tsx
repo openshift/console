@@ -87,7 +87,7 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
         />
       )}
       <Dropdown
-        className="dropdown dropdown--full-width"
+        className="dropdown--full-width"
         toggle={
           <DropdownToggle
             id="nbs-dropdown-id"
