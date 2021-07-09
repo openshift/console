@@ -21,7 +21,7 @@ export const addIDP = (
 };
 
 export const redirectToOAuthPage = () => {
-  const path = resourcePathFromModel(OAuthModel, OAUTH_RESOURCE_NAME);
+  const path = `${resourcePathFromModel(OAuthModel, OAUTH_RESOURCE_NAME)}?idpAdded=true`;
   history.push(path);
 };
 

@@ -1,13 +1,23 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import { Alert, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
+import { Link } from 'react-router-dom';
 
-import { OAuthModel } from '../../models';
+import { useQueryParams } from '@console/shared';
+import { ClusterOperatorModel, OAuthModel } from '../../models';
 import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
-import { EmptyBox, Kebab, ResourceSummary, SectionHeading, history, navFactory } from '../utils';
+import {
+  EmptyBox,
+  history,
+  Kebab,
+  navFactory,
+  resourcePathFromModel,
+  ResourceSummary,
+  SectionHeading,
+} from '../utils';
 import { formatPrometheusDuration } from '../utils/datetime';
 
 const { common } = Kebab.factory;
@@ -63,6 +73,8 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   const [isIDPOpen, setIDPOpen] = React.useState(false);
   const { identityProviders, tokenConfig } = obj.spec;
   const { t } = useTranslation();
+  const queryParams = useQueryParams();
+  const idpAdded = queryParams.get('idpAdded');
 
   const getAddIDPItemLabels = (type: string) => {
     switch (type) {
@@ -127,6 +139,23 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         <p className="co-m-pane__explanation co-m-pane__explanation--alt">
           {t('public~Identity providers determine how users log into the cluster.')}
         </p>
+        {idpAdded === 'true' && (
+          <Alert
+            isInline
+            className="co-alert"
+            variant="info"
+            title={t('public~New identity provider added.')}
+          >
+            <>
+              {t(
+                'public~Authentication is being reconfigured. The new identity provider will be available once reconfiguration is complete.',
+              )}{' '}
+              <Link to={resourcePathFromModel(ClusterOperatorModel, 'authentication')}>
+                {t('public~View authentication conditions for reconfiguration status.')}
+              </Link>
+            </>
+          </Alert>
+        )}
         <Dropdown
           className="co-m-pane__dropdown"
           toggle={
