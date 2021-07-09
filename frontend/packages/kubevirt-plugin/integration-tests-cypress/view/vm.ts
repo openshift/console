@@ -6,7 +6,8 @@ import { virtualization } from './virtualization';
 import { wizard } from './wizard';
 
 export const waitForStatus = (status: string, vmData?: VirtualMachineData, timeout?: number) => {
-  cy.get(detailsTab.vmStatus, { timeout }).should('contain', status);
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+  cy.contains(detailsTab.vmStatus, status, { timeout: timeOut }).should('exist');
   if (status === VM_STATUS.Running) {
     const { name, namespace } = vmData;
     cy.waitForLoginPrompt(name, namespace);
@@ -85,5 +86,12 @@ export const vm = {
     waitForStatus(VM_STATUS.Paused);
     action(VM_ACTION.Unpause);
     waitForStatus(VM_STATUS.Running, vmData);
+  },
+  migrate: (vmData: VirtualMachineData, waitForComplete = true) => {
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    action(VM_ACTION.Migrate);
+    if (waitForComplete) {
+      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_MIGRATE);
+    }
   },
 };

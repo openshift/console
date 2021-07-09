@@ -56,6 +56,7 @@ export enum VM_ACTION_TIMEOUT {
   VM_BOOTUP = 180000,
   VM_IMPORT = 360000,
   VM_IMPORT_AND_BOOTUP = 900000,
+  VM_MIGRATE = 600000,
 }
 
 export enum Flavor {
