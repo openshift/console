@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Stack,
   StackItem,
@@ -9,8 +8,9 @@ import {
   CardBody,
   Tooltip,
 } from '@patternfly/react-core';
-import { ResourceIcon } from '@console/internal/components/utils';
 import { HeartBrokenIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { GitOpsEnvironmentService } from '../utils/gitops-types';
 import './GitOpsResourcesSection.scss';
 
@@ -20,6 +20,7 @@ interface GitOpsResourcesSectionProps {
 
 const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({ services }) => {
   const { t } = useTranslation();
+
   return (
     <>
       <StackItem className="odc-gitops-resources">
@@ -30,8 +31,11 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({ service
               <span className="odc-gitops-resources__list">
                 <SplitItem>
                   <Stack style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
-                    <StackItem>2</StackItem>
-                    <StackItem>2000</StackItem>
+                    {/* Deployments */}
+                    <StackItem>{'42'}</StackItem>
+                    {/* Secrets */}
+                    <StackItem>{'7'}</StackItem>
+                    {/* Services */}
                     <StackItem>{services.length}</StackItem>
                   </Stack>
                 </SplitItem>
@@ -49,9 +53,9 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({ service
                   </Stack>
                 </SplitItem>
               </span>
-              {/* Add checks for all the resources and fix values for Tooltips here, waiting for real data */}
               <SplitItem>
                 <Stack style={{ alignItems: 'flex-end' }}>
+                  {/* Broken Deployments */}
                   <Tooltip content={t('gitops-plugin~7 of 10 degraded')}>
                     <StackItem>
                       {'7'}{' '}
@@ -61,9 +65,11 @@ const GitOpsResourcesSection: React.FC<GitOpsResourcesSectionProps> = ({ service
                       />
                     </StackItem>
                   </Tooltip>
+                  {/* Broken Secrets */}
                   <Tooltip content={t('gitops-plugin~1000 of 2000 degraded')}>
                     <StackItem>{''}</StackItem>
                   </Tooltip>
+                  {/* Broken Services */}
                   <Tooltip content={t('gitops-plugin~0 of 1 degraded')}>
                     <StackItem>
                       {'1000'}{' '}

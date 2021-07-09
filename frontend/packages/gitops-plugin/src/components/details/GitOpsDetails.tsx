@@ -12,7 +12,6 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { ExternalLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ConsoleLinkModel } from '@console/internal/models';
@@ -23,19 +22,16 @@ import {
   GrayUnknownIcon,
 } from '@console/shared';
 import { GitOpsEnvironment } from '../utils/gitops-types';
-import GitOpsDeploymentSuccessSection from './GitOpsDeploymentSuccessSection';
 import GitOpsResourcesSection from './GitOpsResourcesSection';
 import GitOpsServiceDetailsSection from './GitOpsServiceDetailsSection';
 import './GitOpsDetails.scss';
 
 interface GitOpsDetailsProps {
-  customData: {
-    envs: GitOpsEnvironment[];
-    appName: string;
-  };
+  envs: GitOpsEnvironment[];
+  appName: string;
 }
 
-const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ customData: { envs, appName } }) => {
+const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
   const { t } = useTranslation();
   const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
     isList: true,
@@ -126,15 +122,6 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ customData: { envs, appNa
                       </StackItem>
                       <StackItem>
                         <Split className="odc-gitops-details__env-section__deployment-history">
-                          <SplitItem className="odc-gitops-details__env-section__deployment-history__page-link">
-                            <Link
-                              // replace with Deployment history tab link for this env
-                              to="https://www.google.com"
-                              style={{ fontSize: '14px' }}
-                            >
-                              {t('gitops-plugin~Deployment history')}
-                            </Link>
-                          </SplitItem>
                           <Tooltip content="Argo CD">
                             <SplitItem className="odc-gitops-details__env-section__deployment-history__argocd-link">
                               <ExternalLink
@@ -158,7 +145,6 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ customData: { envs, appNa
                   </CardBody>
                 </Card>
               </StackItem>
-              <GitOpsDeploymentSuccessSection />
               <GitOpsResourcesSection services={env.services} />
             </Stack>
           ),

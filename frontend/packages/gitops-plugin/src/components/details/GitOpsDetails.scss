@@ -52,11 +52,6 @@
       font-size: 12px;
       color: var(--pf-global--palette--black-600);
     }
-    &__deployment-history {
-      margin-top: var(--pf-global--spacer--sm); 
-      justify-content: space-between;
-      width: 100%
-    }
     article {
       border: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
       min-width: 323px;

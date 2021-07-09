@@ -2,13 +2,12 @@ import * as React from 'react';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import PodRingWrapper from './PodRingWrapper';
-import { LoadingBox } from '@console/internal/components/utils';
-import TimestampWrapper from './TimestampWrapper';
+import GitOpsEmptyState from '../GitOpsEmptyState';
 import { WORKLOAD_KINDS, GitOpsResource, GitOpsEnvironment } from '../utils/gitops-types';
 import CommitDetails from './CommitDetails';
-import GitOpsEmptyState from '../GitOpsEmptyState';
-import GitOpsDetailsNavBar from './GitOpsDetailsNavBar';
+import GitOpsDetails from './GitOpsDetails';
+import PodRingWrapper from './PodRingWrapper';
+import TimestampWrapper from './TimestampWrapper';
 
 interface GitOpsDetailsControllerProps {
   envsData: GitOpsEnvironment[];
@@ -65,17 +64,14 @@ const GitOpsDetailsController: React.FC<GitOpsDetailsControllerProps> = ({
   envsData,
   emptyStateMsg,
   appName,
-  match,
 }) => {
   const envs = React.useMemo<EnvsVar[]>(() => getTransformedEnvsData(envsData), [envsData]);
 
-  if (!envsData) {
-    return <LoadingBox />;
-  }
-  if (emptyStateMsg) {
-    return <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />;
-  }
-  return <GitOpsDetailsNavBar customData={{ appName, envs }} match={match} />;
+  return emptyStateMsg ? (
+    <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />
+  ) : (
+    <GitOpsDetails envs={envs} appName={appName} />
+  );
 };
 
 export default GitOpsDetailsController;

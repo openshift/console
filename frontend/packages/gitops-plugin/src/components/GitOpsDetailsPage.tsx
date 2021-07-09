@@ -4,12 +4,12 @@ import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { DevPreviewBadge } from '@console/shared';
+import GitOpsDetailsController from './details/GitOpsDetailsController';
+import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
 import { GitOpsEnvironment } from './utils/gitops-types';
 import { getEnvData, getPipelinesBaseURI, getApplicationsBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
 import useEnvDetails from './utils/useEnvDetails';
-import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
-import GitOpsDetailsController from './details/GitOpsDetailsController';
 
 type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }>;
 
