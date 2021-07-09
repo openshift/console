@@ -309,6 +309,7 @@ class MastheadToolbarContents_ extends React.Component {
     const { flags, cv, t, fireTelemetryEvent } = this.props;
     const helpActions = [];
     const reportBugLink = cv && cv.data ? getReportBugLink(cv.data, t) : null;
+    const tourRef = React.createRef();
 
     helpActions.push({
       name: '',
@@ -342,7 +343,7 @@ class MastheadToolbarContents_ extends React.Component {
             ]
           : []),
         {
-          component: <GuidedTourMastheadTrigger />,
+          component: <GuidedTourMastheadTrigger ref={tourRef} />,
         },
         ...(reportBugLink
           ? [
@@ -392,24 +393,24 @@ class MastheadToolbarContents_ extends React.Component {
       if (action.isSection) {
         return (
           <ApplicationLauncherGroup key={groupIndex} label={action.name}>
+            {_.map(action.actions, (sectionAction, itemIndex) => {
+              return (
+                <ApplicationLauncherItem
+                  key={itemIndex}
+                  icon={sectionAction.image}
+                  href={sectionAction.href || '#'}
+                  onClick={sectionAction.callback}
+                  component={sectionAction.component}
+                  data-test={
+                    sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
+                  }
+                  {...this._externalProps(sectionAction)}
+                >
+                  {sectionAction.label}
+                </ApplicationLauncherItem>
+              );
+            })}
             <>
-              {_.map(action.actions, (sectionAction, itemIndex) => {
-                return (
-                  <ApplicationLauncherItem
-                    key={itemIndex}
-                    icon={sectionAction.image}
-                    href={sectionAction.href || '#'}
-                    onClick={sectionAction.callback}
-                    component={sectionAction.component}
-                    data-test={
-                      sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
-                    }
-                    {...this._externalProps(sectionAction)}
-                  >
-                    {sectionAction.label}
-                  </ApplicationLauncherItem>
-                );
-              })}
               {groupIndex < actions.length - 1 && (
                 <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
               )}
