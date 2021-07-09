@@ -212,7 +212,7 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
               <Dropdown
                 aria-label={t('ceph-storage-plugin~Arbiter zone selection')}
                 id="arbiter-zone-dropdown"
-                dropDownClassName="dropdown dropdown--full-width"
+                dropDownClassName="dropdown--full-width"
                 items={zonesOption}
                 title={selectedArbiterZone}
                 selectedKey={selectedArbiterZone}
