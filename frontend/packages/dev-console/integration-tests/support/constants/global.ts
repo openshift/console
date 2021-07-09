@@ -1,7 +1,7 @@
 export enum devNavigationMenu {
   Add = '+Add',
   Topology = 'Topology',
-  Monitoring = 'Monitoring',
+  Observe = 'Observe',
   Builds = 'Builds',
   Search = 'Search',
   Helm = 'Helm',

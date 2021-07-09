@@ -247,7 +247,7 @@ export type NavSectionTitle =
   | 'Builds'
   | 'Compute'
   | 'Home'
-  | 'Monitoring'
+  | 'Observe'
   | 'Networking'
   | 'Operators'
   | 'Service Catalog'

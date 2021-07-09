@@ -66,11 +66,7 @@ const monitoringNavSectionStateToProps = (state) => ({
 const MonitoringNavSection_ = ({ canAccess }) => {
   const { t } = useTranslation();
   return canAccess && !!window.SERVER_FLAGS.prometheusBaseURL ? (
-    <NavSection
-      id="monitoring"
-      title={t('public~Monitoring')}
-      data-quickstart-id="qs-nav-monitoring"
-    >
+    <NavSection id="observe" title={t('public~Observe')} data-quickstart-id="qs-nav-monitoring">
       <HrefLink
         id="monitoringalerts"
         href="/monitoring/alerts"
