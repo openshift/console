@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import i18n from '@console/internal/i18n';
 import * as PropTypes from 'prop-types';
 import {
   FilterSidePanel,
@@ -166,8 +167,8 @@ const categorize = (items, categories) => {
  * (exported for test purposes)
  */
 export const categorizeItems = (items, itemsSorter, initCategories) => {
-  const allCategory = { id: 'all', label: 'All Items' };
-  const otherCategory = { id: 'other', label: 'Other' };
+  const allCategory = { id: 'all', label: i18n.t('public~All Items') };
+  const otherCategory = { id: 'other', label: i18n.t('public~Other') };
 
   const categories = {
     all: allCategory,
@@ -796,7 +797,7 @@ export class TileViewPage extends React.Component {
             onClick={() => this.clearFilters()}
             data-test-id="catalog-clear-filters"
           >
-            Clear All Filters
+            {i18n.t('public~Clear All Filters')}
           </Button>
         </EmptyStateSecondaryActions>
       </EmptyState>
@@ -839,7 +840,7 @@ export class TileViewPage extends React.Component {
     if (!activeCategory) {
       activeCategory = findActiveCategory('all', categories);
     }
-
+    const numItems = i18n.t('public~{{totalItems}} items', { totalItems: activeCategory.numItems });
     return (
       <div className="co-catalog-page co-catalog-page--with-sidebar">
         <div className="co-catalog-page__tabs">
@@ -856,10 +857,10 @@ export class TileViewPage extends React.Component {
                   data-test="search-operatorhub"
                   type="text"
                   ref={(ref) => (this.filterByKeywordInput = ref)}
-                  placeholder="Filter by keyword..."
+                  placeholder={i18n.t('public~Filter by keyword...')}
                   value={activeFilters.keyword.value}
                   onChange={(text) => this.onKeywordChange(text)}
-                  aria-label="Filter by keyword..."
+                  aria-label={i18n.t('public~Filter by keyword...')}
                 />
                 {groupItems && (
                   <Dropdown
@@ -872,7 +873,7 @@ export class TileViewPage extends React.Component {
                   />
                 )}
               </div>
-              <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
+              <div className="co-catalog-page__num-items">{numItems}</div>
             </div>
           </div>
 
