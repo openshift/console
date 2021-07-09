@@ -5,7 +5,8 @@ import {
   humanizeDecimalBytesPerSec,
   humanizeNumber,
   humanizePacketsPerSec,
-} from '../../utils';
+  humanizeSeconds,
+} from '../utils';
 
 export const formatNumber = (s: string, decimals = 2, format = 'short'): string => {
   const value = Number(s);
@@ -26,6 +27,10 @@ export const formatNumber = (s: string, decimals = 2, format = 'short'): string 
       return humanizeDecimalBytesPerSec(value).string;
     case 'pps':
       return humanizePacketsPerSec(value).string;
+    case 'ms':
+      return humanizeSeconds(value, 'ms').string;
+    case 's':
+      return humanizeSeconds(value * 1000, 'ms').string;
     case 'short':
     // fall through
     default:

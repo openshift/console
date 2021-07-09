@@ -12,7 +12,7 @@ import {
 
 import ErrorAlert from '@console/shared/src/components/alerts/error';
 
-import { formatNumber } from './format';
+import { formatNumber } from '../format';
 import { ColumnStyle, Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';

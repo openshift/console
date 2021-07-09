@@ -16,6 +16,7 @@ type Props = {
   pollInterval: number;
   queries: string[];
   showLegend?: boolean;
+  units: string;
 };
 
 const Graph: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const Graph: React.FC<Props> = ({
   pollInterval,
   queries,
   showLegend,
+  units,
 }) => {
   const dispatch = useDispatch();
   const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
@@ -51,6 +53,7 @@ const Graph: React.FC<Props> = ({
       queries={queries}
       showLegend={showLegend}
       timespan={timespan}
+      units={units}
     />
   );
 };
