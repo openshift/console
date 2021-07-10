@@ -1,4 +1,4 @@
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../../../../src/constants';
 
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource(

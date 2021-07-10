@@ -1,5 +1,5 @@
 import { constants } from '@patternfly/react-console';
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../object-enum';
 /* eslint-disable lines-between-class-members */
 
 const {
