@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import {
@@ -25,7 +26,6 @@ import { NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate, NetworkPolicyKind } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
   isNetworkPolicyConversionError,

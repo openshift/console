@@ -21,7 +21,7 @@ import {
   isObjectStorageEvent,
 } from '@console/ceph-storage-plugin/src/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import {
   dataResiliencyQueryMap,

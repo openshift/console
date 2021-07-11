@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared';
 import { connectToFlags } from '../../reducers/connectToFlags';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
 

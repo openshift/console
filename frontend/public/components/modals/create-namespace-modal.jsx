@@ -5,6 +5,7 @@ import { Popover, Button } from '@patternfly/react-core';
 import OutlinedQuestionCircleIcon from '@patternfly/react-icons/dist/js/icons/outlined-question-circle-icon';
 
 import { FLAGS } from '@console/shared';
+
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';

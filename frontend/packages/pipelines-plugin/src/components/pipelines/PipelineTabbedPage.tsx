@@ -6,9 +6,10 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { Page } from '@console/internal/components/utils';
-import { MenuAction, MenuActions, MultiTabListPage, useFlag } from '@console/shared';
+import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../const';
 import { PipelineModel, RepositoryModel } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';

@@ -19,7 +19,7 @@ import DashboardGrid, {
   GridDashboardCard,
 } from '@console/shared/src/components/dashboard/DashboardGrid';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { default as StatusCard } from './persistent-internal/status-card/status-card';
 import RawCapacityCard from './persistent-internal/raw-capacity-card/raw-capacity-card';
 import BreakdownCard from './persistent-internal/capacity-breakdown-card/capacity-breakdown-card';

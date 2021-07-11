@@ -21,6 +21,7 @@ import {
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
 import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { useUserSettings } from '@console/shared';
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
@@ -29,7 +30,7 @@ import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
 import { k8sGet, k8sList, K8sResourceKind } from '@console/internal/module/k8s';
 import { ConsoleExternalLogLinkModel, ProjectModel } from '@console/internal/models';
-import { useFlag } from '@console/shared/src/hooks/flag';
+
 import { usePrevious } from '@console/shared/src/hooks/previous';
 
 export const STREAM_EOF = 'eof';

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import * as dynamicSDK from '@console/dynamic-plugin-sdk';
 import * as utils from '@console/internal/components/utils';
 import * as k8s from '@console/internal/module/k8s';
 import * as shared from '@console/shared';
@@ -10,7 +11,7 @@ import { mockExportData } from './export-data';
 
 describe('ExportApplication', () => {
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-  const spyUseFlag = jest.spyOn(shared, 'useFlag');
+  const spyUseFlag = jest.spyOn(dynamicSDK, 'useFlag');
   const spyUseIsMobile = jest.spyOn(shared, 'useIsMobile');
   const spyUseToast = jest.spyOn(shared, 'useToast');
   const spyUseUserSettings = jest.spyOn(shared, 'useUserSettings');

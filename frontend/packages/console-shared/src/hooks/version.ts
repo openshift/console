@@ -7,7 +7,7 @@ import { ClusterVersionModel } from '@console/internal/models';
 import { referenceForModel, ClusterVersionKind } from '@console/internal/module/k8s';
 import { getFlagsObject } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import { FLAGS } from '../constants';
+import { FLAGS } from '@console/shared';
 
 const getClusterVersionFlag = (state: RootState) => getFlagsObject(state)?.[FLAGS.CLUSTER_VERSION];
 

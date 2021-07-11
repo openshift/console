@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { useFormikContext, useField } from 'formik';
-import { InputField, ResourceDropdownField, FLAGS } from '@console/shared';
+import { FLAGS, InputField, ResourceDropdownField } from '@console/shared';
 import { CREATE_NAMESPACE_KEY } from '../cloud-shell-setup-utils';
 import { InternalNamespaceSection } from '../NamespaceSection';
 

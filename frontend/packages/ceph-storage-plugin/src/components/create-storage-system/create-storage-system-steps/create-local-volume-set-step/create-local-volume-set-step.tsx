@@ -16,7 +16,7 @@ import {
   LocalVolumeDiscoveryResult,
   LocalVolumeSetModel,
 } from '@console/local-storage-operator-plugin/src/models';
-import { useFlag } from '@console/shared/src';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import {
   k8sCreate,
   ListKind,

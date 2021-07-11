@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WatchK8sResults } from '@console/dynamic-plugin-sdk';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { WatchK8sResults, useFlag } from '@console/dynamic-plugin-sdk';
+
 import {
   HealthState,
   healthStateMapping,

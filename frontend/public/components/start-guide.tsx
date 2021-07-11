@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
 import { useTranslation, Trans } from 'react-i18next';
 
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared';
+
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';

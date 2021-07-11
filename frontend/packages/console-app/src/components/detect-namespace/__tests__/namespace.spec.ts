@@ -4,9 +4,9 @@ import { act } from 'react-dom/test-utils';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { usePreferredNamespace } from '../../user-preferences/namespace';
 import { useValuesForNamespaceContext } from '../namespace';

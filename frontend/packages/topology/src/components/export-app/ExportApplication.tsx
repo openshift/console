@@ -2,15 +2,10 @@ import * as React from 'react';
 import { ToolbarItem, Button, AlertVariant } from '@patternfly/react-core';
 import * as _ from 'lodash';
 import { useTranslation, Trans } from 'react-i18next';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { useAccessReview } from '@console/internal/components/utils';
 import { dateTimeFormatter } from '@console/internal/components/utils/datetime';
-import {
-  useFlag,
-  useIsMobile,
-  USERSETTINGS_PREFIX,
-  useToast,
-  useUserSettings,
-} from '@console/shared/src';
+import { useIsMobile, USERSETTINGS_PREFIX, useToast, useUserSettings } from '@console/shared/src';
 import { ALLOW_EXPORT_APP, EXPORT_CR_NAME } from '../../const';
 import { ExportModel } from '../../models';
 import {

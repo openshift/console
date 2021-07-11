@@ -17,7 +17,8 @@ import {
   ButtonBar,
 } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { getName, useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
+import { getName } from '@console/shared';
 import {
   NooBaaBucketClassModel,
   NooBaaBackingStoreModel,

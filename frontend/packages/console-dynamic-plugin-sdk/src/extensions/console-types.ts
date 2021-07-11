@@ -1,5 +1,6 @@
 import { ButtonProps } from '@patternfly/react-core';
 import { TableGridBreakpoint, OnSelect, SortByDirection, ICell } from '@patternfly/react-table';
+import { Map as ImmutableMap } from 'immutable';
 import { RouteComponentProps } from 'react-router';
 import {
   ExtensionK8sGroupKindModel,
@@ -8,6 +9,7 @@ import {
   PrometheusValue,
   ResolvedExtension,
 } from '../api/common-types';
+import { featureReducerName } from '../constants';
 import { Extension, ExtensionTypeGuard } from '../types';
 
 export type OwnerReference = {
@@ -427,3 +429,28 @@ export type UseActivePerspective = () => [
   PerspectiveType,
   React.Dispatch<React.SetStateAction<PerspectiveType>>,
 ];
+export type Request<R> = {
+  active: boolean;
+  timeout: NodeJS.Timer;
+  inFlight: boolean;
+  data: R;
+  error: any;
+};
+
+export type RequestMap<R> = ImmutableMap<string, Request<R>>;
+export type K8sState = ImmutableMap<string, any>;
+export type UIState = ImmutableMap<string, any>;
+export type DashboardsState = ImmutableMap<string, RequestMap<any>>;
+export type FeatureState = ImmutableMap<string, boolean>;
+
+export type RootState = {
+  k8s: K8sState;
+  UI: UIState;
+  [featureReducerName]: FeatureState;
+  dashboards: DashboardsState;
+  plugins?: {
+    [namespace: string]: any;
+  };
+};
+
+export type UseFlag = (flag: string) => boolean;

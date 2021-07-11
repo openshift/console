@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ProjectModel } from '@console/internal/models';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
-import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
+import { FLAGS, InputField, ResourceDropdownField, useFormikValidationFix } from '@console/shared';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
 
 type NamespaceSectionProps = WithFlagsProps;

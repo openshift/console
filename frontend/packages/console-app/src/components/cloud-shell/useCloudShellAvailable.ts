@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import { checkTerminalAvailable } from './cloud-shell-utils';
 

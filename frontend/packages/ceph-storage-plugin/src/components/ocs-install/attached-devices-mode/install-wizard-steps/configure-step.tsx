@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
-import { useFlag, getNamespace, getName } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
+import { getNamespace, getName } from '@console/shared';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { State, Action } from '../reducer';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';

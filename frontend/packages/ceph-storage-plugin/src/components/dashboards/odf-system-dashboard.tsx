@@ -8,7 +8,7 @@ import {
 } from '@console/internal/components/dashboard/dashboards-page/dashboards';
 import { Page, HorizontalNav, LoadingBox, PageHeading } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 // eslint-disable-next-line import/no-named-default
 import { default as OCSOverview, BLOCK_FILE, OBJECT } from './ocs-system-dashboard';
 import { BlockPoolListPage } from '../block-pool/block-pool-list-page';

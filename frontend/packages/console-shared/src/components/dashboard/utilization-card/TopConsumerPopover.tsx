@@ -19,7 +19,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { K8sKind, referenceForModel, K8sResourceCommon } from '@console/internal/module/k8s';
 import { featureReducerName } from '@console/internal/reducers/features';
 import { RootState } from '@console/internal/redux';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared';
 import { getName, getNamespace } from '../../..';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';

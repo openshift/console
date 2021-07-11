@@ -4,9 +4,9 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FlagsObject } from '../reducers/features';
-import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   Kebab,

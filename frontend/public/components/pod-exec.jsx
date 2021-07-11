@@ -4,11 +4,10 @@ import { Base64 } from 'js-base64';
 import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons';
 import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
-
+import { FLAGS } from '@console/shared';
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { FLAGS } from '@console/shared';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';

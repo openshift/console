@@ -23,7 +23,7 @@ import {
   ResourceListPage,
   ResourceTabPage,
 } from '@console/plugin-sdk';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared';
 import '@console/internal/i18n.js';
 import {
   getClusterUpdateTimestamp,

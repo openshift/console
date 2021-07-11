@@ -8,7 +8,8 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult, ExternalLink } from '@console/internal/components/utils';
-import { getName, useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
+import { getName } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';

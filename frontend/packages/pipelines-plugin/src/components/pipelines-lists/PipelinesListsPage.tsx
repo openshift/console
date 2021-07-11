@@ -4,10 +4,11 @@ import { match as Rmatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuAction, MenuActions, MultiTabListPage, useFlag } from '@console/shared';
+import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../const';
 import {
   PipelineModel,

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/shared';
 import { RootState } from '../redux';
 import { FeatureState, FlagsObject } from './features';
 

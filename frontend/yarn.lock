@@ -2745,6 +2745,7 @@
 "@types/react-redux@6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.2.tgz#10069b53db8e0920fd8656e068dcf10c53c9ad2a"
+  integrity sha512-rNf/oxhVDPoRLpxP1d8NvdYHJe6LtyLp0ha8a/RLnsgMVBrbmPaQUznwcmAHlgCdAYFBFqntxe8OqmixHIVI5Q==
   dependencies:
     "@types/react" "*"
     redux "^4.0.0"

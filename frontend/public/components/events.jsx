@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation, withTranslation } from 'react-i18next';
-
+import { FLAGS } from '@console/shared';
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory';
@@ -21,7 +21,6 @@ import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
 import { connectToFlags } from '../reducers/connectToFlags';
-import { FLAGS } from '@console/shared/src/constants';
 import {
   Box,
   Dropdown,

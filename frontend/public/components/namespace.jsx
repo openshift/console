@@ -25,12 +25,12 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 
 import {
+  FLAGS,
   Status,
   getRequester,
   getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
-  FLAGS,
   GreenCheckCircleIcon,
   getName,
   withUserSettingsCompatibility,
@@ -43,6 +43,7 @@ import {
   isModifiedEvent,
   REQUESTER_FILTER,
 } from '@console/shared';
+
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
 import {

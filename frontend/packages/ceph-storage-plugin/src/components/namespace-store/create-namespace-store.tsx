@@ -7,7 +7,7 @@ import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { getName } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import NamespaceStoreForm from './namespace-store-form';
 import '../noobaa-provider-endpoints/noobaa-provider-endpoints.scss';
 import { NooBaaNamespaceStoreModel } from '../../models';

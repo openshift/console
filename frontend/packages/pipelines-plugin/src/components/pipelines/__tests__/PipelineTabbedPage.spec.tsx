@@ -2,7 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { MultiTabListPage, useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
+import { MultiTabListPage } from '@console/shared';
 import { PipelinesPage } from '../PipelinesPage';
 import PipelineTabbedPage, { PageContents } from '../PipelineTabbedPage';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { RowFilter } from '@console/dynamic-plugin-sdk';
+import { RowFilter, useFlag } from '@console/dynamic-plugin-sdk';
 import { MultiListPage } from '@console/internal/components/factory';
 import {
   K8sResourceCommon,
@@ -8,7 +8,6 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useFlag } from '@console/shared';
 import { FLAG_CAMEL_KAMELETS } from '../../../const';
 import { CamelKameletBindingModel } from '../../../models';
 import {

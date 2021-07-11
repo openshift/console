@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import i18next from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
@@ -26,8 +27,7 @@ import {
   referenceForModel,
   VolumeSnapshotKind,
 } from '@console/internal/module/k8s';
-import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { FLAGS, Status, getName, getNamespace, snapshotSource } from '@console/shared';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
 const { common, RestorePVC } = Kebab.factory;

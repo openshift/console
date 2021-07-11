@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import {
   GettingStartedGrid,
   useGettingStartedShowState,
   GettingStartedShowState,
 } from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { GettingStartedSection } from '../GettingStartedSection';
 
-jest.mock('@console/shared/src/hooks/flag', () => ({
-  ...require.requireActual('@console/shared/src/hooks/flag'),
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk'),
   useFlag: jest.fn(),
 }));
 

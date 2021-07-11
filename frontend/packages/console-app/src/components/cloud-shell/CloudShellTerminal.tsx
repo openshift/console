@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 import { StatusBox, LoadError } from '@console/internal/components/utils/status-box';
 import { UserKind } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
-import {
-  useFlag,
-  withUserSettingsCompatibility,
-  WithUserSettingsCompatibilityProps,
-} from '@console/shared';
+import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } from '@console/shared';
 import { FLAG_V1ALPHA2DEVWORKSPACE } from '../../consts';
 import { v1alpha1WorkspaceModel, WorkspaceModel } from '../../models';
 import { TerminalInitData, initTerminal, startWorkspace } from './cloud-shell-utils';

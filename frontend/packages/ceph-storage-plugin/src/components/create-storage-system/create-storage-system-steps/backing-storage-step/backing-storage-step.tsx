@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { useFlag } from '@console/shared/src';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import {
   Form,
   FormGroup,

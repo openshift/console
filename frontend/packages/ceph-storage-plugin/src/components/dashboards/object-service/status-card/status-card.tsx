@@ -21,7 +21,7 @@ import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s
 import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboards/persistent-internal/status-card/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getNooBaaState, getRGWHealthState } from './statuses';
 import { ObjectServiceStatus } from './object-service-health';

@@ -19,6 +19,7 @@ import {
 } from '@patternfly/react-core';
 import fuzzysearch from 'fuzzysearch';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel, NamespaceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -29,7 +30,6 @@ import {
   NAMESPACE_LOCAL_STORAGE_KEY,
 } from '@console/shared';
 import { FLAGS } from '@console/shared/src/constants';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { isSystemNamespace } from './filters';
 import NamespaceMenuToggle from './NamespaceMenuToggle';
 import './NamespaceDropdown.scss';

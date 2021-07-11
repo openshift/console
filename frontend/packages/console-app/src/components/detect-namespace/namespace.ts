@@ -3,11 +3,11 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { setActiveNamespace as setActiveNamespaceForStore } from '@console/internal/actions/ui';
 import { getNamespace } from '@console/internal/components/utils/link';
 import { flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { usePreferredNamespace } from '../user-preferences/namespace';
 import { getValueForNamespace } from './getValueForNamespace';
 import { useLastNamespace } from './useLastNamespace';

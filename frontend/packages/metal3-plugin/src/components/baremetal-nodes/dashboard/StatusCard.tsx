@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import NodeAlerts from '@console/app/src/components/nodes/node-dashboard/NodeAlerts';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { BlueInfoCircleIcon } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -14,7 +15,6 @@ import DashboardCardHeader from '@console/shared/src/components/dashboard/dashbo
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { BMO_ENABLED_FLAG } from '../../../features';
 import { BareMetalHostModel } from '../../../models';
 import { hasPowerManagement } from '../../../selectors';

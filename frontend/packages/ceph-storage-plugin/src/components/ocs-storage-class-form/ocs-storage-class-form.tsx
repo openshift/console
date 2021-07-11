@@ -20,8 +20,7 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { WatchK8sResource } from '@console/dynamic-plugin-sdk';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { WatchK8sResource, useFlag } from '@console/dynamic-plugin-sdk';
 import { ProvisionerProps } from '@console/plugin-sdk';
 import {
   ConfigMapKind,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { Checkbox, FormGroup } from '@patternfly/react-core';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';

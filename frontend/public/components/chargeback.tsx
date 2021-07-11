@@ -5,6 +5,7 @@ import { match as RMatch } from 'react-router-dom';
 
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
+
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { coFetchJSON } from '../co-fetch';

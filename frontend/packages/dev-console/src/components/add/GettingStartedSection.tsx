@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { FLAGS } from '@console/shared';
 import {
   GettingStartedGrid,
@@ -6,7 +7,6 @@ import {
   GettingStartedShowState,
   QuickStartGettingStartedCard,
 } from '@console/shared/src/components/getting-started';
-import { useFlag } from '@console/shared/src/hooks/flag';
 import { GETTING_STARTED_USER_SETTINGS_KEY } from './constants';
 import { DeveloperFeaturesGettingStartedCard } from './DeveloperFeaturesGettingStartedCard';
 import { SampleGettingStartedCard } from './SampleGettingStartedCard';

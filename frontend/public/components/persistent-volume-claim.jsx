@@ -15,8 +15,8 @@ import {
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
-  Status,
   FLAGS,
+  Status,
   calculateRadius,
   getNamespace,
   getName,

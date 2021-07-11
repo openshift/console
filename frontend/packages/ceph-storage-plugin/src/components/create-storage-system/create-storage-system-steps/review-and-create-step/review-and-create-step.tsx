@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants, List, ListItem } from '@patternfly/react-core';
-import { useFlag } from '@console/shared/src';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { BackingStorageType, DeploymentType } from '../../../../constants/create-storage-system';
 import { NetworkTypeLabels, NO_PROVISIONER } from '../../../../constants';
