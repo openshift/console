@@ -66,7 +66,6 @@ const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
   edgesep: 25,
   ranker: 'longest-path',
   rankdir: 'LR',
-  align: 'UL',
   marginx: 20,
   marginy: 20,
 };
