@@ -1,5 +1,4 @@
 // Use this file to override styles from 3rd party dependencies
-$pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
 form.pf-c-form {
   --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
@@ -8,12 +7,6 @@ form.pf-c-form {
 // account for collapsing space between .btn
 .btn + .btn {
   margin-left: 3px;
-}
-
-// Removes PF white gradiant effect since it doesn't work in Firefox. Truncated text still has trailing ...
-// Upstream issue https://github.com/patternfly/patternfly-next/issues/2633
-.catalog-tile-pf-description .truncated::after {
-  background: none;
 }
 
 // Positions the img in OperatorHub that are nested with <span class="catalog-tile-pf-icon"><img ...>
@@ -30,17 +23,6 @@ form.pf-c-form {
 .co-create-operand__form--toggle-no-border {
   .pf-c-accordion__toggle.pf-m-expanded {
     --pf-c-accordion__toggle--before--BackgroundColor: transparent;
-  }
-}
-
-// For input & label alignment while using bootstrap with @patternfly/react-catalog-view-extension
-.filter-panel-pf-category-item {
-  .pf-c-check {
-    align-items: inherit;
-  }
-
-  .pf-c-check__input {
-    margin-top: 2px;
   }
 }
 

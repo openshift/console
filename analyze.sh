@@ -14,7 +14,7 @@ if [ -d "$ARTIFACT_DIR" ]; then
   cp public/dist/report.html "${ARTIFACT_DIR}"
 fi
 
-MAX_BYTES=3250586 # ~3.1 MiB
+MAX_BYTES=3407872 # ~3.25 MiB
 VENDORS_MAIN_BYTES=$(du -b `find public/dist -type f -name 'vendors~main-chunk*js'` | cut -f1)
 DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $VENDORS_MAIN_BYTES/1024/1024}")
 MAX_DISPLAY_VALUE=$(awk "BEGIN {printf \"%.2f\n\", $MAX_BYTES/1024/1024}")
