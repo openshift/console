@@ -507,3 +507,11 @@ export const createUniqueNameResolver = (data: { name: string }[]) => {
     return `${name}-${nameCounts[name].next - 1}`;
   };
 };
+
+export const assureEndsWith = (sentence: string, appendix: string) => {
+  if (!sentence || !appendix || sentence.endsWith(appendix)) {
+    return sentence;
+  }
+
+  return `${sentence}${appendix}`;
+};

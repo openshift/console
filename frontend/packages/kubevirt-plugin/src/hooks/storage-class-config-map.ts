@@ -2,11 +2,11 @@ import * as React from 'react';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind, k8sGet } from '@console/internal/module/k8s';
-import { joinGrammaticallyListOfItems } from '@console/shared/src';
 import {
   STORAGE_CLASS_CONFIG_MAP_NAME,
   STORAGE_CLASS_CONFIG_MAP_NAMESPACES,
 } from '../constants/sc';
+import { joinGrammaticallyListOfItems } from '../utils';
 
 type UseConfigMapResult = [ConfigMapKind, boolean, string];
 
