@@ -435,5 +435,26 @@
       "id": "resources",
       "perspective": "dev"
     }
+  },
+  {
+    "type": "console.user-settings",
+    "properties": {
+      "id": "devconsole.topology.preferredView",
+      "label": "%devconsole~Topology%",
+      "groupId": "general",
+      "description": "%devconsole~If a topology view is not selected, the console defaults to the last viewed.%",
+      "inputOption": {
+        "type": "dropdown",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%devconsole~Last Viewed%"
+          },
+          { "value": "graph", "label": "%devconsole~Graph%" },
+          { "value": "list", "label": "%devconsole~List%" }
+        ]
+      },
+      "insertAfter": "console.preferredNamespace"
+    }
   }
 ]

@@ -468,6 +468,9 @@ class MastheadToolbarContents_ extends React.Component {
         component: 'button',
         dataTest: 'language',
       },
+      {
+        component: <Link to="/user-preferences">{t('public~User Preferences')}</Link>,
+      },
     ];
 
     if (flags[FLAGS.AUTH_ENABLED]) {

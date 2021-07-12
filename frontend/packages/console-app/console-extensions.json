@@ -65,5 +65,51 @@
     "flags": {
       "required": ["CAN_LIST_VSC"]
     }
+  },
+  {
+    "type": "console.user-settings",
+    "properties": {
+      "id": "console.preferredPerspective",
+      "label": "%console-app~Perspective%",
+      "groupId": "general",
+      "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
+      "inputOption": {
+        "type": "dropdown",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%console-app~Last Viewed%"
+          },
+          { "value": "admin", "label": "%console-app~Administrator%" },
+          { "value": "dev", "label": "%console-app~Developer%" }
+        ]
+      },
+      "insertBefore": "console.preferredPerspective"
+    }
+  },
+  {
+    "type": "console.user-settings/group",
+    "properties": {
+      "id": "general",
+      "label": "%console-app~General%",
+      "insertBefore": "language"
+    }
+  },
+  {
+    "type": "console.user-settings/group",
+    "properties": {
+      "id": "language",
+      "label": "%console-app~Language&region%",
+      "insertBefore": "notifications",
+      "insertAfter": "general"
+    }
+  },
+  {
+    "type": "console.user-settings/group",
+    "properties": {
+      "id": "notifications",
+      "label": "%console-app~Notifications%",
+      "insertAfter": "language"
+    }
   }
 ]

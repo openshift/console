@@ -258,6 +258,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).ConsoleOperatorConfigDetailsPage,
     },
   },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/user-preferences', '/user-preferences/:category'],
+      loader: async () =>
+        (
+          await import(
+            './components/user-preferences/UserPreferences' /* webpackChunkName: "co-user-preference" */
+          )
+        ).default,
+    },
+  },
 ];
 
 export default plugin;

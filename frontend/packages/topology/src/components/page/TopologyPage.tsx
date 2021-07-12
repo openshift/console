@@ -7,6 +7,7 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
+import { usePreferredTopologyView } from '@console/dev-console/src/user-preferences/topology/usePreferredTopologyView';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
@@ -69,15 +70,31 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   defaultViewType = TopologyViewType.graph,
 }) => {
   const { t } = useTranslation();
+  const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
   const [
-    topologyViewState,
-    setTopologyViewState,
-    isTopologyViewStateLoaded,
+    topologyLastView,
+    setTopologyLastView,
+    isTopologyLastViewLoaded,
   ] = useUserSettingsCompatibility<TopologyViewType>(
     TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
     activeViewStorageKey,
     defaultViewType,
   );
+
+  const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
+
+  const getTopologyViewState = (): string => {
+    if (!loaded) {
+      return null;
+    }
+
+    if (preferredTopologyView === 'latest') {
+      return topologyLastView;
+    }
+
+    return preferredTopologyView || topologyLastView;
+  };
+
   const namespace = match.params.name;
   const queryParams = useQueryParams();
   let viewType = queryParams.get('view') as TopologyViewType;
@@ -93,16 +110,16 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
           exact: true,
         })
       ? TopologyViewType.graph
-      : isTopologyViewStateLoaded && (topologyViewState || defaultViewType);
+      : loaded && ((getTopologyViewState() as TopologyViewType) || defaultViewType);
     viewType && setQueryArgument('view', viewType);
   }
 
   const onViewChange = React.useCallback(
     (newViewType: TopologyViewType) => {
       setQueryArgument('view', newViewType);
-      setTopologyViewState(newViewType);
+      setTopologyLastView(newViewType);
     },
-    [setTopologyViewState],
+    [setTopologyLastView],
   );
 
   const handleNamespaceChange = (ns: string) => {
