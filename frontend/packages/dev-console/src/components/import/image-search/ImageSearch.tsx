@@ -174,7 +174,9 @@ const ImageSearch: React.FC = () => {
         ref={inputRef}
         type={TextInputTypes.text}
         name="searchTerm"
-        placeholder={t('devconsole~Enter an Image name')}
+        placeholder={t(
+          'devconsole~docker.io/openshift/hello-openshift or quay.io/<username>/<image-name>',
+        )}
         helpText={getHelpText()}
         helpTextInvalid={helpTextInvalid}
         validated={validated}
