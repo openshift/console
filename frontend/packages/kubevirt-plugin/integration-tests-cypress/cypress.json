@@ -11,7 +11,7 @@
   "supportFile": "support/index.ts",
   "pluginsFile": "plugins/index.js",
   "fixturesFolder": "fixtures",
-  "defaultCommandTimeout": 30000,
+  "defaultCommandTimeout": 60000,
   "retries": {
     "runMode": 1,
     "openMode": 0

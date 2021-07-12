@@ -1,10 +1,10 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
+import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import { V1alpha1DataVolume } from '../../src/types/api';
 import {
   KUBEVIRT_PROJECT_NAME,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   EXPECT_LOGIN_SCRIPT_PATH,
-  OS_IMAGES_NS,
 } from '../const';
 import { VirtualMachineData } from '../types/vm';
 
@@ -20,12 +20,14 @@ declare global {
       createDataVolume(name: string, namespace: string): void;
       dropFile(filePath: string, fileName: string, inputSelector: string): void;
       createUserTemplate(namespace: string): void;
-      cdiCloner(namespace: string): void;
+      cdiCloner(srcNS: string, destNS: string): void;
       waitForLoginPrompt(vmName: string, namespace: string): void;
       Login(): void;
       deleteTestProject(namespace: string): void;
       pauseVM(vmData: VirtualMachineData): void;
       uploadFromCLI(dvName: string, ns: string, imagePath: string, size: string): void;
+      selectProject(project: string): void;
+      createNAD(namespace: string): void;
     }
   }
 }
@@ -134,12 +136,11 @@ Cypress.Commands.add('createUserTemplate', (namespace: string) => {
   });
 });
 
-Cypress.Commands.add('cdiCloner', (namespace: string) => {
+Cypress.Commands.add('cdiCloner', (srcNS: string, destNS: string) => {
   cy.fixture('cdi-cloner').then((cloner) => {
     cy.applyResource(cloner.clusterRole);
-    cloner.roleBinding.subjects[0].name = `system:serviceaccount:${namespace}:default`;
-    cloner.roleBinding.metadata.name = namespace;
-    cloner.roleBinding.metadata.namespace = OS_IMAGES_NS;
+    cloner.roleBinding.subjects[0].namespace = destNS;
+    cloner.roleBinding.metadata.namespace = srcNS;
     cy.applyResource(cloner.roleBinding);
   });
 });
@@ -186,3 +187,15 @@ Cypress.Commands.add(
     }
   },
 );
+
+Cypress.Commands.add('selectProject', (project: string) => {
+  projectDropdown.selectProject(project);
+  projectDropdown.shouldContain(project);
+});
+
+Cypress.Commands.add('createNAD', (namespace: string) => {
+  cy.fixture('nad').then((nad) => {
+    nad.metadata.namespace = namespace;
+    cy.createResource(nad);
+  });
+});

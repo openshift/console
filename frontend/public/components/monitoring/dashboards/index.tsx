@@ -504,6 +504,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
                   pollInterval={pollInterval}
                   queries={queries}
                   showLegend={panel.legend?.show}
+                  units={panel.yaxes?.[0]?.format}
                 />
               )}
               {(panel.type === 'singlestat' || panel.type === 'gauge') && (

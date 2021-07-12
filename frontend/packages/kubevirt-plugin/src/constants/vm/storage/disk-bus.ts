@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../object-enum';
 import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 
 export class DiskBus extends SelectDropdownObjectEnum<string> {

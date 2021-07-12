@@ -1,6 +1,6 @@
 import { K8sKind, K8sResourceKind, OwnerReference } from '@console/internal/module/k8s/types';
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../../constants/object-enum';
 import {
   getCreationTimestamp,
   getLabels,

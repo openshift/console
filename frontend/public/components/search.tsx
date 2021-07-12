@@ -335,7 +335,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 export const SearchPage = withStartGuide(SearchPage_);
 
 export type SearchProps = {
-  location: any;
   namespace: string;
   noProjectsAvailable: boolean;
 };

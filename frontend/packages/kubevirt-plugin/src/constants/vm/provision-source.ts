@@ -1,5 +1,4 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-source';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
@@ -13,6 +12,7 @@ import {
   getVolumes,
 } from '../../selectors/vm';
 import { VMLikeEntityKind } from '../../types/vmLike';
+import { ObjectEnum } from '../object-enum';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 import { DataVolumeSourceType, VolumeType } from './storage';
 

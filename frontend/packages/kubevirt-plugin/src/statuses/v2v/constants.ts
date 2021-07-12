@@ -1,4 +1,4 @@
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../constants';
 
 // phases constants conform v2vvmware_controller.go
 export class V2VProviderStatus extends ObjectEnum<string> {

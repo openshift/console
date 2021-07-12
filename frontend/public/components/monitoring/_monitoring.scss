@@ -32,7 +32,7 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
 }
 
 .graph-wrapper.graph-wrapper--query-browser {
-  padding: 5px 15px 15px 50px;
+  padding: 5px 15px 15px 60px;
 
   &--with-legend {
     min-height: 305px;
@@ -494,6 +494,7 @@ $monitoring-line-height: 18px;
   font-weight: var(--pf-global--FontWeight--bold);
   margin-left: auto;
   padding-left: 10px;
+  white-space: nowrap;
 }
 
 .query-browser__tooltip-wrap {
