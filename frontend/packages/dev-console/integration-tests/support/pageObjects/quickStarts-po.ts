@@ -7,22 +7,33 @@ export const quickStartsPO = {
   emptyState: 'div.pf-c-empty-state__content',
   clearFilter: '[data-test="clear-filter button"]',
   cardStatus: '[data-test~="tile"] [data-test~="status"]',
+  duration: '[data-test="duration"]',
 };
 
 export const quickStartSidebarPO = {
   quickStartSidebarBody: '[data-test~="drawer"] [data-test~="content"]',
   startButton: `[data-test="Start button"]`,
   nextButton: '[data-test="Next button"]',
+  restartSideNoteAction: '[data-testid="qs-drawer-side-note-action"]',
   closeButton: '[data-test="Close button"]',
+  closePanel: '[data-test~="drawer"] [aria-label="Close drawer panel"]',
+};
+
+export const quickStartLeaveModalPO = {
+  leaveModal: '[data-test="leave-quickstart"]',
+  leaveButton: '[data-test="leave button"]',
 };
 
 export const quickStartDisplayNameToName = (displayName: string) => {
   switch (displayName) {
-    case 'Getting started with a sample application': {
+    case 'Get started with a sample application': {
       return 'sample-application';
     }
     case 'Install the OpenShift Pipelines Operator': {
       return 'explore-pipelines';
+    }
+    case 'Add health checks to your sample application': {
+      return 'add-healthchecks';
     }
     default: {
       throw new Error('Option is not available');
