@@ -21,13 +21,25 @@ describe('Localization', () => {
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
     masthead.clickMastheadLink('help-dropdown-toggle');
     // wait for both console help menu items and additionalHelpActions items to load
-    // additionalHelpActions come from ConsoleLinks 'HelpMenu' yaml and are not translated
-    // only test console help items which are translated
+    cy.get('.pf-c-app-launcher__group').should('have.length', 2);
+    // Test that all links in the first group are translated
     cy.get('.pf-c-app-launcher__group')
       .first()
       .within(() => {
         cy.get('[role="menuitem"]').isPseudoLocalized();
       });
+    // Ensure that the first two elements of the second help group are translated
+    cy.get('.pf-c-app-launcher__group')
+      .eq(1)
+      .get('[role="menuitem"]')
+      .eq(0)
+      .isPseudoLocalized();
+
+    cy.get('.pf-c-app-launcher__group')
+      .eq(1)
+      .get('[role="menuitem"]')
+      .eq(1)
+      .isPseudoLocalized();
   });
 
   it('pseudolocalizes navigation', () => {
