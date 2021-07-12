@@ -9,6 +9,7 @@ import {
   getTaskStatusKey,
   QUICKSTART_TASKS_INITIAL_STATES,
 } from '@patternfly/quickstarts';
+import Pseudo from 'i18next-pseudo';
 import { useTranslation } from 'react-i18next';
 import {
   MarkdownExecuteSnippet,
@@ -20,6 +21,22 @@ import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
 
 export { QuickStartContext };
 export { QuickStartContextProvider };
+
+export const getProcessedResourceBundle = (resourceBundle, lng) => {
+  const params = new URLSearchParams(window.location.search);
+  const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
+
+  const language = lng || localStorage.getItem('bridge/language') || 'en';
+  const consoleBundle = resourceBundle;
+  if (pseudolocalizationEnabled && language === 'en') {
+    const pseudo = new Pseudo({ enabled: true, wrapped: true });
+    Object.keys(consoleBundle).forEach((key) => {
+      consoleBundle[key] = pseudo.process(consoleBundle[key], '', {}, { language });
+    });
+  }
+
+  return consoleBundle;
+};
 
 const QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY = 'bridge/quick-start-redux-state';
 
@@ -158,6 +175,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
 
   const language = localStorage.getItem('bridge/language') || 'en';
   const resourceBundle = i18n.getResourceBundle(language, 'console-app');
+  const processedResourceBundle = getProcessedResourceBundle(resourceBundle, language);
 
   // https://github.com/i18next/i18next-parser#caveats
   // Need to reference the t() function here for all the keys used in the quickstarts library
@@ -202,7 +220,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   // ];
   return {
     language,
-    resourceBundle,
+    resourceBundle: processedResourceBundle,
     activeQuickStartID,
     allQuickStartStates,
     setActiveQuickStartID,
