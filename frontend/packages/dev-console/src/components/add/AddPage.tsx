@@ -38,15 +38,18 @@ export const PageContents: React.FC<AddPageProps> = ({ match }) => {
 
 const PageContentsWithStartGuide = withStartGuide(PageContents);
 
-const AddPage: React.FC<AddPageProps> = (props) => {
+const AddPage: React.FC<AddPageProps> = ({ match }) => {
   const { t } = useTranslation();
+  const namespace = match.params.ns;
+  const nsVariant = namespace ? null : NamespacedPageVariants.light;
+
   return (
     <>
       <Helmet>
         <title data-test-id="page-title">{`+${t('devconsole~Add')}`}</title>
       </Helmet>
-      <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <PageContentsWithStartGuide {...props} />
+      <NamespacedPage variant={nsVariant} hideApplications>
+        <PageContentsWithStartGuide match={match} />
       </NamespacedPage>
     </>
   );
