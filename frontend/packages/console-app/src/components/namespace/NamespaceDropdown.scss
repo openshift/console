@@ -1,0 +1,88 @@
+$grid-float-breakpoint: 768px;
+$font-size-base: 14px;
+
+.co-namespace-project-selector {
+  .pf-c-divider {
+    // Height of a hr is being set to 0 in ./public/node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_normalize.scss ~line 212
+    // This bootstrap-sass file is overwriting the PatternFly height.  This line sets the it back to the PatternFly styling.
+    min-height: var(--pf-global--BorderWidth--sm);
+  }
+}
+
+// The PF menu  footer places the footer at the bottom of the menu and scrolls with the
+// menu content.  The needed behavior for this drop down is that the footer is "sticky"
+// and always available while the menu is open
+.co-namespace-selector__footer {
+  position: sticky;
+  bottom: 0;
+  background-color: var(--pf-global--BackgroundColor--light-100) !important;
+}
+
+.co-namespace-selector__menu {
+  // This allows the menu to be longer than the menu toggle
+  // Currently PatternFly does not support a min width on the menu component
+  min-width: 210px;
+  @media (min-width: $grid-float-breakpoint) {
+    min-width: 325px;
+  }
+
+  // Max height and overflow are needed until PF is updated
+  // to version 2021.08.  Then a maxMenuHeight prop on the MenuContent
+  // component can be used instead of the the following.
+  max-height: 60vh;
+  overflow: auto;
+
+  // Position is to ensure that the dropdown doesn't push content down when opened
+  position: absolute;
+}
+
+// The .co-namespace-selector__menu-toggle styles are enabled to make the PatternFly
+// more closely match the custom DropDown based drop down.
+// These are displayed side by site in the Developer view > Topology view.active.
+// Once the custom DropDown component changes to the PatternFly component, these styles can be removed.
+.co-namespace-selector__menu-toggle {
+  &::before,
+  &::after {
+    border-width: 0 !important;
+  }
+  font-size: ($font-size-base + 1) !important;
+  padding: 2px 0 !important;
+
+  &:not(:disabled) {
+    color: inherit;
+  }
+  &:disabled {
+    background: none;
+    color: var(--pf-global--disabled-color--200);
+  }
+
+  @media (min-width: $grid-float-breakpoint) {
+    font-size: ($font-size-base + 2) !important;
+    padding-bottom: 9px !important;
+    padding-top: 9px !important;
+  }
+
+  width: 100%;
+  .pf-c-menu-toggle__text {
+    // This allows the menu toggle button to have the label truncate
+    // This is currently not an option in the PatternFly menu toggle component
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+// The PatternFly switch is displayed to the left of the label
+// The design for the namespace/project drop down ahs the switch to
+// the right of the label.  These styles allow for the variance to the
+// normal PatternFly display.
+
+.co-namespace-selector__switch {
+  .pf-c-switch__label {
+    padding-right: 60px; // Ensure switch doesn't land on top of text
+  }
+  .pf-c-switch__toggle {
+    position: absolute;
+    right: 0;
+  }
+}

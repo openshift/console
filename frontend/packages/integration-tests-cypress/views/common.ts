@@ -17,6 +17,8 @@ export const projectDropdown = {
       .click();
     cy.byTestID('dropdown-menu-item-link')
       .contains(projectName)
+      .parents('button')
+      .first()
       .click();
   },
   shouldContain: (name: string) =>

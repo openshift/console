@@ -2,25 +2,34 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStatePrimary,
+  Title,
+  Tooltip,
+} from '@patternfly/react-core';
+import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
+
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect } from 'react-redux';
-import { Tooltip, Button } from '@patternfly/react-core';
+
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import * as fuzzy from 'fuzzysearch';
+
 import {
   Status,
   getRequester,
   getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
-  NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
   GreenCheckCircleIcon,
   getName,
@@ -43,7 +52,6 @@ import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   DetailsItem,
-  Dropdown,
   ExternalLink,
   Firehose,
   Kebab,
@@ -82,10 +90,44 @@ import {
 import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
+import NamespaceDropdown from '../../packages/console-app/src/components/namespace/NamespaceDropdown';
+
+import {
+  isCurrentUser,
+  isOtherUser,
+  isSystemNamespace,
+} from '../../packages/console-app/src/components/namespace/filters';
+
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
   _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
-const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
+
+export const REQUEST_FILTER = { me: 'me', user: 'user', system: 'system' };
+
+const getFilters = [
+  {
+    filterGroupName: i18next.t('public~Requester'),
+    type: 'requester',
+    reducer: (namespace) => {
+      const name = namespace.metadata?.name;
+      const requestor = namespace.metadata?.annotations['openshift.io/requester'];
+      if (isCurrentUser(requestor)) {
+        return REQUEST_FILTER.me;
+      }
+      if (isOtherUser(requestor, name)) {
+        return REQUEST_FILTER.user;
+      }
+      if (isSystemNamespace({ title: name })) {
+        return REQUEST_FILTER.system;
+      }
+    },
+    items: [
+      { id: REQUEST_FILTER.me, title: i18next.t('public~Me') },
+      { id: REQUEST_FILTER.user, title: i18next.t('public~User') },
+      { id: REQUEST_FILTER.system, title: i18next.t('public~System'), hideIfEmpty: true },
+    ],
+  },
+];
 
 export const deleteModal = (kind, ns) => {
   const { labelKey, labelKind, weight, accessReview } = Kebab.factory.Delete(kind, ns);
@@ -396,6 +438,18 @@ export const NamespacesList = connect(
       tableColumns?.[NamespacesColumnManagementID]?.length > 0
         ? new Set(tableColumns[NamespacesColumnManagementID])
         : null;
+
+    const NamespaceNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No namespaces found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
     return (
       <Table
         {...props}
@@ -406,6 +460,7 @@ export const NamespacesList = connect(
         Row={NamespacesRow}
         customData={{ tableColumns: tableColumns?.[NamespacesColumnManagementID] }}
         virtualize
+        EmptyMsg={NamespaceNotFoundMessage}
       />
     );
   }),
@@ -425,6 +480,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
   return (
     <ListPage
       {...props}
+      rowFilters={getFilters}
       ListComponent={NamespacesList}
       canCreate={true}
       createHandler={() => createNamespaceModal({ blocking: true })}
@@ -723,6 +779,7 @@ export const ProjectsTable = (props) => {
 
 const headerWithMetrics = () => projectTableHeader({ showMetrics: true, showActions: true });
 const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActions: true });
+
 const ProjectList_ = connectToFlags(
   FLAGS.CAN_CREATE_PROJECT,
   FLAGS.CAN_GET_NS,
@@ -763,7 +820,18 @@ const ProjectList_ = connectToFlags(
         detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
       />
     );
-    const ProjectNotFoundMessage = () => <MsgBox title={t('public~No projects found')} />;
+
+    const ProjectNotFoundMessage = () => (
+      <EmptyState>
+        <EmptyStateIcon icon={SearchIcon} />
+        <Title size="md" headingLevel="h2">
+          {t('public~No projects found')}
+        </Title>
+        <EmptyStateBody>{t('public~No results match the filter criteria.')}</EmptyStateBody>
+        <EmptyStatePrimary />
+      </EmptyState>
+    );
+
     return (
       <Table
         {...tableProps}
@@ -804,6 +872,7 @@ export const ProjectsPage = connectToFlags(
     return (
       <ListPage
         {...rest}
+        rowFilters={getFilters}
         ListComponent={ProjectList}
         canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
         createHandler={() => createProjectModal({ blocking: true })}
@@ -1032,125 +1101,70 @@ const RolesPage = ({ obj: { metadata } }) => (
   />
 );
 
-const autocompleteFilter = (text, item) => fuzzy(text, item);
-
 const namespaceBarDropdownStateToProps = (state) => {
-  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
-  const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
-
-  return { canListNS, canCreateProject };
+  const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS); //
+  return { canListNS };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
-class NamespaceBarDropdowns_ extends React.Component {
-  componentDidUpdate() {
-    const { namespace, showStartGuide } = this.props;
+const NamespaceBarDropdowns_ = (props) => {
+  const {
+    activeNamespace,
+    canListNS,
+    children,
+    disabled,
+    namespace,
+    onNamespaceChange,
+    setActiveNamespace,
+    showStartGuide,
+    useProjects,
+  } = props;
+
+  React.useEffect(() => {
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
       showStartGuide(noProjects);
     }
+  }, [namespace.data, namespace.loaded, showStartGuide]);
+
+  if (flagPending(canListNS)) {
+    return null;
   }
 
-  render() {
-    const {
-      activeNamespace,
-      onNamespaceChange,
-      setActiveNamespace,
-      canListNS,
-      canCreateProject,
-      useProjects,
-      children,
-      disabled,
-      t,
-    } = this.props;
-    if (flagPending(canListNS)) {
-      return null;
-    }
+  return (
+    <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
+      <NamespaceDropdown
+        onSelect={(event, newNamespace) => {
+          onNamespaceChange && onNamespaceChange(newNamespace);
+          setActiveNamespace(newNamespace);
+          removeQueryArgument('project-name');
+        }}
+        onCreateNew={() => {
+          createProjectModal({
+            blocking: true,
+            onSubmit: (newProject) => {
+              setActiveNamespace(newProject.metadata.name);
+              removeQueryArgument('project-name');
+            },
+          });
+        }}
+        selected={activeNamespace || ALL_NAMESPACES_KEY}
+        isProjects={getModel(useProjects).label === 'Project'}
+        disabled={disabled}
+        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
+      />
 
-    const { loaded, data } = this.props.namespace;
-    const model = getModel(useProjects);
-    const allNamespacesTitle =
-      model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
-    const items = {};
-    if (canListNS) {
-      items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
-    }
+      {children}
+    </div>
+  );
+};
 
-    _.map(data, 'metadata.name')
-      .sort()
-      .forEach((name) => (items[name] = name));
-
-    let title = activeNamespace;
-    if (activeNamespace === ALL_NAMESPACES_KEY) {
-      title = allNamespacesTitle;
-    } else if (loaded && !_.has(items, title)) {
-      // If the currently active namespace is not found in the list of all namespaces, put it in anyway
-      items[title] = title;
-    }
-    const defaultActionItem = canCreateProject
-      ? [
-          {
-            actionTitle:
-              model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
-            actionKey: CREATE_NEW_RESOURCE,
-          },
-        ]
-      : [];
-
-    const onChange = (newNamespace) => {
-      if (newNamespace === CREATE_NEW_RESOURCE) {
-        createProjectModal({
-          blocking: true,
-          onSubmit: (newProject) => {
-            setActiveNamespace(newProject.metadata.name);
-            removeQueryArgument('project-name');
-          },
-        });
-      } else {
-        onNamespaceChange && onNamespaceChange(newNamespace);
-        setActiveNamespace(newNamespace);
-        removeQueryArgument('project-name');
-      }
-    };
-
-    return (
-      <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
-        <Dropdown
-          disabled={disabled}
-          className="co-namespace-selector"
-          menuClassName="co-namespace-selector__menu"
-          buttonClassName="pf-m-plain"
-          canFavorite
-          items={items}
-          actionItems={defaultActionItem}
-          titlePrefix={model.label === 'Project' ? t('public~Project') : t('public~Namespace')}
-          title={title}
-          onChange={onChange}
-          selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
-          autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={
-            model.label === 'Project'
-              ? t('public~Select Project...')
-              : t('public~Select Namespace...')
-          }
-          userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
-          storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-          shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
-        />
-        {children}
-      </div>
-    );
-  }
-}
-
-const NamespaceBarDropdownsWithTranslation = connect(
+const NamespaceBarDropdowns = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
-)(withTranslation()(withLastNamespace(NamespaceBarDropdowns_)));
-
-const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
+)(withLastNamespace(NamespaceBarDropdowns_));
 
 const NamespaceBar_ = ({
   hideProjects = false,

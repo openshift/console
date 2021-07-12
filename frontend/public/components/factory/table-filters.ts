@@ -24,6 +24,9 @@ import {
   alertState,
   silenceState,
 } from '../monitoring/utils';
+
+import { requestorFilter } from '../../../packages/console-app/src/components/namespace/filters';
+
 import { Alert, Rule, Silence } from '../monitoring/types';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
@@ -35,6 +38,8 @@ const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
+
+  requester: requestorFilter,
 
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.name),
 
