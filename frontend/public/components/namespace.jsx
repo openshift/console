@@ -90,8 +90,13 @@ import {
 import { removeQueryArgument } from './utils/router';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
-import NamespaceDropdown from './namespace-dropdown';
-import { isCurrentUser, isOtherUser, isSystemNamespace } from './factory/table-filters';
+import NamespaceDropdown from '../../packages/console-app/src/components/namespace/NamespaceDropdown';
+
+import {
+  isCurrentUser,
+  isOtherUser,
+  isSystemNamespace,
+} from '../../packages/console-app/src/components/namespace/filters';
 
 const getModel = (useProjects) => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = (obj) =>
@@ -1136,9 +1141,14 @@ const NamespaceBarDropdowns_ = (props) => {
           setActiveNamespace(newNamespace);
           removeQueryArgument('project-name');
         }}
-        onCreateNew={(newProject) => {
-          setActiveNamespace(newProject.metadata.name);
-          removeQueryArgument('project-name');
+        onCreateNew={() => {
+          createProjectModal({
+            blocking: true,
+            onSubmit: (newProject) => {
+              setActiveNamespace(newProject.metadata.name);
+              removeQueryArgument('project-name');
+            },
+          });
         }}
         selected={activeNamespace || ALL_NAMESPACES_KEY}
         isProjects={getModel(useProjects).label === 'Project'}

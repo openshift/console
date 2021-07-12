@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import * as React from 'react';
 import {
   Button,
@@ -17,15 +18,11 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
 import { connect } from 'react-redux';
 import { useUserSettingsCompatibility, FLAGS, ALL_NAMESPACES_KEY } from '@console/shared';
-import { createProjectModal } from './modals';
-
-import { isSystemNamespace } from './factory/table-filters';
-import NamespaceMenuToggle from './namespace-menu-toggle';
-
-/* ******************************************************************* */
+import { isSystemNamespace } from './filters';
+import NamespaceMenuToggle from './NamespaceMenuToggle';
+import './NamespaceDropdown.scss';
 
 const NoResults: React.FC<{
   isProjects: boolean;
@@ -49,7 +46,6 @@ const NoResults: React.FC<{
     </>
   );
 };
-/* ******************************************************************* */
 
 const Filter: React.FC<{
   filterRef: React.Ref<any>;
@@ -76,8 +72,6 @@ const Filter: React.FC<{
   );
 };
 
-/* ******************************************************************* */
-
 const SystemSwitch: React.FC<{
   hasSystemNamespaces: boolean;
   isProject: boolean;
@@ -103,7 +97,6 @@ const SystemSwitch: React.FC<{
   ) : null;
 };
 
-/* ******************************************************************* */
 const NamespaceGroup: React.FC<{
   isFavorites?: boolean;
   options: { key: string; title: string }[];
@@ -128,7 +121,7 @@ const NamespaceGroup: React.FC<{
               <MenuItem
                 key={option.key}
                 itemId={option.key}
-                isFavorited={favorites?.[option.key] ? true : false}
+                isFavorited={!!favorites?.[option.key]}
                 isSelected={selectedKey === option.key}
               >
                 {option.title}
@@ -141,13 +134,11 @@ const NamespaceGroup: React.FC<{
   );
 };
 
-/* ******************************************************************* */
-
 const Footer: React.FC<{
   canCreateNew: boolean;
   isProject?: boolean;
   setOpen: (isOpen: boolean) => void;
-  onCreateNew: (newProject) => void;
+  onCreateNew: () => void;
 }> = ({ canCreateNew, isProject, setOpen, onCreateNew }) => {
   const { t } = useTranslation();
   return (
@@ -159,12 +150,7 @@ const Footer: React.FC<{
               variant="secondary"
               onClick={() => {
                 setOpen(false);
-                createProjectModal({
-                  blocking: true,
-                  onSubmit: (newProject) => {
-                    onCreateNew(newProject);
-                  },
-                });
+                onCreateNew();
               }}
             >
               {isProject ? t('public~Create Project') : t('public~Create Namespace')}
@@ -176,8 +162,6 @@ const Footer: React.FC<{
   );
 };
 
-/* ******************************************************************* */
-
 const NamespaceMenu: React.FC<{
   setOpen: (isOpen: boolean) => void;
   onSelect: (event: React.MouseEvent, itemId: string) => void;
@@ -188,7 +172,7 @@ const NamespaceMenu: React.FC<{
   namespacesLoaded: boolean;
   canListNS: boolean;
   allNamespacesTitle: string;
-  onCreateNew: (newProject) => void;
+  onCreateNew: () => void;
 }> = ({
   setOpen,
   onSelect,
@@ -271,9 +255,7 @@ const NamespaceMenu: React.FC<{
     true,
   );
 
-  const isFavorite = React.useCallback((option) => (favorites?.[option.key] ? true : false), [
-    favorites,
-  ]); // undefined cannot be an option
+  const isFavorite = React.useCallback((option) => !!favorites?.[option.key], [favorites]); // undefined cannot be an option
 
   const isOptionShown = React.useCallback(
     (option, checkIsFavorite: boolean) => {
@@ -391,8 +373,6 @@ const NamespaceBarDropdownsWithOptions = connect(
   null,
 )(NamespaceMenu);
 
-/* ******************************************************************* */
-
 const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   disabled,
   isProjects,
@@ -438,7 +418,7 @@ type NamespaceDropdownProps = {
   disabled?: boolean;
   isProjects?: boolean; // Does this drop down contain projects.  If not, assuming namespaces
   onSelect?: (event: React.MouseEvent | React.ChangeEvent, value: string) => void;
-  onCreateNew?: (newProject) => void;
+  onCreateNew?: () => void;
   shortCut?: string;
   selected?: string;
 };
