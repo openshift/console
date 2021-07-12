@@ -4,6 +4,7 @@ import { Extension, ExtensionTypeGuard } from '@console/plugin-sdk/src/typings/b
 import { resolveExtension } from '../coderefs/coderef-resolver';
 import { ResolvedExtension } from '../types';
 import { unwrapPromiseSettledResults } from '../utils/promise';
+import { UseResolvedExtensions } from './api-types';
 
 /**
  * React hook for consuming Console extensions with resolved `CodeRef` properties.
@@ -35,7 +36,7 @@ import { unwrapPromiseSettledResults } from '../utils/promise';
  * references, boolean flag indicating whether the resolution is complete, and a list
  * of errors detected during the resolution.
  */
-export const useResolvedExtensions = <E extends Extension>(
+export const useResolvedExtensions: UseResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
 ): [ResolvedExtension<E>[], boolean, any[]] => {
   const extensions = useExtensions<E>(...typeGuards);

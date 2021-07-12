@@ -1,4 +1,6 @@
 import { K8sResourceCommon, K8sResourceKindReference, Selector } from '../extensions/console-types';
+import { Extension, ExtensionTypeGuard } from '../types';
+import { ResolvedExtension } from './common-types';
 
 export type WatchK8sResource = {
   kind: K8sResourceKindReference;
@@ -37,3 +39,7 @@ export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceComm
 export type UseK8sWatchResources = <R extends ResourcesObject>(
   initResources: WatchK8sResources<R>,
 ) => WatchK8sResults<R>;
+
+export type UseResolvedExtensions = <E extends Extension>(
+  ...typeGuards: ExtensionTypeGuard<E>[]
+) => [ResolvedExtension<E>[], boolean, any[]];

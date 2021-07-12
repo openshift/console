@@ -2,7 +2,7 @@
 
 import * as webpack from 'webpack';
 import * as path from 'path';
-import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
+import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/webpack';
 
 const config: webpack.Configuration = {
   mode: 'development',
@@ -32,6 +32,9 @@ const config: webpack.Configuration = {
     ],
   },
   plugins: [new ConsoleRemotePlugin()],
+  externals: {
+    '@console/dynamic-plugin-sdk/api': 'api',
+  },
   devtool: 'source-map',
   optimization: {
     chunkIds: 'named',

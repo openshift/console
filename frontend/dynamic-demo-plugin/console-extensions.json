@@ -31,5 +31,12 @@
         "$codeRef": "telemetry.eventListener"
       }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-consumer",
+      "component": { "$codeRef": "extensionConsumer.default" }
+    }
   }
 ]
