@@ -67,7 +67,11 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
 
       <Flex direction={{ default: 'column' }} grow={{ default: 'grow' }}>
         {links?.length > 0 ? (
-          <SimpleList isControlled={false} className="ocs-getting-started-card__list">
+          <SimpleList
+            isControlled={false}
+            className="ocs-getting-started-card__list"
+            data-test="getting-started-list"
+          >
             {links.map((link) =>
               link.loading ? (
                 <li key={link.id}>

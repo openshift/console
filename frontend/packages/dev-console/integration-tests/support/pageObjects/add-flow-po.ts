@@ -9,6 +9,9 @@ export const addPagePO = {
   kebabMenuGettingStarted: '[data-test="actions"]',
   hideGettingStarted: '[data-test="hide"]',
   closeButton: '[aria-label="label-close-button"]',
+  buildWithGuidedDocumentation: '[data-test="card quick-start"]',
+  buildWithGuidedDocumentationCardList:
+    '[data-test="card quick-start"] [data-test="getting-started-list"]',
   viewAllQuickStarts: '[data-test="item all-quick-starts"]',
 };
 
