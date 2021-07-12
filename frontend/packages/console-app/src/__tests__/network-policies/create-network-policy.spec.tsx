@@ -23,7 +23,7 @@ describe('NetworkPolicyForm', () => {
   let wrapper: ShallowWrapper<{}, { networkPolicy: NetworkPolicy }>;
 
   beforeEach(() => {
-    wrapper = shallow(<NetworkPolicyForm namespace="default" setNamespace={() => {}} />);
+    wrapper = shallow(<NetworkPolicyForm namespace="default" />);
   });
 
   it('should render CreateNetworkPolicy component', () => {
@@ -32,7 +32,6 @@ describe('NetworkPolicyForm', () => {
 
   it('should render the main form elements of CreateNetworkPolicy component', () => {
     expect(wrapper.find('input[id="name"]')).toHaveLength(1);
-    expect(wrapper.find('input[id="namespace"]')).toHaveLength(1);
     expect(wrapper.find(FormFieldGroupExpandable)).toHaveLength(2);
   });
 

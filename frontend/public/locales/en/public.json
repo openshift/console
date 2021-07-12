@@ -1693,8 +1693,6 @@
   "This action will remove all rules within the Ingress section and cannot be undone.": "This action will remove all rules within the Ingress section and cannot be undone.",
   "This action will remove all rules within the Egress section and cannot be undone.": "This action will remove all rules within the Egress section and cannot be undone.",
   "Policy name": "Policy name",
-  "Policy namespace": "Policy namespace",
-  "The namespace containing pods on which this network policy applies.": "The namespace containing pods on which this network policy applies.",
   "If no pod selector is provided, the policy will apply to all pods in the namespace.": "If no pod selector is provided, the policy will apply to all pods in the namespace.",
   "Policy type": "Policy type",
   "When using the OpenShift SDN cluster network provider, egress network policy is not supported.": "When using the OpenShift SDN cluster network provider, egress network policy is not supported.",

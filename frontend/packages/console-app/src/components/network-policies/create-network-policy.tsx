@@ -8,7 +8,7 @@ import './_create-network-policy.scss';
 
 export const CreateNetworkPolicy: React.FunctionComponent<{}> = () => {
   const { t } = useTranslation();
-  const [namespace, setNamespace] = React.useState(getActiveNamespace());
+  const namespace = getActiveNamespace();
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
@@ -30,7 +30,7 @@ export const CreateNetworkPolicy: React.FunctionComponent<{}> = () => {
           'public~NetworkPolicy can specify how Pods are allowed to communicate with various network entities.',
         )}
       </p>
-      <NetworkPolicyForm namespace={namespace} setNamespace={setNamespace} />
+      <NetworkPolicyForm namespace={namespace} />
     </div>
   );
 };

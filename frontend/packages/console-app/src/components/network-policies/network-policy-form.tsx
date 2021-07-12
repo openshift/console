@@ -36,12 +36,11 @@ const emptyRule = (): NetworkPolicyRule => {
 
 type NetworkPolicyFormProps = {
   namespace: string;
-  setNamespace: (namespace: string) => void;
 };
 
 export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> = (props) => {
   const { t } = useTranslation();
-  const { namespace, setNamespace } = props;
+  const { namespace } = props;
 
   const emptyPolicy: NetworkPolicy = {
     name: '',
@@ -64,12 +63,6 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setNetworkPolicy({ ...networkPolicy, name: event.currentTarget.value });
-
-  const handleNamespaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const ns = event.currentTarget.value;
-    setNetworkPolicy({ ...networkPolicy, namespace: ns });
-    setNamespace(ns);
-  };
 
   const handleMainPodSelectorChange = (updated: string[][]) => {
     setNetworkPolicy({ ...networkPolicy, podSelector: updated });
@@ -187,24 +180,6 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           name="name"
           required
         />
-      </div>
-      <div className="form-group co-create-networkpolicy__namespace">
-        <label className="co-required" htmlFor="namespace">
-          {t('public~Policy namespace')}
-        </label>
-        <input
-          className="pf-c-form-control"
-          type="text"
-          onChange={handleNamespaceChange}
-          value={networkPolicy.namespace}
-          id="namespace"
-          name="namespace"
-          aria-describedby="namespace-help"
-          required
-        />
-        <div className="help-block" id="namespace-help">
-          <p>{t('public~The namespace containing pods on which this network policy applies.')}</p>
-        </div>
       </div>
       <div className="form-group co-create-networkpolicy__podselector">
         <NetworkPolicyConditionalSelector
