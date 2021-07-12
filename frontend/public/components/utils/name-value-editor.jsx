@@ -46,7 +46,7 @@ const NameValueEditor_ = withDragDropContext(
     }
 
     _remove(i) {
-      const { updateParentData, nameValueId } = this.props;
+      const { updateParentData, nameValueId, onLastItemRemoved } = this.props;
       const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
       nameValuePairs.splice(i, 1);
       nameValuePairs.forEach((values, index) => (values[2] = index)); // update the indices in order.
@@ -55,6 +55,10 @@ const NameValueEditor_ = withDragDropContext(
         { nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', '', 0]] },
         nameValueId,
       );
+
+      if (nameValuePairs.length === 0 && !!onLastItemRemoved) {
+        onLastItemRemoved();
+      }
     }
 
     _change(e, i, type) {
@@ -89,6 +93,7 @@ const NameValueEditor_ = withDragDropContext(
         addConfigMapSecret,
         toolTip,
         t,
+        onLastItemRemoved,
       } = this.props;
       const nameString = this.props.nameString || t('public~Key');
       const valueString = this.props.valueString || t('public~Value');
@@ -113,6 +118,7 @@ const NameValueEditor_ = withDragDropContext(
             isEmpty={isEmpty}
             disableReorder={nameValuePairs.length === 1}
             toolTip={toolTip}
+            alwaysAllowRemove={!!onLastItemRemoved}
           />
         );
       });
@@ -191,6 +197,7 @@ NameValueEditor.propTypes = {
   secrets: PropTypes.object,
   addConfigMapSecret: PropTypes.bool,
   toolTip: PropTypes.string,
+  onLastItemRemoved: PropTypes.func,
 };
 NameValueEditor.defaultProps = {
   allowSorting: false,
@@ -465,6 +472,7 @@ const PairElement_ = DragSource(
           toolTip,
           t,
           valueString,
+          alwaysAllowRemove,
         } = this.props;
         const deleteIcon = (
           <>
@@ -546,7 +554,7 @@ const PairElement_ = DragSource(
                         'pairs-list__span-btns': allowSorting,
                       })}
                       onClick={this._onRemove}
-                      isDisabled={isEmpty}
+                      isDisabled={isEmpty && !alwaysAllowRemove}
                       variant="plain"
                     >
                       {deleteIcon}
@@ -582,6 +590,7 @@ PairElement.propTypes = {
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
   toolTip: PropTypes.string,
+  alwaysAllowRemove: PropTypes.bool,
 };
 const EnvFromPairElement_ = DragSource(
   DRAGGABLE_TYPE.ENV_FROM_ROW,

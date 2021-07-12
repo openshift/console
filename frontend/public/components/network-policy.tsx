@@ -114,9 +114,21 @@ const NetworkPoliciesList = (props) => {
   );
 };
 
-export const NetworkPoliciesPage = (props) => (
-  <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />
-);
+export const NetworkPoliciesPage = (props) => {
+  const createProps = {
+    to: `/k8s/ns/${props.namespace || 'default'}/networkpolicies/~new/form`,
+  };
+
+  return (
+    <ListPage
+      ListComponent={NetworkPoliciesList}
+      kind={kind}
+      canCreate={true}
+      createProps={createProps}
+      {...props}
+    />
+  );
+};
 
 const IngressHeader = () => {
   const { t } = useTranslation();
