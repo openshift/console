@@ -35,9 +35,7 @@ describe('Validate NAD for PXE provision source', () => {
     wizard.vm.selectTemplate(vmData);
     cy.get(wizardView.customizeBtn).click();
     cy.get(wizardView.imageSourceDropdown).click();
-    cy.get(wizardView.selectMenu)
-      .contains(vmData.provisionSource.getDescription())
-      .click({ force: true });
+    cy.contains(vmData.provisionSource.getDescription()).click({ force: true });
     cy.contains('No Network Attachment Definitions available').should('be.visible');
     cy.get(wizardView.cancelBtn).click();
     cy.on('window:confirm', () => true);
