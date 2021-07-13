@@ -27,11 +27,12 @@ export const getProcessedResourceBundle = (resourceBundle, lng) => {
   const pseudolocalizationEnabled = params.get('pseudolocalization') === 'true';
 
   const language = lng || localStorage.getItem('bridge/language') || 'en';
-  const consoleBundle = resourceBundle;
+  let consoleBundle = resourceBundle;
   if (pseudolocalizationEnabled && language === 'en') {
+    consoleBundle = {};
     const pseudo = new Pseudo({ enabled: true, wrapped: true });
-    Object.keys(consoleBundle).forEach((key) => {
-      consoleBundle[key] = pseudo.process(consoleBundle[key], '', {}, { language });
+    Object.keys(resourceBundle).forEach((key) => {
+      consoleBundle[key] = pseudo.process(resourceBundle[key], '', {}, { language });
     });
   }
 
