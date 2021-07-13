@@ -9,11 +9,8 @@ import { compose } from 'redux';
 import { Firehose, history } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  connectToFlags,
-  featureReducerName,
-  FlagsObject,
-} from '@console/internal/reducers/features';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
 import { usePrevious } from '@console/shared/src/hooks/previous';

@@ -6,7 +6,8 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { useAccessReview } from '@console/internal/components/utils';
-import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { FlagsObject } from '@console/internal/reducers/features';
 import { TechPreviewBadge } from '@console/shared';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { PipelineModel, PipelineResourceModel } from '../../../models';

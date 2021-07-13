@@ -23,7 +23,8 @@ import {
   convertToBaseValue,
   FieldLevelHelp,
 } from './utils';
-import { connectToFlags, flagPending } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending } from '../reducers/features';
 import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';

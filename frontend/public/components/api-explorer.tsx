@@ -26,7 +26,8 @@ import {
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';

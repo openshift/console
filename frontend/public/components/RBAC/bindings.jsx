@@ -30,7 +30,8 @@ import {
   resourceObjPath,
   useAccessReview,
 } from '../utils';
-import { connectToFlags, flagPending } from '../../reducers/features';
+import { connectToFlags } from '../../reducers/connectToFlags';
+import { flagPending } from '../../reducers/features';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 

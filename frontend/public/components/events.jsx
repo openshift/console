@@ -21,7 +21,7 @@ import {
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
 import {
   Box,
