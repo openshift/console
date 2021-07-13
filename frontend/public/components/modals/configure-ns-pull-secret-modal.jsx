@@ -13,7 +13,6 @@ import { PromiseComponent, ResourceIcon } from '../utils';
 
 const parseExisitingPullSecret = (pullSecret) => {
   let invalidData = false;
-  let multipleCredentials = false;
   const invalidJson = false;
   let username, email, password, address;
 
@@ -34,7 +33,6 @@ const parseExisitingPullSecret = (pullSecret) => {
         // we'll display the first secret, but upon saving, the
         // others will get erased
         invalidData = true;
-        multipleCredentials = true;
       } else if (keys.length < 1) {
         throw 'Invalid data';
       }
@@ -57,7 +55,7 @@ const parseExisitingPullSecret = (pullSecret) => {
     invalidData = true;
   }
 
-  return { username, password, email, address, invalidData, invalidJson, multipleCredentials };
+  return { username, password, email, address, invalidData, invalidJson };
 };
 
 const generateSecretData = (formData) => {
@@ -208,18 +206,9 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               variant="danger"
               title={t('public~Overwriting default pull Secret')}
             >
-              {existingData.multipleCredentials && (
-                <p>
-                  {t(
-                    'Multiple credentials are associated with this default pull Secret, but only the first one is shown.',
-                  )}
-                </p>
+              {t(
+                'public~A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.',
               )}
-              <p>
-                {t(
-                  "public~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
-                )}
-              </p>
             </Alert>
           )}
 
