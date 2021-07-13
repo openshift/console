@@ -426,7 +426,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	if len(s.EnabledConsolePlugins) > 0 {
 		pluginsHandler := plugins.NewPluginsHandler(
 			&http.Client{
-				Timeout:   10 * time.Second,
+				// 120 seconds matches the webpack require timeout.
+				// Plugins are loaded asynchronously, so this doesn't block page load.
+				Timeout:   120 * time.Second,
 				Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
 			},
 			s.ServiceAccountToken,
