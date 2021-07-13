@@ -117,12 +117,11 @@ Feature: Create Pipeline from Add Options
              Then Add pipeline checkbox is displayed
 
         Examples:
-                  | git_url                                                   |
-                  | https://github.com/sclorg/dancer-ex.git                   |
-                  | https://github.com/sclorg/cakephp-ex.git                  |
-                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git |
-                  | https://github.com/sclorg/golang-ex.git                   |
-                  | https://github.com/sclorg/ruby-ex.git                     |
-                  | https://github.com/sclorg/django-ex.git                   |
-                  | https://github.com/spring-projects/spring-boot            |
-                  | https://github.com/sclorg/nodejs-ex.git                   |
+                  | git_url                                        |
+                  | https://github.com/sclorg/dancer-ex.git        |
+                  | https://github.com/sclorg/cakephp-ex.git       |
+                  | https://github.com/sclorg/golang-ex.git        |
+                  | https://github.com/sclorg/ruby-ex.git          |
+                  | https://github.com/sclorg/django-ex.git        |
+                  | https://github.com/spring-projects/spring-boot |
+                  | https://github.com/sclorg/nodejs-ex.git        |
