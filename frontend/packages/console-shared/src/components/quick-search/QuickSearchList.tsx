@@ -62,7 +62,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     <div className="odc-quick-search-list">
       <DataList
         className="odc-quick-search-list__list"
-        aria-label={t('topology~Quick search list')}
+        aria-label={t('console-shared~Quick search list')}
         selectedDataListItemId={selectedItemId}
         onSelectDataListItem={onSelectListItem}
         isCompact

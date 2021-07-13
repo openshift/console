@@ -13,12 +13,12 @@ import QuickSearchContent from './QuickSearchContent';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
-import './QuickSearchButton.scss';
 import './QuickSearchModalBody.scss';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
   searchCatalog: (searchTerm: string) => QuickSearchData;
+  searchPlaceholder: string;
   namespace: string;
   closeModal: () => void;
 }
@@ -27,6 +27,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   searchCatalog,
   namespace,
   closeModal,
+  searchPlaceholder,
   allCatalogItemsLoaded,
 }) => {
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
@@ -170,6 +171,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     <div ref={ref} className="odc-quick-search-modal-body" style={{ height: getModalHeight() }}>
       <QuickSearchBar
         searchTerm={searchTerm}
+        searchPlaceholder={searchPlaceholder}
         onSearch={onSearch}
         showNoResults={catalogItems?.length === 0}
         itemsLoaded={allCatalogItemsLoaded}

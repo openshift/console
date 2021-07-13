@@ -8,6 +8,7 @@ type QuickSearchControllerProps = {
   namespace: string;
   viewContainer?: HTMLElement;
   quickSearchProviders: QuickSearchProviders;
+  searchPlaceholder: string;
   allItemsLoaded: boolean;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -16,6 +17,7 @@ type QuickSearchControllerProps = {
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   namespace,
   quickSearchProviders,
+  searchPlaceholder,
   viewContainer,
   allItemsLoaded,
   isOpen,
@@ -85,6 +87,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       namespace={namespace}
+      searchPlaceholder={searchPlaceholder}
       allCatalogItemsLoaded={allItemsLoaded}
       searchCatalog={searchCatalog}
       viewContainer={viewContainer}

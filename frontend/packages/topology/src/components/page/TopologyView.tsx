@@ -52,7 +52,7 @@ import {
 } from '../../topology-types';
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
-import QuickSearch from '../quick-search/QuickSearch';
+import TopologyQuickSearch from '../quick-search/TopologyQuickSearch';
 import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
 import TopologySideBar from '../side-bar/TopologySideBar';
 import TopologyEmptyState from './TopologyEmptyState';
@@ -362,7 +362,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             {topologySideBarDetails}
           </TopologySideBar>
         </StackItem>
-        <QuickSearch
+        <TopologyQuickSearch
           namespace={namespace}
           viewContainer={viewContainer}
           isOpen={isQuickSearchOpen}
