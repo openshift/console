@@ -96,11 +96,18 @@ const operatorHubFilterGroups = [
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
-const determineCategories = (items) => {
-  const newCategories = {};
+type Category = {
+  id: string;
+  label: string;
+  field: 'categories';
+  values: string[];
+};
+
+export const determineCategories = (items: OperatorHubItem[]): Record<string, Category> => {
+  const newCategories: Record<string, Category> = {};
   _.each(items, (item) => {
     _.each(item.categories, (category) => {
-      if (!newCategories[category]) {
+      if (!newCategories[category] && category) {
         newCategories[category] = {
           id: category,
           label: category,
@@ -121,7 +128,7 @@ const determineCategories = (items) => {
       categories[key] = newCategories[key];
       return categories;
     },
-    {},
+    {} as Record<string, Category>,
   );
 };
 
@@ -225,7 +232,7 @@ const sortFilterValues = (values, field) => {
   return _.sortBy(values, sorter);
 };
 
-const determineAvailableFilters = (initialFilters, items, filterGroups) => {
+const determineAvailableFilters = (initialFilters, items: OperatorHubItem[], filterGroups) => {
   const filters = _.cloneDeep(initialFilters);
 
   _.each(filterGroups, (field) => {
