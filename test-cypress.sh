@@ -31,7 +31,7 @@ if [ $# -eq 0 ]; then
     echo "  test-cypress.sh -p console                            // opens Cypress Test Runner for console tests"
     echo "  test-cypress.sh -p olm                                // opens Cypress Test Runner for OLM tests"
     echo "  test-cypress.sh -p ceph                               // opens Cypress Test Runner for Ceph tests"
-    echo "  test-cypress.sh -p devconsole                        // opens Cypress Test Runner for Dev-Console tests"
+    echo "  test-cypress.sh -p dev-console                        // opens Cypress Test Runner for Dev-Console tests"
     echo "  test-cypress.sh -p gitops                             // opens Cypress Test Runner for gitops tests"
     echo "  test-cypress.sh -p knative                            // opens Cypress Test Runner for knative tests"
     echo "  test-cypress.sh -p pipelines                          // opens Cypress Test Runner for pipelines tests"
@@ -44,7 +44,7 @@ fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-console-headless
-  yarn run test-cypress-devconsole-headless
+  yarn run test-cypress-dev-console-headless
   yarn run test-cypress-olm-headless
   exit;
 fi
