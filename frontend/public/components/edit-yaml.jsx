@@ -20,7 +20,7 @@ import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { errorModal, managedResourceSaveModal } from './modals';
 import { Firehose, LoadingBox, checkAccess, history, Loading, resourceObjPath } from './utils';
 import {

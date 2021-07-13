@@ -13,7 +13,8 @@ import {
   K8sResourceKind,
 } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
-import { connectToFlags, FlagsObject } from '../../reducers/features';
+import { connectToFlags } from '../../reducers/connectToFlags';
+import { FlagsObject } from '../../reducers/features';
 
 const unknownKinds = new Set();
 

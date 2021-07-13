@@ -71,7 +71,8 @@ import {
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
-import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { featureReducerName, flagPending } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';

@@ -22,7 +22,7 @@ import {
   getName,
   getRequestedPVCSize,
 } from '@console/shared';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {

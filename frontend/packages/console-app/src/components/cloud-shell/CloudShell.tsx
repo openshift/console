@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { WithFlagsProps, connectToFlags } from '@console/internal/reducers/features';
+import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { RootState } from '@console/internal/redux';
 import { FLAG_DEVWORKSPACE } from '../../consts';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';

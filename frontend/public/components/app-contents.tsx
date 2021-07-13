@@ -8,7 +8,8 @@ import {
   useUserSettings,
   getPerspectiveVisitedKey,
 } from '@console/shared';
-import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
