@@ -20,14 +20,14 @@ export enum switchPerspective {
 }
 
 export enum operators {
-  PipelinesOperator = 'Pipeline',
-  ServerlessOperator = 'Serverless',
-  VirtualizationOperator = 'Virtualization',
+  PipelinesOperator = 'Red Hat OpenShift Pipelines',
+  ServerlessOperator = 'Red Hat OpenShift Serverless',
+  VirtualizationOperator = 'OpenShift Virtualization',
   RedHatIntegrationCamelK = 'Red Hat Integration - Camel K',
   ApacheCamelKOperator = 'Camel K Operator',
   KnativeApacheCamelOperator = 'Knative Apache Camel Operator',
   EclipseCheOperator = 'Eclipse Che',
-  GitOpsOperator = 'GitOps',
+  GitOpsOperator = 'Red Hat OpenShift GitOps',
   WebTerminalOperator = 'Web Terminal',
   ApacheKafka = 'Red Hat Integration - AMQ Streams',
 }
