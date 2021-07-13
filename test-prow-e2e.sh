@@ -1,6 +1,28 @@
 #!/usr/bin/env bash
 
 set -exuo pipefail
+set -e
+
+# PR_FILES_CHANGED store all Modified/Created files in Pull Request.
+export PR_FILES_CHANGED=$(git --no-pager diff --name-only HEAD $(git merge-base HEAD master))
+
+# transform_files function transform PR_FILES_CHANGED into a new array => FILES_CHANGED_ARRAY.
+function transform_files() {
+    for files in ${PR_FILES_CHANGED}
+    do
+        FILES_CHANGED_ARRAY+=($files)
+    done
+}
+
+# check_pkg_types function check first if packages/{plugin} folder have modifications and
+# in case of modification, respective {plugin} integration-tests should get executed on CI.
+function check_pkg_types() {
+
+}
+
+function execute_scripts_on_cron_jobs() {
+
+}
 
 ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
 SCREENSHOTS_DIR=frontend/gui_test_screenshots
