@@ -3,12 +3,14 @@ import {
   PrometheusHealthHandler,
   ResourceHealthHandler,
   SubsystemHealth,
+  alertType,
 } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { whitelistedCodes, whitelistedCodesRef } from './whitelistedcodes';
 import { getResiliencyProgress } from '../../../../utils';
 import { WatchCephResource } from '../../../../types';
 
-const CephHealthStatus = (status: string, alerts: string[], t: TFunction): SubsystemHealth => {
+const CephHealthStatus = (status: string, alerts: alertType[], t: TFunction): SubsystemHealth => {
   switch (status) {
     case 'HEALTH_OK':
       return {
@@ -37,11 +39,19 @@ export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ c
   const cephObj = data?.[0]?.status?.ceph;
   const status = cephObj?.health;
   const details = cephObj?.details;
+
+  const getTroubleshootLink = (key: string) =>
+    whitelistedCodes.has(key) ? whitelistedCodesRef[key] : null;
+
   const pattern = /[A-Z]+_*|error/g;
-  const alerts: string[] = [];
+  const alerts: alertType[] = [];
   for (const key in details) {
     if (details.hasOwnProperty(key) && pattern.test(key)) {
-      alerts.push(details[key].message);
+      const alertObject: alertType = {
+        alertMessage: details[key].message,
+        troubleshootLink: getTroubleshootLink(key),
+      };
+      alerts.push(alertObject);
     }
   }
 

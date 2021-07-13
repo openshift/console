@@ -2,20 +2,23 @@ import * as React from 'react';
 import { Split, SplitItem } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { alertType } from '@console/plugin-sdk';
 import { SecondaryStatus } from '../../status';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 
-const renderAlerts = (alerts: string[], icon: React.ReactNode): React.ReactNode =>
+const renderAlerts = (alerts: alertType[], icon: React.ReactNode): React.ReactNode =>
   alerts.map((alert) => (
-    <Split hasGutter key={alert}>
+    <Split hasGutter key={alert.alertMessage}>
       <SplitItem>{icon}</SplitItem>
       <SplitItem isFilled>
-        <strong>{alert}</strong>
+        <strong>{alert.alertMessage}</strong>
       </SplitItem>
-      <SplitItem>
-        <a href="https://www.example.com">Troubleshoot</a>
-      </SplitItem>
+      {!!alert.troubleshootLink && (
+        <SplitItem>
+          <a href={alert.troubleshootLink}>Troubleshoot</a>
+        </SplitItem>
+      )}
     </Split>
   ));
 
@@ -79,7 +82,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
 export default HealthItem;
 
 type HealthItemProps = {
-  alerts?: string[];
+  alerts?: alertType[];
   title: string;
   className?: string;
   details?: string;

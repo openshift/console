@@ -354,8 +354,13 @@ export type PrometheusActivityProps = {
   results: PrometheusResponse[];
 };
 
+export type alertType = {
+  alertMessage: string;
+  troubleshootLink?: string;
+};
+
 export type SubsystemHealth = {
-  alerts?: string[];
+  alerts?: alertType[];
   message?: string;
   state: HealthState;
 };
