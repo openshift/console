@@ -2,16 +2,17 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { FLAGS } from '@console/shared/src/constants';
+import {
+  FLAGS,
+  ModelFeatureFlag as DynamicModelFeatureFlag,
+  isModelFeatureFlag as isDynamicModelFeatureFlag,
+} from '@console/dynamic-plugin-sdk';
 import { isModelFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import {
-  ModelFeatureFlag as DynamicModelFeatureFlag,
-  isModelFeatureFlag as isDynamicModelFeatureFlag,
-} from '@console/dynamic-plugin-sdk';
+
 import {
   ChargebackReportModel,
   ClusterAutoscalerModel,

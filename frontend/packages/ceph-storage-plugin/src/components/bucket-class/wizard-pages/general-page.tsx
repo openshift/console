@@ -13,7 +13,7 @@ import {
 import { ExternalLink } from '@console/internal/components/utils';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
 import '../create-bc.scss';
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { Action, State } from '../state';
 import { bucketClassTypeRadios } from '../../../constants/bucket-class';
 import { validateBucketClassName } from '../../../utils/bucket-class';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FLAGS } from '@console/shared/src/constants';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { Area } from '@console/internal/components/graphs/area';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
 import { connectToFlags, WithFlagsProps } from '../../reducers/features';

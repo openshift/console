@@ -15,7 +15,7 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import DataConsumptionGraph from './data-consumption-graph';

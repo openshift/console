@@ -13,10 +13,9 @@ import {
   isPVCCreateProp,
   isPVCStatus,
 } from '@console/dynamic-plugin-sdk/src/extensions/pvc';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { useResolvedExtensions, FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   Status,
-  FLAGS,
   calculateRadius,
   getNamespace,
   getName,

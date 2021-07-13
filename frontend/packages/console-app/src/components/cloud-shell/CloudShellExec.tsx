@@ -3,12 +3,12 @@ import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { connect, Dispatch } from 'react-redux';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import { PodModel } from '@console/internal/models';
 import { resourceURL, K8sKind } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
-import { FLAGS } from '@console/shared';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
 import {
   getCloudShellCR,

@@ -2,17 +2,18 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 
-import { FLAGS } from '@console/shared/src/constants/common';
+import {
+  FLAGS,
+  FeatureFlag as DynamicFeatureFlag,
+  isFeatureFlag as isDynamicFeatureFlag,
+  SetFeatureFlag,
+} from '@console/dynamic-plugin-sdk';
 import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/pluginSubscriptionService';
-import {
-  FeatureFlag as DynamicFeatureFlag,
-  isFeatureFlag as isDynamicFeatureFlag,
-  SetFeatureFlag,
-} from '@console/dynamic-plugin-sdk';
+
 import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';

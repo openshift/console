@@ -4,7 +4,7 @@ import { checkTerminalAvailable } from '../cloud-shell-utils';
 import useCloudShellAvailable from '../useCloudShellAvailable';
 // Need to import useFlag after useCloudShellAvailable for the mock to work correctly. FInd out why?
 // eslint-disable-next-line import/order
-import { useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 
 const useFlagMock = useFlag as jest.Mock;
 const checkTerminalAvailableMock = checkTerminalAvailable as jest.Mock;
@@ -15,8 +15,8 @@ jest.mock('../cloud-shell-utils', () => {
   };
 });
 
-jest.mock('@console/shared', () => {
-  const originalModule = (jest as any).requireActual('@console/shared');
+jest.mock('@console/dynamic-plugin-sdk', () => {
+  const originalModule = (jest as any).requireActual('@console/dynamic-plugin-sdk');
   return {
     ...originalModule,
     useFlag: jest.fn<boolean>(),

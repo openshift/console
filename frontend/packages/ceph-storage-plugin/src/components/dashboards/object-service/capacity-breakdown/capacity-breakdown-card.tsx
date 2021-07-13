@@ -18,7 +18,7 @@ import { usePrometheusQueries } from '@console/shared/src/components/dashboard/u
 import { OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
+import { useFlag } from '@console/dynamic-plugin-sdk';
 import { getStackChartStats } from '../../common/capacity-breakdown/utils';
 import { Colors } from '../../common/capacity-breakdown/consts';
 import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';

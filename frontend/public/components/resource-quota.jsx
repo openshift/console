@@ -11,7 +11,8 @@ import {
 } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,

@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { NavList, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS, useActiveNamespace } from '@console/shared';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
+import { useActiveNamespace } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { featureReducerName } from '../../reducers/features';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';

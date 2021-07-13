@@ -13,6 +13,7 @@ import i18next from 'i18next';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   Status,
   getRequester,
@@ -21,7 +22,6 @@ import {
   KEYBOARD_SHORTCUTS,
   NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
-  FLAGS,
   GreenCheckCircleIcon,
   getName,
   withUserSettingsCompatibility,

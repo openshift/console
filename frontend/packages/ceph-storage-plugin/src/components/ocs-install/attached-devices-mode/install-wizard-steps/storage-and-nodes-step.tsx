@@ -15,7 +15,8 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName, useFlag } from '@console/shared';
+import { useFlag } from '@console/dynamic-plugin-sdk';
+import { getName } from '@console/shared';
 import {
   attachedDevicesStorageClassTooltip,
   OCS_DEVICE_SET_REPLICA,

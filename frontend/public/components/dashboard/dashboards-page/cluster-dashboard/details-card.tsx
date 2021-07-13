@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { InProgressIcon } from '@patternfly/react-icons';
+import { FLAGS } from '@console/dynamic-plugin-sdk';
 import {
   BlueArrowCircleUpIcon,
-  FLAGS,
   getInfrastructureAPIURL,
   getInfrastructurePlatform,
   isSingleNode,

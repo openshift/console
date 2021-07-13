@@ -1,8 +1,7 @@
 import * as React from 'react';
+import { FLAGS, useFlag } from '@console/dynamic-plugin-sdk';
 import { ListDropdown } from '@console/internal/components/utils';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
-import { FLAGS } from '@console/shared';
-import { useFlag } from '@console/shared/src/hooks/flag';
 
 type ProjectDropdownProps = {
   onChange: (project: string) => void;
