@@ -11,13 +11,7 @@ const ServerlessScalingSection: React.FC = () => {
     m: t('devconsole~Min'),
     h: t('devconsole~Hrs'),
   };
-  const {
-    values: {
-      serverless: {
-        scaling: { autoscale },
-      },
-    },
-  } = useFormikContext<FormikValues>();
+
   return (
     <FormSection
       title={t('devconsole~Scaling')}
@@ -63,7 +57,6 @@ const ServerlessScalingSection: React.FC = () => {
         label={t('devconsole~Autoscale window')}
         unitName="serverless.scaling.autoscale.autoscalewindowUnit"
         unitOptions={AutoscaleWindowUnits}
-        defaultUnitSize={`${autoscale.defaultAutoscalewindowUnit}`}
         helpText={t(
           'devconsole~Duration to look back for making auto-scaling decisions. The service is scaled to zero if no request was received in during that time.',
         )}
