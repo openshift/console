@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 
@@ -74,6 +75,25 @@ func (p *PluginsHandler) HandlePlugins(w http.ResponseWriter, r *http.Request) {
 		serverutils.SendResponse(w, http.StatusBadGateway, serverutils.ApiError{Err: errMsg})
 		return
 	}
+}
+
+func (p *PluginsHandler) HandleListPlugins(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.Header().Set("Allow", "GET")
+		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
+		return
+	}
+	pluginsList := make([]string, 0, len(p.PluginsEndpointMap))
+	for k := range p.PluginsEndpointMap {
+		pluginsList = append(pluginsList, k)
+	}
+	serverutils.SendResponse(w, http.StatusOK, struct {
+		ConsoleCommit string   `json:"consoleCommit"`
+		Plugins       []string `json:"plugins"`
+	}{
+		ConsoleCommit: os.Getenv("SOURCE_GIT_COMMIT"),
+		Plugins:       pluginsList,
+	})
 }
 
 func (p *PluginsHandler) getServiceRequestURL(pluginName string) (*url.URL, error) {
