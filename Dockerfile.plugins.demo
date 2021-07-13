@@ -19,6 +19,7 @@ RUN yarn install && \
 FROM node:10
 
 COPY --from=build /src/console/frontend/dynamic-demo-plugin/dist /opt/console-demo-plugin/static
+COPY --from=build /src/console/frontend/dynamic-demo-plugin/locales /opt/console-demo-plugin/static/locales
 COPY --from=build /src/console/frontend/dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
 COPY --from=build /src/console/frontend/dynamic-demo-plugin/http-server.sh /opt/console-demo-plugin/http-server.sh
 

@@ -14,6 +14,7 @@
 FROM node:10
 
 COPY ./frontend/dynamic-demo-plugin/dist /opt/console-demo-plugin/static
+COPY ./frontend/dynamic-demo-plugin/locales /opt/console-demo-plugin/static/locales
 COPY ./frontend/dynamic-demo-plugin/node_modules /opt/console-demo-plugin/node_modules
 COPY ./frontend/dynamic-demo-plugin/http-server.sh /opt/console-demo-plugin/http-server.sh
 
