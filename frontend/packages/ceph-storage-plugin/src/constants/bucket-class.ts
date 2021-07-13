@@ -27,7 +27,7 @@ export const bucketClassTypeRadios = (t: TFunction) => [
     value: BucketClassType.NAMESPACE,
     label: t('ceph-storage-plugin~Namespace'),
     description: t(
-      'ceph-storage-plugin~Data is stored on the NamespaceStores without performing de-duplication, compression, or encryption. BucketClasses of namespace type allow connecting to existing data and serving from them. These are best used for existing data or when other applications (and cloud-native services) need to access the data from outside the OpenShift Container Storage.',
+      'ceph-storage-plugin~Data is stored on the NamespaceStores without performing de-duplication, compression, or encryption. BucketClasses of namespace type allow connecting to existing data and serving from them. These are best used for existing data or when other applications (and cloud-native services) need to access the data from outside OpenShift Container Storage.',
     ),
   },
 ];
