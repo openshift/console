@@ -17,6 +17,7 @@ import {
   VM_DETAIL_ENVIRONMENT,
   VM_DETAIL_SNAPSHOTS,
 } from '../../constants/vm';
+import { useVMStatus } from '../../hooks/use-vm-status';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -57,6 +58,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   const { name, ns: namespace } = props.match.params;
   const { t } = useTranslation();
   const [snapshotResource] = useK8sModel(kubevirtReferenceForModel(VirtualMachineSnapshotModel));
+  const vmStatusBundle = useVMStatus(name, namespace);
 
   const dashboardPage = {
     href: '', // default landing page
@@ -167,6 +169,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
       resources={resources}
       breadcrumbsFor={breadcrumbsForVMPage(t, props.match)}
       customData={{ kindObj: VirtualMachineModel }}
+      getResourceStatus={() => vmStatusBundle.status.getSimpleLabel()}
     >
       <PendingChangesWarningFirehose name={name} namespace={namespace} />
     </DetailsPage>
