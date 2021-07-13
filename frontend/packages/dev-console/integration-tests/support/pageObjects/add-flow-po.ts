@@ -105,7 +105,7 @@ export const catalogPO = {
   cardType: 'span.pf-c-badge',
   create: 'button[type="submit"]',
   cancel: '[data-test-id="reset-button"]',
-  cardList: '[role="rowgroup"]',
+  cardList: '[role="grid"]',
   cardHeader: '.pf-c-badge.pf-m-read',
   groupByMenu: 'pf-c-dropdown__menu',
   catalogTypeLink: 'li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty',

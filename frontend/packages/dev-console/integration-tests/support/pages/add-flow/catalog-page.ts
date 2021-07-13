@@ -155,7 +155,7 @@ export const catalogPage = {
       .its('length')
       .should('be.greaterThan', 0);
   },
-  verifyChartCardsAvailable: () => {
+  verifyHelmChartCardsAvailable: () => {
     cy.get(catalogPO.cardList)
       .should('exist')
       .find(catalogPO.cardHeader)
