@@ -14,10 +14,10 @@ const createPackageJson = (packagePath: string) => {
     '.': './lib/extensions/index.js',
     './webpack': './lib/webpack/ConsoleRemotePlugin.js',
     './api': './lib/api/api.js',
+    './internalAPI': './lib/api/internal-api.js',
   };
   packageJson.readme = 'README.md';
   packageJson.peerDependencies = _.pick(packageJson.devDependencies, 'webpack');
-  delete packageJson.dependencies;
   delete packageJson.devDependencies;
   delete packageJson.scripts;
   fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
@@ -34,5 +34,4 @@ const preparePkgAssets = () => {
   fs.copySync(resolvePath('README.md'), resolvePath('dist/README.md'));
   fs.copySync(resolvePath('schema'), resolvePath('dist/schema'), { recursive: true });
 };
-
 preparePkgAssets();

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Card, CardProps } from '@patternfly/react-core';
+import { Card } from '@patternfly/react-core';
 import classNames from 'classnames';
+import { DashboardCardProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import './card.scss';
 
@@ -20,9 +21,3 @@ const DashboardCard = withFallback<DashboardCardProps>(
 );
 
 export default DashboardCard;
-
-type DashboardCardProps = CardProps & {
-  className?: string;
-  children: React.ReactNode;
-  gradient?: boolean;
-};

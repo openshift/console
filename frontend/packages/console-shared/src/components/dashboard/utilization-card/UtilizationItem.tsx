@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
+import { UtilizationItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
+import { DataPoint } from '@console/internal/components/graphs';
 import {
   AreaChart,
   AreaChartStatus,
@@ -175,7 +176,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         loading={!error && isLoading}
         query={query}
         xAxis={false}
-        humanize={humanizeValue}
+        // Todo(bipuladh): Make huamnize type Humanize once unit.js is converted
+        humanize={humanizeValue as Humanize}
         padding={{ top: 13, left: 70, bottom: 0, right: 0 }}
         height={70}
         chartStyle={chartStyle}
@@ -294,21 +296,6 @@ export default UtilizationItem;
 export type LimitRequested = {
   limit: LIMIT_STATE;
   requested: LIMIT_STATE;
-};
-
-type UtilizationItemProps = {
-  title: string;
-  utilization?: PrometheusResponse;
-  limit?: PrometheusResponse;
-  requested?: PrometheusResponse;
-  isLoading: boolean;
-  humanizeValue: Humanize;
-  query: string | string[];
-  error: boolean;
-  max?: number;
-  byteDataType?: ByteDataTypes;
-  TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
-  setLimitReqState?: (state: LimitRequested) => void;
 };
 
 type MultilineUtilizationItemProps = {

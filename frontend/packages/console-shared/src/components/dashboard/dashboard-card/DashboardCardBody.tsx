@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { CardBody, CardBodyProps } from '@patternfly/react-core';
+import { CardBody } from '@patternfly/react-core';
 import classNames from 'classnames';
+import { DashboardCardBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 import { LoadingInline } from '@console/internal/components/utils/status-box';
 
 const DashboardCardBody: React.FC<DashboardCardBodyProps> = React.memo(
@@ -12,9 +13,3 @@ const DashboardCardBody: React.FC<DashboardCardBodyProps> = React.memo(
 );
 
 export default DashboardCardBody;
-
-type DashboardCardBodyProps = CardBodyProps & {
-  classname?: string;
-  children: React.ReactNode;
-  isLoading?: boolean;
-};

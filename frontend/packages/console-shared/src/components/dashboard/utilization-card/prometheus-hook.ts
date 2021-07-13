@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
+import { UseDashboardPrometheusQuery as UsePrometheusQuery } from '@console/dynamic-plugin-sdk/src/api/internal';
 import {
   watchPrometheusQuery,
   stopWatchPrometheusQuery,
@@ -14,11 +15,11 @@ import {
   GetRangeStats,
   GetInstantStats,
 } from '@console/internal/components/graphs/utils';
-import { Humanize, HumanizeResult } from '@console/internal/components/utils/types';
+import { HumanizeResult } from '@console/internal/components/utils/types';
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
 import { RootState } from '@console/internal/redux';
 
-export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
+export const usePrometheusQuery: UsePrometheusQuery = (query, humanize = _.identity) => {
   const dispatch = useDispatch();
   React.useEffect(() => {
     dispatch(watchPrometheusQuery(query));
@@ -88,6 +89,5 @@ export const usePrometheusQueries = <R extends any>(
   return results;
 };
 
-type UsePrometheusQuery = (query: string, humanize: Humanize) => [HumanizeResult, any, number];
 // [data, loading, loadError]
 type UsePrometheusQueriesResult<R> = [R[], boolean, boolean];

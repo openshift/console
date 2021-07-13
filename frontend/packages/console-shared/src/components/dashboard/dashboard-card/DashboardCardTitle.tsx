@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { DashboardCardTitleProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 
 const DashboardCardTitle: React.FC<DashboardCardTitleProps> = React.memo(
   ({ className, children }) => (
@@ -13,8 +14,3 @@ const DashboardCardTitle: React.FC<DashboardCardTitleProps> = React.memo(
 );
 
 export default DashboardCardTitle;
-
-type DashboardCardTitleProps = {
-  className?: string;
-  children: React.ReactNode;
-};
