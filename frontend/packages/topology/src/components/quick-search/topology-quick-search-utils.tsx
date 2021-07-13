@@ -2,13 +2,7 @@ import * as React from 'react';
 import { QuickStart, QuickStartContext, QuickStartContextValues } from '@patternfly/quickstarts';
 import { TextList, TextListItem } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { keywordCompare } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { history, removeQueryArgument } from '@console/internal/components/utils';
-
-export const quickSearch = (items: CatalogItem[], query: string) => {
-  return keywordCompare(query, items);
-};
 
 export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogItem[] => {
   const { setActiveQuickStart } = React.useContext<QuickStartContextValues>(QuickStartContext);
@@ -49,24 +43,4 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
       }),
     [t, quickStarts, setActiveQuickStart],
   );
-};
-
-export const handleCta = (
-  e: React.SyntheticEvent,
-  item: CatalogItem,
-  closeModal: () => void,
-  fireTelemetryEvent: (event: string, properties?: {}) => void,
-) => {
-  e.preventDefault();
-  const { href, callback } = item.cta;
-  if (callback) {
-    fireTelemetryEvent('Quick Search Used', {
-      id: item.uid,
-      type: item.type,
-      name: item.name,
-    });
-    closeModal();
-    callback();
-    removeQueryArgument('catalogSearch');
-  } else history.push(href);
 };

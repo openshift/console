@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { QuickStart } from '@patternfly/quickstarts';
+import { useTranslation } from 'react-i18next';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import CatalogServiceProvider, {
   CatalogService,
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
-import QuickSearchController from './QuickSearchController';
-import { QuickSearchProviders } from './utils/quick-search-types';
-import { useTransformedQuickStarts } from './utils/quick-search-utils';
+import { QuickSearchController, QuickSearchProviders } from '@console/shared';
+import { useTransformedQuickStarts } from './topology-quick-search-utils';
 
 interface QuickSearchProps {
   namespace: string;
@@ -30,6 +30,8 @@ const Contents: React.FC<{
   isOpen,
   setIsOpen,
 }) => {
+  const { t } = useTranslation();
+
   const quickStartItems = useTransformedQuickStarts(quickStarts);
   const quickSearchProviders: QuickSearchProviders = [
     {
@@ -64,6 +66,7 @@ const Contents: React.FC<{
     <QuickSearchController
       quickSearchProviders={quickSearchProviders}
       allItemsLoaded={catalogService.loaded && quickStartsLoaded}
+      searchPlaceholder={`${t('topology~Add to Project')}...`}
       namespace={namespace}
       viewContainer={viewContainer}
       isOpen={isOpen}
@@ -72,7 +75,7 @@ const Contents: React.FC<{
   );
 };
 
-const QuickSearch: React.FC<QuickSearchProps> = ({
+const TopologyQuickSearch: React.FC<QuickSearchProps> = ({
   namespace,
   viewContainer,
   isOpen,
@@ -106,4 +109,4 @@ const QuickSearch: React.FC<QuickSearchProps> = ({
   );
 };
 
-export default React.memo(QuickSearch);
+export default React.memo(TopologyQuickSearch);
