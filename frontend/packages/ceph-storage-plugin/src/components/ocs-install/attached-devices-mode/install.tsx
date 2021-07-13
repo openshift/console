@@ -69,9 +69,9 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       isInline
     >
       <Trans t={t} ns="ceph-storage-plugin">
-        Before we can create a StorageCluster, the local storage operator needs to be installed.
-        When installation is finished come back to OpenShift Container Storage to create a storage
-        cluster.
+        Before we can create a StorageCluster, the Local Storage operator needs to be installed.
+        When installation is finished come back to OpenShift Container Storage to create a
+        StorageCluster.
         <div className="ceph-ocs-install__lso-alert__button">
           <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
             Install
