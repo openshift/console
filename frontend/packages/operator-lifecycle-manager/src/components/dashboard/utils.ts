@@ -40,6 +40,15 @@ const getOperatorStatus = (
       title: subscriptionStatus.title,
     };
   }
+  if (
+    operatorHealth !== HealthState.ERROR &&
+    subscriptionStatus.status === SubscriptionState.SubscriptionStateUpgradeAvailable
+  ) {
+    return {
+      ...healthStateMapping[HealthState.UPGRADABLE],
+      title: subscriptionStatus.title,
+    };
+  }
   return {
     ...healthStateMapping[operatorHealth],
     title: csvStatus.title,

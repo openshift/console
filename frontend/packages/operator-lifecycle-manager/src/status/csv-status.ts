@@ -71,12 +71,15 @@ export const getSubscriptionStatus = (subscription: SubscriptionKind): Subscript
         title: i18n.t('olm~Upgrade available'),
       };
     case SubscriptionState.SubscriptionStateUpgradePending:
-      return {
-        status,
-        title: upgradeRequiresApproval(subscription)
-          ? i18n.t('olm~Upgrade available')
-          : i18n.t('olm~Upgrading'),
-      };
+      return upgradeRequiresApproval(subscription)
+        ? {
+            status: SubscriptionState.SubscriptionStateUpgradeAvailable,
+            title: i18n.t('olm~Upgrade available'),
+          }
+        : {
+            status,
+            title: i18n.t('olm~Upgrading'),
+          };
     case SubscriptionState.SubscriptionStateAtLatest:
       return {
         status,
