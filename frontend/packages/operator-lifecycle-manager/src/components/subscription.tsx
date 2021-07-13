@@ -107,6 +107,16 @@ export const installPlanForSubscription = (
 ): InstallPlanKind =>
   installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 
+export const SourceMissingStatus: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <WarningStatus title={t('olm~Cannot update')} />
+      <span className="text-muted">{t('olm~CatalogSource not found')}</span>
+    </>
+  );
+};
+
 const tableColumnClasses = [
   '',
   '',
@@ -581,8 +591,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
               </dd>
             ) : (
               <dd>
-                <WarningStatus title={t('olm~Cannot update')} />
-                <span className="text-muted">{t('olm~CatalogSource was removed')}</span>
+                <SourceMissingStatus />
               </dd>
             )}
           </dl>
