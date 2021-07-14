@@ -1,0 +1,23 @@
+.ocs-user-preferences-container {
+  background-color: var(--pf-global--Color--light-200);
+  padding: var(--pf-global--spacer--lg);
+  height: 100%;
+}
+
+.ocs-user-preferences-content {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  background-color: var(--pf-global--BackgroundColor--100);
+  height: 100%;
+  // &__tabs {}
+  &__tab-content {
+    margin: var(--pf-global--spacer--lg) 0 0 var(--pf-global--spacer--3xl);
+    &__item {
+        margin-top: var(--pf-global--spacer--lg);
+    }
+  }
+  .pf-c-tabs__scroll-button {
+    display: none;
+  }
+}

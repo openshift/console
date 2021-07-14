@@ -44,6 +44,7 @@ import {
   TopologyDisplayFilters,
 } from '../extensions/topology';
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import { UserSettings, UserSettingsGroup } from '../extensions/user-preferences';
 import { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
@@ -90,7 +91,9 @@ export type SupportedExtension =
   | TopologyCreateConnector
   | TopologyDataModelFactory
   | TopologyDisplayFilters
-  | TopologyDecoratorProvider;
+  | TopologyDecoratorProvider
+  | UserSettings
+  | UserSettingsGroup;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
