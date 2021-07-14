@@ -1,0 +1,15 @@
+{
+  "name": "@dynamic-sdk/provisional-api",
+  "version": "0.0.0-fixed",
+  "description": "Console components exposed as provisional APIs",
+  "private": true,
+  "main": "./index.ts",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
+    "build": "yarn clean && yarn tsc",
+    "add-asset": "yarn ts-node ./script.ts",
+    "generate-pack": "cd ./dist && yarn pack",
+    "generate-api-package": "yarn build && yarn add-asset && yarn generate-pack"
+  }
+}

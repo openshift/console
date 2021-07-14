@@ -208,3 +208,56 @@ export type FirehoseResult<
 export type FirehoseResourcesResult = {
   [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
 };
+
+export type PrometheusAlert = {
+  activeAt?: string;
+  annotations: PrometheusLabels;
+  labels: PrometheusLabels & {
+    alertname: string;
+    severity?: string;
+  };
+  state: string;
+  value?: number | string;
+};
+
+export type Silence = {
+  comment: string;
+  createdBy: string;
+  endsAt: string;
+  firingAlerts: Alert[];
+  id?: string;
+  matchers: { name: string; value: string; isRegex: boolean }[];
+  name?: string;
+  startsAt: string;
+  status?: { state: string };
+  updatedAt?: string;
+};
+
+export type Alert = PrometheusAlert & {
+  rule: Rule;
+  silencedBy?: Silence[];
+};
+
+export type Alerts = {
+  data: Alert[];
+  loaded: boolean;
+  loadError?: string;
+};
+
+export type PrometheusRule = {
+  alerts: PrometheusAlert[];
+  annotations: PrometheusLabels;
+  duration: number;
+  labels: PrometheusLabels & {
+    severity?: string;
+  };
+  name: string;
+  query: string;
+  state: string;
+  type: string;
+};
+
+export type Rule = PrometheusRule & {
+  id: string;
+  silencedBy?: Silence[];
+};

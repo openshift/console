@@ -6,8 +6,9 @@
   "main": "src/index.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
+    "generate-provisional-api": "yarn --cwd ../console-provisional-api generate-api-package",
     "build": "yarn clean && yarn validate && yarn generate && yarn tsc",
-    "generate": "yarn generate-schema && yarn generate-doc && yarn generate-pkg-assets",
+    "generate": "yarn generate-schema && yarn generate-doc && yarn generate-provisional-api && yarn generate-pkg-assets",
     "generate-schema": "yarn ts-node ./scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node ./scripts/generate-doc.ts",
     "generate-pkg-assets": "yarn ts-node ./scripts/generate-pkg-assets.ts",

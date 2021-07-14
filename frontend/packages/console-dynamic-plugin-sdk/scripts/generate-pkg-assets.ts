@@ -14,10 +14,13 @@ const createPackageJson = (packagePath: string) => {
     '.': './lib/extensions/index.js',
     './webpack': './lib/webpack/ConsoleRemotePlugin.js',
     './api': './lib/api/api.js',
+    './provisional': './lib/api/provisional.js',
   };
   packageJson.readme = 'README.md';
   packageJson.peerDependencies = _.pick(packageJson.devDependencies, 'webpack');
-  delete packageJson.dependencies;
+  packageJson.dependencies = {
+    '@dynamic-sdk/provisional-api': 'file:./dynamic-sdk-provisional-api-v0.0.0-fixed.tgz',
+  };
   delete packageJson.devDependencies;
   delete packageJson.scripts;
   fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
@@ -33,6 +36,9 @@ const preparePkgAssets = () => {
   fs.copySync(resolvePath('../../../LICENSE'), resolvePath('dist/LICENSE'));
   fs.copySync(resolvePath('README.md'), resolvePath('dist/README.md'));
   fs.copySync(resolvePath('schema'), resolvePath('dist/schema'), { recursive: true });
+  fs.copySync(
+    resolvePath('../console-provisional-api/dist/dynamic-sdk-provisional-api-v0.0.0-fixed.tgz'),
+    resolvePath('dist/dynamic-sdk-provisional-api-v0.0.0-fixed.tgz'),
+  );
 };
-
 preparePkgAssets();

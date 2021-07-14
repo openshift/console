@@ -18,7 +18,7 @@ import { Humanize, HumanizeResult } from '@console/internal/components/utils/typ
 import { RESULTS_TYPE } from '@console/internal/reducers/dashboards';
 import { RootState } from '@console/internal/redux';
 
-export const usePrometheusQuery: UsePrometheusQuery = (query, humanize) => {
+export const usePrometheusQuery: UsePrometheusQuery = (query, humanize = _.identity) => {
   const dispatch = useDispatch();
   React.useEffect(() => {
     dispatch(watchPrometheusQuery(query));
@@ -88,6 +88,6 @@ export const usePrometheusQueries = <R extends any>(
   return results;
 };
 
-type UsePrometheusQuery = (query: string, humanize: Humanize) => [HumanizeResult, any, number];
+type UsePrometheusQuery = (query: string, humanize?: Humanize) => [HumanizeResult, any, number];
 // [data, loading, loadError]
 type UsePrometheusQueriesResult<R> = [R[], boolean, boolean];
