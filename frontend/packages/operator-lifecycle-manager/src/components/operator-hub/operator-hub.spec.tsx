@@ -44,8 +44,8 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
       <MemoryRouter>
         <OperatorHubList
           {...operatorHubListPageProps}
-          marketplacePackageManifest={null}
-          subscription={{ loaded: false, data: [] }}
+          marketplacePackageManifests={null}
+          subscriptions={{ loaded: false, data: [] }}
         />
       </MemoryRouter>,
     );
@@ -60,7 +60,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
   it('renders amq-streams tile with correct props', () => {
     const tiles = wrapper.find<any>(CatalogTile);
     const amqTileProps = tiles.at(0).props();
-    const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
+    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
 
     expect(amqTileProps.title).toEqual(
       amqPackageManifest.status.channels[0].currentCSVDesc.displayName,
@@ -82,7 +82,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
   it('renders prometheus tile with correct props', () => {
     const tiles = wrapper.find<any>(CatalogTile);
     const prometheusTileProps = tiles.at(3).props(); // Sorting makes this 3
-    const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
+    const prometheusPackageManifest = operatorHubListPageProps.packageManifests.data[3];
 
     expect(prometheusTileProps.title).toEqual(
       prometheusPackageManifest.status.channels[0].currentCSVDesc.displayName,
@@ -109,7 +109,7 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () 
     expect(details.exists()).toBe(true);
 
     const modalItem = details.at(0).props().item;
-    const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
+    const amqPackageManifest = operatorHubListPageProps.packageManifests.data[0];
 
     expect(modalItem.name).toEqual(
       amqPackageManifest.status.channels[0].currentCSVDesc.displayName,

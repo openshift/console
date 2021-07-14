@@ -764,9 +764,9 @@ export const dummyPackageManifest = {
 export const operatorHubListPageProps = {
   loaded: true,
   loadError: null,
-  operatorGroup: { loaded: false },
+  operatorGroups: { loaded: false },
   catalogSourceConfig: { loaded: false },
-  packageManifest: {
+  packageManifests: {
     loaded: true,
     data: [
       amqPackageManifest,
@@ -776,6 +776,7 @@ export const operatorHubListPageProps = {
       svcatPackageManifest,
     ] as PackageManifestKind[],
   },
+  clusterServiceVersions: null,
 };
 
 export const operatorHubTileViewPageProps = {
