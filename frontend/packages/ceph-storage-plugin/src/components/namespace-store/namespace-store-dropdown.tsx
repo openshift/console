@@ -96,7 +96,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
         />
       )}
       <Dropdown
-        className="dropdown dropdown--full-width"
+        className="dropdown--full-width"
         toggle={
           <DropdownToggle
             id="nns-dropdown-id"

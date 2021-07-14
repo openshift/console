@@ -441,7 +441,7 @@ class Dropdown_ extends DropdownMixin {
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
           <div
             className={classNames(
-              'dropdown pf-c-dropdown',
+              'pf-c-dropdown',
               { 'pf-m-expanded': this.state.active },
               dropDownClassName,
             )}
@@ -513,7 +513,7 @@ class Dropdown_ extends DropdownMixin {
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div
           className={classNames(
-            { 'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
+            { 'pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
             dropDownClassName,
           )}
         >

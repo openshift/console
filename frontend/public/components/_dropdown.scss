@@ -12,10 +12,6 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   min-width: 0;
 }
 
-.dropdown .co-m-resource-icon {
-  margin-left: 2px;
-}
-
 .dropdown--full-width {
   &,
   .pf-c-dropdown__toggle {
@@ -231,6 +227,10 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   &:hover {
     color: var(--pf-global--Color--dark-100);
   }
+}
+
+.pf-c-dropdown .co-m-resource-icon {
+  margin-left: 2px;
 }
 
 .pf-c-dropdown__menu {

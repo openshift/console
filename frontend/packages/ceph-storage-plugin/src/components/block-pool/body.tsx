@@ -188,7 +188,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
               {t('ceph-storage-plugin~Data protection policy')}
             </label>
             <Dropdown
-              className="dropdown dropdown--full-width"
+              className="dropdown--full-width"
               toggle={
                 <DropdownToggle
                   id="replica-dropdown"
@@ -216,7 +216,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
                 {t('ceph-storage-plugin~Volume type')}
               </label>
               <Dropdown
-                className="dropdown dropdown--full-width"
+                className="dropdown--full-width"
                 toggle={
                   <DropdownToggle
                     id="toggle-id"

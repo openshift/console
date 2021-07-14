@@ -577,17 +577,6 @@ dl.co-inline {
   }
 }
 
-.co-kebab {
-  &__button {
-    border: 0; // remove so that dropdown-kebab-pf <button class="btn-link"> are aligned whether disabled or not
-    padding: 0;
-
-    &[disabled] {
-      color: $color-pf-black-300 !important;
-    }
-  }
-}
-
 .no-margin {
   margin: 0 !important;
 }
