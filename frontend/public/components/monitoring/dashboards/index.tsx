@@ -1,5 +1,13 @@
 import * as _ from 'lodash-es';
-import { Button, Dropdown, DropdownToggle, DropdownItem, Label } from '@patternfly/react-core';
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  Label,
+  Select,
+  SelectOption,
+} from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -32,13 +40,12 @@ import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { history, LoadingInline, useSafeFetch } from '../../utils';
-import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
-import customTimeRangeModal from './custom-time-range-modal';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
+import TimespanDropdown from './timespan-dropdown';
 import {
   MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
@@ -105,7 +112,27 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, , open, close] = useBoolean(false);
+  const [filterText, setFilterText] = React.useState<string>();
+
+  const onSelect = (e, value: string): void => {
+    onChange(value);
+    close();
+    setFilterText(undefined);
+  };
+
+  const onToggle = (isExpanded: boolean) => {
+    if (isExpanded) {
+      open();
+    } else {
+      close();
+      setFilterText(undefined);
+    }
+  };
+
+  const filteredItems = filterText
+    ? _.pickBy(items, (v) => v.toLowerCase().includes(filterText))
+    : items;
 
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
@@ -125,25 +152,21 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
           }
         />
       ) : (
-        <Dropdown
-          dropdownItems={_.map(items, (name, key) => (
-            <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
-              {name}
-            </DropdownItem>
-          ))}
-          isOpen={isOpen}
-          onSelect={setClosed}
-          toggle={
-            <DropdownToggle
-              className="monitoring-dashboards__dropdown-button"
-              id={`${id}-dropdown`}
-              onToggle={toggleIsOpen}
-            >
-              {items[selectedKey]}
-            </DropdownToggle>
-          }
+        <Select
           className="monitoring-dashboards__variable-dropdown"
-        />
+          hasInlineFilter={_.size(items) > 1}
+          inlineFilterPlaceholderText={t('public~Filter options')}
+          onFilter={() => null}
+          isOpen={isOpen}
+          onSelect={onSelect}
+          onToggle={onToggle}
+          onTypeaheadInputChanged={(v) => setFilterText(v.toLowerCase())}
+          placeholderText={items[selectedKey]}
+        >
+          {_.map(filteredItems, (name, key) => (
+            <SelectOption key={key} value={name} />
+          ))}
+        </Select>
       )}
     </div>
   );
@@ -299,55 +322,6 @@ const DashboardDropdown = ({ items, onChange, selectedKey }) => {
         }
       />
     </div>
-  );
-};
-
-const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
-
-export const TimespanDropdown = () => {
-  const { t } = useTranslation();
-
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
-  );
-  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
-
-  const dispatch = useDispatch();
-  const onChange = React.useCallback(
-    (v: string) => {
-      if (v === CUSTOM_TIME_RANGE_KEY) {
-        customTimeRangeModal({});
-      } else {
-        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
-        dispatch(monitoringDashboardsSetEndTime(null));
-      }
-    },
-    [dispatch],
-  );
-
-  const timespanOptions = {
-    [CUSTOM_TIME_RANGE_KEY]: t('public~Custom time range'),
-    '5m': t('public~Last {{count}} minute', { count: 5 }),
-    '15m': t('public~Last {{count}} minute', { count: 15 }),
-    '30m': t('public~Last {{count}} minute', { count: 30 }),
-    '1h': t('public~Last {{count}} hour', { count: 1 }),
-    '2h': t('public~Last {{count}} hour', { count: 2 }),
-    '6h': t('public~Last {{count}} hour', { count: 6 }),
-    '12h': t('public~Last {{count}} hour', { count: 12 }),
-    '1d': t('public~Last {{count}} day', { count: 1 }),
-    '2d': t('public~Last {{count}} day', { count: 2 }),
-    '1w': t('public~Last {{count}} week', { count: 1 }),
-    '2w': t('public~Last {{count}} week', { count: 2 }),
-  };
-
-  return (
-    <VariableDropdown
-      id="monitoring-time-range-dropdown"
-      items={timespanOptions}
-      label={t('public~Time range')}
-      onChange={onChange}
-      selectedKey={endTime ? CUSTOM_TIME_RANGE_KEY : formatPrometheusDuration(timespan)}
-    />
   );
 };
 
