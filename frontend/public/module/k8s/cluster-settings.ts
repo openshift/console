@@ -247,7 +247,7 @@ export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
 
 export const getOCMLink = (clusterID: string): string =>
-  `https://cloud.redhat.com/openshift/details/${clusterID}`;
+  `https://console.redhat.com/openshift/details/${clusterID}`;
 
 export const getConditionUpgradeableFalse = (resource) =>
   resource.status?.conditions.find(
