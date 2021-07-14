@@ -6,9 +6,9 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { ANNOTATIONS } from '@console/shared/src';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
+  ANNOTATIONS,
   AccessMode,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
