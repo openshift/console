@@ -1,12 +1,7 @@
 import { browser } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import {
-  click,
-  createResources,
-  deleteResources,
-  fillInput,
-} from '@console/shared/src/test-utils/utils';
+import { click, createResources, deleteResources, fillInput } from '../utils/shared-utils';
 import * as bootOrderView from '../views/dialogs/editBootOrderView';
 import * as editFlavorView from '../views/dialogs/editFlavorView';
 import { saveButton, tableRows } from '../views/kubevirtUIResource.view';

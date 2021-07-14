@@ -5,7 +5,7 @@ import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.
 import { TemplateModel } from '@console/internal/models';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
+import { asyncForEach, click, fillInput } from '../../utils/shared-utils';
 import { diskStorageClass } from '../../views/dialogs/diskDialog.view';
 import { confirmActionButton } from '../../views/importWizard.view';
 import { continueButton, modalTitle, saveButton } from '../../views/kubevirtUIResource.view';

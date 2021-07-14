@@ -1,5 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { click, fillInput } from '../../utils/shared-utils';
 import * as view from '../../views/dialogs/cloneVirtualMachineDialog.view';
 import { PAGE_LOAD_TIMEOUT_SECS, SEC } from '../utils/constants/common';
 import { selectOptionByText } from '../utils/utils';

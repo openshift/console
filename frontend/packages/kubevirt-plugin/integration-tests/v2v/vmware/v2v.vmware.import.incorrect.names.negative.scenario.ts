@@ -1,9 +1,3 @@
-import {
-  asyncForEach,
-  click,
-  deleteResources,
-  removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '../../../src/models';
 import { DiskDialog } from '../../tests/dialogs/diskDialog';
 import { NetworkInterfaceDialog } from '../../tests/dialogs/networkInterfaceDialog';
@@ -11,6 +5,12 @@ import { v2vUIDeployment } from '../../tests/mocks/mocks';
 import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
 import { KEBAP_ACTION } from '../../tests/utils/constants/common';
 import { wrongValues } from '../../tests/utils/constants/vm';
+import {
+  asyncForEach,
+  click,
+  deleteResources,
+  removeLeakedResources,
+} from '../../utils/shared-utils';
 import * as view from '../../views/importWizard.view';
 import { clickKebabAction } from '../../views/wizard.view';
 import { vmwareVMConfig } from './v2v.configs';

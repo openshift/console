@@ -1,12 +1,8 @@
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import {
-  asyncForEach,
-  deleteResources,
-  removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
 import { v2vUIDeployment } from '../../tests/mocks/mocks';
 import { RhvImportWizard } from '../../tests/models/rhvImportWizard';
 import { wrongValues } from '../../tests/utils/constants/vm';
+import { asyncForEach, deleteResources, removeLeakedResources } from '../../utils/shared-utils';
 import { rhvVMConfigNoStartOnCreate } from './v2v.rhv.configs';
 
 describe('RHV Wizard validation, negative tests', () => {

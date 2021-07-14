@@ -6,7 +6,7 @@ import {
   createResources,
   deleteResources,
   waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import * as dashboardView from '../views/dashboard.view';
 import { getVMManifest, hddDisk, multusNAD, multusNetworkInterface } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';

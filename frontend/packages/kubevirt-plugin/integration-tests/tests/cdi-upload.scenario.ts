@@ -9,7 +9,7 @@ import {
   removeLeakedResources,
   withResource,
   withResources,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import { typeWarnMessage } from '../views/pvc.view';
 import { bootSource, vmtLinkByName } from '../views/template.view';
 import { AccessMode, getTestDataVolume, VolumeMode } from './mocks/mocks';

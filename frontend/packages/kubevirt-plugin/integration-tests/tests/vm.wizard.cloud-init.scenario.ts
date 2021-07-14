@@ -1,6 +1,6 @@
 import { get } from 'lodash';
-import { withResource } from '@console/shared/src/test-utils/utils';
 import { getCloudInitVolume } from '../../src/selectors/vm/selectors';
+import { withResource } from '../utils/shared-utils';
 import { cloudInitScript } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
