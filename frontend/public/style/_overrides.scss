@@ -49,29 +49,6 @@ kbd {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-.modal.right-side-modal-pf {
-  top: 76px; // since PatternFly 4's masthead is taller than PatternFly 3's
-
-  .modal-dialog {
-    height: 100%; // Entend panel to bottom
-    margin-top: 0; // parent is positioned: fixed so margin isn't needed for positioning
-
-    .modal-content {
-      height: 100%; // Use % instead of vh so that scroll-shadows can be used
-      max-height: none;
-    }
-  }
-
-  &.fade {
-    .modal-dialog {
-      transition-duration: 200ms;
-    }
-    &:not(.in) .modal-dialog {
-      transform: translate3d(15px, 0, 0);
-    }
-  }
-}
-
 .modal-footer .alert {
   text-align: left;
 }
