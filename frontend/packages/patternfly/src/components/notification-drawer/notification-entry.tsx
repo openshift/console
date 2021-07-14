@@ -85,9 +85,13 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
   };
   return (
     <li
-      className={classNames(`pf-c-notification-drawer__list-item pf-m-hoverable pf-m-${type}`, {
-        'pf-m-read': isRead,
-      })}
+      className={classNames(
+        `pf-c-notification-drawer__list-item pf-m-hoverable`,
+        type === NotificationTypes.update ? 'pf-m-default' : `pf-m-${type}`,
+        {
+          'pf-m-read': isRead,
+        },
+      )}
       tabIndex={0}
       onClick={
         targetPath

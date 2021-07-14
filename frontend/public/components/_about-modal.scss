@@ -16,13 +16,4 @@
 
 .co-about-modal__alert {
   margin-bottom: var(--pf-global--spacer--xl);
-  // PatternFly does not have an `update` alert variant
-  // See https://github.com/patternfly/patternfly-react/issues/4594
-  .pf-c-alert__icon {
-    display: none;
-    &--alt {
-      display: inline-flex;
-      vertical-align: -0.25em !important;
-    }
-  }
 }
