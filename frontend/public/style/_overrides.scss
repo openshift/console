@@ -199,16 +199,6 @@ h6 {
   padding-right: 0;
 }
 
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-primary {
-  color: var(--pf-c-button--m-primary--Color);
-}
-
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-plain:hover {
-  color: var(--pf-c-button--m-plain--hover--Color);
-}
-
 .pf-c-chip-group.pf-m-toolbar {
   margin-bottom: var(--pf-global--spacer--xs);
 }
