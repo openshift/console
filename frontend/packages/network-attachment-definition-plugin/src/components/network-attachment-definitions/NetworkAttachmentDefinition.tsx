@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { QuickStart } from '@patternfly/quickstarts';
 import { Button, EmptyState, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
 import { RocketIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   ListPage,
