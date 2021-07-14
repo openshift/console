@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { RouteIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import {
-  QuickStartContext,
-  QuickStartContextValues,
-} from '@console/app/src/components/quick-starts/utils/quick-start-context';
 import {
   AllQuickStartStates,
   QuickStart,
   QuickStartStatus,
-} from '@console/app/src/components/quick-starts/utils/quick-start-types';
-import { getQuickStartStatus } from '@console/app/src/components/quick-starts/utils/quick-start-utils';
+  QuickStartContext,
+  QuickStartContextValues,
+  getQuickStartStatus,
+} from '@patternfly/quickstarts';
+import { RouteIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import {
   GettingStartedCard,
   GettingStartedLink,

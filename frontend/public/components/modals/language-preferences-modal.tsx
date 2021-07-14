@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import i18next, { TFunction } from 'i18next';
-
+import { QuickStartContextValues } from '@patternfly/quickstarts';
 import { Dropdown } from '../utils';
 import {
   createModalLauncher,
@@ -10,9 +10,26 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory/modal';
+import { getProcessedResourceBundle } from '@console/app/src/components/quick-starts/utils/quick-start-context';
 
 const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { i18n, t } = useTranslation();
+  const { setResourceBundle } = props.quickStartContext;
+
+  React.useEffect(() => {
+    const onLanguageChange = (lng) => {
+      // Update language resource of quick starts components
+      const resourceBundle = i18n.getResourceBundle(lng, 'console-app');
+      const processedBundle = getProcessedResourceBundle(resourceBundle, lng);
+      setResourceBundle(processedBundle, lng);
+    };
+    i18n.on('languageChanged', onLanguageChange);
+
+    return () => {
+      i18n.off('languageChanged', onLanguageChange);
+    };
+  });
+
   const supportedLocales = {
     en: 'English',
     zh: '中文',
@@ -65,4 +82,5 @@ export const languagePreferencesModal = createModalLauncher(LanguagePreferencesM
 
 type LanguagePreferencesModalProps = {
   t: TFunction;
+  quickStartContext: QuickStartContextValues;
 } & ModalComponentProps;

@@ -32,7 +32,7 @@
     "entry": "src/plugin.tsx",
     "exposedModules": {
       "tourContext": "src/components/tour/tour-context.ts",
-      "quickStartContext": "src/components/quick-starts/utils/quick-start-context.ts",
+      "quickStartContext": "src/components/quick-starts/utils/quick-start-context.tsx",
       "fileUploadContext": "src/components/file-upload/file-upload-context.ts",
       "reduxReducer": "src/redux/reducer.ts"
     }

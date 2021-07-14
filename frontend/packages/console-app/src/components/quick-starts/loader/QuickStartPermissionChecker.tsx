@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { QuickStart } from '../utils/quick-start-types';
+import { QuickStart } from '@patternfly/quickstarts';
 import useQuickStartPermission from '../utils/useQuickStartPermission';
 
 type QuickStartPermissionCheckerProps = {

@@ -1,9 +1,8 @@
 import * as React from 'react';
+import { QuickStart, isDisabledQuickStart, getDisabledQuickStarts } from '@patternfly/quickstarts';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { QuickStartModel } from '../../../models';
-import { QuickStart } from '../utils/quick-start-types';
-import { isDisabledQuickStart, getDisabledQuickStarts } from '../utils/quick-start-utils';
 import QuickStartPermissionChecker from './QuickStartPermissionChecker';
 
 type QuickStartsLoaderProps = {

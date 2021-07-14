@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { QuickStart } from '@patternfly/quickstarts';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import CatalogServiceProvider, {
   CatalogService,
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
