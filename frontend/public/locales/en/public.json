@@ -1483,6 +1483,7 @@
   "Add favorite {{content}}": "Add favorite {{content}}",
   "Help": "Help",
   "Maximum file size exceeded. File limit is 4MB.": "Maximum file size exceeded. File limit is 4MB.",
+  "Filename": "Filename",
   "Browse...": "Browse...",
   "Non-printable file detected.": "Non-printable file detected.",
   "File contains non-printable characters. Preview is not available.": "File contains non-printable characters. Preview is not available.",
