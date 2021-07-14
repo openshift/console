@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {
-  ClipboardListIcon,
-  HourglassStartIcon,
-  HourglassHalfIcon,
-  SyncAltIcon,
   BanIcon,
+  ClipboardListIcon,
   ExclamationTriangleIcon,
+  HourglassHalfIcon,
+  HourglassStartIcon,
+  NotStartedIcon,
+  SyncAltIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
-import NotStartedIcon from './NotStartedIcon';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import StatusIconAndText from './StatusIconAndText';
 import { StatusComponentProps } from './types';
