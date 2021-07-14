@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { TFunction } from 'i18next';
-import { apiVersionForModel } from '@console/internal/module/k8s';
+import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -235,7 +235,7 @@ export const FooterPrimaryActions = (t: TFunction) => ({
   UPDATE: t('ceph-storage-plugin~Save'),
 });
 
-export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
+export const isDefaultPool = (blockPoolConfig: K8sResourceKind): boolean =>
   !!blockPoolConfig?.metadata.ownerReferences?.find(
     (ownerReference) => ownerReference.name === OCS_INTERNAL_CR_NAME,
   );

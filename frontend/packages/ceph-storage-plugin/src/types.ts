@@ -207,9 +207,13 @@ export type StoragePoolKind = K8sResourceCommon & {
     parameters?: {
       compression_mode: string;
     };
+    mirroring?: {
+      enabled: boolean;
+    };
   };
   status?: {
     phase?: string;
+    mirroringStatus?: any;
   };
 };
 

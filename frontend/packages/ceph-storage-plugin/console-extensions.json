@@ -111,5 +111,19 @@
       "required": ["MCG"],
       "disallowed": ["OCS"]
     }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "ceph.rook.io",
+        "version": "v1",
+        "kind": "CephBlockPool"
+      },
+      "component":{ "$codeRef": "blockPoolDetailsPage.default" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
   }
 ]
