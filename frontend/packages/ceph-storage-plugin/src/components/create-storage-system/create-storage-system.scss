@@ -1,0 +1,23 @@
+.odf-create-storage-system__header {
+    border-bottom: var(--pf-global--BorderWidth--sm) solid #ddd;
+    padding-right: var(--pf-global--spacer--lg);
+    padding-left: var(--pf-global--spacer--lg);
+    padding-bottom: var(--pf-global--spacer--sm);
+  }
+
+  .odf-create-storage-system__breadcrumb {
+    // _overrides.scss modifies the default padding for pf breadcrumbs to be padding-top: 25px 
+    // Adjusting it since it takes a lot of space on thecreate system page
+    padding-top: var(--pf-global--spacer--sm);
+  }
+  
+  .odf-create-storage-system-footer__alert {
+    margin: 0 var(--pf-global--spacer--md);
+  }
+
+  .odf-create-storage-system-wizard-body {
+    margin: var(--pf-global--spacer--4xl);
+    &__error {
+      color: var(--pf-global--danger-color--200);
+    }
+  }

@@ -135,3 +135,15 @@ export const NooBaaObjectBucketModel: K8sKind = {
   crd: true,
   legacyPluralURL: true,
 };
+
+export const StorageSystemModel: K8sKind = {
+  label: 'StorageSystem',
+  labelPlural: 'StorageSystems',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'odf.openshift.io',
+  plural: 'storagesystems',
+  abbr: 'SS',
+  namespaced: true,
+  kind: 'StorageSystem',
+  crd: true,
+};

@@ -61,6 +61,7 @@ type ConsumedExtensions =
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
+const storageSystemGvk = referenceForModel(models.StorageSystemModel);
 
 const OCS_MODEL_FLAG = 'OCS_MODEL';
 
@@ -131,6 +132,22 @@ const plugin: Plugin<ConsumedExtensions> = [
     flags: {
       required: [OCS_CONVERGED_FLAG, CEPH_FLAG],
       disallowed: [OCS_INDEPENDENT_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [
+        `/k8s/ns/:ns/${referenceForModel(
+          ClusterServiceVersionModel,
+        )}/:appName/${storageSystemGvk}/~new`,
+        `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${storageSystemGvk}/~new`,
+      ],
+      loader: () =>
+        import(
+          './components/create-storage-system/create-storage-system' /* webpackChunkName: "create-storage-system" */
+        ).then((m) => m.default),
     },
   },
   {

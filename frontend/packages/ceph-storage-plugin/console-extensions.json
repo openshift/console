@@ -111,5 +111,19 @@
       "required": ["MCG"],
       "disallowed": ["OCS"]
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": [
+        "/k8s/ns/:ns/operators.coreos.com~v1alpha1~ClusterServiceVersion/:appName/odf.openshift.io~v1alpha1~StorageSystem/~new",
+        "/k8s/ns/:ns/clusterserviceversions/:appName/odf.openshift.io~v1alpha1~StorageSystem/~new"
+      ],
+      "component": {
+        "$codeRef": "createStorageSystem"
+      }
+    }
   }
+
 ]
