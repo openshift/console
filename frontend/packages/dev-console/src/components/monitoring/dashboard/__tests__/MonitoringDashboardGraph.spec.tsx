@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TFunction } from 'i18next';
+import * as redux from 'react-redux';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { monitoringDashboardQueries } from '../../queries';
@@ -17,6 +18,11 @@ jest.mock('react-i18next', () => {
 });
 
 describe('Monitoring Dashboard graph', () => {
+  // FIXME upgrading redux types is causing many errors at this time
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  const spyDispatch = jest.spyOn(redux, 'useDispatch');
+  spyDispatch.mockReturnValue(() => {});
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;
 
   beforeAll(() => {

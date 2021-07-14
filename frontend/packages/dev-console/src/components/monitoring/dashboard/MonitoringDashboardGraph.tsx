@@ -1,5 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch } from 'react-redux';
+import {
+  monitoringDashboardsSetEndTime,
+  monitoringDashboardsSetTimespan,
+} from '@console/internal/actions/ui';
 import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { Humanize } from '@console/internal/components/utils';
@@ -40,6 +47,14 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   endTime,
 }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const onZoom = React.useCallback(
+    (from, to) => {
+      dispatch(monitoringDashboardsSetEndTime(to));
+      dispatch(monitoringDashboardsSetTimespan(to - from));
+    },
+    [dispatch],
+  );
   return (
     <DashboardCard className="monitoring-dashboards__card odc-monitoring-dashboard-graph">
       <DashboardCardHeader>
@@ -63,6 +78,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
             pollInterval={pollInterval}
             fixedEndTime={endTime}
             formatSeriesTitle={(labels) => labels.pod}
+            onZoom={onZoom}
             showLegend
           />
         </PrometheusGraphLink>
