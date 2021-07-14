@@ -172,7 +172,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
         () =>
           consumers.reduce((items, curr) => {
             items[referenceForModel(curr.model)] = t('console-shared~By {{label}}', {
-              label: curr.model.label,
+              label: curr.model.labelKey ? t(curr.model.labelKey) : curr.model.label,
             });
             return items;
           }, {}),
