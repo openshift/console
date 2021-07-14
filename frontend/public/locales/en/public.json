@@ -2,6 +2,7 @@
   "unknown": "unknown",
   "Cluster update available. <2>Update cluster</2>": "Cluster update available. <2>Update cluster</2>",
   "OpenShift version": "OpenShift version",
+  "ACM version": "ACM version",
   "Kubernetes version": "Kubernetes version",
   "Channel": "Channel",
   "Cluster ID": "Cluster ID",

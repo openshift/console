@@ -9,6 +9,7 @@ import {
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/shared';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 import { getBrandingDetails } from './masthead';
 import { ReleaseNotesLink, useAccessReview } from './utils';
 import { ClusterVersionModel } from '../models';
@@ -34,13 +35,16 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
   const clusterID = getClusterID(clusterVersion);
   const channel: string = clusterVersion?.spec?.channel;
   const openshiftVersion = getOpenShiftVersion(clusterVersion);
+  const { branding, kubeAPIServerURL } = window.SERVER_FLAGS;
+  // TODO: get ACM version
+  const acmVersion = isMultiClusterEnabled() ? 'PLACEHOLDER' : null;
   const clusterVersionIsEditable =
     useAccessReview({
       group: ClusterVersionModel.apiGroup,
       resource: ClusterVersionModel.plural,
       verb: 'patch',
       name: 'version',
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+    }) && branding !== 'dedicated';
 
   return (
     <>
@@ -73,6 +77,14 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
               </TextListItem>
             </>
           )}
+          {acmVersion && (
+            <>
+              <TextListItem component="dt">{t('public~ACM version')}</TextListItem>
+              <TextListItem component="dd">
+                <div className="co-select-to-copy">{acmVersion}</div>
+              </TextListItem>
+            </>
+          )}
           <TextListItem component="dt">{t('public~Kubernetes version')}</TextListItem>
           <TextListItem component="dd" className="co-select-to-copy">
             {kubernetesVersion}
@@ -95,7 +107,7 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
           )}
           <TextListItem component="dt">{t('public~API server')}</TextListItem>
           <TextListItem component="dd" className="co-select-to-copy">
-            {window.SERVER_FLAGS.kubeAPIServerURL}
+            {kubeAPIServerURL}
           </TextListItem>
         </TextList>
       </TextContent>
