@@ -10,11 +10,11 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
   label,
   unitName,
   unitOptions,
-  defaultUnitSize,
   helpText,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
+  const [fieldUnit] = useField(unitName);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const fieldId = getFieldId(props.name, 'resource-limit');
   const isValid = !(touched && error);
@@ -39,7 +39,7 @@ const ResourceLimitField: React.FC<ResourceLimitFieldProps> = ({
           setFieldValue(unitName, val.unit);
         }}
         dropdownUnits={unitOptions}
-        defaultRequestSizeUnit={defaultUnitSize}
+        defaultRequestSizeUnit={fieldUnit.value}
         defaultRequestSizeValue={field.value}
         describedBy={`${fieldId}-helper`}
       />
