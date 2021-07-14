@@ -110,8 +110,8 @@ Feature: Create Pipeline from Add Options
 
 
         #Marking this as manual due to git rate limit  issue
-        @manual
-        Scenario Outline: Add Pipeline display in git workload for builder image: P-01-TC08
+        @regression @manual
+        Scenario Outline: Add Pipeline option display in git workload for builder image: P-01-TC08
             Given user is at Import from Git form
              When user enters Git Repo url as "<git_url>"
              Then Add pipeline checkbox is displayed
@@ -125,3 +125,31 @@ Feature: Create Pipeline from Add Options
                   | https://github.com/sclorg/django-ex.git        |
                   | https://github.com/spring-projects/spring-boot |
                   | https://github.com/sclorg/nodejs-ex.git        |
+
+
+        @regression @manual
+        Scenario Outline: Add Pipeline option display for dotnet builder image with context directory": P-01-TC09
+            Given user is at Import from git page
+             When user enters Git Repo url as "<git_url>"
+              And user selects Show advanced Git options
+              And user clears Context dir field
+              And user enters Context dir as "<dir_name>"
+             Then Add pipeline checkbox is displayed
+
+        Examples:
+                  | git_url                                                   | dir_name |
+                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | /app     |
+
+
+        @regression @manual
+        Scenario Outline: Add Pipeline option doesn't display for server related git urls: P-01-TC10
+            Given user is at Import from git page
+             When user enters Git Repo url as "<git_url>"
+              And user selects "<builder_image>" builder image
+             Then git url gets Validated
+              And user is able to see info message "<message>" in Pipelines section
+
+        Examples:
+                  | git_url                                | builder_image | message                                                                         |
+                  | https://github.com/sclorg/httpd-ex.git | httpd         | There are no pipeline templates available for Httpd and Deployment combination. |
+                  | https://github.com/sclorg/nginx-ex.git | Nginx         | There are no pipeline templates available for Nginx and Deployment combination. |
