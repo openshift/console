@@ -1,27 +1,27 @@
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import { JSONSchemaType } from './types';
 import { hasNoFields, prune } from './utils';
 
-const OBJECT: JSONSchema6 = {
+const OBJECT: JSONSchema7 = {
   type: JSONSchemaType.object,
   properties: {
     test: { type: JSONSchemaType.string },
   },
 };
 
-const ARRAY: JSONSchema6 = {
+const ARRAY: JSONSchema7 = {
   type: JSONSchemaType.array,
   items: {
     type: JSONSchemaType.string,
   },
 };
 
-const ADDITIONAL_PROPERTIES_OBJECT: JSONSchema6 = {
+const ADDITIONAL_PROPERTIES_OBJECT: JSONSchema7 = {
   type: JSONSchemaType.object,
   additionalProperties: { type: JSONSchemaType.string },
 };
 
-const NESTED: JSONSchema6 = {
+const NESTED: JSONSchema7 = {
   type: JSONSchemaType.object,
   properties: {
     emptyArray: {

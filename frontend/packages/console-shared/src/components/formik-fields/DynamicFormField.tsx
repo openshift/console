@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { FormProps } from '@rjsf/core';
 import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
-import { FormProps } from 'react-jsonschema-form';
 import { AsyncComponent } from '@console/internal/components/utils';
 
 type DynamicFormFieldProps = FormProps<any> & {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as Ajv from 'ajv';
 import { Formik } from 'formik';
 import { safeDump, safeLoad } from 'js-yaml';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +42,7 @@ export type HelmInstallUpgradeFormData = {
   appVersion: string;
   yamlData: string;
   formData: any;
-  formSchema: JSONSchema6;
+  formSchema: JSONSchema7;
   editorType: EditorType;
 };
 
@@ -70,7 +70,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
 
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
-  const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema6>();
+  const [initialFormSchema, setInitialFormSchema] = React.useState<JSONSchema7>();
 
   const helmAction: HelmActionType =
     initialChartURL !== 'null' ? HelmActionType.Install : HelmActionType.Upgrade;
