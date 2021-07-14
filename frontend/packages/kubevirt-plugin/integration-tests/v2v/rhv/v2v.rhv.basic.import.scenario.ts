@@ -28,11 +28,11 @@ describe('Kubevirt imports VM from RHV using wizard', () => {
   });
 
   it(
-    'Importing VM from RHV Instance with starting after migration',
+    'Importing VM from RHV Instance with no starting after migration',
     async () => {
       const vm = await wizard.import(rhvVMConfigStartOnCreate);
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.waitForStatus(VM_STATUS.Running, V2V_VM_IMPORT_TIMEOUT);
+        await vm.waitForStatus(VM_STATUS.Off, V2V_VM_IMPORT_TIMEOUT);
       });
     },
     V2V_VM_IMPORT_TIMEOUT,

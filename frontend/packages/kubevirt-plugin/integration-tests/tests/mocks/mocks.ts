@@ -49,6 +49,21 @@ export const multusNAD = {
 };
 deepFreeze(multusNAD);
 
+export const sriovNAD = {
+  apiVersion: 'k8s.cni.cncf.io/v1',
+  kind: 'NetworkAttachmentDefinition',
+  metadata: {
+    name: `sriov-${testName}`,
+    namespace: testName,
+    labels: { automatedTest: testName },
+  },
+  spec: {
+    // config: '{ "cniVersion": "0.3.1", "type": "cnv-bridge", "bridge": "testbridge", "ipam": {} }',
+    config:
+      '{ "cniVersion": "0.3.1", "name": "sriov-network", "type": "sriov", "vlan": 0, "vlanQoS": 0, "ipam": {} }',
+  },
+};
+
 export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, volumeMode }) => {
   return {
     apiVersion: 'cdi.kubevirt.io/v1beta1',

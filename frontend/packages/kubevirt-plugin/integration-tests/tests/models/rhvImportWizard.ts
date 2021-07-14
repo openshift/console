@@ -81,7 +81,6 @@ export class RhvImportWizard extends ImportWizard {
     const { provider, instanceConfig, sourceVMName } = config;
     // Establishing connection:
     await this.selectProvider(provider);
-    await this.waitForSpinner();
     await this.configureInstance(instanceConfig);
     await this.waitForSpinner();
 

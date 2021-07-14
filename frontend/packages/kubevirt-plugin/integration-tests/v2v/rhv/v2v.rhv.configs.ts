@@ -32,8 +32,8 @@ const exInstanceConfig: InstanceConfig = {
   saveInstance: false,
 };
 
-export const vmName = 'v2v-rhel7-vm';
-export const vmNameSecond = 'v2v-rhel7-vm';
+export const vmName = 'v2v-cirros';
+export const vmNameSecond = 'v2v-cirros-vm-for-tests';
 export const RHV = 'Red Hat Virtualization (RHV)';
 
 export const rhvVMConfigStartOnCreate: VMImportConfig = {
@@ -50,6 +50,16 @@ export const rhvVMConfigNoStartOnCreate: VMImportConfig = {
   name: 'v2v-rhel7-vm-migrated-no-start',
   description: 'Automated test for migration from RHV reusing existing instance',
   sourceVMName: vmName,
+  provider: RHV,
+  instanceConfig: newInstanceConfig,
+  advancedEdit: true,
+  startOnCreation: false,
+};
+
+export const sriovVMConfigNoStartOnCreate: VMImportConfig = {
+  name: 'v2v-rhel7-vm-migrated-no-start',
+  description: 'Automated test for migration from RHV reusing existing instance',
+  sourceVMName: 'v2v-migration-sriov',
   provider: RHV,
   instanceConfig: newInstanceConfig,
   advancedEdit: true,

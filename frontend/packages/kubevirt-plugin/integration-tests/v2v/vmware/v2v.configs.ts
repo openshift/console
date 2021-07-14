@@ -48,6 +48,19 @@ export const vmwareVMConfig: VMImportConfig = {
   },
 };
 
+export const rhel8VMConfig: VMImportConfig = {
+  name: importedRhelVmName,
+  description: 'Basic import of RHEL8 from VMWare',
+  sourceVMName: 'v2v-rhel8-vm',
+  provider: vmProvider,
+  instanceConfig: newInstanceConfig,
+  operatingSystem: OperatingSystem.RHEL8,
+  workloadProfile: Workload.SERVER,
+  flavorConfig: {
+    flavor: Flavor.SMALL,
+  },
+};
+
 export const vmwareSecondVMConfig: VMImportConfig = {
   name: 'v2v-rhel7-igor-imported-second',
   description:
