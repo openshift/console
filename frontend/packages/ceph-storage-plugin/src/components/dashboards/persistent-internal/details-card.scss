@@ -1,0 +1,12 @@
+.ceph-storage-details-card__version-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ceph-storage-details-card__current-version {
+    flex-direction: row;
+}
+
+.ceph-storage-details-card__update-version {
+    flex-direction: row-reverse;
+}
