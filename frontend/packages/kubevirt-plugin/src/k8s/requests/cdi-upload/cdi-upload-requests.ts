@@ -56,7 +56,7 @@ const createUploadToken = async (pvcName: string, namespace: string): Promise<st
   };
 
   try {
-    const resource = await k8sCreate(UploadTokenRequestModel, tokenRequest);
+    const resource = await k8sCreate<K8sResourceKind>(UploadTokenRequestModel, tokenRequest);
     return resource?.status?.token;
   } catch (error) {
     throw new Error(error.message);
