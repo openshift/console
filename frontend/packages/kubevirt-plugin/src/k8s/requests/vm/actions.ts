@@ -7,6 +7,7 @@ import {
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
 import { getAPIVersion, getName, getNamespace } from '../../../selectors';
+import { V1AddVolumeOptions, V1RemoveVolumeOptions } from '../../../types/api';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
@@ -18,9 +19,15 @@ export enum VMActionType {
   Start = 'start',
   Stop = 'stop',
   Restart = 'restart',
+  AddVolume = 'addvolume',
+  RemoveVolume = 'removevolume',
 }
 
-const VMActionRequest = async (vm: VMKind, action: VMActionType) => {
+const VMActionRequest = async (
+  vm: VMKind,
+  action: VMActionType,
+  body?: V1AddVolumeOptions | V1RemoveVolumeOptions,
+) => {
   const method = 'PUT';
   let url = resourceURL(
     {
@@ -36,7 +43,14 @@ const VMActionRequest = async (vm: VMKind, action: VMActionType) => {
 
   url = `${url}/${action}`;
 
-  const response = await coFetch(url, { method });
+  const response = body
+    ? await coFetch(url, {
+        method,
+        name: getName(vm),
+        namespace: getNamespace(vm),
+        body: JSON.stringify(body),
+      })
+    : await coFetch(url, { method });
   const text = await response.text();
 
   return text;
@@ -55,6 +69,10 @@ export const startVM = async (vm: VMKind) => VMActionWithBootOrderRequest(vm, VM
 export const stopVM = async (vm: VMKind) => VMActionRequest(vm, VMActionType.Stop);
 export const restartVM = async (vm: VMKind) =>
   VMActionWithBootOrderRequest(vm, VMActionType.Restart);
+export const addHotplugPersistent = async (vm: VMKind, body: V1AddVolumeOptions) =>
+  VMActionRequest(vm, VMActionType.AddVolume, body);
+export const removeHotplugPersistent = async (vm: VMKind, body: V1RemoveVolumeOptions) =>
+  VMActionRequest(vm, VMActionType.RemoveVolume, body);
 
 export const deleteVM = async (
   vm: VMKind,

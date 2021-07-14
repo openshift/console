@@ -14,9 +14,9 @@ import {
 import { VMRestore, VMSnapshot } from '../../types';
 import { DASH, dimensifyRow } from '../../utils';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
+import { VMLabel } from '../VMLabel';
 import { VMSnapshotRowCustomData } from './types';
 import { VMSnapshotStatus } from './vm-snapshot-status';
-import { VMRunningSnapshotLabel } from './VMRunningSnapshotLabel';
 
 const { Delete } = Kebab.factory;
 
@@ -69,10 +69,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
       <TableData id={`${snapshotName}-online-snapshot`} className={dimensify()}>
         {indications
           ? indications.map((indication) => (
-              <VMRunningSnapshotLabel
-                key={`${snapshotName}-${indication}`}
-                indication={indication}
-              />
+              <VMLabel key={`${snapshotName}-${indication}`} indication={indication} />
             ))
           : DASH}
       </TableData>

@@ -7,6 +7,7 @@ import {
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
 import { getAPIVersion, getName, getNamespace } from '../../../selectors';
+import { V1AddVolumeOptions, V1RemoveVolumeOptions } from '../../../types/api';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMIKind } from '../../../types/vm';
 import { freeOwnedResources } from '../free-owned-resources';
@@ -14,9 +15,15 @@ import { freeOwnedResources } from '../free-owned-resources';
 export enum VMIActionType {
   Unpause = 'unpause',
   Pause = 'pause',
+  AddVolume = 'addvolume',
+  RemoveVolume = 'removevolume',
 }
 
-const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
+const VMIActionRequest = async (
+  vmi: VMIKind,
+  action: VMIActionType,
+  body?: V1AddVolumeOptions | V1RemoveVolumeOptions,
+) => {
   const method = 'PUT';
   let url = resourceURL(
     {
@@ -32,7 +39,15 @@ const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
 
   url = `${url}/${action}`;
 
-  const response = await coFetch(url, { method });
+  const response = body
+    ? await coFetch(url, {
+        method,
+        name: getName(vmi),
+        namespace: getNamespace(vmi),
+        body: JSON.stringify(body),
+      })
+    : await coFetch(url, { method });
+
   const text = await response.text();
 
   return text;
@@ -40,6 +55,10 @@ const VMIActionRequest = async (vmi: VMIKind, action: VMIActionType) => {
 
 export const unpauseVMI = async (vmi: VMIKind) => VMIActionRequest(vmi, VMIActionType.Unpause);
 export const pauseVMI = async (vmi: VMIKind) => VMIActionRequest(vmi, VMIActionType.Pause);
+export const addHotplugNonPersistent = async (vmi: VMIKind, body: V1AddVolumeOptions) =>
+  VMIActionRequest(vmi, VMIActionType.AddVolume, body);
+export const removeHotplugNonPersistent = async (vmi: VMIKind, body: V1RemoveVolumeOptions) =>
+  VMIActionRequest(vmi, VMIActionType.RemoveVolume, body);
 
 export const deleteVMI = async (
   vmi: VMIKind,

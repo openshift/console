@@ -104,6 +104,12 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
     return this;
   };
 
+  setNamespace = (ns: string) => {
+    this.ensurePath('metadata.namespace');
+    this.data.metadata.namespace = ns;
+    return this;
+  };
+
   setAccessModes = (accessModes: AccessMode[]) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.accessModes =

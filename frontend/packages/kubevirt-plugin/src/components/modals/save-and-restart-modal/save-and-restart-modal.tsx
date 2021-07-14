@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { restartVM } from '../../../k8s/requests/vm';
 import { VMIKind, VMKind } from '../../../types';
-import { ActionMessage } from '../../vms/constants';
+import { ActionMessage } from '../../vms/ActionMessage';
 import { confirmVMIModal } from '../menu-actions-modals/confirm-vmi-modal';
 
 export const saveAndRestartModal = (vm: VMKind, vmi: VMIKind, saveChanges?: () => void) =>
