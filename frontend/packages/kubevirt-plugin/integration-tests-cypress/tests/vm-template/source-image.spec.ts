@@ -5,6 +5,7 @@ import {
   TEMPLATE_BASE_IMAGE,
   TEMPLATE_NAME,
   TEST_PROVIDER,
+  VM_STATUS,
 } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
@@ -57,7 +58,9 @@ describe('test vm template source image', () => {
       pvcName: testName,
       pvcNamespace: 'default',
     });
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Cloning');
+    if (Cypress.env('STORAGE_CLASS') === 'hostpath-provisioner') {
+      virtualization.templates.testSource(TEMPLATE_NAME, VM_STATUS.Cloning);
+    }
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
     virtualization.templates.deleteSource(TEMPLATE_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
