@@ -113,7 +113,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     return sanitizedStep;
   };
 
-  const getIndex = (searchSpace: any, search: string, offset: number = 0) => {
+  const getIndex = (searchSpace: any, search: string | React.ReactText, offset: number = 0) => {
     const index = Object.values(searchSpace).findIndex((el) => el === search);
     return index - offset + 1;
   };
