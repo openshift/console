@@ -6,6 +6,7 @@ import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../mode
 import * as classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
+// import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
@@ -133,13 +134,12 @@ class Details extends React.Component {
           <SectionHeading text={t('public~Rules')} />
           <div className="co-m-pane__filter-row">
             {/* This page is temporarily disabled until we update the safe resources list.
-          <div className="co-m-pane__filter-bar-group">
-            <Link to={addHref(name, namespace)} className="co-m-primary-action">
-              <button className="btn btn-primary">Add Rule</button>
-            </Link>
-          </div>
-          */}
-
+            <div className="co-m-pane__filter-bar-group">
+              <Link to={addHref(name, namespace)} className="co-m-primary-action">
+                <Button variant="primary">{t('public~Add Rule')}</Button>
+              </Link>
+            </div>
+            */}
             <TextFilter
               label={t('public~rules by action or resource')}
               onChange={this.changeFilter}

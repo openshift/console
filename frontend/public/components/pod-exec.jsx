@@ -199,7 +199,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
               <div className="co-toolbar__item">{t('public~Connecting to')}</div>
               <div className="co-toolbar__item">
                 <Dropdown
-                  className="btn-group"
+                  className="co-toolbar__item-dropdown"
                   items={_.mapValues(containers, nameWithIcon)}
                   title={nameWithIcon(activeContainer || <LoadingInline />)}
                   onChange={this.onChangeContainer}

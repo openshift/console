@@ -5,11 +5,6 @@ form.pf-c-form {
   --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
 }
 
-// account for collapsing space between .btn
-.btn + .btn {
-  margin-left: 3px;
-}
-
 // Removes PF white gradiant effect since it doesn't work in Firefox. Truncated text still has trailing ...
 // Upstream issue https://github.com/patternfly/patternfly-next/issues/2633
 .catalog-tile-pf-description .truncated::after {
