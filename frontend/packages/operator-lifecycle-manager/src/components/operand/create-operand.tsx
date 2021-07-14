@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
+import CreateResource from '@console/internal/components/create-resource';
 import {
   PageHeading,
   StatusBox,
@@ -69,7 +70,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       ? '/topology'
       : `${resourcePathFromModel(
           ClusterServiceVersionModel,
-          match.params.appName,
+          match.params.csvName,
           match.params.ns,
         )}/${match.params.plural}`;
 
@@ -187,7 +188,7 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
           resources={[
             {
               kind: referenceForModel(ClusterServiceVersionModel),
-              name: props.match.params.appName,
+              name: props.match.params.csvName,
               namespace: props.match.params.ns,
               isList: false,
               prop: 'clusterServiceVersion',
@@ -214,17 +215,21 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
   );
 });
 
+export const CreateOperandPageExt: React.FC<Omit<CreateOperandPageProps, 'model'>> = ({
+  match,
+}) => <CreateResource match={match} DefaultPage={CreateOperandPage} />;
+
 export type CreateOperandProps = {
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
   customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
   initialEditorType: EditorType;
   loaded: boolean;
   loadError?: any;
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: RouterMatch<{ csvName: string; ns: string; plural: K8sResourceKindReference }>;
   model: K8sKind;
 };
 
 export type CreateOperandPageProps = {
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
+  match: CreateOperandProps['match'];
   model: K8sKind;
 };

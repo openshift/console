@@ -35,6 +35,7 @@ import {
   useResolvedExtensions,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
+import CreateResource from './create-resource';
 
 const RedirectComponent = (props) => {
   const to = `/k8s${props.location.pathname}`;
@@ -654,29 +655,13 @@ const AppContents: React.FC<{}> = () => {
               />
 
               <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
-              <LazyRoute
-                path="/k8s/cluster/:plural/~new"
-                exact
-                loader={() =>
-                  import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(
-                    (m) => m.CreateYAML,
-                  )
-                }
-              />
+              <Route path="/k8s/cluster/:plural/~new" exact component={CreateResource} />
               <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
               <LazyRoute
                 path="/k8s/ns/:ns/pods/:podName/containers/:name"
                 loader={() => import('./container').then((m) => m.ContainersDetailsPage)}
               />
-              <LazyRoute
-                path="/k8s/ns/:ns/:plural/~new"
-                exact
-                loader={() =>
-                  import('./create-yaml' /* webpackChunkName: "create-yaml" */).then((m) =>
-                    NamespaceFromURL(m.CreateYAML),
-                  )
-                }
-              />
+              <Route path="/k8s/ns/:ns/:plural/~new" exact component={CreateResource} />
               <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
               <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
 
