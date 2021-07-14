@@ -5,6 +5,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/release"
+	"k8s.io/client-go/util/retry"
 )
 
 func InstallChart(ns, name, url string, vals map[string]interface{}, conf *action.Configuration) (*release.Release, error) {
@@ -35,8 +36,20 @@ func InstallChart(ns, name, url string, vals map[string]interface{}, conf *actio
 	}
 	ch.Metadata.Annotations["chart_url"] = url
 
-	cmd.Namespace = ns
-	release, err := cmd.Run(ch, vals)
+	r := retry.DefaultRetry
+	r.Steps = 2
+	var release *release.Release
+	err = retry.RetryOnConflict(r, func() error {
+		cmd.Namespace = ns
+		release, err = cmd.Run(ch, vals)
+
+		// Cleanup failed release before re-Run
+		if err != nil {
+			UninstallRelease(name, conf)
+		}
+		return err
+	})
+
 	if err != nil {
 		return nil, err
 	}

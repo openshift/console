@@ -23,7 +23,7 @@ export GOFLAGS="-mod=vendor"
 COVER=${COVER:-"-cover"}
 
 # https://ci-operator-configresolver-ui-ci.apps.ci.l2s4.p1.openshiftapps.com/help#env
-OPENSHIFT_CI=${OPENSHIFT_CI:=false}
+export OPENSHIFT_CI=${OPENSHIFT_CI:=false}
 
 TESTABLE="./..."
 FORMATTABLE=(cmd pkg)

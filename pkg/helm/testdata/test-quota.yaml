@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota
+spec:
+  hard:
+    configmaps: "62"
+    limits.cpu: "170"
+    limits.memory: 260Gi
+    openshift.io/imagestreams: "0"
+    persistentvolumeclaims: "50"
+    pods: "100"
+    replicationcontrollers: "50"
+    requests.cpu: "71"
+    requests.memory: 205Gi
+    requests.storage: 350Gi
+    limits.cpu: "71"
+    limits.memory: 205Gi
+    requests.storage: 350Gi
+    resourcequotas: "1"
+    secrets: "512"
+    services: "70"
+    services.nodeports: "5"
