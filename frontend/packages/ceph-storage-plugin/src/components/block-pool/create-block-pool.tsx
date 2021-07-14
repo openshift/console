@@ -2,12 +2,10 @@ import * as React from 'react';
 import { match as RouteMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useDeepCompareMemoize } from '@console/shared';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import { BreadCrumbs, history, resourcePathFromModel } from '@console/internal/components/utils';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { Button } from '@patternfly/react-core';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { Modal } from '@console/shared/src/components/modal';
@@ -43,14 +41,10 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
   const cephCluster: CephClusterKind = useDeepCompareMemoize(cephClusters[0], true);
 
-  const storageClusterListPage = `${resourcePathFromModel(
-    ClusterServiceVersionModel,
-    appName,
-    ns,
-  )}/${referenceForModel(CephBlockPoolModel)}`;
+  const blockPoolListPage = `${resourcePathFromModel(CephBlockPoolModel, appName, ns)}`;
 
   const onClose = () => {
-    history.push(storageClusterListPage);
+    history.goBack();
   };
 
   // Create new pool
@@ -60,7 +54,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
       dispatch({ type: BlockPoolActionType.SET_INPROGRESS, payload: true });
       k8sCreate(CephBlockPoolModel, poolObj)
-        .then(() => history.push(`${storageClusterListPage}/${state.poolName}`))
+        .then(() => history.push(`${blockPoolListPage}/${state.poolName}`))
         .finally(() => dispatch({ type: BlockPoolActionType.SET_INPROGRESS, payload: false }))
         .catch((err) =>
           dispatch({
@@ -108,7 +102,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
           <BreadCrumbs
             breadcrumbs={[
               {
-                name: 'Openshift Container Storage',
+                name: 'BlockPools',
                 path: url.replace('/~new', ''),
               },
               {

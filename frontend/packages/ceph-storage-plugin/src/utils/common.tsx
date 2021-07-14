@@ -1,5 +1,6 @@
 import { TFunction } from 'i18next';
 import * as React from 'react';
+import * as dateTime from '@console/internal/components/utils/datetime';
 import { StorageClusterKind } from '../types';
 
 export const checkArbiterCluster = (storageCluster: StorageClusterKind): boolean =>
@@ -14,3 +15,6 @@ export const commaSeparatedString = (text: string[], t: TFunction): string =>
   );
 
 export const toList = (text: string[]): React.ReactNode => text.map((s) => <li key={s}>{s}</li>);
+
+export const dateTimeFormatter = (timeStamp: string): string =>
+  timeStamp ? dateTime.dateTimeFormatter.format(new Date(timeStamp)) : '';

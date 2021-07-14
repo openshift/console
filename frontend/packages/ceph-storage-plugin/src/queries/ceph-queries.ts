@@ -25,8 +25,11 @@ export enum StorageDashboardQuery {
   USED_CAPACITY = 'USED_CAPACITY',
   REQUESTED_CAPACITY = 'REQUESTED_CAPACITY',
   CEPH_CAPACITY_AVAILABLE = 'CEPH_CAPACITY_AVAILABLE',
+  // Pool Info
   POOL_CAPACITY_RATIO = 'POOL_CAPACITY_RATIO',
   POOL_SAVED_CAPACITY = 'POOL_SAVED_CAPACITY',
+  POOL_RAW_CAPACITY_USED = 'POOL_RAW_CAPACITY_USED',
+  POOL_COMPRESSION_SAVINGS = 'POOL_COMPRESSION_SAVINGS',
   // Capacity Info Card
   RAW_CAPACITY_TOTAL = 'RAW_TOTAL_CAPACITY',
   RAW_CAPACITY_USED = 'RAW_CAPACITY_USED',
@@ -213,3 +216,15 @@ export const getPVCUsedCapacityQuery = (pvcName: string): string =>
 export const osdDiskInfoMetric = _.template(
   `ceph_disk_occupation{exported_instance=~'<%= nodeName %>'}`,
 );
+
+export const getPoolQuery = (poolNames: string[], queryName: string) => {
+  const queries = {
+    [StorageDashboardQuery.POOL_RAW_CAPACITY_USED]: `ceph_pool_stored_raw * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${poolNames.join(
+      '|',
+    )}'}`,
+    [StorageDashboardQuery.POOL_COMPRESSION_SAVINGS]: `(ceph_pool_compress_under_bytes - ceph_pool_compress_bytes_used) * on (pool_id) group_left(name)ceph_pool_metadata{name=~'${poolNames.join(
+      '|',
+    )}'}`,
+  };
+  return queries[queryName];
+};

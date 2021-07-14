@@ -11,13 +11,13 @@ import {
   ModalFooter,
 } from '@console/internal/components/factory/modal';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
 import { withHandlePromise } from '@console/internal/components/utils';
 
 import { BlockPoolModalFooter } from './modal-footer';
 import { BlockPoolBody, BlockPoolStatus } from '../../block-pool/body';
-import { CephClusterKind, StoragePoolKind } from '../../../types';
+import { CephClusterKind } from '../../../types';
 import { cephClusterResource } from '../../../resources';
 import {
   blockPoolReducer,
@@ -46,7 +46,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
   );
 
   const populateBlockPoolData = React.useCallback(
-    (poolConfig: StoragePoolKind) => {
+    (poolConfig: K8sResourceKind) => {
       dispatch({
         type: BlockPoolActionType.SET_POOL_NAME,
         payload: poolConfig?.metadata.name,
@@ -147,8 +147,8 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
 });
 
 type UpdateBlockPoolModalProps = {
-  kind?: string;
-  blockPoolConfig: StoragePoolKind;
+  kind?: K8sKind | string;
+  blockPoolConfig: K8sResourceKind;
 } & HandlePromiseProps &
   ModalComponentProps;
 
