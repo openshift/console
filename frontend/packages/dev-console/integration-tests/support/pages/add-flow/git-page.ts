@@ -231,11 +231,7 @@ export const gitPage = {
   verifyValidatedMessage: (gitUrl = 'https://github.com/sclorg/nodejs-ex.git') => {
     cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
     cy.get('body').then(($body) => {
-      if (
-        $body.text().includes(messages.addFlow.privateGitRepoMessage) ||
-        $body.text().includes(messages.addFlow.rateLimitExceeded) ||
-        $body.find('[aria-label="Warning Alert"]').length
-      ) {
+      if ($body.text().includes(messages.addFlow.rateLimitExceeded)) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);
       }
     });
