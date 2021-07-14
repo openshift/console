@@ -21,10 +21,10 @@ import {
   StatusBox,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { ALL_NAMESPACES_KEY } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
+import { ALL_NAMESPACES_KEY } from '../../../constants';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
