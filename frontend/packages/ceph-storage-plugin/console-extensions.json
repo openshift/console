@@ -4,10 +4,15 @@
     "properties": {
       "alert": "CephOSDDiskUnavailable",
       "text": "%ceph-storage-plugin~Troubleshoot%",
-      "action": { "$codeRef": "alert.getAlertActionPath" }
+      "action": {
+        "$codeRef": "alert.getAlertActionPath"
+      }
     },
     "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
+      "required": [
+        "LSO_DEVICE_DISCOVERY",
+        "OCS_ATTACHED_DEVICES"
+      ]
     }
   },
   {
@@ -15,10 +20,15 @@
     "properties": {
       "alert": "CephOSDDiskNotResponding",
       "text": "%ceph-storage-plugin~Troubleshoot%",
-      "action": { "$codeRef": "alert.getAlertActionPath" }
+      "action": {
+        "$codeRef": "alert.getAlertActionPath"
+      }
     },
     "flags": {
-      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
+      "required": [
+        "LSO_DEVICE_DISCOVERY",
+        "OCS_ATTACHED_DEVICES"
+      ]
     }
   },
   {
@@ -26,10 +36,14 @@
     "properties": {
       "alert": "CephClusterNearFull",
       "text": "%ceph-storage-plugin~Add Capacity%",
-      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+      "action": {
+        "$codeRef": "alert.launchClusterExpansionModal"
+      }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": [
+        "OCS"
+      ]
     }
   },
   {
@@ -37,20 +51,28 @@
     "properties": {
       "alert": "CephClusterCriticallyFull",
       "text": "%ceph-storage-plugin~Add Capacity%",
-      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+      "action": {
+        "$codeRef": "alert.launchClusterExpansionModal"
+      }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": [
+        "OCS"
+      ]
     }
   },
   {
     "type": "console.storage-provider",
     "properties": {
       "name": "ObjectBucketClaim",
-      "Component": { "$codeRef": "storageProvider" }
+      "Component": {
+        "$codeRef": "storageProvider"
+      }
     },
     "flags": {
-      "required": ["OCS"]
+      "required": [
+        "OCS"
+      ]
     }
   },
   {
@@ -66,7 +88,9 @@
       }
     },
     "flags": {
-      "required": ["MCG"]
+      "required": [
+        "MCG"
+      ]
     }
   },
   {
@@ -82,7 +106,9 @@
       }
     },
     "flags": {
-      "required": ["MCG"]
+      "required": [
+        "MCG"
+      ]
     }
   },
   {
@@ -95,7 +121,9 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": ["OCS"]
+      "required": [
+        "OCS"
+      ]
     }
   },
   {
@@ -108,8 +136,12 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": ["MCG"],
-      "disallowed": ["OCS"]
+      "required": [
+        "MCG"
+      ],
+      "disallowed": [
+        "OCS"
+      ]
     }
   }
 ]
