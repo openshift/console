@@ -44,6 +44,7 @@ export const Loading: React.FC<LoadingProps> = ({ className }) => (
   <div
     className={classNames('co-m-loader co-an-fade-in-out', className)}
     data-test="loading-indicator"
+    data-testid="loader"
   >
     <div className="co-m-loader-dot__one" />
     <div className="co-m-loader-dot__two" />

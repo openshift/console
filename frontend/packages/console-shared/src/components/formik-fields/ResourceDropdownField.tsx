@@ -24,6 +24,7 @@ export interface ResourceDropdownFieldProps extends DropdownFieldProps {
   }[];
   appendItems?: ResourceDropdownItems;
   customResourceKey?: (key: string, resource: K8sResourceKind) => string;
+  dataTestId?: string;
 }
 
 const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
@@ -35,6 +36,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
   resources,
   onLoad,
   resourceFilter,
+  dataTestId,
   ...props
 }) => {
   const [field, { touched, error }] = useField(props.name);
@@ -53,6 +55,7 @@ const ResourceDropdownField: React.FC<ResourceDropdownFieldProps> = ({
       helperTextInvalid={errorMessage}
       validated={isValid ? 'default' : 'error'}
       isRequired={required}
+      data-testid={dataTestId}
     >
       <Firehose resources={resources}>
         <ResourceDropdown

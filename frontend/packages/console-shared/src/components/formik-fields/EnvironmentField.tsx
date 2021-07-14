@@ -53,9 +53,12 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({
         setConfigMaps(nsConfigMaps);
         setSecrets(nsSecrets);
       })
-      .catch((err) => {
+      .catch(async (err) => {
         if (err?.response?.status !== 403) {
-          errorModal({ error: err?.message });
+          try {
+            await errorModal({ error: err?.message });
+            // eslint-disable-next-line no-empty
+          } catch (e) {}
         }
       });
   }, [namespace]);

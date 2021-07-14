@@ -37,6 +37,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
         'pf-u-box-shadow-sm-top':
           sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
       })}
+      data-testid="form-footer"
       ref={footerElementRef}
     >
       <ButtonBar

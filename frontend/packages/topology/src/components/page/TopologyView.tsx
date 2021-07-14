@@ -326,7 +326,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   });
 
   const topologyViewComponent = (
-    <div className="odc-topology">
+    <div className="odc-topology" data-testid="topology">
       <Stack>
         <StackItem isFilled={false}>
           <TopologyFilterBar

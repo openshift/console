@@ -95,7 +95,10 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   return (
     <>
-      <div className={cx('ocs-synced-editor-field__editor-toggle', { margin: !noMargin })}>
+      <div
+        className={cx('ocs-synced-editor-field__editor-toggle', { margin: !noMargin })}
+        data-testid="synced-editor-field"
+      >
         <RadioGroupField
           label={t('console-shared~Configure via:')}
           name={name}

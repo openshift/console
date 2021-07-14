@@ -170,6 +170,7 @@ export const mockFormValues = {
     config: true,
   },
   fromImageStreamTag: true,
+  envs: [],
 };
 
 export const mockEditDeploymentData = {

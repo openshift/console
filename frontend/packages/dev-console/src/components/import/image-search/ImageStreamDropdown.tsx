@@ -13,6 +13,7 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
   formContextField,
 }) => {
   const { t } = useTranslation();
+  const unmounted = React.useRef(false);
   const imgCollection = {};
 
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
@@ -42,6 +43,7 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
 
   const onDropdownChange = React.useCallback(
     (img: string) => {
+      if (unmounted.current) return;
       setFieldValue(`${fieldPrefix}imageStream.tag`, initialImageStream.tag);
       setFieldValue(`${fieldPrefix}isi`, initialIsi);
       const image = _.get(imgCollection, [imageStream.namespace, img], {});
@@ -59,6 +61,7 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
   );
   const onLoad = (imgstreams) => {
     const imageStreamAvailable = !_.isEmpty(imgstreams);
+    if (unmounted.current) return;
     setHasImageStreams(imageStreamAvailable);
     loading &&
       isNamespaceSelected &&
@@ -82,6 +85,12 @@ const ImageStreamDropdown: React.FC<{ disabled?: boolean; formContextField?: str
       initialImageStream.tag = '';
     }
   }, [imageStream.image, initialImageStream.image, initialImageStream.tag]);
+
+  React.useEffect(() => {
+    return () => {
+      unmounted.current = true;
+    };
+  });
 
   return (
     <ResourceDropdownField
