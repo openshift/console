@@ -39,6 +39,21 @@ import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
 import { withTelemetry } from '@console/shared/src/hoc';
 
+const defaultHelpLinks = [
+  {
+    // t('public~Learning Portal')
+    label: 'Learning Portal',
+    externalLink: true,
+    href: 'https://learn.openshift.com/?ref=webconsole',
+  },
+  {
+    // t('public~OpenShift Blog')
+    label: 'OpenShift Blog',
+    externalLink: true,
+    href: 'https://blog.openshift.com',
+  },
+];
+
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -363,8 +378,31 @@ class MastheadToolbarContents_ extends React.Component {
       ],
     });
 
-    if (!_.isEmpty(additionalHelpActions.actions)) {
-      helpActions.push(additionalHelpActions);
+    const additionOperatorHelpActions = { ...additionalHelpActions } || {
+      name: '',
+      isSection: true,
+      actions: [],
+    };
+
+    //  This hides any defaultHelpLinks from the operator from being displayed
+    //  This check can be removed once the operator is updated
+    additionOperatorHelpActions.actions = additionalHelpActions.actions.filter(
+      (action) =>
+        !defaultHelpLinks.some(
+          (defaultLink) => defaultLink.label === action.label && defaultLink.href === action.href,
+        ),
+    );
+
+    // Add default help links to start of additional links from operator
+    additionOperatorHelpActions.actions = defaultHelpLinks
+      .map((helpLink) => ({
+        ...helpLink,
+        label: t(`public~${helpLink.label}`),
+      }))
+      .concat(additionOperatorHelpActions.actions);
+
+    if (!_.isEmpty(additionOperatorHelpActions.actions)) {
+      helpActions.push(additionOperatorHelpActions);
     }
 
     return helpActions;
