@@ -16,3 +16,8 @@ export const messages = {
     unableToDetectBuilderImage: 'Unable to detect the Builder Image.',
   },
 };
+export const devWorkspaceStatuses = {
+  stopped: 'Stopped',
+  starting: 'Starting',
+  running: 'Running',
+};

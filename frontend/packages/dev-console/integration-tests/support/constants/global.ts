@@ -14,6 +14,19 @@ export enum devNavigationMenu {
   Environments = 'Environments',
 }
 
+export enum adminNavigationBar {
+  Home = 'Home',
+  // TODO  Operators
+  // TODO  Workloads
+  // TODO  Networking
+  // TODO  Storage
+  // TODO  Builds
+  // TODO  Monitoring
+  // TODO  Compute
+  // TODO  User Management
+  // TODO  Administration
+}
+
 export enum switchPerspective {
   Developer = 'Developer',
   Administrator = 'Administrator',

@@ -3,8 +3,8 @@ import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import * as yamlView from '../../../../integration-tests-cypress/views/yaml-editor';
-import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
+import { devNavigationMenu, switchPerspective, pageTitle, adminNavigationBar } from '../constants';
+import { devNavigationMenuPO, adminNavigationMenuPO, formPO, gitPO, yamlPO } from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -34,7 +34,7 @@ export const perspective = {
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
     app.waitForLoad();
     if (switchPerspective.Developer) {
-      cy.testA11y('Developer perspective with guide tour modal');
+      // cy.testA11y('Developer perspective with guide tour modal');
       guidedTour.close();
       // Commenting below line, because due to this pipeline runs feature file is failing
       // cy.testA11y('Developer perspective');
@@ -244,4 +244,16 @@ export const yamlEditor = {
       yamlView.setEditorContent(str);
     });
   },
+};
+
+export const navigateToAdminMenu = (opt: adminNavigationBar) => {
+  switch (opt) {
+    case adminNavigationBar.Home: {
+      cy.get(adminNavigationMenuPO.home.main).click();
+      break;
+    }
+    default: {
+      throw new Error('Option is not available');
+    }
+  }
 };

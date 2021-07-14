@@ -4,8 +4,7 @@ Feature: Web Terminal for Admin user
 
 
         Background:
-            Given user has logged in as admin user
-              And user has installed Web Terminal operator
+            Given user has installed Web Terminal operator
 
         @smoke @to-do
         Scenario: Create new project and use Web Terminal: WT-02-TC01

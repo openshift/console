@@ -1,0 +1,19 @@
+kind: DevWorkspace
+apiVersion: workspace.devfile.io/v1alpha1
+metadata:
+  name: web-terminal
+  annotations:
+    # it's important to make workspace immutable to make sure nobody with right access
+    # won't set custom editor to steal creator's token
+    controller.devfile.io/restricted-access: "true"
+  labels:
+    # it's a label OpenShift console uses a flag to mark terminal's workspaces
+    console.openshift.io/terminal: "true"
+spec:
+  started: true
+  routingClass: 'web-terminal'
+  template:
+    components:
+      - plugin:
+          name: web-terminal
+          id: redhat-developer/web-terminal/latest

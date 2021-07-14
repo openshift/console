@@ -3,7 +3,7 @@ Feature: Web Terminal for Developer user
               As a developer user, I should be able to use web terminal
 
         Background:
-            Given user has logged in as dev user
+            Given user has logged in as basic user
               # for correct checking of the user story we can use just an one project with active terminal
               # we use 2 different namespace (projects) for avoiding conflicts
               # 1. `aut-terminal-testuser` for creation, starting and removing DevWorkspace

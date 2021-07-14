@@ -19,7 +19,7 @@ Given('user has installed Web Terminal operator', () => {
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {
-    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound).length !== 0) {
       installOperator(operators.WebTerminalOperator);
     } else {
       cy.log('Serverless operator is installed in cluster');
