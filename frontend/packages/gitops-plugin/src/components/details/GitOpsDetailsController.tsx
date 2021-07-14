@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import GitOpsEmptyState from '../GitOpsEmptyState';
 import { WORKLOAD_KINDS, GitOpsResource, GitOpsEnvironment } from '../utils/gitops-types';
@@ -14,13 +13,15 @@ interface GitOpsDetailsControllerProps {
   envsData: GitOpsEnvironment[];
   emptyStateMsg: string;
   appName: string;
+  match: any;
 }
 
 const getWorkLoad = (resources: GitOpsResource[]) => {
   return _.find(resources, (res) => _.includes(WORKLOAD_KINDS, res.kind));
 };
 
-const getTransformedServices = (originalEnv: GitOpsEnvironment, t: TFunction) => {
+const getTransformedServices = (originalEnv: GitOpsEnvironment) => {
+  const t = (tKey) => i18next.t(tKey);
   return _.sortBy(
     _.map(originalEnv?.services, (service) => {
       const workload = getWorkLoad(service?.resources);
@@ -41,12 +42,14 @@ const getTransformedServices = (originalEnv: GitOpsEnvironment, t: TFunction) =>
   );
 };
 
-const getTransformedEnvsData = (originalEnvsData: GitOpsEnvironment[], t: TFunction) => {
+type EnvsVar = GitOpsEnvironment | undefined;
+
+const getTransformedEnvsData = (originalEnvsData: GitOpsEnvironment[]): EnvsVar[] => {
   return _.map(originalEnvsData, (env) => {
     if (env) {
       const resModels = _.flatten(_.map(env?.services, (service) => service.resources));
       const timestamp = <TimestampWrapper resModels={resModels} />;
-      const services = getTransformedServices(env, t);
+      const services = getTransformedServices(env);
       return {
         ...env,
         services,
@@ -62,8 +65,7 @@ const GitOpsDetailsController: React.FC<GitOpsDetailsControllerProps> = ({
   emptyStateMsg,
   appName,
 }) => {
-  const { t } = useTranslation();
-  const envs = React.useMemo(() => getTransformedEnvsData(envsData, t), [envsData, t]);
+  const envs = React.useMemo<EnvsVar[]>(() => getTransformedEnvsData(envsData), [envsData]);
 
   return emptyStateMsg ? (
     <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />

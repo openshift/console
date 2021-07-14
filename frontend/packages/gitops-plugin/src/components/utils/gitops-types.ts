@@ -45,6 +45,7 @@ export interface GitOpsEnvironmentService {
   image?: string;
   podRing?: React.ReactNode;
   commitDetails?: React.ReactNode;
+  serviceStatus: string;
 }
 
 export interface GitOpsEnvironment {
@@ -52,6 +53,10 @@ export interface GitOpsEnvironment {
   environment: string;
   timestamp?: React.ReactNode;
   services: GitOpsEnvironmentService[];
+  // deployments?: string[];
+  // deploymentStatus?: string;
+  // secrets?: string[];
+  // secretStatus?: string;
 }
 
 export interface CommitData {
