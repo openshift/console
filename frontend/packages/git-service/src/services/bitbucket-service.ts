@@ -1,5 +1,6 @@
+import { Base64 } from 'js-base64';
 import * as ParseBitbucketUrl from 'parse-bitbucket-url';
-import { coFetchJSON } from '@console/internal/co-fetch';
+import 'whatwg-fetch';
 import {
   GitSource,
   SecretType,
@@ -25,13 +26,26 @@ export class BitbucketService extends BaseService {
     switch (this.gitsource.secretType) {
       case SecretType.BASIC_AUTH: {
         const { username, password } = this.gitsource.secretContent;
-        return { type: 'basic', username, password };
+        const encodedAuth = Base64.encode(`${username}:${password}`);
+        return { Authorization: `Basic ${encodedAuth}` };
       }
-      case SecretType.NO_AUTH:
-        return null;
       default:
         return null;
     }
+  };
+
+  protected fetchJson = async (url: string) => {
+    const authHeaders = this.getAuthProvider();
+    const response = await fetch(url, { headers: { Accept: 'application/json', ...authHeaders } });
+    if (!response.ok) {
+      const error = new Error();
+      error.response = response;
+      throw error;
+    }
+    if (response.headers.get('Content-Type') === 'text/plain') {
+      return response.text();
+    }
+    return response.json();
   };
 
   getRepoMetadata = (): RepoMetadata => {
@@ -49,7 +63,7 @@ export class BitbucketService extends BaseService {
   isRepoReachable = async (): Promise<RepoStatus> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
-      const data = await coFetchJSON(url);
+      const data = await this.fetchJson(url);
       if (data.slug === this.metadata.repoName) {
         return RepoStatus.Reachable;
       }
@@ -64,7 +78,7 @@ export class BitbucketService extends BaseService {
   getRepoBranchList = async (): Promise<BranchList> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/refs/branches`;
     try {
-      const data = await coFetchJSON(url);
+      const data = await this.fetchJson(url);
       const list = data.values.map((b) => b.name);
       return { branches: list };
     } catch (e) {
@@ -75,7 +89,7 @@ export class BitbucketService extends BaseService {
   getRepoFileList = async (): Promise<RepoFileList> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
     try {
-      const data = await coFetchJSON(url);
+      const data = await this.fetchJson(url);
       const files = data.values?.map((f) => f.path) || [];
       return { files };
     } catch (e) {
@@ -86,7 +100,7 @@ export class BitbucketService extends BaseService {
   getRepoLanguageList = async (): Promise<RepoLanguageList> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
-      const data = await coFetchJSON(url);
+      const data = await this.fetchJson(url);
       return { languages: [data.language] };
     } catch (e) {
       return { languages: [] };
@@ -96,7 +110,7 @@ export class BitbucketService extends BaseService {
   isFilePresent = async (path: string): Promise<boolean> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${path}`;
     try {
-      await coFetchJSON(url);
+      await this.fetchJson(url);
       return true;
     } catch (e) {
       return false;
@@ -106,7 +120,7 @@ export class BitbucketService extends BaseService {
   getFileContent = async (path: string): Promise<string | null> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${path}`;
     try {
-      const data = await coFetchJSON(url);
+      const data = await this.fetchJson(url);
       return data as string;
     } catch (e) {
       return null;
