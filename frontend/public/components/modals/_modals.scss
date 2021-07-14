@@ -37,7 +37,7 @@
   @include scroll-shadows-vertical-covers;
   width: 100%;
 
-  // so that input, textarea, button, and input-group-addon don't mask the inner scroll shadows
+  // so that input and textarea don't mask the inner scroll shadows
   input, textarea {
     &.pf-c-form-control {
       background-color: transparent;
@@ -46,10 +46,6 @@
         background-color: rgba(128, 128, 128, 0.15);
       }
     }
-  }
-
-  .input-group-addon {
-    background-color: rgba(227, 227, 227, 0.5);
   }
 }
 
