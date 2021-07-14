@@ -3,7 +3,7 @@ import { RemoteEntryModule } from './types';
 /**
  * Vendor modules shared between Console application and its dynamic plugins.
  */
-export const sharedVendorModules = ['react'];
+export const sharedVendorModules = ['react', '@openshift-console/dynamic-plugin-sdk'];
 
 /**
  * At runtime, Console will override (i.e. enforce Console-bundled implementation of) shared
@@ -15,5 +15,8 @@ export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
   entryModule.override({
     // eslint-disable-next-line
     react: async () => () => require('react'),
+    '@openshift-console/dynamic-plugin-sdk': async () => () =>
+      // eslint-disable-next-line
+      require('@console/dynamic-plugin-sdk/src/libIndex'),
   });
 };

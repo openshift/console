@@ -52,6 +52,13 @@ export class ConsoleRemotePlugin {
       compiler.options.output.enabledLibraryTypes.push(remoteEntryLibraryType);
     }
 
+    compiler.options.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /.*/,
+        contextRegExp: /node_modules\/@openshift-console\/dynamic-plugin-sdk\/lib\/api/,
+      }),
+    );
+
     // Apply relevant webpack plugins
     compiler.hooks.afterPlugins.tap(ConsoleRemotePlugin.name, () => {
       new webpack.container.ContainerPlugin({

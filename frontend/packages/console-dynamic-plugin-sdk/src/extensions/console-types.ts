@@ -208,3 +208,13 @@ export type FirehoseResult<
 export type FirehoseResourcesResult = {
   [key: string]: FirehoseResult<K8sResourceCommon | K8sResourceCommon[]>;
 };
+
+export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
+
+export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
+  initResource: WatchK8sResource,
+) => WatchK8sResult<R>;
+
+export type UseK8sWatchResources = <R extends ResourcesObject>(
+  initResources: WatchK8sResources<R>,
+) => WatchK8sResults<R>;
