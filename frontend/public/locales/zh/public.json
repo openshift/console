@@ -678,7 +678,7 @@
   "Default pull Secret": "默认 pull secret",
   "Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.": "指定用于在此命名空间中验证和下载容器的默认凭证。这些凭证是默认的，除非 pod 引用了一个特定的 pull Secret。",
   "Overwriting default pull Secret": "覆盖默认 pull Secret",
-  "A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.": "存在一个默认的 pull Secret，但无法解析。保存这个将会覆盖它。",
+  "A default pull Secret exists, but can't be parsed. Saving this will overwrite it.": "存在一个默认的 pull Secret，但无法解析。保存这个将会覆盖它。",
   "Secret name": "Secret 名",
   "Friendly name to help you manage this in the future": "友好名称，以帮助您在以后管理此功能",
   "Method": "方法",

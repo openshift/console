@@ -207,7 +207,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               title={t('public~Overwriting default pull Secret')}
             >
               {t(
-                'public~A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.',
+                "public~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
               )}
             </Alert>
           )}

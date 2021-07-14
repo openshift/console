@@ -683,7 +683,7 @@
   "Default pull Secret": "デフォルトのプルシークレット",
   "Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.": "この namespace 内のコンテナーの認証およびダウンロードに使用するデフォルトの認証情報を指定します。Pod が特定のプルシークレットを参照しない限り、これらの認証情報はデフォルトになります。",
   "Overwriting default pull Secret": "デフォルトのプルシークレットの上書き",
-  "A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.": "デフォルトのプルシークレットは存在しますが、解析できません。これを保存すると、上書きされます。",
+  "A default pull Secret exists, but can't be parsed. Saving this will overwrite it.": "デフォルトのプルシークレットは存在しますが、解析できません。これを保存すると、上書きされます。",
   "Secret name": "シークレット名",
   "Friendly name to help you manage this in the future": "今後これを管理しやすくする名前",
   "Method": "方法",
