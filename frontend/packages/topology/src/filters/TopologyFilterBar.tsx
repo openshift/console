@@ -20,7 +20,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { useQueryParams } from '@console/shared';
-import QuickSearchButton from '../components/quick-search/QuickSearchButton';
+import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { TopologyViewType } from '../topology-types';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
 import {
@@ -78,7 +78,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarContent>
         <ToolbarItem>
-          <QuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
+          <TopologyQuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
         </ToolbarItem>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>

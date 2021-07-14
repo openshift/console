@@ -20,7 +20,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, c
       <Title headingLevel="h4">{selectedItem.name}</Title>
       {selectedItem.provider && (
         <span className="odc-quick-search-details__provider">
-          {t('topology~Provided by {{provider}}', { provider: selectedItem.provider })}
+          {t('console-shared~Provided by {{provider}}', { provider: selectedItem.provider })}
         </span>
       )}
       <Button

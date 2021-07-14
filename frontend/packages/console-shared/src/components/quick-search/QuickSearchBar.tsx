@@ -10,6 +10,7 @@ interface QuickSearchBarProps {
   autoFocus: boolean;
   searchTerm: string;
   onSearch: (searchTerm: string) => void;
+  searchPlaceholder: string;
 }
 
 const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
@@ -17,6 +18,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
   itemsLoaded,
   autoFocus = false,
   searchTerm,
+  searchPlaceholder,
   onSearch,
 }) => {
   const { t } = useTranslation();
@@ -28,9 +30,9 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
       </InputGroupText>
       <TextInput
         type="search"
-        aria-label={t('topology~Quick search bar')}
+        aria-label={t('console-shared~Quick search bar')}
         className="odc-quick-search-bar__input"
-        placeholder={`${t('topology~Add to Project')}...`}
+        placeholder={searchPlaceholder}
         onChange={onSearch}
         autoFocus={autoFocus}
         value={searchTerm}
@@ -41,7 +43,7 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
         </InputGroupText>
       )}
       {itemsLoaded && showNoResults && (
-        <InputGroupText>-- {t('topology~No results')}</InputGroupText>
+        <InputGroupText>-- {t('console-shared~No results')}</InputGroupText>
       )}
     </InputGroup>
   );
