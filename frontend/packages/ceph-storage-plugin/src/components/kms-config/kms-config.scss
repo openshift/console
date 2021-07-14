@@ -17,12 +17,12 @@
   }
 
   &__form-token {
-    display: flex;
     align-items: center;
+    display: flex;
   }
 
   &__save-button {
-    margin-left: var(--pf-global--spacer--md);
     margin-bottom: var(--pf-global--spacer--md);
+    margin-left: var(--pf-global--spacer--md);
   }
 }

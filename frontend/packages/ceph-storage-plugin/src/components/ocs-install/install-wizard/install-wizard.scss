@@ -10,13 +10,13 @@
   border-top: var(--pf-global--BorderWidth--sm) solid var(--pf-global--BorderColor--100);
 
   &__card {
-    max-width: 27rem;
     max-height: 12rem;
+    max-width: 27rem;
   }
 
   &__card-body {
-    overflow-y: scroll;
     overflow-x: auto;
+    overflow-y: scroll;
     scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
   }
 
@@ -33,13 +33,13 @@
   }
 
   &__review-list-item-alert {
-    max-width: 40rem;
     margin-top: var(--pf-global--spacer--xs);
+    max-width: 40rem;
   }
 
   &__review-alert {
-    max-width: 60rem;
     margin-top: var(--pf-global--spacer--lg);
+    max-width: 60rem;
   }
 
   &__select-nodes {

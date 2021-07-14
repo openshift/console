@@ -1,11 +1,11 @@
 .upload-component {
-  display: inline-flex;
   cursor: grab;
+  display: inline-flex;
 }
 
 .input-btn {
-  display: inline-flex;
   cursor: grab;
+  display: inline-flex;
 }
 
 .custom-input-btn {
@@ -13,12 +13,12 @@
 }
 
 .upload-btn__input {
-  position: absolute;
-  opacity: 0;
   border: none;
-  min-height: 2.5em;
-  max-width: 5.5em;
   cursor: grab;
+  max-width: 5.5em;
+  min-height: 2.5em;
+  opacity: 0;
+  position: absolute;
 }
 
 .upload-component__textInput {

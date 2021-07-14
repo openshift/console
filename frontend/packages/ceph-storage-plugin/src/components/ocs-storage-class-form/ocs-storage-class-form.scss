@@ -16,8 +16,8 @@
   }
 
   &__card {
-    padding: var(--pf-global--spacer--md) !important; // To override patternfly card class
     margin: var(--pf-global--spacer--md) !important; // To override patternfly card class
+    padding: var(--pf-global--spacer--md) !important; // To override patternfly card class
   }
 
   &__pv-title {
@@ -30,8 +30,8 @@
 
   &__details {
     list-style: none !important; // To override patternfly content class
-    padding: 0 !important; // To override patternfly content class
     margin: var(--pf-global--spacer--md) 0 !important; // To override patternfly content class
+    padding: 0 !important; // To override patternfly content class
   }
 
   &__help-block {
