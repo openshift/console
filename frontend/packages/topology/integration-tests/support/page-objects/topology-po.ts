@@ -4,6 +4,7 @@ export const topologyPO = {
   title: 'h1.ocs-page-layout__title',
   search: '[data-test-id="item-filter"]',
   emptyStateIcon: 'div.pf-c-empty-state__icon',
+  emptyText: '[data-test="no-resources-found"]',
   graph: {
     reset: '#reset-view',
     zoomIn: '#zoom-in',
@@ -24,13 +25,14 @@ export const topologyPO = {
     addNewAnnotations: '[data-test="add-button"]',
     connector: '[data-test-id="edge-handler"]',
     filterByResource: {
-      filterByResourceDropDown: '.pf-c-select__toggle-text',
-      deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
-      deploymentConfigResource: '.co-m-resource-icon.co-m-resource-deploymentconfig',
+      filterByResourceDropDown: '[data-test="filter-by-resource"]',
     },
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',
     },
+    addLink: '[data-test="add-page"]',
+    startBuildingNewApp: '[data-test="start-building-your-application"]',
+    quickSearch: '[data-test="quick-search-bar"]',
   },
   list: {
     appName: '#HelmRelease ul li div',
@@ -216,3 +218,14 @@ export const topologyPO = {
     tickButton: '[data-test-id="check-icon"]',
   },
 };
+
+export function typeOfResource(type: string) {
+  return `[data-test="${type}"]`;
+}
+
+export function typeOfWorkload(workload: string) {
+  return `[data-test~="icon"][data-test~="${workload
+    .toLowerCase()
+    .replace(' ', '')
+    .trim()}"]`;
+}

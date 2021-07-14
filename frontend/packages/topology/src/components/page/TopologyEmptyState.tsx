@@ -21,7 +21,7 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
   return (
     <EmptyState className="odc-topology__empty-state" variant={EmptyStateVariant.full}>
       <EmptyStateIcon variant="container" component={TopologyIcon} />
-      <Title headingLevel="h3" size="lg">
+      <Title headingLevel="h3" size="lg" data-test="no-resources-found">
         {t('topology~No resources found')}
       </Title>
       <EmptyStateSecondaryActions>
@@ -29,6 +29,7 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
           <Button
             isInline
             variant="link"
+            data-test="start-building-your-application"
             onClick={(e) => {
               e.stopPropagation();
               setIsQuickSearchOpen(true);
@@ -36,7 +37,11 @@ const TopologyEmptyState: React.FC<TopologyEmptyStateProps> = ({ setIsQuickSearc
           >
             Start building your application
           </Button>{' '}
-          or visit the <Link to="/add">Add page</Link> for more details.
+          or visit the{' '}
+          <Link to="/add" data-test="add-page">
+            Add page
+          </Link>{' '}
+          for more details.
         </Trans>
       </EmptyStateSecondaryActions>
     </EmptyState>
