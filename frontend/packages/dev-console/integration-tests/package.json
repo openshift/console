@@ -9,8 +9,8 @@
   "scripts": {
     "test-cypress": "../../../node_modules/.bin/cypress open --env openshift=true",
     "clean-reports": "rm -rf ../../../gui_test_screenshots",
-    "cypress-merge": "mochawesome-merge ../../../gui_test_screenshots/cypress_report*.json > ../../../gui_test_screenshots/cypress.json",
-    "cypress-generate": "marge -o ../../../gui_test_screenshots/ -f cypress-report -t 'OpenShift DevConsole Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ../../../gui_test_screenshots/cypress/assets ../../../gui_test_screenshots/cypress.json",
+    "cypress-merge": "../../../node_modules/.bin/mochawesome-merge ../../../gui_test_screenshots/cypress_report*.json > ../../../gui_test_screenshots/cypress.json",
+    "cypress-generate": "../../../node_modules/.bin/marge -o ../../../gui_test_screenshots/ -f cypress-report -t 'OpenShift DevConsole Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ../../../gui_test_screenshots/cypress/assets ../../../gui_test_screenshots/cypress.json",
     "test-headless": "node --max-old-space-size=4096 ../../../node_modules/.bin/cypress run --env openshift=true --browser ${BRIDGE_E2E_BROWSER_NAME:=chrome} --headless --spec \"features/*/project-creation.feature\";",
     "test-cypress-headless": "yarn run clean-reports && yarn run test-headless && yarn run cypress-merge && yarn run cypress-generate"
   }
