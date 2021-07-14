@@ -221,6 +221,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   iUserTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.userTemplate),
   commonTemplateName: getInitialData(state, wizardReduxID).commonTemplateName,
   cnvBaseImages: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftCNVBaseImages),
+  dataVolumes: iGetCommonData(state, wizardReduxID, VMWizardProps.dataVolumes),
   openshiftFlag: iGetCommonData(state, wizardReduxID, VMWizardProps.openshiftFlag),
   isCreateTemplate: iGetCommonData(state, wizardReduxID, VMWizardProps.isCreateTemplate),
   provisionSourceStorage: iGetProvisionSourceStorage(state, wizardReduxID),

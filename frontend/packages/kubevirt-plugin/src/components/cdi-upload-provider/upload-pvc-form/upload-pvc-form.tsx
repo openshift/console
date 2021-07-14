@@ -56,6 +56,7 @@ import {
   TEMPLATE_VM_COMMON_NAMESPACE,
   VolumeMode,
 } from '../../../constants';
+import { LABEL_CDROM_SOURCE } from '../../../constants/vm/constants';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import {
@@ -150,6 +151,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const [isGolden, setIsGolden] = React.useState(!!osParam);
   const [os, setOs] = React.useState<OperatingSystemRecord>();
   const [pvcSizeFromTemplate, setPvcSizeFromTemplate] = React.useState<boolean>(false);
+  const [mountAsCDROM, setMountAsCDROM] = React.useState<boolean>();
   const [osImageExists, setOsImageExists] = React.useState(false);
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
   const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
@@ -181,6 +183,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   React.useEffect(() => {
     const value = getGiBUploadPVCSizeByImage((fileValue as File)?.size);
     const isIso = (fileValue as File)?.name?.toLowerCase().endsWith('.iso');
+    setMountAsCDROM(isIso);
     setPvcSizeFromTemplate(!isIso);
     setRequestSizeValue(isIso ? value?.toString() : os?.baseImageRecomendedSize[0] || '');
     setRequestSizeUnit(os?.baseImageRecomendedSize[1] || BinaryUnit.Gi);
@@ -207,6 +210,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
         metadata: {
           name: pvcName,
           namespace,
+          labels: {
+            [LABEL_CDROM_SOURCE]: mountAsCDROM?.toString(),
+          },
         },
         spec: {
           source: {
@@ -234,6 +240,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     namespace,
     pvcName,
     onChange,
+    mountAsCDROM,
     storageClassName,
     requestSizeValue,
     requestSizeUnit,
@@ -279,6 +286,10 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
         ? os?.baseImageRecomendedSize[0] || ''
         : getGiBUploadPVCSizeByImage((fileValue as File)?.size)?.toString(),
     );
+  };
+
+  const handleCDROMChange = (checked: boolean) => {
+    setMountAsCDROM(checked);
   };
 
   React.useEffect(() => {
@@ -385,13 +396,22 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               )}
             </FormSelect>
             {os && (
-              <Checkbox
-                id="golden-os-checkbox-pvc-size-template"
-                className="kv--create-upload__golden-switch"
-                isChecked={pvcSizeFromTemplate}
-                label={t('kubevirt-plugin~Use template size PVC')}
-                onChange={handlePvcSizeTemplate}
-              />
+              <>
+                <Checkbox
+                  id="golden-os-checkbox-pvc-size-template"
+                  className="kv--create-upload__golden-switch"
+                  isChecked={pvcSizeFromTemplate}
+                  label={t('kubevirt-plugin~Use template size PVC')}
+                  onChange={handlePvcSizeTemplate}
+                />
+                <Checkbox
+                  id="golden-os-checkbox-pvc-size-template"
+                  className="kv--create-upload__golden-switch"
+                  isChecked={!!mountAsCDROM}
+                  label={t('kubevirt-plugin~Mount this as a CD-ROM boot source')}
+                  onChange={handleCDROMChange}
+                />
+              </>
             )}
           </div>
           {osImageExists && (

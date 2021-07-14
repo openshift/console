@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
 import { Firehose, history } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
@@ -25,7 +26,7 @@ import {
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { useUpdateStorages } from '../../hooks/use-update-data-volume';
-import { VirtualMachineModel } from '../../models';
+import { DataVolumeModel, VirtualMachineModel } from '../../models';
 import { getTemplateName } from '../../selectors/vm-template/basic';
 import { FirehoseResourceEnhanced } from '../../types/custom';
 import { ITemplate } from '../../types/template';
@@ -350,6 +351,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
           initialData: props.initialData,
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
+          dataVolumes: props.dataVolumes,
           isSimpleView: props.isSimpleView,
         },
         dataIDReferences: props.dataIDReferences,
@@ -402,7 +404,10 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
   const userMode = searchParams.get(VMWizardURLParams.MODE) || VMWizardMode.VM;
-
+  const [dataVolumes] = useK8sWatchResource({
+    kind: referenceForModel(DataVolumeModel),
+    isList: true,
+  });
   const initialData = parseVMWizardInitialData(searchParams);
 
   let resources: FirehoseResourceEnhanced[] = [];
@@ -502,6 +507,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
+        dataVolumes={dataVolumes}
         reduxID={reduxID}
         onClose={history.goBack}
         initialData={initialData}
