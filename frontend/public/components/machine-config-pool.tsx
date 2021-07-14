@@ -246,12 +246,12 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = (props) => (
 );
 
 const tableColumnClasses = [
-  'pf-u-w-25-on-lg pf-u-w-33-on-md pf-u-w-50-on-sm',
-  'pf-m-hidden pf-m-visible-on-xl pf-u-w-50-on-xl',
-  'pf-u-w-25-on-sm pf-u-w-16-on-md pf-u-w-8-on-lg',
-  'pf-m-hidden pf-m-visible-on-md pf-u-w-16-on-md pf-u-w-8-on-lg',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-8-on-lg',
-  'pf-u-w-25-on-lg pf-u-w-33-on-sm pf-u-w-8-on-lg',
+  'pf-u-w-33-on-md pf-u-w-25-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg pf-u-w-33-on-xl',
+  'pf-u-w-10-on-xl',
+  'pf-m-hidden pf-m-visible-on-sm pf-u-w-10-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
+  'pf-u-w-10-on-xl',
   Kebab.columnClass,
 ];
 

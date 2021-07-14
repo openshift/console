@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { match as RMatch } from 'react-router-dom';
 
@@ -450,10 +449,10 @@ export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = (props) =>
 };
 
 const reportsGenerationColumnClasses = [
-  classNames('col-md-3', 'col-sm-4'),
-  classNames('col-md-3', 'col-sm-4'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-3', 'col-sm-4'),
+  '',
+  '',
+  'pf-m-hidden pf-visible-on-lg',
+  '',
   Kebab.columnClass,
 ];
 
