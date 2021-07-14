@@ -109,13 +109,14 @@ export const gitPage = {
         break;
       case 'deployment config':
       case 'Deployment Config':
+      case 'DeploymentConfig':
         cy.get(gitPO.resources.deploymentConfig)
           .scrollIntoView()
           .check();
         break;
       case 'Knative':
-      case 'knative':
       case 'Knative Service':
+      case 'Serverless Deployment':
         cy.get(gitPO.resources.knative)
           .scrollIntoView()
           .check();

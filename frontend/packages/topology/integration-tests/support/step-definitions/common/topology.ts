@@ -24,6 +24,11 @@ Given('user is at the Topology page', () => {
   topologyPage.verifyTopologyPage();
 });
 
+Given('user is at Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
+  topologyPage.verifyTopologyPage();
+});
+
 When('user navigates to Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
 });
@@ -109,6 +114,19 @@ Given(
       componentName,
       resourceType,
       'nodejs-ex-git-app',
+    );
+    topologyHelper.verifyWorkloadInTopologyPage(componentName);
+  },
+);
+
+Given(
+  'user has created workload {string} with resource type {string} and application groupings {string}',
+  (componentName: string, resourceType: string = 'Deployment', applicationGroupings: string) => {
+    createGitWorkload(
+      'https://github.com/sclorg/nodejs-ex.git',
+      componentName,
+      resourceType,
+      applicationGroupings,
     );
     topologyHelper.verifyWorkloadInTopologyPage(componentName);
   },
