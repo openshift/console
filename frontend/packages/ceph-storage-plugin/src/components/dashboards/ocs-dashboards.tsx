@@ -21,6 +21,8 @@ import {
   DashboardsPageProps,
 } from '@console/internal/components/dashboard/dashboards-page/dashboards';
 import { HorizontalNav, PageHeading, LoadingBox } from '@console/internal/components/utils';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../features';
 
 const OCSDashboardsPage: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
@@ -30,17 +32,32 @@ const OCSDashboardsPage: React.FC<DashboardsPageProps> = ({ match, kindsInFlight
   const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);
   const dynamicCardExtensions = useExtensions<DynamicDashboardsCard>(isDynamicDashboardsCard);
 
-  const pluginPages = React.useMemo(
-    () =>
-      getPluginTabPages(
-        [...tabExtensions, ...dynamicTabExtensions],
-        cardExtensions,
-        dynamicCardExtensions,
-        'storage',
-        'persistent-storage',
-      ),
-    [tabExtensions, dynamicTabExtensions, cardExtensions, dynamicCardExtensions],
-  );
+  const isExternalOcs = useFlag(OCS_INDEPENDENT_FLAG);
+  const isInternallOcs = useFlag(OCS_FLAG);
+
+  const pluginPages = React.useMemo(() => {
+    const allTabs: (DashboardsTab | DynamicDashboardsTab)[] = [
+      ...tabExtensions,
+      ...dynamicTabExtensions,
+    ];
+    /** firstTabId === 'independent-dashboard', if it is an external mode OCS cluster.
+     *  firstTabId === 'persistent-storage', if it is not an external mode OCS cluster (internal mode).
+     *  firstTabId === 'object-service', if NooBaaSystem is there, but, StorageCluster is not.
+     */
+    const firstTabId: string = isExternalOcs
+      ? 'independent-dashboard'
+      : isInternallOcs
+      ? 'persistent-storage'
+      : 'object-service';
+    return getPluginTabPages(allTabs, cardExtensions, dynamicCardExtensions, 'storage', firstTabId);
+  }, [
+    tabExtensions,
+    dynamicTabExtensions,
+    isExternalOcs,
+    isInternallOcs,
+    cardExtensions,
+    dynamicCardExtensions,
+  ]);
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
