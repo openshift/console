@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import {
@@ -91,12 +90,12 @@ const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
 ContainerLink.displayName = 'ContainerLink';
 
 const volumeRowColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  'pf-u-w-25-on-2xl',
+  'pf-u-w-25-on-2xl',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
+  'pf-m-hidden pf-m-visible-on-xl',
   Kebab.columnClass,
 ];
 
