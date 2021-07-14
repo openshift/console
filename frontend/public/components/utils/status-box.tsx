@@ -18,12 +18,12 @@ export const LoadError: React.FC<LoadErrorProps> = ({
   canRetry = true,
 }) => (
   <Box className={className}>
-    <div className="text-center cos-error-title">
+    <div className="pf-u-text-align-center cos-error-title">
       Error Loading {label}
       {_.isString(message) ? `: ${message}` : ''}
     </div>
     {canRetry && (
-      <div className="text-center">
+      <div className="pf-u-text-align-center">
         Please{' '}
         <Button
           type="button"
@@ -67,7 +67,7 @@ export const EmptyBox: React.FC<EmptyBoxProps> = ({ label }) => {
   const { t } = useTranslation();
   return (
     <Box>
-      <div data-test="empty-message" className="text-center">
+      <div data-test="empty-message" className="pf-u-text-align-center">
         {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
       </div>
     </Box>
@@ -83,7 +83,7 @@ export const MsgBox: React.FC<MsgBoxProps> = ({ title, detail, className = '' })
       </div>
     )}
     {detail && (
-      <div className="text-center cos-status-box__detail" data-test="msg-box-detail">
+      <div className="pf-u-text-align-center cos-status-box__detail" data-test="msg-box-detail">
         {detail}
       </div>
     )}
@@ -95,7 +95,7 @@ export const AccessDenied: React.FC<AccessDeniedProps> = ({ message }) => {
   const { t } = useTranslation();
   return (
     <div>
-      <Box className="text-center">
+      <Box className="pf-u-text-align-center">
         <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
         <MsgBox
           title={t('public~Restricted Access')}

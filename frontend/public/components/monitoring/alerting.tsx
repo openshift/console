@@ -1044,7 +1044,7 @@ export const AlertRulesDetailsPage = withFallback(
               <div className="row">
                 <div className="col-xs-12">
                   {_.isEmpty(alerts) ? (
-                    <div className="text-center">{t('public~None found')}</div>
+                    <div className="pf-u-text-align-center">{t('public~None found')}</div>
                   ) : (
                     <ActiveAlerts alerts={alerts} ruleID={rule?.id} namespace={namespace} />
                   )}
@@ -1062,7 +1062,7 @@ const SilencedAlertsList = ({ alerts }) => {
   const { t } = useTranslation();
 
   return _.isEmpty(alerts) ? (
-    <div className="text-center">{t('public~None found')}</div>
+    <div className="pf-u-text-align-center">{t('public~None found')}</div>
   ) : (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">

@@ -79,7 +79,7 @@ describe('RevisionsOverviewListItem', () => {
     };
     wrapper.setProps({ service: mockServiceData });
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
-    expect(wrapper.find('span.text-right').text()).toBe('100%');
+    expect(wrapper.find('span.pf-u-text-align-right').text()).toBe('100%');
   });
 
   describe('RevisionsOverviewListItem: deployments', () => {

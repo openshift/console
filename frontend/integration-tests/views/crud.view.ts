@@ -191,7 +191,7 @@ export const checkResourceExists = async (resource: string, name: string) => {
   expect(resourceTitle.getText()).toEqual(name);
 };
 
-export const emptyState = $('.cos-status-box').$('.text-center');
+export const emptyState = $('.cos-status-box').$('.pf-u-text-align-center');
 
 export const errorMessage = $('.pf-c-alert.pf-m-inline.pf-m-danger');
 export const successMessage = $('.pf-c-alert.pf-m-inline.pf-m-success');

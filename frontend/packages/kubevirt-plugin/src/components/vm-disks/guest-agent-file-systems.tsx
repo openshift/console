@@ -94,7 +94,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
 
   const body = () => {
     return !guestAgentInfoRaw ? (
-      <div className="text-center">
+      <div className="pf-u-text-align-center">
         {getGuestAgentFieldNotAvailMsg(t, isGuestAgentInstalled(vmi), vmStatusBundle.status)}
       </div>
     ) : (
@@ -106,7 +106,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
         loadError={error?.message}
         loaded={!loading}
         EmptyMsg={() => (
-          <div id="no-files-systems-found-msg" className="text-center">
+          <div id="no-files-systems-found-msg" className="pf-u-text-align-center">
             {t('kubevirt-plugin~No File Systems Found')}
           </div>
         )}

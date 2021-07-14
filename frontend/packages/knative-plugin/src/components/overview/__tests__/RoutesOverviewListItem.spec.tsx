@@ -122,7 +122,7 @@ describe('RoutesOverviewListItem', () => {
     ]);
     expect(title).toEqual(`${i18nNS}~Unique Route`);
     expect(urls).toEqual(['https://tag1.test.com', 'https://tag2.test.com']);
-    expect(wrapper.find('span.text-right').text()).toBe('50%');
+    expect(wrapper.find('span.pf-u-text-align-right').text()).toBe('50%');
   });
 
   it('should not show the route url and traffic percentage section, if there are not available', () => {
@@ -147,6 +147,6 @@ describe('RoutesOverviewListItem', () => {
     wrapper.setProps({ routeLink });
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
     expect(wrapper.find(RoutesUrlLink)).toHaveLength(0);
-    expect(wrapper.find('span.text-right')).toHaveLength(0);
+    expect(wrapper.find('span.pf-u-text-align-right')).toHaveLength(0);
   });
 });

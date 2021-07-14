@@ -105,7 +105,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
         <span className="col-xs-3">
           <PodStatus pod={pod} />
         </span>
-        <span className="col-xs-3 text-right">
+        <span className="col-xs-3 pf-u-text-align-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
         </span>
       </div>

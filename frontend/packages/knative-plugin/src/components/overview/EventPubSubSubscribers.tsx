@@ -51,7 +51,7 @@ const EventPubSubSubscribers: React.FC<EventPubSubSubscribersProps> = ({
                         </GridItem>
                         {r?.filters && r?.filters.length > 0 && (
                           <GridItem span={3}>
-                            <span className="text-right">
+                            <span className="pf-u-text-align-right">
                               <EventPubSubExpandButton
                                 rowSelected={expanded.length > 0 && r.name === expanded}
                                 onClick={onClick}

@@ -199,7 +199,7 @@ const numericUnits = new Set([
 
 const DataCell = ({ name, value, unit }: DataTableCellProps) => {
   if (numericUnits.has(unit)) {
-    return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
+    return <div className="pf-u-text-align-right">{_.round(value, 2).toLocaleString()}</div>;
   }
   if (unit === 'date' || unit === 'time') {
     return <Timestamp timestamp={value} />;
@@ -379,7 +379,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     if (inFlight) {
       dataElem = (
         <div className="row">
-          <div className="col-xs-12 text-center">
+          <div className="col-xs-12 pf-u-text-align-center">
             <LoadingInline />
           </div>
         </div>
