@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
-import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
@@ -39,7 +37,7 @@ interface TaskProps {
   task?: {
     data: TaskKind;
   };
-  status?: TaskStatus;
+  status: TaskStatus;
   namespace: string;
   isPipelineRun: boolean;
   disableVisualizationTooltip?: boolean;
@@ -203,27 +201,27 @@ const TaskComponent: React.FC<TaskProps> = ({
         renderVisualName
       )}
 
-      {isPipelineRun && showStatusState && (
-        <svg
-          width={30}
-          height={30}
-          viewBox="-5 -4 20 20"
-          style={{
-            color: taskStatusColor,
-          }}
-        >
-          <g
-            className={cx({
-              'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
-              'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
-            })}
-          >
-            <StatusIcon status={status.reason} disableSpin />
-          </g>
-        </svg>
-      )}
       {showStatusState && (
-        <SvgTaskStatus steps={stepStatusList} x={30} y={23} width={width / 2 + 15} />
+        <>
+          <svg
+            width={30}
+            height={30}
+            viewBox="-5 -4 20 20"
+            style={{
+              color: taskStatusColor,
+            }}
+          >
+            <g
+              className={cx({
+                'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
+                'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
+              })}
+            >
+              <StatusIcon status={status.reason} disableSpin />
+            </g>
+          </svg>
+          <SvgTaskStatus steps={stepStatusList} x={30} y={23} width={width / 2 + 15} />
+        </>
       )}
     </g>
   );
@@ -249,24 +247,18 @@ const TaskComponent: React.FC<TaskProps> = ({
     );
   }
 
-  const taskColor = showStatusState
-    ? taskStatusColor
-    : !isFinallyTask
-    ? greyBackgroundColor.value
-    : lightBackgroundColor.value;
-
   const taskNode = (
     <>
       {hasWhenExpression && (
         <WhenExpressionDecorator
           width={WHEN_EXPRESSSION_DIAMOND_SIZE}
           height={WHEN_EXPRESSSION_DIAMOND_SIZE}
-          stroke={showStatusState ? taskColor : undefined}
-          color={taskColor}
           appendLine={!hasRunAfter && !isFinallyTask}
+          isPipelineRun={isPipelineRun}
           status={status.reason}
           enableTooltip
           leftOffset={disableVisualizationTooltip && !isFinallyTask ? 3 : 2}
+          isFinallyTask={isFinallyTask}
         />
       )}
       {taskPill}

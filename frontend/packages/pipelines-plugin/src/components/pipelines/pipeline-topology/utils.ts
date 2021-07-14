@@ -1,6 +1,11 @@
+import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
+import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
+import i18n from '@console/internal/i18n';
 import { PipelineKind, PipelineRunKind, PipelineTask } from '../../../types';
+import { getRunStatusColor, runStatus } from '../../../utils/pipeline-augment';
 import { getPipelineTasks, getFinallyTasksWithStatus } from '../../../utils/pipeline-utils';
 import { CheckTaskErrorMessage } from '../pipeline-builder/types';
 import {
@@ -31,6 +36,7 @@ import {
   BuilderFinallyNodeModel,
   FinallyNodeModel,
   PipelineFinallyNodeModel,
+  DiamondStateType,
 } from './types';
 
 const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, data) => ({
@@ -343,4 +349,37 @@ export const getLayoutData = (layout: PipelineLayout): dagre.GraphLabel => {
     default:
       return null;
   }
+};
+
+export const getWhenExpressionDiamondState = (
+  status: runStatus,
+  isPipelineRun: boolean,
+  isFinallyTask: boolean,
+): DiamondStateType => {
+  let diamondColor: string;
+  if (isPipelineRun) {
+    if (status === runStatus.Failed) {
+      diamondColor = successColor.value;
+    } else {
+      diamondColor = getRunStatusColor(status).pftoken.value;
+    }
+  } else if (!isFinallyTask) {
+    diamondColor = greyBackgroundColor.value;
+  } else {
+    diamondColor = lightBackgroundColor.value;
+  }
+
+  let tooltipContent: string;
+  switch (status) {
+    case runStatus.Succeeded:
+    case runStatus.Failed:
+      tooltipContent = i18n.t('pipelines-plugin~When expression was met');
+      break;
+    case runStatus.Skipped:
+      tooltipContent = i18n.t('pipelines-plugin~When expression was not met');
+      break;
+    default:
+      tooltipContent = i18n.t('pipelines-plugin~When expression');
+  }
+  return { tooltipContent, diamondColor };
 };
