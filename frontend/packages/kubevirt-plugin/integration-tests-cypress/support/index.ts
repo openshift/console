@@ -35,7 +35,7 @@ declare global {
 Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
   cy.exec(
-    `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`,
+    `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s`,
   );
 
   // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
