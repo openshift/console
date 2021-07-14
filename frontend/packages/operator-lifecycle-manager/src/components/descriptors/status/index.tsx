@@ -129,7 +129,7 @@ const MainStatus: React.FC<StatusCapabilityProps> = ({
 
 export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (props) => {
   const [capability] =
-    getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value, true) ?? [];
+    getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value) ?? [];
 
   if (capability?.startsWith(StatusCapability.k8sResourcePrefix)) {
     return <K8sResourceLinkCapability capability={capability} {...props} />;

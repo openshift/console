@@ -134,7 +134,6 @@ const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapabi
 export function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   type: string,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const compatibleCapabilities = getCompatibleCapabilities(type);
   const [valid, invalid, deprecated] = _.reduce(
@@ -150,10 +149,9 @@ export function getValidCapabilitiesForDataType<CapabilityType extends string = 
           capability.startsWith(compatibleCapability),
         );
 
-      const isValid = (!isDeprecated || allowDeprecated) && isCompatible;
       return [
-        [...(validAccumulator ?? []), ...(isValid ? [capability] : [])],
-        [...(invalidAccumulator ?? []), ...(!isValid ? [capability] : [])],
+        [...(validAccumulator ?? []), ...(!isDeprecated && isCompatible ? [capability] : [])],
+        [...(invalidAccumulator ?? []), ...(!isCompatible ? [capability] : [])],
         [...(deprecatedAccumulator ?? []), ...(isDeprecated ? [capability] : [])],
       ];
     },
@@ -174,14 +172,13 @@ export function getValidCapabilitiesForDataType<CapabilityType extends string = 
     deprecated.forEach((deprecatedCapability) => {
       // eslint-disable-next-line no-console
       console.warn(
-        `[Deprecated x-descriptor] "${deprecatedCapability}" is no longer supported ${!allowDeprecated &&
-          'and will have no effect'}`,
+        `[Deprecated x-descriptor] "${deprecatedCapability}" is no longer supported and will have no effect`,
         descriptor,
       );
     });
   }
 
-  return valid ?? [];
+  return valid;
 }
 
 const getValueType = (value: any): string => {
@@ -197,19 +194,17 @@ const getValueType = (value: any): string => {
 export function getValidCapabilitiesForValue<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   value: any,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const type = getValueType(value);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
 }
 
 export function getValidCapabilitiesForSchema<CapabilityType extends string = SpecCapability>(
   descriptor: Descriptor<CapabilityType>,
   schema: JSONSchema6,
-  allowDeprecated?: boolean,
 ): CapabilityType[] {
   const type = getSchemaType(schema);
-  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type);
 }
 
 export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>

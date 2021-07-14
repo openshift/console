@@ -44,7 +44,7 @@ const PodCount: React.FC<SpecCapabilityProps> = ({
       })
     }
   >
-    {value} pods
+    {value ?? 0} pods
   </DetailsItem>
 );
 
@@ -66,7 +66,7 @@ const Label: React.FC<SpecCapabilityProps> = ({
     {_.isObject(value) ? (
       <LabelList kind={model.kind} labels={value} />
     ) : (
-      <span>{value || '--'}</span>
+      <span>{value || '-'}</span>
     )}
   </DetailsItem>
 );
@@ -317,7 +317,7 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
 
 export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = (props) => {
   const [capability] =
-    getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value, true) ?? [];
+    getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value) ?? [];
 
   if (capability?.startsWith(SpecCapability.k8sResourcePrefix)) {
     return <K8sResourceLinkCapability capability={capability} {...props} />;
