@@ -25,16 +25,17 @@ const ErrorMessage = ({ message }) => {
       className="co-alert co-alert--scrollable"
       variant="danger"
       title={t('public~An error occurred')}
+      tabIndex={0}
     >
       <div className="co-pre-line">{message}</div>
     </Alert>
   );
 };
 const InfoMessage = ({ message }) => (
-  <Alert isInline className="co-alert" variant="info" title={message} />
+  <Alert isInline className="co-alert" variant="info" title={message} tabIndex={0} />
 );
 const SuccessMessage = ({ message }) => (
-  <Alert isInline className="co-alert" variant="success" title={message} />
+  <Alert isInline className="co-alert" variant="success" title={message} tabIndex={0} />
 );
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.
