@@ -47,14 +47,17 @@ const TLSCert = ({ ingress }) => {
     );
   }
 
-  const certs = _.map(ingress.spec.tls, 'secretName');
+  const certs = _.map(ingress.spec.tls, (secret, i) => (
+    <>
+      <span>
+        <ResourceIcon kind="Secret" />
+        {secret.secretName}
+      </span>
+      {ingress.spec.tls.length - 1 !== i && ', '}
+    </>
+  ));
 
-  return (
-    <div>
-      <ResourceIcon kind="Secret" />
-      <span>{certs.join(', ')}</span>
-    </div>
-  );
+  return <div>{certs}</div>;
 };
 
 const tableColumnClasses = [
