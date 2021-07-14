@@ -11,10 +11,12 @@ import {
   kindForReference,
   apiVersionCompare,
   referenceForGroupVersionKind,
+  referenceForExtensionModel,
 } from './k8s';
 import store from '../../redux';
 import { pluginStore } from '../../plugins';
 import { isModelDefinition } from '@console/plugin-sdk';
+import { isModelMetadata } from '@console/dynamic-plugin-sdk';
 
 const modelKey = (model: K8sKind): string => {
   // TODO: Use `referenceForModel` even for known API objects
@@ -57,8 +59,20 @@ const getK8sModels = () => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const modelFor = (ref: K8sResourceKindReference) => {
+  const dynamicModelMetadata = pluginStore
+    .getAllExtensions()
+    .filter(isModelMetadata)
+    ?.find(
+      (e) =>
+        ref === referenceForExtensionModel(e?.properties?.model) ||
+        ref === e?.properties?.model?.kind,
+    )?.properties;
+
   let m = getK8sModels().get(ref);
   if (m) {
+    if (dynamicModelMetadata) {
+      return _.merge(m, dynamicModelMetadata);
+    }
     return m;
   }
   // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
@@ -66,18 +80,32 @@ export const modelFor = (ref: K8sResourceKindReference) => {
     .getState()
     .k8s.getIn(['RESOURCES', 'models'])
     .get(ref);
+
   if (m) {
+    if (dynamicModelMetadata) {
+      return _.merge(m, dynamicModelMetadata);
+    }
     return m;
   }
+
   m = getK8sModels().get(kindForReference(ref));
+
   if (m) {
+    if (dynamicModelMetadata) {
+      return _.merge(m, dynamicModelMetadata);
+    }
     return m;
   }
+
   m = store
     .getState()
     .k8s.getIn(['RESOURCES', 'models'])
     .get(kindForReference(ref));
+
   if (m) {
+    if (dynamicModelMetadata) {
+      return _.merge(m, dynamicModelMetadata);
+    }
     return m;
   }
 };

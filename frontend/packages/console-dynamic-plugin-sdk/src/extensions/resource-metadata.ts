@@ -3,7 +3,7 @@ import { Extension, ExtensionDeclaration } from '../types';
 
 /** Customize the display of models by overriding values retrieved and generated through API discovery. */
 export type ModelMetadata = ExtensionDeclaration<
-  'console.resource-metadata',
+  'console.model-metadata',
   {
     /** The model to customize. May specify only a group, or optional version and kind. */
     model: ExtensionK8sGroupModel;
@@ -13,14 +13,18 @@ export type ModelMetadata = ExtensionDeclaration<
     color?: string;
     /** Override the label. Requires `kind` be provided. */
     label?: string;
+    /** Override plural. Requires `kind` be provided. */
+    plural?: string;
     /** Override the plural label. Requires `kind` be provided. */
     labelPlural?: string;
     /** Customize the abbreviation. Defaults to All uppercase chars in the kind up to 4 characters long. Requires `kind` be provided. */
     abbr?: string;
+    /** Flag if the model is a Custom Resource Definition */
+    crd?: boolean;
   }
 >;
 
 // Type guards
 
 export const isModelMetadata = (e: Extension): e is ModelMetadata =>
-  e.type === 'console.resource-metadata';
+  e.type === 'console.model-metadata';
