@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 import { Patch } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
 import { V1Network, V1NetworkInterface } from '../../../types/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getSimpleName } from '../../../utils';
+import { PatchBuilder } from '../../helpers/patch';
 import { NetworkInterfaceWrapper } from '../../wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
 import { getVMLikePatches } from '../vm-template';

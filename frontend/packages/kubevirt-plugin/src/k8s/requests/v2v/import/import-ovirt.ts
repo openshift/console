@@ -2,7 +2,6 @@
 import * as _ from 'lodash';
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import {
   getOvirtAttribute,
   getOvirtField,
@@ -21,6 +20,7 @@ import { ANNOTATION_DESCRIPTION } from '../../../../constants/vm';
 import { NetworkType } from '../../../../constants/vm/network';
 import { DiskMapping, NetworkMapping } from '../../../../types/vm-import/ovirt/vm-import';
 import { compareOwnerReference, buildOwnerReference } from '../../../../utils';
+import { PatchBuilder } from '../../../helpers/patch';
 import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import { VMImportWrappper } from '../../../wrapper/vm-import/vm-import-wrapper';
 import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';

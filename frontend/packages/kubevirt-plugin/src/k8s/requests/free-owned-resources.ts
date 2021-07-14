@@ -1,8 +1,8 @@
 import { k8sKill, k8sPatch, OwnerReference } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { getOwnerReferences } from '../../selectors';
 import { K8sResourceWithModel } from '../../types/k8s-resource-with-model';
 import { compareOwnerReference } from '../../utils';
+import { PatchBuilder } from '../helpers/patch';
 
 export const freeOwnedResources = async (
   ownedResources: K8sResourceWithModel[],
