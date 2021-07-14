@@ -98,7 +98,12 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
     () =>
       status === QuickStartStatus.COMPLETE &&
       taskNumber === totalTasks && (
-        <Button variant="link" className="pull-right" onClick={onRestart}>
+        <Button
+          variant="link"
+          className="pull-right"
+          onClick={onRestart}
+          data-test="restart button"
+        >
           {SecondaryButtonText.RESTART}
         </Button>
       ),

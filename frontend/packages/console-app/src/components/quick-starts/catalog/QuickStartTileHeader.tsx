@@ -44,8 +44,8 @@ const QuickStartTileHeader: React.FC<QuickStartTileHeaderProps> = ({ status, dur
             {statusLocaleMap[status]}
           </Label>
         )}
-        <Label variant="outline" icon={<OutlinedClockIcon />}>
-          {t('console-app~{{duration, number}} minutes', { duration })}
+        <Label variant="outline" data-test="duration" icon={<OutlinedClockIcon />}>
+          {t('quickstart~{{duration, number}} minutes', { duration })}
         </Label>
       </div>
     </div>
