@@ -14,7 +14,7 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { VM_DETAIL_SNAPSHOTS } from '../../constants';
-import { VirtualMachineSnapshotModel } from '../../models';
+import { VirtualMachineModel, VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName } from '../../selectors';
 import {
@@ -114,6 +114,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
 
   const breadcrumbsForSnapshots = (snapshot) => {
     const vmName = getVmSnapshotVmName(snapshot);
+    const vmReference = kubevirtReferenceForModel(VirtualMachineModel);
     const vmNamespace = namespace || 'default';
     return [
       {
@@ -126,7 +127,7 @@ export const SnapshotDetailsPage: React.FC<SnapshotDetailsPageProps> = ({ match,
       },
       {
         name: `${vmName} Snapshots`,
-        path: `/k8s/ns/${vmNamespace}/virtualmachines/${vmName}/${VM_DETAIL_SNAPSHOTS}`,
+        path: `/k8s/ns/${vmNamespace}/${vmReference}/${vmName}/${VM_DETAIL_SNAPSHOTS}`,
       },
       {
         name: `${snapshotName} Details`,
