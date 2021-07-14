@@ -41,6 +41,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
         onActivate={() => onSelectCategory(id)}
         hasActiveDescendant={hasActiveDescendant(selectedCategory, category)}
         shown={toplevelCategory}
+        data-test={`tab ${id}`}
       >
         {subcategories && (
           <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryID, category)}>
@@ -54,7 +55,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
   };
 
   return (
-    <VerticalTabs restrictTabs activeTab={activeTab}>
+    <VerticalTabs restrictTabs activeTab={activeTab} data-test="catalog-categories">
       {_.map(categories, (category) => renderTabs(category, selectedCategory, true))}
     </VerticalTabs>
   );
