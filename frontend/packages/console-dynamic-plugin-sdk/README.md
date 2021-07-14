@@ -165,6 +165,12 @@ as enabled. Updating Console operator config triggers a new rollout of the Conso
 Bridge reads the computed list of plugins upon its startup and injects this list into Console web page
 via `SERVER_FLAGS` object.
 
+## Disabling plugins in the browser
+
+Console users can disable specific or all dynamic plugins that would normally get loaded upon Console
+startup via `disable-plugins` query parameter. The value of this parameter is either a comma separated
+list of plugin names (disable specific plugins) or an empty string (disable all plugins).
+
 ## Runtime constraints and specifics
 
 - Loading multiple plugins with the same `name` (but with a different `version`) is not allowed.

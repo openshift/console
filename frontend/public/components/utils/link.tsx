@@ -57,11 +57,11 @@ export const getNamespace = (path: string): string => {
 export const getURLSearchParams = () => {
   const all: any = {};
   const params = new URLSearchParams(window.location.search);
-  // The URLSearchParams type definition does not include `entries()`.
-  // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries
-  for (const [k, v] of (params as any).entries()) {
+
+  for (const [k, v] of params.entries()) {
     all[k] = v;
   }
+
   return all;
 };
 

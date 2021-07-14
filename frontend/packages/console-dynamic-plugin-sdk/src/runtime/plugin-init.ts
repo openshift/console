@@ -12,8 +12,7 @@ export const initConsolePlugins = _.once(
     registerPluginEntryCallback(pluginStore);
     exposePluginAPI();
 
-    // Load all dynamic plugins which are currently enabled on the cluster
-    window.SERVER_FLAGS.consolePlugins.forEach((pluginName) => {
+    pluginStore.getAllowedDynamicPluginNames().forEach((pluginName) => {
       loadAndEnablePlugin(pluginName, pluginStore, () => {
         // TODO(vojtech): add new entry into the notification drawer
         pluginStore.registerFailedDynamicPlugin(pluginName);

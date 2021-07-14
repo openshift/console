@@ -52,6 +52,8 @@ export class PluginStore {
   // Extensions contributed by dynamic plugins (loaded from remote hosts at runtime)
   private dynamicPluginExtensions: LoadedExtension[] = [];
 
+  private readonly allowedDynamicPluginNames: Set<string>;
+
   // Dynamic plugins that were loaded successfully
   private readonly loadedDynamicPlugins = new Map<string, LoadedDynamicPlugin>();
 
@@ -60,10 +62,7 @@ export class PluginStore {
 
   private readonly listeners: VoidFunction[] = [];
 
-  constructor(
-    staticPlugins: ActivePlugin[] = [],
-    private readonly allowedDynamicPluginNames: Set<string> = new Set(),
-  ) {
+  constructor(staticPlugins: ActivePlugin[] = [], allowedDynamicPluginNames: string[] = []) {
     this.staticPluginExtensions = _.flatMap(
       staticPlugins.map((p) =>
         p.extensions.map((e, index) =>
@@ -71,10 +70,16 @@ export class PluginStore {
         ),
       ),
     );
+
+    this.allowedDynamicPluginNames = new Set(allowedDynamicPluginNames);
   }
 
   getAllExtensions() {
     return [...this.staticPluginExtensions, ...this.dynamicPluginExtensions];
+  }
+
+  getAllowedDynamicPluginNames() {
+    return Array.from(this.allowedDynamicPluginNames);
   }
 
   subscribe(listener: VoidFunction): VoidFunction {
