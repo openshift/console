@@ -62,6 +62,8 @@ const errorPhases = [
 
 const isPodError = (pod: PodKind) => _.includes(errorPhases, podPhase(pod));
 
+const isEvicted = (pod: PodKind) => podPhase(pod) === 'Evicted';
+
 const isDeploymentGeneratedByWebConsole = (obj: K8sResourceKind) =>
   obj.kind === 'Deployment' &&
   obj.metadata?.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole';
@@ -76,6 +78,13 @@ const podCompare = (pod1: PodKind, pod2: PodKind): number => {
 
   if (error1 !== error2) {
     return error1 ? 1 : 0;
+  }
+
+  const evicted1 = isEvicted(pod1);
+  const evicted2 = isEvicted(pod2);
+
+  if (evicted1 !== evicted2) {
+    return evicted1 ? 1 : -1;
   }
 
   const runtime1 = podUpdateTime(pod1);
