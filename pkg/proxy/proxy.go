@@ -251,8 +251,8 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	errc := make(chan error, 2)
 
 	// Can't just use io.Copy here since browsers care about frame headers.
-	go func() { errc <- copyMsgs(nil, frontend, backend) }()
-	go func() { errc <- copyMsgs(&writeMutex, backend, frontend) }()
+	go func() { errc <- copyMsgs(&writeMutex, frontend, backend) }()
+	go func() { errc <- copyMsgs(nil, backend, frontend) }()
 
 	for {
 		select {
