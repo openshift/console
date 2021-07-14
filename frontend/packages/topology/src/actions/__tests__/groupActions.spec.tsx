@@ -68,4 +68,16 @@ describe('groupActions: ', () => {
     expect(actions).toHaveLength(5);
     expect(actions.filter((a) => a.label === 'Event Source')).toHaveLength(0);
   });
+
+  it('should return serverless menu items when eventing and serving is enabled', () => {
+    const graphDataWithEventSourceEnabled: GraphData = {
+      ...graphData,
+      eventSourceEnabled: true,
+    };
+    const actions = groupActions(graphDataWithEventSourceEnabled, application);
+    expect(actions).toHaveLength(9);
+    expect(actions.filter((a) => !!a.labelKey.match(/(Event Source|Broker|Channel)/))).toHaveLength(
+      3,
+    );
+  });
 });

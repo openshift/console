@@ -75,7 +75,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(12);
+    expect(actions).toHaveLength(13);
   });
 
   it('should return the correct number of items when all permission are not allowed and eventSource is enabled', () => {
@@ -85,6 +85,6 @@ describe('graphActions: ', () => {
       createResourceAccess: [],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(7);
+    expect(actions).toHaveLength(8);
   });
 });

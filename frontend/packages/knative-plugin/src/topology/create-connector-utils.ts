@@ -12,6 +12,7 @@ import { errorModal } from '@console/internal/components/modals';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { GraphData } from '@console/topology/src/topology-types';
 import { getResource } from '@console/topology/src/utils';
+import { addBrokers } from '../actions/add-broker';
 import { addChannels } from '../actions/add-channel';
 import { addEventSource } from '../actions/add-event-source';
 import { addSubscription } from '../actions/add-subscription';
@@ -36,7 +37,9 @@ export const getKnativeContextMenuAction = (
   if (connectorSource?.getData().type === TYPE_EVENT_SOURCE_KAFKA) {
     return [];
   }
-  const knativeActions = [addEventSource, addChannels].filter(disabledFilter).map(actionMapper);
+  const knativeActions = [addEventSource, addChannels, addBrokers]
+    .filter(disabledFilter)
+    .map(actionMapper);
   const knativeConnectorActions = [addEventSource].filter(disabledFilter).map(actionMapper);
 
   if (!connectorSource && isGroupActions) {

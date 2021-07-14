@@ -27,15 +27,11 @@ import {
   getKameletSourceData,
 } from '../../utils/create-eventsources-utils';
 import { getEventSourceModels } from '../../utils/fetch-dynamic-eventsources-utils';
+import { EVENT_SOURCES_APP } from './const';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import EventSourceMetaDescription from './EventSourceMetadataDescription';
-import {
-  EventSourceSyncFormData,
-  SinkType,
-  EVENT_SOURCES_APP,
-  EventSourceMetaData,
-} from './import-types';
+import { EventSourceSyncFormData, SinkType, EventSourceMetaData } from './import-types';
 
 interface EventSourceProps {
   namespace: string;
