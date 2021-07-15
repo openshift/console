@@ -443,21 +443,6 @@ h6 {
   color: $color-text-secondary;
 }
 
-.toolbar-pf {
-  background-color: transparent;
-  border-bottom: none;
-  box-shadow: none;
-  min-width: 0; // enable text-overflow: ellipsis
-  padding-top: 0;
-}
-
-@media (max-width: $screen-md-max) {
-  .toolbar-pf-actions {
-    display: block;
-    margin-bottom: 0;
-  }
-}
-
 .xterm .xterm-screen canvas {
   // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
   // see https://github.com/xtermjs/xterm.js/issues/1974
