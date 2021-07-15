@@ -16,7 +16,7 @@ import {
 import { humanizeBinaryBytes, Dropdown, FieldLevelHelp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { TechPreviewBadge, useDeepCompareMemoize, getName } from '@console/shared';
+import { useDeepCompareMemoize, getName } from '@console/shared';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { scResource } from '../../../resources';
 import { arbiterText, MODES } from '../../../constants';
@@ -33,7 +33,6 @@ const EnableArbiterLabel: React.FC = () => {
       <span className="ocs-enable-arbiter-label__title--padding">
         {t('ceph-storage-plugin~Enable arbiter')}
       </span>
-      <TechPreviewBadge />
       <AdvancedSubscription />
     </div>
   );
