@@ -73,10 +73,18 @@ export default (state: UIState, action: UIAction): UIState => {
         selectedKey: null,
       }),
       monitoringDashboards: ImmutableMap({
-        endTime: null,
-        pollInterval: 30 * 1000,
-        timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
-        variables: ImmutableMap(),
+        dev: ImmutableMap({
+          endTime: null,
+          pollInterval: 30 * 1000,
+          timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+          variables: ImmutableMap(),
+        }),
+        admin: ImmutableMap({
+          endTime: null,
+          pollInterval: 30 * 1000,
+          timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+          variables: ImmutableMap(),
+        }),
       }),
       queryBrowser: ImmutableMap({
         metrics: [],
@@ -139,28 +147,39 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.MonitoringDashboardsPatchVariable:
       return state.mergeIn(
-        ['monitoringDashboards', 'variables', action.payload.key],
+        ['monitoringDashboards', action.payload.perspective, 'variables', action.payload.key],
         ImmutableMap(action.payload.patch),
       );
 
     case ActionType.MonitoringDashboardsPatchAllVariables:
       return state.setIn(
-        ['monitoringDashboards', 'variables'],
+        ['monitoringDashboards', action.payload.perspective, 'variables'],
         ImmutableMap(action.payload.variables),
       );
 
     case ActionType.MonitoringDashboardsSetEndTime:
-      return state.setIn(['monitoringDashboards', 'endTime'], action.payload.endTime);
+      return state.setIn(
+        ['monitoringDashboards', action.payload.perspective, 'endTime'],
+        action.payload.endTime,
+      );
 
     case ActionType.MonitoringDashboardsSetPollInterval:
-      return state.setIn(['monitoringDashboards', 'pollInterval'], action.payload.pollInterval);
+      return state.setIn(
+        ['monitoringDashboards', action.payload.perspective, 'pollInterval'],
+        action.payload.pollInterval,
+      );
 
     case ActionType.MonitoringDashboardsSetTimespan:
-      return state.setIn(['monitoringDashboards', 'timespan'], action.payload.timespan);
+      return state.setIn(
+        ['monitoringDashboards', action.payload.perspective, 'timespan'],
+        action.payload.timespan,
+      );
 
     case ActionType.MonitoringDashboardsVariableOptionsLoaded: {
-      const { key, newOptions } = action.payload;
-      const { options, value } = state.getIn(['monitoringDashboards', 'variables', key]).toJS();
+      const { key, newOptions, perspective } = action.payload;
+      const { options, value } = state
+        .getIn(['monitoringDashboards', perspective, 'variables', key])
+        .toJS();
       const patch = _.isEqual(options, newOptions)
         ? { isLoading: false }
         : {
@@ -169,9 +188,14 @@ export default (state: UIState, action: UIAction): UIState => {
             value:
               value === MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY || newOptions.includes(value)
                 ? value
+                : perspective === 'dev' && key === 'namespace'
+                ? state.getIn(['activeNamespace'])
                 : newOptions[0],
           };
-      return state.mergeIn(['monitoringDashboards', 'variables', key], ImmutableMap(patch));
+      return state.mergeIn(
+        ['monitoringDashboards', perspective, 'variables', key],
+        ImmutableMap(patch),
+      );
     }
     case ActionType.MonitoringSetRules:
       return state.setIn(['monitoring', action.payload.key], action.payload.data);

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DatePicker, TimePicker } from '@patternfly/react-core';
 
+import { useActivePerspective } from '@console/shared';
 import {
   monitoringDashboardsSetEndTime,
   monitoringDashboardsSetTimespan,
@@ -24,11 +25,14 @@ import { setQueryArguments } from '../../utils';
 
 const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
   const { t } = useTranslation();
+  const [activePerspective] = useActivePerspective();
 
   const dispatch = useDispatch();
-  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
+  const endTime = useSelector(({ UI }: RootState) =>
+    UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
+  );
   const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
   );
 
   // If a time is already set in Redux, default to that, otherwise default to a time range that
@@ -49,8 +53,8 @@ const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
     const from = Date.parse(`${fromDate} ${fromTime}`);
     const to = Date.parse(`${toDate} ${toTime}`);
     if (_.isInteger(from) && _.isInteger(to)) {
-      dispatch(monitoringDashboardsSetEndTime(to));
-      dispatch(monitoringDashboardsSetTimespan(to - from));
+      dispatch(monitoringDashboardsSetEndTime(to, activePerspective));
+      dispatch(monitoringDashboardsSetTimespan(to - from, activePerspective));
       setQueryArguments({
         endTime: to.toString(),
         timeRange: (to - from).toString(),
