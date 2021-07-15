@@ -53,7 +53,7 @@ Feature: Create Application from Container image file
 
         Examples:
                   | image_stream | runtime_icon | name           |
-                  | golang       | fedora       | hello-internal |
+                  | httpd        | fedora       | hello-internal |
 
 
         @regression

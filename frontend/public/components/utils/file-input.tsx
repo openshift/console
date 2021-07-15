@@ -97,19 +97,22 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
               <input
                 type="text"
                 className="pf-c-form-control"
+                aria-label={t('public~Filename')}
                 value={this.props.inputFileName}
-                aria-describedby={`${id}-help`}
+                aria-describedby={this.props.inputFieldHelpText ? `${id}-help` : undefined}
                 readOnly
                 disabled
               />
               <span className="pf-c-button pf-m-tertiary co-btn-file">
-                <input type="file" onChange={this.onFileUpload} data-test="file-input" />
+                <input id={id} type="file" onChange={this.onFileUpload} data-test="file-input" />
                 {t('public~Browse...')}
               </span>
             </div>
-            <p className="help-block" id={`${id}-help`}>
-              {this.props.inputFieldHelpText}
-            </p>
+            {this.props.inputFieldHelpText ? (
+              <p className="help-block" id={`${id}-help`}>
+                {this.props.inputFieldHelpText}
+              </p>
+            ) : null}
             {!hideContents && (
               <textarea
                 data-test-id={
@@ -118,13 +121,18 @@ class FileInputWithTranslation extends React.Component<FileInputProps, FileInput
                 className="pf-c-form-control co-file-dropzone__textarea"
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
-                aria-describedby={`${id}-textarea-help`}
+                aria-label={this.props.label}
+                aria-describedby={
+                  this.props.textareaFieldHelpText ? `${id}-textarea-help` : undefined
+                }
                 required={isRequired}
               />
             )}
-            <p className="help-block" id={`${id}-textarea-help`}>
-              {this.props.textareaFieldHelpText}
-            </p>
+            {this.props.textareaFieldHelpText ? (
+              <p className="help-block" id={`${id}-textarea-help`}>
+                {this.props.textareaFieldHelpText}
+              </p>
+            ) : null}
             {errorMessage && <div className="text-danger">{errorMessage}</div>}
             {fileIsBinary && (
               <Alert
