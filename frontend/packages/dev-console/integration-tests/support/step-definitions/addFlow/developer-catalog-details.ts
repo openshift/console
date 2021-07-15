@@ -46,5 +46,5 @@ Then('user will see the cards of Event Sources', () => {
 });
 
 Then('user will see the cards of Helm Charts', () => {
-  catalogPage.verifyChartCardsAvailable();
+  catalogPage.verifyHelmChartCardsAvailable();
 });
