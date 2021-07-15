@@ -1,5 +1,12 @@
-.co-close-button--float-right {
-  float: right;
+.co-close-button {
+
+  &--float-right {
+    float: right;
+  }
+
+  &--no-padding {
+    padding: 0 !important;
+  }
 }
 
 .co-sidebar-dismiss__close-button {

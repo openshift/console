@@ -7,15 +7,21 @@ import './CloseButton.scss';
 
 type CloseButtonProps = {
   additionalClassName?: string;
+  ariaLabel?: string;
   dataTestID?: string;
   onClick: (e: any) => void;
 };
 
-const CloseButton: React.FC<CloseButtonProps> = ({ additionalClassName, dataTestID, onClick }) => {
+const CloseButton: React.FC<CloseButtonProps> = ({
+  additionalClassName,
+  ariaLabel,
+  dataTestID,
+  onClick,
+}) => {
   const { t } = useTranslation();
   return (
     <Button
-      aria-label={t('public~Close')}
+      aria-label={ariaLabel || t('public~Close')}
       className={classNames('co-close-button', additionalClassName)}
       data-test-id={dataTestID}
       onClick={onClick}
