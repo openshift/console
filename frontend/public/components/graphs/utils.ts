@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import i18n from 'i18next';
 import { chart_color_orange_300 as requestedColor } from '@patternfly/react-tokens/dist/js/chart_color_orange_300';
 
 import { PrometheusResponse, DataPoint, PrometheusResult } from '.';
@@ -50,7 +51,12 @@ export const mapLimitsRequests = (
   const data = utilizationData ? [...utilizationData] : [];
   const chartStyle = [null];
   if (limit) {
-    const limitData = getRangeVectorStats(limit, 'total limit', { type: 'dash' }, xMutator);
+    const limitData = getRangeVectorStats(
+      limit,
+      i18n.t('public~total limit'),
+      { type: 'dash' },
+      xMutator,
+    );
     data.push(...limitData);
     if (limitData.length) {
       chartStyle.push({
@@ -61,7 +67,7 @@ export const mapLimitsRequests = (
   if (requested) {
     const reqData = getRangeVectorStats(
       requested,
-      'total requested',
+      i18n.t('public~total requested'),
       {
         type: 'dash',
         fill: requestedColor.value,

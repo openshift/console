@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import i18n from 'i18next';
 import {
   Chart,
   ChartArea,
@@ -102,7 +103,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       const { x, y } = prop.datum;
       const value = humanize(y, unit, unit).string;
       const date = formatDate(x);
-      return includeDate ? `${value} at ${date}` : value;
+      return includeDate ? i18n.t('public~{{value}} at {{date}}', { value, date }) : value;
     },
     [humanize, unit, formatDate],
   );
