@@ -1,10 +1,6 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { RootState } from '@console/internal/redux';
-import { Status, useCsvWatchResource } from '@console/shared';
+import { ActionMenu, ActionMenuVariant, ActionsLoader, Status } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
@@ -14,9 +10,14 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { DeploymentModel } from '../models';
-import { DeploymentKind, K8sKind, K8sResourceKindReference } from '../module/k8s';
+import {
+  DeploymentKind,
+  K8sKind,
+  K8sResourceKindReference,
+  referenceFor,
+  referenceForModel,
+} from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -222,15 +223,29 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
 
 const { details, editYaml, pods, envEditor, events, metrics } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => {
-  const ns = useSelector((state: RootState) => getActiveNamespace(state));
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    return (
+      <ActionsLoader resourceKind={resourceKind} scope={obj}>
+        {(loader) =>
+          loader.loaded && (
+            <ActionMenu
+              actions={loader.actions}
+              options={loader.options}
+              variant={ActionMenuVariant.DROPDOWN}
+            />
+          )
+        }
+      </ActionsLoader>
+    );
+  };
 
-  const { csvData } = useCsvWatchResource(ns);
   // t('public~ReplicaSets')
   return (
     <DetailsPage
       {...props}
       kind={deploymentsReference}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[
         details(DeploymentDetails),
         metrics(),
@@ -244,7 +259,6 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
         envEditor(environmentComponent),
         events(ResourceEventStream),
       ]}
-      customData={{ csvs: csvData }}
     />
   );
 };
@@ -261,13 +275,21 @@ type DeploymentDetailsProps = {
 const kind = 'Deployment';
 
 const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style, ...props }) => {
+  const resourceKind = referenceFor(obj);
+  const customActionMenu = (
+    <ActionsLoader resourceKind={resourceKind} scope={obj}>
+      {(loader) =>
+        loader.loaded && <ActionMenu actions={loader.actions} options={loader.options} />
+      }
+    </ActionsLoader>
+  );
   return (
     <WorkloadTableRow
       obj={obj}
       index={index}
       rowKey={key}
       style={style}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       kind={kind}
       {...props}
     />
@@ -294,13 +316,11 @@ export const DeploymentsList: React.FC = (props) => {
 DeploymentsList.displayName = 'DeploymentsList';
 
 export const DeploymentsPage: React.FC<DeploymentsPageProps> = (props) => {
-  const { csvData } = useCsvWatchResource(props.namespace);
   return (
     <ListPage
       kind={deploymentsReference}
       canCreate={true}
       ListComponent={DeploymentsList}
-      customData={{ csvs: csvData }}
       {...props}
     />
   );

@@ -9,9 +9,9 @@ export const useImportDeploymentActionsProvider = (resource: K8sResourceKind) =>
   const deploymentActions = React.useMemo(() => {
     const annotation = resource?.metadata?.annotations?.['openshift.io/generated-by'];
     const isFromDevfile = resource?.metadata?.annotations?.isFromDevfile;
-    const showEditImportAction = annotation === 'OpenShiftWebConsole' || !isFromDevfile;
+    const hideEditImportAction = annotation !== 'OpenShiftWebConsole' || !!isFromDevfile;
 
-    return showEditImportAction ? EditImportApplication(kindObj, resource) : [];
+    return hideEditImportAction ? [] : EditImportApplication(kindObj, resource);
   }, [kindObj, resource]);
 
   return [deploymentActions, !inFlight, undefined];

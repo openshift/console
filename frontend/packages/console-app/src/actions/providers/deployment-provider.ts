@@ -46,14 +46,15 @@ export const useDeploymentActionsProvider = (resource: K8sResourceKind) => {
     resource,
   ]);
   const supportsHPA = React.useMemo(
-    () => !isHelmResource(resource) || !isOperatorBackedService(resource, extraResources.csvs.data),
+    () =>
+      !(isHelmResource(resource) || isOperatorBackedService(resource, extraResources.csvs.data)),
     [extraResources.csvs.data, resource],
   );
 
   const deploymentActions = React.useMemo(
     () => [
       getHealthChecksAction(kindObj, resource),
-      ...(relatedHPAs?.length > 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
+      ...(relatedHPAs?.length < 1 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
       ...(supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : []),
       DeploymentActionFactory.PauseAction(kindObj, resource),
       CommonActionFactory.AddStorage(kindObj, resource),
