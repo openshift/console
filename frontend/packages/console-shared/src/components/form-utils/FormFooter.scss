@@ -11,4 +11,7 @@
     background: var(--pf-chart-global--Fill--Color--white);
     bottom: 0;
   }
+  &__shadow {
+    box-shadow: var(--pf-global--BoxShadow--sm-top);
+  }
 }

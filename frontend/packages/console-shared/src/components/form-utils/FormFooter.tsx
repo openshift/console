@@ -34,7 +34,7 @@ const FormFooter: React.FC<FormFooterProps> = ({
     <div
       className={cx('ocs-form-footer', {
         'ocs-form-footer__sticky': sticky,
-        'pf-u-box-shadow-sm-top':
+        'ocs-form-footer__shadow':
           sticky && (shadowPosition === Shadows.both || shadowPosition === Shadows.bottom),
       })}
       ref={footerElementRef}
