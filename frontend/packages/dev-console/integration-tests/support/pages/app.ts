@@ -197,6 +197,7 @@ export const projectNameSpace = {
         });
       }
     });
+    cy.get('@projectNameSpaceDropdown').should('have.text', `Project: ${projectName}`);
   },
 
   selectProject: (projectName: string) => {

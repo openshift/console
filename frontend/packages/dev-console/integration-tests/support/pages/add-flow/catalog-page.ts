@@ -87,7 +87,12 @@ export const catalogPage = {
       .get(cardTitle, { timeout: 40000 })
       .contains('Knative Serving')
       .click(),
-  selectHelmChartCard: (cardName: string) => cy.byTestID(`HelmChart-${cardName}`).click(),
+  //  Due to Bug ODC-6153, identified the card using index
+  selectHelmChartCard: (cardName: string) =>
+    cy
+      .byTestID(`HelmChart-${cardName}`)
+      .first()
+      .click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.install).click();
     cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');

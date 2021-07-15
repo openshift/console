@@ -21,7 +21,7 @@ export const upgradeHelmRelease = {
       .click();
     if (yamlView === true) {
       modal.modalTitleShouldContain('Change Chart Version?');
-      cy.byTestID('confirm-action').click();
+      modal.submit();
     }
   },
   clickOnUpgrade: () => {
