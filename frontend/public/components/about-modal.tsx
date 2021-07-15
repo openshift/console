@@ -48,18 +48,14 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
         <Alert
           className="co-alert co-about-modal__alert"
           title={
-            <>
-              {/* PatternFly does not have an `update` alert variant
-              See https://github.com/patternfly/patternfly-react/issues/4594 */}
-              <BlueArrowCircleUpIcon className="pf-c-alert__icon pf-c-alert__icon--alt" />
-              <Trans t={t} ns="public">
-                Cluster update available.{' '}
-                <Link to="/settings/cluster?showVersions" onClick={closeAboutModal}>
-                  Update cluster
-                </Link>
-              </Trans>
-            </>
+            <Trans t={t} ns="public">
+              Cluster update available.{' '}
+              <Link to="/settings/cluster?showVersions" onClick={closeAboutModal}>
+                Update cluster
+              </Link>
+            </Trans>
           }
+          customIcon={<BlueArrowCircleUpIcon />}
         />
       )}
       <TextContent>
