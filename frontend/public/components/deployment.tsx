@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionMenu, ActionMenuVariant, ActionsLoader, Status } from '@console/shared';
+import { ActionServiceProvider, ActionMenu, ActionMenuVariant, Status } from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
@@ -225,18 +225,15 @@ const { details, editYaml, pods, envEditor, events, metrics } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (props) => {
   const customActionMenu = (kindObj, obj) => {
     const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
     return (
-      <ActionsLoader resourceKind={resourceKind} scope={obj}>
-        {(loader) =>
-          loader.loaded && (
-            <ActionMenu
-              actions={loader.actions}
-              options={loader.options}
-              variant={ActionMenuVariant.DROPDOWN}
-            />
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
           )
         }
-      </ActionsLoader>
+      </ActionServiceProvider>
     );
   };
 
@@ -276,12 +273,13 @@ const kind = 'Deployment';
 
 const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style, ...props }) => {
   const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
   const customActionMenu = (
-    <ActionsLoader resourceKind={resourceKind} scope={obj}>
-      {(loader) =>
-        loader.loaded && <ActionMenu actions={loader.actions} options={loader.options} />
+    <ActionServiceProvider context={context}>
+      {({ actions, options, loaded }) =>
+        loaded && <ActionMenu actions={actions} options={options} />
       }
-    </ActionsLoader>
+    </ActionServiceProvider>
   );
   return (
     <WorkloadTableRow

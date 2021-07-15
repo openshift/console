@@ -5,6 +5,7 @@ type ActionsHookResolverProps = {
   scope: any;
   useValue: ExtensionHook<Action[]>;
   onValueResolved: (value: Action[]) => void;
+  onContextChange: (contextId: string, scope: any) => void;
   onValueError: (error: any) => void;
 };
 
