@@ -169,3 +169,16 @@ export const VirtualMachineRestoreModel: K8sKind = {
   id: 'virtualmachinerestore',
   crd: true,
 };
+
+export const StorageProfileModel: K8sKind = {
+  label: 'Storage Profile',
+  labelPlural: 'Storage Profiles',
+  apiVersion: 'v1beta1',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'storageprofiles',
+  abbr: 'SP',
+  namespaced: false,
+  kind: 'StorageProfile',
+  id: 'storageprofile',
+  crd: true,
+};

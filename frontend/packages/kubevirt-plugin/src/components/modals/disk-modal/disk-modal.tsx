@@ -3,7 +3,6 @@ import {
   Alert,
   AlertVariant,
   Checkbox,
-  ExpandableSection,
   Form,
   FormSelect,
   FormSelectOption,
@@ -13,24 +12,23 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
+import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
+import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
 import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
+import { initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import {
-  NamespaceModel,
-  PersistentVolumeClaimModel,
-  StorageClassModel,
-} from '@console/internal/models';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
+import { NamespaceModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import {
   ConfigMapKind,
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,
   DataVolumeSourceType,
@@ -40,39 +38,32 @@ import {
   VolumeType,
 } from '../../../constants/vm/storage';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
+import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-  getDefaultStorageClass,
-  isConfigMapContainsScModes,
-} from '../../../selectors/config-map/sc-defaults';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
-import { getName, getAnnotations } from '../../../selectors/selectors';
+import { getName } from '../../../selectors/selectors';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import {
+  getDialogUIError,
   getLoadedData,
-  isLoaded,
+  getSequenceName,
   prefixedID,
   resolveDataVolumeName,
-  getDialogUIError,
-  getSequenceName,
 } from '../../../utils';
 import {
   DYNAMIC,
+  PREALLOCATION_DATA_VOLUME_LINK,
   STORAGE_CLASS_SUPPORTED_RHV_LINK,
   STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
-  PREALLOCATION_DATA_VOLUME_LINK,
 } from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { validateDisk } from '../../../utils/validations/vm';
-import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { VMImportProvider } from '../../create-vm-wizard/types';
 import { FormPFSelect } from '../../form/form-pf-select';
@@ -94,7 +85,6 @@ import './disk-modal.scss';
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
     showInitialValidation,
-    storageClasses,
     usedPVCNames,
     persistentVolumeClaims,
     vmName,
@@ -112,18 +102,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     close,
     cancel,
     templateValidations,
-    storageClassConfigMap: _storageClassConfigMap,
     editConfig,
     isVMRunning,
     importProvider,
     baseImageName,
   } = props;
   const { t } = useTranslation();
-  const inProgress = _inProgress || !isLoaded(_storageClassConfigMap);
-  const isDisabled = (fieldName: string, disabled?: boolean) =>
-    inProgress || disabled || isFieldDisabled(editConfig, fieldName);
-
-  const storageClassConfigMap = getLoadedData(_storageClassConfigMap);
 
   const asId = prefixedID.bind(null, 'disk');
   const disk = props.disk || new DiskWrapper();
@@ -138,6 +122,22 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     persistentVolumeClaimWrapper: props.persistentVolumeClaim,
     isNewPVC: !!props.persistentVolumeClaim,
   });
+
+  const [storageClassName, setStorageClassName] = React.useState<string>(
+    combinedDisk.getStorageClassName() || '',
+  );
+
+  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
+    storageClassName,
+  );
+
+  const [applySP, setApplySP] = React.useState<boolean>(true);
+
+  const inProgress = _inProgress && !spLoaded;
+
+  const isDisabled = (fieldName: string, disabled?: boolean) =>
+    inProgress || disabled || isFieldDisabled(editConfig, fieldName);
+
   const combinedDiskSize = combinedDisk.getSize();
 
   const [type, setType] = React.useState<DiskType>(disk.getType() || DiskType.DISK);
@@ -172,9 +172,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getDiskBus() ||
       (isEditing ? null : validAllowedBuses.has(DiskBus.VIRTIO) ? DiskBus.VIRTIO : allowedBuses[0]),
   );
-  const [storageClassName, setStorageClassName] = React.useState<string>(
-    combinedDisk.getStorageClassName() || '',
-  );
 
   const [size, setSize] = React.useState<string>(
     combinedDiskSize ? `${combinedDiskSize.value}` : '',
@@ -183,15 +180,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (combinedDiskSize && combinedDiskSize.unit) || BinaryUnit.Gi,
   );
 
-  const [advancedDrawerIsOpen, setAdvancedDrawerIsOpen] = React.useState(false);
-
   const [accessMode, setAccessMode] = React.useState<AccessMode>(
-    (isEditing && (combinedDisk.getAccessModes() || [])[0]) || null,
+    isEditing ? (combinedDisk.getAccessModes() || [])[0] : applySP ? spAccessMode : null,
   );
 
   const [volumeMode, setVolumeMode] = React.useState<VolumeMode>(
-    (isEditing && combinedDisk.getVolumeMode()) || null,
+    isEditing ? combinedDisk.getVolumeMode() : applySP ? spVolumeMode : null,
   );
+
+  const [storageProvisioner, setStorageProvisioner] = React.useState('');
+  const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
 
   const [enablePreallocation, setEnablePreallocation] = React.useState<boolean>(
     dataVolume.getPreallocation(),
@@ -208,37 +206,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       setVolumeMode((value) => VolumeMode.fromString(pvc?.spec?.volumeMode) || value);
     }
   }, [dataVolume, persistentVolumeClaims, source]);
-
-  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
-    return [
-      getDefaultSCAccessModes(storageClassConfigMap, storageClassName)?.[0],
-      getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
-      isConfigMapContainsScModes(storageClassConfigMap, storageClassName),
-    ];
-  }, [storageClassConfigMap, storageClassName]);
-
-  React.useEffect(() => {
-    if (!isEditing) {
-      let defaultStorageClass = null;
-
-      if (!storageClassName) {
-        defaultStorageClass = getDefaultStorageClass(getLoadedData(storageClasses, []));
-
-        if (defaultStorageClass) {
-          setStorageClassName(getName(defaultStorageClass) || '');
-        }
-      }
-
-      if (defaultAccessMode) {
-        setVolumeMode(defaultVolumeMode);
-      }
-
-      if (defaultVolumeMode) {
-        setAccessMode(defaultAccessMode);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultAccessMode, defaultVolumeMode, storageClassName, storageClasses]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -278,8 +245,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         url:
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
-      .setVolumeMode(volumeMode || null)
-      .setAccessModes(accessMode ? [accessMode] : null)
+      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
+      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
       .setPreallocationDisk(enablePreallocation);
   }
 
@@ -292,8 +259,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         size,
         unit,
       })
-      .setVolumeMode(volumeMode || null)
-      .setAccessModes(accessMode ? [accessMode] : null);
+      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
+      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null);
   }
 
   const {
@@ -343,18 +310,18 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     [setName, setPVCName, source],
   );
 
-  const onStorageClassNameChanged = (newStorageClassName) => {
-    // eslint-disable-next-line eqeqeq
-    if (newStorageClassName != storageClassName) {
-      setStorageClassName(newStorageClassName);
-      const newAccessMode = getDefaultSCAccessModes(storageClassConfigMap, newStorageClassName)[0];
-      const newVolumeMode = getDefaultSCVolumeMode(storageClassConfigMap, newStorageClassName);
-      if (newAccessMode !== accessMode) {
-        setAccessMode(newAccessMode);
-      }
-      if (newVolumeMode !== volumeMode) {
-        setVolumeMode(newVolumeMode);
-      }
+  const onStorageClassNameChanged = (newSC) => {
+    const provisioner: string = newSC?.provisioner || '';
+    const displayMessage = !isSPSettingProvided
+      ? `${t('kubevirt-plugin~Access mode is set by StorageClass and cannot be changed')}`
+      : `${t('kubevirt-plugin~Permissions to the mounted drive')}`;
+
+    setAccessModeHelp(displayMessage);
+    setStorageClassName(newSC?.metadata?.name);
+    setStorageProvisioner(provisioner);
+    if (applySP && isSPSettingProvided) {
+      setAccessMode(spAccessMode);
+      setVolumeMode(spVolumeMode);
     }
   };
 
@@ -364,7 +331,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     setURL('');
     setPVCName('');
     setContainerImage('');
-    onStorageClassNameChanged('');
     onNamespaceChanged(vmNamespace);
     setSource(StorageUISource.fromString(uiSource));
   };
@@ -381,10 +347,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     }
   };
 
-  const onToggleAdvancedDrawer = () => {
-    setAdvancedDrawerIsOpen(!advancedDrawerIsOpen);
-  };
-
   const onTypeChanged = (diskType) => {
     const newType = DiskType.fromString(diskType);
     setType(newType);
@@ -397,8 +359,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   };
 
   const onTogglePreallocation = () => setEnablePreallocation(!enablePreallocation);
-
-  const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
 
   return (
     <div className="modal-content">
@@ -639,23 +599,59 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 </StackItem>
               )}
               <StackItem>
-                <K8sResourceSelectRow
-                  title={t('kubevirt-plugin~Storage Class')}
-                  key="storage-class"
-                  id={asId('storage-class')}
-                  isDisabled={isDisabled('storageClass') || isStorageClassDataLoading}
-                  name={storageClassName}
-                  data={storageClasses}
-                  model={StorageClassModel}
-                  hasPlaceholder
-                  onChange={(sc) => onStorageClassNameChanged(sc || '')}
-                  getResourceLabel={(sc) =>
-                    getAnnotations(sc, {})[DEFAULT_SC_ANNOTATION] === 'true'
-                      ? t('kubevirt-plugin~{{name}} (default)', { name: getName(sc) })
-                      : getName(sc)
-                  }
+                <StorageClassDropdown
+                  name={t('kubevirt-plugin~Storage Class')}
+                  onChange={(scName) => onStorageClassNameChanged(scName)}
                 />
               </StackItem>
+              {source.requiresVolumeModeOrAccessModes() && (
+                <>
+                  <StackItem>
+                    <Checkbox
+                      id="apply-storage-provider"
+                      description={t(
+                        'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
+                      )}
+                      isChecked={applySP}
+                      onChange={() => setApplySP(!applySP)}
+                      isDisabled={!isSPSettingProvided}
+                      label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
+                    />
+                  </StackItem>
+                  {isSPSettingProvided && applySP ? (
+                    <StackItem>
+                      {t(
+                        'kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}',
+                        {
+                          accessMode: spAccessMode?.getValue(),
+                          volumeMode: spVolumeMode?.getValue(),
+                        },
+                      )}
+                    </StackItem>
+                  ) : (
+                    <>
+                      <StackItem>
+                        <AccessModeSelector
+                          onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
+                          provisioner={storageProvisioner}
+                          loaded
+                          availableAccessModes={initialAccessModes}
+                          description={accessModeHelp}
+                        />
+                      </StackItem>
+                      <StackItem>
+                        <VolumeModeSelector
+                          onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
+                          provisioner={storageProvisioner}
+                          accessMode={accessMode?.getValue()}
+                          storageClass={storageClassName}
+                          loaded
+                        />
+                      </StackItem>
+                    </>
+                  )}
+                </>
+              )}
               <StackItem>
                 <Checkbox
                   id="cnv668"
@@ -677,97 +673,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 />
               </StackItem>
             </Stack>
-          )}
-          {source.requiresVolumeModeOrAccessModes() && (
-            <ExpandableSection
-              toggleText={t('kubevirt-plugin~Advanced')}
-              isExpanded={advancedDrawerIsOpen}
-              onToggle={onToggleAdvancedDrawer}
-              className="disk-advanced-drawer"
-            >
-              <Stack hasGutter>
-                <StackItem>
-                  {source.requiresVolumeMode() && (
-                    <FormRow title={t('kubevirt-plugin~Volume Mode')} fieldId={asId('volume-mode')}>
-                      <FormSelect
-                        onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
-                        value={asFormSelectValue(volumeMode?.getValue())}
-                        id={asId('volume-mode')}
-                        isDisabled={
-                          isDisabled('volumeMode') ||
-                          isStorageClassDataLoading ||
-                          source.requiresPVC()
-                        }
-                      >
-                        <FormSelectPlaceholderOption
-                          isDisabled={inProgress}
-                          placeholder={t('kubevirt-plugin~--- Select Volume Mode ---')}
-                        />
-                        {VolumeMode.getAll().map((v) => (
-                          <FormSelectOption
-                            key={v.getValue()}
-                            value={v.getValue()}
-                            label={v.toString().concat(
-                              v.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
-                                ? t(
-                                    'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
-                                    {
-                                      storageClassName,
-                                    },
-                                  )
-                                : '',
-                            )}
-                          />
-                        ))}
-                      </FormSelect>
-                      {source.requiresPVC() && (
-                        <div className="pf-c-form__helper-text" aria-live="polite">
-                          {t('kubevirt-plugin~Volume Mode is set by Source PVC')}
-                        </div>
-                      )}
-                    </FormRow>
-                  )}
-                  {source.requiresAccessModes() && (
-                    <FormRow
-                      title={t('kubevirt-plugin~Access Mode')}
-                      fieldId={asId('access-mode')}
-                      className="disk-access-mode"
-                    >
-                      <FormSelect
-                        onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
-                        value={asFormSelectValue(accessMode?.getValue())}
-                        id={asId('access-mode')}
-                        isDisabled={isDisabled('accessMode') || isStorageClassDataLoading}
-                      >
-                        <FormSelectPlaceholderOption
-                          isDisabled={inProgress}
-                          placeholder={t('kubevirt-plugin~--- Select Access Mode ---')}
-                        />
-                        {AccessMode.getAll().map((a) => (
-                          <FormSelectOption
-                            key={a.getValue()}
-                            value={a.getValue()}
-                            label={a.toString().concat(
-                              a.getValue() !== defaultAccessMode.getValue() && isScModesKnown
-                                ? t(
-                                    'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
-                                    {
-                                      storageClassName,
-                                    },
-                                  )
-                                : '',
-                            )}
-                          />
-                        ))}
-                      </FormSelect>
-                    </FormRow>
-                  )}
-                </StackItem>
-                <StackItem>
-                  <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
-                </StackItem>
-              </Stack>
-            </ExpandableSection>
           )}
         </Form>
       </ModalBody>
