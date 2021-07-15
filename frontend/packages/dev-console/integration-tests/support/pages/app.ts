@@ -163,7 +163,10 @@ export const projectNameSpace = {
 
   selectOrCreateProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    // Bug: ODC-5129 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
+    cy.get('[role="listbox"]')
+      .find('li')
+      .should('have.length.gt', 5);
+    // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
     cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-dropdown__toggle-text')
@@ -197,6 +200,7 @@ export const projectNameSpace = {
         });
       }
     });
+    cy.get('@projectNameSpaceDropdown').should('have.text', `Project: ${projectName}`);
   },
 
   selectProject: (projectName: string) => {

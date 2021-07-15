@@ -7,11 +7,11 @@ export const upgradeHelmRelease = {
       .get('h1')
       .contains('Upgrade Helm Release')
       .should('be.visible'),
-  updateReplicaCount: () =>
+  updateReplicaCount: (replicaCount: string = '2') =>
     cy
       .get(helmPO.upgradeHelmRelease.replicaCount)
       .clear()
-      .type('2'),
+      .type(replicaCount),
   upgradeChartVersion: (yamlView: boolean = false) => {
     cy.get(helmPO.upgradeHelmRelease.chartVersion).click();
     const count = Cypress.$('[data-test-id="dropdown-menu"]').length;
@@ -21,7 +21,7 @@ export const upgradeHelmRelease = {
       .click();
     if (yamlView === true) {
       modal.modalTitleShouldContain('Change Chart Version?');
-      cy.byTestID('confirm-action').click();
+      modal.submit();
     }
   },
   clickOnUpgrade: () => {

@@ -4,7 +4,7 @@ Feature: Feature flag for Helm
 
 
         Background:
-            Given user has created or selected namespace "aut-helm-feature-flag"
+            Given user has created or selected namespace "aut-helm"
 
 
         @regression @manual

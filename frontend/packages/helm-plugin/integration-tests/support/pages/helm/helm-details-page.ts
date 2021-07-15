@@ -1,19 +1,21 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { helmActions } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
+
+const actions = [helmActions.upgrade, helmActions.rollback, helmActions.uninstallHelmRelease];
 
 export const helmDetailsPage = {
   verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),
   verifyResourcesTab: () => cy.get(helmPO.resourcesTab).should('be.visible'),
   verifyReleaseNotesTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
-  verifyActionsDropdown: () => cy.byLegacyTestID('actions-menu-button').should('be.visible'),
+  verifyActionsDropdown: () => cy.byLegacyTestID('menu-toggle-button').should('be.visible'),
   verifyRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
-  clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
+  clickActionMenu: () => cy.byLegacyTestID('menu-toggle-button').click(),
   verifyActionsInActionMenu: () => {
-    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
-    cy.byLegacyTestID('action-items')
-      .children()
-      .each(($el) => {
-        expect(actions).toContain($el.text());
+    cy.byLegacyTestID('action-menu-content')
+      .find('li')
+      .each(($ele) => {
+        expect(actions).toContain($ele.text());
       });
   },
   verifyFieldValue: (fieldName: string, fieldValue: string) => {

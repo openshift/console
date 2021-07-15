@@ -3,7 +3,7 @@ Feature: Perform Actions on Helm Releases
               As a user, I want to perform the actions on the helm releases in topology page
 
         Background:
-            Given user has created or selected namespace "aut-helm-actions"
+            Given user has created or selected namespace "aut-helm"
 
 
         Scenario: Context menu options of helm release: HR-01-TC01
