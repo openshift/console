@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import QuickSearchIcon from './QuickSearchIcon';
-import './QuickSearchButton.scss';
+import QuickSearchIcon from '@console/shared/src/components/quick-search/QuickSearchIcon';
+import './TopologyQuickSearchButton.scss';
 
 interface QuickSearchButtonProps {
   onClick: () => void;
 }
 
-const QuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
+const TopologyQuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
   const { t } = useTranslation();
 
   return (
     <Tooltip position="right" content={t('topology~Add to Project')}>
       <Button
-        className="odc-quick-search-button"
+        className="odc-topology-quick-search-button"
         variant="plain"
         onClick={(e) => {
           e.stopPropagation();
@@ -28,4 +28,4 @@ const QuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
   );
 };
 
-export default QuickSearchButton;
+export default TopologyQuickSearchButton;

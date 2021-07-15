@@ -10,6 +10,7 @@ interface QuickSearchModalProps {
   closeModal: () => void;
   allCatalogItemsLoaded: boolean;
   searchCatalog: (searchTerm: string) => QuickSearchData;
+  searchPlaceholder: string;
   viewContainer?: HTMLElement;
 }
 
@@ -18,6 +19,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   namespace,
   closeModal,
   searchCatalog,
+  searchPlaceholder,
   allCatalogItemsLoaded,
   viewContainer,
 }) => {
@@ -26,7 +28,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   return viewContainer ? (
     <Modal
       variant={ModalVariant.medium}
-      aria-label={t('topology~Quick search')}
+      aria-label={t('console-shared~Quick search')}
       isOpen={isOpen}
       showClose={false}
       position="top"
@@ -37,6 +39,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       <QuickSearchModalBody
         allCatalogItemsLoaded={allCatalogItemsLoaded}
         searchCatalog={searchCatalog}
+        searchPlaceholder={searchPlaceholder}
         namespace={namespace}
         closeModal={closeModal}
       />
