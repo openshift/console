@@ -204,23 +204,23 @@ const TaskComponent: React.FC<TaskProps> = ({
       )}
 
       {isPipelineRun && showStatusState && (
-        <g
-          className={cx({
-            'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
-            'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
-          })}
+        <svg
+          width={30}
+          height={30}
+          viewBox="-5 -4 20 20"
+          style={{
+            color: taskStatusColor,
+          }}
         >
-          <svg
-            width={30}
-            height={30}
-            viewBox="-5 -4 20 20"
-            style={{
-              color: taskStatusColor,
-            }}
+          <g
+            className={cx({
+              'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
+              'odc-pipeline-vis-task--icon-stop': status.reason !== runStatus.Running,
+            })}
           >
             <StatusIcon status={status.reason} disableSpin />
-          </svg>
-        </g>
+          </g>
+        </svg>
       )}
       {showStatusState && (
         <SvgTaskStatus steps={stepStatusList} x={30} y={23} width={width / 2 + 15} />
