@@ -173,12 +173,6 @@ h6 {
   --pf-global--FontSize--md: 1rem;
 }
 
-.pf-c-modal-box__header {
-  // prevent header from collapsing in Safari
-  // temp fix for upstream issue https://github.com/patternfly/patternfly/issues/3825
-  flex-shrink: 0;
-}
-
 .pf-c-page {
   display: block !important;
   position: relative;
