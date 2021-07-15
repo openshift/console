@@ -305,18 +305,6 @@ dl.co-inline {
 
 .co-sidebar-dismiss {
   padding: 0 5px;
-
-  .close {
-    font-size: 16px;
-    // adjustments to increase click target and default color contrast because it's on a grey background
-    opacity: 0.3;
-    padding: 10px 15px;
-
-    &:hover,
-    &:focus {
-      opacity: 0.6;
-    }
-  }
 }
 
 .co-toolbar {
