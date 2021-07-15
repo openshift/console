@@ -40,7 +40,7 @@ const ToggleableFieldBase: React.FC<ToggleableFieldBaseProps> = ({
         label,
         isChecked: field.checked,
         isValid,
-        'aria-describedby': `${fieldId}-helper`,
+        'aria-describedby': helpText ? `${fieldId}-helper` : undefined,
         onChange: (val, event) => {
           field.onChange(event);
           onChange && onChange(val);

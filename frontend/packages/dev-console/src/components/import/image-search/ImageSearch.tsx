@@ -186,6 +186,7 @@ const ImageSearch: React.FC = () => {
           setValidated(ValidatedOptions.default);
           debouncedHandleSearch((e.target as HTMLInputElement).value);
         }}
+        aria-label={t('devconsole~Image name')}
         data-test-id="deploy-image-search-term"
         required
       />
