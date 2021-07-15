@@ -17,7 +17,10 @@ const createPackageJson = (packagePath: string) => {
     './internalAPI': './lib/api/internal-api.js',
   };
   packageJson.readme = 'README.md';
-  packageJson.peerDependencies = _.pick(packageJson.devDependencies, 'webpack');
+  packageJson.peerDependencies = _.pick(packageJson.devDependencies, [
+    'webpack',
+    'react-virtualized',
+  ]);
   delete packageJson.dependencies;
   delete packageJson.devDependencies;
   delete packageJson.scripts;

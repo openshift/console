@@ -6,6 +6,7 @@ import {
   ConsoleFetchJSON,
   ConsoleFetchText,
 } from './api-types';
+import { VirtualizedGridProps } from './types/VirtualizedGrid';
 
 export * from './api-types';
 
@@ -30,3 +31,4 @@ export const consoleFetch: ConsoleFetch = newMockImpl();
 export const consoleFetchJSON: ConsoleFetchJSON = newMockImpl();
 mockProperties(consoleFetchJSON, 'delete', 'post', 'put', 'patch');
 export const consoleFetchText: ConsoleFetchText = newMockImpl();
+export const VirtualizedGrid: React.FC<VirtualizedGridProps> = newMockImpl();

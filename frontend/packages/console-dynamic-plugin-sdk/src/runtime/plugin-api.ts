@@ -55,5 +55,6 @@ export const exposePluginAPI = () => {
 
     usePrometheusPoll: require('@console/internal/components/graphs/prometheus-poll-hook')
       .usePrometheusPoll,
+    VirtualizedGrid: require('@console/shared/src/components/virtualized-grid').default,
   };
 };
