@@ -2,15 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Action, ActionGroup, isActionGroup } from '@console/dynamic-plugin-sdk';
 import { useExtensions } from '@console/plugin-sdk';
+import { useDeepCompareMemoize } from '../../hooks';
 import ActionsLoader from './loader/ActionsLoader';
-import { MenuOption } from './menu/menu-types';
-import { createMenuOptions } from './menu/menu-utils';
-
-type ActionContext = {
-  [contextId: string]: any;
-};
-
-type ActionService = { actions: Action[]; options: MenuOption[]; loaded: boolean; error: any };
+import { ActionContext, ActionService, MenuOption } from './types';
+import { createMenuOptions } from './utils';
 
 type ActionServiceProviderProps = {
   context: ActionContext;
@@ -21,6 +16,8 @@ const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, 
   const [contextMap, setContextMap] = React.useState<ActionContext>(context);
   const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = React.useState<any>();
+
+  const memoizedContext = useDeepCompareMemoize(context, true);
 
   const onContextChange = React.useCallback((newContexId: string, newScope: any) => {
     setContextMap((prevContext) => ({ ...prevContext, [newContexId]: newScope }));
@@ -50,6 +47,11 @@ const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, 
     }),
     [actions, actionsLoaded, loadError, options],
   );
+
+  // Update the state whenever the context from props changes.
+  React.useEffect(() => {
+    setContextMap((prevContext) => ({ ...prevContext, ...memoizedContext }));
+  }, [memoizedContext]);
 
   return (
     <>

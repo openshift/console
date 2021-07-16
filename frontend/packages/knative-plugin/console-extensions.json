@@ -172,6 +172,9 @@
         "kind": "Deployment"
       },
       "provider": { "$codeRef": "actions.useKnativeDeploymentActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
     }
   }
 ]

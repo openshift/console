@@ -25,10 +25,10 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
 
 export const HealthChecksActionFactory: ResourceActionFactory = {
   AddHealthChecks: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'add-health-checks-action',
+    id: 'add-health-checks',
     label: i18next.t('console-app~Add Health Checks'),
     cta: { href: healthChecksUrl(kind, obj) },
-    insertAfter: 'pause-rollout-action',
+    insertAfter: 'pause-rollout',
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -38,16 +38,16 @@ export const HealthChecksActionFactory: ResourceActionFactory = {
     },
   }),
   EditHealthChecks: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'add-health-checks-action',
+    id: 'edit-health-checks',
     label: i18next.t('console-app~Edit Health Checks'),
     cta: { href: healthChecksUrl(kind, obj) },
-    insertBefore: 'edit-labels-action',
+    insertBefore: 'edit-labels',
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
-      verb: 'get',
+      verb: 'update',
     },
   }),
 };

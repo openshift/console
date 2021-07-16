@@ -21,7 +21,7 @@ export type ResourceActionFactory = { [name: string]: ResourceActionCreator };
 
 export const CommonActionFactory: ResourceActionFactory = {
   Delete: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: `delete-${kind.kind}-action`,
+    id: `delete-resource`,
     label: i18next.t('console-app~Delete {{kind}}', { kind: kind.kind }),
     cta: () =>
       deleteModal({
@@ -31,7 +31,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: `edit-${kind.kind}-action`,
+    id: `edit-resource`,
     label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
     cta: {
       href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
@@ -40,7 +40,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
   ModifyLabels: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-labels-action',
+    id: 'edit-labels',
     label: i18next.t('console-app~Edit labels'),
     cta: () =>
       labelsModal({
@@ -51,7 +51,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-annotations-action',
+    id: 'edit-annotations',
     label: i18next.t('console-app~Edit annotations'),
     cta: () =>
       annotationsModal({
@@ -62,7 +62,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-pod-count-action',
+    id: 'edit-pod-count',
     label: i18next.t('console-app~Edit Pod count'),
     cta: () =>
       configureReplicaCountModal({
@@ -72,7 +72,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
   }),
   ModifyPodSelector: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-pod-selector-action',
+    id: 'edit-pod-selector',
     label: i18next.t('console-app~Edit Pod selector'),
     cta: () =>
       podSelectorModal({
@@ -83,7 +83,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTolerations: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-toleration-action',
+    id: 'edit-toleration',
     label: i18next.t('console-app~Edit tolerations'),
     cta: () =>
       tolerationsModal({
@@ -94,7 +94,7 @@ export const CommonActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'add-storage-action',
+    id: 'add-storage',
     label: i18next.t('console-app~Add storage'),
     cta: {
       href: `${resourceObjPath(

@@ -34,17 +34,13 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
   }, []);
 
   const providerGuard = React.useCallback(
-    (e): e is ActionProvider => {
-      return isActionProvider(e) && e.properties.contextId === contextId;
-    },
+    (e): e is ActionProvider => isActionProvider(e) && e.properties.contextId === contextId,
     [contextId],
   );
 
   const resourceProviderGuard = React.useCallback(
-    (e): e is ResourceActionProvider => {
-      const modelKind = referenceForExtensionModel(e.properties.model);
-      return isResourceActionProvider(e) && modelKind === contextId;
-    },
+    (e): e is ResourceActionProvider =>
+      isResourceActionProvider(e) && referenceForExtensionModel(e.properties.model) === contextId,
     [contextId],
   );
 
@@ -69,11 +65,13 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
 
   React.useEffect(() => {
     if (actionsLoaded) onActionsLoaded?.(actions);
+    // We do not want to run the effect every time onActionsLoaded changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actions, actionsLoaded]);
 
   React.useEffect(() => {
     if (loadError) onLoadError(loadError);
+    // We do not want to run the effect every time onLoadError changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadError]);
 

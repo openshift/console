@@ -8,7 +8,7 @@ import { ResourceActionFactory } from './common-factory';
 
 export const DeploymentActionFactory: ResourceActionFactory = {
   EditDeployment: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: `edit-${kind.kind}-action`,
+    id: `edit-deployment`,
     label: i18next.t('console-app~Edit {{kind}}', { kind: kind.kind }),
     cta: {
       href: `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`,
@@ -17,9 +17,9 @@ export const DeploymentActionFactory: ResourceActionFactory = {
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
   UpdateStrategy: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-update-strategy-action',
+    id: 'edit-update-strategy',
     label: i18next.t('console-app~Edit update strategy'),
-    cta: () => configureUpdateStrategyModal({ obj }),
+    cta: () => configureUpdateStrategyModal({ deployment: obj }),
     accessReview: {
       group: kind.apiGroup,
       resource: kind.plural,
@@ -29,7 +29,7 @@ export const DeploymentActionFactory: ResourceActionFactory = {
     },
   }),
   PauseAction: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'pause-rollout-action',
+    id: 'pause-rollout',
     label: obj.spec.paused
       ? i18next.t('console-app~Resume rollouts')
       : i18next.t('console-app~Pause rollouts'),
@@ -43,7 +43,7 @@ export const DeploymentActionFactory: ResourceActionFactory = {
     },
   }),
   EditResourceLimits: (kind: K8sKind, obj: K8sResourceKind): Action => ({
-    id: 'edit-resource-limits-action',
+    id: 'edit-resource-limits',
     label: i18next.t('console-app~Edit resource limits'),
     cta: () =>
       resourceLimitsModal({

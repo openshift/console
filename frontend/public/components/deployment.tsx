@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionServiceProvider, ActionMenu, ActionMenuVariant, Status } from '@console/shared';
+import {
+  ActionServiceProvider,
+  LazyActionMenu,
+  ActionMenu,
+  ActionMenuVariant,
+  Status,
+} from '@console/shared';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
@@ -274,13 +280,7 @@ const kind = 'Deployment';
 const DeploymentTableRow: RowFunction<DeploymentKind> = ({ obj, index, key, style, ...props }) => {
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
-  const customActionMenu = (
-    <ActionServiceProvider context={context}>
-      {({ actions, options, loaded }) =>
-        loaded && <ActionMenu actions={actions} options={options} />
-      }
-    </ActionServiceProvider>
-  );
+  const customActionMenu = <LazyActionMenu context={context} />;
   return (
     <WorkloadTableRow
       obj={obj}

@@ -11,6 +11,7 @@ export const hideKnatifyAction = (resource: K8sResourceKind): boolean => {
   return resource.metadata?.ownerReferences?.length > 0 || !isWorkloadReady;
 };
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const setKnatify = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   const kind = obj.kind || model.kind;
   const apiVersion = obj.apiVersion || `${model.apiGroup}/${model.apiVersion}`;
@@ -32,12 +33,12 @@ export const MakeServerless = (model: K8sKind, obj: K8sResourceKind): Action => 
   const kind = obj.kind || model.kind;
   const apiVersion = obj.apiVersion || `${model.apiGroup}/${model.apiVersion}`;
   return {
-    id: 'make-serverless-action',
+    id: 'make-serverless',
     label: i18next.t('knative-plugin~Make Serverless'),
     cta: {
       href: `/knatify/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind}&apiversion=${apiVersion}`,
     },
-    insertBefore: 'edit-labels-action',
+    insertBefore: 'edit-labels',
     accessReview: {
       group: ServiceModel.apiGroup,
       resource: ServiceModel.plural,

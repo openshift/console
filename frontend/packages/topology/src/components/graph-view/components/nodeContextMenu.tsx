@@ -17,13 +17,13 @@ import {
   isKebabSubMenu,
 } from '@console/internal/components/utils';
 import {
+  getMenuOptionType,
   GroupedMenuOption,
   MenuOption,
   MenuOptionType,
   orderExtensionBasedOnInsertBeforeAndAfter,
-} from '@console/shared/src';
+} from '@console/shared';
 import ActionMenuItem from '@console/shared/src/components/actions/menu/ActionMenuItem';
-import { getMenuOptionType } from '@console/shared/src/components/actions/menu/menu-utils';
 import { graphActions } from '../../../actions/graphActions';
 import { groupActions } from '../../../actions/groupActions';
 import { workloadActions } from '../../../actions/workloadActions';

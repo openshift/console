@@ -15,7 +15,7 @@ import { DeploymentActionFactory } from '../creators/deployment-factory';
 import { getHealthChecksAction } from '../creators/health-checks-factory';
 import { getHpaActions } from '../creators/hpa-factory';
 
-type DeployementActionExtraResources = {
+type DeploymentActionExtraResources = {
   hpas: HorizontalPodAutoscalerKind[];
   csvs: ClusterServiceVersionKind[];
 };
@@ -40,7 +40,7 @@ export const useDeploymentActionsProvider = (resource: K8sResourceKind) => {
     }),
     [namespace],
   );
-  const extraResources = useK8sWatchResources<DeployementActionExtraResources>(watchedResources);
+  const extraResources = useK8sWatchResources<DeploymentActionExtraResources>(watchedResources);
   const relatedHPAs = React.useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
     extraResources,
     resource,
@@ -54,7 +54,7 @@ export const useDeploymentActionsProvider = (resource: K8sResourceKind) => {
   const deploymentActions = React.useMemo(
     () => [
       getHealthChecksAction(kindObj, resource),
-      ...(relatedHPAs?.length < 1 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
+      ...(relatedHPAs?.length === 0 ? [CommonActionFactory.ModifyCount(kindObj, resource)] : []),
       ...(supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : []),
       DeploymentActionFactory.PauseAction(kindObj, resource),
       CommonActionFactory.AddStorage(kindObj, resource),

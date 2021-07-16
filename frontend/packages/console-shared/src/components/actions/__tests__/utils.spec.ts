@@ -1,6 +1,6 @@
-import { MenuOptionType } from '../menu/menu-types';
-import { getMenuOptionType, createMenuOptions } from '../menu/menu-utils';
-import { mockActionGroups, mockActions, mockMenuOptions } from './menu-utils-test-data';
+import { MenuOptionType } from '../types';
+import { getMenuOptionType, createMenuOptions } from '../utils';
+import { mockActionGroups, mockActions, mockMenuOptions } from './utils-test-data';
 
 describe('Menu utils', () => {
   it('should create menu options using groups extensions', () => {

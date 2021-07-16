@@ -16,10 +16,10 @@ const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8
 
 export const HpaActionFactory: ResourceActionFactory = {
   AddHorizontalPodAutoScaler: (kind: K8sKind, obj: K8sResourceKind) => ({
-    id: 'add-hpa-action',
+    id: 'add-hpa',
     label: i18next.t('console-app~Add HorizontalPodAutoscaler'),
     cta: { href: hpaRoute(obj, kind) },
-    insertBefore: 'add-storage-action',
+    insertBefore: 'add-storage',
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
@@ -28,10 +28,10 @@ export const HpaActionFactory: ResourceActionFactory = {
     },
   }),
   EditHorizontalPodAutoScaler: (kind: K8sKind, obj: K8sResourceCommon) => ({
-    id: 'edit-hpa-action',
+    id: 'edit-hpa',
     label: i18next.t('console-app~Edit HorizontalPodAutoscaler'),
     cta: { href: hpaRoute(obj, kind) },
-    insertBefore: 'add-storage-action',
+    insertBefore: 'add-storage',
     accessReview: {
       group: HorizontalPodAutoscalerModel.apiGroup,
       resource: HorizontalPodAutoscalerModel.plural,
@@ -44,7 +44,7 @@ export const HpaActionFactory: ResourceActionFactory = {
     obj: K8sResourceCommon,
     relatedHPA: HorizontalPodAutoscalerKind,
   ) => ({
-    id: 'delete-hpa-action',
+    id: 'delete-hpa',
     label: i18next.t('console-app~Remove HorizontalPodAutoscaler'),
     insertBefore: 'edit-resource-limits',
     cta: () => {
@@ -67,7 +67,7 @@ export const getHpaActions = (
   obj: K8sResourceKind,
   relatedHPAs: K8sResourceKind[],
 ): Action[] => {
-  if (relatedHPAs.length < 1) return [HpaActionFactory.AddHorizontalPodAutoScaler(kind, obj)];
+  if (relatedHPAs.length === 0) return [HpaActionFactory.AddHorizontalPodAutoScaler(kind, obj)];
 
   return [
     HpaActionFactory.EditHorizontalPodAutoScaler(kind, obj),
