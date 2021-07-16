@@ -691,8 +691,6 @@
   "Maximum replicas:": "Maximum replicas:",
   "Default pull Secret": "Default pull Secret",
   "Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.": "Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.",
-  "Overwriting default pull Secret": "Overwriting default pull Secret",
-  "A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.": "A default pull Secret exists, but can&apos;t be parsed. Saving this will overwrite it.",
   "Secret name": "Secret name",
   "Friendly name to help you manage this in the future": "Friendly name to help you manage this in the future",
   "Method": "Method",
