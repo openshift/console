@@ -47,8 +47,8 @@ export class LineBuffer {
     return this._buffer;
   }
 
-  getBlob(options): Blob {
-    return new Blob([this._buffer.join('')], options);
+  getBlob(options: BlobPropertyBag, lineSeparator = '\n'): Blob {
+    return new Blob([this._buffer.join(lineSeparator)], options);
   }
 
   getHasTruncated(): boolean {
