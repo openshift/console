@@ -1,12 +1,12 @@
 @monitoring
-Feature: Metrics Tab on Monitoring Page
+Feature: Metrics Tab on Observe Page
               As a user, I should be able to run queries to check the usage
 
         Background:
             Given user is at developer perspective
-              And user has created or selected namespace "aut-monitoring-m"
+              And user has created or selected namespace "aut-observe-m"
               And user has opened application "dancer-ex-git" in topology page
-              And user is on Monitoring page
+              And user is on Observe page
 
 
         @smoke
