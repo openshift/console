@@ -1,4 +1,10 @@
+import { chart_color_black_400 as skippedColor } from '@patternfly/react-tokens/dist/js/chart_color_black_400';
+import { chart_color_blue_300 as runningColor } from '@patternfly/react-tokens/dist/js/chart_color_blue_300';
+import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
+import { global_BackgroundColor_200 as greyBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_200';
+import { global_BackgroundColor_light_100 as lightBackgroundColor } from '@patternfly/react-tokens/dist/js/global_BackgroundColor_light_100';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
+import { runStatus } from '../../../../utils/pipeline-augment';
 import {
   getLastRegularTasks,
   getTopologyNodesEdges,
@@ -7,6 +13,7 @@ import {
   getFinallyTaskWidth,
   taskHasWhenExpression,
   nodesHasWhenExpression,
+  getWhenExpressionDiamondState,
 } from '../utils';
 
 const pipelineData = pipelineTestData[PipelineExampleNames.COMPLEX_PIPELINE];
@@ -137,5 +144,57 @@ describe('hasWhenExpression', () => {
 
   it('expect to return true if the finally tasks in the pipeline contains when expression', () => {
     expect(hasWhenExpression(pipelineWithWhenAndFinally)).toBe(true);
+  });
+});
+
+describe('When expression decorator color', () => {
+  it('should return grey color in pipeline details page', () => {
+    const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
+      runStatus.Idle,
+      false,
+      false,
+    );
+    expect(diamondColor).toBe(greyBackgroundColor.value);
+    expect(tooltipContent).toBe('When expression');
+  });
+
+  it('should return light-grey color in pipeline details page', () => {
+    const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
+      runStatus.Idle,
+      false,
+      true,
+    );
+    expect(diamondColor).toBe(lightBackgroundColor.value);
+    expect(tooltipContent).toBe('When expression');
+  });
+
+  it('should return green color for failed task status in pipeline-run details page', () => {
+    const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
+      runStatus.Failed,
+      true,
+      true,
+    );
+    expect(diamondColor).toBe(successColor.value);
+    expect(tooltipContent).toBe('When expression was met');
+  });
+
+  it('should return blue color for running task status in pipeline-run details page', () => {
+    const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
+      runStatus.Running,
+      true,
+      true,
+    );
+    expect(diamondColor).toBe(runningColor.value);
+    expect(tooltipContent).toBe('When expression');
+  });
+
+  it('should return black color for skipped status in pipeline-run details page', () => {
+    const { diamondColor, tooltipContent } = getWhenExpressionDiamondState(
+      runStatus.Skipped,
+      true,
+      true,
+    );
+    expect(diamondColor).toBe(skippedColor.value);
+    expect(tooltipContent).toBe('When expression was not met');
   });
 });
