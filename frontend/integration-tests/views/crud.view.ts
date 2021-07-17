@@ -121,10 +121,10 @@ export const deleteRow = (kind: string) => (name: string) => {
     await $('#confirm-action').click();
 
     const kebabIsDisabled = until.not(
-      until.elementToBeClickable(rowForName(name).$('.co-kebab__button')),
+      until.elementToBeClickable(rowForName(name).$('#kebab-button')),
     );
     const listIsEmpty = until.textToBePresentInElement($('.cos-status-box__title'), 'No ');
-    const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-kebab')));
+    const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.dropdown-kebab-pf')));
     return browser.wait(until.or(kebabIsDisabled, until.or(listIsEmpty, rowIsGone)));
   });
 };
