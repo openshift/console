@@ -397,6 +397,7 @@ export const testModel: K8sKind = {
   labelPlural: 'Test Resources',
   namespaced: true,
   plural: 'testresources',
+  verbs: ['create'],
 };
 
 const amqPackageManifest = {
