@@ -116,6 +116,11 @@ class Terminal_ extends React.Component {
       this.fitAddon.fit();
       // update the pty
       this.props.onResize(terminal.rows, terminal.cols);
+      // The internal xterm textarea was not repositioned when the window was resized.
+      // This workaround triggers a textarea position update to fix this.
+      // See https://bugzilla.redhat.com/show_bug.cgi?id=1983220
+      // and https://github.com/xtermjs/xterm.js/issues/3390
+      terminal._core?._syncTextArea?.();
     });
   }
 
