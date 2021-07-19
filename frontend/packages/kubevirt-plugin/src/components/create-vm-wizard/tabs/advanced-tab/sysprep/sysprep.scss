@@ -1,7 +1,15 @@
+.kv-sysprep--main {
+  width: 40vw;
+}
+
 .kv-sysprep--title {
   display: inline-flex;
 }
 
 .kv-sysprep--error {
   color: var(--pf-global--danger-color--200);
+}
+
+.kv-sysprep-info {
+  margin: 0;
 }
