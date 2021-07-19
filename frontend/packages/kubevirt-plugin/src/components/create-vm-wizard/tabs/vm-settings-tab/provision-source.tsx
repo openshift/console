@@ -105,7 +105,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
   ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
     const { t } = useTranslation();
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
-    const sources: string[] = iGet(provisionSourceField, 'sources');
+    const sources: string[] = [...iGet(provisionSourceField, 'sources')];
     const validationType = iGetIn(provisionSourceField, ['validation', 'type']);
 
     return (
