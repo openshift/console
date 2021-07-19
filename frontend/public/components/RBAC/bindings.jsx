@@ -504,7 +504,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     const subject = this.getSubject();
     const { fixed, saveButtonText, t } = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
-    const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
+    const title = `${this.props.titleVerb} ${t(kindObj(kind).labelKey)}`;
     const isSubjectDisabled = fixed?.subjectRef?.subjectName ? true : false;
     const bindingKinds = [
       {
