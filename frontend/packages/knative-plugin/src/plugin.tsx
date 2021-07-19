@@ -295,6 +295,22 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
+      path: ['/broker/all-namespaces', '/broker/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/add/EventingBrokerPage' /* webpackChunkName: "knative-eventing-broker-page" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_BROKER],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
       path: ['/serving'],
       component: NamespaceRedirect,
     },
