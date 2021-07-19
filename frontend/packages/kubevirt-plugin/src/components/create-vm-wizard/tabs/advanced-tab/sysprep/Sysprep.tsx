@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
-import SysprepAutoUnattended from './sysprep-auto-unattended/SysprepAutoUnattended';
-import SysprepUnattended from './sysprep-unattended/SysprepUnattended';
+import SysprepAutounattend from './sysprep-autounattend/SysprepAutounattend';
+import SysprepUnattend from './sysprep-unattend/SysprepUnattend';
+import SysprepInfo from './SysprepInfo';
 
 import './sysprep.scss';
 
 const Sysprep = () => {
   return (
-    <Form>
-      <SysprepAutoUnattended />
-      <SysprepUnattended />
+    <Form className="kv-sysprep--main">
+      <SysprepInfo />
+      <SysprepAutounattend />
+      <SysprepUnattend />
     </Form>
   );
 };

@@ -28,6 +28,7 @@ import { useBaseImages } from '../../hooks/use-base-images';
 import { useUpdateStorages } from '../../hooks/use-update-data-volume';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
 import { getTemplateName } from '../../selectors/vm-template/basic';
+import { isWindows } from '../../selectors/vm/combined';
 import { FirehoseResourceEnhanced } from '../../types/custom';
 import { ITemplate } from '../../types/template';
 import { VMWizardInitialData } from '../../types/url';
@@ -181,7 +182,16 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       template: templateName,
     });
   };
-
+  const isWindowsTemplate = React.useMemo(
+    () =>
+      isWindows(
+        props?.iUserTemplate ||
+          immutableListToShallowJS(iGetLoadedData(props?.commonTemplates))?.find(
+            (tmp) => tmp.metadata.name === props?.initialData?.commonTemplateName,
+          ),
+      ),
+    [props],
+  );
   const goBackToEditingSteps = () =>
     props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
@@ -255,7 +265,11 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
         <>
           <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
           <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-          <AdvancedTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED} />
+          <AdvancedTab
+            wizardReduxID={reduxID}
+            key={VMWizardTab.ADVANCED}
+            isWindowsTemplate={isWindowsTemplate}
+          />
         </>
       ),
     },

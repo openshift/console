@@ -1,6 +1,7 @@
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { getStringEnumValues } from '../../../../utils/types';
+import { SysprepData } from '../../tabs/advanced-tab/sysprep/utils/sysprep-utils';
 import {
   ALL_VM_WIZARD_TABS,
   ImportProvidersField,
@@ -48,6 +49,8 @@ export const isLastStepErrorFatal = (state, wizardID: string) =>
 
 export const getEnableSSHService = (state): boolean =>
   state?.plugins?.kubevirt?.authorizedSSHKeys?.enableSSHService;
+
+export const getSysprepData = (state): SysprepData => state?.plugins?.kubevirt?.sysprep;
 
 export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {
   const stepData = iGetCreateVMWizardTabs(state, wizardID);
