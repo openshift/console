@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { BackingStorageType, RHCS } from '../../constants/create-storage-system';
+import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
+import { BackingStorageType } from '../../constants/create-storage-system';
 
-export type WizardState = React.ReducerState<WizardReducer>;
-export type WizardDispatch = React.Dispatch<React.ReducerAction<WizardReducer>>;
+export type WizardState = CreateStorageSystemState;
+export type WizardDispatch = React.Dispatch<CreateStorageSystemAction>;
 
 export type WizardCommonProps = {
   state: WizardState;
@@ -11,49 +12,62 @@ export type WizardCommonProps = {
 
 /* State of CreateStorageSystem */
 export const initialState: CreateStorageSystemState = {
-  currentStep: 1,
+  stepIdReached: 1,
   backingStorage: {
     type: BackingStorageType.EXISTING,
-    externalProvider: RHCS,
+    externalStorage: '',
   },
+  createStorageClass: {},
+  connectionDetails: {},
   storageClass: { name: '', provisioner: '' },
 };
 
 type CreateStorageSystemState = {
-  currentStep: number;
+  stepIdReached: number;
+  storageClass: { name: string; provisioner?: string };
   backingStorage: {
     type: BackingStorageType;
-    externalProvider: string;
+    externalStorage: string;
   };
-  storageClass: { name: string; provisioner?: string };
+  createStorageClass: ExternalState;
+  connectionDetails: ExternalState;
 };
 
 /* Reducer of CreateStorageSystem */
 export const reducer: WizardReducer = (prevState, action) => {
   const newState = _.cloneDeep(prevState);
   switch (action.type) {
-    case 'currentStep/incrementCount':
-      newState.currentStep += 1;
-      break;
-    case 'currentStep/resetCount':
-      newState.currentStep = 1;
-      break;
-    case 'backingStorage/setType':
-      newState.backingStorage = {
-        ...prevState.backingStorage,
-        type: action.payload,
-      };
-      break;
-    case 'backingStorage/setExternalProvider':
-      newState.backingStorage = {
-        ...prevState.backingStorage,
-        externalProvider: action.payload,
-      };
+    case 'wizard/setStepIdReached':
+      newState.stepIdReached = action.payload;
       break;
     case 'wizard/setStorageClass':
       newState.storageClass = {
         name: action.payload.name,
         provisioner: action.payload?.provisioner,
+      };
+      break;
+    case 'backingStorage/setType':
+      newState.backingStorage = {
+        ...newState.backingStorage,
+        type: action.payload,
+      };
+      break;
+    case 'backingStorage/setExternalStorage':
+      newState.backingStorage = {
+        ...newState.backingStorage,
+        externalStorage: action.payload,
+      };
+      break;
+    case 'wizard/setCreateStorageClass':
+      newState.createStorageClass = {
+        ...newState.createStorageClass,
+        [action.payload.field]: action.payload.value,
+      };
+      break;
+    case 'wizard/setConnectionDetails':
+      newState.connectionDetails = {
+        ...newState.connectionDetails,
+        [action.payload.field]: action.payload.value,
       };
       break;
     default:
@@ -69,14 +83,21 @@ export type WizardReducer = (
 
 /* Actions of CreateStorageSystem */
 type CreateStorageSystemAction =
-  | { type: 'currentStep/incrementCount' }
-  | { type: 'currentStep/resetCount' }
-  | { type: 'backingStorage/setType'; payload: CreateStorageSystemState['backingStorage']['type'] }
+  | { type: 'wizard/setStepIdReached'; payload: number }
+  | { type: 'backingStorage/setType'; payload: WizardState['backingStorage']['type'] }
   | {
-      type: 'backingStorage/setExternalProvider';
-      payload: CreateStorageSystemState['backingStorage']['externalProvider'];
+      type: 'backingStorage/setExternalStorage';
+      payload: WizardState['backingStorage']['externalStorage'];
     }
   | {
       type: 'wizard/setStorageClass';
-      payload: CreateStorageSystemState['storageClass'];
+      payload: WizardState['storageClass'];
+    }
+  | {
+      type: 'wizard/setCreateStorageClass';
+      payload: { field: ExternalStateKeys; value: ExternalStateValues };
+    }
+  | {
+      type: 'wizard/setConnectionDetails';
+      payload: { field: ExternalStateKeys; value: ExternalStateValues };
     };

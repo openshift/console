@@ -5,51 +5,58 @@ import { Form, FormSelect, FormSelectOption, FormSelectProps, Radio } from '@pat
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import './backing-storage.scss';
-import { ExternalProvider } from 'packages/ceph-storage-plugin/src/odf-external-providers/types';
-import { ODF_EXTERNAL_PROVIDERS } from '../../../../odf-external-providers/external-providers';
+import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
+import { getStorageSystemKind } from '../../../../utils/create-storage-system';
 import { filterSCWithoutNoProv } from '../../../../utils/install';
-import { WizardReducer, WizardState, WizardDispatch } from '../../reducer';
+import { WizardState, WizardDispatch } from '../../reducer';
 import {
   BackingStorageType,
-  RHCS,
   StorageClusterIdentifier,
 } from '../../../../constants/create-storage-system';
 import { ErrorHandler } from '../../error-handler';
+import { ExternalStorage } from '../../external-storage/types';
 
 const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
   dispatch,
-  providersList,
-  selectedProvider,
-  hasOCS,
+  selectOptions,
+  selectedStorage,
 }) => {
   const { t } = useTranslation();
-  const handleSelection: FormSelectProps['onChange'] = (value: string) =>
-    dispatch({
-      type: 'backingStorage/setExternalProvider',
-      payload: value,
-    });
+
+  const handleSelection: FormSelectProps['onChange'] = React.useCallback(
+    (value: string) =>
+      dispatch({
+        type: 'backingStorage/setExternalStorage',
+        payload: value,
+      }),
+    [dispatch],
+  );
+
+  React.useEffect(() => {
+    if (!selectedStorage) {
+      handleSelection(selectOptions[0].model.kind, null);
+    }
+  }, [handleSelection, selectOptions, selectedStorage]);
 
   return (
     <FormSelect
       aria-label={t('ceph-storage-plugin~Select external system from list')}
-      value={selectedProvider}
+      value={selectedStorage}
       className="odf-backing-storage__selection--width"
       onChange={handleSelection}
     >
-      {hasOCS && <FormSelectOption key={RHCS} value={RHCS} label="Red Hat Ceph Storage" />}
-      {providersList.map((p) => (
-        <FormSelectOption key={p.id} value={p.id} label={p.label} />
+      {selectOptions.map(({ displayName, model: { kind } }) => (
+        <FormSelectOption key={kind} value={kind} label={displayName} />
       ))}
     </FormSelect>
   );
 };
 
 type ExternalSystemSelectionProps = {
-  dispatch: React.Dispatch<React.ReducerAction<WizardReducer>>;
-  selectedProvider: WizardState['backingStorage']['externalProvider'];
-  providersList: ExternalProvider[];
-  hasOCS: boolean;
+  dispatch: WizardDispatch;
+  selectedStorage: WizardState['backingStorage']['externalStorage'];
+  selectOptions: ExternalStorage[];
 };
 
 const StorageClassSelection: React.FC<StorageClassSelectionProps> = ({ dispatch, selected }) => {
@@ -86,9 +93,9 @@ type StorageSystemSet = Set<StorageSystemKind['spec']['kind']>;
 
 export const BackingStorage: React.FC<BackingStorageProps> = ({
   state,
+  storageClass,
   dispatch,
   storageSystems,
-  storageClass,
   error,
   loaded,
 }) => {
@@ -98,8 +105,11 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   const hasOCS: boolean = formattedSS.has(StorageClusterIdentifier);
 
-  const externalProviders = ODF_EXTERNAL_PROVIDERS.filter(
-    (provider) => !formattedSS.has(provider.kind),
+  const allowedExternalStorage: ExternalStorage[] = SUPPORTED_EXTERNAL_STORAGE.filter(
+    ({ model }) => {
+      const kind = getStorageSystemKind(model);
+      return !formattedSS.has(kind);
+    },
   );
 
   React.useEffect(() => {
@@ -107,21 +117,24 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
      Allow pre selecting the "external connection" option instead of the "existing" option 
      if an OCS Storage System is already created and no external system is created.
     */
-    if (hasOCS && externalProviders.length) {
+    if (hasOCS && allowedExternalStorage.length) {
       dispatch({ type: 'backingStorage/setType', payload: BackingStorageType.EXTERNAL });
     }
-  }, [dispatch, externalProviders.length, hasOCS]);
+  }, [dispatch, allowedExternalStorage.length, hasOCS]);
 
-  const { type, externalProvider } = state;
+  const { type, externalStorage } = state;
 
-  const showExternalSystemSelection = type === BackingStorageType.EXTERNAL;
+  const showExternalStorageSelection =
+    type === BackingStorageType.EXTERNAL && allowedExternalStorage.length;
   const showStorageClassSelection = !hasOCS && type === BackingStorageType.EXISTING;
+
   const RADIO_GROUP_NAME = 'backing-storage-radio-group';
 
   const onRadioSelect = (_, event) => {
     dispatch({ type: 'backingStorage/setType', payload: event.target.value });
     dispatch({
-      type: 'currentStep/resetCount',
+      type: 'wizard/setStepIdReached',
+      payload: 1,
     });
   };
 
@@ -166,14 +179,13 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           value={BackingStorageType.EXTERNAL}
           isChecked={type === BackingStorageType.EXTERNAL}
           onChange={onRadioSelect}
-          isDisabled={externalProviders.length === 0}
+          isDisabled={allowedExternalStorage.length === 0}
           body={
-            showExternalSystemSelection && (
+            showExternalStorageSelection && (
               <ExternalSystemSelection
-                selectedProvider={externalProvider}
+                selectedStorage={externalStorage}
                 dispatch={dispatch}
-                providersList={externalProviders}
-                hasOCS={hasOCS}
+                selectOptions={allowedExternalStorage}
               />
             )
           }

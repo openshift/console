@@ -1,102 +1,134 @@
+import * as React from 'react';
 import { TFunction } from 'i18next';
 import { WizardStep } from '@patternfly/react-core';
-import { WizardState } from '../reducer';
-import { BackingStorageType, RHCS, StepsId } from '../../../constants/create-storage-system';
+import { CreateStorageClass } from './create-storage-class-step';
+import { ConnectionDetails } from './connection-details';
+import { WizardDispatch, WizardState } from '../reducer';
+import { BackingStorageType, Steps, StepsName } from '../../../constants/create-storage-system';
+import { OCSServiceModel } from '../../../models';
 
 export const createSteps = (
   t: TFunction,
   state: WizardState,
-  hasStorageCluster: boolean,
+  dispatch: WizardDispatch,
+  hasOCS: boolean,
 ): WizardStep[] => {
-  const { backingStorage, currentStep } = state;
-  const { externalProvider } = backingStorage;
+  const { backingStorage, stepIdReached, createStorageClass, storageClass } = state;
+  const { externalStorage } = backingStorage;
 
   const commonSteps = {
     capacityAndNodes: {
-      id: StepsId.CapacityAndNodes,
-      name: t('ceph-storage-plugin~Capacity and nodes'),
+      name: StepsName(t)[Steps.CapacityAndNodes],
     },
     securityAndNetwork: {
-      id: StepsId.SecurityAndNetwork,
-      name: t('ceph-storage-plugin~Security and network'),
+      name: StepsName(t)[Steps.SecurityAndNetwork],
     },
     reviewAndCreate: {
-      id: StepsId.ReviewAndCreate,
-      name: t('ceph-storage-plugin~Review and create'),
+      name: StepsName(t)[Steps.ReviewAndCreate],
     },
   };
 
-  const rhcsExternalProviderSteps = [
+  const rhcsExternalProviderSteps: WizardStep[] = [
     {
-      id: StepsId.ConnectionDetails,
-      canJumpTo: currentStep >= 2,
-      name: t('ceph-storage-plugin~Connection details'),
+      name: StepsName(t)[Steps.ConnectionDetails],
+      canJumpTo: stepIdReached >= 2,
+      id: 2,
+      component: (
+        <ConnectionDetails
+          state={state.connectionDetails}
+          dispatch={dispatch}
+          externalStorage={externalStorage}
+        />
+      ),
     },
     {
-      id: StepsId.ReviewAndCreate,
-      canJumpTo: currentStep >= 3,
+      name: StepsName(t)[Steps.ReviewAndCreate],
+      canJumpTo: stepIdReached >= 3,
+      id: 3,
       ...commonSteps.reviewAndCreate,
     },
   ];
 
-  const nonRhcsExternalProviderStep = {
-    canJumpTo: currentStep >= 2,
-    id: StepsId.CreateStorageClass,
-    name: t('ceph-storage-plugin~Create storage class'),
+  const nonRhcsExternalProviderStep: WizardStep = {
+    canJumpTo: stepIdReached >= 2,
+    id: 2,
+    name: StepsName(t)[Steps.CreateStorageClass],
+    component: (
+      <CreateStorageClass
+        state={createStorageClass}
+        externalStorage={externalStorage}
+        dispatch={dispatch}
+        storageClass={storageClass}
+      />
+    ),
   };
 
   switch (backingStorage.type) {
     case BackingStorageType.EXISTING:
       return [
         {
-          canJumpTo: currentStep >= 2,
+          id: 2,
+          canJumpTo: stepIdReached >= 2,
+
           ...commonSteps.capacityAndNodes,
         },
         {
-          canJumpTo: currentStep >= 3,
+          id: 3,
+          canJumpTo: stepIdReached >= 3,
+
           ...commonSteps.securityAndNetwork,
         },
         {
-          canJumpTo: currentStep >= 4,
+          id: 4,
+          canJumpTo: stepIdReached >= 4,
           ...commonSteps.reviewAndCreate,
         },
       ];
     case BackingStorageType.LOCAL_DEVICES:
       return [
         {
-          id: StepsId.CreateLocalVolumeSet,
-          canJumpTo: currentStep >= 2,
-          name: t('ceph-storage-plugin~Create local volume set'),
+          name: StepsName(t)[Steps.CreateLocalVolumeSet],
+          canJumpTo: stepIdReached >= 2,
+          id: 2,
         },
         {
-          canJumpTo: currentStep >= 3,
+          canJumpTo: stepIdReached >= 3,
           ...commonSteps.capacityAndNodes,
+          id: 3,
         },
         {
-          canJumpTo: currentStep >= 4,
-          id: StepsId.SecurityAndNetwork,
+          canJumpTo: stepIdReached >= 4,
+          name: StepsName(t)[Steps.SecurityAndNetwork],
           ...commonSteps.securityAndNetwork,
+          id: 4,
         },
         {
-          canJumpTo: currentStep >= 5,
-          id: StepsId.ReviewAndCreate,
+          canJumpTo: stepIdReached >= 5,
+          name: StepsName(t)[Steps.ReviewAndCreate],
           ...commonSteps.reviewAndCreate,
+          id: 5,
         },
       ];
     case BackingStorageType.EXTERNAL:
-      if (externalProvider === RHCS) {
+      if (externalStorage === OCSServiceModel.kind) {
         return rhcsExternalProviderSteps;
       }
-      if (!hasStorageCluster) {
+      if (!hasOCS) {
         return [
           nonRhcsExternalProviderStep,
-          { canJumpTo: currentStep >= 3, ...commonSteps.capacityAndNodes },
           {
-            canJumpTo: currentStep >= 4,
+            canJumpTo: stepIdReached >= 3,
+            id: 3,
+            ...commonSteps.capacityAndNodes,
+          },
+          {
+            canJumpTo: stepIdReached >= 4,
+            id: 4,
             ...commonSteps.securityAndNetwork,
           },
           {
-            canJumpTo: currentStep >= 5,
+            canJumpTo: stepIdReached >= 5,
+            id: 5,
             ...commonSteps.reviewAndCreate,
           },
         ];
@@ -104,7 +136,8 @@ export const createSteps = (
       return [
         nonRhcsExternalProviderStep,
         {
-          canJumpTo: currentStep >= 3,
+          canJumpTo: stepIdReached >= 3,
+          id: 3,
           ...commonSteps.reviewAndCreate,
         },
       ];

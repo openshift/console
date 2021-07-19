@@ -8,7 +8,7 @@ import { CreateStorageSystemFooter } from './footer';
 import { CreateStorageSystemHeader } from './header';
 import { BackingStorage, createSteps } from './create-storage-system-steps';
 import { initialState, reducer, WizardReducer } from './reducer';
-import { StepsId, StorageClusterIdentifier } from '../../constants/create-storage-system';
+import { Steps, StepsName, StorageClusterIdentifier } from '../../constants/create-storage-system';
 import { StorageSystemKind } from '../../types';
 import { StorageSystemModel } from '../../models';
 
@@ -25,13 +25,13 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
 
   if (ssLoaded && !ssLoadError) {
     const hasOCS = ssList?.items?.some((ss) => ss.spec.kind === StorageClusterIdentifier);
-    wizardSteps = createSteps(t, state, hasOCS);
+    wizardSteps = createSteps(t, state, dispatch, hasOCS);
   }
 
   const steps: WizardStep[] = [
     {
-      id: StepsId.BackingStorage,
-      name: t('ceph-storage-plugin~Backing storage'),
+      id: 1,
+      name: StepsName(t)[Steps.BackingStorage],
       component: (
         <BackingStorage
           state={state.backingStorage}
@@ -55,7 +55,7 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
           <CreateStorageSystemFooter
             state={state}
             dispatch={dispatch}
-            disableNext={!ssLoaded || ssLoadError}
+            disableNext={!ssLoaded || !!ssLoadError}
           />
         }
         cancelButtonText={t('ceph-storage-plugin~Cancel')}

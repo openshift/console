@@ -1,18 +1,28 @@
 import { apiVersionForModel } from '@console/internal/module/k8s';
+import { Payload } from './external-storage/types';
 import { CEPH_STORAGE_NAMESPACE } from '../../constants';
-import { StorageSystemKind } from '../../types';
 import { StorageSystemModel } from '../../models';
 
-export const createSSPayload = (kind: string, name: string): StorageSystemKind => ({
-  apiVersion: apiVersionForModel(StorageSystemModel),
-  kind: StorageSystemModel.kind,
-  metadata: {
-    name: `odf-${name}-storage-system`,
-    namespace: CEPH_STORAGE_NAMESPACE,
-  },
-  spec: {
-    name: `odf-${name}-storage-system`,
-    kind,
-    namespace: CEPH_STORAGE_NAMESPACE,
-  },
-});
+export const createSSPayload = (systemKind: string, systemName: string): Payload => {
+  const { apiGroup, apiVersion, kind } = StorageSystemModel;
+  return {
+    model: {
+      group: apiGroup,
+      version: apiVersion,
+      kind,
+    },
+    payload: {
+      apiVersion: apiVersionForModel(StorageSystemModel),
+      kind,
+      metadata: {
+        name: systemName,
+        namespace: CEPH_STORAGE_NAMESPACE,
+      },
+      spec: {
+        name: systemName,
+        mame: systemKind,
+        namespace: CEPH_STORAGE_NAMESPACE,
+      },
+    },
+  };
+};

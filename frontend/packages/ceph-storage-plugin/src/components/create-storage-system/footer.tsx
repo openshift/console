@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import {
   WizardFooter,
   Button,
@@ -9,19 +11,24 @@ import {
   AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { WizardCommonProps } from './reducer';
+import { WizardCommonProps, WizardState } from './reducer';
 import { createSSPayload } from './payloads';
-import { BackingStorageType, StepsId, RHCS } from '../../constants/create-storage-system';
-import { StorageSystemModel } from '../../models';
+import { BackingStorageType, Steps, StepsName } from '../../constants/create-storage-system';
+import { OCSServiceModel } from '../../models';
 import './create-storage-system.scss';
-import { ODF_EXTERNAL_PROVIDERS } from '../../odf-external-providers/external-providers';
+import {
+  getExternalStorage,
+  getStorageSystemKind,
+  getStorageSystemName,
+} from '../../utils/create-storage-system';
 
-const validateBackingStorageStep = (bsType, sc, externalProvider) => {
-  switch (bsType) {
+const validateBackingStorageStep = (backingStorage, sc) => {
+  const { type, externalStorage } = backingStorage;
+  switch (type) {
     case BackingStorageType.EXISTING:
       return !!sc;
     case BackingStorageType.EXTERNAL:
-      return !!externalProvider;
+      return !!externalStorage;
     case BackingStorageType.LOCAL_DEVICES:
       return true;
     default:
@@ -29,22 +36,55 @@ const validateBackingStorageStep = (bsType, sc, externalProvider) => {
   }
 };
 
-const validateStep = (id, state) => {
-  const { storageClass, backingStorage } = state;
-  const { type, externalProvider } = backingStorage;
-  switch (id) {
-    case StepsId.BackingStorage:
-      return validateBackingStorageStep(type, storageClass, externalProvider);
-    case StepsId.CreateLocalVolumeSet:
-    case StepsId.CapacityAndNodes:
-    case StepsId.ConnectionDetails:
-    case StepsId.CreateStorageClass:
-    case StepsId.ReviewAndCreate:
-    case StepsId.SecurityAndNetwork:
+const validateStep = (name: string, state: WizardState, t: TFunction) => {
+  const { storageClass, backingStorage, createStorageClass } = state;
+  const { externalStorage } = backingStorage;
+  const { canGoToNextStep } = getExternalStorage(externalStorage) || {};
+
+  switch (name) {
+    case StepsName(t)[Steps.BackingStorage]:
+      return validateBackingStorageStep(backingStorage, storageClass);
+    case StepsName(t)[Steps.CreateStorageClass]:
+      return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
+    case StepsName(t)[Steps.ConnectionDetails]:
+      return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
+    case StepsName(t)[Steps.CreateLocalVolumeSet]:
+    case StepsName(t)[Steps.CapacityAndNodes]:
+    case StepsName(t)[Steps.ReviewAndCreate]:
+    case StepsName(t)[Steps.SecurityAndNetwork]:
       return true;
     default:
       return false;
   }
+};
+
+const getPayloads = (stepName: string, state: WizardState, t: TFunction) => {
+  const { backingStorage, createStorageClass, storageClass, connectionDetails } = state;
+  const { externalStorage } = backingStorage;
+
+  const isRhcs = externalStorage === OCSServiceModel.kind;
+
+  const { createPayload, model, displayName } = getExternalStorage(externalStorage) || {};
+
+  if (model && displayName && stepName === StepsName(t)[Steps.BackingStorage] && !isRhcs) {
+    const systemName = getStorageSystemName(displayName);
+    const systemKind = getStorageSystemKind(model);
+    return [createSSPayload(systemKind, systemName)];
+  }
+
+  if (stepName === StepsName(t)[Steps.ReviewAndCreate] && model && displayName) {
+    const systemName = getStorageSystemName(displayName);
+    const systemKind = model && getStorageSystemKind(model);
+    const secondParam = isRhcs ? connectionDetails : createStorageClass;
+    const payloads = [
+      ...createPayload(systemName, secondParam, model, storageClass.name),
+      createSSPayload(systemKind, systemName),
+    ];
+
+    return !_.isEmpty(secondParam) && payloads;
+  }
+
+  return null;
 };
 
 export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps> = ({
@@ -60,23 +100,21 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   const [requestError, setRequestError] = React.useState('');
   const [showErrorAlert, setShowErrorAlert] = React.useState(false);
 
-  const { backingStorage } = state;
-  const { externalProvider } = backingStorage;
+  const stepId = activeStep.id as number;
+  const stepName = activeStep.name as string;
 
-  const { id } = activeStep;
-
-  const jumpToNextStep = validateStep(id, state);
+  const jumpToNextStep = validateStep(stepName, state, t);
 
   const handleNext = async () => {
-    if (id === StepsId.BackingStorage && externalProvider !== RHCS) {
+    const payloads = getPayloads(stepName, state, t);
+    if (payloads !== null) {
       setRequestInProgress(true);
-      const { kind, id: providerID } =
-        ODF_EXTERNAL_PROVIDERS.find((p) => p.id === externalProvider) || {};
-      const payload = createSSPayload(kind, providerID);
       try {
-        await k8sCreate(StorageSystemModel, payload);
+        const requests = payloads.map(({ model, payload }) => k8sCreate(model, payload));
+        await Promise.all(requests);
         dispatch({
-          type: 'currentStep/incrementCount',
+          type: 'wizard/setStepIdReached',
+          payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
         });
         onNext();
       } catch (err) {
@@ -87,7 +125,8 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
       }
     } else {
       dispatch({
-        type: 'currentStep/incrementCount',
+        type: 'wizard/setStepIdReached',
+        payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
       });
       onNext();
     }
@@ -114,12 +153,16 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
           type="submit"
           onClick={handleNext}
         >
-          {id === StepsId.ReviewAndCreate
+          {stepName === StepsName(t)[Steps.ReviewAndCreate]
             ? t('ceph-storage-plugin~Create')
             : t('ceph-storage-plugin~Next')}
         </Button>
         {/* Disabling the back button for the first step (Backing storage) in wizard */}
-        <Button variant="secondary" onClick={onBack} isDisabled={id === StepsId.BackingStorage}>
+        <Button
+          variant="secondary"
+          onClick={onBack}
+          isDisabled={stepName === StepsName(t)[Steps.BackingStorage]}
+        >
           {t('ceph-storage-plugin~Back')}
         </Button>
         <Button variant="link" onClick={onClose}>
