@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk/src/api/useActiveNamespace';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
 import { loadingQuickStarts, loadedQuickStarts } from './QuickStartGettingStartedCard.data';
 
-jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
+jest.mock('@console/dynamic-plugin-sdk/src/api/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));
 

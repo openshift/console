@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src';
 import { GettingStartedCard } from '@console/shared/src/components/getting-started';
 import { DeveloperFeaturesGettingStartedCard } from '../DeveloperFeaturesGettingStartedCard';
 
@@ -8,6 +9,11 @@ jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
   useActiveNamespace: jest.fn(),
   useOpenShiftVersion: () => '4.8.0',
+}));
+
+jest.mock('@console/dynamic-plugin-sdk', () => ({
+  ...require.requireActual('@console/dynamic-plugin-sdk'),
+  useActiveNamespace: jest.fn(),
 }));
 
 // Workaround because getting-started exports also useGettingStartedShowState

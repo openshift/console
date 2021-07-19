@@ -2,13 +2,13 @@ import * as React from 'react';
 import { FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import {
   FlexForm,
   FormBody,
   FormFooter,
   FormHeader,
   SyncedEditorField,
-  useActiveNamespace,
   YAMLEditorField,
 } from '@console/shared/src';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';

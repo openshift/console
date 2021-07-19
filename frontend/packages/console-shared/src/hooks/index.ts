@@ -24,7 +24,6 @@ export * from './useUserSettingsCompatibility';
 export * from './hpa-hooks';
 export * from './usePinnedResources';
 export * from './perspectiveUtils';
-export * from './useActiveNamespace';
 export * from './useIsMobile';
 export * from './useResizeObserver';
 export * from './useBoundingClientRect';

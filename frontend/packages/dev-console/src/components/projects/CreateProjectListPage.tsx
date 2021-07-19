@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/shared';
 import ProjectListPage, { ProjectListPageProps } from './ProjectListPage';
 
 type LazySubTitleRender = (openProjectModal: () => void) => React.ReactNode;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useActiveNamespace } from '../hooks';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 
 type WithLastNamespaceProps = {
   activeNamespace?: string;

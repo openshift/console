@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
 import { getCommonResourceActions } from '@console/app/src/actions/creators/common-factory';
-import { K8sKind } from '@console/dynamic-plugin-sdk/src';
+import { K8sKind, useActiveNamespace } from '@console/dynamic-plugin-sdk/src';
 import { useAccessReview } from '@console/internal/components/utils';
 import {
   BuildConfigModel,
@@ -17,7 +17,6 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { useActiveNamespace } from '@console/shared';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { TYPE_APPLICATION_GROUP } from '@console/topology/src/const';
 import { getDisabledAddActions } from '../utils/useAddActionExtensions';

@@ -6,16 +6,11 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  FormHeader,
-  FlexForm,
-  FormBody,
-  useActiveNamespace,
-  TechPreviewBadge,
-} from '@console/shared';
+import { FormHeader, FlexForm, FormBody, TechPreviewBadge } from '@console/shared';
 import { ServicesRequestCRName } from '../../const';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import {

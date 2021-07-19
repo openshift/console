@@ -3,10 +3,9 @@ import {
   ALL_NAMESPACES_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-  useActiveNamespace,
   useUserSettingsCompatibility,
 } from '@console/shared';
-import { TableColumn } from '@console/dynamic-plugin-sdk';
+import { useActiveNamespace, TableColumn } from '@console/dynamic-plugin-sdk';
 
 export const useActiveColumns = <D = any>({
   columns,

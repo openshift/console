@@ -1,6 +1,6 @@
 import * as React from 'react';
 import i18next from 'i18next';
-import { Action } from '@console/dynamic-plugin-sdk';
+import { Action, useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
@@ -14,12 +14,7 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import {
-  deleteHPAModal,
-  isHelmResource,
-  isOperatorBackedService,
-  useActiveNamespace,
-} from '@console/shared';
+import { deleteHPAModal, isHelmResource, isOperatorBackedService } from '@console/shared';
 import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { ResourceActionFactory } from './common-factory';
 

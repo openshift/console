@@ -10,15 +10,15 @@ import {
 } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import {
+  useActiveNamespace,
   ListPageCreateProps,
   CreateWithPermissionsProps,
   ListPageCreateLinkProps,
   ListPageCreateButtonProps,
   ListPageCreateDropdownProps,
 } from '@console/dynamic-plugin-sdk';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 import { RequireCreatePermission } from '../../utils';
 

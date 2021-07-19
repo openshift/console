@@ -5,6 +5,7 @@ import { RocketIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { ListPage, Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -17,7 +18,6 @@ import {
   getName,
   getNamespace,
   getUID,
-  useActiveNamespace,
 } from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';

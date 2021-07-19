@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
-import { useActiveNamespace } from '@console/shared/src';
+import { useActiveNamespace } from '@console/dynamic-plugin-sdk';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 
 const appendActiveNamespace = (namespace: string, pathname: string): string => {

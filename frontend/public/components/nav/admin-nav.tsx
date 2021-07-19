@@ -3,15 +3,17 @@ import { connect } from 'react-redux';
 import { NavList, NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS, useActiveNamespace } from '@console/shared';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
-import { featureReducerName } from '../../reducers/features';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 import {
+  useActiveNamespace,
   NavItem as PluginNavItem,
   NavSection as PluginNavSection,
   Separator as PluginNavSeparator,
-} from '@console/dynamic-plugin-sdk/src';
+} from '@console/dynamic-plugin-sdk';
+import { FLAGS } from '@console/shared';
+import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import { featureReducerName } from '../../reducers/features';
+import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 import {
