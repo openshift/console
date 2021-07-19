@@ -680,7 +680,7 @@ export const Kafkas: K8sResourceKind[] = [
       message: 'Created',
       metadata: {
         cloudUI:
-          'https://cloud.redhat.com/beta/application-services/openshift-streams/kafkas/1qCXzgiGqva0D5bXIB0Gn9g23Ni',
+          'https://console.redhat.com/beta/application-services/openshift-streams/kafkas/1qCXzgiGqva0D5bXIB0Gn9g23Ni',
         provider: 'rhoas',
         saslMechanism: 'PLAIN',
         securityProtocol: 'SASL_SSL',
