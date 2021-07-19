@@ -40,7 +40,7 @@ import {
   OCS_INTERNAL_CR_NAME,
   MODES,
 } from '../../../constants';
-import { StorageClusterKind, NavUtils } from '../../../types';
+import { StorageClusterKind, NetworkType, NavUtils } from '../../../types';
 import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../ocs-request-data';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
@@ -126,6 +126,10 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
   const discoveryNodes = state.lvdIsSelectNodes ? state.lvdSelectNodes : state.lvdAllNodes;
 
   const { getStep, getIndex, getAnchor } = navUtils;
+  const hasConfiguredNetwork =
+    state.networkType === NetworkType.MULTUS
+      ? !!(state.publicNetwork || state.clusterNetwork)
+      : true;
 
   /**
    * This custom footer for wizard provides a control over the movement to next step.
@@ -154,7 +158,8 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
             },
             [CreateStepsSC.CONFIGURE]: {
               onNextClick: () => onNext(),
-              isNextDisabled: !state.encryption.hasHandled || !state.kms.hasHandled,
+              isNextDisabled:
+                !state.encryption.hasHandled || !hasConfiguredNetwork || !state.kms.hasHandled,
             },
             [CreateStepsSC.REVIEWANDCREATE]: {
               onNextClick: () =>
@@ -162,7 +167,8 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
               isNextDisabled:
                 state.nodes.length < MINIMUM_NODES ||
                 !getName(state.storageClass) ||
-                !state.kms.hasHandled,
+                !state.kms.hasHandled ||
+                !hasConfiguredNetwork,
             },
           };
           const { id } = activeStep;
