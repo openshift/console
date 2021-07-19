@@ -4,8 +4,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Button, Chip, ChipGroup } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation, withTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
@@ -35,6 +34,7 @@ import {
   TogglePlay,
 } from './utils';
 import { EventStreamList } from './utils/event-stream';
+import CloseButton from '@console/shared/src/components/close-button';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -238,9 +238,7 @@ export const EventsList = (props) => {
                   </Chip>
                 );
               })}
-              <Button variant="plain" aria-label={t('public~Close')} onClick={clearSelection}>
-                <CloseIcon />
-              </Button>
+              <CloseButton onClick={clearSelection} />
             </ChipGroup>
           )}
         </div>
