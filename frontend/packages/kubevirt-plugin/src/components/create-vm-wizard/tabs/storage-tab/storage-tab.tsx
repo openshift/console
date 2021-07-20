@@ -18,12 +18,12 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { createLookup, getName } from '@console/shared/src';
 import { DeviceType } from '../../../../constants/vm';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { isLoaded } from '../../../../utils';
+import { getName } from '../../../../selectors';
+import { isLoaded, createLookup } from '../../../../utils';
 import {
   STORAGE_CLASS_SUPPORTED_RHV_LINK,
   STORAGE_CLASS_SUPPORTED_VMWARE_LINK,

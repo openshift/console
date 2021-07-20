@@ -17,7 +17,7 @@ import {
   saveButton,
 } from '@console/internal-integration-tests/views/yaml.view';
 import { MatchLabels } from '@console/internal/module/k8s';
-import { click } from '@console/shared/src/test-utils/utils';
+import { click } from '../../utils/shared-utils';
 import { filterCount } from '../../views/vms.list.view';
 import { createItemButton, createWithYAMLButton } from '../../views/wizard.view';
 import { NodePortService, Status } from '../types/types';

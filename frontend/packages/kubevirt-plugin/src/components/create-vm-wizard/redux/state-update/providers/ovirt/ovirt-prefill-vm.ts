@@ -4,7 +4,6 @@ import {
   K8sResourceKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { alignWithDNS1123, getName, joinGrammaticallyListOfItems } from '@console/shared/src';
 import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
 import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
 import {
@@ -22,13 +21,18 @@ import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/networ
 import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
+import { getName } from '../../../../../../selectors';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../../../selectors/config-map/sc-defaults';
 import { OvirtVM } from '../../../../../../types/vm-import/ovirt/ovirt-vm';
+import {
+  createUniqueNameResolver,
+  alignWithDNS1123,
+  joinGrammaticallyListOfItems,
+} from '../../../../../../utils';
 import { immutableListToShallowJS, toShallowJS } from '../../../../../../utils/immutable';
-import { createUniqueNameResolver } from '../../../../../../utils/strings';
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 import { iGetOvirtFieldAttribute } from '../../../../selectors/immutable/provider/ovirt/selectors';
 import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';

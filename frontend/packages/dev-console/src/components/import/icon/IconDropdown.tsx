@@ -18,7 +18,7 @@ type IconProps = {
 
 const Icon: React.FC<IconProps> = ({ label, url }) => (
   <>
-    <img src={url} width="24" height="24" alt={label} className="icon" />
+    <img src={url} width="24" height="24" alt="" className="icon" />
     {label}
   </>
 );

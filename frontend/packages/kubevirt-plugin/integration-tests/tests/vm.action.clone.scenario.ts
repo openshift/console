@@ -9,6 +9,7 @@ import {
   resourceRows,
   resourceRowsPresent,
 } from '@console/internal-integration-tests/views/crud.view';
+import { getDataVolumeTemplates, getVolumes } from '../../src/selectors/vm/selectors';
 import {
   addLeakableResource,
   applyResource,
@@ -19,8 +20,7 @@ import {
   removeLeakedResources,
   waitForCount,
   withResource,
-} from '@console/shared/src/test-utils/utils';
-import { getDataVolumeTemplates, getVolumes } from '../../src/selectors/vm/selectors';
+} from '../utils/shared-utils';
 import * as cloneDialogView from '../views/dialogs/cloneVirtualMachineDialog.view';
 import { CloneVirtualMachineDialog } from './dialogs/cloneVirtualMachineDialog';
 import {

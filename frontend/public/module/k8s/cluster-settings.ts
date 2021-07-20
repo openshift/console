@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
+import i18next from 'i18next';
 
 import { ClusterVersionModel } from '../../models';
 import { referenceForModel } from './k8s';
@@ -37,6 +38,29 @@ export const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
     console.error('error sorting cluster updates', e);
     return available;
   }
+};
+
+export const getNewerMinorVersionUpdate = (currentVersion, availableUpdates) => {
+  const currentVersionParsed = semver.parse(currentVersion);
+  return availableUpdates?.find(
+    // find the next minor version update, which there should never be more than one
+    (update) => {
+      const updateParsed = semver.parse(update.version);
+      return semver.gt(
+        semver.coerce(`${updateParsed.major}.${updateParsed.minor}`),
+        semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+      );
+    },
+  );
+};
+
+export const isMinorVersionNewer = (currentVersion, otherVersion) => {
+  const currentVersionParsed = semver.parse(currentVersion);
+  const otherVersionParsed = semver.parse(otherVersion);
+  return semver.gt(
+    semver.coerce(`${otherVersionParsed.major}.${otherVersionParsed.minor}`),
+    semver.coerce(`${currentVersionParsed.major}.${currentVersionParsed.minor}`),
+  );
 };
 
 export const getAvailableClusterChannels = (cv) => {
@@ -186,11 +210,11 @@ Browser: ${window.navigator.userAgent}
 `);
   return _.isEmpty(prerelease)
     ? {
-        label: 'Open Support Case with Red Hat',
+        label: i18next.t('public~Open Support Case with Red Hat'),
         href: `https://access.redhat.com/support/cases/#/case/new?product=OpenShift%20Container%20Platform&version=${major}.${minor}&clusterId=${cv.spec.clusterID}`,
       }
     : {
-        label: 'Report Bug to Red Hat',
+        label: i18next.t('public~Report Bug to Red Hat'),
         href: `https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform&version=${bugzillaVersion}&cf_environment=${environment}`,
       };
 };
@@ -223,4 +247,12 @@ export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL
 export const getClusterID = (cv: ClusterVersionKind): string => _.get(cv, 'spec.clusterID');
 
 export const getOCMLink = (clusterID: string): string =>
-  `https://cloud.redhat.com/openshift/details/${clusterID}`;
+  `https://console.redhat.com/openshift/details/${clusterID}`;
+
+export const getConditionUpgradeableFalse = (resource) =>
+  resource.status?.conditions.find(
+    (c) => c.type === 'Upgradeable' && c.status === K8sResourceConditionStatus.False,
+  );
+
+export const getNotUpgradeableResources = (resources) =>
+  resources.filter((resource) => getConditionUpgradeableFalse(resource));

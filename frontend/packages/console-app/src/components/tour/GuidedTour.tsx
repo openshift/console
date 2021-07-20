@@ -19,8 +19,8 @@ const GuidedTour: React.FC = () => {
       <StepComponent
         {...intro}
         showStepBadge={false}
-        nextButtonText={t('tour~Get started')}
-        backButtonText={t('tour~Skip tour')}
+        nextButtonText={t('console-app~Get started')}
+        backButtonText={t('console-app~Skip tour')}
       />
     );
   if (stepNumber > totalSteps)
@@ -29,13 +29,17 @@ const GuidedTour: React.FC = () => {
         {...end}
         showClose={false}
         showStepBadge={false}
-        nextButtonText={t('tour~Okay, got it!')}
-        backButtonText={t('tour~Back')}
+        nextButtonText={t('console-app~Okay, got it!')}
+        backButtonText={t('console-app~Back')}
       />
     );
   const step = steps[stepNumber - 1];
   return (
-    <StepComponent {...step} nextButtonText={t('tour~Next')} backButtonText={t('tour~Back')} />
+    <StepComponent
+      {...step}
+      nextButtonText={t('console-app~Next')}
+      backButtonText={t('console-app~Back')}
+    />
   );
 };
 export default GuidedTour;

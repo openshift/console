@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ListPageWrapper_ as ListPageWrapper } from '@console/internal/components/factory';
+import { ListPageWrapper } from '@console/internal/components/factory';
 import { EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import PipelineAugmentRunsWrapper from '../PipelineAugmentRunsWrapper';

@@ -1,8 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import CloseButton from '@console/shared/src/components/close-button';
 
 import { definitionFor } from '../../module/k8s';
 import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
@@ -14,7 +13,6 @@ const sidebarScrollTop = () => {
 };
 
 const ResourceSidebarWrapper = (props) => {
-  const { t } = useTranslation();
   const { label, children, toggleSidebar } = props;
 
   return (
@@ -23,15 +21,10 @@ const ResourceSidebarWrapper = (props) => {
       data-test="resource-sidebar"
     >
       <div className="co-m-pane__body co-p-has-sidebar__sidebar-body">
-        <Button
-          type="button"
-          className="co-p-has-sidebar__sidebar-close"
-          variant="plain"
-          aria-label={t('public~Close')}
+        <CloseButton
+          additionalClassName="co-close-button--float-right co-p-has-sidebar__close-button"
           onClick={toggleSidebar}
-        >
-          <CloseIcon />
-        </Button>
+        />
         <h2 className="co-p-has-sidebar__sidebar-heading text-capitalize">{label}</h2>
         {children}
       </div>

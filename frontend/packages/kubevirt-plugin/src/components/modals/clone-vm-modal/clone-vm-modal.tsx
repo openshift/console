@@ -25,11 +25,10 @@ import {
 } from '@console/internal/components/utils';
 import { NamespaceModel, PersistentVolumeClaimModel, ProjectModel } from '@console/internal/models';
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, ValidationErrorType } from '@console/shared';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { getDescription } from '../../../selectors/selectors';
+import { getName, getNamespace, ValidationErrorType, getDescription } from '../../../selectors';
 import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,

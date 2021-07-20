@@ -44,6 +44,7 @@ const getIcon = (status: OperatorStatus) => {
     [OperatorStatus.Available]: <GreenCheckCircleIcon />,
     [OperatorStatus.Progressing]: <SyncAltIcon />,
     [OperatorStatus.Degraded]: <YellowExclamationTriangleIcon />,
+    [OperatorStatus.CannotUpdate]: <YellowExclamationTriangleIcon />,
     [OperatorStatus.Unknown]: <UnknownIcon />,
   }[status];
 };
@@ -59,9 +60,9 @@ const OperatorStatusIconAndLabel: React.FC<OperatorStatusIconAndLabelProps> = ({
 
 const tableColumnClasses = [
   '',
-  '',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-md',
+  'pf-u-w-16-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-2xl',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-33-on-2xl',
   Kebab.columnClass,
 ];
 
@@ -131,6 +132,7 @@ const allStatuses = [
   OperatorStatus.Available,
   OperatorStatus.Progressing,
   OperatorStatus.Degraded,
+  OperatorStatus.CannotUpdate,
   OperatorStatus.Unknown,
 ];
 

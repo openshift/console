@@ -13,7 +13,8 @@
     "exposedModules": {
       "icons": "src/utils/icons.ts",
       "catalog": "src/catalog",
-      "actions": "src/actions"
+      "actions": "src/actions",
+      "helmTopology": "src/topology/sidebar"
     }
   }
 }

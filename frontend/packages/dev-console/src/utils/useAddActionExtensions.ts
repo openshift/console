@@ -18,16 +18,17 @@ export const getDisabledAddActions = (): string[] | undefined => {
   return undefined;
 };
 
-export const useAddActionExtensions = (): [ResolvedExtension<AddAction>[], boolean] => {
+export const useAddActionExtensions = (): [ResolvedExtension<AddAction>[], boolean, boolean] => {
   const [allAddActionExtensions, resolved] = useResolvedExtensions<AddAction>(isAddAction);
   const disabledActions = getDisabledAddActions();
+  const allAddActionsDisabled = disabledActions?.length === allAddActionExtensions?.length;
 
   if (allAddActionExtensions && disabledActions && disabledActions.length > 0) {
     const filteredAddActionExtensions = allAddActionExtensions.filter(
       (addActionExtension) => !disabledActions.includes(addActionExtension.properties.id),
     );
-    return [filteredAddActionExtensions, resolved];
+    return [filteredAddActionExtensions, resolved, allAddActionsDisabled];
   }
 
-  return [allAddActionExtensions, resolved];
+  return [allAddActionExtensions, resolved, allAddActionsDisabled];
 };

@@ -94,6 +94,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     title,
     menuActions,
     buttonActions,
+    customActionMenu,
     obj,
     breadcrumbs,
     breadcrumbsFor,
@@ -116,7 +117,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const hasData = !_.isEmpty(data);
   const showActions =
-    (hasButtonActions || hasMenuActions) && hasData && !_.get(data, 'metadata.deletionTimestamp');
+    (hasButtonActions || hasMenuActions || customActionMenu) &&
+    hasData &&
+    !_.get(data, 'metadata.deletionTimestamp');
   const resourceStatus = hasData && getResourceStatus ? getResourceStatus(data) : null;
   const showHeading = props.icon || kind || resourceTitle || resourceStatus || badge || showActions;
   const showBreadcrumbs = breadcrumbs || (breadcrumbsFor && !_.isEmpty(data));
@@ -180,6 +183,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                   }
                 />
               )}
+              {customActionMenu}
             </div>
           )}
         </h1>
@@ -286,6 +290,7 @@ export type PageHeadingProps = {
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  customActionMenu?: React.ReactNode; // Renders a custom action menu.
   obj?: FirehoseResult<K8sResourceKind>;
   resourceKeys?: string[];
   style?: object;

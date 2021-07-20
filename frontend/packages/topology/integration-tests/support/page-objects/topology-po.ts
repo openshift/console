@@ -23,6 +23,12 @@ export const topologyPO = {
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
     addNewAnnotations: '[data-test="add-button"]',
     connector: '[data-test-id="edge-handler"]',
+    displayOptions: {
+      connenctivityMode: '[id="showGroups"]',
+      consumptionMode: '[id="hideGroups"]',
+      expandSwitchToggle: '.pf-c-switch__input',
+      applicationGroupingsDisabled: '.pf-c-check.pf-c-select__menu-item.pf-m-disabled',
+    },
     filterByResource: {
       filterByResourceDropDown: '.pf-c-select__toggle-text',
       deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
@@ -39,6 +45,7 @@ export const topologyPO = {
   },
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',
+    showPodCount: '[id$=show-pod-count]',
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
     tabs: '[role="dialog"] li button',

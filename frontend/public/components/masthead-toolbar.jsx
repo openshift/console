@@ -25,7 +25,8 @@ import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
 import * as UIActions from '../actions/ui';
-import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
 import { getOCMLink, referenceForModel } from '../module/k8s';
 import { Firehose } from './utils';
@@ -36,7 +37,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
-import { withTelemetry } from '@console/shared/src/hoc';
+import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -308,7 +309,8 @@ class MastheadToolbarContents_ extends React.Component {
   _helpActions(additionalHelpActions) {
     const { flags, cv, t, fireTelemetryEvent } = this.props;
     const helpActions = [];
-    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data) : null;
+    const reportBugLink = cv && cv.data ? getReportBugLink(cv.data, t) : null;
+    const tourRef = React.createRef();
 
     helpActions.push({
       name: '',
@@ -342,7 +344,7 @@ class MastheadToolbarContents_ extends React.Component {
             ]
           : []),
         {
-          component: <GuidedTourMastheadTrigger />,
+          component: <GuidedTourMastheadTrigger ref={tourRef} />,
         },
         ...(reportBugLink
           ? [
@@ -392,24 +394,24 @@ class MastheadToolbarContents_ extends React.Component {
       if (action.isSection) {
         return (
           <ApplicationLauncherGroup key={groupIndex} label={action.name}>
+            {_.map(action.actions, (sectionAction, itemIndex) => {
+              return (
+                <ApplicationLauncherItem
+                  key={itemIndex}
+                  icon={sectionAction.image}
+                  href={sectionAction.href || '#'}
+                  onClick={sectionAction.callback}
+                  component={sectionAction.component}
+                  data-test={
+                    sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
+                  }
+                  {...this._externalProps(sectionAction)}
+                >
+                  {sectionAction.label}
+                </ApplicationLauncherItem>
+              );
+            })}
             <>
-              {_.map(action.actions, (sectionAction, itemIndex) => {
-                return (
-                  <ApplicationLauncherItem
-                    key={itemIndex}
-                    icon={sectionAction.image}
-                    href={sectionAction.href || '#'}
-                    onClick={sectionAction.callback}
-                    component={sectionAction.component}
-                    data-test={
-                      sectionAction.dataTest ? sectionAction.dataTest : 'application-launcher-item'
-                    }
-                    {...this._externalProps(sectionAction)}
-                  >
-                    {sectionAction.label}
-                  </ApplicationLauncherItem>
-                );
-              })}
               {groupIndex < actions.length - 1 && (
                 <ApplicationLauncherSeparator key={`separator-${groupIndex}`} />
               )}
@@ -441,7 +443,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags, consoleLinks, t } = this.props;
+    const { flags, consoleLinks, t, quickStartContext } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
     const additionalUserActions = this._getAdditionalActions(
       this._getAdditionalLinks(consoleLinks?.data, 'UserMenu'),
@@ -463,7 +465,7 @@ class MastheadToolbarContents_ extends React.Component {
     const userActions = [
       {
         label: t('public~Language preference'),
-        callback: () => languagePreferencesModal({}),
+        callback: () => languagePreferencesModal({ quickStartContext }),
         component: 'button',
         dataTest: 'language',
       },
@@ -690,8 +692,8 @@ const mastheadToolbarStateToProps = (state) => ({
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
-const MastheadToolbarContentsWithTranslation = withTranslation()(
-  withTelemetry(MastheadToolbarContents_),
+const MastheadToolbarContentsWithTranslation = withQuickStartContext(
+  withTranslation()(withTelemetry(MastheadToolbarContents_)),
 );
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,

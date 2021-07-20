@@ -25,7 +25,7 @@ describe('test vm template source image', () => {
         namespace: OS_IMAGES_NS,
       },
     });
-    cy.cdiCloner(testName);
+    cy.cdiCloner(testName, OS_IMAGES_NS);
   });
 
   after(() => {

@@ -88,7 +88,6 @@ export interface EnvironmentFieldProps extends FieldProps {
 export interface ResourceLimitFieldProps extends FieldProps {
   unitName: string;
   unitOptions: object;
-  defaultUnitSize: string;
   fullWidth?: boolean;
 }
 

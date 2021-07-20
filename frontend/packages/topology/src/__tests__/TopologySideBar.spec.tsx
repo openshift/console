@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
-import { CloseButton } from '@console/internal/components/utils';
+import CloseButton from '@console/shared/src/components/close-button';
 import TopologySideBar from '../components/side-bar/TopologySideBar';
 
 jest.mock('react-i18next', () => {
@@ -28,7 +29,7 @@ describe('TopologySideBar:', () => {
     wrapper
       .find(CloseButton)
       .shallow()
-      .find('button')
+      .find(Button)
       .simulate('click');
     expect(onClose).toHaveBeenCalled();
   });

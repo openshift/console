@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
+import { getName, getNamespace } from '../../../selectors';
 import { VMIKind } from '../../../types';
 
 import './vmi-users-alert.scss';

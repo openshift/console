@@ -16,7 +16,6 @@ import {
   AngleRightIcon,
   ChartLineIcon,
   CompressIcon,
-  TimesIcon,
 } from '@patternfly/react-icons';
 import {
   ISortBy,
@@ -34,6 +33,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect, useDispatch, useSelector } from 'react-redux';
+import CloseButton from '@console/shared/src/components/close-button';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
@@ -491,15 +491,11 @@ const QueryInput_: React.FC<QueryInputProps> = ({
         spellCheck={false}
         value={text}
       />
-      <Button
-        className="query-browser__clear-icon"
-        aria-label={t('public~Clear query')}
+      <CloseButton
+        additionalClassName="query-browser__clear-icon"
+        ariaLabel={t('public~Clear query')}
         onClick={onClear}
-        type="button"
-        variant="plain"
-      >
-        <TimesIcon />
-      </Button>
+      />
       {!_.isEmpty(allSuggestions) && (
         <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
           {_.map(allSuggestions, (suggestions, title) => (

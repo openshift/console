@@ -441,7 +441,7 @@ class Dropdown_ extends DropdownMixin {
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
           <div
             className={classNames(
-              'dropdown pf-c-dropdown',
+              'pf-c-dropdown',
               { 'pf-m-expanded': this.state.active },
               dropDownClassName,
             )}
@@ -458,7 +458,7 @@ class Dropdown_ extends DropdownMixin {
               disabled={disabled}
               data-test={this.props.dataTest}
             >
-              <div className="btn-dropdown__content-wrap">
+              <div className="pf-c-dropdown__content-wrap">
                 <span className="pf-c-dropdown__toggle-text">
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
@@ -513,7 +513,7 @@ class Dropdown_ extends DropdownMixin {
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div
           className={classNames(
-            { 'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
+            { 'pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
             dropDownClassName,
           )}
         >
@@ -751,7 +751,6 @@ export const ContainerDropdown = (props) => {
   const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
   return (
     <Dropdown
-      className="btn-group"
       headerBefore={headerBefore}
       items={dropdownItems}
       spacerBefore={spacerBefore}

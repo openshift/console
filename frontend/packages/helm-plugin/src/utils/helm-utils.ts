@@ -3,6 +3,7 @@ import { TFunction } from 'i18next';
 import { loadAll, safeDump, DEFAULT_SAFE_SCHEMA } from 'js-yaml';
 import * as _ from 'lodash';
 import { coFetchJSON } from '@console/internal/co-fetch';
+import { Flatten } from '@console/internal/components/factory/list-page';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { toTitleCase } from '@console/shared';
@@ -240,7 +241,7 @@ export const getHelmActionConfig = (
   }
 };
 
-export const flattenReleaseResources = (resources: { [kind: string]: { data: K8sResourceKind } }) =>
+export const flattenReleaseResources: Flatten = (resources) =>
   Object.keys(resources).reduce((acc, kind) => {
     if (!_.isEmpty(resources[kind].data)) {
       acc.push(resources[kind].data);

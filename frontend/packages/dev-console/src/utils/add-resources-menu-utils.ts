@@ -94,6 +94,9 @@ export const getAddPageUrl = (
     case ImportOptions.EVENTCHANNEL:
       pageUrl = `/channel/ns/${ns}`;
       break;
+    case ImportOptions.EVENTBROKER:
+      pageUrl = `/broker/ns/${ns}`;
+      break;
     case ImportOptions.UPLOADJAR:
       pageUrl = `/upload-jar/ns/${ns}`;
       contextSource &&

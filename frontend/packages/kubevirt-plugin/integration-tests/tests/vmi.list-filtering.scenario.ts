@@ -1,5 +1,5 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResource, deleteResources } from '@console/shared/src/test-utils/utils';
+import { createResource, deleteResources } from '../utils/shared-utils';
 import { filterCount } from '../views/vms.list.view';
 import { getVMIManifest, getVMManifest } from './mocks/mocks';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';

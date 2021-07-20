@@ -26,7 +26,8 @@ import {
   ResourceAccessReviewRequest,
   ResourceAccessReviewResponse,
 } from '../module/k8s';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
@@ -116,11 +117,11 @@ const Group: React.FC<{ value: string }> = ({ value }) => {
 };
 
 const tableClasses = [
-  'col-lg-3 col-md-3 col-sm-5 col-xs-4',
-  'col-lg-2 col-md-2 col-sm-4 col-xs-4',
-  'col-lg-2 col-md-2 col-sm-3 col-xs-4',
-  'col-lg-2 hidden-md hidden-sm hidden-xs',
-  'col-lg-3 col-md-5 hidden-sm hidden-xs',
+  'pf-u-w-25-on-2xl',
+  'pf-u-w-16-on-2xl',
+  'pf-u-w-16-on-lg pf-u-w-10-on-2xl',
+  'pf-m-hidden pf-m-visible-on-xl pf-u-w-16-on-lg',
+  'pf-m-hidden pf-m-visible-on-lg',
 ];
 
 const APIResourceRows = ({ componentProps: { data } }) =>
@@ -310,7 +311,7 @@ const APIResourcesList = compose(
             selectedKey={groupFilter}
             spacerBefore={groupSpacer}
             title={groupOptions[groupFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
           <Dropdown
             items={versionOptions}
@@ -318,7 +319,7 @@ const APIResourcesList = compose(
             selectedKey={versionFilter}
             spacerBefore={versionSpacer}
             title={versionOptions[versionFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
           <Dropdown
             items={scopeOptions}
@@ -326,7 +327,7 @@ const APIResourcesList = compose(
             selectedKey={scopeFilter}
             spacerBefore={scopeSpacer}
             title={scopeOptions[scopeFilter]}
-            className="btn-group"
+            className="co-m-pane__filter-bar-dropdown"
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">

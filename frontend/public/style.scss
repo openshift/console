@@ -5,7 +5,6 @@
 // IMPORTANT: Please put non-variable/mixin external dependency imports in vendor.scss!
 // Patternfly variables must be imported before Bootstrap
 @import '~patternfly/dist/sass/patternfly/variables';
-@import '~@patternfly/react-catalog-view-extension/dist/sass/variables';
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
 @import '~@fortawesome/fontawesome-free/scss/variables';

@@ -23,24 +23,24 @@ const DetailsCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('nodes~Details')}</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>{t('nodes~View all')}</DashboardCardLink>
+        <DashboardCardTitle>{t('console-app~Details')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('console-app~View all')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('nodes~Node name')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Node name')}>
             {obj.metadata.name}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Role')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Role')}>
             <NodeRoles node={obj} />
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Instance type')} error={!instanceType}>
+          <DetailItem isLoading={!obj} title={t('console-app~Instance type')} error={!instanceType}>
             {instanceType}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Zone')} error={!zone}>
+          <DetailItem isLoading={!obj} title={t('console-app~Zone')} error={!zone}>
             {zone}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('nodes~Node addresses')}>
+          <DetailItem isLoading={!obj} title={t('console-app~Node addresses')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
           </DetailItem>
         </DetailsBody>

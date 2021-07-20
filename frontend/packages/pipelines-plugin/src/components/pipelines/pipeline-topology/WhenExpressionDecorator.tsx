@@ -1,35 +1,40 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { global_BorderColor_100 as lightBorderColor } from '@patternfly/react-tokens/dist/js/global_BorderColor_100';
-import { useTranslation } from 'react-i18next';
 import { runStatus } from '../../../utils/pipeline-augment';
 import { NODE_HEIGHT } from './const';
+import { getWhenExpressionDiamondState } from './utils';
 
 import './WhenExpressionDecorator.scss';
 
 type WhenExpressionDecoratorProps = {
   width: number;
   height: number;
-  color: string;
   leftOffset?: number;
   stroke?: string;
-  status?: string;
+  status: runStatus;
   appendLine?: boolean;
   enableTooltip?: boolean;
+  isFinallyTask: boolean;
+  isPipelineRun: boolean;
 };
 
 const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
   width,
   height,
-  color,
   enableTooltip,
-  stroke = lightBorderColor.value,
   appendLine = false,
   status,
   leftOffset = 2,
+  isFinallyTask,
+  isPipelineRun,
 }) => {
-  const { t } = useTranslation();
   const rotation = 45; // 45deg
+  const { tooltipContent, diamondColor } = getWhenExpressionDiamondState(
+    status,
+    isPipelineRun,
+    isFinallyTask,
+  );
   const diamondHeight =
     Math.round(width * Math.sin(rotation)) + Math.round(height * Math.cos(rotation));
   const diamondNode = (
@@ -39,8 +44,8 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
         className="opp-when-expression-decorator-diamond"
         width={width}
         height={height}
-        fill={color}
-        stroke={stroke}
+        fill={diamondColor}
+        stroke={isPipelineRun ? diamondColor : lightBorderColor.value}
       />
       {appendLine && (
         <line
@@ -53,17 +58,6 @@ const WhenExpressionDecorator: React.FC<WhenExpressionDecoratorProps> = ({
       )}
     </g>
   );
-  let tooltipContent;
-  switch (status) {
-    case runStatus.Succeeded:
-      tooltipContent = t('pipelines-plugin~When expression was met');
-      break;
-    case runStatus.Skipped:
-      tooltipContent = t('pipelines-plugin~When expression was not met');
-      break;
-    default:
-      tooltipContent = t('pipelines-plugin~When expression');
-  }
 
   return enableTooltip ? (
     <Tooltip

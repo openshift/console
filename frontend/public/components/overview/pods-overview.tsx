@@ -62,6 +62,8 @@ const errorPhases = [
 
 const isPodError = (pod: PodKind) => _.includes(errorPhases, podPhase(pod));
 
+const isEvicted = (pod: PodKind) => podPhase(pod) === 'Evicted';
+
 const isDeploymentGeneratedByWebConsole = (obj: K8sResourceKind) =>
   obj.kind === 'Deployment' &&
   obj.metadata?.annotations?.['openshift.io/generated-by'] === 'OpenShiftWebConsole';
@@ -70,12 +72,19 @@ const isPodWithoutImageId = (pod: PodKind) =>
   pod.status?.phase === 'Pending' &&
   pod.status?.containerStatuses?.some((containerStatus) => !containerStatus.imageID);
 
-const podCompare = (pod1: PodKind, pod2: PodKind): number => {
+export const podCompare = (pod1: PodKind, pod2: PodKind): number => {
   const error1 = isPodError(pod1);
   const error2 = isPodError(pod2);
 
   if (error1 !== error2) {
-    return error1 ? 1 : 0;
+    return error1 ? -1 : 1;
+  }
+
+  const evicted1 = isEvicted(pod1);
+  const evicted2 = isEvicted(pod2);
+
+  if (evicted1 !== evicted2) {
+    return evicted1 ? 1 : -1;
   }
 
   const runtime1 = podUpdateTime(pod1);
@@ -105,7 +114,7 @@ const PodOverviewItem: React.FC<PodOverviewItemProps> = ({ pod }) => {
         <span className="col-xs-3">
           <PodStatus pod={pod} />
         </span>
-        <span className="col-xs-3 text-right">
+        <span className="col-xs-3 pf-u-text-align-right">
           <Link to={`${resourcePath(kind, name, namespace)}/logs`}>{t('public~View logs')}</Link>
         </span>
       </div>

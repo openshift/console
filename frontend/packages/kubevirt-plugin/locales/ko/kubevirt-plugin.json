@@ -626,7 +626,7 @@
   "Mount Point": "마운트 지점",
   "Total Bytes": "총 바이트",
   "Used Bytes": "사용된 바이트",
-  "FileSystems": "FileSystems",
+  "FileSystems": "파일 시스템",
   "No File Systems Found": "파일 시스템을 찾을 수 없음",
   "File Systems": "파일 시스템",
   "The following information regarding how the disks are partitioned is provided by the guest agent.": "다음의 디스크 파티션 설정 방법에 대한 정보는 게스트 에이전트에서 제공합니다.",

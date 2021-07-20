@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { useClusterVersion, BlueArrowCircleUpIcon } from '@console/shared';
 import { getBrandingDetails } from './masthead';
-import { useAccessReview } from './utils';
+import { ReleaseNotesLink, useAccessReview } from './utils';
 import { ClusterVersionModel } from '../models';
 import { k8sVersion } from '../module/status';
 import {
@@ -20,7 +20,6 @@ import {
   getOpenShiftVersion,
   hasAvailableUpdates,
 } from '../module/k8s/cluster-settings';
-import { ReleaseNotesLink } from './cluster-settings/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
@@ -49,18 +48,14 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({ closeAboutModal }) =>
         <Alert
           className="co-alert co-about-modal__alert"
           title={
-            <>
-              {/* PatternFly does not have an `update` alert variant
-              See https://github.com/patternfly/patternfly-react/issues/4594 */}
-              <BlueArrowCircleUpIcon className="pf-c-alert__icon pf-c-alert__icon--alt" />
-              <Trans t={t} ns="public">
-                Cluster update available.{' '}
-                <Link to="/settings/cluster?showVersions" onClick={closeAboutModal}>
-                  Update cluster
-                </Link>
-              </Trans>
-            </>
+            <Trans t={t} ns="public">
+              Cluster update available.{' '}
+              <Link to="/settings/cluster?showVersions" onClick={closeAboutModal}>
+                Update cluster
+              </Link>
+            </Trans>
           }
+          customIcon={<BlueArrowCircleUpIcon />}
         />
       )}
       <TextContent>

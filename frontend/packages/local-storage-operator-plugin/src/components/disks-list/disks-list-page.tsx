@@ -13,7 +13,11 @@ import {
   MultiListPage,
 } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { FirehoseResult, humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
+import {
+  FirehoseResourcesResult,
+  humanizeBinaryBytes,
+  Kebab,
+} from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
 import { SubscriptionKind, SubscriptionModel } from '@console/operator-lifecycle-manager';
@@ -199,15 +203,15 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
       hideLabelFilter
       textFilter="node-disk-name"
       rowFilters={diskFilters}
-      flatten={(resource: FirehoseResult<LocalVolumeDiscoveryResultKind>) =>
-        resource[propName]?.data[0]?.status?.discoveredDevices ?? []
-      }
+      flatten={(
+        resource: FirehoseResourcesResult<{ [key: string]: LocalVolumeDiscoveryResultKind }>,
+      ) => resource[propName]?.data[0]?.status?.discoveredDevices ?? []}
       ListComponent={ListComponent ?? DisksList}
       resources={[
         {
           kind: referenceForModel(LocalVolumeDiscoveryResult),
           prop: propName,
-          selector: { [LABEL_SELECTOR]: nodeName },
+          selector: { matchLabels: { [LABEL_SELECTOR]: nodeName } },
         },
       ]}
       customData={{

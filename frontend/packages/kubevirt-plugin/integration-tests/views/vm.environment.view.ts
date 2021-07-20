@@ -1,7 +1,7 @@
 import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
 import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
+import { click } from '../utils/shared-utils';
 
 export const allPairRows = $$('.pairs-list__row');
 

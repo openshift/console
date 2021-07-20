@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { AsyncComponent } from './utils';
+import { useTranslation } from 'react-i18next';
 
 export const ImportYamlPage = () => {
-  const title = 'Import YAML';
+  const { t } = useTranslation();
+  const title = t('public~Import YAML');
 
   return (
     <>

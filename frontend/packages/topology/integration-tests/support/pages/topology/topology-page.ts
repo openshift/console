@@ -34,11 +34,26 @@ export const topologyPage = {
   verifyWorkloadInTopologyPage: (appName: string) => {
     topologyHelper.verifyWorkloadInTopologyPage(appName);
   },
-  clickDisplayOptionDropdown: () =>
-    cy
-      .get(topologyPO.graph.filterDropdown)
-      .contains('Display Options')
-      .click(),
+  verifyWorkloadNotInTopologyPage: (appName: string) => {
+    topologyHelper.search(appName).should('not.exist');
+  },
+  clickDisplayOptionDropdown: () => cy.contains('Display options').click(),
+  checkConnectivityMode: () => cy.get(topologyPO.graph.displayOptions.connenctivityMode).click(),
+  checkConsumptionMode: () => cy.get(topologyPO.graph.displayOptions.consumptionMode).click(),
+  verifyConnectivityModeChecked: () =>
+    cy.get(topologyPO.graph.displayOptions.connenctivityMode).should('be.checked'),
+  verifyConsumptionModeChecked: () =>
+    cy.get(topologyPO.graph.displayOptions.consumptionMode).should('be.checked'),
+  verifyExpandChecked: () =>
+    cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).should('be.checked'),
+  verifyExpandDisabled: () =>
+    cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).should('be.disabled'),
+  verifyExpandOptionsDisabled: () =>
+    cy.get(topologyPO.graph.displayOptions.applicationGroupingsDisabled).should('be.visible'),
+  uncheckExpandToggle: () => {
+    cy.get(topologyPO.graph.displayOptions.expandSwitchToggle).click({ force: true });
+  },
+  verifyPodCountUnchecked: () => cy.get(topologyPO.sidePane.showPodCount).should('not.be.checked'),
   selectDisplayOption: (opt: displayOptions) => {
     topologyPage.clickDisplayOptionDropdown();
     switch (opt) {

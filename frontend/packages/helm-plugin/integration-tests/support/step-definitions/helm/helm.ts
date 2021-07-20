@@ -63,7 +63,7 @@ Then('user will see the list of Chart Repositories', () => {
 });
 
 Then('user will see the cards of Helm Charts', () => {
-  catalogPage.verifyChartCardsAvailable();
+  catalogPage.verifyHelmChartCardsAvailable();
 });
 
 Then('user will see Filter by Keyword field', () => {

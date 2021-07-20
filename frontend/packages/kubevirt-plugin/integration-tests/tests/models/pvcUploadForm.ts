@@ -11,7 +11,7 @@ import {
   saveChangesBtn,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { click, fillInput } from '../../utils/shared-utils';
 import * as pvcView from '../../views/pvc.view';
 import { dropDownItem } from '../../views/uiResource.view';
 import { PVCData } from '../types/pvc';

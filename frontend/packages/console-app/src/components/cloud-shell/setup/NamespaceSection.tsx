@@ -4,7 +4,7 @@ import { useFormikContext, FormikValues, useField } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ProjectModel } from '@console/internal/models';
-import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
+import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { InputField, ResourceDropdownField, useFormikValidationFix, FLAGS } from '@console/shared';
 import { CREATE_NAMESPACE_KEY } from './cloud-shell-setup-utils';
 
@@ -42,8 +42,8 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
     <>
       <ResourceDropdownField
         name="namespace"
-        label={t('cloudshell~Project')}
-        placeholder={t('cloudshell~Select Project')}
+        label={t('console-app~Project')}
+        placeholder={t('console-app~Select Project')}
         fullWidth
         required
         selectedKey={namespace.value}
@@ -60,7 +60,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
           canCreate
             ? [
                 {
-                  actionTitle: t('cloudshell~Create Project'),
+                  actionTitle: t('console-app~Create Project'),
                   actionKey: CREATE_NAMESPACE_KEY,
                 },
               ]
@@ -68,7 +68,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
         }
         onLoad={handleOnLoad}
         helpText={t(
-          'cloudshell~This Project will be used to initialize your command line terminal',
+          'console-app~This Project will be used to initialize your command line terminal',
         )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
@@ -76,7 +76,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
           type={TextInputTypes.text}
           required
           name="newNamespace"
-          label={t('cloudshell~Project name')}
+          label={t('console-app~Project name')}
         />
       )}
     </>

@@ -517,7 +517,7 @@ export class Kebab extends React.Component<any, { active: boolean }> {
     return (
       <div
         className={classNames({
-          'dropdown pf-c-dropdown': true,
+          'pf-c-dropdown': true,
           'pf-m-expanded': this.state.active,
         })}
       >

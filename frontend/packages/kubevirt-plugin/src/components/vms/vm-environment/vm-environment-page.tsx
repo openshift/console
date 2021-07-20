@@ -24,11 +24,11 @@ import {
   ServiceAccountKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { getNamespace, getRandomChars } from '@console/shared';
 import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../../models';
+import { getNamespace } from '../../../selectors';
 import { isVM } from '../../../selectors/check-type';
 import { getVMLikeModel } from '../../../selectors/vm';
 import {
@@ -37,7 +37,7 @@ import {
 } from '../../../selectors/vm-template/selectors';
 import { V1Disk, V1Volume } from '../../../types/api';
 import { VMKind } from '../../../types/vm';
-import { getResource } from '../../../utils';
+import { getRandomChars, getResource } from '../../../utils';
 import { VMTabProps } from '../types';
 import {
   configMapKind,

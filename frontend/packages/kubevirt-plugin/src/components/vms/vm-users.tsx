@@ -72,7 +72,7 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle })
 
   if (!guestAgentInfoRaw) {
     return (
-      <div id="guest-agent-unavailable-msg" className="text-center">
+      <div id="guest-agent-unavailable-msg" className="pf-u-text-align-center">
         {guestAgentFieldNotAvailMsg}
       </div>
     );
@@ -99,7 +99,7 @@ export const VMUsersList: React.FC<VMUsersListProps> = ({ vmi, vmStatusBundle })
       loadError={error?.message}
       loaded={!loading}
       EmptyMsg={() => (
-        <div id="no-active-users-msg" className="text-center">
+        <div id="no-active-users-msg" className="pf-u-text-align-center">
           {t('kubevirt-plugin~No Active Users')}
         </div>
       )}

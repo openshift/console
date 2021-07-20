@@ -307,3 +307,14 @@ export type OcsStorageClassKind = StorageClassResourceKind & {
     pool: string;
   };
 };
+
+export type StorageSystemKind = K8sResourceCommon & {
+  spec: {
+    // kind is a string as `<kind>.<apiGroup>/<apiVersion>`, describing the managed storage vendor CR
+    kind: string;
+    // name describes the name of managed storage vendor CR
+    name: string;
+    // namespace describes the name of managed storage vendor CR
+    namespace: string;
+  };
+};

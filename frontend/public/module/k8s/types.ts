@@ -755,6 +755,7 @@ export enum ClusterVersionConditionType {
   Progressing = 'Progressing',
   RetrievedUpdates = 'RetrievedUpdates',
   Invalid = 'Invalid',
+  Upgradeable = 'Upgradeable',
 }
 
 export type ClusterVersionCondition = {
@@ -1082,7 +1083,7 @@ export type NetworkPolicyPeer = {
 };
 
 export type NetworkPolicyPort = {
-  port?: string;
+  port?: string | number;
   protocol?: string;
 };
 

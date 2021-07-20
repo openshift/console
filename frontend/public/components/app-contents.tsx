@@ -8,7 +8,8 @@ import {
   useUserSettings,
   getPerspectiveVisitedKey,
 } from '@console/shared';
-import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
@@ -367,6 +368,17 @@ const AppContents: React.FC<{}> = () => {
                 exact
                 kind="Secret"
                 loader={() => import('./create-yaml').then((m) => m.EditYAMLPage)}
+              />
+
+              <LazyRoute
+                path="/k8s/ns/:ns/networkpolicies/~new/form"
+                exact
+                kind="NetworkPolicy"
+                loader={() =>
+                  import(
+                    '@console/app/src/components/network-policies/create-network-policy' /* webpackChunkName: "create-network-policy" */
+                  ).then((m) => m.CreateNetworkPolicy)
+                }
               />
 
               <LazyRoute

@@ -25,7 +25,9 @@ export const listPage = {
   },
   filter: {
     byName: (name: string) => {
-      cy.byLegacyTestID('item-filter').type(name);
+      cy.byTestID('name-filter-input')
+        .clear()
+        .type(name);
     },
     numberOfActiveFiltersShouldBe: (numFilters: number) => {
       cy.get("[class='pf-c-toolbar__item pf-m-chip-group']").should('have.length', numFilters);
@@ -33,6 +35,19 @@ export const listPage = {
     clickSearchByDropdown: () => {
       cy.get('.pf-c-toolbar__content-section').within(() => {
         cy.byLegacyTestID('dropdown-button').click();
+      });
+    },
+    clickFilterDropdown: () => {
+      cy.byLegacyTestID('filter-dropdown-toggle').within(() => {
+        cy.get('button').click();
+      });
+    },
+    clearAllFilters: () => {
+      cy.log('Clearing all filters');
+      cy.get('.pf-c-toolbar__content').within(() => {
+        cy.get('button')
+          .last()
+          .click();
       });
     },
     by: (rowFilter: string) => {

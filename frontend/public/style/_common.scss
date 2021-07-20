@@ -48,12 +48,12 @@ dl.co-inline {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  .btn-group,
+  .co-m-pane__filter-bar-dropdown,
   .co-m-primary-action,
   .pf-c-form-control {
     margin-bottom: 10px;
   }
-  .btn-group {
+  .co-m-pane__filter-bar-dropdown {
     margin-right: 10px;
     min-width: 0; // enables truncation of selected item, if needed
   }
@@ -305,18 +305,6 @@ dl.co-inline {
 
 .co-sidebar-dismiss {
   padding: 0 5px;
-
-  .close {
-    font-size: 16px;
-    // adjustments to increase click target and default color contrast because it's on a grey background
-    opacity: 0.3;
-    padding: 10px 15px;
-
-    &:hover,
-    &:focus {
-      opacity: 0.6;
-    }
-  }
 }
 
 .co-toolbar {
@@ -330,7 +318,7 @@ dl.co-inline {
 .co-toolbar__item {
   max-width: 100%;
   padding: 5px 0;
-  .btn-group {
+  .co-toolbar__item-dropdown {
     max-width: 100%;
   }
 }
@@ -574,17 +562,6 @@ dl.co-inline {
   }
   40% {
     transform: scale(1, 1);
-  }
-}
-
-.co-kebab {
-  &__button {
-    border: 0; // remove so that dropdown-kebab-pf <button class="btn-link"> are aligned whether disabled or not
-    padding: 0;
-
-    &[disabled] {
-      color: $color-pf-black-300 !important;
-    }
   }
 }
 

@@ -8,7 +8,6 @@ interface SelectorCardProps {
   title: string;
   iconUrl: string;
   name: string;
-  displayName?: string;
   selected?: boolean;
   recommended?: boolean;
   onChange: (name: string) => void;
@@ -18,22 +17,15 @@ const SelectorCard: React.FC<SelectorCardProps> = ({
   title,
   iconUrl,
   name,
-  displayName,
   selected,
   recommended = false,
   onChange,
 }) => {
   const classes = classNames('odc-selector-card', { 'is-selected': selected });
   return (
-    <Card
-      component="button"
-      type="button"
-      aria-label={title}
-      className={classes}
-      onClick={() => onChange(name)}
-    >
+    <Card component="button" type="button" className={classes} onClick={() => onChange(name)}>
       <CardTitle>
-        <img className="odc-selector-card__icon" src={iconUrl} alt={displayName ?? title} />
+        <img className="odc-selector-card__icon" src={iconUrl} alt="" />
       </CardTitle>
       <CardBody>
         <span className="odc-selector-card__title">{title}</span>

@@ -1,12 +1,12 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { READY } from '../../src/utils/strings';
 import {
   addLeakableResource,
   click,
   createResource,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
-import { READY } from '../../src/utils/strings';
+} from '../utils/shared-utils';
 import { listViewAction } from '../views/actions.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as editVMSnapshotsView from '../views/vm.snapshots.view';

@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { detailViewAction as vmActions } from '@console/shared/src/test-utils/actions.view';
+import { detailViewAction as vmActions } from '../utils/shared-actions.view';
 import {
   click,
   createResource,
@@ -10,7 +10,7 @@ import {
   selectDropdownOption,
   selectDropdownOptionById,
   waitForStringInElement,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import {
   consoleTypeSelector,
   consoleTypeSelectorId,

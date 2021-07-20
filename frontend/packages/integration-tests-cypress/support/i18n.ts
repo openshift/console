@@ -48,7 +48,11 @@ Cypress.Commands.add(
     prevSubject: true,
   },
   (subject) => {
-    const text = subject.text();
-    expect(text).to.match(/\[[^a-zA-Z]+\]/);
+    cy.wrap(subject).each(($el) => {
+      const text = $el.text();
+      if (text.length > 0) {
+        expect(text).to.match(/\[[^a-zA-Z]+\]/);
+      }
+    });
   },
 );

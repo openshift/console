@@ -5,9 +5,10 @@ import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
   DetailsPage,
-  TableInnerProps,
   Table,
   TableRow,
+  TableProps,
+  ComponentProps,
 } from '@console/internal/components/factory';
 import {
   Timestamp,
@@ -231,9 +232,9 @@ describe(ClusterServiceVersionList.displayName, () => {
         loaded
       />,
     );
-    const header = wrapper.find<TableInnerProps>(Table).props().Header;
+    const header = wrapper.find<TableProps>(Table).props().Header;
     expect(header.name).toEqual('SingleProjectTableHeader');
-    const headerColumns = header();
+    const headerColumns = header({} as ComponentProps);
     expect(headerColumns[0].title).toEqual('olm~Name');
     expect(headerColumns[1].title).toEqual('olm~Managed Namespaces');
     expect(headerColumns[2].title).toEqual('olm~Status');
@@ -251,9 +252,9 @@ describe(ClusterServiceVersionList.displayName, () => {
         loaded
       />,
     );
-    const header = wrapper.find<TableInnerProps>(Table).props().Header;
+    const header = wrapper.find<TableProps>(Table).props().Header;
     expect(header.name).toEqual('AllProjectsTableHeader');
-    const headerColumns = header();
+    const headerColumns = header({} as ComponentProps);
     expect(headerColumns[0].title).toEqual('olm~Name');
     expect(headerColumns[1].title).toEqual('olm~Namespace');
     expect(headerColumns[2].title).toEqual('olm~Managed Namespaces');

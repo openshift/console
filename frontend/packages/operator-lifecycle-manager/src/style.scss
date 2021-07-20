@@ -1,13 +1,8 @@
 // Bootstrap Core variables and mixins
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
 
 // Patternfly Core variables and mixins
 @import '~patternfly/dist/sass/patternfly/variables';
-@import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
-@import '~patternfly/dist/sass/patternfly/mixins';
-@import '~patternfly/dist/sass/patternfly/icons';
-@import '~patternfly-react/dist/sass/patternfly-react';
 
 // OpenShift variables
 @import '../../../public/style/vars';

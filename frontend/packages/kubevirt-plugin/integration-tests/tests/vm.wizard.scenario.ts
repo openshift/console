@@ -2,14 +2,14 @@ import { execSync } from 'child_process';
 import { browser } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { isLoaded } from '../../../../integration-tests/views/crud.view';
 import {
   createResources,
   deleteResources,
   removeLeakedResources,
   waitForStringInElement,
   withResource,
-} from '@console/shared/src/test-utils/utils';
-import { isLoaded } from '../../../../integration-tests/views/crud.view';
+} from '../utils/shared-utils';
 import * as view from '../views/wizard.view';
 import { cdGuestTools, getTestDataVolume, multusNAD } from './mocks/mocks';
 import { getBasicVMBuilder, vmPresets } from './mocks/vmBuilderPresets';

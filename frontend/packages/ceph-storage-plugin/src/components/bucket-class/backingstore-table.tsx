@@ -13,7 +13,9 @@ import {
   getUID,
   useDeepCompareMemoize,
 } from '@console/shared';
-import { Table, ListPage, getFilteredRows } from '@console/internal/components/factory';
+import { Table, ListPage } from '@console/internal/components/factory';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
+import { Filter } from '@console/internal/components/factory/table';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -78,7 +80,7 @@ const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
   const {
     customData: { onRowsSelected, preSelected },
     data,
-    filters = {},
+    filters,
   } = props;
   const visibleRows = getFilteredRows(filters, null, data);
   const visibleUIDs = React.useMemo(() => new Set<string>(visibleRows?.map(getUID)), [visibleRows]);
@@ -274,7 +276,7 @@ type BackingStoreTableProps = {
     onRowsSelected?: (arg: BackingStoreKind[]) => void;
     preSelected?: string[];
   };
-  filters?: {};
+  filters?: Filter[];
   preSelected?: string[];
 };
 

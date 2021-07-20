@@ -24,6 +24,7 @@ import {
   TableData,
   MultiListPage,
   RowFunctionArgs,
+  Flatten,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -68,7 +69,6 @@ import {
 import {
   ALL_NAMESPACES_KEY,
   Status,
-  WarningStatus,
   getNamespace,
   getUID,
   StatusIconAndText,
@@ -111,14 +111,16 @@ import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { CreateInitializationResourceButton } from './operator-install-page';
 import {
+  SourceMissingStatus,
   SubscriptionDetails,
-  catalogSourceForSubscription,
   UpgradeApprovalLink,
+  catalogSourceForSubscription,
 } from './subscription';
 import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
 
 const isSubscription = (obj) => referenceFor(obj) === referenceForModel(SubscriptionModel);
-const isCSV = (obj) => referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
+const isCSV = (obj): obj is ClusterServiceVersionKind =>
+  referenceFor(obj) === referenceForModel(ClusterServiceVersionModel);
 const isPackageServer = (obj) =>
   obj.metadata.name === 'packageserver' &&
   obj.metadata.namespace === 'openshift-operator-lifecycle-manager';
@@ -173,16 +175,6 @@ const menuActionsForCSV = (
   return _.isEmpty(subscription)
     ? [Kebab.factory.Delete]
     : [() => editSubscription(subscription), () => uninstall(subscription, csv)];
-};
-
-const SourceMissingStatus: React.FC = () => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <WarningStatus title={t('olm~Cannot update')} />
-      <span className="text-muted">{t('olm~CatalogSource was removed.')}</span>
-    </>
-  );
 };
 
 const SubscriptionStatus: React.FC<{ muted?: boolean; subscription: SubscriptionKind }> = ({
@@ -753,7 +745,10 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
     </Trans>
   );
 
-  const flatten = ({ clusterServiceVersions, subscriptions }) =>
+  const flatten: Flatten<{
+    clusterServiceVersions: ClusterServiceVersionKind[];
+    subscriptions: SubscriptionKind[];
+  }> = ({ clusterServiceVersions, subscriptions }) =>
     [
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(
@@ -996,16 +991,17 @@ export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetails
                 >
                   {status.reason === CSVConditionReason.CSVReasonCopied ? (
                     <>
-                      {t(
-                        'olm~This Operator was copied from another namespace. For the reason it failed, see ',
-                      )}
-                      <ResourceLink
-                        name={metadata.name}
-                        kind={referenceForModel(ClusterServiceVersionModel)}
-                        namespace={operatorNamespaceFor(props.obj)}
-                        hideIcon
-                        inline
-                      />
+                      <Trans t={t} ns="olm">
+                        This Operator was copied from another namespace. For the reason it failed,
+                        see{' '}
+                        <ResourceLink
+                          name={metadata.name}
+                          kind={referenceForModel(ClusterServiceVersionModel)}
+                          namespace={operatorNamespaceFor(props.obj)}
+                          hideIcon
+                          inline
+                        />
+                      </Trans>
                     </>
                   ) : (
                     status.message

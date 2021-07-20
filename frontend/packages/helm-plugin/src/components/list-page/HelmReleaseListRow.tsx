@@ -3,8 +3,7 @@ import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Timestamp, ResourceIcon } from '@console/internal/components/utils';
-import { ActionsLoader, Status } from '@console/shared';
-import KebabMenu from '@console/shared/src/components/kebab/KebabMenu';
+import { ActionsLoader, ActionMenu, Status } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { tableColumnClasses } from './HelmReleaseListHeader';
 
@@ -42,7 +41,9 @@ const HelmReleaseListRow: RowFunction<HelmRelease> = ({ obj, index, key, style }
       </TableData>
       <TableData className={tableColumnClasses.kebab}>
         <ActionsLoader contextId="helm-actions" scope={actionsScope}>
-          {(actions, loaded) => loaded && <KebabMenu actions={actions} />}
+          {(loader) =>
+            loader.loaded && <ActionMenu actions={loader.actions} options={loader.options} />
+          }
         </ActionsLoader>
       </TableData>
     </TableRow>

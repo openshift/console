@@ -2,12 +2,12 @@ import { k8sCreate, k8sGet, k8sKill, K8sResourceKind } from '@console/internal/m
 import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
 import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
-import { getName, getNamespace } from '@console/shared';
 import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
 import {
   getKubevirtModelAvailableAPIVersion,
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { delay } from '../../../utils/utils';
 
 const PVC_STATUS_DELAY = 2 * 1000;

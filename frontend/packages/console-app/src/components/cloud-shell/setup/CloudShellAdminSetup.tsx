@@ -63,7 +63,7 @@ const CloudShellAdminSetup: React.FunctionComponent<Props> = ({ onInitialize, wo
 
   if (initError) {
     return (
-      <LoadError message={initError} label={t('cloudshell~OpenShift command line terminal')} />
+      <LoadError message={initError} label={t('console-app~OpenShift command line terminal')} />
     );
   }
 

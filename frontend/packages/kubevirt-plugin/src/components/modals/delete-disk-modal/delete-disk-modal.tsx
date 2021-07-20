@@ -10,11 +10,11 @@ import {
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { freeOwnedResources } from '../../../k8s/requests/free-owned-resources';
 import { DataVolumeModel } from '../../../models';
+import { getName, getNamespace } from '../../../selectors';
 import { getVMLikeModel } from '../../../selectors/vm';
 import { V1Disk, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';

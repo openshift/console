@@ -1,6 +1,6 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, removeLeakedResources, withResource } from '@console/shared/src/test-utils/utils';
 import { isDedicatedCPUPlacement } from '../../src/selectors/vm';
+import { click, removeLeakedResources, withResource } from '../utils/shared-utils';
 import * as editDedicatedResourcesView from '../views/dialogs/editDedicatedResourcesView';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as virtualMachineView from '../views/virtualMachine.view';

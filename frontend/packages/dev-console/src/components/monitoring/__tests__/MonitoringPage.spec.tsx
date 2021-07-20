@@ -26,7 +26,7 @@ describe('Monitoring Page ', () => {
     };
     const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(CreateProjectListPage).exists()).toBe(true);
-    expect(component.find(CreateProjectListPage).prop('title')).toBe(`${I18N_NS}~Monitoring`);
+    expect(component.find(CreateProjectListPage).prop('title')).toBe(`${I18N_NS}~Observe`);
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {
@@ -50,7 +50,7 @@ describe('Monitoring Page ', () => {
 
     const component = shallow(<PageContents {...monPageProps} />);
     expect(component.find(utils.PageHeading).exists()).toBe(true);
-    expect(component.find(utils.PageHeading).prop('title')).toBe(`${I18N_NS}~Monitoring`);
+    expect(component.find(utils.PageHeading).prop('title')).toBe(`${I18N_NS}~Observe`);
     expect(component.find(utils.HorizontalNav).exists()).toBe(true);
     const actualTabs = component
       .find(utils.HorizontalNav)

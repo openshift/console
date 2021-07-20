@@ -23,7 +23,10 @@ import {
   K8sVerb,
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
-import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
+import {
+  getDomainMappingRequests,
+  getKnativeServiceDepResource,
+} from '@console/knative-plugin/src/utils/create-knative-utils';
 import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
@@ -658,10 +661,6 @@ export const createOrUpdateResources = async (
   const defaultAnnotations = getGitAnnotations(repository, ref);
 
   if (formData.resources === Resources.KnativeService) {
-    // knative service doesn't have dry run capability so returning the promises.
-    if (dryRun) {
-      return responses;
-    }
     const imageStreamURL = imageStreamResponse.status.dockerImageRepository;
 
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
@@ -685,10 +684,16 @@ export const createOrUpdateResources = async (
       annotations,
       _.get(appResources, 'editAppResource.data'),
     );
+    const domainMappingResources = await getDomainMappingRequests(
+      formData,
+      knDeploymentResource,
+      dryRun,
+    );
     return Promise.all([
       verb === 'update'
-        ? k8sUpdate(KnServiceModel, knDeploymentResource)
-        : k8sCreate(KnServiceModel, knDeploymentResource),
+        ? k8sUpdate(KnServiceModel, knDeploymentResource, null, null, dryRun ? dryRunOpt : {})
+        : k8sCreate(KnServiceModel, knDeploymentResource, dryRun ? dryRunOpt : {}),
+      ...domainMappingResources,
     ]);
   }
 

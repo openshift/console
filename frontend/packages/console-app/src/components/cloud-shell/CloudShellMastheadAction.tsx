@@ -31,7 +31,7 @@ const ClouldShellMastheadAction: React.FC<Props> = ({ onClick, className, open }
       data-tour-id="tour-cloud-shell-button"
       data-quickstart-id="qs-masthead-cloudshell"
     >
-      {t('cloudshell~OpenShift command line')}
+      {t('console-app~OpenShift command line')}
       {open ? (
         <span
           style={{

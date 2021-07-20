@@ -4,7 +4,6 @@ import {
   TYPE_HELM_RELEASE,
   TYPE_HELM_WORKLOAD,
 } from '@console/helm-plugin/src/topology/components/const';
-import TopologyHelmReleasePanel from '@console/helm-plugin/src/topology/TopologyHelmReleasePanel';
 import TopologyHelmWorkloadPanel from '@console/helm-plugin/src/topology/TopologyHelmWorkloadPanel';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
@@ -16,6 +15,7 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
+// import TopologyHelmReleasePanel from '@console/helm-plugin/src/topology/TopologyHelmReleasePanel';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
@@ -28,6 +28,7 @@ import { TopologyDataObject } from '../../topology-types';
 import TopologyApplicationPanel from '../application-panel/TopologyApplicationPanel';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
+import TopologySideBarContent from './TopologySideBarContent';
 
 export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
   if (!selectedEntity) {
@@ -47,9 +48,8 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
         />
       );
     }
-    // TODO: Use Plugins
     if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
-      return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
+      return <TopologySideBarContent element={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_MANAGED_KAFKA_CONNECTION) {
       return <TopologyKafkaPanel item={selectedEntity} />;

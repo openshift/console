@@ -10,6 +10,8 @@ import {
   TableRow,
   TableData,
   RowFunction,
+  Flatten,
+  Filter,
 } from '@console/internal/components/factory';
 import {
   MsgBox,
@@ -18,7 +20,7 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import i18n from '@console/internal/i18n';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import { MatchExpression, referenceForModel } from '@console/internal/module/k8s';
 import { OPERATOR_HUB_LABEL } from '@console/shared';
 import { PackageManifestModel, CatalogSourceModel } from '../models';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
@@ -141,7 +143,6 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
   const { catalogSource } = props;
   const namespace = _.get(props.match, 'params.ns');
 
-  type Flatten = (resources: { [kind: string]: { data: K8sResourceKind[] } }) => K8sResourceKind[];
   const flatten: Flatten = (resources) => _.get(resources.packageManifest, 'data', []);
 
   const helpText = (
@@ -170,7 +171,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
           prop: 'packageManifest',
           selector: {
             matchExpressions: [
-              ...(catalogSource
+              ...((catalogSource
                 ? [
                     {
                       key: 'catalog',
@@ -183,7 +184,7 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
                       values: [catalogSource?.metadata.namespace],
                     },
                   ]
-                : []),
+                : []) as MatchExpression[]),
               { key: visibilityLabel, operator: 'DoesNotExist' },
               { key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist' },
             ],
@@ -204,7 +205,7 @@ export type PackageManifestListProps = {
   customData?: { catalogSource: CatalogSourceKind };
   namespace?: string;
   data: PackageManifestKind[];
-  filters?: { [name: string]: string };
+  filters?: Filter[];
   loaded: boolean;
   loadError?: string | Record<string, any>;
   showDetailsLink?: boolean;

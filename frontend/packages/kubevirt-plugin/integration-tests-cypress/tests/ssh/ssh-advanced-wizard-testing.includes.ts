@@ -1,3 +1,5 @@
+import { ProvisionSource } from '../../enums/provisionSource';
+
 export default ({ vmName }) =>
   describe('ID (CNV-5971) Test if ssh service is present in advanced wizard', () => {
     it('should navigate to advanced wizard', () => {
@@ -19,7 +21,7 @@ export default ({ vmName }) =>
       });
       cy.get('[id=image-source-type-dropdown]').click();
       cy.contains('Import via Registry (creates PVC)').click();
-      cy.get('[id=provision-source-container').type('kubevirt/fedora-cloud-container-disk-demo');
+      cy.get('[id=provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('@nextButton').click();
       cy.get('[id=vm-name]')
         .clear()

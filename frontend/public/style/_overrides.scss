@@ -1,19 +1,7 @@
 // Use this file to override styles from 3rd party dependencies
-$pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
 form.pf-c-form {
   --pf-c-form__helper-text--Color: var(--pf-global--Color--200);
-}
-
-// account for collapsing space between .btn
-.btn + .btn {
-  margin-left: 3px;
-}
-
-// Removes PF white gradiant effect since it doesn't work in Firefox. Truncated text still has trailing ...
-// Upstream issue https://github.com/patternfly/patternfly-next/issues/2633
-.catalog-tile-pf-description .truncated::after {
-  background: none;
 }
 
 // Positions the img in OperatorHub that are nested with <span class="catalog-tile-pf-icon"><img ...>
@@ -33,43 +21,9 @@ form.pf-c-form {
   }
 }
 
-// For input & label alignment while using bootstrap with @patternfly/react-catalog-view-extension
-.filter-panel-pf-category-item {
-  .pf-c-check {
-    align-items: inherit;
-  }
-
-  .pf-c-check__input {
-    margin-top: 2px;
-  }
-}
-
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.modal.right-side-modal-pf {
-  top: 76px; // since PatternFly 4's masthead is taller than PatternFly 3's
-
-  .modal-dialog {
-    height: 100%; // Entend panel to bottom
-    margin-top: 0; // parent is positioned: fixed so margin isn't needed for positioning
-
-    .modal-content {
-      height: 100%; // Use % instead of vh so that scroll-shadows can be used
-      max-height: none;
-    }
-  }
-
-  &.fade {
-    .modal-dialog {
-      transition-duration: 200ms;
-    }
-    &:not(.in) .modal-dialog {
-      transform: translate3d(15px, 0, 0);
-    }
-  }
 }
 
 .modal-footer .alert {
@@ -148,18 +102,6 @@ h6 {
   margin-left: auto !important;
 }
 
-.pf-c-button.co-p-has-sidebar__sidebar-close {
-  float: right;
-  font-size: 21px !important;
-  line-height: 1;
-  opacity: 0.35;
-  padding: 0;
-  &:hover,
-  &:focus {
-    opacity: 1;
-  }
-}
-
 .pf-c-button {
   &:hover,
   &:focus {
@@ -199,16 +141,6 @@ h6 {
   padding-right: 0;
 }
 
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-primary {
-  color: var(--pf-c-button--m-primary--Color);
-}
-
-// Fix upstream issue https://github.com/patternfly/patternfly/issues/3996 introduced in v4.96.2
-.pf-c-button.pf-m-plain:hover {
-  color: var(--pf-c-button--m-plain--hover--Color);
-}
-
 .pf-c-chip-group.pf-m-toolbar {
   margin-bottom: var(--pf-global--spacer--xs);
 }
@@ -222,12 +154,6 @@ h6 {
 .pf-c-modal-box,
 .pf-c-switch {
   --pf-global--FontSize--md: 1rem;
-}
-
-.pf-c-modal-box__header {
-  // prevent header from collapsing in Safari
-  // temp fix for upstream issue https://github.com/patternfly/patternfly/issues/3825
-  flex-shrink: 0;
 }
 
 .pf-c-page {
@@ -446,6 +372,7 @@ h6 {
   }
 }
 
+// required because our tables use table-layout:fixed
 .pf-c-table__action {
   max-width: 44px !important;
   padding: 8px 0 !important;
@@ -481,21 +408,6 @@ h6 {
 
 .text-secondary {
   color: $color-text-secondary;
-}
-
-.toolbar-pf {
-  background-color: transparent;
-  border-bottom: none;
-  box-shadow: none;
-  min-width: 0; // enable text-overflow: ellipsis
-  padding-top: 0;
-}
-
-@media (max-width: $screen-md-max) {
-  .toolbar-pf-actions {
-    display: block;
-    margin-bottom: 0;
-  }
 }
 
 .xterm .xterm-screen canvas {

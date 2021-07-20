@@ -89,7 +89,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
         .catch((e) => {
           if (!unmounted) {
             const defaultError = t(
-              'cloudshell~Failed to connect to your OpenShift command line terminal',
+              'console-app~Failed to connect to your OpenShift command line terminal',
             );
             if (e?.response?.headers?.get('Content-Type')?.startsWith('text/plain')) {
               // eslint-disable-next-line promise/no-nesting
@@ -119,7 +119,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
       <StatusBox
         loaded={loaded}
         loadError={loadError}
-        label={t('cloudshell~OpenShift command line terminal')}
+        label={t('console-app~OpenShift command line terminal')}
       />
     );
   }
@@ -127,7 +127,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   // failed to init the terminal
   if (initError) {
     return (
-      <LoadError message={initError} label={t('cloudshell~OpenShift command line terminal')} />
+      <LoadError message={initError} label={t('console-app~OpenShift command line terminal')} />
     );
   }
 

@@ -6,7 +6,7 @@ import { connect, Dispatch } from 'react-redux';
 import { PodModel } from '@console/internal/models';
 import { resourceURL, K8sKind } from '@console/internal/module/k8s';
 import { WSFactory } from '@console/internal/module/ws-factory';
-import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
+import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/connectToFlags';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { FLAGS } from '@console/shared';
 import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
@@ -170,7 +170,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             const stopReason = cr.metadata.annotations[CLOUD_SHELL_STOPPED_BY_ANNOTATION];
             if (stopReason) {
               stoppedByError = t(
-                'cloudshell~The terminal connection has closed due to {{reason}}.',
+                'console-app~The terminal connection has closed due to {{reason}}.',
                 { reason: stopReason },
               );
             }
@@ -181,7 +181,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
           })
           .finally(() => {
             const error =
-              evt.reason || stoppedByError || t('cloudshell~The terminal connection has closed.');
+              evt.reason || stoppedByError || t('console-app~The terminal connection has closed.');
             const currentTerminal = terminal.current;
             currentTerminal && currentTerminal.onConnectionClosed(error);
             websocket.destroy();
@@ -200,7 +200,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
       const currentTerminal = terminal.current;
       currentTerminal &&
         currentTerminal.onConnectionClosed(
-          t('cloudshell~connecting to {{container}}', { container }),
+          t('console-app~connecting to {{container}}', { container }),
         );
     }
 
@@ -241,8 +241,8 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
             }}
           >
             {customResource.status.phase === 'Running'
-              ? t('cloudshell~Reconnect to terminal')
-              : t('cloudshell~Restart terminal')}
+              ? t('console-app~Reconnect to terminal')
+              : t('console-app~Restart terminal')}
           </Button>
         </EmptyState>
       </div>

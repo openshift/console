@@ -14,16 +14,9 @@ const CloudinitFormOrYamlSelector: React.FC<CloudinitFormOrYamlSelectorProps> = 
 }) => {
   const { t } = useTranslation();
   return (
-    <>
+    <div className="kv-cloudint-form-or-yaml-selector--main">
       <Text component={TextVariants.h6}>{t('kubevirt-plugin~Configure via:')}</Text>
       <div className="kv-cloudinit-advanced-tab-with-editor--title_radio_buttons">
-        <Radio
-          isChecked={view === ViewComponent.editor}
-          name="yaml-checkbox"
-          id="CloudInitAdvancedTabWithEditor-yaml-checkbox"
-          onChange={() => setView(ViewComponent.editor)}
-          label={t('kubevirt-plugin~Yaml View')}
-        />
         <Radio
           isChecked={view === ViewComponent.form}
           name="form-checkbox"
@@ -31,8 +24,15 @@ const CloudinitFormOrYamlSelector: React.FC<CloudinitFormOrYamlSelectorProps> = 
           onChange={() => setView(ViewComponent.form)}
           label={t('kubevirt-plugin~Form View')}
         />
+        <Radio
+          isChecked={view === ViewComponent.editor}
+          name="yaml-checkbox"
+          id="CloudInitAdvancedTabWithEditor-yaml-checkbox"
+          onChange={() => setView(ViewComponent.editor)}
+          label={t('kubevirt-plugin~Yaml View')}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

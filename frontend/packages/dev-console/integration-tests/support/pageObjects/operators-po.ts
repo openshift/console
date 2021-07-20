@@ -13,15 +13,21 @@ export const operatorsPO = {
   operatorHub: {
     numOfItems: 'div.co-catalog-page__num-items',
     install: '[data-test="install-operator"]',
-    pipelinesOperatorCard: '[data-test^="openshift-pipelines-operator"]',
-    serverlessOperatorCard: '[data-test^=serverless-operator]',
-    virtualizationOperatorCard: '[data-test^="kubevirt-hyperconverged"]',
-    redHatCamelKOperatorCard: '[data-test^="red-hat-camel-k"]',
+    pipelinesOperatorCard:
+      '[data-test="openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace"]',
+    serverlessOperatorCard:
+      '[data-test="serverless-operator-redhat-operators-openshift-marketplace"]',
+    virtualizationOperatorCard:
+      '[data-test="kubevirt-hyperconverged-redhat-operators-openshift-marketplace"]',
+    redHatCamelKOperatorCard:
+      '[data-test="red-hat-camel-k-redhat-operators-openshift-marketplace"]',
     installingOperatorModal: '#operator-install-page',
-    gitOpsOperatorCard: '[data-test^="openshift-gitops-operator"]',
+    gitOpsOperatorCard:
+      '[data-test="openshift-gitops-operator-redhat-operators-openshift-marketplace"]',
     webTerminalOperatorCard: '[data-test="web-terminal-redhat-operators-openshift-marketplace"]',
-    apacheCamelKOperatorCard: '[data-test^="camel-k-community"]',
-    knativeApacheCamelKOperatorCard: '[data-test^="knative-camel-operator-community"]',
+    apacheCamelKOperatorCard: '[data-test="camel-k-community-operators-openshift-marketplace"]',
+    knativeApacheCamelKOperatorCard:
+      '[data-test="knative-camel-operator-community-operators-openshift-marketplace"]',
     apacheKafkaOperatorCard: '[data-test^="amq-streams-redhat-operators"]',
     redHatSourceType: '[data-test-group-name="catalogSourceDisplayName"] [title="Red Hat"]',
   },

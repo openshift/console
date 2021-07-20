@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Level, LevelItem } from '@patternfly/react-core';
 import MonacoEditor from 'react-monaco-editor';
 import {
   ChevronDownIcon,
@@ -29,25 +29,30 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
       </h3>
       {img && <img src={img} className="co-resource-sidebar-item__img img-responsive" />}
       <p>{description}</p>
-      <Button
-        type="button"
-        variant="link"
-        isInline
-        onClick={() => loadSampleYaml(id, yaml, reference)}
-      >
-        <PasteIcon className="co-icon-space-r" />
-        {t('public~Try it')}
-      </Button>
-      <Button
-        type="button"
-        variant="link"
-        isInline
-        className="pull-right"
-        onClick={() => downloadSampleYaml(id, yaml, reference)}
-      >
-        <DownloadIcon className="co-icon-space-r" />
-        {t('public~Download YAML')}
-      </Button>
+      <Level>
+        <LevelItem>
+          <Button
+            type="button"
+            variant="link"
+            isInline
+            onClick={() => loadSampleYaml(id, yaml, reference)}
+          >
+            <PasteIcon className="co-icon-space-r" />
+            {t('public~Try it')}
+          </Button>
+        </LevelItem>
+        <LevelItem>
+          <Button
+            type="button"
+            variant="link"
+            isInline
+            onClick={() => downloadSampleYaml(id, yaml, reference)}
+          >
+            <DownloadIcon className="co-icon-space-r" />
+            {t('public~Download YAML')}
+          </Button>
+        </LevelItem>
+      </Level>
     </li>
   );
 };
@@ -119,29 +124,29 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
         <span className="text-uppercase">{highlightText}</span> {title}
       </h3>
       <p>{description}</p>
-      <Button type="button" variant="link" isInline onClick={insertSnippet}>
-        <PasteIcon className="co-icon-space-r" />
-        {t('public~Insert snippet')}
-      </Button>
-      <Button
-        type="button"
-        className="pull-right"
-        variant="link"
-        isInline
-        onClick={toggleYamlPreview}
-      >
-        {yamlPreviewOpen ? (
-          <>
-            {t('public~Hide YAML')}
-            <ChevronDownIcon className="co-icon-space-l" />
-          </>
-        ) : (
-          <>
-            {t('public~Show YAML')}
-            <ChevronRightIcon className="co-icon-space-l" />
-          </>
-        )}
-      </Button>
+      <Level>
+        <LevelItem>
+          <Button type="button" variant="link" isInline onClick={insertSnippet}>
+            <PasteIcon className="co-icon-space-r" />
+            {t('public~Insert snippet')}
+          </Button>
+        </LevelItem>
+        <LevelItem>
+          <Button type="button" variant="link" isInline onClick={toggleYamlPreview}>
+            {yamlPreviewOpen ? (
+              <>
+                {t('public~Hide YAML')}
+                <ChevronDownIcon className="co-icon-space-l" />
+              </>
+            ) : (
+              <>
+                {t('public~Show YAML')}
+                <ChevronRightIcon className="co-icon-space-l" />
+              </>
+            )}
+          </Button>
+        </LevelItem>
+      </Level>
       {yamlPreviewOpen && yamlPreview && <PreviewYAML yaml={yamlPreview} />}
     </li>
   );

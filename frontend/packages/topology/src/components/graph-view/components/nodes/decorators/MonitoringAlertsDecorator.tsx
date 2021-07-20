@@ -18,7 +18,7 @@ type DispatchProps = {
 };
 
 const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  showMonitoringOverview: () => dispatch(selectOverviewDetailsTab('Monitoring')),
+  showMonitoringOverview: () => dispatch(selectOverviewDetailsTab('Observe')),
 });
 
 interface MonitoringAlertsDecoratorProps {

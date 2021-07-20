@@ -122,6 +122,24 @@ export const ServiceModel: K8sKind = {
   color: knativeServingColor.value,
 };
 
+export const DomainMappingModel: K8sKind = {
+  apiGroup: KNATIVE_SERVING_APIGROUP,
+  apiVersion: 'v1alpha1',
+  kind: 'DomainMapping',
+  label: 'DomainMapping',
+  // t('knative-plugin~DomainMapping')
+  labelKey: 'knative-plugin~DomainMapping',
+  labelPlural: 'DomainMappings',
+  // t('knative-plugin~DomainMappings')
+  labelPluralKey: 'knative-plugin~DomainMappings',
+  plural: 'domainmappings',
+  id: 'DomainMapping',
+  abbr: 'DM',
+  namespaced: true,
+  crd: true,
+  color: knativeServingColor.value,
+};
+
 export const EventSourceCronJobModel: K8sKind = {
   apiGroup: KNATIVE_EVENT_SOURCE_APIGROUP_DEP,
   apiVersion: 'v1alpha1',

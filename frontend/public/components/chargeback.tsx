@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { match as RMatch } from 'react-router-dom';
 
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -198,7 +198,7 @@ const numericUnits = new Set([
 
 const DataCell = ({ name, value, unit }: DataTableCellProps) => {
   if (numericUnits.has(unit)) {
-    return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
+    return <div className="pf-u-text-align-right">{_.round(value, 2).toLocaleString()}</div>;
   }
   if (unit === 'date' || unit === 'time') {
     return <Timestamp timestamp={value} />;
@@ -378,7 +378,7 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     if (inFlight) {
       dataElem = (
         <div className="row">
-          <div className="col-xs-12 text-center">
+          <div className="col-xs-12 pf-u-text-align-center">
             <LoadingInline />
           </div>
         </div>
@@ -449,10 +449,10 @@ export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = (props) =>
 };
 
 const reportsGenerationColumnClasses = [
-  classNames('col-md-3', 'col-sm-4'),
-  classNames('col-md-3', 'col-sm-4'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-3', 'col-sm-4'),
+  '',
+  '',
+  'pf-m-hidden pf-visible-on-lg',
+  '',
   Kebab.columnClass,
 ];
 
@@ -642,10 +642,10 @@ export type DataTableRowsProps = {
 export type ReportsPageProps = {
   filterLabel: string;
   flags: { [_: string]: boolean };
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportsDetailsPageProps = {
@@ -662,10 +662,10 @@ export type ReportGenerationQueriesDetailsProps = {
 
 export type ReportGenerationQueriesPageProps = {
   filterLabel: string;
-  match: {
+  match: RMatch<{
     url: string;
     path: string;
-  };
+  }>;
 };
 
 export type ReportGenerationQueriesDetailsPageProps = {

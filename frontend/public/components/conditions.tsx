@@ -60,7 +60,7 @@ export const Conditions: React.FC<ConditionsProps> = ({ conditions }) => {
         </div>
       ) : (
         <div className="cos-status-box">
-          <div className="text-center">{t('public~No conditions found')}</div>
+          <div className="pf-u-text-align-center">{t('public~No conditions found')}</div>
         </div>
       )}
     </>

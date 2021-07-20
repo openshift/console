@@ -20,12 +20,12 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
     (node: NodeKind) => [
       {
         href: '',
-        name: t('nodes~Overview'),
+        name: t('console-app~Overview'),
         component: NodeDashboard,
       },
       {
         href: 'details',
-        name: t('nodes~Details'),
+        name: t('console-app~Details'),
         component: NodeDetails,
       },
       editYaml(),
@@ -43,7 +43,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
           (k === 'node.openshift.io/os_id' && v === 'Windows') ||
           (k === 'corev1.LabelOSStable' && v === 'windows'),
       )
-        ? [{ href: 'terminal', name: t('nodes~Terminal'), component: NodeTerminal }]
+        ? [{ href: 'terminal', name: t('console-app~Terminal'), component: NodeTerminal }]
         : []),
     ],
     [editYaml, events, pods, t],

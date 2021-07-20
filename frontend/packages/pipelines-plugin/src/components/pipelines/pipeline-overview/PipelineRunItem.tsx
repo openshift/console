@@ -48,7 +48,7 @@ const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {
         <GridItem span={3}>
           <Status status={pipelineRunStatus(pipelineRun) || 'Pending'} />
         </GridItem>
-        <GridItem span={3} className="text-right">
+        <GridItem span={3} className="pf-u-text-align-right">
           <Link to={`${path}/logs`}>{t('pipelines-plugin~View logs')}</Link>
         </GridItem>
         {logDetails && (

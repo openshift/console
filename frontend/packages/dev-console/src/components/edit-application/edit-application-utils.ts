@@ -250,6 +250,7 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
       },
       concurrencyutilization: '',
     },
+    domainMapping: [],
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
     const {
@@ -275,6 +276,7 @@ export const getServerlessData = (resource: K8sResourceKind): ServerlessData => 
         },
         concurrencyutilization: annotations?.[KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION] || '',
       },
+      domainMapping: [],
     };
   }
   return serverlessData;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { K8sResourceCommon } from '@console/internal/module/k8s/types';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '../../selectors';
 
 export const ActionMessage: React.FC<{
   obj: K8sResourceCommon;

@@ -70,7 +70,7 @@ const SinkPubsubModal: React.FC<Props> = ({
             dataSelector={['metadata', 'name']}
             fullWidth
             required
-            placeholder="knative-plugin~Select a sink"
+            placeholder={t('knative-plugin~Select a sink')}
             showBadge
             autocompleteFilter={autocompleteFilter}
             onChange={onSinkChange}

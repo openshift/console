@@ -8,8 +8,8 @@ import {
   getNamespace,
   getOwnerReferences,
   hasLabel,
-} from '@console/shared/src';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+} from '../../../selectors';
+import { compareOwnerReference } from '../../../utils';
 import { K8sResourceKindMethods } from '../types/types';
 import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
 import { Wrapper } from './wrapper';

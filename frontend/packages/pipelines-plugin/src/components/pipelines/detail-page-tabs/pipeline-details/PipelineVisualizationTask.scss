@@ -20,7 +20,8 @@ $border-color: var(--pf-global--BorderColor--light-100);
   &--icon-spin {
     filter: blur(0);
     -webkit-filter: blur(0);
-    transform-origin: 16.7px 15.1px;
+    transform-box: fill-box;
+    transform-origin: center;
   }
 }
 

@@ -79,9 +79,9 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.testA11y('GitOps Page in dev perspective');
       break;
     }
-    case devNavigationMenu.Monitoring: {
+    case devNavigationMenu.Observe: {
       cy.get(devNavigationMenuPO.monitoring).click();
-      detailsPage.titleShouldContain(pageTitle.Monitoring);
+      detailsPage.titleShouldContain(pageTitle.Observe);
       cy.testA11y('Monitoring Page in dev perspective');
       break;
     }

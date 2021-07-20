@@ -7,7 +7,7 @@ import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
@@ -132,6 +132,8 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
     }
 
     componentWillUnmount() {
+      const exitCode = 'exit\r';
+      this.ws && exitCode.split('').map((t) => this.ws.send(`0${Base64.encode(t)}`));
       this.ws && this.ws.destroy();
       delete this.ws;
     }
@@ -197,7 +199,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
               <div className="co-toolbar__item">{t('public~Connecting to')}</div>
               <div className="co-toolbar__item">
                 <Dropdown
-                  className="btn-group"
+                  className="co-toolbar__item-dropdown"
                   items={_.mapValues(containers, nameWithIcon)}
                   title={nameWithIcon(activeContainer || <LoadingInline />)}
                   onChange={this.onChangeContainer}

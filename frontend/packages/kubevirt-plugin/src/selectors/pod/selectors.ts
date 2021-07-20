@@ -1,9 +1,9 @@
 import { get } from 'lodash';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { VMIKind, VMKind } from '../../types';
+import { createBasicLookup } from '../../utils';
 import { getPvcImportPodName, getPvcUploadPodName } from '../pvc/selectors';
+import { getName, getNamespace, getOwnerReferences, getUID } from '../selectors';
 import { getDataVolumeTemplates } from '../vm';
 
 export const getHostName = (pod: PodKind) =>

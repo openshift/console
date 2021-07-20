@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Dropdown } from './dropdown';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { NumberSpinner } from './number-spinner';
 
@@ -19,8 +18,10 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
   required,
   testID,
 }) => {
-  const [unit, setUnit] = React.useState(defaultRequestSizeUnit);
-  const [value, setValue] = React.useState(parseInt(defaultRequestSizeValue, 10));
+  const parsedRequestSizeValue = parseInt(defaultRequestSizeValue, 10);
+  const defaultValue = Number.isFinite(parsedRequestSizeValue) ? parsedRequestSizeValue : null;
+  const [unit, setUnit] = React.useState<string>(defaultRequestSizeUnit);
+  const [value, setValue] = React.useState<number>(defaultValue);
 
   const onValueChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setValue(parseInt(event.currentTarget.value, 10));
@@ -41,8 +42,8 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
 
   React.useEffect(() => {
     setUnit(defaultRequestSizeUnit);
-    setValue(parseInt(defaultRequestSizeValue, 10));
-  }, [defaultRequestSizeUnit, defaultRequestSizeValue]);
+    setValue(defaultValue);
+  }, [defaultRequestSizeUnit, defaultValue]);
 
   const { t } = useTranslation();
   const inputName = `${name}Value`;
@@ -67,7 +68,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
           title={dropdownUnits[defaultRequestSizeUnit]}
           selectedKey={defaultRequestSizeUnit}
           name={dropdownName}
-          className={classNames('btn-group', 'request-size-input__unit')}
+          className="request-size-input__unit"
           items={dropdownUnits}
           onChange={onUnitChange}
           disabled={isInputDisabled}

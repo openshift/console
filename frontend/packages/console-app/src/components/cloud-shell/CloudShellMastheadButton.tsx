@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { RootState } from '@console/internal/redux';
 import { toggleCloudShellExpanded } from '../../redux/actions/cloud-shell-actions';
 import { isCloudShellExpanded } from '../../redux/reducers/cloud-shell-selectors';
+import isMultiClusterEnabled from '../../utils/isMultiClusterEnabled';
 import useCloudShellAvailable from './useCloudShellAvailable';
 
 type DispatchProps = {
@@ -20,9 +21,10 @@ type Props = StateProps & DispatchProps;
 
 const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
   const terminalAvailable = useCloudShellAvailable();
+
   const { t } = useTranslation();
 
-  if (!terminalAvailable) {
+  if (!terminalAvailable || isMultiClusterEnabled()) {
     return null;
   }
 
@@ -30,7 +32,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ onClick, open }) => {
     <PageHeaderToolsItem>
       <Button
         variant="plain"
-        aria-label={t('cloudshell~Command line terminal')}
+        aria-label={t('console-app~Command line terminal')}
         onClick={onClick}
         className={open ? 'pf-m-selected' : undefined}
         data-tour-id="tour-cloud-shell-button"
