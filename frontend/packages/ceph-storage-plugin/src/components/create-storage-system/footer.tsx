@@ -12,14 +12,19 @@ import {
 } from '@patternfly/react-core';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { WizardCommonProps, WizardState } from './reducer';
-import { createSSPayload } from './payloads';
-import { BackingStorageType, Steps, StepsName } from '../../constants/create-storage-system';
+import { createNoobaaPayload, createSSPayload } from './payloads';
+import {
+  BackingStorageType,
+  DeploymentType,
+  Steps,
+  StepsName,
+} from '../../constants/create-storage-system';
 import { OCSServiceModel } from '../../models';
 import './create-storage-system.scss';
 import {
   getExternalStorage,
   getStorageSystemKind,
-  getStorageSystemName,
+  createExternalSSName,
 } from '../../utils/create-storage-system';
 
 const validateBackingStorageStep = (backingStorage, sc) => {
@@ -60,28 +65,39 @@ const validateStep = (name: string, state: WizardState, t: TFunction) => {
 
 const getPayloads = (stepName: string, state: WizardState, t: TFunction) => {
   const { backingStorage, createStorageClass, storageClass, connectionDetails } = state;
-  const { externalStorage } = backingStorage;
+  const { externalStorage, deployment, type } = backingStorage;
 
   const isRhcs = externalStorage === OCSServiceModel.kind;
 
   const { createPayload, model, displayName } = getExternalStorage(externalStorage) || {};
 
-  if (model && displayName && stepName === StepsName(t)[Steps.BackingStorage] && !isRhcs) {
-    const systemName = getStorageSystemName(displayName);
+  if (
+    stepName === StepsName(t)[Steps.BackingStorage] &&
+    type === BackingStorageType.EXTERNAL &&
+    !isRhcs
+  ) {
+    const systemName = createExternalSSName(displayName);
     const systemKind = getStorageSystemKind(model);
     return [createSSPayload(systemKind, systemName)];
   }
 
-  if (stepName === StepsName(t)[Steps.ReviewAndCreate] && model && displayName) {
-    const systemName = getStorageSystemName(displayName);
-    const systemKind = model && getStorageSystemKind(model);
-    const secondParam = isRhcs ? connectionDetails : createStorageClass;
-    const payloads = [
-      ...createPayload(systemName, secondParam, model, storageClass.name),
-      createSSPayload(systemKind, systemName),
-    ];
-
-    return !_.isEmpty(secondParam) && payloads;
+  if (stepName === StepsName(t)[Steps.ReviewAndCreate]) {
+    if (deployment === DeploymentType.MCG) {
+      const { apiGroup, apiVersion, kind } = OCSServiceModel;
+      const systemName = 'odf-storage-system';
+      const systemKind = getStorageSystemKind({ group: apiGroup, version: apiVersion, kind });
+      return [createNoobaaPayload(), createSSPayload(systemKind, systemName)];
+    }
+    if (type === BackingStorageType.EXTERNAL) {
+      const systemName = createExternalSSName(displayName);
+      const systemKind = getStorageSystemKind(model);
+      const secondParam = isRhcs ? connectionDetails : createStorageClass;
+      const payloads = [
+        ...createPayload(systemName, secondParam, model, storageClass.name),
+        createSSPayload(systemKind, systemName),
+      ];
+      return !_.isEmpty(secondParam) && payloads;
+    }
   }
 
   return null;

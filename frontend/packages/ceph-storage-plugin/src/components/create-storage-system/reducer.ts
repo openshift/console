@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
-import { BackingStorageType } from '../../constants/create-storage-system';
+import { BackingStorageType, DeploymentType } from '../../constants/create-storage-system';
 
 export type WizardState = CreateStorageSystemState;
 export type WizardDispatch = React.Dispatch<CreateStorageSystemAction>;
@@ -16,6 +16,8 @@ export const initialState: CreateStorageSystemState = {
   backingStorage: {
     type: BackingStorageType.EXISTING,
     externalStorage: '',
+    deployment: DeploymentType.ALL,
+    isAdvancedOpen: false,
   },
   createStorageClass: {},
   connectionDetails: {},
@@ -28,6 +30,8 @@ type CreateStorageSystemState = {
   backingStorage: {
     type: BackingStorageType;
     externalStorage: string;
+    deployment: DeploymentType;
+    isAdvancedOpen: boolean;
   };
   createStorageClass: ExternalState;
   connectionDetails: ExternalState;
@@ -47,16 +51,16 @@ export const reducer: WizardReducer = (prevState, action) => {
       };
       break;
     case 'backingStorage/setType':
-      newState.backingStorage = {
-        ...newState.backingStorage,
-        type: action.payload,
-      };
+      newState.backingStorage.type = action.payload;
+      break;
+    case 'backingStorage/setDeployment':
+      newState.backingStorage.deployment = action.payload;
       break;
     case 'backingStorage/setExternalStorage':
-      newState.backingStorage = {
-        ...newState.backingStorage,
-        externalStorage: action.payload,
-      };
+      newState.backingStorage.externalStorage = action.payload;
+      break;
+    case 'backingStorage/setIsAdvancedOpen':
+      newState.backingStorage.isAdvancedOpen = action.payload;
       break;
     case 'wizard/setCreateStorageClass':
       newState.createStorageClass = {
@@ -88,6 +92,14 @@ type CreateStorageSystemAction =
   | {
       type: 'backingStorage/setExternalStorage';
       payload: WizardState['backingStorage']['externalStorage'];
+    }
+  | {
+      type: 'backingStorage/setDeployment';
+      payload: WizardState['backingStorage']['deployment'];
+    }
+  | {
+      type: 'backingStorage/setIsAdvancedOpen';
+      payload: WizardState['backingStorage']['isAdvancedOpen'];
     }
   | {
       type: 'wizard/setStorageClass';

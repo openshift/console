@@ -5,6 +5,7 @@ import { Form, FormSelect, FormSelectOption, FormSelectProps, Radio } from '@pat
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import './backing-storage.scss';
+import { AdvancedSection } from './advanced-section';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
 import { getStorageSystemKind } from '../../../../utils/create-storage-system';
@@ -12,6 +13,7 @@ import { filterSCWithoutNoProv } from '../../../../utils/install';
 import { WizardState, WizardDispatch } from '../../reducer';
 import {
   BackingStorageType,
+  DeploymentType,
   StorageClusterIdentifier,
 } from '../../../../constants/create-storage-system';
 import { ErrorHandler } from '../../error-handler';
@@ -122,7 +124,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     }
   }, [dispatch, allowedExternalStorage.length, hasOCS]);
 
-  const { type, externalStorage } = state;
+  const { type, externalStorage, deployment, isAdvancedOpen } = state;
 
   const showExternalStorageSelection =
     type === BackingStorageType.EXTERNAL && allowedExternalStorage.length;
@@ -150,9 +152,10 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           value={BackingStorageType.EXISTING}
           isChecked={type === BackingStorageType.EXISTING}
           onChange={onRadioSelect}
-          isDisabled={hasOCS}
+          isDisabled={hasOCS || deployment === DeploymentType.MCG}
           body={
-            showStorageClassSelection && (
+            showStorageClassSelection &&
+            deployment !== DeploymentType.MCG && (
               <StorageClassSelection dispatch={dispatch} selected={storageClass} />
             )
           }
@@ -167,7 +170,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           value={BackingStorageType.LOCAL_DEVICES}
           isChecked={type === BackingStorageType.LOCAL_DEVICES}
           onChange={onRadioSelect}
-          isDisabled={hasOCS}
+          isDisabled={hasOCS || deployment === DeploymentType.MCG}
           id={`bs-${BackingStorageType.LOCAL_DEVICES}`}
         />
         <Radio
@@ -179,9 +182,10 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           value={BackingStorageType.EXTERNAL}
           isChecked={type === BackingStorageType.EXTERNAL}
           onChange={onRadioSelect}
-          isDisabled={allowedExternalStorage.length === 0}
+          isDisabled={allowedExternalStorage.length === 0 || deployment === DeploymentType.MCG}
           body={
-            showExternalStorageSelection && (
+            showExternalStorageSelection &&
+            deployment !== DeploymentType.MCG && (
               <ExternalSystemSelection
                 selectedStorage={externalStorage}
                 dispatch={dispatch}
@@ -190,6 +194,11 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
             )
           }
           id={`bs-${BackingStorageType.EXTERNAL}`}
+        />
+        <AdvancedSection
+          dispatch={dispatch}
+          deployment={deployment}
+          isAdvancedOpen={isAdvancedOpen}
         />
       </Form>
     </ErrorHandler>

@@ -1,5 +1,16 @@
 import { TFunction } from 'i18next';
 
+export enum BackingStorageType {
+  EXISTING = 'existing',
+  LOCAL_DEVICES = 'local-devices',
+  EXTERNAL = 'external',
+}
+
+export enum DeploymentType {
+  ALL = 'all',
+  MCG = 'mcg',
+}
+
 export enum Steps {
   BackingStorage = 'backing-storage',
   CreateStorageClass = 'create-storage-class',
@@ -8,12 +19,6 @@ export enum Steps {
   SecurityAndNetwork = 'security-and-network',
   ConnectionDetails = 'connection-details',
   ReviewAndCreate = 'review-and-create',
-}
-
-export enum BackingStorageType {
-  EXISTING = 'existing',
-  LOCAL_DEVICES = 'local-devices',
-  EXTERNAL = 'external',
 }
 
 export const StepsName = (t: TFunction) => ({

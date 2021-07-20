@@ -4,7 +4,12 @@ import { WizardStep } from '@patternfly/react-core';
 import { CreateStorageClass } from './create-storage-class-step';
 import { ConnectionDetails } from './connection-details';
 import { WizardDispatch, WizardState } from '../reducer';
-import { BackingStorageType, Steps, StepsName } from '../../../constants/create-storage-system';
+import {
+  BackingStorageType,
+  DeploymentType,
+  Steps,
+  StepsName,
+} from '../../../constants/create-storage-system';
 import { OCSServiceModel } from '../../../models';
 
 export const createSteps = (
@@ -14,7 +19,7 @@ export const createSteps = (
   hasOCS: boolean,
 ): WizardStep[] => {
   const { backingStorage, stepIdReached, createStorageClass, storageClass } = state;
-  const { externalStorage } = backingStorage;
+  const { externalStorage, deployment } = backingStorage;
 
   const commonSteps = {
     capacityAndNodes: {
@@ -62,6 +67,15 @@ export const createSteps = (
       />
     ),
   };
+
+  if (deployment === DeploymentType.MCG)
+    return [
+      {
+        id: 2,
+        canJumpTo: stepIdReached >= 2,
+        ...commonSteps.reviewAndCreate,
+      },
+    ];
 
   switch (backingStorage.type) {
     case BackingStorageType.EXISTING:

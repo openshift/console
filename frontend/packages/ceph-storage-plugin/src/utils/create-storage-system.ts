@@ -5,7 +5,7 @@ import { WizardState } from '../components/create-storage-system/reducer';
 export const getStorageSystemKind = ({ kind, version, group }: ExtensionK8sModel) =>
   `${kind.toLowerCase()}.${group}/${version}`;
 
-export const getStorageSystemName = (id: string = '') => id.toLowerCase().replace(' ', '-');
+export const createExternalSSName = (id: string = '') => id.toLowerCase().replace(' ', '-');
 
 export const getExternalStorage = (id: WizardState['backingStorage']['externalStorage'] = '') =>
   SUPPORTED_EXTERNAL_STORAGE.find((p) => p.model.kind === id);
