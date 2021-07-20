@@ -98,6 +98,15 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
   );
   const [startsAt, setStartsAt] = React.useState(defaults.startsAt ?? formatDate(now));
 
+  const user = useSelector(({ UI }: RootState) => UI.get('user'));
+
+  React.useEffect(() => {
+    if (_.isEmpty(createdBy)) {
+      setCreatedBy(user?.metadata?.name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   const getEndsAtValue = (): string => {
     const startsAtDate = Date.parse(startsAt);
     return startsAtDate
@@ -413,15 +422,12 @@ export const EditSilence = ({ match }) => {
 export const CreateSilence = () => {
   const { t } = useTranslation();
 
-  const user = useSelector(({ UI }: RootState) => UI.get('user'));
-  const createdBy = user?.metadata?.name;
-
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
 
   return _.isEmpty(matchers) ? (
-    <SilenceForm defaults={{ createdBy }} title={t('public~Create silence')} />
+    <SilenceForm defaults={{}} title={t('public~Create silence')} />
   ) : (
-    <SilenceForm defaults={{ createdBy, matchers }} title={t('public~Silence alert')} />
+    <SilenceForm defaults={{ matchers }} title={t('public~Silence alert')} />
   );
 };
 
