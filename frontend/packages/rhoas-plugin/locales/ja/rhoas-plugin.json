@@ -28,7 +28,7 @@
   "Select Kafka Instance": "Kafka インスタンスの選択",
   "The selected Kafka instance will be added to the topology view.": "選択した Kafka インスタンスがトポロジービューに追加されます。",
   "Could not connect to RHOAS with API Token": "API トークンを使用して RHOAS に接続できませんでした",
-  "Ready": "準備状態",
+  "Ready": "準備完了",
   "Creation pending": "作成が保留中です",
   "Creation in progress": "作成が進行中です",
   "Failed": "失敗",
@@ -54,6 +54,5 @@
   "Cloud Service": "クラウドサービス",
   "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。",
   "Details": "詳細",
-  "Resources": "リソース",
-  "Kafka Connection": "Kafka 接続"
+  "Resources": "リソース"
 }

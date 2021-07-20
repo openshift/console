@@ -43,7 +43,6 @@
   "No {{metricLabel}} metrics available.": "{{metricLabel}} 사용 가능한 메트릭이 없습니다.",
   "{{metricLabel}} usage by Pod": "Pod 별 {{metricLabel}} 사용",
   "{{ready, number}} of {{count, number}} Pod_0": "{{ready, number}}/{{count, number}} Pod",
-  "{{ready, number}} of {{count, number}} Pod_1": "{{ready, number}}/{{count, number}} Pod",
   "{{length}} Pods": "{{length}} Pod",
   "Rollout in progress...": "롤아웃 진행 중...",
   "{{resourceLabel}} sub-resources": "{{resourceLabel}} 하위 리소스",
@@ -87,7 +86,7 @@
   "Mode": "모드",
   "Connectivity": "연결",
   "Consumption": "소비",
-  "Expand": "펼치기",
+  "Expand": "확장",
   "Collapse groups": "그룹 축소",
   "Show": "보기",
   "Display options": "옵션 보기",
@@ -116,9 +115,5 @@
   "Delete Connector?": "커넥터를 삭제하시겠습니까?",
   "Delete": "삭제",
   "Unable to update Application, invalid resource type: {{kind}}": "애플리케이션을 업데이트할 수 없습니다. 잘못된 리소스 유형: {{kind}}",
-  "Can not create a connection from a node to itself.": "노드 자체에서 연결을 만들 수 없습니다.",
-  "To add content to your Project, create an Application, component or service using one of these options.": "프로젝트에 콘텐츠를 추가하려면 다음 옵션 중 하나를 사용하여 애플리케이션, 구성 요소 또는 서비스를 만듭니다.",
-  "Select a Project to view the topology": "토폴로지를 보려면 프로젝트를 선택",
-  "Topology view": "토폴로지 보기",
-  "View all results for \"{{searchTerm}}\" ({{totalItems, number}})": "\"{{searchTerm}}\"의 결과를 모두 표시 ({{totalItems, number}})"
+  "Can not create a connection from a node to itself.": "노드 자체에서 연결을 만들 수 없습니다."
 }

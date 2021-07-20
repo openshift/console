@@ -199,6 +199,5 @@
   "This host was provisioned outside of this cluster and added manually.": "이 호스트는이 클러스터 외부에서 프로비저닝되었으며 수동으로 추가되었습니다.",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": " Baseboard Management Controller (BMC) 인증 정보가 제공될 때 까지 이 호스트에서 전원 작업을 수행할 수 없습니다.",
   "Under maintenance": "유지 보수 중",
-  "Stopping maintenance": "유지 보수 중지",
-  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "정상적으로 전원을 끄려면<1> 유지 관리를 시작</1>하여 호스트에서 모든 관리 워크로드를 클러스터의 다른 노드로 이동합니다."
+  "Stopping maintenance": "유지 보수 중지"
 }

@@ -3,7 +3,7 @@
   "Delete connector": "コネクターの削除",
   "Delete Application": "アプリケーションの削除",
   "Edit Application grouping": "アプリケーションのグループ化の編集",
-  "Edit {{applicationName}}": "{{applicationName}} の編集",
+  "Edit {{applicationName}}": "{{applicationName}}の編集",
   "View all {{size}}": "すべての {{size}} を表示",
   "Resources": "リソース",
   "Select an Application": "アプリケーションの選択",
@@ -43,7 +43,6 @@
   "No {{metricLabel}} metrics available.": "{{metricLabel}} メトリクスはありません。",
   "{{metricLabel}} usage by Pod": "Pod による{{metricLabel}} の使用",
   "{{ready, number}} of {{count, number}} Pod_0": "{{ready, number}}/{{count, number}} Pod",
-  "{{ready, number}} of {{count, number}} Pod_1": "{{ready, number}}/{{count, number}} Pod",
   "{{length}} Pods": "{{length}} Pod",
   "Rollout in progress...": "ロールアウトが進行中...",
   "{{resourceLabel}} sub-resources": "{{resourceLabel}} サブリソース",
@@ -116,9 +115,5 @@
   "Delete Connector?": "コネクターを削除しますか?",
   "Delete": "削除",
   "Unable to update Application, invalid resource type: {{kind}}": "アプリケーションを更新できません。無効なリソースタイプ: {{kind}}",
-  "Can not create a connection from a node to itself.": "ノードからそれ自体への接続を作成できません。",
-  "To add content to your Project, create an Application, component or service using one of these options.": "プロジェクトにコンテンツを追加するには、以下のオプションのいずれかを使用してアプリケーション、コンポーネント、またはサービスを作成します。",
-  "Select a Project to view the topology": "トポロジーを表示するプロジェクトの選択",
-  "Topology view": "トポロジービュー",
-  "View all results for \"{{searchTerm}}\" ({{totalItems, number}})": "\"{{searchTerm}}\" の結果をすべて表示 ({{totalItems, number}})"
+  "Can not create a connection from a node to itself.": "ノードからそれ自体への接続を作成できません。"
 }
