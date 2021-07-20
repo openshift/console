@@ -1,4 +1,7 @@
 {
+  "Web console update is available": "Web console update is available",
+  "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.",
+  "Refresh web console": "Refresh web console",
   "VolumeSnapshotContents": "VolumeSnapshotContents",
   "Edit resource limits": "Edit resource limits",
   "Add Health Checks": "Add Health Checks",
@@ -35,9 +38,6 @@
   "Connecting to your OpenShift command line terminal ...": "Connecting to your OpenShift command line terminal ...",
   "Enabled": "Enabled",
   "Disabled": "Disabled",
-  "Web console update is available": "Web console update is available",
-  "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.": "There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.",
-  "Refresh web console": "Refresh web console",
   "Name": "Name",
   "Version": "Version",
   "Description": "Description",

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AlertVariant, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import {
   ISortBy,
@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableVariant,
 } from '@patternfly/react-table';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { breadcrumbsForGlobalConfig } from '@console/internal/components/cluster-settings/global-config';
 import { DetailsForKind } from '@console/internal/components/default-resource';
@@ -22,7 +21,6 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { ConsoleOperatorConfigModel, ConsolePluginModel } from '@console/internal/models';
 import {
   ConsolePluginKind,
@@ -33,7 +31,6 @@ import {
 import { DynamicPluginInfo, isLoadedDynamicPluginInfo } from '@console/plugin-sdk/src';
 import { useDynamicPluginInfo } from '@console/plugin-sdk/src/api/useDynamicPluginInfo';
 import { consolePluginModal } from '@console/shared/src/components/modals';
-import { useToast } from '@console/shared/src/components/toast';
 import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 
 const consoleOperatorConfigReference: K8sResourceKindReference = referenceForModel(
@@ -83,40 +80,6 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
 
 const ConsolePluginsList: React.FC<ConsolePluginsListType> = ({ obj }) => {
   const { t } = useTranslation();
-  const toastContext = useToast();
-  const [pluginsData, pluginsError] = useURLPoll<ConsoleUpdatesResponseType>(
-    `${window.SERVER_FLAGS.basePath}api/check-updates`,
-  );
-
-  const prevPluginsDataRef = React.useRef<ConsoleUpdatesResponseType>();
-  React.useEffect(() => {
-    prevPluginsDataRef.current = pluginsData;
-  });
-  const prevPluginsData = prevPluginsDataRef.current;
-
-  const pluginsStateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
-  const pluginsChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
-  const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
-
-  if (pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
-    toastContext.addToast({
-      variant: AlertVariant.warning,
-      title: t('console-app~Web console update is available'),
-      content: t(
-        'console-app~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
-      ),
-      timeout: true,
-      dismissible: true,
-      actions: [
-        {
-          dismiss: true,
-          label: t('console-app~Refresh web console'),
-          callback: () => window.location.reload(),
-        },
-      ],
-    });
-  }
-
   const [consolePlugins, consolePluginsLoaded] = useK8sWatchResource<ConsolePluginKind[]>({
     isList: true,
     kind: referenceForModel(ConsolePluginModel),
@@ -248,9 +211,4 @@ type ConsolePluginStatusType = {
 
 type ConsolePluginsListType = {
   obj: K8sResourceKind;
-};
-
-type ConsoleUpdatesResponseType = {
-  consoleCommit?: string;
-  plugins?: string[];
 };

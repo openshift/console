@@ -8,7 +8,7 @@ import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
 import store, { applyReduxExtensions } from '../redux';
-import { withTranslation } from 'react-i18next';
+import { withTranslation, useTranslation } from 'react-i18next';
 
 import { detectFeatures } from '../actions/features';
 import AppContents from './app-contents';
@@ -37,15 +37,17 @@ import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plug
 import { GuidedTour } from '@console/app/src/components/tour';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawerAsync';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
+import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.css';
 
 // PF4 Imports
-import { Page, SkipToContent } from '@patternfly/react-core';
+import { Page, SkipToContent, AlertVariant } from '@patternfly/react-core';
 
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -288,6 +290,45 @@ const CaptureTelemetry = React.memo(() => {
   return null;
 });
 
+const PollConsoleUpdates = React.memo(() => {
+  const toastContext = useToast();
+  const { t } = useTranslation();
+  const [pluginsData, pluginsError] = useURLPoll(
+    `${window.SERVER_FLAGS.basePath}api/check-updates`,
+  );
+
+  const prevPluginsDataRef = React.useRef();
+  React.useEffect(() => {
+    prevPluginsDataRef.current = pluginsData;
+  });
+  const prevPluginsData = prevPluginsDataRef.current;
+
+  const pluginsStateInitialized = _.isEmpty(pluginsError) && !_.isEmpty(prevPluginsData);
+  const pluginsChanged = !_.isEmpty(_.xor(prevPluginsData?.plugins, pluginsData?.plugins));
+  const consoleCommitChanged = prevPluginsData?.consoleCommit !== pluginsData?.consoleCommit;
+
+  if (pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
+    toastContext.addToast({
+      variant: AlertVariant.warning,
+      title: t('console-app~Web console update is available'),
+      content: t(
+        'console-app~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+      ),
+      timeout: false,
+      dismissible: true,
+      actions: [
+        {
+          dismiss: true,
+          label: t('console-app~Refresh web console'),
+          callback: () => window.location.reload(),
+        },
+      ],
+    });
+  }
+
+  return null;
+});
+
 graphQLReady.onReady(() => {
   const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -361,6 +402,7 @@ graphQLReady.onReady(() => {
       <Provider store={store}>
         <CaptureTelemetry />
         <ToastProvider>
+          <PollConsoleUpdates />
           <AppRouter />
         </ToastProvider>
       </Provider>
