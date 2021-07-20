@@ -467,7 +467,7 @@ export const EditYAML_ = connect(stateToProps)(
           let hasErrors = false;
           this.setState({ errors: null }, () => {
             try {
-              objs = safeLoadAll(this.getEditor().getValue());
+              objs = safeLoadAll(this.getEditor().getValue()).filter((obj) => obj);
             } catch (e) {
               this.handleError(t('public~Error parsing YAML: {{e}}', { e }));
               return;
