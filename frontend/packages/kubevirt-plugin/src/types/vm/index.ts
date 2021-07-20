@@ -142,3 +142,17 @@ export type VMRestore = {
     restoreTime: string;
   };
 } & K8sResourceKind;
+
+export type StorageProfile = {
+  spec: any;
+  status: {
+    claimPropertySets?: [
+      {
+        accessModes?: string[];
+        volumeMode?: string;
+      },
+    ];
+    provisioner: string;
+    storageClass: string;
+  };
+} & K8sResourceKind;
