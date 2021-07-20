@@ -553,6 +553,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <div className="form-group">
         <Dropdown
           id="dropdown-selectbox"
+          dataTest="dropdown-selectbox"
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
           items={items}
