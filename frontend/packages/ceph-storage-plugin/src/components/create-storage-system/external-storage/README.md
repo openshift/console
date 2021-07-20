@@ -8,7 +8,7 @@ All external vendors can contribute their UI via the `Create storage class` step
 Follow the steps written below to integrate with the ODF wizard:
 
 
-1. Any new external storage vendor would require to add a new entry to  [`SUPPORTED_EXTERNAL_STORAGE`](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/external-storage/index.ts) with the following details:
+1. Any new external storage vendor would require to add a new entry to  [`SUPPORTED_EXTERNAL_STORAGE`](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/components/create-storage-system/external-storage/index.ts) with the following details:
 ```js
 /**
  *  Configures a new external storage vendor to the Storage System Creation wizard.
@@ -124,7 +124,7 @@ type CanGoToNextStep<S extends ExternalState> = (
 
 5. Define and export the `type` of Component's state in `./src/components/create-storage-system/external-storage/types.ts`
 
-6. Add the new external storage vendor configuration to [`SUPPORTED_EXTERNAL_STORAGE`](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/external-storage/index.ts)
+6. Add the new external storage vendor configuration to [`SUPPORTED_EXTERNAL_STORAGE`](https://github.com/openshift/console/blob/master/frontend/packages/ceph-storage-plugin/src/components/create-storage-system/external-storage/index.ts)
 
 
 #### Example:
