@@ -81,7 +81,7 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
   const installedVersion = installedCSV?.spec?.version;
   return (
-    <HintBlock className="co-catalog-page__hint" title="Installed Operator">
+    <HintBlock className="co-catalog-page__hint" title={t('olm~Installed Operator')}>
       <p>
         {installedVersion !== latestVersion ? (
           <span>
@@ -100,9 +100,46 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   );
 };
 
+const InstallingHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
+  namespace,
+  subscription,
+}) => {
+  const { t } = useTranslation();
+  const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
+    subscription?.status?.installedCSV
+      ? {
+          kind: referenceForModel(ClusterServiceVersionModel),
+          name: subscription?.status?.installedCSV,
+          namespace: subscription?.metadata?.namespace,
+          isList: false,
+          namespaced: true,
+        }
+      : null,
+  );
+  const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
+  const to = installedCSV
+    ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name}/subscription`
+    : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+  return (
+    <HintBlock className="co-catalog-page__hint" title={t('olm~Installing Operator')}>
+      <p>
+        <span>
+          <Trans ns="olm">This Operator is being installed on the cluster.</Trans>
+        </span>
+        &nbsp;
+        <Link to={to}>{t('olm~View it here.')}</Link>
+      </p>
+    </HintBlock>
+  );
+};
+
 const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
   const { t } = useTranslation();
-  const { installed, catalogSource } = props;
+  const { installed, isInstalling, catalogSource } = props;
+  if (isInstalling) {
+    return <InstallingHintBlock {...props} />;
+  }
+
   if (installed) {
     return <InstalledHintBlock {...props} />;
   }
@@ -162,6 +199,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     description,
     infraFeatures,
     installed,
+    isInstalling,
     longDescription,
     marketplaceSupportWorkflow,
     provider,
@@ -260,6 +298,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               <OperatorHubItemDetailsHintBlock
                 installed={installed}
+                isInstalling={isInstalling}
                 latestVersion={version}
                 namespace={namespace}
                 catalogSource={catalogSource}
@@ -279,6 +318,7 @@ OperatorHubItemDetails.defaultProps = {
 };
 type OperatorHubItemDetailsHintBlockProps = {
   installed: boolean;
+  isInstalling: boolean;
   latestVersion: string;
   namespace: string;
   catalogSource: string;
