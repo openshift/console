@@ -1,5 +1,5 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { click, fillInput } from '../../utils/shared-utils';
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { errorHelper, modalCancelButton, waitForNoLoaders } from '../../views/wizard.view';

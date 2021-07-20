@@ -10,7 +10,7 @@ import {
   deleteResources,
   removeLeakedResources,
   withResource,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import * as templateView from '../views/template.view';
 import * as detailView from '../views/virtualMachine.view';
 import { flavorConfigs, getTestDataVolume, multusNAD } from './mocks/mocks';

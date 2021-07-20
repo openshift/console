@@ -1,8 +1,21 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
-import { rowForName } from '@console/internal-integration-tests/views/crud.view';
-import { click } from '../utils/shared-utils';
+import { click } from './shared-utils';
 
 const PAGE_LOAD_TIMEOUT_SECS = 15 * 1000;
+export const resourceRows = $$('[data-test-rows="resource-row"]');
+
+// FIXME: Avoid this helper since it can result in StaleElementReferenceErrors.
+// Prefer to use a `data-test-` attribute on the row.
+export const rowForName = (name: string) =>
+  resourceRows
+    .filter((row) =>
+      row
+        .$$('.co-m-resource-icon + a')
+        .first()
+        .getText()
+        .then((text) => text === name),
+    )
+    .first();
 
 const listViewKebabDropdown = '[data-test-id="kebab-button"]';
 export const detailViewDropdown = '[data-test-id="actions-menu-button"]';
@@ -29,8 +42,6 @@ const selectDropdownItem = (getActionsDropdown) => async (action: string) => {
   await browser.wait(until.elementToBeClickable(getActionsDropdown()));
   await getActionsDropdown().click();
   await browser.wait(until.presenceOf($(detailViewDropdownMenu)));
-  // wait for disabled items gone
-  await browser.sleep(3000);
   await click($(`[data-test-action="${action}"]`));
 };
 

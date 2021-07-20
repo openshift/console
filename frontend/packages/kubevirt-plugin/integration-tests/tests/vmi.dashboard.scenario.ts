@@ -1,6 +1,6 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineInstanceModel } from '../../src/models';
+import { createResource, deleteResource } from '../utils/shared-utils';
 import {
   vmDetailsIPAddress,
   vmDetailsName,

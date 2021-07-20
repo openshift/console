@@ -7,8 +7,8 @@ import { clickHorizontalTab } from '@console/internal-integration-tests/views/ho
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { K8sKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { confirmAction } from '@console/shared/src/test-utils/actions.view';
-import { click } from '@console/shared/src/test-utils/utils';
+import { confirmAction } from '../../utils/shared-actions.view';
+import { click } from '../../utils/shared-utils';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';
 import * as editStatusView from '../../views/dialogs/editStatusView';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';

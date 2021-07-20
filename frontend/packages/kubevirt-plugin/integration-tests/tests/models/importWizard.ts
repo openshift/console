@@ -3,7 +3,7 @@ import { browser } from 'protractor';
 import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { K8sKind } from '@console/internal/module/k8s';
-import { asyncForEach, click } from '@console/shared/src/test-utils/utils';
+import { asyncForEach, click } from '../../utils/shared-utils';
 import * as view from '../../views/importWizard.view';
 import { saveButton, tableRows } from '../../views/kubevirtUIResource.view';
 import * as rhvView from '../../views/rhvImportWizard.view';

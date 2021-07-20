@@ -5,7 +5,7 @@ import {
   createResource,
   removeLeakableResource,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import { vmLinkByName } from '../views/vms.list.view';
 import { getVMIManifest } from './mocks/mocks';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';

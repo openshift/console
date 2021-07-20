@@ -6,7 +6,7 @@ import {
   createResource,
   deleteResource,
   selectDropdownOptionById,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import {
   consoleTypeSelectorId,
   openInNewWindow,
