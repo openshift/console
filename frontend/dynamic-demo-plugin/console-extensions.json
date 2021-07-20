@@ -52,5 +52,12 @@
       "path": "/example/nav",
       "component": { "$codeRef": "navPage" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test-status-components",
+      "component": { "$codeRef": "statusComponents.default" }
+    }
   }
 ]

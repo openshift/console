@@ -56,5 +56,17 @@ export const exposePluginAPI = () => {
 
     usePrometheusPoll: require('@console/internal/components/graphs/prometheus-poll-hook')
       .usePrometheusPoll,
+    GenericStatus: require('@console/shared/src/components/status/Status').default,
+    Status: require('@console/shared/src/components/status/GenericStatus').default,
+    StatusIconAndText: require('@console/shared/src/components/status/StatusIconAndText').default,
+    ErrorStatus: require('@console/shared/src/components/status/statuses').ErrorStatus,
+    SuccessStatus: require('@console/shared/src/components/status/statuses').SuccessStatus,
+    PendingStatus: require('@console/shared/src/components/status/statuses').PendingStatus,
+    ProgressStatus: require('@console/shared/src/components/status/statuses').ProgressStatus,
+    InfoIcon: require('@console/shared/src/components/status/icons').BlueInfoCircleIcon,
+    SuccessIcon: require('@console/shared/src/components/status/icons').GreenCheckCircleIcon,
+    ErrorIcon: require('@console/shared/src/components/status/icons').RedExclamationCircleIcon,
+    WarningIcon: require('@console/shared/src/components/status/icons')
+      .YellowExclamationTriangleIcon,
   };
 };

@@ -7,6 +7,13 @@ import {
   ConsoleFetchText,
 } from './api-types';
 import { HorizontalNavProps } from './component-api-types';
+import {
+  StatusProps,
+  GenericStatusProps,
+  StatusComponentProps,
+  ColoredIconProps,
+  StatusIconAndTextProps,
+} from './types/statuses';
 
 export * from './api-types';
 
@@ -52,3 +59,16 @@ export const consoleFetchText: ConsoleFetchText = newMockImpl();
  * @param {object} match - match object provided by React Router
  */
 export const HorizontalNav: React.FC<HorizontalNavProps> = newMockImpl();
+
+// status, icons
+export const Status: React.FC<StatusProps> = newMockImpl();
+export const GenericStatus: React.FC<GenericStatusProps> = newMockImpl();
+export const ErrorStatus: React.FC<StatusComponentProps> = newMockImpl();
+export const SuccessStatus: React.FC<StatusComponentProps> = newMockImpl();
+export const PendingStatus: React.FC<StatusComponentProps> = newMockImpl();
+export const ProgressStatus: React.FC<StatusComponentProps> = newMockImpl();
+export const InfoIcon: React.FC<ColoredIconProps> = newMockImpl();
+export const SuccessIcon: React.FC<ColoredIconProps> = newMockImpl();
+export const ErrorIcon: React.FC<ColoredIconProps> = newMockImpl();
+export const WarningIcon: React.FC<ColoredIconProps> = newMockImpl();
+export const StatusIconAndText: React.FC<StatusIconAndTextProps> = newMockImpl();
