@@ -1,22 +1,22 @@
 // Base element styles.
 // Please DO NOT add rules of this type.
 
-ul,
-ol {
-  padding-left: 20px; }
+dd {
+  margin-bottom: 20px;
+}
+
+dd:last-child {
+  margin-bottom: 0;
+}
 
 dl {
-  margin: 0px; }
+  margin: 0;
+}
 
 // match pf4 styling / table col head styling
 dt {
-  font-weight: var(--pf-global--FontWeight--bold); }
-
-dd {
-  margin-bottom: 20px; }
-
-dd:last-child {
-  margin-bottom: 0px; }
+  font-weight: var(--pf-global--FontWeight--bold);
+}
 
 input[type="number"] {
   -webkit-appearance: textfield;
@@ -30,4 +30,9 @@ input[type="number"] {
 
 input[type="radio"] {
   margin-right: 7px;
+}
+
+ol,
+ul {
+  padding-left: 20px;
 }
