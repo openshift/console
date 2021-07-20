@@ -10,13 +10,16 @@ import {
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { freeOwnedResources } from '../../../k8s/requests/free-owned-resources';
+import { removeHotplugPersistent } from '../../../k8s/requests/vm/actions';
 import { DataVolumeModel } from '../../../models';
-import { getName, getNamespace } from '../../../selectors';
-import { getVMLikeModel } from '../../../selectors/vm';
-import { V1Disk, V1Volume } from '../../../types/api';
+import { isHotplugDisk } from '../../../selectors/disks/hotplug';
+import { asVM, getVMLikeModel, isVMRunningOrExpectedRunning } from '../../../selectors/vm';
+import { VMIKind } from '../../../types';
+import { V1Disk, V1RemoveVolumeOptions, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 
 export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) => {
@@ -26,6 +29,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     volume,
     inProgress,
     errorMessage,
+    vmi,
     handlePromise,
     close,
     cancel,
@@ -35,9 +39,10 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
 
   const entityModel = getVMLikeModel(vmLikeEntity);
   const namespace = getNamespace(vmLikeEntity);
+  const vmName = getName(vmLikeEntity);
 
   const vmLikeReference = {
-    name: getName(vmLikeEntity),
+    name: vmName,
     kind: entityModel.kind,
     apiVersion: apiVersionForModel(entityModel),
   } as any;
@@ -54,9 +59,18 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
 
   const diskName = disk?.name;
 
+  const removeHotplugRequest: V1RemoveVolumeOptions = {
+    name: diskName,
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
+    if (isVMRunningOrExpectedRunning(asVM(vmLikeEntity), vmi)) {
+      const promise = removeHotplugPersistent(asVM(vmLikeEntity), removeHotplugRequest);
+
+      return handlePromise(promise, close);
+    }
     const promise = k8sPatch(
       entityModel,
       vmLikeEntity,
@@ -69,7 +83,9 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('kubevirt-plugin~Detach {{diskName}} disk', { diskName })}
+        {isHotplugDisk(vmi, diskName)
+          ? t('kubevirt-plugin~Detach {{diskName}} hotplug disk', { diskName })
+          : t('kubevirt-plugin~Detach {{diskName}} disk', { diskName })}
       </ModalTitle>
       <ModalBody>
         <Trans t={t} ns="kubevirt-plugin">
@@ -113,6 +129,7 @@ export type DeleteDiskModalProps = {
   disk: V1Disk;
   volume: V1Volume;
   vmLikeEntity: VMLikeEntityKind;
+  vmi?: VMIKind;
 } & ModalComponentProps &
   HandlePromiseProps;
 
