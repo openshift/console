@@ -1,8 +1,8 @@
 import { Patch, Toleration } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { Affinity } from '../../../components/modals/scheduling-modals/affinity-modal/types';
 import { NodeSelector } from '../../../types/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
+import { PatchBuilder } from '../../helpers/patch';
 import { getVMLikePatches } from '../vm-template';
 
 export const getNodeSelectorPatches = (

@@ -1,6 +1,5 @@
 import { SecretModel, ServiceAccountModel } from '@console/internal/models';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
 import { getFieldValue } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
@@ -22,6 +21,7 @@ import {
 } from '../../../../selectors/v2v';
 import { createBasicLookup, compareOwnerReference, buildOwnerReference } from '../../../../utils';
 import { delay } from '../../../../utils/utils';
+import { PatchBuilder } from '../../../helpers/patch';
 import { PodWrappper } from '../../../wrapper/k8s/pod-wrapper';
 import { RoleBindingWrappper } from '../../../wrapper/k8s/role-binding-wrapper';
 import { RoleWrappper } from '../../../wrapper/k8s/role-wrapper';
