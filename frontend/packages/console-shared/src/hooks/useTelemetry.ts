@@ -7,10 +7,10 @@ import {
 } from '@console/dynamic-plugin-sdk';
 
 export const useTelemetry = () => {
-  // TODO(vojtech): once #8966 is merged, utilize useDynamicPluginInfo hook to determine
-  // whether all dynamic plugins have finished loading (no plugins with 'Pending' status)
-  // in order to avoid firing events multiple times whenever plugins asynchronously load.
+  // TODO use useDynamicPluginInfo() hook to tell whether all dynamic plugins have been processed
+  // to avoid firing telemetry events multiple times whenever a dynamic plugin loads asynchronously
   const [extensions] = useResolvedExtensions<TelemetryListener>(isTelemetryListener);
+
   return React.useCallback<TelemetryEventListener>(
     (eventType, properties) => {
       extensions.forEach((e) =>
