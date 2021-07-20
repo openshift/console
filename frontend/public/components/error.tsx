@@ -36,7 +36,7 @@ const ErrorComponent: React.SFC<ErrorComponentProps> = ({ title, message }) => (
     <PageHeading detail={true} title="Error" />
     <div className="co-m-pane__body" data-test-id="error-page">
       <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
-      {message && <div className="text-center">{message}</div>}
+      {message && <div className="pf-u-text-align-center">{message}</div>}
     </div>
   </>
 );
