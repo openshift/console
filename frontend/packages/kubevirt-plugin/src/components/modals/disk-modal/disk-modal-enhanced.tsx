@@ -18,10 +18,13 @@ import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
+import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { getName, getNamespace } from '../../../selectors';
 import { isTemplate } from '../../../selectors/check-type';
 import { getVMLikeModel } from '../../../selectors/vm';
+import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getLoadedData } from '../../../utils';
@@ -36,6 +39,8 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
     vmLikeEntity,
     vmLikeEntityLoading,
     isVMRunning,
+    vm,
+    vmi,
     ...restProps
   } = props;
 
@@ -65,11 +70,15 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
 
   const storageClassConfigMap = useStorageClassConfigMapWrapped();
 
+  const usedDisks = !isVMRunning
+    ? new VMWrapper(vm).getDisks().map((usedDisk) => usedDisk.name)
+    : new VMIWrapper(vmi).getDisks().map((usedDisk) => usedDisk.name);
+
   return (
     <DiskModal
       {...restProps}
       storageClassConfigMap={storageClassConfigMap}
-      usedDiskNames={combinedDiskFactory.getUsedDiskNames(diskWrapper.getName())}
+      usedDiskNames={new Set(usedDisks)}
       usedPVCNames={combinedDiskFactory.getUsedDataVolumeNames(dataVolumeWrapper.getName())}
       vmName={getName(vmLikeFinal)}
       vmNamespace={getNamespace(vmLikeFinal)}
@@ -78,6 +87,8 @@ const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (p
       dataVolume={new DataVolumeWrapper(dataVolumeWrapper, true)}
       onSubmit={onSubmit}
       isVMRunning={isVMRunning}
+      vm={vm}
+      vmi={vmi}
     />
   );
 };
@@ -95,6 +106,8 @@ type DiskModalFirehoseComponentProps = ModalComponentProps & {
   vmLikeEntity: VMLikeEntityKind;
   templateValidations?: TemplateValidations;
   isVMRunning?: boolean;
+  vm?: VMKind;
+  vmi?: VMIKind;
 };
 
 const DiskModalFirehose: React.FC<DiskModalFirehoseProps> = (props) => {
@@ -139,6 +152,8 @@ const DiskModalFirehose: React.FC<DiskModalFirehoseProps> = (props) => {
         namespace={namespace}
         onNamespaceChanged={(n) => setNamespace(n)}
         isTemplate={isTemplate(vmLikeEntity)}
+        vm={restProps.vm}
+        vmi={restProps.vmi}
         {...restProps}
       />
     </Firehose>
@@ -155,6 +170,8 @@ type DiskModalFirehoseProps = ModalComponentProps & {
   templateValidations?: TemplateValidations;
   isTemplate?: boolean;
   isVMRunning?: boolean;
+  vm?: VMKind;
+  vmi?: VMIKind;
 };
 
 const diskModalStateToProps = ({ k8s }) => {
