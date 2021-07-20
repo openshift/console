@@ -23,8 +23,7 @@ import { UseResolvedExtensions } from './api-types';
  * Example usage:
  *
  * ```ts
- * const navItemExtensions = useResolvedExtensions<NavItem>(isNavItem);
- * const [perspectiveExtensions] = useResolvedExtensions<Perspective>(isPerspective);
+ * const [navItemExtensions, navItemsResolved] = useResolvedExtensions<NavItem>(isNavItem);
  * // process adapted extensions and render your component
  * ```
  *

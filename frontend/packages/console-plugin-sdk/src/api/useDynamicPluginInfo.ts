@@ -13,26 +13,28 @@ import { subscribeToDynamicPlugins } from './pluginSubscriptionService';
  *
  * ```ts
  * const Example = () => {
- *   const pluginEntries = useDynamicPluginInfo();
+ *   const [pluginInfoEntries, allPluginsProcessed] = useDynamicPluginInfo();
  *   // process plugin entries and render your component
  * };
  * ```
  *
- * The hook's result is guaranteed to be referentially stable across re-renders.
+ * The hook's result elements are guaranteed to be referentially stable across re-renders.
  *
  * @returns Console dynamic plugin runtime information.
  */
-export const useDynamicPluginInfo = (): DynamicPluginInfo[] => {
+export const useDynamicPluginInfo = (): [DynamicPluginInfo[], boolean] => {
   const forceRender = useForceRender();
 
   const isMountedRef = React.useRef(true);
   const unsubscribeRef = React.useRef<VoidFunction>(null);
-  const pluginEntriesRef = React.useRef<DynamicPluginInfo[]>([]);
+  const pluginInfoEntriesRef = React.useRef<DynamicPluginInfo[]>([]);
+  const allPluginsProcessedRef = React.useRef<boolean>(false);
 
   const trySubscribe = React.useCallback(() => {
     if (unsubscribeRef.current === null) {
-      unsubscribeRef.current = subscribeToDynamicPlugins((pluginEntries) => {
-        pluginEntriesRef.current = pluginEntries;
+      unsubscribeRef.current = subscribeToDynamicPlugins((pluginInfoEntries) => {
+        pluginInfoEntriesRef.current = pluginInfoEntries;
+        allPluginsProcessedRef.current = pluginInfoEntries.every((i) => i.status !== 'Pending');
         isMountedRef.current && forceRender();
       });
     }
@@ -55,5 +57,5 @@ export const useDynamicPluginInfo = (): DynamicPluginInfo[] => {
     [tryUnsubscribe],
   );
 
-  return pluginEntriesRef.current;
+  return [pluginInfoEntriesRef.current, allPluginsProcessedRef.current];
 };

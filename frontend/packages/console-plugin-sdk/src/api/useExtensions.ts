@@ -27,7 +27,6 @@ import { subscribeToExtensions } from './pluginSubscriptionService';
  * ```ts
  * const Example = () => {
  *   const navItemExtensions = useExtensions<NavItem>(isNavItem);
- *   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
  *   // process extensions and render your component
  * };
  * ```

@@ -193,4 +193,4 @@ type ExtensionSubscription<E extends Extension = Extension> = {
   listenerLastArgs?: E[];
 };
 
-type DynamicPluginListener = (pluginEntries: DynamicPluginInfo[]) => void;
+type DynamicPluginListener = (pluginInfoEntries: DynamicPluginInfo[]) => void;
