@@ -8,6 +8,7 @@ export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 
 export const TEMPLATE_NAME = 'Red Hat Enterprise Linux 6.0+ VM';
 export const TEMPLATE_BASE_IMAGE = 'rhel6';
+export const TEMPLATE_METADATA_NAME = 'rhel6-server-small';
 
 export const TEST_PROVIDER = 'test-provider';
 export const IMPORTING = 'Importing';
