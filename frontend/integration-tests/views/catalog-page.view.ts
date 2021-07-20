@@ -7,7 +7,6 @@ export const catalogTileByID = (id: string) => $(`[data-test=${id}]`);
 
 // FilterSidePanel views
 export const filterSectionFor = (group: string) => $(`[data-test-group-name=${group}]`);
-export const showMoreFilters = (group: string) => $(`[data-test-group-name=${group}] .btn-link`);
 export const filterCheckboxFor = (id: string) => $(`input[data-test=${id}]`);
 export const clickFilterCheckbox = async (id: string) => {
   await browser.wait(until.presenceOf(filterCheckboxFor(id)));

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Dropdown } from './dropdown';
-import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { NumberSpinner } from './number-spinner';
 
@@ -69,7 +68,7 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
           title={dropdownUnits[defaultRequestSizeUnit]}
           selectedKey={defaultRequestSizeUnit}
           name={dropdownName}
-          className={classNames('btn-group', 'request-size-input__unit')}
+          className="request-size-input__unit"
           items={dropdownUnits}
           onChange={onUnitChange}
           disabled={isInputDisabled}
