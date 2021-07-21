@@ -1,15 +1,30 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import Loggable = Cypress.Loggable;
+import Timeoutable = Cypress.Timeoutable;
+import Withinable = Cypress.Withinable;
+import Shadow = Cypress.Shadow;
+
 export {};
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
-      byTestID(selector: string, options?: object): Chainable<Element>;
+      byTestID(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<Element>;
       byTestActionID(selector: string): Chainable<Element>;
       byLegacyTestID(selector: string): Chainable<Element>;
       byButtonText(selector: string): Chainable<Element>;
       byDataID(selector: string): Chainable<Element>;
-      byTestSelector(selector: string): Chainable<Element>;
+      byTestSelector(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<Element>;
       byTestDropDownMenu(selector: string): Chainable<Element>;
-      byTestOperatorRow(selector: string, options?: object): Chainable<Element>;
+      byTestOperatorRow(
+        selector: string,
+        options?: Partial<Loggable & Timeoutable & Withinable & Shadow>,
+      ): Chainable<Element>;
       byTestSectionHeading(selector: string): Chainable<Element>;
       byTestOperandLink(selector: string): Chainable<Element>;
     }
@@ -18,9 +33,12 @@ declare global {
 
 // any command added below, must be added to global Cypress interface above
 
-Cypress.Commands.add('byTestID', (selector: string, options?: object) => {
-  cy.get(`[data-test="${selector}"]`, options);
-});
+Cypress.Commands.add(
+  'byTestID',
+  (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) => {
+    cy.get(`[data-test="${selector}"]`, options);
+  },
+);
 
 Cypress.Commands.add('byTestActionID', (selector: string) =>
   cy.get(`[data-test-action="${selector}"]:not(.pf-m-disabled)`),
@@ -37,8 +55,10 @@ Cypress.Commands.add('byButtonText', (selector: string) =>
 
 Cypress.Commands.add('byDataID', (selector: string) => cy.get(`[data-id="${selector}"]`));
 
-Cypress.Commands.add('byTestSelector', (selector: string) =>
-  cy.get(`[data-test-selector="${selector}"]`),
+Cypress.Commands.add(
+  'byTestSelector',
+  (selector: string, options?: Partial<Loggable & Timeoutable & Withinable & Shadow>) =>
+    cy.get(`[data-test-selector="${selector}"]`, options),
 );
 
 Cypress.Commands.add('byTestDropDownMenu', (selector: string) =>
