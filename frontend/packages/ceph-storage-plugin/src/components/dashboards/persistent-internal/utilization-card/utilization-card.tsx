@@ -11,7 +11,10 @@ import {
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
-import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
+import {
+  PrometheusMultilineUtilizationItem,
+  PrometheusUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import { UtilizationDurationDropdown } from '@console/shared/src/components/dashboard/utilization-card/UtilizationDurationDropdown';
 import { humanizeIOPS, humanizeLatency } from './utils';
 import {
@@ -55,20 +58,29 @@ const UtilizationCard: React.FC = () => {
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={storagePopover}
         />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title={t('ceph-storage-plugin~IOPS')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_WRITE_QUERY],
+          ]}
           humanizeValue={humanizeIOPS}
         />
-        <PrometheusUtilizationItem
-          title={t('ceph-storage-plugin~Latency')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
-          humanizeValue={humanizeLatency}
-        />
-        <PrometheusUtilizationItem
+        <PrometheusMultilineUtilizationItem
           title={t('ceph-storage-plugin~Throughput')}
-          utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_WRITE_QUERY],
+          ]}
           humanizeValue={humanizeDecimalBytesPerSec}
+        />
+        <PrometheusMultilineUtilizationItem
+          title={t('ceph-storage-plugin~Latency')}
+          queries={[
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_READ_QUERY],
+            UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_WRITE_QUERY],
+          ]}
+          humanizeValue={humanizeLatency}
         />
         <PrometheusUtilizationItem
           title={t('ceph-storage-plugin~Recovery')}
