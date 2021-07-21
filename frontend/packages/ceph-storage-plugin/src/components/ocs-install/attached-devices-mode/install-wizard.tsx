@@ -243,7 +243,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
           {t('ceph-storage-plugin~Capacity and nodes')}{' '}
         </Link>
       ),
-      component: <StorageAndNodes dispatch={dispatch} state={state} mode={mode} />,
+      component: <StorageAndNodes dispatch={dispatch} state={state} />,
     },
     {
       id: CreateStepsSC.CONFIGURE,

@@ -69,7 +69,7 @@ const validate = (
   return validations;
 };
 
-export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch, mode }) => {
+export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch }) => {
   const { t } = useTranslation();
   const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
   const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
@@ -211,7 +211,12 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
-          {isTaintSupported && <EnableTaintNodes state={state} dispatch={dispatch} mode={mode} />}
+          {isTaintSupported && (
+            <EnableTaintNodes
+              enableTaint={state.enableTaint}
+              setEnableTaint={() => dispatch({ type: 'setEnableTaint', value: !state.enableTaint })}
+            />
+          )}
           {!!validations.length &&
             validations.map((validation) => (
               <ValidationMessage key={validation} validation={validation} />
@@ -225,5 +230,4 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
 type StorageAndNodesProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
-  mode: string;
 };
