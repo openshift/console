@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { getMachineAWSPlacement, getMachineRole } from '@console/shared';
+import { getMachineAWSPlacement, getMachineRole, getMachineSetInstanceType } from '@console/shared';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
@@ -91,7 +91,13 @@ export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentK
 export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) =>
   machineSet?.status?.availableReplicas || 0;
 
-const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
+const tableColumnClasses = [
+  '',
+  '',
+  'pf-m-hidden pf-m-visible-on-md',
+  'pf-m-hidden pf-m-visible-on-lg',
+  Kebab.columnClass,
+];
 
 export const MachineCounts: React.FC<MachineCountsProps> = ({
   resourceKind,
@@ -146,9 +152,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
               <dt className="co-detail-table__section-header">{t('public~Current count')}</dt>
               <dd>
                 <Tooltip content={t('public~The most recently observed number of replicas.')}>
-                  <span>
-                    {replicas} {t('public~machine', { count: replicas })}
-                  </span>
+                  <span>{t('public~{{replicas}} machine', { replicas, count: replicas })}</span>
                 </Tooltip>
               </dd>
             </dl>
@@ -163,7 +167,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
                   )}
                 >
                   <span>
-                    {readyReplicas} {t('public~machine', { count: readyReplicas })}
+                    {t('public~{{readyReplicas}} machine', { readyReplicas, count: readyReplicas })}
                   </span>
                 </Tooltip>
               </dd>
@@ -179,7 +183,10 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
                   )}
                 >
                   <span>
-                    {availableReplicas} {t('public~machine', { count: availableReplicas })}
+                    {t('public~{{availableReplicas}} machine', {
+                      availableReplicas,
+                      count: availableReplicas,
+                    })}
                   </span>
                 </Tooltip>
               </dd>
@@ -202,6 +209,7 @@ export const MachineTabPage: React.SFC<MachineTabPageProps> = ({
 const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getMachineAWSPlacement(obj);
+  const instanceType = getMachineSetInstanceType(obj);
   const { t } = useTranslation();
   return (
     <>
@@ -219,6 +227,8 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
                   namespace={obj.metadata.namespace}
                 />
               </dd>
+              <dt>{t('public~Instance type')}</dt>
+              <dd>{instanceType || '-'}</dd>
               {machineRole && (
                 <>
                   <dt>{t('public~Machine role')}</dt>
@@ -245,43 +255,9 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({ obj }) => {
   );
 };
 
-const MachineSetTableRow: React.FC<RowFunctionArgs<MachineSetKind>> = ({ obj }) => {
+export const MachineSetList: React.FC = (props) => {
   const { t } = useTranslation();
-  return (
-    <>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={machineSetReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
-      </TableData>
-      <TableData
-        className={classNames(tableColumnClasses[1], 'co-break-word')}
-        columnID="namespace"
-      >
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(
-            machineSetReference,
-            obj.metadata.name,
-            obj.metadata.namespace,
-          )}/machines`}
-        >
-          {getReadyReplicas(obj)} {t('public~of')} {getDesiredReplicas(obj)} {t('public~machines')}
-        </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
-      </TableData>
-    </>
-  );
-};
 
-export const MachineSetList: React.SFC = (props) => {
-  const { t } = useTranslation();
   const MachineSetTableHeader = () => {
     return [
       {
@@ -304,11 +280,56 @@ export const MachineSetList: React.SFC = (props) => {
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: '',
+        title: t('public~Instance type'),
+        sortFunc: 'instanceType',
+        transforms: [sortable],
         props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[4] },
       },
     ];
   };
+
+  const MachineSetTableRow: React.FC<RowFunctionArgs<MachineSetKind>> = ({ obj }) => (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={machineSetReference}
+          name={obj.metadata.name}
+          namespace={obj.metadata.namespace}
+        />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link
+          to={`${resourcePath(
+            machineSetReference,
+            obj.metadata.name,
+            obj.metadata.namespace,
+          )}/machines`}
+        >
+          {t('public~{{numReadyReplicas}} of {{numDesiredReplicas}} machine', {
+            numReadyReplicas: getReadyReplicas(obj),
+            numDesiredReplicas: getDesiredReplicas(obj),
+            count: getDesiredReplicas(obj),
+          })}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {getMachineSetInstanceType(obj) || '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
+      </TableData>
+    </>
+  );
 
   return (
     <Table
