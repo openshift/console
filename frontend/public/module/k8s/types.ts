@@ -610,6 +610,10 @@ export type MachineSpec = {
   providerSpec: {
     value?: {
       placement?: MachineAWSPlacement;
+      instanceType?: string;
+      vmSize?: string;
+      machineType?: string;
+      flavor?: string;
     };
   };
   versions: {
