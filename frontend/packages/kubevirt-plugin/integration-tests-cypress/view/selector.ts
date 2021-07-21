@@ -25,15 +25,17 @@ export enum actionButtons {
   kebabButton = 'kebab-button',
 }
 
-// dialogs
+// modal
 export const modalTitle = '[data-test-id="modal-title"]';
+export const modalConfirm = '[data-test="confirm-action"]';
+export const modalCancel = '[data-test-id="modal-cancel-action"]';
 export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 
 // alert
 export const alertTitle = '.pf-c-alert__title';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
 
-// nic
+// nic modal
 export enum nicDialog {
   addNIC = 'button[id="add-nic"]',
   model = 'button[id="nic-select-model"]',
@@ -43,6 +45,7 @@ export enum nicDialog {
   add = 'button[data-test="confirm-action"]',
 }
 
+// disk modal
 export enum diskDialog {
   addDisk = 'button[id="add-disk"]',
   source = 'button[id="disk-select-source"]',
@@ -52,4 +55,11 @@ export enum diskDialog {
   storageClass = 'select[id="disk-storage-class"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
+}
+
+// storageClass
+export enum storageClass {
+  advanced = '[data-test="advanced-section"]',
+  dropdown = 'button[id="form-ds-sc-select"]',
+  selectMenu = '.pf-c-select__menu',
 }

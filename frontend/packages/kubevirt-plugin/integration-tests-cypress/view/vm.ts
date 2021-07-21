@@ -28,27 +28,32 @@ export const action = (selector: string) => {
 
 export const vm = {
   create: (vmData: VirtualMachineData) => {
-    const {
-      cdrom,
-      flavor,
-      name,
-      namespace,
-      provisionSource,
-      pvcName,
-      pvcNS,
-      pvcSize,
-      sshEnable,
-      startOnCreation,
-      template,
-      sourceAvailable,
-    } = vmData;
+    const { startOnCreation, sourceAvailable } = vmData;
     virtualization.vms.visit();
     wizard.vm.open();
-    wizard.vm.processSelectTemplate(template);
+    wizard.vm.selectTemplate(vmData);
     if (!sourceAvailable) {
-      wizard.vm.processBootSource(provisionSource, cdrom, pvcSize, pvcName, pvcNS);
+      wizard.vm.fillBootSourceForm(vmData);
     }
-    wizard.vm.processReview(namespace, name, flavor, sshEnable, startOnCreation);
+    wizard.vm.fillReviewForm(vmData);
+    if (startOnCreation) {
+      waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+      waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    } else {
+      waitForStatus(VM_STATUS.Off, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+    }
+  },
+  customizeCreate: (vmData: VirtualMachineData) => {
+    const { startOnCreation } = vmData;
+    virtualization.vms.visit();
+    wizard.vm.open();
+    wizard.vm.selectTemplate(vmData);
+    cy.byLegacyTestID('wizard-customize').click();
+    wizard.vm.fillGeneralForm(vmData);
+    wizard.vm.fillNetworkForm(vmData);
+    wizard.vm.fillStorageForm(vmData);
+    wizard.vm.fillAdvancedForm(vmData);
+    wizard.vm.fillConfirmForm(vmData);
     if (startOnCreation) {
       waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
       waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
