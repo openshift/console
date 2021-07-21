@@ -178,7 +178,6 @@
   "URL": "URL",
   "Traffic": "Traffic",
   "Generation": "Generation",
-  "Move {{sourceKind}}": "Move {{sourceKind}}",
   "Connects": "Connects",
   "to": "to",
   "Select a sink": "Select a sink",

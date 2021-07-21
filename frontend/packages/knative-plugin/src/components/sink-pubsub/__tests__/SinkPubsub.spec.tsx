@@ -23,6 +23,7 @@ describe('SinkPubsub', () => {
   let pubsubForm: ShallowWrapper<SinkPubsubProps>;
   const formProps: SinkPubsubProps = {
     source: EventSubscriptionObj,
+    resourceType: 'Subscription',
   };
   pubsubForm = shallow(<SinkPubsub {...formProps} />);
   it('should render Formik with proper initial values', () => {
@@ -40,14 +41,14 @@ describe('SinkPubsub', () => {
   it('should render Formik child with label move Subscription for Subscription', () => {
     const formikFormRender = pubsubForm.find(Formik).get(0).props;
     expect(formikFormRender.children).toHaveLength(1);
-    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{sourceKind}}`);
+    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{kind}}`);
   });
 
   it('should render Formik child with label move Trigger for Trigger', () => {
-    const formPropsData = { source: EventTriggerObj };
+    const formPropsData = { source: EventTriggerObj, resourceType: 'Trigger' };
     pubsubForm = shallow(<SinkPubsub {...formPropsData} />);
     const formikFormRender = pubsubForm.find(Formik).get(0).props;
     expect(formikFormRender.children).toHaveLength(1);
-    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{sourceKind}}`);
+    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{kind}}`);
   });
 });
