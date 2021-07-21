@@ -11,7 +11,7 @@ RUN ./build-backend.sh
 ##################################################
 #
 # nodejs frontend build
-FROM registry.ci.openshift.org/ocp/builder:ubi8.nodejs.14 AS nodebuilder
+FROM registry.ci.openshift.org/ocp/builder:rhel-8-base-nodejs-openshift-4.7 AS nodebuilder
 
 ADD . .
 
