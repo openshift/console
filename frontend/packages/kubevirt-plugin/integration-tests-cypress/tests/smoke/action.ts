@@ -48,7 +48,7 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-765) Unpauses VM', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       vm.unpause(vmData);
     });
 
@@ -80,12 +80,12 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-1794) Unpauses VM', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       vm.unpause(vmData);
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       waitForStatus(VM_STATUS.Paused);
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
