@@ -52,7 +52,7 @@ describe('EventingListPage', () => {
       multiTablistPage
         .props()
         .menuActions.eventSource.onSelection('eventSource', { label: 'Event Source' }, undefined),
-    ).toEqual('/catalog/ns/my-project?catalogType=EventSource');
+    ).toEqual('/catalog/ns/my-project?catalogType=EventSource&provider=["Red+Hat"]');
   });
 
   it('should show correct url for creation if namespace is not defined', () => {
@@ -74,6 +74,6 @@ describe('EventingListPage', () => {
       multiTablistPage
         .props()
         .menuActions.eventSource.onSelection('eventSource', { label: 'Event Source' }, undefined),
-    ).toEqual('/catalog/ns/default?catalogType=EventSource');
+    ).toEqual('/catalog/ns/default?catalogType=EventSource&provider=["Red+Hat"]');
   });
 });

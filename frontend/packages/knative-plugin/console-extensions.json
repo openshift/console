@@ -16,7 +16,7 @@
     "properties": {
       "id": "knative-event-source",
       "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace?catalogType=EventSource",
+      "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
       "icon": { "$codeRef": "icons.eventSourceIconSVG" }
