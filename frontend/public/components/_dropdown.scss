@@ -2,6 +2,7 @@
 
 $color-bookmarker--hover: $color-pf-black-500;
 $color-bookmarker: $color-pf-black-400;
+$dropdown-background: $pf-color-white;
 $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
 
 .dropdown--full-width {
@@ -40,10 +41,6 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   font-size: ($font-size-base - 1);
   padding: 3px 10px;
   text-transform: uppercase;
-}
-
-.dropdown-menu__filter {
-  padding: 5px var(--pf-c-dropdown__menu-item--PaddingRight) 10px;
 }
 
 .dropdown-menu--text-wrap {
@@ -118,6 +115,10 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 
 // Custom dropdown menu rules for namespace-selector & resource-item that don't use the default pf4 styles
 .co-namespace-selector .dropdown-menu__autocomplete-filter {
+  li.dropdown-menu__filter {
+    padding: 5px var(--pf-c-dropdown__menu-item--PaddingRight) 10px;
+  }
+
   li {
     display: flex;
     padding: 0;
@@ -177,6 +178,8 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   // Since namespace selector has multiple <a> tags within each list item,
   // target the <li> except the one containing the list divider.
   li {
+    background-color: var(--pf-global--BackgroundColor--100);
+
     &:not(.co-namespace-selector__divider):hover {
       background-color: $dropdown-background--hover;
       color: $dropdown-link-hover-color;

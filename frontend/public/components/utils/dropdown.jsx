@@ -129,7 +129,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
     if (!autocompleteFilter && !onBookmark) {
       //use pf4 markup if not using the autocomplete dropdown
       return (
-        <li key={itemKey}>
+        <li key={itemKey} role="menuitem">
           <button
             className="pf-c-dropdown__menu-item"
             id={`${itemKey}-link`}
@@ -187,7 +187,7 @@ class DropDownRowWithTranslation extends React.PureComponent {
     }
 
     return (
-      <li role="option" className={classNames(className)} key={itemKey}>
+      <li role="menuitem" className={classNames(className)} key={itemKey}>
         {prefix}
         <a
           href="#"
@@ -347,7 +347,7 @@ class Dropdown_ extends DropdownMixin {
               hover={ai.actionKey === keyboardHoverKey}
             />
           ))}
-          <li className="co-namespace-selector__divider">
+          <li className="co-namespace-selector__divider" role="none">
             <div className="dropdown-menu__divider" />
           </li>
         </>
@@ -406,7 +406,7 @@ class Dropdown_ extends DropdownMixin {
       }
       if (spacerBefore.has(key)) {
         rows.push(
-          <li key={`${key}-spacer`}>
+          <li key={`${key}-spacer`} role="none">
             <div className="dropdown-menu__divider" />
           </li>,
         );
@@ -468,7 +468,7 @@ class Dropdown_ extends DropdownMixin {
             </button>
             {active && (
               <ul
-                role="listbox"
+                role="menu"
                 ref={this.dropdownList}
                 className={classNames(
                   'dropdown-menu__autocomplete-filter',
@@ -477,7 +477,7 @@ class Dropdown_ extends DropdownMixin {
                 )}
               >
                 {autocompleteFilter && (
-                  <div className="dropdown-menu__filter">
+                  <li role="menuitem" className="dropdown-menu__filter">
                     <input
                       autoFocus
                       type="text"
@@ -491,12 +491,12 @@ class Dropdown_ extends DropdownMixin {
                       onClick={(e) => e.stopPropagation()}
                       data-test-id="dropdown-text-filter"
                     />
-                  </div>
+                  </li>
                 )}
                 {this.renderActionItem()}
                 {bookMarkRows}
                 {_.size(bookMarkRows) ? (
-                  <li className="co-namespace-selector__divider">
+                  <li className="co-namespace-selector__divider" role="none">
                     <div className="dropdown-menu__divider" />
                   </li>
                 ) : null}
@@ -540,6 +540,7 @@ class Dropdown_ extends DropdownMixin {
           {active && (
             <ul
               ref={this.dropdownList}
+              role="menu"
               className={classNames('pf-c-dropdown__menu', menuClassName)}
             >
               {rows}
