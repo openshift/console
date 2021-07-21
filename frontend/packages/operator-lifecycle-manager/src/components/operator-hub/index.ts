@@ -23,6 +23,7 @@ export enum InfraFeatures {
   cnf = 'Cloud-Native Network Function',
   cni = 'Container Network Interface',
   csi = 'Container Storage Interface',
+  sno = 'Single-Node OpenShift',
 }
 
 export type OperatorHubItem = {
