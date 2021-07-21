@@ -23,6 +23,7 @@ import { Scroll } from '@patternfly/react-virtualized-extension/dist/js/componen
 import {
   getNodeRoles,
   getMachinePhase,
+  getMachineSetInstanceType,
   nodeMemory,
   nodeCPU,
   nodeFS,
@@ -86,6 +87,7 @@ const sorts = {
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
   ingressValidHosts,
   serviceCatalogStatus,
+  instanceType: (obj): string => getMachineSetInstanceType(obj),
   jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
   nodeReadiness: (node: NodeKind) => {
