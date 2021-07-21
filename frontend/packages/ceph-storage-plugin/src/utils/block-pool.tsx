@@ -47,7 +47,7 @@ export const PROGRESS_STATUS = (t: TFunction, poolName: string): ProgressStatusP
   {
     name: POOL_PROGRESS.FAILED,
     icon: ExclamationCircleIcon,
-    desc: t('ceph-storage-plugin~An error occurred Pool {{name}} was not created', {
+    desc: t('ceph-storage-plugin~An error occurred. Pool {{name}} was not created', {
       name: poolName,
     }),
     className: 'ceph-block-pool__error-icon',

@@ -72,7 +72,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
       dispatch({
         type: BlockPoolActionType.SET_ERROR_MESSAGE,
         payload: t(
-          "ceph-storage-plugin~The OpenShift Container Storage's StorageCluster is not available. Try again after the StorageCluster is ready to use.",
+          "ceph-storage-plugin~OpenShift Container Storage's StorageCluster is not available. Try again after the StorageCluster is ready to use.",
         ),
       });
   };
