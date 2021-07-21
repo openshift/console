@@ -4,8 +4,9 @@
   }
 
   &__sub.pf-c-dropdown__menu-item {
+    --pf-c-dropdown__menu-item--PaddingRight: var(--pf-global--spacer--lg);
+
     position: relative;
-    padding-right: var(--pf-global--spacer--lg);
   }
 
   &__arrow {

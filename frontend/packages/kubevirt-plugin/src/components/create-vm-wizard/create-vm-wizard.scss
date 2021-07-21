@@ -19,26 +19,22 @@
 }
 
 .kubevirt-create-vm-modal__wizard-content .pf-c-wizard__main-body {
+  --pf-c-wizard__main-body--PaddingBottom: 0;
+
   display: flex;
   height: 100%;
   flex-direction: column;
-  padding-bottom: 0;
 }
 
 .pf-c-wizard__outer-wrap {
   min-height: inherit;
 }
 
-.pf-c-wizard__main {
-  z-index: calc(var(--pf-global--ZIndex--xs) - 3);
-}
+.pf-c-wizard {
+  --pf-c-wizard__main--ZIndex: calc(var(--pf-global--ZIndex--xs) - 3);
+  --pf-c-wizard__nav--ZIndex: calc(var(--pf-global--ZIndex--xs) - 2);
+  --pf-c-wizard__toggle--ZIndex: calc(var(--pf-global--ZIndex--xs) - 1);
 
-.pf-c-wizard__nav {
-  z-index: calc(var(--pf-global--ZIndex--xs) - 2);
-}
-
-.pf-c-wizard__toggle {
-  z-index: calc(var(--pf-global--ZIndex--xs) - 1);
 }
 
 .pf-c-wizard__nav-link {

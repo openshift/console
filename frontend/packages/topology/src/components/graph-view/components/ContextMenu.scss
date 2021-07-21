@@ -1,6 +1,9 @@
 .odc-topology-context-menu {
   z-index: 1050;
   &__kebab-wrapper.pf-c-dropdown__menu-item {
-    padding: 0;
+    --pf-c-dropdown__menu-item--PaddingTop: 0;
+    --pf-c-dropdown__menu-item--PaddingRight: 0;
+    --pf-c-dropdown__menu-item--PaddingBottom: 0;
+    --pf-c-dropdown__menu-item--PaddingLeft: 0;
   }
 }

@@ -41,11 +41,13 @@
   // so that input and textarea don't mask the inner scroll shadows
   input, textarea {
     &.pf-c-form-control {
-      background-color: transparent;
+      --pf-c-form-control--BackgroundColor: transparent;
+
       max-width: 100%;
+
       &[disabled],
       &[readonly] {
-        background-color: rgba(128, 128, 128, 0.15);
+        --pf-c-form-control--BackgroundColor: rgba(128, 128, 128, 0.15);
       }
     }
   }
