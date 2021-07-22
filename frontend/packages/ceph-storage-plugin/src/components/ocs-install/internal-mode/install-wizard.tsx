@@ -98,7 +98,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
         </Link>
       ),
       id: CreateStepsSC.STORAGEANDNODES,
-      component: <SelectCapacityAndNodes state={state} dispatch={dispatch} mode={mode} />,
+      component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
       enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
     },
     {

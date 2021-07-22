@@ -26,6 +26,7 @@ import {
   getStorageSystemKind,
   createExternalSSName,
 } from '../../utils/create-storage-system';
+import { MINIMUM_NODES } from '../../constants';
 
 const validateBackingStorageStep = (backingStorage, sc) => {
   const { type, externalStorage } = backingStorage;
@@ -41,9 +42,10 @@ const validateBackingStorageStep = (backingStorage, sc) => {
   }
 };
 
-const validateStep = (name: string, state: WizardState, t: TFunction) => {
-  const { storageClass, backingStorage, createStorageClass } = state;
+const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
+  const { storageClass, backingStorage, createStorageClass, capacityAndNodes } = state;
   const { externalStorage } = backingStorage;
+  const { nodes, capacity } = capacityAndNodes;
   const { canGoToNextStep } = getExternalStorage(externalStorage) || {};
 
   switch (name) {
@@ -53,9 +55,11 @@ const validateStep = (name: string, state: WizardState, t: TFunction) => {
       return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
     case StepsName(t)[Steps.ConnectionDetails]:
       return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
-    case StepsName(t)[Steps.CreateLocalVolumeSet]:
     case StepsName(t)[Steps.CapacityAndNodes]:
+      return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.ReviewAndCreate]:
+      return nodes.length >= MINIMUM_NODES && capacity;
+    case StepsName(t)[Steps.CreateLocalVolumeSet]:
     case StepsName(t)[Steps.SecurityAndNetwork]:
       return true;
     default:
@@ -119,7 +123,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   const stepId = activeStep.id as number;
   const stepName = activeStep.name as string;
 
-  const jumpToNextStep = validateStep(stepName, state, t);
+  const jumpToNextStep = canJumpToNextStep(stepName, state, t);
 
   const handleNext = async () => {
     const payloads = getPayloads(stepName, state, t);

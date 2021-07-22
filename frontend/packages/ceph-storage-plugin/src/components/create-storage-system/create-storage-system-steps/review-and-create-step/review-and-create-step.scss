@@ -1,0 +1,18 @@
+.odf-review-and-create__body {
+    margin-left: var(--pf-global--spacer--md);
+}
+
+.odf-review-and-create__icon {
+    margin-right: var(--pf-global--spacer--xs);
+}
+
+.odf-review-and-create__card {
+    max-width: 27rem;
+    max-height: 12rem;
+}
+
+.odf-review-and-create__card-body {
+    overflow-y: scroll;
+    overflow-x: auto;
+    scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
+}

@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { TFunction } from 'i18next';
 import { WizardStep } from '@patternfly/react-core';
-import { CreateStorageClass } from './create-storage-class-step';
-import { ConnectionDetails } from './connection-details';
-import { WizardDispatch, WizardState } from '../reducer';
+import {
+  CapacityAndNodes,
+  CreateStorageClass,
+  ConnectionDetails,
+  ReviewAndCreate,
+} from './create-storage-system-steps';
+import { WizardDispatch, WizardState } from './reducer';
 import {
   BackingStorageType,
   DeploymentType,
   Steps,
   StepsName,
-} from '../../../constants/create-storage-system';
-import { OCSServiceModel } from '../../../models';
+} from '../../constants/create-storage-system';
+import { OCSServiceModel } from '../../models';
 
 export const createSteps = (
   t: TFunction,
@@ -18,18 +22,32 @@ export const createSteps = (
   dispatch: WizardDispatch,
   hasOCS: boolean,
 ): WizardStep[] => {
-  const { backingStorage, stepIdReached, createStorageClass, storageClass } = state;
+  const {
+    backingStorage,
+    stepIdReached,
+    createStorageClass,
+    storageClass,
+    capacityAndNodes,
+  } = state;
   const { externalStorage, deployment } = backingStorage;
 
   const commonSteps = {
     capacityAndNodes: {
       name: StepsName(t)[Steps.CapacityAndNodes],
+      component: (
+        <CapacityAndNodes
+          dispatch={dispatch}
+          state={capacityAndNodes}
+          storageClass={storageClass}
+        />
+      ),
     },
     securityAndNetwork: {
       name: StepsName(t)[Steps.SecurityAndNetwork],
     },
     reviewAndCreate: {
       name: StepsName(t)[Steps.ReviewAndCreate],
+      component: <ReviewAndCreate state={state} />,
     },
   };
 

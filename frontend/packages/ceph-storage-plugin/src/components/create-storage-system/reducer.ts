@@ -10,18 +10,33 @@ export type WizardCommonProps = {
   dispatch: WizardDispatch;
 };
 
+export type WizardNodeState = {
+  name: string;
+  hostName: string;
+  cpu: string;
+  memory: string;
+  zone: string;
+  uid: string;
+  roles: string[];
+};
+
 /* State of CreateStorageSystem */
 export const initialState: CreateStorageSystemState = {
   stepIdReached: 1,
+  storageClass: { name: '', provisioner: '' },
   backingStorage: {
     type: BackingStorageType.EXISTING,
     externalStorage: '',
     deployment: DeploymentType.ALL,
     isAdvancedOpen: false,
   },
+  capacityAndNodes: {
+    nodes: [],
+    capacity: '2Ti',
+    enableArbiter: false,
+  },
   createStorageClass: {},
   connectionDetails: {},
-  storageClass: { name: '', provisioner: '' },
 };
 
 type CreateStorageSystemState = {
@@ -35,6 +50,11 @@ type CreateStorageSystemState = {
   };
   createStorageClass: ExternalState;
   connectionDetails: ExternalState;
+  capacityAndNodes: {
+    nodes: WizardNodeState[];
+    capacity: string;
+    enableArbiter: boolean;
+  };
 };
 
 /* Reducer of CreateStorageSystem */
@@ -50,6 +70,18 @@ export const reducer: WizardReducer = (prevState, action) => {
         provisioner: action.payload?.provisioner,
       };
       break;
+    case 'wizard/setCreateStorageClass':
+      newState.createStorageClass = {
+        ...newState.createStorageClass,
+        [action.payload.field]: action.payload.value,
+      };
+      break;
+    case 'wizard/setConnectionDetails':
+      newState.connectionDetails = {
+        ...newState.connectionDetails,
+        [action.payload.field]: action.payload.value,
+      };
+      break;
     case 'backingStorage/setType':
       newState.backingStorage.type = action.payload;
       break;
@@ -62,17 +94,11 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'backingStorage/setIsAdvancedOpen':
       newState.backingStorage.isAdvancedOpen = action.payload;
       break;
-    case 'wizard/setCreateStorageClass':
-      newState.createStorageClass = {
-        ...newState.createStorageClass,
-        [action.payload.field]: action.payload.value,
-      };
+    case 'capacityAndNodes/nodes':
+      newState.capacityAndNodes.nodes = action.payload;
       break;
-    case 'wizard/setConnectionDetails':
-      newState.connectionDetails = {
-        ...newState.connectionDetails,
-        [action.payload.field]: action.payload.value,
-      };
+    case 'capacityAndNodes/capacity':
+      newState.capacityAndNodes.capacity = action.payload;
       break;
     default:
       throw new TypeError(`${action} is not a valid reducer action`);
@@ -88,11 +114,6 @@ export type WizardReducer = (
 /* Actions of CreateStorageSystem */
 type CreateStorageSystemAction =
   | { type: 'wizard/setStepIdReached'; payload: number }
-  | { type: 'backingStorage/setType'; payload: WizardState['backingStorage']['type'] }
-  | {
-      type: 'backingStorage/setExternalStorage';
-      payload: WizardState['backingStorage']['externalStorage'];
-    }
   | {
       type: 'backingStorage/setDeployment';
       payload: WizardState['backingStorage']['deployment'];
@@ -112,4 +133,11 @@ type CreateStorageSystemAction =
   | {
       type: 'wizard/setConnectionDetails';
       payload: { field: ExternalStateKeys; value: ExternalStateValues };
-    };
+    }
+  | { type: 'backingStorage/setType'; payload: WizardState['backingStorage']['type'] }
+  | {
+      type: 'backingStorage/setExternalStorage';
+      payload: WizardState['backingStorage']['externalStorage'];
+    }
+  | { type: 'capacityAndNodes/nodes'; payload: WizardState['capacityAndNodes']['nodes'] }
+  | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] };
