@@ -57,6 +57,14 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
       />
     );
   };
+  React.useLayoutEffect(() => {
+    if (selectedItemId) {
+      const element = document.getElementById(selectedItemId);
+      if (element) {
+        element?.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [selectedItemId]);
 
   return (
     <div className="odc-quick-search-list">
@@ -115,18 +123,21 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
           );
         })}
       </DataList>
-      <div className="odc-quick-search-list__all-items-link">
-        {viewAll?.map((catalogLink) => (
-          <Link
-            id={catalogLink.catalogType}
-            to={catalogLink.to}
-            key={catalogLink.catalogType}
-            style={{ fontSize: 'var(--pf-global--FontSize--sm)' }}
-          >
-            {catalogLink.label}
-          </Link>
-        ))}
-      </div>
+
+      {viewAll.length > 0 && (
+        <div className="odc-quick-search-list__all-items-link">
+          {viewAll?.map((catalogLink) => (
+            <Link
+              id={catalogLink.catalogType}
+              to={catalogLink.to}
+              key={catalogLink.catalogType}
+              style={{ fontSize: 'var(--pf-global--FontSize--sm)' }}
+            >
+              {catalogLink.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

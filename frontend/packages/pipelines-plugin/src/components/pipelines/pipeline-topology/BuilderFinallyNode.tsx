@@ -30,7 +30,13 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
   const { t } = useTranslation();
   const { width, height } = element.getBounds();
   const { clusterTaskList = [], namespaceTaskList = [], task, namespace } = element.getData();
-  const { addNewFinallyListNode, finallyTasks = [], finallyListTasks = [] } = task;
+
+  const {
+    addNewFinallyListNode,
+    finallyTasks = [],
+    finallyListTasks = [],
+    onTaskSearch = () => {},
+  } = task;
   const allTasksLength = finallyTasks.length + finallyListTasks.length;
   const nodeCenter = NODE_HEIGHT + NODE_HEIGHT / 2;
   const leftPadding = FINALLY_NODE_PADDING + WHEN_EXPRESSION_SPACING;
@@ -108,6 +114,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
               listOptions={[...clusterTaskList, ...namespaceTaskList]}
               onRemoveTask={flt.onRemoveTask}
               onNewTask={flt.convertList}
+              onTaskSearch={onTaskSearch}
             />
           </g>
         </g>

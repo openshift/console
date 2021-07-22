@@ -13,6 +13,7 @@ import {
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
+import PipelineQuickSearch from '../../quicksearch/PipelineQuickSearch';
 import { STATUS_KEY_NAME_ERROR, UpdateOperationType } from './const';
 import { sanitizeToForm, sanitizeToYaml } from './form-switcher-validation';
 import { useExplicitPipelineTaskTouch, useFormikFetchAndSaveTasks } from './hooks';
@@ -28,8 +29,10 @@ import {
   UpdateOperationRenameTaskData,
   PipelineBuilderFormikValues,
   TaskType,
+  TaskSearchCallback,
 } from './types';
 import { applyChange } from './update-utils';
+
 import './PipelineBuilderForm.scss';
 
 type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
@@ -61,8 +64,16 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);
+  const [container, setContainerView] = React.useState<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
+  const savedCallback = React.useRef(() => {});
+
   statusRef.current = status;
 
+  const onTaskSearch: TaskSearchCallback = (callback: () => void): void => {
+    setMenuOpen(true);
+    savedCallback.current = callback;
+  };
   const onTaskSelection = (task: PipelineTask, resource: TaskKind, isFinallyTask: boolean) => {
     const builderNodes = isFinallyTask ? formData.finallyTasks : formData.tasks;
     setSelectedTask({
@@ -108,6 +119,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       taskGroup={taskGroup}
       taskResources={taskResources}
       onTaskSelection={onTaskSelection}
+      onTaskSearch={onTaskSearch}
       onUpdateTasks={(updatedTaskGroup, op) => {
         updateTasks(applyChange(updatedTaskGroup, op));
       }}
@@ -127,6 +139,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
           </StackItem>
           <FlexForm onSubmit={handleSubmit}>
             <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
+              <div ref={setContainerView} />
+              <PipelineQuickSearch
+                namespace={'rh-test'}
+                viewContainer={container}
+                isOpen={menuOpen}
+                callback={savedCallback.current}
+                setIsOpen={(open) => setMenuOpen(open)}
+              />
               <SyncedEditorField
                 name="editorType"
                 formContext={{

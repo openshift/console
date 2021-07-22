@@ -80,6 +80,8 @@ export type SelectTaskCallback = (
   isFinallyTask: boolean,
 ) => void;
 
+export type TaskSearchCallback = (callback: () => void) => void;
+
 export type UpdateOperation<D extends UpdateOperationBaseData = UpdateOperationBaseData> = {
   type: UpdateOperationType;
   data: D;

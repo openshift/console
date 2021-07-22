@@ -20,6 +20,7 @@ interface QuickSearchContentProps {
   onSelect: (itemId: string) => void;
   viewAll?: CatalogLinkData[];
   closeModal: () => void;
+  isLimitedList?: boolean;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
@@ -32,6 +33,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   selectedItemId,
   onSelect,
   closeModal,
+  isLimitedList = true,
 }) => {
   return (
     <Split className="odc-quick-search-content">
@@ -42,7 +44,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
         })}
       >
         <QuickSearchList
-          listItems={catalogItems.slice(0, MAX_CATALOG_ITEMS_SHOWN)}
+          listItems={isLimitedList ? catalogItems.slice(0, MAX_CATALOG_ITEMS_SHOWN) : catalogItems}
           catalogItemTypes={catalogItemTypes}
           viewAll={viewAll}
           selectedItemId={selectedItemId}

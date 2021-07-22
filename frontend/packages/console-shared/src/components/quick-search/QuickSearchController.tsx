@@ -11,6 +11,9 @@ type QuickSearchControllerProps = {
   searchPlaceholder: string;
   allItemsLoaded: boolean;
   isOpen: boolean;
+  icon?: React.ReactNode;
+  isLimitedList?: boolean;
+  modalPositionOffset?: string;
   setIsOpen: (isOpen: boolean) => void;
 };
 
@@ -20,6 +23,9 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   searchPlaceholder,
   viewContainer,
   allItemsLoaded,
+  modalPositionOffset,
+  isLimitedList = true,
+  icon,
   isOpen,
   setIsOpen,
 }) => {
@@ -34,7 +40,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
             : [];
           const itemCount = items.length;
           const viewAllLink =
-            itemCount > 0
+            itemCount > 0 && isLimitedList
               ? [
                   {
                     label: t(quickSearchProvider.catalogLinkLabel, { itemCount }),
@@ -59,7 +65,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         { filteredItems: [], viewAllLinks: [], catalogItemTypes: [] },
       );
     },
-    [namespace, quickSearchProviders, t],
+    [isLimitedList, namespace, quickSearchProviders, t],
   );
 
   React.useEffect(() => {
@@ -84,6 +90,9 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
 
   return (
     <QuickSearchModal
+      isLimitedList={isLimitedList}
+      icon={icon}
+      modalPositionOffset={modalPositionOffset}
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       namespace={namespace}

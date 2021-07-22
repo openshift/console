@@ -13,12 +13,14 @@ import {
   PipelineBuilderTaskGroup,
   SelectTaskCallback,
   UpdateTasksCallback,
+  TaskSearchCallback,
 } from './types';
 import { getBuilderTasksErrorGroup } from './utils';
 
 type PipelineBuilderVisualizationProps = {
   onTaskSelection: SelectTaskCallback;
   onUpdateTasks: UpdateTasksCallback;
+  onTaskSearch: TaskSearchCallback;
   taskGroup: PipelineBuilderTaskGroup;
   taskResources: PipelineBuilderTaskResources;
 };
@@ -26,6 +28,7 @@ type PipelineBuilderVisualizationProps = {
 const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> = ({
   onTaskSelection,
   onUpdateTasks,
+  onTaskSearch,
   taskGroup,
   taskResources,
 }) => {
@@ -34,6 +37,7 @@ const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> 
   const nodes = useNodes(
     onTaskSelection,
     onUpdateTasks,
+    onTaskSearch,
     taskGroup,
     taskResources,
     getBuilderTasksErrorGroup(errors?.formData, status),

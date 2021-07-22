@@ -25,7 +25,7 @@ export type TaskResult = {
 
 export type TektonTaskSpec = {
   metadata?: {};
-
+  description?: string;
   steps: TektonTaskSteps[];
   params?: TektonParam[];
   resources?: TektonResourceGroup<TektonResource>;
