@@ -1,10 +1,11 @@
 import {
   IMPORTING,
-  TEMPLATE_NAME,
-  TEMPLATE_BASE_IMAGE,
   OS_IMAGES_NS,
   PREPARING_FOR_CUSTOMIZATION,
   READY_FOR_CUSTOMIZATION,
+  TEMPLATE_BASE_IMAGE,
+  TEMPLATE_METADATA_NAME,
+  TEMPLATE_NAME,
   TEST_PROVIDER,
 } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
@@ -46,7 +47,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
 
-    virtualization.templates.customizeSource(TEMPLATE_NAME);
+    virtualization.templates.customizeSource(TEMPLATE_METADATA_NAME);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();
@@ -63,7 +64,7 @@ describe('test vm template source image', () => {
     cy.createUserTemplate(testName);
     virtualization.templates.visit();
 
-    virtualization.templates.customizeSource(TEMPLATE_NAME);
+    virtualization.templates.customizeSource(TEMPLATE_METADATA_NAME);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();

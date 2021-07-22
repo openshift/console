@@ -71,7 +71,11 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
       <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} />
       </TableData>
-      <TableData className={dimensify()} data-test="template-source">
+      <TableData
+        className={dimensify()}
+        data-test="template-source"
+        data-test-template-name={template.metadata.name}
+      >
         <TemplateSource
           loadError={sourceLoadError}
           loaded={loaded}

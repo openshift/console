@@ -54,16 +54,12 @@ export const virtualization = {
         cy.byTestID('template-source', { timeout }).should('have.text', sourceStatus),
       ),
     deleteSource: (templateName: string) => {
-      getRow(templateName, () =>
-        cy.byTestID('template-source').within(() => cy.get('button').click()),
-      );
+      cy.get(`[data-test-template-name="${templateName}"] > button`).click();
       cy.byTestID('delete-template-source').click();
       cy.byTestID('confirm-action').click();
     },
     customizeSource: (templateName: string) => {
-      getRow(templateName, () =>
-        cy.byTestID('template-source').within(() => cy.get('button').click()),
-      );
+      cy.get(`[data-test-template-name="${templateName}"] > button`).click();
       cy.byTestID('customize-template-source').click();
       cy.get('#confirm-action').click();
     },
