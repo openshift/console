@@ -170,6 +170,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       const pvCapacity = calcPVsCapacity(pvBySc);
       const humanizedCapacity = humanizeBinaryBytes(pvCapacity).string;
       dispatch({ type: 'capacityAndNodes/capacity', payload: humanizedCapacity });
+      dispatch({ type: 'capacityAndNodes/pvCount', payload: memoizedPv.length });
     }
   }, [dispatch, memoizedPv, pvLoadError, pvLoaded, storageClassName]);
 

@@ -32,3 +32,5 @@ export const StepsName = (t: TFunction) => ({
 });
 
 export const StorageClusterIdentifier = 'storagecluster.ocs.openshift.io/v1';
+
+export const StorageClusterSystemName = 'odf-storage-system';

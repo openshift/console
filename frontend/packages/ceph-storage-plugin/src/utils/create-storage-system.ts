@@ -34,7 +34,7 @@ export const getAllZone = (nodes: WizardNodeState[]): Set<string> =>
     new Set<string>(),
   );
 
-export const createWizardNodeState = (nodes: NodeKind[]) =>
+export const createWizardNodeState = (nodes: NodeKind[]): WizardNodeState[] =>
   nodes.map((node) => {
     const name = getName(node);
     const hostName = getLabel(node, 'kubernetes.io/hostname', '');
@@ -43,6 +43,7 @@ export const createWizardNodeState = (nodes: NodeKind[]) =>
     const zone = getZone(node);
     const uid = getUID(node);
     const roles = getNodeRoles(node).sort();
+    const labels = node?.metadata?.labels;
     return {
       name,
       hostName,
@@ -51,6 +52,7 @@ export const createWizardNodeState = (nodes: NodeKind[]) =>
       zone,
       uid,
       roles,
+      labels,
     };
   });
 

@@ -73,7 +73,7 @@ const createCluster = async (
     setInProgress(true);
 
     const storageCluster: StorageClusterKind = getOCSRequestData(
-      storageClass,
+      { name: storageClass?.metadata?.name, provisioner: storageClass?.provisioner },
       defaultRequestSize.BAREMETAL,
       encryption.clusterWide,
       enableMinimal,
