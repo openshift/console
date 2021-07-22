@@ -25,9 +25,12 @@
       ]
     },
     "exposedModules": {
+
       "alert": "src/utils/alert-action-path.tsx",
       "storageProvider": "src/components/attach-obc/attach-obc-deployment.tsx",
-      "createStorageSystem": "src/components/create-storage-system/create-storage-system.tsx"
+      "createStorageSystem": "src/components/create-storage-system/create-storage-system.tsx",
+      "blockPoolListPage": "./src/components/block-pool/block-pool-list-page.tsx",
+      "blockPoolCreatePage": "./src/components/block-pool/create-block-pool.tsx"
     }
   }
 }

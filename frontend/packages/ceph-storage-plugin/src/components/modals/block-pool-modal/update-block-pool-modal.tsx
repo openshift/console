@@ -11,7 +11,7 @@ import {
   ModalFooter,
 } from '@console/internal/components/factory/modal';
 import { StatusBox } from '@console/internal/components/utils/status-box';
-import { k8sPatch } from '@console/internal/module/k8s';
+import { k8sPatch, K8sKind } from '@console/internal/module/k8s';
 import { HandlePromiseProps } from '@console/internal/components/utils/promise-component';
 import { withHandlePromise } from '@console/internal/components/utils';
 
@@ -147,7 +147,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
 });
 
 type UpdateBlockPoolModalProps = {
-  kind?: string;
+  kindObj?: K8sKind;
   blockPoolConfig: StoragePoolKind;
 } & HandlePromiseProps &
   ModalComponentProps;

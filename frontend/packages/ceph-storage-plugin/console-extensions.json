@@ -143,5 +143,32 @@
         "OCS"
       ]
     }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "ceph.rook.io",
+        "version": "v1",
+        "kind": "CephBlockPool"
+      },
+      "component":{ "$codeRef": "blockPoolListPage.BlockPoolListPage" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/ceph.rook.io~v1~CephBlockPool/~new"],
+      "component": {
+        "$codeRef": "blockPoolCreatePage.default"
+      }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
   }
 ]
