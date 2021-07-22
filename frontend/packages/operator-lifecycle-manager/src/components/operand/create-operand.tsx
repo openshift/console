@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -81,7 +81,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   const baseSchema = React.useMemo(
     () =>
       crd?.spec?.versions?.find?.((version) => version.name === providedAPI?.version)?.schema
-        ?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema6),
+        ?.openAPIV3Schema ?? (definitionFor(model) as JSONSchema7),
     [crd, model, providedAPI],
   );
 
@@ -93,7 +93,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   const [schema, FormComponent] = React.useMemo(() => {
     const useFallback =
       getSchemaErrors(baseSchema).length ||
-      hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema6);
+      hasNoFields((baseSchema?.properties?.spec ?? {}) as JSONSchema7);
     return useFallback
       ? // eslint-disable-next-line @typescript-eslint/camelcase
         [baseSchema, DEPRECATED_CreateOperandForm]

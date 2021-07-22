@@ -1,7 +1,7 @@
+import { UiSchema } from '@rjsf/core';
 import * as Immutable from 'immutable';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
-import { UiSchema } from 'react-jsonschema-form';
 import i18n from '@console/internal/i18n';
 import { modelFor } from '@console/internal/module/k8s';
 import { getSchemaAtPath } from '@console/shared';
@@ -21,7 +21,7 @@ import { HIDDEN_UI_SCHEMA } from './const';
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
-export const hideAllExistingProperties = (schema: JSONSchema6) => {
+export const hideAllExistingProperties = (schema: JSONSchema7) => {
   return _.reduce(
     schema?.properties,
     (acc, _unused, propertyName) => ({
@@ -124,7 +124,7 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
 // Map a set of spec descriptors to a ui schema
 export const descriptorsToUISchema = (
   descriptors: Descriptor<SpecCapability>[],
-  jsonSchema: JSONSchema6,
+  jsonSchema: JSONSchema7,
 ) => {
   const uiSchemaFromDescriptors = _.reduce(
     descriptors,
@@ -176,7 +176,7 @@ export const descriptorsToUISchema = (
 export const getUISchema = (jsonSchema, providedAPI) => {
   return {
     metadata: {
-      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema6),
+      ...hideAllExistingProperties(jsonSchema?.properties?.metadata as JSONSchema7),
       name: {
         'ui:title': i18n.t('public~Name'),
         'ui:widget': 'TextWidget',
