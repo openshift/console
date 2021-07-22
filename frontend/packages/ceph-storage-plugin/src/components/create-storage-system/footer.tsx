@@ -85,7 +85,7 @@ const getPayloads = (stepName: string, state: WizardState, t: TFunction) => {
     if (deployment === DeploymentType.MCG) {
       const { apiGroup, apiVersion, kind } = OCSServiceModel;
       const systemName = 'odf-storage-system';
-      const systemKind = getStorageSystemKind({ group: apiGroup, version: apiVersion, kind });
+      const systemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
       return [createNoobaaPayload(), createSSPayload(systemKind, systemName)];
     }
     if (type === BackingStorageType.EXTERNAL) {

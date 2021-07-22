@@ -6,9 +6,10 @@ export const SUPPORTED_EXTERNAL_STORAGE: ExternalStorage[] = [
   {
     displayName: 'Red Hat Ceph Storage',
     model: {
-      group: OCSServiceModel.apiGroup,
-      version: OCSServiceModel.apiVersion,
+      apiGroup: OCSServiceModel.apiGroup,
+      apiVersion: OCSServiceModel.apiVersion,
       kind: OCSServiceModel.kind,
+      plural: OCSServiceModel.plural,
     },
     Component: ConnectionDetails,
     createPayload: rhcsPayload,

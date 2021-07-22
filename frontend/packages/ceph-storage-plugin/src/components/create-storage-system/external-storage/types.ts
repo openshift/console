@@ -1,4 +1,3 @@
-import { ExtensionK8sModel } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { IP_FAMILY } from '../../../constants';
 
@@ -9,8 +8,8 @@ export type ExternalStorage = {
   /** Display name of the external storage vendor. */
   displayName: string;
 
-  /** The model referring the `apiGroup`,`apiVersion` and `kind` of the external storage vendor's CRD. */
-  model: ExtensionK8sModel;
+  /** The model referring the `apiGroup`,`apiVersion`, `plural` and `kind` of the external storage vendor's CRD. */
+  model: Model;
 
   /** A React Functional Component to input the connection details of the external storage vendor. */
   Component: React.FunctionComponent<ExternalComponentProps<{}>>;
@@ -20,6 +19,22 @@ export type ExternalStorage = {
 
   /**  Handler function to validate the storage class page in order to move to the next step of wizard */
   canGoToNextStep: CanGoToNextStep<{}>;
+};
+
+/** The model referring the `apiGroup`,`apiVersion`, `plural` and `kind` of the external storage vendor's CRD. */
+
+type Model = {
+  /* apiGroup of the external provider CRD */
+  apiGroup: string;
+
+  /* apiVersion of the external provider CRD */
+  apiVersion: string;
+
+  /* kind of the external provider CRD */
+  kind: string;
+
+  /* plural of the external provider CRD */
+  plural: string;
 };
 
 /** Props for `ExternalStorage.Component` to input the connection details of the external storage vendor. */
@@ -51,11 +66,11 @@ export type ExternalComponentProps<S extends ExternalState> = {
 export type CreatePayload<S extends ExternalState> = (
   systemName: string,
   state: S,
-  model: ExtensionK8sModel,
+  model: Model,
   storageClassName: string,
 ) => Payload[];
 
-export type Payload = { model: ExtensionK8sModel; payload: K8sResourceKind };
+export type Payload = { model: Model; payload: K8sResourceKind };
 
 /**
  *  @function CanGoToNextStep<S>
