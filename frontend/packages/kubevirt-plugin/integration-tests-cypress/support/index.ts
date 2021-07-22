@@ -36,12 +36,14 @@ Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
   cy.exec(
     `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s`,
+    { timeout: 120000 },
   );
 
   // VMI may still be there while VM is being deleted. Wait for VMI to be deleted before continuing
   if (['VirtualMachine', 'DataVolume', 'PersistentVolumeClaim'].includes(kind)) {
     cy.exec(
       `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} vmi ${resource.metadata.name} --wait=true --timeout=120s`,
+      { timeout: 120000 },
     );
   }
 });

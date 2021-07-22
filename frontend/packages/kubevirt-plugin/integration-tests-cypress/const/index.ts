@@ -16,6 +16,8 @@ export const ADD_SOURCE = 'Add source';
 export const COMMUNITY = 'Community';
 export const PREPARING_FOR_CUSTOMIZATION = 'Preparing for customization';
 export const READY_FOR_CUSTOMIZATION = 'Ready for customization';
+export const YAML_VM_NAME = 'vm-example';
+export const STATUS_READY = 'Ready';
 
 export enum DEFAULTS_VALUES {
   NOT_AVAILABLE = 'Not available',
