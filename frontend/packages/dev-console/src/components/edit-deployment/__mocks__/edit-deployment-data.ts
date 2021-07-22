@@ -170,6 +170,7 @@ export const mockFormValues = {
     config: true,
   },
   fromImageStreamTag: true,
+  envs: [],
 };
 
 export const mockEditDeploymentData = {
@@ -453,4 +454,64 @@ export const mockDeploymentConfig = {
     replicas: 1,
     readyReplicas: 1,
   },
+};
+
+export const mockDeployment = {
+  kind: 'Deployment',
+  apiVersion: 'apps/v1',
+  metadata: {
+    annotations: {
+      'app.openshift.io/connects-to': '["wit"]',
+    },
+    resourceVersion: '753748',
+    name: 'analytics-deployment',
+    uid: '5ca9ae28-680d-11e9-8c69-5254003f9382',
+    creationTimestamp: '2019-04-22T11:35:37Z',
+    generation: 5,
+    namespace: 'testproject1',
+    labels: {
+      'app.kubernetes.io/component': 'backend',
+      'app.kubernetes.io/instance': 'analytics',
+      'app.kubernetes.io/name': 'python',
+      'app.kubernetes.io/part-of': 'application-1',
+      'app.kubernetes.io/version': '1.0',
+    },
+  },
+  spec: {
+    replicas: 3,
+    selector: {
+      matchLabels: {
+        'app.kubernetes.io/component': 'backend',
+        'app.kubernetes.io/instance': 'analytics',
+        'app.kubernetes.io/name': 'python',
+        'app.kubernetes.io/part-of': 'application-1',
+        'app.kubernetes.io/version': '1.0',
+      },
+    },
+    template: {
+      metadata: {
+        creationTimestamp: null,
+        labels: {
+          'app.kubernetes.io/component': 'backend',
+          'app.kubernetes.io/instance': 'analytics',
+          'app.kubernetes.io/name': 'python',
+          'app.kubernetes.io/part-of': 'application-1',
+          'app.kubernetes.io/version': '1.0',
+        },
+      },
+      spec: {
+        containers: [],
+      },
+    },
+    strategy: {
+      type: 'RollingUpdate',
+      rollingUpdate: {
+        maxUnavailable: '25%',
+        maxSurge: '25%',
+      },
+    },
+    revisionHistoryLimit: 10,
+    progressDeadlineSeconds: 600,
+  },
+  status: {},
 };

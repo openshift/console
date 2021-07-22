@@ -14,7 +14,7 @@ const CustomStrategy: React.FC<StrategyFieldProps> = ({ resourceObj }) => {
     },
   } = useFormikContext<FormikValues>();
   return (
-    <>
+    <div data-test="customParams">
       <InputField
         name="formData.deploymentStrategy.customParams.image"
         label={t('devconsole~Image name')}
@@ -37,7 +37,7 @@ const CustomStrategy: React.FC<StrategyFieldProps> = ({ resourceObj }) => {
         obj={resourceObj}
         envPath={['spec', 'strategy', 'customParams']}
       />
-    </>
+    </div>
   );
 };
 
