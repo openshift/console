@@ -12,8 +12,7 @@ type QuickSearchControllerProps = {
   allItemsLoaded: boolean;
   isOpen: boolean;
   icon?: React.ReactNode;
-  isLimitedList?: boolean;
-  modalPositionOffset?: string;
+  limitItemCount: number;
   setIsOpen: (isOpen: boolean) => void;
 };
 
@@ -23,14 +22,14 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   searchPlaceholder,
   viewContainer,
   allItemsLoaded,
-  modalPositionOffset,
-  isLimitedList = true,
+  limitItemCount,
   icon,
   isOpen,
   setIsOpen,
 }) => {
   const { t } = useTranslation();
 
+  const isLimitedList = limitItemCount > 0;
   const searchCatalog = React.useCallback(
     (searchTerm: string): QuickSearchData => {
       return quickSearchProviders.reduce(
@@ -90,9 +89,8 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
 
   return (
     <QuickSearchModal
-      isLimitedList={isLimitedList}
+      limitItemCount={limitItemCount}
       icon={icon}
-      modalPositionOffset={modalPositionOffset}
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       namespace={namespace}

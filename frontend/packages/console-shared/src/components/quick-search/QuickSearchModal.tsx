@@ -12,9 +12,8 @@ interface QuickSearchModalProps {
   searchCatalog: (searchTerm: string) => QuickSearchData;
   searchPlaceholder: string;
   viewContainer?: HTMLElement;
-  isLimitedList: boolean;
+  limitItemCount: number;
   icon?: React.ReactNode;
-  modalPositionOffset?: string;
 }
 
 const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
@@ -26,8 +25,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   allCatalogItemsLoaded,
   viewContainer,
   icon,
-  isLimitedList = true,
-  modalPositionOffset = '15%',
+  limitItemCount,
 }) => {
   const { t } = useTranslation();
 
@@ -38,7 +36,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       isOpen={isOpen}
       showClose={false}
       position="top"
-      positionOffset={modalPositionOffset}
+      positionOffset="15%"
       hasNoBodyWrapper
       appendTo={viewContainer}
     >
@@ -48,7 +46,7 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         searchPlaceholder={searchPlaceholder}
         namespace={namespace}
         closeModal={closeModal}
-        isLimitedList={isLimitedList}
+        limitItemCount={limitItemCount}
         icon={icon}
       />
     </Modal>

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   AddNodeDirection,
   BUILDER_NODE_ADD_RADIUS,
-  BUILDER_NODE_ERROR_RADIUS,
+  BUILDER_NODE_DECORATOR_RADIUS,
   BUILDER_NODE_ADD_PADDING,
 } from './const';
 import ErrorNodeDecorator from './ErrorNodeDecorator';
@@ -37,8 +37,8 @@ const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
         <TaskNode element={element} disableTooltip />
         {error && (
           <ErrorNodeDecorator
-            x={BUILDER_NODE_ERROR_RADIUS / 2}
-            y={BUILDER_NODE_ERROR_RADIUS / 4}
+            x={BUILDER_NODE_DECORATOR_RADIUS / 2}
+            y={BUILDER_NODE_DECORATOR_RADIUS / 4}
             errorStr={error}
           />
         )}

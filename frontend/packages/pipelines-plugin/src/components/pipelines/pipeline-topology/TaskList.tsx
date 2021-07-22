@@ -58,7 +58,7 @@ const TaskList: React.FC<any> = ({
     [unselectedTaskText],
   );
   const renderText = (
-    <text x={width / 2 - 10} y={height / 2 + 1}>
+    <text x={width / 2} y={height / 2 + 1}>
       {truncatedTaskText}
     </text>
   );
@@ -69,8 +69,9 @@ const TaskList: React.FC<any> = ({
         data-test="task-list"
         ref={hoverRef}
         className="odc-task-list-node__trigger"
-        onClick={() => {
-          setTimeout(() => onTaskSearch(onNewTask), 0); // wait for thread end
+        onClick={(e) => {
+          e.stopPropagation();
+          onTaskSearch(onNewTask);
         }}
       >
         <rect

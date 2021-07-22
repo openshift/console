@@ -10,7 +10,7 @@ import {
   FINALLY_NODE_PADDING,
   FINALLY_NODE_VERTICAL_SPACING,
   FINALLY_ADD_LINK_TEXT_HEIGHT,
-  BUILDER_NODE_ERROR_RADIUS,
+  BUILDER_NODE_DECORATOR_RADIUS,
   FINALLY_ADD_LINK_SIZE,
   WHEN_EXPRESSION_SPACING,
 } from './const';
@@ -82,7 +82,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             {ft.error && (
               <ErrorNodeDecorator
                 x={BUILDER_NODE_ADD_RADIUS / 2}
-                y={BUILDER_NODE_ERROR_RADIUS / 4}
+                y={BUILDER_NODE_DECORATOR_RADIUS / 4}
                 errorStr={ft.error}
               />
             )}

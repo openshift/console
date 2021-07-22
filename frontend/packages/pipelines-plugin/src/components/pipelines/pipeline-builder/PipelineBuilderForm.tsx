@@ -64,7 +64,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);
-  const [container, setContainerView] = React.useState<HTMLElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
   const savedCallback = React.useRef(() => {});
 
@@ -139,10 +139,10 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
           </StackItem>
           <FlexForm onSubmit={handleSubmit}>
             <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
-              <div ref={setContainerView} />
+              <div ref={containerRef} />
               <PipelineQuickSearch
-                namespace={'rh-test'}
-                viewContainer={container}
+                namespace={namespace}
+                viewContainer={containerRef.current}
                 isOpen={menuOpen}
                 callback={savedCallback.current}
                 setIsOpen={(open) => setMenuOpen(open)}

@@ -5,13 +5,14 @@ import CatalogServiceProvider, {
   CatalogService,
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
 import { QuickSearchController, QuickSearchProviders } from '@console/shared';
+import { TaskSearchCallback } from '../pipelines/pipeline-builder/types';
 
 interface QuickSearchProps {
   namespace: string;
   viewContainer?: HTMLElement;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  callback: any;
+  callback: TaskSearchCallback;
 }
 
 const Contents: React.FC<{
@@ -58,9 +59,8 @@ const Contents: React.FC<{
       viewContainer={viewContainer}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      isLimitedList={false}
+      limitItemCount={0}
       icon={<PlusCircleIcon width="1.5em" height="1.5em" />}
-      modalPositionOffset="40%"
     />
   );
 };

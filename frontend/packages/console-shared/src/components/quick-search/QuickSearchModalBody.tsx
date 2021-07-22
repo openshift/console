@@ -21,7 +21,7 @@ interface QuickSearchModalBodyProps {
   searchPlaceholder: string;
   namespace: string;
   closeModal: () => void;
-  isLimitedList?: boolean;
+  limitItemCount: number;
   icon?: React.ReactNode;
 }
 
@@ -29,7 +29,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   searchCatalog,
   namespace,
   closeModal,
-  isLimitedList = true,
+  limitItemCount,
   searchPlaceholder,
   allCatalogItemsLoaded,
   icon,
@@ -42,7 +42,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [selectedItemId, setSelectedItemId] = React.useState<string>('');
   const [selectedItem, setSelectedItem] = React.useState<CatalogItem>(null);
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
-  const listCatalogItems = isLimitedList ? catalogItems?.slice(0, 5) : catalogItems;
+  const listCatalogItems =
+    limitItemCount > 0 ? catalogItems?.slice(0, limitItemCount) : catalogItems;
   const ref = React.useRef<HTMLDivElement>(null);
   const fireTelemetryEvent = useTelemetry();
 
@@ -192,7 +193,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           closeModal={closeModal}
           selectedItem={selectedItem}
           namespace={namespace}
-          isLimitedList={isLimitedList}
+          limitItemCount={limitItemCount}
           onSelect={(itemId) => {
             setSelectedItemId(itemId);
             setSelectedItem(catalogItems?.find((item) => item.uid === itemId));

@@ -159,9 +159,9 @@
   {
     "type": "console.catalog/item-type",
     "properties": {
-      "type": "Tekton",
-      "title": "%pipelines-plugin~Tekton%",
-      "catalogDescription": "%pipelines-plugin~Browse for tekton tasks available in the cluster.%"
+      "type": "Red Hat",
+      "title": "%pipelines-plugin~Red Hat%",
+      "catalogDescription": "%pipelines-plugin~Browse for openshift pipeline tasks available in the cluster.%"
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
@@ -171,7 +171,7 @@
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "pipelines-task-catalog",
-      "type": "Tekton",
+      "type": "Red Hat",
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
     },
     "flags": {

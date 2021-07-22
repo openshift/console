@@ -124,9 +124,9 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
         })}
       </DataList>
 
-      {viewAll.length > 0 && (
+      {viewAll?.length > 0 && (
         <div className="odc-quick-search-list__all-items-link">
-          {viewAll?.map((catalogLink) => (
+          {viewAll.map((catalogLink) => (
             <Link
               id={catalogLink.catalogType}
               to={catalogLink.to}

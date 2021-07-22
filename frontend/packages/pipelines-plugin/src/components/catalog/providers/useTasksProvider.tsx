@@ -1,21 +1,19 @@
 import * as React from 'react';
-import { TFunction } from 'i18next';
+import { useFormikContext } from 'formik';
+import i18next from 'i18next';
 import * as _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { TaskModel, ClusterTaskModel } from '../../../models';
 import { TaskKind } from '../../../types';
 import { TektonTaskAnnotation, TektonTaskLabel } from '../../pipelines/const';
+import { PipelineBuilderFormikValues } from '../../pipelines/pipeline-builder/types';
 
-const normalizeTektonTasks = (TektonTasks: TaskKind[], t: TFunction): CatalogItem<TaskKind>[] => {
+const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] => {
   const normalizedTektonTasks: CatalogItem<TaskKind>[] = _.reduce(
-    TektonTasks,
+    tektonTasks,
     (acc, task) => {
       const { uid, name, annotations = {}, creationTimestamp, labels = {} } = task.metadata;
-      const { description } = task?.spec;
+      const { description } = task.spec;
       const tags = (annotations[TektonTaskAnnotation.tags] || '').split(/\s*,\s*/);
       const provider = labels[TektonTaskLabel.providerType];
       const iconClass = 'icon-build';
@@ -23,7 +21,7 @@ const normalizeTektonTasks = (TektonTasks: TaskKind[], t: TFunction): CatalogIte
 
       const normalizedTektonTask: CatalogItem<TaskKind> = {
         uid,
-        type: 'Tekton',
+        type: 'Red Hat',
         name,
         description,
         provider,
@@ -34,7 +32,7 @@ const normalizeTektonTasks = (TektonTasks: TaskKind[], t: TFunction): CatalogIte
           class: iconClass,
         },
         cta: {
-          label: t('pipelines-plugin~Add'),
+          label: i18next.t('pipelines-plugin~Add'),
           callback: () => {},
         },
         data: task,
@@ -48,44 +46,21 @@ const normalizeTektonTasks = (TektonTasks: TaskKind[], t: TFunction): CatalogIte
   return normalizedTektonTasks;
 };
 
-const useTasks: ExtensionHook<CatalogItem[]> = ({
-  namespace,
-}): [CatalogItem[], boolean, string] => {
-  const { t } = useTranslation();
+const useTasksProvider: ExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, string] => {
+  const { values, status } = useFormikContext<PipelineBuilderFormikValues>();
+  const {
+    taskResources: { namespacedTasks, clusterTasks, tasksLoaded },
+  } = values;
 
-  const { namespacedTasks, clusterTasks } = useK8sWatchResources<{
-    namespacedTasks: TaskKind[];
-    clusterTasks: TaskKind[];
-  }>({
-    namespacedTasks: {
-      kind: referenceForModel(TaskModel),
-      isList: true,
-      namespace,
-    },
-    clusterTasks: {
-      kind: referenceForModel(ClusterTaskModel),
-      isList: true,
-      namespaced: false,
-    },
-  });
-  const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : [];
-  const clusterTaskData = clusterTasks.loaded ? clusterTasks.data : [];
-
-  const tektonTasks = React.useMemo(() => _.filter([...namespacedTaskData, ...clusterTaskData]), [
-    namespacedTaskData,
-    clusterTaskData,
+  const tektonTasks = React.useMemo(() => _.filter([...namespacedTasks, ...clusterTasks]), [
+    namespacedTasks,
+    clusterTasks,
   ]);
 
-  const normalizedTektonTasks = React.useMemo(() => normalizeTektonTasks(tektonTasks, t), [
+  const normalizedTektonTasks = React.useMemo(() => normalizeTektonTasks(tektonTasks), [
     tektonTasks,
-    t,
   ]);
-
-  return [
-    normalizedTektonTasks,
-    namespacedTasks.loaded && clusterTasks.loaded,
-    namespacedTasks.loadError || clusterTasks.loadError,
-  ];
+  return [normalizedTektonTasks, tasksLoaded, status?.taskLoadingError];
 };
 
-export default useTasks;
+export default useTasksProvider;
