@@ -12,7 +12,7 @@ export const app = {
       .its('readyState')
       .should('eq', 'complete');
   },
-  waitForLoad: (timeout: number = 80000) => {
+  waitForLoad: (timeout: number = 160000) => {
     cy.get('.co-m-loader', { timeout }).should('not.exist');
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
     cy.get('.skeleton-catalog--grid', { timeout }).should('not.exist');
@@ -21,7 +21,10 @@ export const app = {
     app.waitForDocumentLoad();
   },
   waitForNameSpacesToLoad: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
+    cy.request('/api/kubernetes/apis/project.openshift.io/v1/projects?limit=250').then((resp) => {
+      expect(resp.status).toEqual(200);
+    });
+    app.waitForLoad();
   },
 };
 
@@ -72,6 +75,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Topology: {
       cy.get(devNavigationMenuPO.topology).click();
       cy.url().should('include', 'topology');
+      app.waitForLoad();
       // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Topology Page in dev perspective');
       break;
@@ -215,8 +219,13 @@ export const projectNameSpace = {
 
   selectProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    cy.get(`[id="${projectName}-link"]`).click();
+    cy.byTestID('showSystemSwitch').check(); // Ensure that all projects are showing
+    cy.byTestID('dropdown-menu-item-link').should('have.length.gt', 5);
+    cy.byTestID('dropdown-text-filter').type(projectName);
+    cy.byTestID('namespace-dropdown-menu')
+      .find('[data-test="dropdown-menu-item-link"]')
+      .contains(projectName)
+      .click();
     cy.log(`User has selected namespace ${projectName}`);
   },
 
@@ -238,7 +247,7 @@ export const createForm = {
       .click(),
   clickSave: () =>
     cy
-      .get(formPO.create)
+      .get(formPO.save)
       .should('be.enabled')
       .click(),
   sectionTitleShouldContain: (sectionTitle: string) =>
@@ -263,5 +272,9 @@ export const yamlEditor = {
     cy.readFile(yamlLocation).then((str) => {
       yamlView.setEditorContent(str);
     });
+  },
+
+  clickSave: () => {
+    cy.byTestID('save-changes').click();
   },
 };

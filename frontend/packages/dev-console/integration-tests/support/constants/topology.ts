@@ -36,6 +36,7 @@ export enum nodeActions {
   DeleteInMemoryChannel = 'Delete InMemoryChannel',
   EditRevision = 'Edit Revision',
   DeleteRevision = 'Delete Revision',
+  MakeServerless = 'Make Serverless',
 }
 
 export enum applicationGroupingsActions {

@@ -8,12 +8,32 @@ Feature: side bar details
               And user has created or selected namespace "aut-knative-side-pane-details"
 
 
+        @precondition
+        Scenario Outline: Create knative workload from Container Images on Add page: KN-05-TC04
+            Given user is at Add page
+              And user is at Deploy Image page
+             When user enters Image name from external registry as "<image_name>"
+              And user selects the "<runtime_icon>" from Runtime Icon dropdown
+              And user selects the application "sample-app" from Application dropdown
+              And user enters Name as "<name>"
+              And user selects resource type as "Serverless Deployment"
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user will see the deployed image "<name>" with "<runtime_icon>" icon
+              And user is able to see Knative Revision
+
+        Examples:
+                  | name         | image_name                | runtime_icon |
+                  | hello-secure | openshift/hello-openshift | fedora       |
+
+
         @smoke
         Scenario: side bar details of knative Service: KN-06-TC01
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the knative service "nodejs-ex-git"
              Then side bar is displayed with heading name as "nodejs-ex-git"
-              And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed  in topology details
+              And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed in topology details
+              And Pods, Revisions, Routes and Builds displayed in Resources section
             # And Name display as "nodejs-ex-git-1" in topology details
             # And Namespace display as "aut-knative-side-pane-details" in topology details
             # And Labels section contain n number of Labels in topology details
@@ -27,18 +47,8 @@ Feature: side bar details
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the revision of knative service "nodejs-ex-git"
              Then side bar is displayed with heading name as "nodejs-ex-git"
-              And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed  in topology details
-
-
-        @to-do
-        Scenario: Resoruce details of knative revision in side bar: KN-06-TC03
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on Resoruces section
-
-
-        Scenario: links in side bar: KN-06-TC04
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the revision of knative service "nodejs-ex-git"
+              And Name, Namespace, Labels, Annotations, Created at, Owner fields displayed in topology details
+              And Pods, Deployment, Routes and Configurations displayed in Resources section
 
 
         @regression
@@ -53,12 +63,7 @@ Feature: side bar details
         Scenario: Resoruce details of knative service in side bar: KN-06-TC06
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the knative service "nodejs-ex-git"
-              And user clicks on Resoruces section
-
-
-        Scenario: links in side bar: KN-06-TC07
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the revision of knative service "nodejs-ex-git"
+              And user clicks on Resources section
 
 
         @regression
@@ -66,4 +71,4 @@ Feature: side bar details
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the knative service "nodejs-ex-git"
               And user clicks on Actions dropdown in top right corner of side bar
-             Then user able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit NameOfWorkLoad, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service
+             Then user able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service
