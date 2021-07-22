@@ -26,6 +26,7 @@ import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
+import MigrationTool from './migration-tool/MigrationTool';
 import { VirtualMachinesPage } from './vm';
 
 import './virtualization.scss';
@@ -173,6 +174,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
           {t('kubevirt-plugin~Virtualization')}
         </h1>
         <div className="co-actions" data-test-id="details-actions">
+          <MigrationTool />
           <Dropdown
             data-test-id="item-create"
             onSelect={() => setOpen(false)}
