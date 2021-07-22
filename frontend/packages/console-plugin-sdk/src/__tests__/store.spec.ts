@@ -317,8 +317,8 @@ describe('PluginStore', () => {
       expect(store.getAllExtensions()).toEqual(staticPluginExtensions);
     });
 
-    it('starts off with no information on dynamic plugins', () => {
-      const store = new PluginStore();
+    it('initializes dynamic plugin information based on allowedDynamicPluginNames', () => {
+      const store = new PluginStore([], ['Test1', 'Test2']);
 
       const {
         dynamicPluginExtensions,
@@ -331,7 +331,17 @@ describe('PluginStore', () => {
       expect(failedDynamicPluginNames.size).toBe(0);
 
       expect(store.getAllExtensions()).toEqual([]);
-      expect(store.getDynamicPluginInfo()).toEqual([]);
+      expect(store.getAllowedDynamicPluginNames()).toEqual(['Test1', 'Test2']);
+      expect(store.getDynamicPluginInfo()).toEqual([
+        {
+          status: 'Pending',
+          pluginName: 'Test1',
+        },
+        {
+          status: 'Pending',
+          pluginName: 'Test2',
+        },
+      ]);
     });
   });
 
@@ -347,7 +357,7 @@ describe('PluginStore', () => {
             ],
           },
         ],
-        new Set(['Test1', 'Test2']),
+        ['Test1', 'Test2'],
       );
 
       expect(store.getAllExtensions()).toEqual([
@@ -457,7 +467,7 @@ describe('PluginStore', () => {
     });
 
     it('invokes the listener when extensions in use or dynamic plugin information changes', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       const listeners = [jest.fn(), jest.fn()];
@@ -479,7 +489,7 @@ describe('PluginStore', () => {
 
   describe('addDynamicPlugin', () => {
     it('adds the given plugin into loadedDynamicPlugins', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
 
       const manifest = getPluginManifest('Test', '1.2.3', [
         {
@@ -560,7 +570,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if a plugin with the same ID is already registered', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest1 = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
       const manifest2 = getPluginManifest('Test', '1.2.3', [{ type: 'Bar', properties: {} }]);
 
@@ -591,7 +601,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is not listed via allowedDynamicPluginNames', () => {
-      const store = new PluginStore([], new Set(['Test1', 'Test2']));
+      const store = new PluginStore([], ['Test1', 'Test2']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
@@ -602,7 +612,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is already marked as failed', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       store.registerFailedDynamicPlugin('Test');
@@ -616,7 +626,7 @@ describe('PluginStore', () => {
 
   describe('setDynamicPluginEnabled', () => {
     it('recomputes dynamic extensions and calls all registered listeners', () => {
-      const store = new PluginStore([], new Set(['Test1', 'Test2']));
+      const store = new PluginStore([], ['Test1', 'Test2']);
       const manifest1 = getPluginManifest('Test1', '1.2.3', [{ type: 'Foo', properties: {} }]);
       const manifest2 = getPluginManifest('Test2', '2.3.4', [{ type: 'Bar', properties: {} }]);
 
@@ -703,7 +713,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is not loaded', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
@@ -724,7 +734,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is already enabled or disabled', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
@@ -772,7 +782,7 @@ describe('PluginStore', () => {
 
   describe('registerFailedDynamicPlugin', () => {
     it('adds the given plugin name to failedDynamicPluginNames', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
 
       const listeners = [jest.fn(), jest.fn()];
       listeners.forEach((l) => store.subscribe(l));
@@ -795,7 +805,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is not listed via allowedDynamicPluginNames', () => {
-      const store = new PluginStore([], new Set(['Test1', 'Test2']));
+      const store = new PluginStore([], ['Test1', 'Test2']);
 
       const listeners = [jest.fn(), jest.fn()];
       listeners.forEach((l) => store.subscribe(l));
@@ -812,7 +822,7 @@ describe('PluginStore', () => {
     });
 
     it('does nothing if the plugin is already loaded', () => {
-      const store = new PluginStore([], new Set(['Test']));
+      const store = new PluginStore([], ['Test']);
       const manifest = getPluginManifest('Test', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       store.addDynamicPlugin('Test@1.2.3', manifest, [{ type: 'Foo', properties: {} }]);
@@ -834,7 +844,7 @@ describe('PluginStore', () => {
 
   describe('getDynamicPluginInfo', () => {
     it('returns plugin runtime information for all known dynamic plugins', () => {
-      const store = new PluginStore([], new Set(['Test1', 'Test2']));
+      const store = new PluginStore([], ['Test1', 'Test2']);
       const manifest1 = getPluginManifest('Test1', '1.2.3', [{ type: 'Foo', properties: {} }]);
 
       expect(store.getDynamicPluginInfo()).toEqual([
