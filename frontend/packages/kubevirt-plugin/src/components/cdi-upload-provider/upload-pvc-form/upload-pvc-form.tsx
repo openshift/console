@@ -408,7 +408,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   id="golden-os-checkbox-pvc-size-template"
                   className="kv--create-upload__golden-switch"
                   isChecked={!!mountAsCDROM}
-                  label={t('kubevirt-plugin~Mount this as a CD-ROM boot source')}
+                  label={t('kubevirt-plugin~This is a CD-ROM boot source')}
                   onChange={handleCDROMChange}
                 />
               </>

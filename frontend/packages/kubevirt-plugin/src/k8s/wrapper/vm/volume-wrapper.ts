@@ -126,6 +126,11 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
 
   getReferencedObject = () => getVolumeReferencedObject(this);
 
+  setName = (name: string) => {
+    this.data.name = name;
+    return this;
+  };
+
   protected sanitize(
     type: VolumeType,
     { name, claimName, image, userData, userDataBase64 }: CombinedTypeData,

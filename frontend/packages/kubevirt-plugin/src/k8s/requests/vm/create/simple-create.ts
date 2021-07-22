@@ -16,7 +16,7 @@ import {
   VolumeMode,
   VolumeType,
 } from '../../../../constants';
-import { CLOUDINIT_DISK } from '../../../../constants/vm/constants';
+import { CLOUDINIT_DISK, ROOT_DISK_INSTALL_NAME } from '../../../../constants/vm/constants';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { VirtualMachineModel } from '../../../../models';
@@ -181,6 +181,8 @@ export const prepareVM = async (
       rootDisk.setType(DiskType.CDROM, {
         bus: rootDiskBus === DiskBus.VIRTIO ? DiskBus.SATA : rootDiskBus,
       });
+      rootDisk.setName(ROOT_DISK_INSTALL_NAME);
+      rootVolume.setName(ROOT_DISK_INSTALL_NAME);
       vmWrapper.prependStorage(
         getEmptyInstallStorage(scConfigMap, rootDiskBus, name, emptyDiskSize),
       );
