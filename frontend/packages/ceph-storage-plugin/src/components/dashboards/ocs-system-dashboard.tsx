@@ -39,6 +39,7 @@ import { default as ObjectBreakdownCard } from './object-service/capacity-breakd
 import DataConsumptionCard from './object-service/data-consumption-card/data-consumption-card';
 import { default as ObjectActivityCard } from './object-service/activity-card/activity-card';
 import { ResourceProvidersCard } from './object-service/resource-providers-card/resource-providers-card';
+import { default as MirroringCard } from './persistent-internal/mirroring-card/mirroring-card';
 import { OCS_INDEPENDENT_FLAG, MCG_FLAG, CEPH_FLAG } from '../../features';
 
 const convertToCard = (Card: React.ComponentType): GridDashboardCard => ({ Card });
@@ -88,7 +89,12 @@ const PersistentInternalDashboard: React.FC = () => {
     BreakdownCard,
     UtilizationCard,
   ];
-  const leftCards: React.ComponentType[] = [DetailsCard, InventoryCard, storageEfficiencyCard];
+  const leftCards: React.ComponentType[] = [
+    DetailsCard,
+    InventoryCard,
+    MirroringCard,
+    storageEfficiencyCard,
+  ];
   const rightCards: React.ComponentType[] = [ActivityCard];
 
   return (

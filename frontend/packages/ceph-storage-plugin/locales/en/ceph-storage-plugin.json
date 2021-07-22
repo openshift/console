@@ -396,6 +396,7 @@
   "Service name": "Service name",
   "Cluster name": "Cluster name",
   "Internal": "Internal",
+  "Mirroring Status": "Mirroring Status",
   "Raw capacity is the absolute total disk space available to the array subsystem.": "Raw capacity is the absolute total disk space available to the array subsystem.",
   "Active health checks": "Active health checks",
   "Progressing": "Progressing",

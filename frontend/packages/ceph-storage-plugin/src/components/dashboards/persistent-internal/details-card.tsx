@@ -12,36 +12,18 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
-import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
+import { FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel } from '@console/internal/models/index';
-import {
-  SubscriptionModel,
-  ClusterServiceVersionModel,
-} from '@console/operator-lifecycle-manager/src/models';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
-import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import { OCSServiceModel } from '../../../models';
+
 import { getOCSVersion } from '../../../selectors';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
 import { StorageClusterKind } from '../../../types';
-
-const ocsResource: FirehoseResource = {
-  kind: referenceForModel(OCSServiceModel),
-  namespaced: true,
-  isList: true,
-  namespace: CEPH_STORAGE_NAMESPACE,
-  prop: 'ocs',
-};
-
-const SubscriptionResource: FirehoseResource = {
-  kind: referenceForModel(SubscriptionModel),
-  namespaced: false,
-  prop: 'subscription',
-  isList: true,
-};
+import { ocsResource, subscriptionResource } from '../../../resources';
 
 const DetailsCard: React.FC<DashboardItemProps> = ({
   watchK8sResource,
@@ -54,10 +36,10 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
     'cluster',
   );
   React.useEffect(() => {
-    watchK8sResource(SubscriptionResource);
+    watchK8sResource(subscriptionResource);
     watchK8sResource(ocsResource);
     return () => {
-      stopWatchK8sResource(SubscriptionResource);
+      stopWatchK8sResource(subscriptionResource);
       stopWatchK8sResource(ocsResource);
     };
   }, [watchK8sResource, stopWatchK8sResource]);
@@ -70,7 +52,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const cluster = ocsData?.find((item: StorageClusterKind) => item.status.phase !== 'Ignored');
   const ocsName = getName(cluster);
 
-  const subscription = resources?.subscription as FirehoseResult;
+  const subscription = resources?.subs as FirehoseResult;
   const subscriptionLoaded = subscription?.loaded;
   const ocsVersion = getOCSVersion(subscription);
   const ocsPath = `${resourcePathFromModel(

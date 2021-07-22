@@ -45,6 +45,7 @@ export enum GUARDED_FEATURES {
   OCS_THICK_PROVISION = 'OCS_THICK_PROVISION',
   OCS_POOL_MANAGEMENT = 'OCS_POOL_MANAGEMENT',
   OCS_NAMESPACE_STORE = 'OCS_NAMESPACE_STORE',
+  OCS_POOL_MIRRORING = 'OCS_POOL_MIRRORING',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -57,6 +58,7 @@ const OCS_FEATURE_FLAGS = {
   [GUARDED_FEATURES.OCS_THICK_PROVISION]: 'thick-provision',
   [GUARDED_FEATURES.OCS_POOL_MANAGEMENT]: 'pool-management',
   [GUARDED_FEATURES.OCS_NAMESPACE_STORE]: 'namespace-store',
+  [GUARDED_FEATURES.OCS_POOL_MIRRORING]: 'mirroring',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {

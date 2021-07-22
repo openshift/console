@@ -254,6 +254,9 @@ export type StorageClusterKind = K8sResourceCommon & {
     arbiter: {
       enable: boolean;
     };
+    mirroring: {
+      enabled: boolean;
+    };
     nodeTopologies: {
       arbiterLocation: string;
     };

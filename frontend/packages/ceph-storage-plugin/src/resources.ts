@@ -92,6 +92,14 @@ export const storageClusterResource: FirehoseResource = {
   prop: 'storage-cluster',
 };
 
+export const ocsResource: FirehoseResource = {
+  kind: referenceForModel(OCSServiceModel),
+  namespaced: true,
+  isList: true,
+  namespace: CEPH_STORAGE_NAMESPACE,
+  prop: 'ocs',
+};
+
 export const eventsResource: FirehoseResource = {
   isList: true,
   kind: EventModel.kind,
