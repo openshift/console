@@ -105,13 +105,14 @@ export const ConnectionDetails: React.FC<ExternalComponentProps<RHCSState>> = ({
 };
 
 export const rhcsPayload: CreatePayload<RHCSState> = (systemName, state, model) => {
-  const { apiVersion, apiGroup, kind } = SecretModel;
+  const { apiVersion, apiGroup, kind, plural } = SecretModel;
   return [
     {
       model: {
-        group: apiGroup,
-        version: apiVersion,
+        apiGroup,
+        apiVersion,
         kind,
+        plural,
       },
       payload: {
         apiVersion: SecretModel.apiVersion,
@@ -130,7 +131,8 @@ export const rhcsPayload: CreatePayload<RHCSState> = (systemName, state, model) 
     {
       model,
       payload: {
-        apiVersion: model.version,
+        apiVersion: model.apiVersion,
+        apiGroup: model.apiGroup,
         kind: model.kind,
         metadata: {
           name: systemName,

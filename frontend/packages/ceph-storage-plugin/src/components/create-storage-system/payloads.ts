@@ -4,12 +4,13 @@ import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import { NooBaaSystemModel, StorageSystemModel } from '../../models';
 
 export const createSSPayload = (systemKind: string, systemName: string): Payload => {
-  const { apiGroup, apiVersion, kind } = StorageSystemModel;
+  const { apiGroup, apiVersion, kind, plural } = StorageSystemModel;
   return {
     model: {
-      group: apiGroup,
-      version: apiVersion,
+      apiGroup,
+      apiVersion,
       kind,
+      plural,
     },
     payload: {
       apiVersion: apiVersionForModel(StorageSystemModel),
@@ -28,13 +29,14 @@ export const createSSPayload = (systemKind: string, systemName: string): Payload
 };
 
 export const createNoobaaPayload = (): Payload => {
-  const { apiGroup, apiVersion, kind } = NooBaaSystemModel;
+  const { apiGroup, apiVersion, kind, plural } = NooBaaSystemModel;
 
   return {
     model: {
-      group: apiGroup,
-      version: apiVersion,
+      apiGroup,
+      apiVersion,
       kind,
+      plural,
     },
     payload: {
       apiVersion,
