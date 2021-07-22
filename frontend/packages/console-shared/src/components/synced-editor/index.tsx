@@ -144,12 +144,12 @@ type SyncedEditorProps = {
     formContext: { [key: string]: any };
     yamlContext: { [key: string]: any };
   };
-  FormEditor: React.FC<any>;
+  FormEditor: React.ElementType<any>;
   initialType?: EditorType;
   initialData?: K8sResourceKind;
   onChangeEditorType?: (newType: EditorType) => void;
   onChange?: (data: K8sResourceKind) => void;
-  prune?: (data: any) => any;
-  YAMLEditor: React.FC<any>;
+  prune?: (data: K8sResourceKind) => any;
+  YAMLEditor: React.ElementType<any>;
   lastViewUserSettingKey: string;
 };

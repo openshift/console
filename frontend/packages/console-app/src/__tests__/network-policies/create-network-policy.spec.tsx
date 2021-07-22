@@ -3,6 +3,7 @@ import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { NetworkPolicyKind } from 'public/module/k8s';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
@@ -12,6 +13,19 @@ jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
 jest.mock('@console/shared/src/hooks/flag', () => ({
   useFlag: () => true,
 }));
+
+const emptyPolicy: NetworkPolicyKind = {
+  metadata: {
+    name: '',
+    namespace: 'default',
+  },
+  spec: {
+    podSelector: {},
+    ingress: [{}],
+    egress: [{}],
+    policyTypes: ['Ingress', 'Egress'],
+  },
+};
 
 describe('NetworkPolicyForm', () => {
   const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
@@ -44,5 +58,23 @@ describe('NetworkPolicyForm', () => {
         .childAt(0)
         .text(),
     ).toEqual('Cancel');
+  });
+
+  it('should render multiple rules', () => {
+    const formData = { ...emptyPolicy };
+    formData.spec.ingress = [
+      {
+        from: [],
+        ports: [{}],
+      },
+    ];
+    formData.spec.egress = [
+      {
+        to: [],
+        ports: [{}],
+      },
+    ];
+    wrapper.setProps({ formData });
+    expect(wrapper.find(NetworkPolicyRuleConfigPanel)).toHaveLength(2);
   });
 });
