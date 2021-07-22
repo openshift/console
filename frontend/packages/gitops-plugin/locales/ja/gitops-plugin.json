@@ -23,9 +23,5 @@
   "OutOfSync": "同期なし",
   "Unknown": "不明",
   "No GitOps manifest URLs found": "GitOps マニフェスト URL が見つかりません",
-  "No Application groups found": "アプリケーショングループが見つかりません",
-  "Argo CD": "Argo CD",
-  "{{id}} by {{author}}": "{{id}} ({{author}} 別)",
-  "{{count, number}} item_0": "{{count, number}} 項目",
-  "{{count, number}} Environment_0": "{{count, number}} 環境"
+  "No Application groups found": "アプリケーショングループが見つかりません"
 }
