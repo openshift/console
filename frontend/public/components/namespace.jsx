@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { connect } from 'react-redux';
-import { Tooltip, Button } from '@patternfly/react-core';
+import { Alert, Tooltip, Button } from '@patternfly/react-core';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
@@ -35,7 +35,13 @@ import {
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
-import { ConsoleLinkModel, NamespaceModel, ProjectModel, SecretModel } from '../models';
+import {
+  ConsoleLinkModel,
+  NamespaceModel,
+  ProjectModel,
+  SecretModel,
+  ServiceAccountModel,
+} from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as k8sActions from '../actions/k8s';
@@ -831,43 +837,56 @@ export const ProjectsPage = connectToFlags(
 /** @type {React.SFC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {
   const [isLoading, setIsLoading] = React.useState(true);
-  const [data, setData] = React.useState(undefined);
+  const [data, setData] = React.useState([]);
+  const [error, setError] = React.useState(false);
   const { t } = useTranslation();
+  const { namespace, canViewSecrets } = props;
 
   React.useEffect(() => {
-    k8sGet(SecretModel, null, props.namespace.metadata.name, {
-      queryParams: { fieldSelector: 'type=kubernetes.io/dockerconfigjson' },
-    })
-      .then((pullSecrets) => {
+    k8sGet(ServiceAccountModel, 'default', namespace.metadata.name, {})
+      .then((serviceAccount) => {
         setIsLoading(false);
-        setData(_.get(pullSecrets, 'items[0]'));
+        setData(serviceAccount.imagePullSecrets ?? []);
+        setError(false);
       })
-      .catch((error) => {
+      .catch((err) => {
         setIsLoading(false);
-        setData(undefined);
-        // A 404 just means that no pull secrets exist
-        if (error.status !== 404) {
-          throw error;
-        }
+        setData([]);
+        setError(true);
+        // eslint-disable-next-line no-console
+        console.error('Error getting default ServiceAccount', err);
       });
-  }, [props.namespace.metadata.name]);
+  }, [namespace.metadata.name]);
 
-  if (isLoading) {
-    return <LoadingInline />;
-  }
-  const modal = () =>
-    configureNamespacePullSecretModal({ namespace: props.namespace, pullSecret: data });
+  const modal = () => configureNamespacePullSecretModal({ namespace, pullSecret: undefined });
+
+  const secrets = () => {
+    if (error) {
+      return (<Alert variant="danger" isInline title={t('Error loading default pull Secrets')} />);
+    }
+    return data.length > 0 ? (
+      (data.map((secret) => (
+        <div key={secret.name}>
+          <ResourceLink
+            kind="Secret"
+            name={secret.name}
+            namespace={namespace.metadata.name}
+            linkTo={canViewSecrets}
+          />
+        </div>
+      )))
+    ) : (
+      (<Button variant="link" type="button" isInline onClick={modal}>
+        {t('public~Not configured')}
+        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+      </Button>)
+    );
+  };
 
   return (
     <>
-      {data ? (
-        <ResourceLink kind="Secret" name={data.metadata.name} namespace={data.metadata.namespace} />
-      ) : (
-        <Button variant="link" type="button" isInline onClick={modal}>
-          {t('public~Not configured')}
-          <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-        </Button>
-      )}
+      <dt>{t('public~Default pull Secret', { count: data.length })}</dt>
+      <dd>{isLoading ? <LoadingInline /> : secrets()}</dd>
     </>
   );
 };
@@ -968,14 +987,7 @@ export const NamespaceSummary = ({ ns }) => {
           <DetailsItem label={t('public~Status')} obj={ns} path="status.phase">
             <Status status={ns.status.phase} />
           </DetailsItem>
-          {canListSecrets && (
-            <>
-              <dt>{t('public~Default pull secret')}</dt>
-              <dd>
-                <PullSecret namespace={ns} />
-              </dd>
-            </>
-          )}
+          <PullSecret namespace={ns} canViewSecrets={canListSecrets} />
           <dt>{t('public~NetworkPolicies')}</dt>
           <dd>
             <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
