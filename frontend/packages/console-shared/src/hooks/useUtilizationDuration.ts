@@ -2,12 +2,13 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useSelector, useDispatch } from 'react-redux';
+import { UseUtilizationDuration } from '@console/dynamic-plugin-sdk/src/api/internal';
 import * as UIActions from '@console/internal/actions/ui';
 import { DEFAULT_DURATION, DEFAULT_DURATION_KEY } from '../constants';
 
-export const useUtilizationDuration = (
+export const useUtilizationDuration: UseUtilizationDuration = (
   adjustDuration?: (duration: number) => number,
-): UtilizationDurationState => {
+) => {
   const dispatch = useDispatch();
   const duration =
     useSelector(({ UI }) => UI.getIn(['utilizationDuration', 'duration'])) ?? DEFAULT_DURATION;
@@ -40,14 +41,4 @@ export const useUtilizationDuration = (
     updateEndDate,
     updateSelectedKey,
   };
-};
-
-type UtilizationDurationState = {
-  duration: number;
-  endDate: Date;
-  selectedKey: string;
-  startDate: Date;
-  updateDuration: (duration: number) => void;
-  updateEndDate: (endDate: Date) => void;
-  updateSelectedKey: (key: string) => void;
 };

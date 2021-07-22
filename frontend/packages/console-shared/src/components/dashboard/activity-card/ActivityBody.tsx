@@ -4,13 +4,15 @@ import { PlayIcon, PauseIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import {
+  ActivityBodyProps,
+  OngoingActivityBodyProps,
+  RecentEventsBodyProps,
+} from '@console/dynamic-plugin-sdk/src/api/internal';
 import { ErrorLoadingEvents, sortEvents } from '@console/internal/components/events';
-import { PrometheusResponse } from '@console/internal/components/graphs';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { FirehoseResult } from '@console/internal/components/utils/types';
-import { K8sResourceKind, EventKind } from '@console/internal/module/k8s';
-import { K8sActivityProps, PrometheusActivityProps, LazyLoader } from '@console/plugin-sdk';
+import { EventKind } from '@console/internal/module/k8s';
 import { DashboardCardButtonLink } from '../dashboard-card/DashboardCardLink';
 import EventItem from './EventItem';
 
@@ -219,32 +221,6 @@ const ActivityBody: React.FC<ActivityBodyProps> = ({ children, className }) => (
 );
 
 export default ActivityBody;
-
-type ActivityBodyProps = {
-  children: React.ReactNode;
-  className?: string;
-};
-
-type OngoingActivityBodyProps = {
-  resourceActivities?: {
-    resource: K8sResourceKind;
-    timestamp: Date;
-    loader?: LazyLoader<K8sActivityProps>;
-    component?: React.ComponentType<K8sActivityProps>;
-  }[];
-  prometheusActivities?: {
-    results: PrometheusResponse[];
-    loader?: LazyLoader<PrometheusActivityProps>;
-    component?: React.ComponentType<PrometheusActivityProps>;
-  }[];
-  loaded: boolean;
-};
-
-type RecentEventsBodyProps = {
-  events: FirehoseResult<EventKind[]>;
-  filter?: (event: EventKind) => boolean;
-  moreLink?: string;
-};
 
 type RecentEventsBodyContentProps = RecentEventsBodyProps & {
   paused?: boolean;

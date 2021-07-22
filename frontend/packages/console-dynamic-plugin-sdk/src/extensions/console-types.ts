@@ -1,4 +1,4 @@
-import { ExtensionK8sGroupKindModel } from '../api/common-types';
+import { ExtensionK8sGroupKindModel, PrometheusLabels, PrometheusValue } from '../api/common-types';
 
 export type OwnerReference = {
   name: string;
@@ -121,11 +121,9 @@ export enum HealthState {
   UNKNOWN = 'UNKNOWN',
   UPDATING = 'UPDATING',
   PROGRESS = 'PROGRESS',
+  UPGRADABLE = 'UPGRADABLE',
   NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
-
-export type PrometheusLabels = { [key: string]: string };
-export type PrometheusValue = [number, string];
 
 // Only covers range and instant vector responses for now.
 export type PrometheusResult = {

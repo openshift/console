@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Progress, ProgressSize } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
 import classNames from 'classnames';
+import { ActivityItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 
 export const ActivityProgress: React.FC<ActivityProgressProps> = ({
   title,
@@ -29,10 +30,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({ children, className }) => (
 );
 
 export default ActivityItem;
-
-type ActivityItemProps = {
-  className?: string;
-};
 
 type ActivityProgressProps = {
   title: string;

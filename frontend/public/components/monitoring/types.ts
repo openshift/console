@@ -1,39 +1,38 @@
 import { APIError } from '@console/shared';
+import {
+  Silence,
+  AlertStates,
+  PrometheusAlert,
+  Alert,
+  SilenceStates,
+  AlertSeverity,
+  RuleStates,
+  PrometheusRule,
+  PrometheusLabels,
+  PrometheusValue,
+  Rule,
+} from '@console/dynamic-plugin-sdk';
 
 import { RowFunction } from '../factory';
 import { RowFilter } from '../filter-toolbar';
-import { PrometheusLabels } from '../graphs';
 
-export const enum AlertSeverity {
-  Critical = 'critical',
-  Info = 'info',
-  None = 'none',
-  Warning = 'warning',
-}
+export {
+  Silence,
+  AlertStates,
+  PrometheusAlert,
+  Alert,
+  SilenceStates,
+  AlertSeverity,
+  RuleStates,
+  PrometheusRule,
+  PrometheusLabels,
+  PrometheusValue,
+  Rule,
+};
 
 export const enum AlertSource {
   Platform = 'platform',
   User = 'user',
-}
-
-export const enum AlertStates {
-  Firing = 'firing',
-  NotFiring = 'not-firing',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum RuleStates {
-  Firing = 'firing',
-  Inactive = 'inactive',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export const enum SilenceStates {
-  Active = 'active',
-  Expired = 'expired',
-  Pending = 'pending',
 }
 
 export type MonitoringResource = {
@@ -43,64 +42,16 @@ export type MonitoringResource = {
   plural: string;
 };
 
-export type Silence = {
-  comment: string;
-  createdBy: string;
-  endsAt: string;
-  // eslint-disable-next-line no-use-before-define
-  firingAlerts: Alert[];
-  id?: string;
-  matchers: { name: string; value: string; isRegex: boolean }[];
-  name?: string;
-  startsAt: string;
-  status?: { state: SilenceStates };
-  updatedAt?: string;
-};
-
 export type Silences = {
   data: Silence[];
   loaded: boolean;
   loadError?: string;
 };
 
-export type PrometheusAlert = {
-  activeAt?: string;
-  annotations: PrometheusLabels;
-  labels: PrometheusLabels & {
-    alertname: string;
-    severity?: AlertSeverity | string;
-  };
-  state: AlertStates;
-  value?: number | string;
-};
-
-export type Alert = PrometheusAlert & {
-  rule: Rule;
-  silencedBy?: Silence[];
-};
-
 export type Alerts = {
   data: Alert[];
   loaded: boolean;
   loadError?: string;
-};
-
-export type PrometheusRule = {
-  alerts: PrometheusAlert[];
-  annotations: PrometheusLabels;
-  duration: number;
-  labels: PrometheusLabels & {
-    severity?: AlertSeverity | string;
-  };
-  name: string;
-  query: string;
-  state: RuleStates;
-  type: string;
-};
-
-export type Rule = PrometheusRule & {
-  id: string;
-  silencedBy?: Silence[];
 };
 
 export type Rules = {

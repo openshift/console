@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { UtilizationDurationDropdownProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 import { Dropdown } from '@console/internal/components/utils';
 import { DurationKeys, DURATION_VALUES, useUtilizationDuration } from '@console/shared';
 
@@ -30,8 +31,4 @@ export const UtilizationDurationDropdown: React.FC<UtilizationDurationDropdownPr
       title={items[selectedKey]}
     />
   );
-};
-
-type UtilizationDurationDropdownProps = {
-  adjustDuration?: (duration: number) => number;
 };

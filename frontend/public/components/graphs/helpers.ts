@@ -5,13 +5,8 @@ import {
   DEFAULT_PROMETHEUS_SAMPLES,
   DEFAULT_PROMETHEUS_TIMESPAN,
 } from './index';
-
-export enum PrometheusEndpoint {
-  LABEL = 'api/v1/label',
-  RULES = 'api/v1/rules',
-  QUERY = 'api/v1/query',
-  QUERY_RANGE = 'api/v1/query_range',
-}
+import { PrometheusEndpoint } from '@console/dynamic-plugin-sdk/src/api/internal';
+export { PrometheusEndpoint };
 
 // Range vector queries require end, start, and step search params
 const getRangeVectorSearchParams = (
