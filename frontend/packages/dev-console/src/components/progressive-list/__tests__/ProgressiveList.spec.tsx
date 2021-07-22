@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import ProgressiveList from '../ProgressiveList';
-import ProgressiveListFooter from '../ProgressiveListFooter';
+import ProgressiveListFooter, { ProgressiveItem } from '../ProgressiveListFooter';
 import ProgressiveListItem from '../ProgressiveListItem';
 
 const DummyComponent: React.FC = () => <div id="dummy">Dummy Component</div>;
@@ -60,6 +60,8 @@ describe(ProgressiveList.displayName, () => {
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
+        .find(ProgressiveItem)
+        .shallow()
         .find(Button)
         .render()
         .text(),
@@ -68,12 +70,16 @@ describe(ProgressiveList.displayName, () => {
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
+        .find(ProgressiveItem)
+        .shallow()
         .find(Button),
     ).toHaveLength(1);
     expect(wrapper.find(DummyComponent).exists()).toBe(false);
     expect(visibleItems).toHaveLength(0);
     wrapper
       .find(ProgressiveListFooter)
+      .shallow()
+      .find(ProgressiveItem)
       .shallow()
       .find(Button)
       .simulate('click', { target: { innerText: 'Dummy' } });
@@ -85,7 +91,8 @@ describe(ProgressiveList.displayName, () => {
       wrapper
         .find(ProgressiveListFooter)
         .shallow()
-        .find(Button),
-    ).toHaveLength(0);
+        .find(ProgressiveItem)
+        .exists(),
+    ).toBe(false);
   });
 });
