@@ -3,7 +3,7 @@ import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core'
 import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
 import { isEmpty } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getGitService, GitProvider, BuildType, RepoStatus } from '@console/git-service';
+import { getGitService, BuildType, RepoStatus } from '@console/git-service';
 import { BuildStrategyType } from '@console/internal/components/build';
 import {
   InputField,
@@ -96,7 +96,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue('git.type', gitType);
       setFieldValue('git.showGitType', showGitType);
 
-      const gitService = getGitService({ url, ref, contextDir: dir }, gitType as GitProvider);
+      const gitService = getGitService(url, gitType, ref, dir);
       const repositoryStatus = gitService && (await gitService.isRepoReachable());
 
       setRepoStatus(repositoryStatus);
@@ -151,10 +151,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
   const handleBuilderImageRecommendation = React.useCallback(async () => {
     const gitType = gitTypeTouched ? values.git.type : detectGitType(values.git.url);
-    const gitService = getGitService(
-      { url: values.git.url, ref: values.git.ref, contextDir: values.git.dir },
-      gitType as GitProvider,
-    );
+    const gitService = getGitService(values.git.url, gitType, values.git.ref, values.git.dir);
     if (repoStatus === RepoStatus.Reachable && builderImages) {
       setFieldValue('image.isRecommending', true);
       const buildTools: BuildType[] = gitService && (await gitService.detectBuildTypes());

@@ -16,4 +16,8 @@ describe('Build tool detection tests', () => {
   it('should return false for package.json of nodejs app', () => {
     expect(isModernWebApp(packageJson2)).toBeFalsy();
   });
+
+  it('should return false for invalid package.json', () => {
+    expect(isModernWebApp('{')).toBeFalsy();
+  });
 });

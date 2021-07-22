@@ -123,7 +123,7 @@ export const useDevfileSource = () => {
   React.useEffect(() => {
     if (devfileSourceUrl) {
       const gitType = detectGitType(devfileSourceUrl);
-      const gitService = getGitService({ url: devfileSourceUrl }, gitType as GitProvider);
+      const gitService = getGitService(devfileSourceUrl, gitType as GitProvider);
       setFieldValue('devfile.devfileSourceUrl', devfileSourceUrl);
       gitService
         .getDevfileContent()
