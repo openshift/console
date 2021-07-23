@@ -5,3 +5,4 @@ approvers:
   - florkbr
 labels:
   - component/backend
+  - kind/dependency-change
