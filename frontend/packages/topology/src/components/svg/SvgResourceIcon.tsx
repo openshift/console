@@ -57,6 +57,7 @@ const ForwardSvgResourceIcon: React.FC<ResourceIconProps> = (
       className={cx('odc-resource-icon', {
         [`odc-resource-icon-${kindStr.toLowerCase()}`]: !kindColor,
       })}
+      data-test={`icon ${kindStr.toLowerCase()}`}
     >
       {rect}
       <title>{kindStr}</title>

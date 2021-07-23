@@ -53,7 +53,7 @@
   "Unable to move connector of type {{type}}.": "Unable to move connector of type {{type}}.",
   "Topology": "Topology",
   "No resources found": "No resources found",
-  "<0>Start building your application</0> or visit the <3>Add page</3> for more details.": "<0>Start building your application</0> or visit the <3>Add page</3> for more details.",
+  "<0>Start building your application</0> or visit the <2>Add page</2> for more details.": "<0>Start building your application</0> or visit the <2>Add page</2> for more details.",
   "Select a Project to view the topology or <2>create a Project</2>.": "Select a Project to view the topology or <2>create a Project</2>.",
   "List view": "List view",
   "Graph view": "Graph view",

@@ -74,7 +74,12 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
         </Button>
       </span>
       {kindFilters.map((filter) => (
-        <SelectOption key={filter.id} value={filter.id} isChecked={filter.value}>
+        <SelectOption
+          key={filter.id}
+          value={filter.id}
+          isChecked={filter.value}
+          data-test={filter.label}
+        >
           <ResourceIcon kind={filter.id} />
           {filter.label} ({supportedKinds[filter.id]})
         </SelectOption>
