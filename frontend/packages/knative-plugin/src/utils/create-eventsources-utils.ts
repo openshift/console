@@ -11,6 +11,10 @@ import {
   modelFor,
   K8sKind,
 } from '@console/internal/module/k8s';
+import {
+  Descriptor,
+  SpecCapability,
+} from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 import { Perspective } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
@@ -392,4 +396,48 @@ export const sanitizeSourceToForm = (
   return formDataValues.type === EventSources.KafkaSource
     ? sanitizeKafkaSourceResource(formData)
     : formData;
+};
+
+export const formDescriptorData = (
+  properties,
+  descriptorArr = [],
+  path = '',
+): Descriptor<SpecCapability>[] => {
+  for (const k in properties) {
+    if (properties.hasOwnProperty(k) && typeof properties[k] === 'object') {
+      const custPath = path !== '' ? `${path}.${k}` : k;
+      if (properties[k].type === 'object') {
+        formDescriptorData(properties[k].properties, descriptorArr, custPath);
+      } else if (properties[k].type === 'array' && properties[k].items) {
+        if (properties[k].items.type === 'object') {
+          formDescriptorData(properties[k].items.properties, descriptorArr, `${custPath}[0]`);
+        } else if (properties[k].items.type === 'array') {
+          formDescriptorData(properties[k].items, descriptorArr, `${custPath}[0]`);
+        } else {
+          descriptorArr.push({
+            ...(properties[k].items.hasOwnProperty('title') && {
+              displayName: properties[k].items.title,
+            }),
+            ...(properties[k].items.hasOwnProperty('description') && {
+              description: properties[k].items.description,
+            }),
+            path: `${custPath}[0]`,
+            ...(properties[k].items.hasOwnProperty('x-descriptors') && {
+              'x-descriptors': properties[k].items['x-descriptors'],
+            }),
+          });
+        }
+      } else {
+        descriptorArr.push({
+          displayName: properties[k].title,
+          description: properties[k].description,
+          path: custPath,
+          ...(properties[k]['x-descriptors'] && {
+            'x-descriptors': properties[k]['x-descriptors'],
+          }),
+        });
+      }
+    }
+  }
+  return descriptorArr;
 };
