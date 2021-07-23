@@ -148,15 +148,19 @@ $co-affinity-row-margin: 15px;
 
 .co-create-operand__header {
   border-bottom: 1px solid #ddd;
-  padding: 10px 15px;
+  padding: 0 15px 10px;
   @media (min-width: $screen-sm-min) {
     padding: 0 30px 15px;
   }
 }
 
-.co-create-operand__header-buttons {
+.co-create-operand__breadcrumbs {
   align-items: baseline;
   display: flex;
+  padding: 10px 15px;
+  @media (min-width: $screen-sm-min) {
+    padding: 0 30px 15px;
+  }
 }
 
 .co-create-operand__header-text {

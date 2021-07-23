@@ -98,24 +98,21 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
   return (
     <>
+      <div className="co-create-operand__breadcrumbs">
+        <BreadCrumbs
+          breadcrumbs={[
+            {
+              name: pathName.startsWith('ocs-operator') ? 'Openshift Container Storage' : pathName,
+              path: url.replace('/~new', ''),
+            },
+            {
+              name: t('ceph-storage-plugin~Create BlockPool'),
+              path: url,
+            },
+          ]}
+        />
+      </div>
       <div className="co-create-operand__header">
-        <div className="co-create-operand__header-buttons">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: pathName.startsWith('ocs-operator')
-                  ? 'Openshift Container Storage'
-                  : pathName,
-                path: url.replace('/~new', ''),
-              },
-              {
-                name: t('ceph-storage-plugin~Create BlockPool'),
-                path: url,
-              },
-            ]}
-          />
-        </div>
-
         <h1 className="co-create-operand__header-text">
           {t('ceph-storage-plugin~Create BlockPool')}
         </h1>

@@ -248,25 +248,25 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
 
   return (
     <>
+      <div className="co-create-operand__breadcrumbs">
+        <BreadCrumbs
+          breadcrumbs={[
+            {
+              name: _.get(
+                clusterServiceVersion,
+                'spec.displayName',
+                'Openshift Container Storage Operator',
+              ),
+              path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+            },
+            {
+              name: t('ceph-storage-plugin~Create BucketClass'),
+              path: match.url,
+            },
+          ]}
+        />
+      </div>
       <div className="co-create-operand__header">
-        <div className="co-create-operand__header-buttons">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: _.get(
-                  clusterServiceVersion,
-                  'spec.displayName',
-                  'Openshift Container Storage Operator',
-                ),
-                path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
-              },
-              {
-                name: t('ceph-storage-plugin~Create BucketClass'),
-                path: match.url,
-              },
-            ]}
-          />
-        </div>
         <div className="nb-create-bc-header-title">
           <Title size="2xl" headingLevel="h1" className="nb-create-bc-header-title__main">
             {t('ceph-storage-plugin~Create new BucketClass')}
