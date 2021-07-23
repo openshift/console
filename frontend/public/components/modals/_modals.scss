@@ -40,6 +40,7 @@
   // so that input, textarea, button, and input-group-addon don't mask the inner scroll shadows
   input, textarea {
     &.pf-c-form-control {
+      max-width: 100%;
       background-color: transparent;
       &[disabled],
       &[readonly] {
