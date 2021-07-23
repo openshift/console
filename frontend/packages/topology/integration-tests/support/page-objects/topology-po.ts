@@ -5,6 +5,8 @@ export const topologyPO = {
   search: '[data-test-id="item-filter"]',
   emptyStateIcon: 'div.pf-c-empty-state__icon',
   emptyText: '[data-test="no-resources-found"]',
+  addToApplication: '[data-test-action="devconsole~Add to Application"]',
+  addToApplicationInContext: 'button.pf-topology-context-sub-menu.pf-c-dropdown__menu-item',
   graph: {
     reset: '#reset-view',
     zoomIn: '#zoom-in',
@@ -23,6 +25,7 @@ export const topologyPO = {
     eventSourceWorkload: '[data-type="event-source"]',
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
     addNewAnnotations: '[data-test="add-button"]',
+    deleteApplication: '[id="form-input-resourceName-field"]',
     connector: '[data-test-id="edge-handler"]',
     displayOptions: {
       connenctivityMode: '[id="showGroups"]',
@@ -58,6 +61,9 @@ export const topologyPO = {
     healthCheckAlert: 'div.ocs-health-checks-alert',
     podScale: 'button.pf-c-button.pf-m-plain.pf-m-block',
     podText: 'text.pf-chart-donut-title.pod-ring__center-text',
+    applicationGroupingsTitle: '.overview__sidebar-pane-head.resource-overview__heading',
+    applicationGroupingsSidepane: 'overview__sidebar-pane resource-overview',
+    resourcesTabApplicationGroupings: '.co-m-horizontal-nav__menu-item',
     detailsTab: {
       labels: 'dt[data-test-selector$="Labels"]',
       annotations: '[data-test-selector="details-item-label__Annotations"]',
