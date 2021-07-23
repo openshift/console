@@ -3,3 +3,4 @@ export { CapacityAndNodes } from './capacity-and-nodes-step/capacity-and-nodes-s
 export { ConnectionDetails } from './connection-details-step';
 export { CreateStorageClass } from './create-storage-class-step';
 export { ReviewAndCreate } from './review-and-create-step/review-and-create-step';
+export { CreateLocalVolumeSet } from './create-local-volume-set/create-local-volume-set-step';

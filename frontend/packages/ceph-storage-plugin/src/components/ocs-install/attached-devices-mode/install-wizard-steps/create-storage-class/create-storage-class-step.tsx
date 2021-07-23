@@ -59,7 +59,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
     'ceph-storage-plugin~Uses the available disks that match the selected filters on all nodes selected in the previous step.',
   );
   const lvsNameSelectorTxt = t(
-    'ceph-storage-plugin~A Local Volume Set allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
+    'ceph-storage-plugin~A LocalVolumeSet allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
   );
   const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
 

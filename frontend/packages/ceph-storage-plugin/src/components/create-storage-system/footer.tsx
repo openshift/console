@@ -43,9 +43,16 @@ const validateBackingStorageStep = (backingStorage, sc) => {
 };
 
 const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
-  const { storageClass, backingStorage, createStorageClass, capacityAndNodes } = state;
+  const {
+    storageClass,
+    backingStorage,
+    createStorageClass,
+    capacityAndNodes,
+    createLocalVolumeSet,
+  } = state;
   const { externalStorage } = backingStorage;
   const { nodes, capacity } = capacityAndNodes;
+  const { chartNodes, volumeSetName, isValidDiskSize } = createLocalVolumeSet;
   const { canGoToNextStep } = getExternalStorage(externalStorage) || {};
 
   switch (name) {
@@ -60,6 +67,7 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     case StepsName(t)[Steps.ReviewAndCreate]:
       return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.CreateLocalVolumeSet]:
+      return chartNodes.size < MINIMUM_NODES || !volumeSetName.trim().length || !isValidDiskSize;
     case StepsName(t)[Steps.SecurityAndNetwork]:
       return true;
     default:
