@@ -159,6 +159,7 @@
   "Services": "Services",
   "Subscription details": "Subscription details",
   "Trigger details": "Trigger details",
+  "Attribute": "Attribute",
   "No Subscriber available": "No Subscriber available",
   "To create a Subscriber, first create a Knative Service from the Add page.": "To create a Subscriber, first create a Knative Service from the Add page.",
   "Select Subscriber": "Select Subscriber",
