@@ -41,7 +41,7 @@ const DynamicResourceLinkList: React.FC<DynamicResourceLinkListProps> = ({
               linkName += ` (${qualifier})`;
             }
             return (
-              <div key={`${resourceKind}/${name}`}>
+              <div key={`${resourceKind}/${linkName}`}>
                 <PipelineResourceRef
                   resourceKind={resourceKind}
                   resourceName={name}
