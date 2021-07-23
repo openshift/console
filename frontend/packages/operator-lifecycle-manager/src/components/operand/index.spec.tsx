@@ -46,6 +46,27 @@ const STATUS_INDEX = _.findIndex(COLUMNS, { title: 'Status' });
 const LABELS_INDEX = _.findIndex(COLUMNS, { title: 'Labels' });
 const LAST_UPDATED_INDEX = _.findIndex(COLUMNS, { title: 'Last Updated' });
 
+jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
+  useK8sModels: () => [
+    {
+      'testapp.coreos.com~v1alpha1~TestResource': {
+        abbr: 'TR',
+        apiGroup: 'testapp.coreos.com',
+        apiVersion: 'v1alpha1',
+        crd: true,
+        kind: 'TestResource',
+        label: 'Test Resource',
+        labelPlural: 'Test Resources',
+        namespaced: true,
+        plural: 'testresources',
+        verbs: ['create'],
+      },
+    },
+    false,
+    null,
+  ],
+}));
+
 describe(OperandTableHeader.displayName, () => {
   it('returns column header definition for resource', () => {
     expect(Array.isArray(OperandTableHeader())).toBe(true);
@@ -405,7 +426,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   beforeEach(() => {
-    wrapper = shallow(<ProvidedAPIsPage.WrappedComponent obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ProvidedAPIsPage obj={testClusterServiceVersion} />);
   });
 
   it('renders a `StatusBox` if given app has no owned or required custom resources', () => {

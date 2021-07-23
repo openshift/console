@@ -8,6 +8,7 @@ import {
   referenceForModel,
   K8sKind,
   K8sResourceKind,
+  apiVersionCompare,
 } from '@console/internal/module/k8s';
 import { PackageManifestModel } from '../models';
 import {
@@ -20,14 +21,36 @@ import {
   ProvidedAPI,
 } from '../types';
 import * as operatorLogo from '../operator.svg';
+import { getInternalObjects } from '../utils';
 
 export const visibilityLabel = 'olm-visibility';
 
-type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => ProvidedAPI[];
-export const providedAPIsFor: ProvidedAPIsFor = (csv) =>
-  _.get(csv, 'spec.customresourcedefinitions.owned', []).concat(
-    _.get(csv, 'spec.apiservicedefinitions.owned', []),
-  );
+const filteredAPIs = (providedAPIs: ProvidedAPI[], internalObjects: string[]): ProvidedAPI[] => {
+  const filteredAndSorted = providedAPIs
+    .filter((api) => !internalObjects.includes(api.name))
+    .sort((a, b) => apiVersionCompare(a.version, b.version));
+  return _.uniqBy(filteredAndSorted, 'name');
+};
+
+// Returns provided apis for a given csv, excluding internal objects and duplicate
+export const providedAPIsForCSV = (csv: ClusterServiceVersionKind): ProvidedAPI[] => {
+  const allProvidedAPIs: ProvidedAPI[] = [
+    ...(csv?.spec?.apiservicedefinitions?.owned ?? []),
+    ...(csv?.spec?.customresourcedefinitions?.owned ?? []),
+  ];
+  const internalObjects = getInternalObjects(csv?.metadata?.annotations);
+  return filteredAPIs(allProvidedAPIs, internalObjects);
+};
+
+export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: string) => {
+  const { currentCSVDesc } = pkg.status.channels.find((ch) => ch.name === channel);
+  const allProvidedAPIs: ProvidedAPI[] = [
+    ...(currentCSVDesc?.customresourcedefinitions?.owned ?? []),
+    ...(currentCSVDesc?.apiservicedefinitions?.owned ?? []),
+  ];
+  const internalObjects = getInternalObjects(currentCSVDesc?.annotations);
+  return filteredAPIs(allProvidedAPIs, internalObjects);
+};
 
 export const referenceForProvidedAPI = (
   desc: CRDDescription | APIServiceDefinition,
@@ -46,15 +69,6 @@ export const installModesFor = (pkg: PackageManifestKind) => (channel: string) =
   pkg.status.channels.find((ch) => ch.name === channel)?.currentCSVDesc?.installModes || [];
 export const supportedInstallModesFor = (pkg: PackageManifestKind) => (channel: string) =>
   installModesFor(pkg)(channel).filter(({ supported }) => supported);
-export const providedAPIsForChannel = (pkg: PackageManifestKind) => (channel: string) =>
-  _.compact(
-    _.flatten([
-      pkg.status.channels.find((ch) => ch.name === channel).currentCSVDesc.customresourcedefinitions
-        .owned,
-      pkg.status.channels.find((ch) => ch.name === channel).currentCSVDesc.apiservicedefinitions
-        .owned,
-    ]),
-  );
 
 export const iconFor = (pkg: PackageManifestKind) => {
   const defaultChannel = pkg?.status?.defaultChannel
@@ -106,11 +120,13 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
   );
 };
 
+export const providedAPIForReference = (csv, reference) => {
+  const providedAPIs = providedAPIsForCSV(csv) ?? [];
+  return providedAPIs.find((api) => referenceForProvidedAPI(api) === reference);
+};
+
 export const providedAPIForModel = (csv: ClusterServiceVersionKind, model: K8sKind): ProvidedAPI =>
-  _.find<ProvidedAPI>(
-    providedAPIsFor(csv),
-    (crd) => referenceForProvidedAPI(crd) === referenceForModel(model),
-  );
+  providedAPIForReference(csv, referenceForModel(model));
 
 export const parseALMExamples = (
   csv: ClusterServiceVersionKind,

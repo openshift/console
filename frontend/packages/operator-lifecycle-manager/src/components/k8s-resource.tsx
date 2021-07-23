@@ -25,7 +25,7 @@ import {
   referenceForGroupVersionKind,
 } from '@console/internal/module/k8s';
 import { CRDDescription, ClusterServiceVersionKind, ProvidedAPI } from '../types';
-import { referenceForProvidedAPI, providedAPIsFor } from './index';
+import { providedAPIForReference } from './index';
 import { OperandLink } from './operand/operand-link';
 
 const tableColumnClasses = [
@@ -133,8 +133,9 @@ export const linkForCsvResource = (
   );
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
-  const providedAPI = providedAPIsFor(props.clusterServiceVersion).find(
-    (desc) => referenceForProvidedAPI(desc) === props.match.params.plural,
+  const providedAPI = providedAPIForReference(
+    props.clusterServiceVersion,
+    props.match.params.plural,
   );
 
   const defaultResources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'];
