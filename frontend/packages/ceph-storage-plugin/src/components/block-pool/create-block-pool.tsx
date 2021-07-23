@@ -89,7 +89,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
       >
         <strong>
           {t(
-            "ceph-storage-plugin~Pool creation is not supported for OpenShift Container Storage's external mode.",
+            "ceph-storage-plugin~Pool creation is not supported for OpenShift Data Foundation's external RHCS StorageSystem.",
           )}
         </strong>
       </Modal>

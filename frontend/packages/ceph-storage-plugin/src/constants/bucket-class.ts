@@ -19,7 +19,7 @@ export const bucketClassTypeRadios = (t: TFunction) => [
     value: BucketClassType.STANDARD,
     label: t('ceph-storage-plugin~Standard'),
     description: t(
-      'ceph-storage-plugin~Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Container Storage endpoints to access the data.',
+      'ceph-storage-plugin~Data will be consumed by a Multi-cloud object gateway, deduped, compressed, and encrypted. The encrypted chunks would be saved on the selected BackingStores. Best used when the applications would always use the OpenShift Data Foundation endpoints to access the data.',
     ),
   },
   {

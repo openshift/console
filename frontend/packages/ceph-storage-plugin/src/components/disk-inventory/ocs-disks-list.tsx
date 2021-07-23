@@ -247,7 +247,7 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t("ceph-storage-plugin~OpenShift Container Storage's Status"),
+      title: t('ceph-storage-plugin~OpenShift Data Foundation status'),
       sortField: '',
       transforms: [],
       props: { className: tableColumnClasses[1] },

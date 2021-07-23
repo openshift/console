@@ -73,7 +73,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   );
 
   const vaultTLSTooltip = t(
-    `ceph-storage-plugin~The name to use as the SNI host when OpenShift Container Storage connecting via TLS to the Vault server`,
+    `ceph-storage-plugin~The name to use as the SNI host when OpenShift Data Foundation connecting via TLS to the Vault server`,
   );
 
   const submit = (event: React.FormEvent<EventTarget>) => {
