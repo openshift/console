@@ -4,7 +4,10 @@ import {
   Form, 
   FormGroup, 
   TextInput,
+  Button,
+  ValidatedOptions,
  } from '@patternfly/react-core';
+import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import {
   SecretKind,
   apiVersionForModel,
@@ -12,6 +15,7 @@ import {
 import {
   SecretModel
 } from '@console/internal/models';
+import { isValidUrl } from '@console/shared';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 import { FlashsystemState, IBMFlashsystemKind } from './type';
 import { IBMFlashsystemModel } from './models';
@@ -21,24 +25,40 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   formState,
 }) => {
   const { t } = useTranslation();
+  const [reveal, setReveal] = React.useState(false);
+  const [endpointValid, setEndpointValid] = React.useState(ValidatedOptions.default);
+  const onChange = (value: string) => {
+    setFormState('endpoint', value);
+    if (value){
+      if (isValidUrl(value)){
+        setEndpointValid(ValidatedOptions.success);
+      } else {
+        setEndpointValid(ValidatedOptions.error);
+      }
+    };
+  };
+
   return (
     <Form>
       <FormGroup 
         label={t('ceph-storage-plugin~Endpoint')} 
         fieldId="endpoint-input"
+        isRequired
+        validated = {endpointValid}
         helperText={
           t('ceph-storage-plugin~Rest API IP address of IBM Storage FlashSystem.')
         }
+        helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid URL')}
         >
         <TextInput
           id="endpoint-input"
           value={formState.endpoint}
           type="text"
-          onChange={(value: string) => setFormState('endpoint', value)}
+          onChange={onChange}
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Username')} fieldId="username-input">
+      <FormGroup label={t('ceph-storage-plugin~Username')} isRequired fieldId="username-input">
         <TextInput
           id="username-input"
           value={formState.username}
@@ -47,7 +67,9 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Password')} fieldId="password-input">
+      <FormGroup label={t('ceph-storage-plugin~Password')} isRequired fieldId="password-input" >
+      {reveal ? (
+        <>
         <TextInput
           id="password-input"
           value={formState.password}
@@ -55,8 +77,39 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           onChange={(value: string) => setFormState('password', value)}
           isRequired
         />
+                
+        </>
+        ) : (
+        <>
+        <TextInput
+          id="password-input"
+          value={formState.password}
+          type="password"
+          onChange={(value: string) => setFormState('password', value)}
+          isRequired
+        />
+        </>
+        )}
+        <Button
+            type="button"
+            onClick={() => setReveal(!reveal)}
+            variant="link"
+            className="pf-m-link--align-right"
+          >
+            {reveal ? (
+              <>
+                <EyeSlashIcon className="co-icon-space-r" />
+                {t('ceph-storage-plugin~Hide Values')}
+              </>
+            ) : (
+              <>
+                <EyeIcon className="co-icon-space-r" />
+                {t('ceph-storage-plugin~Reveal Values')}
+              </>
+            )}
+          </Button>
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Poolname')} fieldId="poolname-input">
+      <FormGroup label={t('ceph-storage-plugin~Poolname')} isRequired fieldId="poolname-input">
         <TextInput
           id="poolname-input"
           value={formState.poolname}
