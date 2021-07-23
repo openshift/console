@@ -1,4 +1,4 @@
-import { VM_ACTION, VMI_ACTION, VM_STATUS, VM_ACTION_TIMEOUT } from '../const/index';
+import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../const/index';
 import { VirtualMachineData } from '../types/vm';
 import { detailViewAction, listViewAction } from './actions';
 import { detailsTab } from './selector';
@@ -98,5 +98,10 @@ export const vm = {
     if (waitForComplete) {
       waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_MIGRATE);
     }
+  },
+  pause: (vmData: VirtualMachineData) => {
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
+    action(VM_ACTION.Pause);
+    waitForStatus(VM_STATUS.Paused, vmData);
   },
 };

@@ -35,6 +35,7 @@ export enum VM_ACTION {
   Start = 'Start Virtual Machine',
   Stop = 'Stop Virtual Machine',
   Unpause = 'Unpause Virtual Machine',
+  Pause = 'Pause Virtual Machine',
 }
 
 export enum VMI_ACTION {
