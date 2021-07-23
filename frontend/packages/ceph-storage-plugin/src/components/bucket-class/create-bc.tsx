@@ -255,7 +255,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
               name: _.get(
                 clusterServiceVersion,
                 'spec.displayName',
-                'Openshift Container Storage Operator',
+                'Openshift Data Foundation Operator',
               ),
               path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },

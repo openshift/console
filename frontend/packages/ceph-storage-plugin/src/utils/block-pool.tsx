@@ -57,7 +57,7 @@ export const PROGRESS_STATUS = (t: TFunction, poolName: string): ProgressStatusP
     name: POOL_PROGRESS.TIMEOUT,
     icon: DisconnectedIcon,
     desc: t(
-      'ceph-storage-plugin~Pool {{name}} creation timed out. Please check if ocs-operator and rook operator are running',
+      'ceph-storage-plugin~Pool {{name}} creation timed out. Please check if odf operator and rook operator are running',
       { name: poolName },
     ),
     className: '',
