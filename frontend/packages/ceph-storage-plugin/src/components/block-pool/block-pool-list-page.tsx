@@ -27,7 +27,7 @@ import { StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 import { menuActions } from './block-pool-menu-action';
-import { healthStateMapping } from './states';
+import { healthStateMapping } from '../dashboards/block-pool/states';
 import { CephBlockPoolModel } from '../../models';
 import { StoragePoolKind, OcsStorageClassKind, CephClusterKind } from '../../types';
 import { CEPH_STORAGE_NAMESPACE, CEPH_EXTERNAL_CR_NAME } from '../../constants';
