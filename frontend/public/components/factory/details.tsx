@@ -178,7 +178,9 @@ export type DetailsPageProps = {
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
   buttonActions?: any[];
-  customActionMenu?: React.ReactNode; // Renders a custom action menu.
+  customActionMenu?:
+    | React.ReactNode
+    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
   pages?: Page[];
   pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;

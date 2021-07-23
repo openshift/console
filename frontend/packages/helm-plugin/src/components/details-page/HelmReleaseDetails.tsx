@@ -13,7 +13,7 @@ import {
 } from '@console/internal/components/utils';
 import { SecretModel } from '@console/internal/models';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-import { ActionMenu, ActionsLoader, ActionMenuVariant, Status } from '@console/shared';
+import { ActionMenu, ActionMenuVariant, Status, ActionServiceProvider } from '@console/shared';
 import { HelmRelease, HelmActionOrigins } from '../../types/helm-types';
 import { fetchHelmReleases } from '../../utils/helm-utils';
 import HelmReleaseHistory from './history/HelmReleaseHistory';
@@ -80,17 +80,13 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   };
 
   const customActionMenu = (
-    <ActionsLoader contextId="helm-actions" scope={actionsScope}>
-      {(loader) =>
-        loader.loaded && (
-          <ActionMenu
-            actions={loader.actions}
-            options={loader.options}
-            variant={ActionMenuVariant.DROPDOWN}
-          />
+    <ActionServiceProvider context={{ 'helm-actions': actionsScope }}>
+      {({ actions, options, loaded }) =>
+        loaded && (
+          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
         )
       }
-    </ActionsLoader>
+    </ActionServiceProvider>
   );
 
   return (

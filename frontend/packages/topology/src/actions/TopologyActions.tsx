@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { ActionsLoader, ActionMenu, ActionMenuVariant } from '@console/shared';
+import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 
 type TopologyActionsProps = {
   element: GraphElement;
@@ -8,11 +8,13 @@ type TopologyActionsProps = {
 
 const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
   return (
-    <ActionsLoader contextId="topology-actions" scope={element}>
-      {({ actions, loaded }) =>
-        loaded && <ActionMenu actions={actions} variant={ActionMenuVariant.DROPDOWN} />
+    <ActionServiceProvider context={{ 'topology-actions': element }}>
+      {({ actions, options, loaded }) =>
+        loaded && (
+          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+        )
       }
-    </ActionsLoader>
+    </ActionServiceProvider>
   );
 };
 

@@ -162,5 +162,19 @@
         "$codeRef": "yamlTemplates.defaultYamlTemplate"
       }
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useKnativeDeploymentActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
   }
 ]

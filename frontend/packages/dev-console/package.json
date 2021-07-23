@@ -23,6 +23,7 @@
       ]
     },
     "exposedModules": {
+      "actions": "src/actions",
       "icons": "src/utils/icons.tsx",
       "catalog": "src/components/catalog",
       "fileUpload": "src/components/jar-file-upload/index.ts"
