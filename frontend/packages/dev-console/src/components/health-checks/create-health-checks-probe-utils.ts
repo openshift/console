@@ -6,16 +6,19 @@ import { healthChecksDefaultValues } from './health-checks-probe-utils';
 
 export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Resources) => {
   const probeData = {
-    ...(data.failureThreshold && { failureThreshold: data.failureThreshold }),
-    ...(data.successThreshold && { successThreshold: data.successThreshold }),
+    ...(data.failureThreshold && { failureThreshold: _.toInteger(data.failureThreshold) }),
+    ...(data.successThreshold && { successThreshold: _.toInteger(data.successThreshold) }),
     ...(data.requestType === RequestType.ContainerCommand && {
       exec: data.exec,
     }),
     ...(data.requestType === RequestType.HTTPGET && {
       httpGet: {
         ...data[data.requestType],
-        ...(data[data.requestType]?.scheme?.[0] === 'HTTPS' && {
-          scheme: data[data.requestType].scheme[0],
+        ...(_.isArray(data[data.requestType]?.scheme) && {
+          scheme:
+            data[data.requestType].scheme[0] === 'HTTPS'
+              ? data[data.requestType].scheme[0]
+              : 'HTTP',
         }),
         port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.httpGet.port),
       },
@@ -26,10 +29,10 @@ export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Re
       },
     }),
     ...(data.initialDelaySeconds && {
-      initialDelaySeconds: data.initialDelaySeconds,
+      initialDelaySeconds: _.toInteger(data.initialDelaySeconds),
     }),
-    ...(data.periodSeconds && { periodSeconds: data.periodSeconds }),
-    ...(data.timeoutSeconds && { timeoutSeconds: data.timeoutSeconds }),
+    ...(data.periodSeconds && { periodSeconds: _.toInteger(data.periodSeconds) }),
+    ...(data.timeoutSeconds && { timeoutSeconds: _.toInteger(data.timeoutSeconds) }),
   };
   return probeData;
 };
