@@ -4,8 +4,6 @@ import {
   Form, 
   FormGroup, 
   TextInput,
-  //Checkbox,
-  //Button,
  } from '@patternfly/react-core';
 import {
   SecretKind,
@@ -13,13 +11,12 @@ import {
 } from '@console/internal/module/k8s';
 import {
   SecretModel
-  //StorageClassModel,
 } from '@console/internal/models';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 import { FlashsystemState, IBMFlashsystemKind } from './type';
 import { IBMFlashsystemModel } from './models';
 
-export const flashsystemConnectionDetails: React.FC<ExternalComponentProps<FlashsystemState>> = ({ 
+export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<FlashsystemState>> = ({ 
   setFormState,
   formState,
 }) => {
@@ -70,184 +67,9 @@ export const flashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
       </FormGroup>
     </Form>
   );
-  
-/*
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const create = (event: React.FormEvent<EventTarget>) => {
-    const storageSecretTemplate: SecretKind = {
-      apiVersion: apiVersionForModel(SecretModel),
-      stringData:{
-        management_address: endpoint,
-        password: password,
-        username: username,
-      },
-      kind: 'Secret',
-      metadata:{
-        name: storageName,
-        namespace: namespace,
-      },
-      type: 'Opaque',
-    };
-    const IBMFlashsystemTemplate: IBMFlashsystemKind = {
-      apiVersion: apiVersionForModel(IBMFlashsystemModel),
-      kind: IBMFlashsystemModel.kind,
-      metadata: {
-        name: storageName,
-        namespace: namespace,
-      },
-      spec: {
-        name: storageName,
-        endpoint: endpoint,
-        insecureSkipVerify: true,
-        secret:{
-          name: storageName,
-          namespace: namespace,
-        },
-      },
-    };
-    const IBMFlashsystemTemplateWithDefaultPool: IBMFlashsystemKind = {
-      apiVersion: apiVersionForModel(IBMFlashsystemModel),
-      kind: IBMFlashsystemModel.kind,
-      metadata: {
-        name: storageName,
-        namespace: namespace,
-      },
-      spec: {
-        name: storageName,
-        endpoint: endpoint,
-        insecureSkipVerify: true,
-        secret:{
-          name: storageName,
-          namespace: namespace,
-        },
-        defaultPool:{
-          poolname: poolName,
-        }
-      },
-    };
-  };
-
-  var createDefaultStorageClassPage;
-  if(createDefaultStorageClass) {
-    createDefaultStorageClassPage = (<div className="subline-with-2-words">
-            <label className="control-label co-required" htmlFor="snapshot-name">
-              Pool Name
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handlePoolName}
-              name="poolname"
-              id="poolname"
-              value={poolName}
-              required
-            />
-          </div>)
-  } else {
-    createDefaultStorageClassPage = (<div className="form-group co-pre-wrap">
-    </div>)
-  }
-
-  return (
-    <div className="co-volume-snapshot__body">
-      <div className="co-m-pane__body co-m-pane__form">
-        <form className="co-m-pane__body-group" onSubmit={create}>
-          
-          <div className="form-group co-volume-snapshot__form">
-            <label className="control-label co-required" htmlFor="snapshot-name">
-              Name
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handlestorageName}
-              name="storageName"
-              id="snapshot-name"
-              value={storageName}
-              required
-            />
-          
-            <label className="control-label co-required" htmlFor="endpoint">
-              Endpoint
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handleEndpoint}
-              name="endpoint"
-              id="endpoint"
-              value={endpoint}
-              required
-            />
-            <p className="help-block" id="label-selector-help">
-            Rest API IP address of IBM Storage FlashSystem 
-            </p>
-          
-            <label className="control-label co-required" htmlFor="username">
-              Username
-            </label>
-            <input
-              className="pf-c-form-control"
-              type="text"
-              onChange={handleUserName}
-              name="username"
-              id="username"
-              value={username}
-              required
-            />
-          
-            <label className="control-label co-required" htmlFor="password">
-              Password
-            </label>
-            
-            {showPassword ? (
-                <>
-                  <input
-                    className="pf-c-form-control"
-                    type="text"
-                    onChange={handlePassword}
-                    name="password"
-                    id="password"
-                    value={password}
-                    required
-                  />
-                  <Button isSmall isInline variant="link" onClick={() => setShowPassword(false)}>
-                    {t('kubevirt-plugin~Hide password')}
-                  </Button>
-                </>
-              ) : (
-                <>
-                <input
-                    className="pf-c-form-control"
-                    type="password"
-                    onChange={handlePassword}
-                    name="password"
-                    id="password"
-                    value={password}
-                    required
-                  />
-                <Button isSmall isInline variant="link" onClick={() => setShowPassword(true)}>
-                  {t('kubevirt-plugin~Show password')}
-                </Button>
-                </>
-              )}
-              <Checkbox
-              label="Create Default StorageClass"
-              onChange={handleDefaultStorageClass}
-              isChecked={createDefaultStorageClass}
-              id="createDefaultStorageClass"
-              />
-              {createDefaultStorageClassPage}
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-  */
 };
 
-export const flashsystemPayload: CreatePayload<FlashsystemState> = (systemName, form, model, storageClassName) => {
+export const FlashsystemPayload: CreatePayload<FlashsystemState> = (systemName, form, model, storageClassName) => {
   const namespace = 'openshift-storage';
   const defaultFilesystem = 'ext4';
   const defaultVolumeMode = 'thick';
@@ -306,11 +128,8 @@ export const flashsystemPayload: CreatePayload<FlashsystemState> = (systemName, 
     payload: storageSecretTemplate,
   };
   
-  const allPayload = [ secretPayload, flashsystemPayload ];
-  
-  return allPayload;
+  return [ secretPayload, flashsystemPayload ];
 };
 
-
-export const flashsystemCanGoToNextStep: CanGoToNextStep<FlashsystemState> = (state) =>
+export const FlashsystemCanGoToNextStep: CanGoToNextStep<FlashsystemState> = (state) =>
   !!state.endpoint && !!state.username && !!state.password && !!state.poolname;
