@@ -24,6 +24,7 @@ import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shar
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
+import isMultiClusterEnabled from '@console/app/src/utils/isMultiClusterEnabled';
 import * as UIActions from '../actions/ui';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { flagPending, featureReducerName } from '../reducers/features';
@@ -327,6 +328,20 @@ class MastheadToolbarContents_ extends React.Component {
             fireTelemetryEvent('Documentation Clicked');
           },
         },
+        ...(isMultiClusterEnabled()
+          ? [
+              {
+                label: t('public~ACM Documentation'),
+                externalLink: true,
+                // TODO:  add version number to end of URL
+                href:
+                  'https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes',
+                callback: () => {
+                  fireTelemetryEvent('ACM Documentation Clicked');
+                },
+              },
+            ]
+          : []),
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
               {
