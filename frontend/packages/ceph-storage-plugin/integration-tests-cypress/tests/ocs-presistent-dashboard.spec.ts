@@ -6,7 +6,7 @@ describe('Check OCS Dashboards', () => {
     cy.login();
     cy.visit('/');
     cy.install();
-    cy.visit('/ocs-dashboards');
+    cy.visit('/ocs-dashboards/block-file');
   });
 
   afterEach(() => {
@@ -29,8 +29,13 @@ describe('Check OCS Dashboards', () => {
   });
 
   it('Check Details card is correct', () => {
-    cy.contains('OpenShift Container Storage').should('be.visible');
-    cy.contains('ocs-storagecluster').should('be.visible');
+    cy.byTestID('ocs-link')
+      .contains('OpenShift Container Storage')
+      .scrollIntoView()
+      .should('be.visible');
+    cy.contains('ocs-storagecluster')
+      .scrollIntoView()
+      .should('be.visible');
   });
 
   it('Check Inventory card is correct', () => {
