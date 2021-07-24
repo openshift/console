@@ -1,5 +1,5 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FlashsystemState } from './ibm-flashsystem/type';
+import { FlashSystemState } from './ibm-flashsystem/type';
 import { IP_FAMILY } from '../../../constants';
 
 /**
@@ -92,7 +92,7 @@ export type CanGoToNextStep<S extends ExternalState> = (
 /**
  * State for external components
  */
-export type ExternalState = RHCSState | FlashsystemState | {};
+export type ExternalState = RHCSState | FlashSystemState | {};
 
 export type ExternalStateValues = ValuesOfUnion<ExternalState>;
 

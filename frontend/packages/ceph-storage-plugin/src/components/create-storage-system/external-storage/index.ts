@@ -1,11 +1,11 @@
 import { ExternalStorage } from './types';
 import { rhcsCanGoToNextStep, ConnectionDetails, rhcsPayload } from './red-hat-ceph-storage';
 import {
-  FlashsystemCanGoToNextStep,
-  FlashsystemConnectionDetails,
-  FlashsystemPayload,
+  FlashSystemCanGoToNextStep,
+  FlashSystemConnectionDetails,
+  FlashSystemPayload,
 } from './ibm-flashsystem/index';
-import { IBMFlashsystemModel } from './ibm-flashsystem/models';
+import { IBMFlashSystemModel } from './ibm-flashsystem/models';
 import { OCSServiceModel } from '../../../models';
 
 export const SUPPORTED_EXTERNAL_STORAGE: ExternalStorage[] = [
@@ -22,15 +22,15 @@ export const SUPPORTED_EXTERNAL_STORAGE: ExternalStorage[] = [
     canGoToNextStep: rhcsCanGoToNextStep,
   },
   {
-    displayName: 'IBM Flashsystem Storage',
+    displayName: 'IBM FlashSystem Storage',
     model: {
-      apiGroup: IBMFlashsystemModel.apiGroup,
-      apiVersion: IBMFlashsystemModel.apiVersion,
-      kind: IBMFlashsystemModel.kind,
-      plural: IBMFlashsystemModel.plural,
+      apiGroup: IBMFlashSystemModel.apiGroup,
+      apiVersion: IBMFlashSystemModel.apiVersion,
+      kind: IBMFlashSystemModel.kind,
+      plural: IBMFlashSystemModel.plural,
     },
-    Component: FlashsystemConnectionDetails,
-    createPayload: FlashsystemPayload,
-    canGoToNextStep: FlashsystemCanGoToNextStep,
+    Component: FlashSystemConnectionDetails,
+    createPayload: FlashSystemPayload,
+    canGoToNextStep: FlashSystemCanGoToNextStep,
   },
 ];

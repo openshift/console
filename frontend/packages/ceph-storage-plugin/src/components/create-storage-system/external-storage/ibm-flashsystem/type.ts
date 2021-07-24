@@ -1,6 +1,6 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
-export type IBMFlashsystemStatus = {
+export type IBMFlashSystemStatus = {
   capacity?: {
     maxCapacity: string;
     usedCapacity: string;
@@ -11,7 +11,7 @@ export type IBMFlashsystemStatus = {
   version?: string;
 };
 
-export type IBMFlashsystemSpec = {
+export type IBMFlashSystemSpec = {
   name?: string;
   defaultPool?: {
     fsType: string;
@@ -27,12 +27,12 @@ export type IBMFlashsystemSpec = {
   };
 };
 
-export type IBMFlashsystemKind = {
-  spec: IBMFlashsystemSpec;
-  status?: IBMFlashsystemStatus;
+export type IBMFlashSystemKind = {
+  spec: IBMFlashSystemSpec;
+  status?: IBMFlashSystemStatus;
 } & K8sResourceCommon;
 
-export type FlashsystemState = {
+export type FlashSystemState = {
   username: string;
   password: string;
   endpoint: string;

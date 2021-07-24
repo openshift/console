@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormGroup, TextInput, Button, ValidatedOptions } from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, InputGroup, Button, Tooltip, ValidatedOptions } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { isValidUrl } from '@console/shared';
-import { FlashsystemState, IBMFlashsystemKind } from './type';
-import { IBMFlashsystemModel } from './models';
+import { FlashSystemState, IBMFlashSystemKind } from './type';
+import { IBMFlashSystemModel } from './models';
 import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 
-export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<FlashsystemState>> = ({
+export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<FlashSystemState>> = ({
   setFormState,
   formState,
 }) => {
@@ -31,7 +31,7 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
         fieldId="endpoint-input"
         isRequired
         validated={endpointValid}
-        helperText={t('ceph-storage-plugin~Rest API IP address of IBM Storage FlashSystem.')}
+        helperText={t('ceph-storage-plugin~Rest API IP address of IBM FlashSystem.')}
         helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid URL')}
       >
         <TextInput
@@ -52,31 +52,20 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
         />
       </FormGroup>
       <FormGroup label={t('ceph-storage-plugin~Password')} isRequired fieldId="password-input">
-        <TextInput
-          id="password-input"
-          value={formState.password}
-          type={reveal ? 'text' : 'password'}
-          onChange={(value: string) => setFormState('password', value)}
-          isRequired
-        />
-        <Button
-          type="button"
-          onClick={() => setReveal(!reveal)}
-          variant="link"
-          className="pf-m-link--align-right"
-        >
-          {reveal ? (
-            <>
-              <EyeSlashIcon className="co-icon-space-r" />
-              {t('ceph-storage-plugin~Hide Values')}
-            </>
-          ) : (
-            <>
-              <EyeIcon className="co-icon-space-r" />
-              {t('ceph-storage-plugin~Reveal Values')}
-            </>
-          )}
-        </Button>
+        <InputGroup>
+          <TextInput
+            id="password-input"
+            value={formState.password}
+            type={reveal ? 'text' : 'password'}
+            onChange={(value: string) => setFormState('password', value)}
+            isRequired
+          />
+          <Tooltip content={reveal ? 'Hide password' : 'Reveal password'}>
+              <Button variant="control" onClick={() => setReveal(!reveal)}>
+                {reveal ? <EyeSlashIcon /> : <EyeIcon />}
+              </Button>
+            </Tooltip>
+        </InputGroup>
       </FormGroup>
       <FormGroup label={t('ceph-storage-plugin~Poolname')} isRequired fieldId="poolname-input">
         <TextInput
@@ -91,7 +80,7 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   );
 };
 
-export const FlashsystemPayload: CreatePayload<FlashsystemState> = (
+export const FlashSystemPayload: CreatePayload<FlashSystemState> = (
   systemName,
   form,
   model,
@@ -102,9 +91,9 @@ export const FlashsystemPayload: CreatePayload<FlashsystemState> = (
   const defaultVolumeMode = 'thick';
   const defaultVolumePrefix = 'odf';
 
-  const IBMFlashsystemTemplate: IBMFlashsystemKind = {
-    apiVersion: apiVersionForModel(IBMFlashsystemModel),
-    kind: IBMFlashsystemModel.kind,
+  const IBMFlashSystemTemplate: IBMFlashSystemKind = {
+    apiVersion: apiVersionForModel(IBMFlashSystemModel),
+    kind: IBMFlashSystemModel.kind,
     metadata: {
       name: systemName,
       namespace,
@@ -125,9 +114,9 @@ export const FlashsystemPayload: CreatePayload<FlashsystemState> = (
       },
     },
   };
-  const flashsystemPayload = {
+  const FlashSystemPayload = {
     model,
-    payload: IBMFlashsystemTemplate,
+    payload: IBMFlashSystemTemplate,
   };
 
   const storageSecretTemplate: SecretKind = {
@@ -155,8 +144,8 @@ export const FlashsystemPayload: CreatePayload<FlashsystemState> = (
     payload: storageSecretTemplate,
   };
 
-  return [secretPayload, flashsystemPayload];
+  return [secretPayload, FlashSystemPayload];
 };
 
-export const FlashsystemCanGoToNextStep: CanGoToNextStep<FlashsystemState> = (state) =>
+export const FlashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
   !!state.endpoint && !!state.username && !!state.password && !!state.poolname;
