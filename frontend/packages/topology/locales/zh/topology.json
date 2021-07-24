@@ -52,7 +52,7 @@
   "Unable to move connector of type {{type}}.": "无法移动类型 {{type}} 的连接器。",
   "Topology": "拓扑",
   "No resources found": "没有找到资源",
-  "<0>Start building your application</0> or visit the <3>Add page</3> for more details.": "<0>开始构建应用程序</0> 或访问<3>添加页面</3>以了解更多详细信息。",
+  "<0>Start building your application</0> or visit the <2>Add page</2> for more details.": "<0>开始构建应用程序</0> 或访问<2>添加页面</2>以了解更多详细信息。",
   "Select a Project to view the topology or <2>create a Project</2>.": "选择一个项目查看拓扑或<2>创建一个项目</2>",
   "List view": "列表视图",
   "Graph view": "图形视图",

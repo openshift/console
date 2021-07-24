@@ -16,3 +16,14 @@ export enum ActionMenuVariant {
   KEBAB = 'plain',
   DROPDOWN = 'default',
 }
+
+export type ActionContext = {
+  [contextId: string]: any;
+};
+
+export type ActionService = {
+  actions: Action[];
+  options: MenuOption[];
+  loaded: boolean;
+  error: any;
+};

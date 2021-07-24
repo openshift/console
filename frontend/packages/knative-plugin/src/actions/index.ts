@@ -6,3 +6,4 @@ export * from './sink-source';
 export * from './sink-pubsub';
 export * from './knatify';
 export * from './edit-ksvc';
+export * from './providers';

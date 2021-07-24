@@ -185,7 +185,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
             className="co-alert"
             variant="info"
             title={t(
-              "ceph-storage-plugin~A bucket will be created to provide the OpenShift Container Storage's Service.",
+              "ceph-storage-plugin~A bucket will be created to provide the OpenShift Data Foundation's Service.",
             )}
             role="alert"
             aria-label={t(

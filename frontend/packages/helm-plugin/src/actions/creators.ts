@@ -8,7 +8,7 @@ export const getHelmDeleteAction = (
   { releaseName, namespace, redirect }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
-  id: 'helm-delete-action',
+  id: 'delete-helm',
   label: t('helm-plugin~Uninstall Helm Release'),
   cta: () => {
     deleteResourceModal({
@@ -33,7 +33,7 @@ export const getHelmUpgradeAction = (
   { releaseName, namespace, actionOrigin }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
-  id: 'helm-upgrade-action',
+  id: 'upgrade-helm',
   label: t('helm-plugin~Upgrade'),
   cta: {
     href: `/helm-releases/ns/${namespace}/${releaseName}/upgrade?actionOrigin=${actionOrigin}`,
@@ -44,7 +44,7 @@ export const getHelmRollbackAction = (
   { releaseName, namespace, actionOrigin }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
-  id: 'helm-rollback-action',
+  id: 'rollback-helm',
   label: t('helm-plugin~Rollback'),
   cta: {
     href: `/helm-releases/ns/${namespace}/${releaseName}/rollback?actionOrigin=${actionOrigin}`,

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 
 import {
   GreenCheckCircleIcon,
@@ -6,6 +7,18 @@ import {
   YellowExclamationTriangleIcon,
   GrayUnknownIcon,
 } from '@console/shared/src/components/status/icons';
+
+import { ImageStates } from '../../../types';
+
+export const ImageStateLegendMap = (t: TFunction): { [state in ImageStates]: string } => ({
+  [ImageStates.STARTING_REPLAY]: t('ceph-storage-plugin~Start replay'),
+  [ImageStates.STOPPING_REPLAY]: t('ceph-storage-plugin~Stop reply'),
+  [ImageStates.REPLAYING]: t('ceph-storage-plugin~Replaying'),
+  [ImageStates.STOPPED]: t('ceph-storage-plugin~Stopped'),
+  [ImageStates.ERROR]: t('ceph-storage-plugin~Error'),
+  [ImageStates.SYNCING]: t('ceph-storage-plugin~Syncing'),
+  [ImageStates.UNKNOWN]: t('ceph-storage-plugin~Unknown'),
+});
 
 enum ImageHealth {
   OK = 'OK',

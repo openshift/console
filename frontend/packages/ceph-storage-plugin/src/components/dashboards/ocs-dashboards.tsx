@@ -24,7 +24,7 @@ import { HorizontalNav, PageHeading, LoadingBox } from '@console/internal/compon
 
 const OCSDashboardsPage: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
-  const title = t('ceph-storage-plugin~OpenShift Container Storage Overview');
+  const title = t('ceph-storage-plugin~OpenShift Data Foundation Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
   const dynamicTabExtensions = useExtensions<DynamicDashboardsTab>(isDynamicDashboardsTab);

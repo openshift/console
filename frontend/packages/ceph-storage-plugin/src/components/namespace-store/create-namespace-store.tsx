@@ -22,7 +22,7 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: 'Openshift Container Storage',
+              name: 'Openshift Data Foundation',
               path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
             },
             { name: t('ceph-storage-plugin~Create NamespaceStore '), path: match.url },

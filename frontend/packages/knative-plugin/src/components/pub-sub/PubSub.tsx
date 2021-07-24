@@ -33,7 +33,7 @@ const PubSub: React.FC<PubSubProps> = ({
   } = target;
   const getResourceModel = () =>
     sourceKind === EventingBrokerModel.kind ? EventingTriggerModel : EventingSubscriptionModel;
-  const { kind, apiVersion, apiGroup } = getResourceModel();
+  const { kind, apiVersion, apiGroup, labelKey } = getResourceModel();
   const getSpecForKind = (connectorSourceKind: string) => {
     let spec = {};
     if (connectorSourceKind === EventingTriggerModel.kind) {
@@ -79,7 +79,9 @@ const PubSub: React.FC<PubSubProps> = ({
       });
   };
 
-  const labelTitle = t('knative-plugin~Add {{kind}}', { kind });
+  const labelTitle = t('knative-plugin~Add {{kind}}', {
+    kind: t(labelKey) || kind,
+  });
   return (
     <Formik
       initialValues={initialValues}

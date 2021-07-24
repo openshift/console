@@ -26,3 +26,10 @@ const deleteBlockPool = (kindObj: K8sKind, blockPoolConfig: StoragePoolKind, _, 
 };
 
 export const menuActions = [editBlockPool, deleteBlockPool];
+
+export const menuActionCreator = (
+  kindObj: K8sKind,
+  blockPoolConfig: StoragePoolKind,
+  resource?: any,
+  customData?: any,
+) => menuActions.map((action) => action(kindObj, blockPoolConfig, resource, customData));

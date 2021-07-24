@@ -12,7 +12,7 @@ export const OCSUpgradeActivity: React.FC = () => {
 
   return (
     <ActivityItem>
-      {t("ceph-storage-plugin~Upgrading OpenShift Container Storage's Operator")}
+      {t("ceph-storage-plugin~Upgrading OpenShift Data Foundation's Operator")}
     </ActivityItem>
   );
 };

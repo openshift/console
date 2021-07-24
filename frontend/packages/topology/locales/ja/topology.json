@@ -52,7 +52,7 @@
   "Unable to move connector of type {{type}}.": "タイプ {{type}} のコネクターを移動できません。",
   "Topology": "トポロジー",
   "No resources found": "リソースが見つかりません",
-  "<0>Start building your application</0> or visit the <3>Add page</3> for more details.": "<0>アプリケーションのビルドを開始</0>するか、または <3>Add page</3> に移動して詳細を確認します。",
+  "<0>Start building your application</0> or visit the <2>Add page</2> for more details.": "<0>アプリケーションのビルドを開始</0>するか、または <2>Add page</2> に移動して詳細を確認します。",
   "Select a Project to view the topology or <2>create a Project</2>.": "トポロジーを表示するプロジェクトを選択するか、または<2>プロジェクトを作成</2>します。",
   "List view": "リストビュー",
   "Graph view": "グラフビュー",

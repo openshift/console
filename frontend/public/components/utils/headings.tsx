@@ -183,7 +183,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
                   }
                 />
               )}
-              {customActionMenu}
+              {_.isFunction(customActionMenu) ? customActionMenu(kindObj, data) : customActionMenu}
             </div>
           )}
         </h1>
@@ -290,7 +290,9 @@ export type PageHeadingProps = {
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
   menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
-  customActionMenu?: React.ReactNode; // Renders a custom action menu.
+  customActionMenu?:
+    | React.ReactNode
+    | ((kindObj: K8sKind, obj: K8sResourceKind) => React.ReactNode); // Renders a custom action menu.
   obj?: FirehoseResult<K8sResourceKind>;
   resourceKeys?: string[];
   style?: object;

@@ -341,7 +341,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Edit BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/update-block-pool-modal' /* webpackChunkName: "ceph-storage-update-block-pool-modal" */
         )
@@ -781,7 +781,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Delete BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/delete-block-pool-modal' /* webpackChunkName: "ceph-storage-delete-block-pool-modal" */
         )

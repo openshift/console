@@ -1,0 +1,8 @@
+reviewers:
+  - florkbr
+  - jhadvig
+approvers:
+  - florkbr
+labels:
+  - component/backend
+  - kind/dependency-change

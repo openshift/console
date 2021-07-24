@@ -52,9 +52,17 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
   });
 
   it('should fetch models for duck type in case of error', async () => {
-    jest.spyOn(coFetch, 'coFetch').mockImplementation(() => Promise.reject(new Error('Error')));
+    // Suppress the warning to clean up the test output
+    jest.spyOn(console, 'warn').mockImplementation(jest.fn());
+
+    jest
+      .spyOn(coFetch, 'coFetch')
+      .mockImplementation(() => Promise.reject(new Error('Test Error')));
     await fetchEventSourcesCrd();
     expect(getEventSourceModels()).toHaveLength(0);
+
+    // eslint-disable-next-line no-console
+    (console.warn as any).mockRestore();
   });
 
   it('should return true for event source model', async () => {

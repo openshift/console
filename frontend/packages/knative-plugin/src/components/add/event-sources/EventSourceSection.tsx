@@ -7,8 +7,9 @@ import AppSection from '@console/dev-console/src/components/import/app/AppSectio
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ProjectModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { capabilityWidgetMap } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/spec-descriptor-input';
+import { descriptorsToUISchema } from '@console/operator-lifecycle-manager/src/components/operand/utils';
 import { DynamicFormField, useFormikValidationFix } from '@console/shared';
+import { formDescriptorData } from '../../../utils/create-eventsources-utils';
 import { EventSources } from '../import-types';
 import ApiServerSection from './ApiServerSection';
 import ContainerSourceSection from './ContainerSourceSection';
@@ -23,22 +24,6 @@ interface EventSourceSectionProps {
   fullWidth?: boolean;
   kameletSource?: K8sResourceKind;
 }
-
-const getUISchema = (formSchema) => {
-  const uiSchema = {};
-  for (const k in formSchema.properties) {
-    if (formSchema.properties.hasOwnProperty(k)) {
-      uiSchema[k] = {
-        'ui:title': formSchema.properties[k].title,
-        'ui:description': formSchema.properties[k].description,
-        ...(formSchema.properties[k].hasOwnProperty('x-descriptors')
-          ? { 'ui:widget': capabilityWidgetMap.get(formSchema.properties[k]['x-descriptors'][0]) }
-          : {}),
-      };
-    }
-  }
-  return uiSchema;
-};
 
 const EventSourceSection: React.FC<EventSourceSectionProps> = ({
   namespace,
@@ -103,7 +88,7 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
           <DynamicFormField
             name="formData.data.KameletBinding.source.properties"
             schema={formSchema}
-            uiSchema={getUISchema(formSchema)}
+            uiSchema={descriptorsToUISchema(formDescriptorData(formSchema.properties), formSchema)}
             showAlert={false}
           />
         </>
