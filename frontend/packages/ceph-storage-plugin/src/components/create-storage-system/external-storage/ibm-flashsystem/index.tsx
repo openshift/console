@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormGroup, TextInput, InputGroup, Button, Tooltip, ValidatedOptions } from '@patternfly/react-core';
+import {
+  Form,
+  FormGroup,
+  TextInput,
+  InputGroup,
+  Button,
+  Tooltip,
+  ValidatedOptions,
+} from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
@@ -60,11 +68,17 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
             onChange={(value: string) => setFormState('password', value)}
             isRequired
           />
-          <Tooltip content={reveal ? 'Hide password' : 'Reveal password'}>
-              <Button variant="control" onClick={() => setReveal(!reveal)}>
-                {reveal ? <EyeSlashIcon /> : <EyeIcon />}
-              </Button>
-            </Tooltip>
+          <Tooltip
+            content={
+              reveal
+                ? t('ceph-storage-plugin~Hide password')
+                : t('ceph-storage-plugin~Reveal password')
+            }
+          >
+            <Button variant="control" onClick={() => setReveal(!reveal)}>
+              {reveal ? <EyeSlashIcon /> : <EyeIcon />}
+            </Button>
+          </Tooltip>
         </InputGroup>
       </FormGroup>
       <FormGroup label={t('ceph-storage-plugin~Poolname')} isRequired fieldId="poolname-input">
@@ -114,7 +128,7 @@ export const FlashSystemPayload: CreatePayload<FlashSystemState> = (
       },
     },
   };
-  const FlashSystemPayload = {
+  const flashSystemPayload = {
     model,
     payload: IBMFlashSystemTemplate,
   };
@@ -144,7 +158,7 @@ export const FlashSystemPayload: CreatePayload<FlashSystemState> = (
     payload: storageSecretTemplate,
   };
 
-  return [secretPayload, FlashSystemPayload];
+  return [secretPayload, flashSystemPayload];
 };
 
 export const FlashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
