@@ -10,5 +10,4 @@ export const IBMFlashsystemModel: K8sKind = {
     namespaced: true,
     kind: 'FlashSystemCluster', 
     crd: true,
-  };
-  
+};

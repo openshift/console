@@ -28,12 +28,12 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   const [reveal, setReveal] = React.useState(false);
   const [endpointValid, setEndpointValid] = React.useState(ValidatedOptions.default);
   const onChange = (value: string) => {
-    setFormState('endpoint', value);
-    if (value){
-      if (isValidUrl(value)){
-        setEndpointValid(ValidatedOptions.success);
+    setFormState( 'endpoint', value );
+    if (value ){
+      if (isValidUrl(value )){
+        setEndpointValid(ValidatedOptions.success );
       } else {
-        setEndpointValid(ValidatedOptions.error);
+        setEndpointValid(ValidatedOptions.error );
       }
     };
   };
@@ -68,28 +68,13 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
         />
       </FormGroup>
       <FormGroup label={t('ceph-storage-plugin~Password')} isRequired fieldId="password-input" >
-      {reveal ? (
-        <>
         <TextInput
           id="password-input"
           value={formState.password}
-          type="text"
+          type={reveal ? 'text' : 'password'}
           onChange={(value: string) => setFormState('password', value)}
           isRequired
         />
-                
-        </>
-        ) : (
-        <>
-        <TextInput
-          id="password-input"
-          value={formState.password}
-          type="password"
-          onChange={(value: string) => setFormState('password', value)}
-          isRequired
-        />
-        </>
-        )}
         <Button
             type="button"
             onClick={() => setReveal(!reveal)}
