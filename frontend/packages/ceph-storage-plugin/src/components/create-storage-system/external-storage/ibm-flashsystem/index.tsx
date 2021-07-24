@@ -1,55 +1,39 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { 
-  Form, 
-  FormGroup, 
-  TextInput,
-  Button,
-  ValidatedOptions,
- } from '@patternfly/react-core';
+import { Form, FormGroup, TextInput, Button, ValidatedOptions } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
-import {
-  SecretKind,
-  apiVersionForModel,
-} from '@console/internal/module/k8s';
-import {
-  SecretModel
-} from '@console/internal/models';
+import { SecretKind, apiVersionForModel } from '@console/internal/module/k8s';
+import { SecretModel } from '@console/internal/models';
 import { isValidUrl } from '@console/shared';
-import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 import { FlashsystemState, IBMFlashsystemKind } from './type';
 import { IBMFlashsystemModel } from './models';
+import { CreatePayload, ExternalComponentProps, CanGoToNextStep } from '../types';
 
-export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<FlashsystemState>> = ({ 
+export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<FlashsystemState>> = ({
   setFormState,
   formState,
 }) => {
   const { t } = useTranslation();
   const [reveal, setReveal] = React.useState(false);
   const [endpointValid, setEndpointValid] = React.useState(ValidatedOptions.default);
+
   const onChange = (value: string) => {
-    setFormState( 'endpoint', value );
-    if (value ){
-      if (isValidUrl(value )){
-        setEndpointValid(ValidatedOptions.success );
-      } else {
-        setEndpointValid(ValidatedOptions.error );
-      }
-    };
+    setFormState('endpoint', value);
+    value && isValidUrl(value)
+      ? setEndpointValid(ValidatedOptions.success)
+      : setEndpointValid(ValidatedOptions.error);
   };
 
   return (
     <Form>
-      <FormGroup 
-        label={t('ceph-storage-plugin~Endpoint')} 
+      <FormGroup
+        label={t('ceph-storage-plugin~Endpoint')}
         fieldId="endpoint-input"
         isRequired
-        validated = {endpointValid}
-        helperText={
-          t('ceph-storage-plugin~Rest API IP address of IBM Storage FlashSystem.')
-        }
+        validated={endpointValid}
+        helperText={t('ceph-storage-plugin~Rest API IP address of IBM Storage FlashSystem.')}
         helperTextInvalid={t('ceph-storage-plugin~The endpoint is not a valid URL')}
-        >
+      >
         <TextInput
           id="endpoint-input"
           value={formState.endpoint}
@@ -67,7 +51,7 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Password')} isRequired fieldId="password-input" >
+      <FormGroup label={t('ceph-storage-plugin~Password')} isRequired fieldId="password-input">
         <TextInput
           id="password-input"
           value={formState.password}
@@ -76,23 +60,23 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
         <Button
-            type="button"
-            onClick={() => setReveal(!reveal)}
-            variant="link"
-            className="pf-m-link--align-right"
-          >
-            {reveal ? (
-              <>
-                <EyeSlashIcon className="co-icon-space-r" />
-                {t('ceph-storage-plugin~Hide Values')}
-              </>
-            ) : (
-              <>
-                <EyeIcon className="co-icon-space-r" />
-                {t('ceph-storage-plugin~Reveal Values')}
-              </>
-            )}
-          </Button>
+          type="button"
+          onClick={() => setReveal(!reveal)}
+          variant="link"
+          className="pf-m-link--align-right"
+        >
+          {reveal ? (
+            <>
+              <EyeSlashIcon className="co-icon-space-r" />
+              {t('ceph-storage-plugin~Hide Values')}
+            </>
+          ) : (
+            <>
+              <EyeIcon className="co-icon-space-r" />
+              {t('ceph-storage-plugin~Reveal Values')}
+            </>
+          )}
+        </Button>
       </FormGroup>
       <FormGroup label={t('ceph-storage-plugin~Poolname')} isRequired fieldId="poolname-input">
         <TextInput
@@ -107,7 +91,12 @@ export const FlashsystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   );
 };
 
-export const FlashsystemPayload: CreatePayload<FlashsystemState> = (systemName, form, model, storageClassName) => {
+export const FlashsystemPayload: CreatePayload<FlashsystemState> = (
+  systemName,
+  form,
+  model,
+  storageClassName,
+) => {
   const namespace = 'openshift-storage';
   const defaultFilesystem = 'ext4';
   const defaultVolumeMode = 'thick';
@@ -118,40 +107,40 @@ export const FlashsystemPayload: CreatePayload<FlashsystemState> = (systemName, 
     kind: IBMFlashsystemModel.kind,
     metadata: {
       name: systemName,
-      namespace: namespace,
+      namespace,
     },
     spec: {
       name: systemName,
       insecureSkipVerify: true,
-      secret:{
+      secret: {
         name: systemName,
-        namespace: namespace,
+        namespace,
       },
-      defaultPool:{
+      defaultPool: {
         poolName: form.poolname,
         storageclassName: storageClassName,
         spaceEfficiency: defaultVolumeMode,
         fsType: defaultFilesystem,
-        volumeNamePrefix:defaultVolumePrefix,
-      }
+        volumeNamePrefix: defaultVolumePrefix,
+      },
     },
   };
   const flashsystemPayload = {
-    model: model,
+    model,
     payload: IBMFlashsystemTemplate,
   };
 
   const storageSecretTemplate: SecretKind = {
     apiVersion: apiVersionForModel(SecretModel),
-    stringData:{
-      management_address: form.endpoint,
+    stringData: {
+      managementAddress: form.endpoint,
       password: form.password,
       username: form.username,
     },
     kind: 'Secret',
-    metadata:{
+    metadata: {
       name: systemName,
-      namespace: namespace,
+      namespace,
     },
     type: 'Opaque',
   };
@@ -165,8 +154,8 @@ export const FlashsystemPayload: CreatePayload<FlashsystemState> = (systemName, 
     },
     payload: storageSecretTemplate,
   };
-  
-  return [ secretPayload, flashsystemPayload ];
+
+  return [secretPayload, flashsystemPayload];
 };
 
 export const FlashsystemCanGoToNextStep: CanGoToNextStep<FlashsystemState> = (state) =>

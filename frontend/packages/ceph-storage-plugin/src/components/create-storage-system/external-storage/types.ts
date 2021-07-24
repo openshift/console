@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { IP_FAMILY } from '../../../constants';
 import { FlashsystemState } from './ibm-flashsystem/type';
+import { IP_FAMILY } from '../../../constants';
 
 /**
  *  Configures a new external storage vendor to the Storage System Creation wizard.
@@ -92,7 +92,7 @@ export type CanGoToNextStep<S extends ExternalState> = (
 /**
  * State for external components
  */
-export type ExternalState = RHCSState | FlashsystemState| {};
+export type ExternalState = RHCSState | FlashsystemState | {};
 
 export type ExternalStateValues = ValuesOfUnion<ExternalState>;
 

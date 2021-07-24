@@ -1,12 +1,12 @@
 import { ExternalStorage } from './types';
 import { rhcsCanGoToNextStep, ConnectionDetails, rhcsPayload } from './red-hat-ceph-storage';
-import { OCSServiceModel } from '../../../models';
-import { 
-  FlashsystemCanGoToNextStep, 
-  FlashsystemConnectionDetails, 
-  FlashsystemPayload, 
+import {
+  FlashsystemCanGoToNextStep,
+  FlashsystemConnectionDetails,
+  FlashsystemPayload,
 } from './ibm-flashsystem/index';
 import { IBMFlashsystemModel } from './ibm-flashsystem/models';
+import { OCSServiceModel } from '../../../models';
 
 export const SUPPORTED_EXTERNAL_STORAGE: ExternalStorage[] = [
   {
