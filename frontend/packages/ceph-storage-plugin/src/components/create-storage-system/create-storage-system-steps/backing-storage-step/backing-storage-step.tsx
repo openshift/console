@@ -18,6 +18,7 @@ import {
 } from '../../../../constants/create-storage-system';
 import { ErrorHandler } from '../../error-handler';
 import { ExternalStorage } from '../../external-storage/types';
+import { NO_PROVISIONER } from '../../../../constants';
 
 const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
   dispatch,
@@ -114,6 +115,8 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     },
   );
 
+  const { type, externalStorage, deployment, isAdvancedOpen } = state;
+
   React.useEffect(() => {
     /*
      Allow pre selecting the "external connection" option instead of the "existing" option 
@@ -124,7 +127,17 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     }
   }, [dispatch, allowedExternalStorage.length, hasOCS]);
 
-  const { type, externalStorage, deployment, isAdvancedOpen } = state;
+  React.useEffect(() => {
+    /*
+     Update storage class state when no storage class is used.
+    */
+    if (type === BackingStorageType.LOCAL_DEVICES) {
+      dispatch({
+        type: 'wizard/setStorageClass',
+        payload: { name: '', provisioner: NO_PROVISIONER },
+      });
+    }
+  }, [dispatch, type]);
 
   const showExternalStorageSelection =
     type === BackingStorageType.EXTERNAL && allowedExternalStorage.length;

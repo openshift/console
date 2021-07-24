@@ -6,6 +6,7 @@ import {
   CreateStorageClass,
   ConnectionDetails,
   ReviewAndCreate,
+  CreateLocalVolumeSet,
 } from './create-storage-system-steps';
 import { WizardDispatch, WizardState } from './reducer';
 import {
@@ -122,6 +123,13 @@ export const createSteps = (
           name: StepsName(t)[Steps.CreateLocalVolumeSet],
           canJumpTo: stepIdReached >= 2,
           id: 2,
+          component: (
+            <CreateLocalVolumeSet
+              state={state.createLocalVolumeSet}
+              dispatch={dispatch}
+              storageClass={storageClass}
+            />
+          ),
         },
         {
           canJumpTo: stepIdReached >= 3,

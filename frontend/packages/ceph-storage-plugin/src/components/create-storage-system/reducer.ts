@@ -1,4 +1,9 @@
 import * as _ from 'lodash';
+import {
+  deviceTypeDropdownItems,
+  diskModeDropdownItems,
+} from '@console/local-storage-operator-plugin/src/constants';
+import { NodeKind } from 'public/module/k8s';
 import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
 import { BackingStorageType, DeploymentType } from '../../constants/create-storage-system';
 
@@ -37,6 +42,23 @@ export const initialState: CreateStorageSystemState = {
   },
   createStorageClass: {},
   connectionDetails: {},
+  createLocalVolumeSet: {
+    lvsIsSelectNodes: false,
+    lvsAllNodes: [],
+    lvsSelectNodes: [],
+    volumeSetName: '',
+    isValidDiskSize: true,
+    diskType: 'All',
+    diskMode: diskModeDropdownItems.BLOCK,
+    deviceType: [deviceTypeDropdownItems.DISK, deviceTypeDropdownItems.PART],
+    maxDiskLimit: '',
+    minDiskSize: '1',
+    maxDiskSize: '',
+    diskSizeUnit: 'Gi',
+    isValidMaxSize: true,
+    showConfirmModal: false,
+    chartNodes: new Set(),
+  },
 };
 
 type CreateStorageSystemState = {
@@ -55,6 +77,25 @@ type CreateStorageSystemState = {
     capacity: string;
     enableArbiter: boolean;
   };
+  createLocalVolumeSet: LocalVolumeSet;
+};
+
+export type LocalVolumeSet = {
+  lvsIsSelectNodes: boolean;
+  lvsAllNodes: NodeKind[];
+  lvsSelectNodes: NodeKind[];
+  volumeSetName: string;
+  isValidDiskSize: boolean;
+  diskType: string;
+  diskMode: string;
+  deviceType: string[];
+  maxDiskLimit: string;
+  minDiskSize: string;
+  maxDiskSize: string;
+  diskSizeUnit: string;
+  isValidMaxSize: boolean;
+  showConfirmModal: boolean;
+  chartNodes: Set<string>;
 };
 
 /* Reducer of CreateStorageSystem */
@@ -79,6 +120,12 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'wizard/setConnectionDetails':
       newState.connectionDetails = {
         ...newState.connectionDetails,
+        [action.payload.field]: action.payload.value,
+      };
+      break;
+    case 'wizard/setCreateLocalVolumeSet':
+      newState.createLocalVolumeSet = {
+        ...newState.createLocalVolumeSet,
         [action.payload.field]: action.payload.value,
       };
       break;
@@ -115,14 +162,6 @@ export type WizardReducer = (
 type CreateStorageSystemAction =
   | { type: 'wizard/setStepIdReached'; payload: number }
   | {
-      type: 'backingStorage/setDeployment';
-      payload: WizardState['backingStorage']['deployment'];
-    }
-  | {
-      type: 'backingStorage/setIsAdvancedOpen';
-      payload: WizardState['backingStorage']['isAdvancedOpen'];
-    }
-  | {
       type: 'wizard/setStorageClass';
       payload: WizardState['storageClass'];
     }
@@ -133,6 +172,18 @@ type CreateStorageSystemAction =
   | {
       type: 'wizard/setConnectionDetails';
       payload: { field: ExternalStateKeys; value: ExternalStateValues };
+    }
+  | {
+      type: 'wizard/setCreateLocalVolumeSet';
+      payload: { field: keyof LocalVolumeSet; value: LocalVolumeSet[keyof LocalVolumeSet] };
+    }
+  | {
+      type: 'backingStorage/setDeployment';
+      payload: WizardState['backingStorage']['deployment'];
+    }
+  | {
+      type: 'backingStorage/setIsAdvancedOpen';
+      payload: WizardState['backingStorage']['isAdvancedOpen'];
     }
   | { type: 'backingStorage/setType'; payload: WizardState['backingStorage']['type'] }
   | {
