@@ -337,4 +337,8 @@ export type StorageSystemKind = K8sResourceCommon & {
     // namespace describes the name of managed storage vendor CR
     namespace: string;
   };
+  status: {
+    phase?: string;
+    conditions?: any;
+  };
 };

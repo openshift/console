@@ -793,6 +793,24 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
   },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        name: '%ceph-storage-plugin~Storage Systems%',
+        href: 'systems',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-system/odf-system-list' /* webpackChunkName: "odf-system-list" */
+          )
+        ).default,
+    },
+  },
 ];
 
 export default plugin;
