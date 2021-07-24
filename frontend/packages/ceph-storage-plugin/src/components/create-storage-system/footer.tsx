@@ -10,7 +10,7 @@ import {
   Alert,
   AlertActionCloseButton,
 } from '@patternfly/react-core';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { WizardCommonProps, WizardState } from './reducer';
 import { createNoobaaPayload, createSSPayload } from './payloads';
 import {
@@ -130,7 +130,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
     if (payloads !== null) {
       setRequestInProgress(true);
       try {
-        const requests = payloads.map(({ model, payload }) => k8sCreate(model, payload));
+        const requests = payloads.map(({ model, payload }) => k8sCreate(model as K8sKind, payload));
         await Promise.all(requests);
         dispatch({
           type: 'wizard/setStepIdReached',

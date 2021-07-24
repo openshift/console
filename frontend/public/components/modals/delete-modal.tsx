@@ -40,7 +40,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
       ? { kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy }
       : null;
 
-    props.handlePromise(k8sKill(kind, resource, {}, json), () => {
+    props.handlePromise(k8sKill(kind, resource, {}, {}, json), () => {
       props.close();
 
       // If we are currently on the deleted resource's page, redirect to the resource list page

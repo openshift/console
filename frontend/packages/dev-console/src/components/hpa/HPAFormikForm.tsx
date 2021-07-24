@@ -6,6 +6,7 @@ import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   HorizontalPodAutoscalerKind,
   k8sCreate,
+  K8sKind,
   K8sResourceKind,
   k8sUpdate,
 } from '@console/internal/module/k8s';
@@ -55,8 +56,10 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
       return Promise.reject();
     }
 
-    const method = existingHPA ? k8sUpdate : k8sCreate;
-
+    const method: (
+      kind: K8sKind,
+      data: HorizontalPodAutoscalerKind,
+    ) => Promise<HorizontalPodAutoscalerKind> = existingHPA ? k8sUpdate : k8sCreate;
     return method(HorizontalPodAutoscalerModel, hpa)
       .then(() => {
         history.goBack();
