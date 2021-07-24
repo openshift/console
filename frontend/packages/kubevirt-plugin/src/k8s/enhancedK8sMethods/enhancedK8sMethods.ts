@@ -68,7 +68,12 @@ export class EnhancedK8sMethods {
     enhancedOpts?: EnhancedOpts,
   ) => this.k8sCreate(wrapper.getModel(), wrapper.asResource(), opts, enhancedOpts);
 
-  k8sCreate = async (kind: K8sKind, data: K8sResourceKind, opts?, enhancedOpts?: EnhancedOpts) => {
+  k8sCreate = async <R extends K8sResourceCommon>(
+    kind: K8sKind,
+    data: R,
+    opts?,
+    enhancedOpts?: EnhancedOpts,
+  ) => {
     try {
       this.registerKind(kind);
       const result = await _k8sCreate(kind, data, opts);
