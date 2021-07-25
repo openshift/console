@@ -15,9 +15,10 @@ import {
   YellowExclamationTriangleIcon,
   BlueInfoCircleIcon,
   RedExclamationCircleIcon,
+  useFlag,
 } from '@console/shared/src';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { MINIMUM_NODES, NO_PROVISIONER } from '../../../../constants';
+import { MINIMUM_NODES, NetworkTypeLabels, NO_PROVISIONER } from '../../../../constants';
 import {
   capacityAndNodesValidate,
   getAllZone,
@@ -26,11 +27,14 @@ import {
 } from '../../../../utils/create-storage-system';
 import { OSD_CAPACITY_SIZES, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import {
+  getEncryptionLevel,
   ValidationMessage,
   VALIDATIONS,
   ValidationType,
 } from '../../../../utils/common-ocs-install-el';
 import { WizardNodeState, WizardState } from '../../reducer';
+import { NetworkType } from '../../../../types';
+import { GUARDED_FEATURES } from '../../../../features';
 import './review-and-create-step.scss';
 
 const NodesCard: React.FC<NodeCardProps> = ({ nodes }) =>
@@ -108,9 +112,11 @@ type ReviewListBodyProps = {
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
   const { t } = useTranslation();
+  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
 
-  const { storageClass } = state;
-  const { nodes, enableArbiter, capacity } = state.capacityAndNodes;
+  const { storageClass, capacityAndNodes, securityAndNetwork } = state;
+  const { nodes, enableArbiter, capacity } = capacityAndNodes;
+  const { encryption, publicNetwork, clusterNetwork, kms, networkType } = securityAndNetwork;
 
   const validations = [...capacityAndNodesValidate(nodes, enableArbiter)];
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
@@ -171,6 +177,44 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
           })}
         </p>
       </ReviewListBody>
+      {(encryption.clusterWide || encryption.storageClass) && (
+        <>
+          <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
+          <ReviewListBody>
+            <p className="odf-review-and-create__encryption">
+              {t('ceph-storage-plugin~Enable Encryption')}
+            </p>
+            {encryption.advanced && (
+              <p className="odf-review-and-create__encryption">
+                {t('ceph-storage-plugin~Connect to external key management service: {{name}}', {
+                  name: kms.name.value,
+                })}
+              </p>
+            )}
+            <p>
+              {t('ceph-storage-plugin~Encryption Level: {{level}}', {
+                level: getEncryptionLevel(encryption, t),
+              })}
+            </p>
+          </ReviewListBody>
+        </>
+      )}
+      {isMultusSupported && (
+        <ReviewListBody
+          validation={
+            networkType === NetworkType.MULTUS &&
+            !publicNetwork &&
+            !clusterNetwork &&
+            ValidationType.NETWORK
+          }
+        >
+          <p>
+            {t('ceph-storage-plugin~Using {{networkLabel}}', {
+              networkLabel: NetworkTypeLabels[networkType],
+            })}
+          </p>
+        </ReviewListBody>
+      )}
     </dl>
   );
 };

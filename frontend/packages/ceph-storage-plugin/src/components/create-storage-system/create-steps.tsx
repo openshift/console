@@ -7,6 +7,7 @@ import {
   ConnectionDetails,
   ReviewAndCreate,
   CreateLocalVolumeSet,
+  SecurityAndNetwork,
 } from './create-storage-system-steps';
 import { WizardDispatch, WizardState } from './reducer';
 import {
@@ -29,6 +30,7 @@ export const createSteps = (
     createStorageClass,
     storageClass,
     capacityAndNodes,
+    securityAndNetwork,
   } = state;
   const { externalStorage, deployment } = backingStorage;
 
@@ -45,6 +47,7 @@ export const createSteps = (
     },
     securityAndNetwork: {
       name: StepsName(t)[Steps.SecurityAndNetwork],
+      component: <SecurityAndNetwork state={securityAndNetwork} dispatch={dispatch} />,
     },
     reviewAndCreate: {
       name: StepsName(t)[Steps.ReviewAndCreate],

@@ -3,9 +3,10 @@ import {
   deviceTypeDropdownItems,
   diskModeDropdownItems,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { NodeKind } from 'public/module/k8s';
+import { NodeKind } from '@console/internal/module/k8s';
 import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
 import { BackingStorageType, DeploymentType } from '../../constants/create-storage-system';
+import { EncryptionType, KMSConfig, NetworkType } from '../../types';
 
 export type WizardState = CreateStorageSystemState;
 export type WizardDispatch = React.Dispatch<CreateStorageSystemAction>;
@@ -23,6 +24,7 @@ export type WizardNodeState = {
   zone: string;
   uid: string;
   roles: string[];
+  labels: NodeKind['metadata']['labels'];
 };
 
 /* State of CreateStorageSystem */
@@ -39,6 +41,7 @@ export const initialState: CreateStorageSystemState = {
     nodes: [],
     capacity: '2Ti',
     enableArbiter: false,
+    pvCount: 0,
   },
   createStorageClass: {},
   connectionDetails: {},
@@ -59,6 +62,47 @@ export const initialState: CreateStorageSystemState = {
     showConfirmModal: false,
     chartNodes: new Set(),
   },
+  securityAndNetwork: {
+    // Encryption state initialization
+    encryption: {
+      clusterWide: false,
+      storageClass: false,
+      advanced: false,
+      hasHandled: true,
+    },
+    // KMS object state
+    kms: {
+      name: {
+        value: '',
+        valid: true,
+      },
+      token: {
+        value: '',
+        valid: true,
+      },
+      address: {
+        value: '',
+        valid: true,
+      },
+      port: {
+        value: '',
+        valid: true,
+      },
+      backend: '',
+      caCert: null,
+      tls: '',
+      clientCert: null,
+      clientKey: null,
+      providerNamespace: '',
+      hasHandled: true,
+      caCertFile: '',
+      clientCertFile: '',
+      clientKeyFile: '',
+    },
+    publicNetwork: null,
+    clusterNetwork: null,
+    networkType: NetworkType.DEFAULT,
+  },
 };
 
 type CreateStorageSystemState = {
@@ -76,6 +120,14 @@ type CreateStorageSystemState = {
     nodes: WizardNodeState[];
     capacity: string;
     enableArbiter: boolean;
+    pvCount: number;
+  };
+  securityAndNetwork: {
+    encryption: EncryptionType;
+    kms: KMSConfig;
+    publicNetwork: string;
+    clusterNetwork: string;
+    networkType: NetworkType;
   };
   createLocalVolumeSet: LocalVolumeSet;
 };
@@ -147,6 +199,25 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'capacityAndNodes/capacity':
       newState.capacityAndNodes.capacity = action.payload;
       break;
+    case 'capacityAndNodes/pvCount':
+      newState.capacityAndNodes.pvCount = action.payload;
+      break;
+    case 'securityAndNetwork/setKms':
+      newState.securityAndNetwork.kms = action.payload;
+      break;
+    case 'securityAndNetwork/setEncryption':
+      newState.securityAndNetwork.encryption = action.payload;
+      break;
+    case 'securityAndNetwork/setClusterNetwork':
+      newState.securityAndNetwork.clusterNetwork = action.payload;
+      break;
+    case 'securityAndNetwork/setPublicNetwork':
+      newState.securityAndNetwork.publicNetwork = action.payload;
+      break;
+    case 'securityAndNetwork/setNetworkType':
+      newState.securityAndNetwork.networkType = action.payload;
+      break;
+
     default:
       throw new TypeError(`${action} is not a valid reducer action`);
   }
@@ -159,7 +230,7 @@ export type WizardReducer = (
 ) => CreateStorageSystemState;
 
 /* Actions of CreateStorageSystem */
-type CreateStorageSystemAction =
+export type CreateStorageSystemAction =
   | { type: 'wizard/setStepIdReached'; payload: number }
   | {
       type: 'wizard/setStorageClass';
@@ -191,4 +262,25 @@ type CreateStorageSystemAction =
       payload: WizardState['backingStorage']['externalStorage'];
     }
   | { type: 'capacityAndNodes/nodes'; payload: WizardState['capacityAndNodes']['nodes'] }
-  | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] };
+  | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
+  | { type: 'capacityAndNodes/pvCount'; payload: WizardState['capacityAndNodes']['pvCount'] }
+  | {
+      type: 'securityAndNetwork/setKms';
+      payload: WizardState['securityAndNetwork']['kms'];
+    }
+  | {
+      type: 'securityAndNetwork/setEncryption';
+      payload: WizardState['securityAndNetwork']['encryption'];
+    }
+  | {
+      type: 'securityAndNetwork/setPublicNetwork';
+      payload: WizardState['securityAndNetwork']['publicNetwork'];
+    }
+  | {
+      type: 'securityAndNetwork/setClusterNetwork';
+      payload: WizardState['securityAndNetwork']['clusterNetwork'];
+    }
+  | {
+      type: 'securityAndNetwork/setNetworkType';
+      payload: WizardState['securityAndNetwork']['networkType'];
+    };

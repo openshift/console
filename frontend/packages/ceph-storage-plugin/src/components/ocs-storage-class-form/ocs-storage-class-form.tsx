@@ -490,6 +490,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({
                       <KMSConfigure
                         state={state}
                         dispatch={dispatch}
+                        mode="storage-class-form"
                         className="ocs-storage-class-encryption"
                       />
                       <div className="ocs-install-kms__save-button">

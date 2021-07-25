@@ -11,13 +11,20 @@ import {
   AlertActionCloseButton,
 } from '@patternfly/react-core';
 import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
+import { history } from '@console/internal/components/utils';
 import { WizardCommonProps, WizardState } from './reducer';
-import { createNoobaaPayload, createSSPayload } from './payloads';
+import {
+  createNoobaaPayload,
+  createSSPayload,
+  createStorageClusterPayload,
+  labelNodes,
+} from './payloads';
 import {
   BackingStorageType,
   DeploymentType,
   Steps,
   StepsName,
+  StorageClusterSystemName,
 } from '../../constants/create-storage-system';
 import { OCSServiceModel } from '../../models';
 import './create-storage-system.scss';
@@ -27,12 +34,14 @@ import {
   createExternalSSName,
 } from '../../utils/create-storage-system';
 import { MINIMUM_NODES } from '../../constants';
+import { NetworkType } from '../../types';
+import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 
 const validateBackingStorageStep = (backingStorage, sc) => {
   const { type, externalStorage } = backingStorage;
   switch (type) {
     case BackingStorageType.EXISTING:
-      return !!sc;
+      return !!sc.name;
     case BackingStorageType.EXTERNAL:
       return !!externalStorage;
     case BackingStorageType.LOCAL_DEVICES:
@@ -49,33 +58,42 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     createStorageClass,
     capacityAndNodes,
     createLocalVolumeSet,
+    securityAndNetwork,
   } = state;
   const { externalStorage } = backingStorage;
   const { nodes, capacity } = capacityAndNodes;
   const { chartNodes, volumeSetName, isValidDiskSize } = createLocalVolumeSet;
+  const { encryption, kms, networkType, publicNetwork, clusterNetwork } = securityAndNetwork;
   const { canGoToNextStep } = getExternalStorage(externalStorage) || {};
+
+  const hasConfiguredNetwork =
+    networkType === NetworkType.MULTUS ? !!(publicNetwork || clusterNetwork) : true;
 
   switch (name) {
     case StepsName(t)[Steps.BackingStorage]:
       return validateBackingStorageStep(backingStorage, storageClass);
     case StepsName(t)[Steps.CreateStorageClass]:
-      return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
+      return (
+        !!storageClass.name &&
+        canGoToNextStep &&
+        canGoToNextStep(createStorageClass, storageClass.name)
+      );
     case StepsName(t)[Steps.ConnectionDetails]:
       return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
-    case StepsName(t)[Steps.CapacityAndNodes]:
-      return nodes.length >= MINIMUM_NODES && capacity;
-    case StepsName(t)[Steps.ReviewAndCreate]:
-      return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.CreateLocalVolumeSet]:
       return chartNodes.size < MINIMUM_NODES || !volumeSetName.trim().length || !isValidDiskSize;
+    case StepsName(t)[Steps.CapacityAndNodes]:
+      return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.SecurityAndNetwork]:
+      return encryption.hasHandled && hasConfiguredNetwork && kms.hasHandled;
+    case StepsName(t)[Steps.ReviewAndCreate]:
       return true;
     default:
       return false;
   }
 };
 
-const getPayloads = (stepName: string, state: WizardState, t: TFunction) => {
+const getPayloads = (stepName: string, state: WizardState, hasOCS: boolean, t: TFunction) => {
   const { backingStorage, createStorageClass, storageClass, connectionDetails } = state;
   const { externalStorage, deployment, type } = backingStorage;
 
@@ -96,19 +114,37 @@ const getPayloads = (stepName: string, state: WizardState, t: TFunction) => {
   if (stepName === StepsName(t)[Steps.ReviewAndCreate]) {
     if (deployment === DeploymentType.MCG) {
       const { apiGroup, apiVersion, kind } = OCSServiceModel;
-      const systemName = 'odf-storage-system';
       const systemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
-      return [createNoobaaPayload(), createSSPayload(systemKind, systemName)];
+      return [createNoobaaPayload(), createSSPayload(systemKind, StorageClusterSystemName)];
     }
     if (type === BackingStorageType.EXTERNAL) {
-      const systemName = createExternalSSName(displayName);
-      const systemKind = getStorageSystemKind(model);
+      const { apiGroup, apiVersion, kind } = OCSServiceModel;
+      const scSystemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
+      const externalSystemName = createExternalSSName(displayName);
+
       const secondParam = isRhcs ? connectionDetails : createStorageClass;
+      const systemName = isRhcs ? externalSystemName : StorageClusterSystemName;
+
       const payloads = [
-        ...createPayload(systemName, secondParam, model, storageClass.name),
-        createSSPayload(systemKind, systemName),
+        ...createPayload(externalSystemName, secondParam, model, storageClass.name),
       ];
+
+      if (!hasOCS) {
+        payloads.push(
+          createSSPayload(scSystemKind, systemName),
+          createStorageClusterPayload(state),
+        );
+      }
+
       return !_.isEmpty(secondParam) && payloads;
+    }
+    if (type === BackingStorageType.EXISTING) {
+      const { apiGroup, apiVersion, kind } = OCSServiceModel;
+      const systemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
+      return [
+        createStorageClusterPayload(state),
+        createSSPayload(systemKind, StorageClusterSystemName),
+      ];
     }
   }
 
@@ -119,11 +155,10 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   dispatch,
   state,
   disableNext,
+  hasOCS,
 }) => {
   const { t } = useTranslation();
-  const { activeStep, onNext, onBack, onClose } = React.useContext<WizardContextType>(
-    WizardContext,
-  );
+  const { activeStep, onNext, onBack } = React.useContext<WizardContextType>(WizardContext);
   const [requestInProgress, setRequestInProgress] = React.useState(false);
   const [requestError, setRequestError] = React.useState('');
   const [showErrorAlert, setShowErrorAlert] = React.useState(false);
@@ -134,12 +169,14 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   const jumpToNextStep = canJumpToNextStep(stepName, state, t);
 
   const handleNext = async () => {
-    const payloads = getPayloads(stepName, state, t);
+    const payloads = getPayloads(stepName, state, hasOCS, t);
     if (payloads !== null) {
       setRequestInProgress(true);
       try {
+        if (state.capacityAndNodes.nodes)
+          await Promise.all(labelNodes(state.capacityAndNodes.nodes));
         const requests = payloads.map(({ model, payload }) => k8sCreate(model as K8sKind, payload));
-        await Promise.all(requests);
+        await Promise.all([labelOCSNamespace(), ...requests]);
         dispatch({
           type: 'wizard/setStepIdReached',
           payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
@@ -193,7 +230,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         >
           {t('ceph-storage-plugin~Back')}
         </Button>
-        <Button variant="link" onClick={onClose}>
+        <Button variant="link" onClick={history.goBack}>
           {t('ceph-storage-plugin~Cancel')}
         </Button>
       </WizardFooter>
@@ -203,4 +240,5 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
 
 type CreateStorageSystemFooterProps = WizardCommonProps & {
   disableNext: boolean;
+  hasOCS: boolean;
 };

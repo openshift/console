@@ -22,18 +22,21 @@ import { NO_PROVISIONER } from '../../../../constants';
 
 const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
   dispatch,
+  stepIdReached,
   selectOptions,
   selectedStorage,
 }) => {
   const { t } = useTranslation();
 
   const handleSelection: FormSelectProps['onChange'] = React.useCallback(
-    (value: string) =>
+    (value: string) => {
+      if (stepIdReached === 2) dispatch({ type: 'wizard/setStepIdReached', payload: 1 });
       dispatch({
         type: 'backingStorage/setExternalStorage',
         payload: value,
-      }),
-    [dispatch],
+      });
+    },
+    [dispatch, stepIdReached],
   );
 
   React.useEffect(() => {
@@ -58,6 +61,7 @@ const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
 
 type ExternalSystemSelectionProps = {
   dispatch: WizardDispatch;
+  stepIdReached: WizardState['stepIdReached'];
   selectedStorage: WizardState['backingStorage']['externalStorage'];
   selectOptions: ExternalStorage[];
 };
@@ -101,6 +105,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   storageSystems,
   error,
   loaded,
+  stepIdReached,
 }) => {
   const { t } = useTranslation();
 
@@ -131,7 +136,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
     /*
      Update storage class state when no storage class is used.
     */
-    if (type === BackingStorageType.LOCAL_DEVICES) {
+    if (type === BackingStorageType.LOCAL_DEVICES || type === BackingStorageType.EXTERNAL) {
       dispatch({
         type: 'wizard/setStorageClass',
         payload: { name: '', provisioner: NO_PROVISIONER },
@@ -203,6 +208,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
                 selectedStorage={externalStorage}
                 dispatch={dispatch}
                 selectOptions={allowedExternalStorage}
+                stepIdReached={stepIdReached}
               />
             )
           }
@@ -223,6 +229,7 @@ type BackingStorageProps = {
   state: WizardState['backingStorage'];
   storageSystems: StorageSystemKind[];
   storageClass: WizardState['storageClass'];
+  stepIdReached: WizardState['stepIdReached'];
   error: any;
   loaded: boolean;
 };

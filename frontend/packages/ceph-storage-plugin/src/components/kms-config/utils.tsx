@@ -14,6 +14,7 @@ import { Action } from '../ocs-install/attached-devices-mode/reducer';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
 import { StorageClassClusterAction } from '../../utils/kms-encryption';
+import { CreateStorageSystemAction } from '../create-storage-system/reducer';
 
 export const parseURL = (url: string) => {
   try {
@@ -168,10 +169,14 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
   return resources;
 };
 
+export type EncryptionDispatch = React.Dispatch<
+  Action | InternalClusterAction | StorageClassClusterAction | CreateStorageSystemAction
+>;
+
 export const setEncryptionDispatch = (
   keyType: any,
   mode: string,
-  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>,
+  dispatch: EncryptionDispatch,
   valueType?: any,
 ) => {
   const stateType = mode === MODES.ATTACHED_DEVICES ? _.camelCase(keyType) : keyType;

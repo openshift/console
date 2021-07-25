@@ -16,17 +16,14 @@ import {
 import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
-import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
+import { setEncryptionDispatch, parseURL, kmsConfigValidation, EncryptionDispatch } from './utils';
 import { advancedKMSModal } from '../modals/advanced-kms-modal/advanced-kms-modal';
-import {
-  InternalClusterState,
-  InternalClusterAction,
-  ActionType,
-} from '../ocs-install/internal-mode/reducer';
+import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/reducer';
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
-import { State, Action } from '../ocs-install/attached-devices-mode/reducer';
-import { StorageClassState, StorageClassClusterAction } from '../../utils/kms-encryption';
+import { State } from '../ocs-install/attached-devices-mode/reducer';
+import { StorageClassState } from '../../utils/kms-encryption';
+import { WizardState } from '../create-storage-system/reducer';
 
 import './kms-config.scss';
 
@@ -42,36 +39,64 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   React.useEffect(() => {
     const hasHandled: boolean = kmsConfigValidation(kms);
     if (kms.hasHandled !== hasHandled) {
-      setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
-        ...kms,
-        hasHandled,
-      });
+      mode
+        ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
+            ...kms,
+            hasHandled,
+          })
+        : dispatch({
+            type: 'securityAndNetwork/setKms',
+            payload: {
+              ...kms,
+              hasHandled,
+            },
+          });
     }
   }, [dispatch, mode, kms]);
 
   const setServiceName = (name: string) => {
     kmsObj.name.value = name;
     kmsObj.name.valid = name !== '';
-    setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      : dispatch({
+          type: 'securityAndNetwork/setKms',
+          payload: kmsObj,
+        });
   };
 
   const setAddress = (address: string) => {
     kmsObj.address.value = address;
     kmsObj.address.valid = address !== '' && parseURL(address.trim()) != null;
-    setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      : dispatch({
+          type: 'securityAndNetwork/setKms',
+          payload: kmsObj,
+        });
   };
 
   const setAddressPort = (port: string) => {
     kmsObj.port.value = port;
     kmsObj.port.valid =
       port !== '' && !_.isNaN(Number(port)) && Number(port) > 0 && Number(port) < 65536;
-    setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      : dispatch({
+          type: 'securityAndNetwork/setKms',
+          payload: kmsObj,
+        });
   };
 
   const setToken = (token: string) => {
     kmsObj.token.value = token;
     kmsObj.token.valid = token !== '';
-    setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj)
+      : dispatch({
+          type: 'securityAndNetwork/setKms',
+          payload: kmsObj,
+        });
   };
 
   const validateAddressMessage = () =>
@@ -225,8 +250,8 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 };
 
 type KMSConfigureProps = {
-  state: InternalClusterState | State | StorageClassState;
-  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>;
+  state: InternalClusterState | State | StorageClassState | WizardState['securityAndNetwork'];
+  dispatch: EncryptionDispatch;
   mode?: string;
   className: string;
 };
