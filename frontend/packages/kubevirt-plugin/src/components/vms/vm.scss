@@ -10,3 +10,10 @@
 .kv-vm-quickstart-icon {
   margin-right: var(--pf-global--spacer--sm);
 }
+
+.kv-vm-resource--details-item {
+  display: inline-block;
+  p.text-muted {
+    color: unset;
+  }
+}
