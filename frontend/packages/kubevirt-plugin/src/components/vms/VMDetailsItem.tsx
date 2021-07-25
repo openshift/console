@@ -8,6 +8,8 @@ const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
   canEdit = false,
   editButtonId,
+  customEditButton,
+  editClassName,
   onEditClick,
   idValue,
   isLoading = false,
@@ -35,8 +37,11 @@ const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   return (
     <>
       <dt>
-        <span>
-          {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
+        <span className={editClassName}>
+          {title}{' '}
+          {customEditButton || (
+            <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
+          )}
           {arePendingChanges && (
             <Button
               className="co-modal-btn-link--inline"
@@ -60,6 +65,8 @@ type VMDetailsItemProps = {
   title: string;
   canEdit?: boolean;
   editButtonId?: string;
+  customEditButton?: React.ReactElement;
+  editClassName?: string;
   onEditClick?: () => void;
   idValue?: string;
   isLoading?: boolean;
