@@ -1,10 +1,10 @@
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import {
   BinaryUnit,
   stringValueUnitSplit,
   toIECUnit,
 } from '../../../components/form/size-unit-utils';
+import { PersistentVolumeClaimModel } from '../../../console-internal/models';
+import { PersistentVolumeClaimKind } from '../../../console-internal/module/k8s';
 import { AccessMode, VolumeMode } from '../../../constants/vm/storage';
 import {
   getPvcAccessModes,

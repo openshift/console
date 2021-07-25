@@ -1,4 +1,4 @@
-import { SecretModel } from '@console/internal/models';
+import { SecretModel } from '../../../console-internal/models';
 import { V2V_TEMPORARY_LABEL, VCENTER_TYPE_LABEL } from '../../../constants/v2v';
 import { V2VVMwareModel } from '../../../models';
 import { getName, getOwnerReferences } from '../../../selectors';

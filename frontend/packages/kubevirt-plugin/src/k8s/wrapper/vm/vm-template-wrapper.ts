@@ -1,6 +1,6 @@
-import { TemplateModel } from '@console/internal/models';
 /* eslint-disable lines-between-class-members */
-import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateModel } from '../../../console-internal/models';
+import { TemplateKind } from '../../../console-internal/module/k8s';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,

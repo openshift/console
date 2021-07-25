@@ -1,5 +1,6 @@
-import { TemplateModel } from '@console/internal/models';
-import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { TemplateModel } from '../console-internal/models';
+import { TemplateKind } from '../console-internal/module/k8s';
 import {
   VirtualMachineImportModel,
   VirtualMachineInstanceModel,

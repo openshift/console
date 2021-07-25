@@ -7,12 +7,12 @@ import {
   PersistentVolumeClaimModel,
   ProjectModel,
   StorageClassModel,
-} from '@console/internal/models';
+} from '../../../console-internal/models';
 import {
   k8sPatch,
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
-} from '@console/internal/module/k8s';
+} from '../../../console-internal/module/k8s';
 import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';

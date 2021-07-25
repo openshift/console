@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { TemplateModel } from '@console/internal/models';
+import { TemplateModel } from '../console-internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../selectors';

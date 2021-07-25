@@ -1,6 +1,10 @@
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, PodModel } from '../console-internal/models';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+} from '../console-internal/module/k8s';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,

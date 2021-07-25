@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { URLHealthHandler } from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+import { PersistentVolumeClaimModel, PodModel } from '../../../console-internal/models';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,

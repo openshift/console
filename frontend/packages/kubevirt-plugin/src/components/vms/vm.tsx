@@ -32,13 +32,13 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import {
   NamespaceModel,
   NodeModel,
   PersistentVolumeClaimModel,
   PodModel,
-} from '@console/internal/models';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+} from '../../console-internal/models';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
 import { useNamespace } from '../../hooks/use-namespace';

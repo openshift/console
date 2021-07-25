@@ -1,7 +1,7 @@
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { RouteModel } from '@console/internal/models';
-import { ListKind, RouteKind } from '@console/internal/module/k8s';
 import { getCloudInitValues } from '../components/ssh-service/SSHForm/ssh-form-utils';
+import { RouteModel } from '../console-internal/models';
+import { ListKind, RouteKind } from '../console-internal/module/k8s';
 import { VMIKind, VMKind } from '../types';
 import useSSHService from './use-ssh-service';
 

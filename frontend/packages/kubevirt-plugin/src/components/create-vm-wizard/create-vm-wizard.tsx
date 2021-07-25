@@ -8,12 +8,12 @@ import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
 import { Firehose, history } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
+import { TemplateModel } from '../../console-internal/models';
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,

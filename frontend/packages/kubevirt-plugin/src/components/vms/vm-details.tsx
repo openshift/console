@@ -11,8 +11,8 @@ import {
   StatusBox,
   useAccessReview,
 } from '@console/internal/components/utils';
-import { ServiceModel } from '@console/internal/models';
 import { K8sKind, PodKind } from '@console/internal/module/k8s';
+import { ServiceModel } from '../../console-internal/models';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';

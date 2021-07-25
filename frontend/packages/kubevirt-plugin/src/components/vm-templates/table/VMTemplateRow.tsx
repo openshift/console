@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
-import { NamespaceModel, TemplateModel } from '@console/internal/models';
+import { NamespaceModel, TemplateModel } from '../../../console-internal/models';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';

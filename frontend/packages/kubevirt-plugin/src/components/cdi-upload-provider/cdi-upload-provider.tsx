@@ -4,7 +4,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '../../console-internal/module/k8s';
 import { CDIConfigModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getUploadProxyURL } from '../../selectors/cdi';

@@ -2,8 +2,12 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { LoadingBox } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, PodModel } from '../../../console-internal/models';
+import {
+  K8sResourceKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+} from '../../../console-internal/module/k8s';
 import { ConsoleType } from '../../../constants/vm/console-type';
 import { useEventListener } from '../../../hooks/use-event-listener';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';

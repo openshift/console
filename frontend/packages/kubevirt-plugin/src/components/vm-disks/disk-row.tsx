@@ -7,7 +7,7 @@ import {
   LoadingInline,
   ResourceLink,
 } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, TemplateModel } from '../../console-internal/models';
 import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';
 import { getDeletetionTimestamp } from '../../selectors';

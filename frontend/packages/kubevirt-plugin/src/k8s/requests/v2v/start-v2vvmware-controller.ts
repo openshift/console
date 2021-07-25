@@ -1,6 +1,7 @@
-import { DeploymentModel, RoleModel } from '@console/internal/models';
-import { ConfigMapKind, DeploymentKind, K8sResourceCommon } from '@console/internal/module/k8s';
-import { VMImportProvider } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/types';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
+import { VMImportProvider } from '../../../components/create-vm-wizard/types';
+import { DeploymentModel, RoleModel } from '../../../console-internal/models';
+import { ConfigMapKind, DeploymentKind } from '../../../console-internal/module/k8s';
 import { V2VVMWARE_DEPLOYMENT_NAME } from '../../../constants/v2v';
 import { getName } from '../../../selectors';
 import { getContainerImage } from '../../../selectors/pod/container';

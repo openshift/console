@@ -1,5 +1,4 @@
-import { SecretModel, ServiceAccountModel } from '@console/internal/models';
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { getVmwareField } from '../../../../components/create-vm-wizard/selectors/provider/vmware/selectors';
 import { getFieldValue } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
@@ -8,6 +7,7 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../components/create-vm-wizard/types';
+import { SecretModel, ServiceAccountModel } from '../../../../console-internal/models';
 import {
   CONVERSION_GENERATE_NAME,
   CONVERSION_SERVICEACCOUNT_DELAY,

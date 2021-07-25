@@ -3,7 +3,7 @@ import { Button, ButtonVariant, Checkbox, SelectOption, Text } from '@patternfly
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel } from '../../../../console-internal/models';
 import { getPVCUploadURL } from '../../../../constants';
 import { operatingSystemsNative } from '../../../../constants/vm-templates/os';
 import { asValidationObject, ValidationErrorType } from '../../../../selectors';

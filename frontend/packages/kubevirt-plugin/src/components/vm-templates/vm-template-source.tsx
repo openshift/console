@@ -12,7 +12,6 @@ import {
 import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import {
@@ -23,6 +22,7 @@ import {
   WarningStatus,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { PersistentVolumeClaimModel, PodModel } from '../../console-internal/models';
 import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
 import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';

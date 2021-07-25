@@ -20,6 +20,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
 import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import { K8sVerb } from '@console/dynamic-plugin-sdk/src';
 import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   ButtonBar,
@@ -41,15 +42,14 @@ import {
   PersistentVolumeClaimModel,
   StorageClassModel,
   TemplateModel,
-} from '@console/internal/models';
+} from '../../../console-internal/models';
 import {
   ConfigMapKind,
   K8sResourceKind,
-  K8sVerb,
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
   TemplateKind,
-} from '@console/internal/module/k8s';
+} from '../../../console-internal/module/k8s';
 import {
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
@@ -81,6 +81,7 @@ import {
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
 import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
+
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {

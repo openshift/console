@@ -6,12 +6,12 @@ import { Flatten, MultiListPage, RowFunction, Table } from '@console/internal/co
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, TemplateModel } from '../../console-internal/models';
 import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
   TemplateKind,
-} from '@console/internal/module/k8s';
+} from '../../console-internal/module/k8s';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';

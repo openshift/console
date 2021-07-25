@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { ConfigMapModel } from '@console/internal/models';
-import { ConfigMapKind, k8sGet } from '@console/internal/module/k8s';
+import { ConfigMapModel } from '../console-internal/models';
+import { ConfigMapKind, k8sGet } from '../console-internal/module/k8s';
 import {
   STORAGE_CLASS_CONFIG_MAP_NAME,
   STORAGE_CLASS_CONFIG_MAP_NAMESPACES,

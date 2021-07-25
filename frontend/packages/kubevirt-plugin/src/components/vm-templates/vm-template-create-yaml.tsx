@@ -9,8 +9,8 @@ import {
   resourcePathFromModel,
 } from '@console/internal/components/utils';
 import { connectToPlural } from '@console/internal/kinds';
-import { TemplateModel } from '@console/internal/models';
 import { k8sList, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { TemplateModel } from '../../console-internal/models';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,

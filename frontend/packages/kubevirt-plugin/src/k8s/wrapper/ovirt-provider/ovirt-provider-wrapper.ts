@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk';
 import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel } from '../../../models';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';

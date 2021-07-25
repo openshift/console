@@ -1,7 +1,5 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import * as _ from 'lodash';
-import { SecretModel } from '@console/internal/models';
-import { SecretKind } from '@console/internal/module/k8s';
 import {
   getOvirtAttribute,
   getOvirtField,
@@ -14,6 +12,8 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../components/create-vm-wizard/types';
+import { SecretModel } from '../../../../console-internal/models';
+import { SecretKind } from '../../../../console-internal/module/k8s';
 import { VM_IMPORT_PROPAGATE_ANNOTATIONS_ANNOTATION } from '../../../../constants/v2v-import/constants';
 import { VMImportType } from '../../../../constants/v2v-import/ovirt/vm-import-type';
 import { ANNOTATION_DESCRIPTION } from '../../../../constants/vm';

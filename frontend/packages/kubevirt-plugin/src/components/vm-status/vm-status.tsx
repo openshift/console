@@ -21,13 +21,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
+import { PersistentVolumeClaimModel, PodModel } from '../../console-internal/models';
 import { VM_DETAIL_EVENTS_HREF } from '../../constants';
 import { StatusGroup } from '../../constants/status-group';
 import { VMImportType } from '../../constants/v2v-import/ovirt/vm-import-type';

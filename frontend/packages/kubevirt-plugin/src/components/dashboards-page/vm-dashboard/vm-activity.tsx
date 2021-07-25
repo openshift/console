@@ -6,7 +6,6 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult, resourcePath } from '@console/internal/components/utils';
-import { EventModel } from '@console/internal/models';
 import { EventKind } from '@console/internal/module/k8s';
 import ActivityBody, {
   PauseButton,
@@ -17,6 +16,7 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
+import { EventModel } from '../../../console-internal/models';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';

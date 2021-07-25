@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
+import { K8sKind } from '@console/dynamic-plugin-sdk';
 import {
   ConfigMapModel,
   PersistentVolumeClaimModel,
   SecretModel,
   ServiceAccountModel,
-} from '@console/internal/models';
-import { K8sKind } from '@console/internal/module/k8s';
+} from '../../../console-internal/models';
 import { VolumeType } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
 import {

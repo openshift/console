@@ -9,12 +9,13 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
+import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import {
   ConfigMapModel,
   SecretModel,
   ServiceAccountModel,
   TemplateModel,
-} from '@console/internal/models';
+} from '../../../console-internal/models';
 import {
   ConfigMapKind,
   EnvVarSource,
@@ -23,8 +24,7 @@ import {
   SecretKind,
   ServiceAccountKind,
   TemplateKind,
-} from '@console/internal/module/k8s';
-import { PatchBuilder } from '@console/shared/src/k8s/patch';
+} from '../../../console-internal/module/k8s';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../../models';

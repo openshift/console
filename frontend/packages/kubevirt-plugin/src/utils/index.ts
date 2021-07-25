@@ -3,15 +3,10 @@ import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
 import { toPath } from 'lodash';
 import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
+import { K8sKind, MatchExpression, OwnerReference } from '@console/dynamic-plugin-sdk/src';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
-import {
-  K8sKind,
-  K8sResourceKind,
-  MatchExpression,
-  OwnerReference,
-  TemplateKind,
-} from '@console/internal/module/k8s';
+import { NamespaceModel, ProjectModel } from '../console-internal/models';
+import { K8sResourceKind, TemplateKind } from '../console-internal/module/k8s';
 import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER, VM_TEMPLATE_NAME_PARAMETER } from '../constants';
 import {
   getAPIVersion,

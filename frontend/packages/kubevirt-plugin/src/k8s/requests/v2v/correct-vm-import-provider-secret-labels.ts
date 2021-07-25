@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { SecretModel } from '@console/internal/models';
-import { k8sGet, k8sPatch, SecretKind } from '@console/internal/module/k8s';
 import { VMImportProvider } from '../../../components/create-vm-wizard/types';
+import { SecretModel } from '../../../console-internal/models';
+import { k8sGet, k8sPatch, SecretKind } from '../../../console-internal/module/k8s';
 import { V2V_DATA_TTL_KEY, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel, V2VVMwareModel } from '../../../models';
 import { getLabels, getOwnerReferences } from '../../../selectors';

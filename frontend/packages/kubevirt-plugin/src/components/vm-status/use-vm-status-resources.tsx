@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import {
   K8sKind,
   K8sResourceCommon,
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
+import { PersistentVolumeClaimModel, PodModel } from '../../console-internal/models';
 import { useDebounceCallback } from '../../hooks/use-debounce';
 import { useDeepCompareMemoize } from '../../hooks/use-deep-compare-memoize';
 import { DataVolumeModel, VirtualMachineInstanceMigrationModel } from '../../models';

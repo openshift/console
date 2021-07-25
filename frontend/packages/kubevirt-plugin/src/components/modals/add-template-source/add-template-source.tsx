@@ -12,8 +12,12 @@ import {
 } from '@console/internal/components/factory';
 import { LoadingBox, useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { StorageClassModel } from '@console/internal/models';
-import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '../../../console-internal/models';
+import {
+  k8sCreate,
+  StorageClassResourceKind,
+  TemplateKind,
+} from '../../../console-internal/module/k8s';
 import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,

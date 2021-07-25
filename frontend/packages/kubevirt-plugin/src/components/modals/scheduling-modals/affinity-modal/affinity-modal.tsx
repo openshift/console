@@ -21,8 +21,8 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import { NodeModel } from '@console/internal/models';
-import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
+import { NodeModel } from '../../../../console-internal/models';
+import { k8sPatch, NodeKind } from '../../../../console-internal/module/k8s';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 import { getAffinityPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { getName } from '../../../../selectors';

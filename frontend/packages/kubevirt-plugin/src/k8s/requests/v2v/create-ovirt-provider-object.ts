@@ -1,4 +1,4 @@
-import { SecretModel } from '@console/internal/models';
+import { SecretModel } from '../../../console-internal/models';
 import { OVIRT_TYPE_LABEL, V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
 import { OVirtProviderModel } from '../../../models';
 import { getName, getOwnerReferences } from '../../../selectors';

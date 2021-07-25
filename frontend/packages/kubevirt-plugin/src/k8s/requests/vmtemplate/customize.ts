@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import { TemplateModel } from '@console/internal/models';
+import { VMSettingsField } from '../../../components/create-vm-wizard/types';
+import { TemplateModel } from '../../../console-internal/models';
 import {
   k8sCreate,
   k8sPatchByName,
   PersistentVolumeClaimKind,
   TemplateKind,
-} from '@console/internal/module/k8s';
-import { VMSettingsField } from '../../../components/create-vm-wizard/types';
+} from '../../../console-internal/module/k8s';
 import {
   AccessMode,
   ANNOTATIONS,

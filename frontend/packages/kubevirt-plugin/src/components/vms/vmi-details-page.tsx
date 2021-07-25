@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
-import { PodModel } from '@console/internal/models';
+import { PodModel } from '../../console-internal/models';
 import {
   VM_DETAIL_CONSOLES_HREF,
   VM_DETAIL_DETAILS_HREF,

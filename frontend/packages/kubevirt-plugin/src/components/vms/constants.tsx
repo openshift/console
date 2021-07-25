@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { K8sResourceCommon } from '@console/internal/module/k8s/types';
+import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 import { getName, getNamespace } from '../../selectors';
 
 export const ActionMessage: React.FC<{
