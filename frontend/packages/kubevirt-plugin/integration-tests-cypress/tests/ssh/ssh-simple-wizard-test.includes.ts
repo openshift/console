@@ -1,4 +1,5 @@
 import { ProvisionSource } from '../../enums/provisionSource';
+import sshFixure from '../../fixtures/ssh';
 
 export default ({ vmName }) =>
   describe('ID (CNV-5970) Test creating a vm using simple wizard and adding an ssh key', () => {
@@ -16,14 +17,14 @@ export default ({ vmName }) =>
         .click();
       cy.get('body').then(($body) => {
         if ($body.find('[data-test-id="modal-title"]').length) {
-          cy.get('[id=confirm-action]').click();
+          cy.get('#confirm-action').click();
         }
       });
-      cy.get('[id=image-source-type-dropdown]').click();
+      cy.get('#image-source-type-dropdown').click();
       cy.contains('Import via Registry (creates PVC)').click();
-      cy.get('[id=provision-source-container').type(ProvisionSource.REGISTRY.getSource());
+      cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('@nextButton').click();
-      cy.get('[id=vm-name]')
+      cy.get('#vm-name')
         .clear()
         .type(vmName);
     });
@@ -46,9 +47,7 @@ export default ({ vmName }) =>
     });
 
     it('should add an ssh key', () => {
-      cy.fixture('ssh').then((ssh) => {
-        cy.get('.SSHFormKey-input-field').type(ssh?.key);
-      });
+      cy.get('.SSHFormKey-input-field').type(sshFixure.key);
     });
 
     it('checking identity of key is correct', () => {
@@ -56,13 +55,13 @@ export default ({ vmName }) =>
     });
 
     it('checking remember ssh key is not checked', () => {
-      cy.get('[id=ssh-service-checkbox]')
+      cy.get('#ssh-service-checkbox')
         .first()
         .should('not.be.checked');
     });
 
     it('should check remember ssh key', () => {
-      cy.get('[id=ssh-service-checkbox]')
+      cy.get('#ssh-service-checkbox')
         .first()
         .check();
     });

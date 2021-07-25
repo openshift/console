@@ -230,7 +230,7 @@ export const wizard = {
       cy.get('.pf-c-select__menu')
         .contains(ProvisionSource.REGISTRY.getDescription())
         .click();
-      cy.get('input[id="provision-source-container"]').type(ProvisionSource.REGISTRY.getSource());
+      cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('#create-vm-wizard-reviewandcreate-btn').click();
       cy.get('#create-vm-wizard-submit-btn').click();
       cy.byTestID('success-list').click();

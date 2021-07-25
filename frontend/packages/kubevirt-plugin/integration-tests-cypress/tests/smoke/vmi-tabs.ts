@@ -1,3 +1,4 @@
+import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { virtualization } from '../../view/virtualization';
 
@@ -8,10 +9,8 @@ describe('smoke tests', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    cy.fixture('vmi-ephemeral').then((vmi) => {
-      vmi.metadata.namespace = testName;
-      cy.createResource(vmi);
-    });
+    vmiFixture.metadata.namespace = testName;
+    cy.createResource(vmiFixture);
   });
 
   after(() => {
