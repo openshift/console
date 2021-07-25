@@ -13,7 +13,7 @@
   "fixturesFolder": "fixtures",
   "defaultCommandTimeout": 120000,
   "retries": {
-    "runMode": 1,
+    "runMode": 2,
     "openMode": 0
   },
   "viewportWidth": 1536,
