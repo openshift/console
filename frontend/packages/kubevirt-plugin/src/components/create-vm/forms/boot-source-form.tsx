@@ -337,7 +337,9 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           <TextInput
             value={state.container?.value}
             type="text"
-            onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
+            onChange={(payload) =>
+              dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload: payload?.trim() })
+            }
             aria-label={t('kubevirt-plugin~Container image')}
             isDisabled={disabled}
             id={getFieldId(VMSettingsField.CONTAINER_IMAGE)}
