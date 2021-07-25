@@ -25,13 +25,17 @@
       ]
     },
     "exposedModules": {
-
       "alert": "src/utils/alert-action-path.tsx",
       "storageProvider": "src/components/attach-obc/attach-obc-deployment.tsx",
       "createStorageSystem": "src/components/create-storage-system/create-storage-system.tsx",
       "blockPoolListPage": "./src/components/block-pool/block-pool-list-page.tsx",
       "blockPoolCreatePage": "./src/components/block-pool/create-block-pool.tsx",
-      "blockPoolDetailsPage": "./src/components/block-pool/block-pool-details-page.tsx"
+      "blockPoolDetailsPage": "./src/components/block-pool/block-pool-details-page.tsx",
+      "resourceDetailsPage": "./src/components/odf-resources/resource-details-page.tsx",
+      "resourceListPage": "./src/components/odf-resources/resource-list-page.tsx",
+      "bsCreate": "./src/components/create-backingstore-page/create-bs-page.tsx",
+      "bcCreate": "./src/components/bucket-class/create-bc.tsx",
+      "nssCreate": "./src/components/namespace-store/create-namespace-store.tsx"
     }
   }
 }
