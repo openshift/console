@@ -47,8 +47,8 @@ describe('ID (CNV-6821) Sysprep testing', () => {
 
   it('should fill input fields with data and create vm', () => {
     cy.fixture('sysprep.xml').then((sysprep) => {
-      cy.get('#sysprep-Autounattend.xml-input').type(sysprep);
-      cy.get('#sysprep-Unattend.xml-input').type(sysprep);
+      cy.get('[data-test=sysprep-autounattend-xml-input]').type(sysprep);
+      cy.get('[data-test=sysprep-unattend-xml-input]').type(sysprep);
     });
     cy.get('[id=create-vm-wizard-submit-btn]')
       .click()
