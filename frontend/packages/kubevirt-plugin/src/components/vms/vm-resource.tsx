@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Button } from '@patternfly/react-core';
+import { PencilAltIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { NodeLink, ResourceLink, ResourceSummary } from '@console/internal/components/utils';
 import { Selector } from '@console/internal/components/utils/selector';
@@ -27,7 +29,6 @@ import { getBasicID, prefixedID } from '../../utils';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
 import { isGuestAgentInstalled } from '../../utils/guest-agent-utils';
 import { BootOrderSummary } from '../boot-order';
-import { EditButton } from '../edit-button';
 import { descriptionModal, vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
 import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
@@ -75,12 +76,18 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
         {!description && (
           <span className="text-secondary">{t('kubevirt-plugin~Not available')}</span>
         )}
-        <EditButton
-          canEdit={canUpdateVM}
-          onClick={() => descriptionModal({ resource: vmiLike, kind: getVMLikeModel(vmiLike) })}
-        >
-          {description}
-        </EditButton>
+        {canUpdateVM && (
+          <Button
+            data-test="edit-annotations"
+            type="button"
+            isInline
+            onClick={() => descriptionModal({ resource: vmiLike, kind: getVMLikeModel(vmiLike) })}
+            variant="link"
+          >
+            {description}
+            <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+          </Button>
+        )}
       </VMDetailsItem>
 
       <VMDetailsItem
