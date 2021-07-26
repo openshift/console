@@ -486,11 +486,7 @@ export const RoutesDetailsPage: React.FC<RoutesDetailsPageProps> = (props) => (
     menuActions={menuActions}
     pages={[
       navFactory.details(detailsPage(RouteDetails)),
-      {
-        href: 'metrics',
-        nameKey: 'public~Metrics',
-        component: RouteMetrics,
-      },
+      navFactory.metrics(RouteMetrics),
       navFactory.editYaml(),
     ]}
   />
