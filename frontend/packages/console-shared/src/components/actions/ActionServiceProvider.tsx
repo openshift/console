@@ -17,7 +17,7 @@ const ActionServiceProvider: React.FC<ActionServiceProviderProps> = ({ context, 
   const [actionsMap, setActionsMap] = React.useState<{ [uid: string]: Action[] }>({});
   const [loadError, setLoadError] = React.useState<any>();
 
-  const memoizedContext = useDeepCompareMemoize(context, true);
+  const memoizedContext = useDeepCompareMemoize(context);
 
   const onContextChange = React.useCallback((newContexId: string, newScope: any) => {
     setContextMap((prevContext) => ({ ...prevContext, [newContexId]: newScope }));
