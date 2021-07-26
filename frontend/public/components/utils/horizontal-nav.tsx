@@ -11,11 +11,7 @@ import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
-<<<<<<< HEAD
 import { ResourceMetricsDashboard } from './resource-metrics';
-=======
-import { PodLogs } from '../pod-logs';
->>>>>>> fa202c2704 (Added logs for the Alert Pod on Monitring/Alerts page)
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
