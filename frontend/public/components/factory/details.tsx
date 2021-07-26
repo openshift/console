@@ -35,6 +35,7 @@ import {
   referenceFor,
   referenceForExtensionModel,
 } from '../../module/k8s';
+import { Alert, Rule } from '../monitoring/types';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
@@ -155,6 +156,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           customData={props.customData}
           badge={props.badge || getBadgeFromType(kindObj?.badge)}
           icon={props.icon}
+          ele={props.ele}
         >
           {props.children}
         </PageHeading>
@@ -203,6 +205,12 @@ export type DetailsPageProps = {
   getResourceStatus?: (resource: K8sResourceKind) => string;
   children?: React.ReactNode;
   customKind?: string;
+  alert?: Alert;
+  loaded?: any;
+  loadError?: string;
+  rule?: Rule;
+  silencesLoaded?: boolean;
+  ele?: JSX.Element;
 };
 
 DetailsPage.displayName = 'DetailsPage';

@@ -98,17 +98,15 @@ export class AlertLogs extends React.Component {
 
     return (
       <>
-        {this.props.namespace !== undefined && (
+        {this.props?.namespace && (
           <div className="co-m-pane__body">
-            {_.isEmpty(this.props.obj) === false && (
-              <ResourceLog
-                containerName={currentContainer ? currentContainer.name : ''}
-                dropdown={containerDropdown}
-                resource={this.props.obj}
-                resourceStatus={currentContainerStatus}
-                alertLogs={this.state.alertLogs}
-              />
-            )}
+            <ResourceLog
+              containerName={currentContainer ? currentContainer.name : ''}
+              dropdown={containerDropdown}
+              resource={this.props.obj}
+              resourceStatus={currentContainerStatus}
+              alertLogs={this.state.alertLogs}
+            />
           </div>
         )}
       </>
