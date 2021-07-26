@@ -112,7 +112,7 @@ class StorageClassFormWithTranslation extends React.Component<
       parameters: {
         type: {
           name: 'Type', // t('public~Type')
-          values: { gp2: 'gp2', io1: 'io1', sc1: 'sc1', st1: 'st1', standard: 'standard' },
+          values: { gp2: 'gp2', io1: 'io1', sc1: 'sc1', st1: 'st1' },
           hintText: 'Select AWS Type. Default is gp2',
         },
         iopsPerGB: {
