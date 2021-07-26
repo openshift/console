@@ -6,10 +6,9 @@ import { RouteComponentProps } from 'react-router';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { coFetchJSON } from '@console/internal/co-fetch';
 import { history, getQueryArgument } from '@console/internal/components/utils';
 import { HelmRelease, HelmActionType, HelmActionOrigins } from '../../../types/helm-types';
-import { getHelmActionConfig } from '../../../utils/helm-utils';
+import { fetchHelmReleaseHistory, getHelmActionConfig } from '../../../utils/helm-utils';
 import HelmReleaseRollbackForm from './HelmReleaseRollbackForm';
 
 type HelmReleaseRollbackPageProps = RouteComponentProps<{
@@ -35,22 +34,22 @@ const HelmReleaseRollbackPage: React.FC<HelmReleaseRollbackPageProps> = ({ match
   React.useEffect(() => {
     let ignore = false;
 
-    const fetchReleaseHistory = async () => {
+    const getReleaseHistory = async () => {
       let res: HelmRelease[];
       try {
-        res = await coFetchJSON(config.helmReleaseApi);
+        res = await fetchHelmReleaseHistory(releaseName, namespace);
       } catch {} // eslint-disable-line no-empty
       if (ignore) return;
 
       res?.length > 0 && setReleaseHistory(res);
     };
 
-    fetchReleaseHistory();
+    getReleaseHistory();
 
     return () => {
       ignore = true;
     };
-  }, [config.helmReleaseApi]);
+  }, [namespace, releaseName]);
 
   const initialValues: HelmRollbackFormData = {
     revision: -1,

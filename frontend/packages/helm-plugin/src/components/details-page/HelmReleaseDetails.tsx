@@ -74,8 +74,7 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
   );
 
   const actionsScope = {
-    releaseName,
-    namespace,
+    release: { name: releaseName, namespace, version: helmReleaseData.version },
     actionOrigin: HelmActionOrigins.details,
   };
 
@@ -154,7 +153,10 @@ const HelmReleaseDetails: React.FC<HelmReleaseDetailsProps> = ({ secret, match }
     return () => {
       ignore = true;
     };
-  }, [helmReleaseName, namespace]);
+    // On upgrading/rolling back to another version a new helm release is created.
+    // For fetching and showing the details of the new release adding secret.data as depedency here
+    // since secret's data list gets updated when a new release is created.
+  }, [helmReleaseName, namespace, secret.data]);
 
   return (
     <LoadedHelmReleaseDetails match={match} secret={secret} helmReleaseData={helmReleaseData} />

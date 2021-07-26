@@ -11,7 +11,7 @@ export const useHelmActionProvider = (scope: HelmActionsScope) => {
   const actions = React.useMemo(
     () => [
       getHelmUpgradeAction(scope, t),
-      getHelmRollbackAction(scope, t),
+      ...(scope.release.version > 1 ? [getHelmRollbackAction(scope, t)] : []),
       getHelmDeleteAction(scope, t),
     ],
     [scope, t],
@@ -24,10 +24,17 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
   const nodeType = element.getType();
   const scope = React.useMemo(() => {
     const releaseName = element.getLabel();
-    const { namespace } = getResource(element as Node).metadata;
-    return {
-      releaseName,
+    const {
       namespace,
+      labels: { version },
+    } = getResource(element as Node).metadata;
+
+    return {
+      release: {
+        name: releaseName,
+        namespace,
+        version: parseInt(version, 10),
+      },
       actionOrigin: 'topology',
     };
   }, [element]);
