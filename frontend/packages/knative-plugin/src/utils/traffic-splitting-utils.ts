@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, Patch } from '@console/internal/module/k8s';
+import { Traffic } from '../types';
 import {
   knativeServingResourcesRevision,
   knativeServingResourcesConfigurations,
@@ -17,13 +17,13 @@ export const getRevisionItems = (revisions: K8sResourceKind[]): RevisionItems =>
   }, {} as RevisionItems);
 };
 
-export const constructObjForUpdate = (traffic, service) => {
-  const obj = _.omit(service, 'status');
-  return {
-    ...obj,
-    spec: { ...obj.spec, traffic },
-  };
-};
+export const trafficDataForPatch = (traffic: Traffic[], service: K8sResourceKind): Patch[] => [
+  {
+    op: service.spec?.traffic ? 'replace' : 'add',
+    path: '/spec/traffic',
+    value: traffic,
+  },
+];
 
 export const knativeServingResourcesTrafficSplitting = (namespace: string): FirehoseResource[] => [
   ...knativeServingResourcesRevision(namespace),

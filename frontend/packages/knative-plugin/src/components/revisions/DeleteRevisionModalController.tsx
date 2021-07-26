@@ -17,8 +17,8 @@ import {
 } from '@console/internal/components/utils';
 import {
   k8sKill,
+  k8sPatch,
   K8sResourceKind,
-  k8sUpdate,
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RedExclamationCircleIcon } from '@console/shared';
@@ -29,7 +29,7 @@ import { Traffic } from '../../types';
 import {
   knativeServingResourcesTrafficSplitting,
   getRevisionItems,
-  constructObjForUpdate,
+  trafficDataForPatch,
 } from '../../utils/traffic-splitting-utils';
 import { TrafficSplittingType } from '../traffic-splitting/TrafficSplitting';
 import DeleteRevisionModal from './DeleteRevisionModal';
@@ -138,12 +138,12 @@ const Controller: React.FC<ControllerProps> = ({ loaded, resources, revision, ca
   };
 
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    const obj = constructObjForUpdate(values.trafficSplitting, service);
+    const ksvcPatch = trafficDataForPatch(values.trafficSplitting, service);
     if (!deleteTraffic || deleteTraffic.percent === 0) {
       return deleteRevision(action);
     }
 
-    return k8sUpdate(ServiceModel, obj)
+    return k8sPatch(ServiceModel, service, ksvcPatch)
       .then(() => {
         deleteRevision(action);
       })
