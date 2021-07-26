@@ -176,10 +176,10 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     }
   };
 
+  const isDisabled = _.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1;
+
   const helpText =
-    helmAction === HelmActionType.Install
-      ? t('helm-plugin~Select the chart version.')
-      : t('helm-plugin~Select the version to upgrade to.');
+    helmAction === HelmActionType.Upgrade && t('helm-plugin~Select the version to upgrade to.');
 
   const title =
     _.isEmpty(helmChartVersions) && !chartVersion
@@ -198,8 +198,8 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         name="chartVersion"
         label={t('helm-plugin~Chart version')}
         items={helmChartVersions}
-        helpText={helpText}
-        disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}
+        helpText={!isDisabled ? helpText : ''}
+        disabled={isDisabled}
         title={title}
         onChange={handleChartVersionChange}
         required
