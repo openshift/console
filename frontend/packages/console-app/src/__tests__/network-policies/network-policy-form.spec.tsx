@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, FormFieldGroupExpandable } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
@@ -35,6 +35,14 @@ describe('NetworkPolicyForm with Unknown CNI type', () => {
   it('should render a checkbox to deny all egress', () => {
     expect(wrapper.find(`[name="denyAllEgress"]`).exists()).toBe(true);
   });
+  it('should render the Egress policies section', () => {
+    expect(
+      wrapper
+        .find(FormFieldGroupExpandable)
+        .findWhere((b) => b.props().toggleAriaLabel === 'Egress')
+        .exists(),
+    ).toBe(true);
+  });
 });
 
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
@@ -49,6 +57,14 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
   it('should not render any checkbox to deny all egress', () => {
     expect(wrapper.find(`[name="denyAllEgress"]`).exists()).toBe(false);
   });
+  it('should not render the Egress policies section', () => {
+    expect(
+      wrapper
+        .find(FormFieldGroupExpandable)
+        .findWhere((b) => b.props().toggleAriaLabel === 'Egress')
+        .exists(),
+    ).toBe(false);
+  });
 });
 
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
@@ -62,5 +78,13 @@ describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
   });
   it('should render the checkbox to deny all egress', () => {
     expect(wrapper.find(`[name="denyAllEgress"]`).exists()).toBe(true);
+  });
+  it('should render the Egress policies section', () => {
+    expect(
+      wrapper
+        .find(FormFieldGroupExpandable)
+        .findWhere((b) => b.props().toggleAriaLabel === 'Egress')
+        .exists(),
+    ).toBe(true);
   });
 });

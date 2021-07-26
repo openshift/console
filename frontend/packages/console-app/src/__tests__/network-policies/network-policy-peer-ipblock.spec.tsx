@@ -40,7 +40,13 @@ describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
       `${i18nNS}~When using the OpenShift SDN cluster network provider, exceptions are not supported and would cause the entire IP block section to be ignored.`,
     );
   });
-  it('should render the current exceptions list', () => {
+  it('should render the exceptions section', () => {
+    expect(
+      wrapper
+        .find('label')
+        .findWhere((b) => b.text().includes(`${i18nNS}~Exceptions`))
+        .exists(),
+    ).toBe(true);
     expect(wrapper.find('input[value="bar"]').exists()).toBe(true);
   });
   it('should render a button to add an exception', () => {
@@ -61,8 +67,13 @@ describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
     const alert = wrapper.find(Alert);
     expect(alert.exists()).toBe(false);
   });
-  it('should not render the current exceptions list', () => {
-    expect(wrapper.find('input[value="bar"]').exists()).toBe(false);
+  it('should not render the exceptions section', () => {
+    expect(
+      wrapper
+        .find('label')
+        .findWhere((b) => b.text().includes(`${i18nNS}~Exceptions`))
+        .exists(),
+    ).toBe(false);
   });
   it('should not render a button to add any exception', () => {
     const btn = wrapper.find(Button).findWhere((b) => b.text().includes(`${i18nNS}~Add exception`));
@@ -82,7 +93,13 @@ describe('NetworkPolicyPeerIPBlock with OVN Kubernetes CNI type', () => {
     const alert = wrapper.find(Alert);
     expect(alert.exists()).toBe(false);
   });
-  it('should render the current exceptions list', () => {
+  it('should render the exceptions section', () => {
+    expect(
+      wrapper
+        .find('label')
+        .findWhere((b) => b.text().includes(`${i18nNS}~Exceptions`))
+        .exists(),
+    ).toBe(true);
     expect(wrapper.find('input[value="bar"]').exists()).toBe(true);
   });
   it('should render a button to add an exception', () => {

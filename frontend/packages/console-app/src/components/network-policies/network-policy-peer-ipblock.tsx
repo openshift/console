@@ -40,11 +40,10 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
           required
         />
       </div>
-      <div className="form-group co-create-networkpolicy__exceptions">
-        <label>{t('public~Exceptions')}</label>
-        {showSDNAlert &&
-          networkFeaturesLoaded &&
-          networkFeatures.PolicyPeerIPBlockExceptions === undefined && (
+      {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
+        <div className="form-group co-create-networkpolicy__exceptions">
+          <label>{t('public~Exceptions')}</label>
+          {showSDNAlert && networkFeatures.PolicyPeerIPBlockExceptions === undefined && (
             <div>
               <Alert
                 variant="info"
@@ -55,54 +54,51 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
               />
             </div>
           )}
-        {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
-          <>
-            {ipBlock.except.map((exc, idx) => (
-              <div className="pf-c-input-group" key={exc.key}>
-                <input
-                  className="pf-c-form-control"
-                  type="text"
-                  onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
-                  placeholder="10.2.1.0/12"
-                  aria-describedby="ports-help"
-                  name={`exception-${idx}`}
-                  id={`exception-${idx}`}
-                  value={exc.value}
-                />
-                <Button
-                  aria-label={t('public~Remove exception')}
-                  className="co-create-networkpolicy__remove-exception"
-                  onClick={() => {
-                    ipBlock.except = [
-                      ...ipBlock.except.slice(0, idx),
-                      ...ipBlock.except.slice(idx + 1),
-                    ];
-                    onChange(ipBlock);
-                  }}
-                  type="button"
-                  variant="plain"
-                >
-                  <MinusCircleIcon />
-                </Button>
-              </div>
-            ))}
-            <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-exception">
+          {ipBlock.except.map((exc, idx) => (
+            <div className="pf-c-input-group" key={exc.key}>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={(event) => handleExceptionsChange(idx, event.currentTarget.value)}
+                placeholder="10.2.1.0/12"
+                aria-describedby="ports-help"
+                name={`exception-${idx}`}
+                id={`exception-${idx}`}
+                value={exc.value}
+              />
               <Button
-                className="pf-m-link--align-left"
+                aria-label={t('public~Remove exception')}
+                className="co-create-networkpolicy__remove-exception"
                 onClick={() => {
-                  ipBlock.except.push({ key: _.uniqueId('exception-'), value: '' });
+                  ipBlock.except = [
+                    ...ipBlock.except.slice(0, idx),
+                    ...ipBlock.except.slice(idx + 1),
+                  ];
                   onChange(ipBlock);
                 }}
                 type="button"
-                variant="link"
+                variant="plain"
               >
-                <PlusCircleIcon className="co-icon-space-r" />
-                {t('public~Add exception')}
+                <MinusCircleIcon />
               </Button>
             </div>
-          </>
-        )}
-      </div>
+          ))}
+          <div className="co-toolbar__group co-toolbar__group--left co-create-networkpolicy__add-exception">
+            <Button
+              className="pf-m-link--align-left"
+              onClick={() => {
+                ipBlock.except.push({ key: _.uniqueId('exception-'), value: '' });
+                onChange(ipBlock);
+              }}
+              type="button"
+              variant="link"
+            >
+              <PlusCircleIcon className="co-icon-space-r" />
+              {t('public~Add exception')}
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

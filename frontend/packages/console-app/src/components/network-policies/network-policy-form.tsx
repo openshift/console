@@ -276,53 +276,55 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
           ))}
         </FormFieldGroupExpandable>
       )}
-      {!networkPolicy.egress.denyAll && (
-        <FormFieldGroupExpandable
-          toggleAriaLabel="Egress"
-          className="co-create-networkpolicy__expandable-xl"
-          isExpanded
-          header={
-            <FormFieldGroupHeader
-              titleText={{ text: t('public~Egress'), id: 'egress-header' }}
-              actions={
-                <>
-                  <Button
-                    variant="link"
-                    isDisabled={networkPolicy.egress.rules.length === 0}
-                    onClick={removeAllEgress}
-                  >
-                    {t('public~Remove all')}
-                  </Button>
-                  <Button variant="secondary" onClick={addEgressRule}>
-                    {t('public~Add egress rule')}
-                  </Button>
-                </>
-              }
-            />
-          }
-        >
-          <div className="help-block" id="egress-help">
-            <p>
-              {t(
-                'public~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
-              )}
-            </p>
-          </div>
-          {networkPolicy.egress.rules.map((rule, idx) => (
-            <NetworkPolicyRuleConfigPanel
-              key={rule.key}
-              direction="egress"
-              rule={rule}
-              onChange={(r) => {
-                const newRules = [...networkPolicy.egress.rules];
-                newRules[idx] = r;
-                updateEgressRules(newRules);
-              }}
-              onRemove={() => removeEgressRule(idx)}
-            />
-          ))}
-        </FormFieldGroupExpandable>
-      )}
+      {!networkPolicy.egress.denyAll &&
+        networkFeaturesLoaded &&
+        networkFeatures.PolicyEgress !== false && (
+          <FormFieldGroupExpandable
+            toggleAriaLabel="Egress"
+            className="co-create-networkpolicy__expandable-xl"
+            isExpanded
+            header={
+              <FormFieldGroupHeader
+                titleText={{ text: t('public~Egress'), id: 'egress-header' }}
+                actions={
+                  <>
+                    <Button
+                      variant="link"
+                      isDisabled={networkPolicy.egress.rules.length === 0}
+                      onClick={removeAllEgress}
+                    >
+                      {t('public~Remove all')}
+                    </Button>
+                    <Button variant="secondary" onClick={addEgressRule}>
+                      {t('public~Add egress rule')}
+                    </Button>
+                  </>
+                }
+              />
+            }
+          >
+            <div className="help-block" id="egress-help">
+              <p>
+                {t(
+                  'public~List of egress rules to be applied to the selected pods. Traffic is allowed to a destination if it matches at least one rule.',
+                )}
+              </p>
+            </div>
+            {networkPolicy.egress.rules.map((rule, idx) => (
+              <NetworkPolicyRuleConfigPanel
+                key={rule.key}
+                direction="egress"
+                rule={rule}
+                onChange={(r) => {
+                  const newRules = [...networkPolicy.egress.rules];
+                  newRules[idx] = r;
+                  updateEgressRules(newRules);
+                }}
+                onRemove={() => removeEgressRule(idx)}
+              />
+            ))}
+          </FormFieldGroupExpandable>
+        )}
       <ButtonBar errorMessage={error} inProgress={inProgress}>
         <ActionGroup className="pf-c-form">
           <Button type="submit" id="save-changes" variant="primary">
