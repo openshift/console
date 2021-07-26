@@ -159,6 +159,13 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           {props.children}
         </PageHeading>
         <HorizontalNav
+          alert={props.alert}
+          loaded={props.loaded}
+          loadError={props.loadError}
+          rule={props.rule}
+          silencesLoaded={props.silencesLoaded}
+          namespace={props.namespace}
+          name={props.name}
           pages={allPages}
           pagesFor={props.pagesFor}
           className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
