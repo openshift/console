@@ -139,15 +139,15 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
   };
 
   if (kms.caCert) {
-    resources.push(k8sCreate(SecretModel, kms.caCert, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(SecretModel, kms.caCert));
   }
 
   if (kms.clientCert) {
-    resources.push(k8sCreate(SecretModel, kms.clientCert, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(SecretModel, kms.clientCert));
   }
 
   if (kms.clientKey) {
-    resources.push(k8sCreate(SecretModel, kms.clientKey, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(SecretModel, kms.clientKey));
   }
 
   if (update) {
@@ -161,9 +161,9 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
     ];
     resources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
   } else {
-    resources.push(k8sCreate(SecretModel, tokenSecret, { ns: CEPH_STORAGE_NAMESPACE }));
-    resources.push(k8sCreate(ConfigMapModel, configMapObj, { ns: CEPH_STORAGE_NAMESPACE }));
-    resources.push(k8sCreate(ConfigMapModel, csiConfigObj, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(SecretModel, tokenSecret));
+    resources.push(k8sCreate(ConfigMapModel, configMapObj));
+    resources.push(k8sCreate(ConfigMapModel, csiConfigObj));
   }
 
   return resources;
