@@ -1,5 +1,6 @@
 import { TEMPLATE_NAME, VM_STATUS } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
+import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import { virtualization } from '../../view/virtualization';
@@ -108,10 +109,8 @@ describe('Test VM/VMI actions', () => {
     };
 
     beforeEach(() => {
-      cy.fixture('vmi-ephemeral').then((vmi) => {
-        vmi.metadata.namespace = testName;
-        cy.createResource(vmi);
-      });
+      vmiFixture.metadata.namespace = testName;
+      cy.createResource(vmiFixture);
       virtualization.vms.visit();
       waitForStatus(VM_STATUS.Running, vmiData);
     });

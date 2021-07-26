@@ -2,8 +2,8 @@ import { TEST_PROVIDER } from '../const';
 import { ProvisionSource } from '../enums/provisionSource';
 
 export const provisionSourceInputs = {
-  [ProvisionSource.URL.getValue()]: 'input[id="provision-source-url"]',
-  [ProvisionSource.REGISTRY.getValue()]: 'input[id="provision-source-container"]',
+  [ProvisionSource.URL.getValue()]: '#provision-source-url',
+  [ProvisionSource.REGISTRY.getValue()]: '#provision-source-container',
 };
 
 type DiskSourceOpts = {

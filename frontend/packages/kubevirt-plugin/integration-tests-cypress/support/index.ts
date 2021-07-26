@@ -6,6 +6,7 @@ import {
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   EXPECT_LOGIN_SCRIPT_PATH,
 } from '../const';
+import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
 
 export * from '../../../integration-tests-cypress/support';
@@ -194,8 +195,6 @@ Cypress.Commands.add('selectProject', (project: string) => {
 });
 
 Cypress.Commands.add('createNAD', (namespace: string) => {
-  cy.fixture('nad').then((nad) => {
-    nad.metadata.namespace = namespace;
-    cy.createResource(nad);
-  });
+  nadFixture.metadata.namespace = namespace;
+  cy.createResource(nadFixture);
 });

@@ -52,6 +52,7 @@ const SysprepFileField: React.FC<SysprepFileFieldProps> = ({ id }) => {
     <>
       <FileUpload
         id={`sysprep-${id}-input`}
+        data-test={`sysprep-${id.toLowerCase().replace('.', '-')}-input`}
         type="text"
         value={data.value}
         filename={data.fileName}

@@ -25,14 +25,14 @@ describe('ID (CNV-6821) Sysprep testing', () => {
       .click();
     cy.get('body').then(($body) => {
       if ($body.find('[data-test-id="modal-title"]').length) {
-        cy.get('[id=confirm-action]').click();
+        cy.get('#confirm-action').click();
       }
     });
-    cy.get('[id=image-source-type-dropdown]').click();
+    cy.get('#image-source-type-dropdown').click();
     cy.contains('Import via Registry (creates PVC)').click();
-    cy.get('[id=provision-source-container').type(ProvisionSource.REGISTRY.getSource());
+    cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
     cy.get('@nextButton').click();
-    cy.get('[id=vm-name]')
+    cy.get('#vm-name')
       .clear()
       .type(vmName);
     cy.byLegacyTestID('wizard-customize').click();
@@ -47,8 +47,8 @@ describe('ID (CNV-6821) Sysprep testing', () => {
 
   it('should fill input fields with data and create vm', () => {
     cy.fixture('sysprep.xml').then((sysprep) => {
-      cy.get('[id="sysprep-Autounattend.xml-input"]').type(sysprep);
-      cy.get('[id="sysprep-Unattend.xml-input"]').type(sysprep);
+      cy.get('[data-test=sysprep-autounattend-xml-input]').type(sysprep);
+      cy.get('[data-test=sysprep-unattend-xml-input]').type(sysprep);
     });
     cy.get('[id=create-vm-wizard-submit-btn]')
       .click()
