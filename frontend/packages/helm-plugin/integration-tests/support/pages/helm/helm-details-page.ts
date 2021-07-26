@@ -8,11 +8,11 @@ export const helmDetailsPage = {
   verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),
   verifyResourcesTab: () => cy.get(helmPO.resourcesTab).should('be.visible'),
   verifyReleaseNotesTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
-  verifyActionsDropdown: () => cy.byLegacyTestID('menu-toggle-button').should('be.visible'),
+  verifyActionsDropdown: () => cy.byLegacyTestID('actions-menu-button').should('be.visible'),
   verifyRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
-  clickActionMenu: () => cy.byLegacyTestID('menu-toggle-button').click(),
+  clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
   verifyActionsInActionMenu: () => {
-    cy.byLegacyTestID('action-menu-content')
+    cy.byLegacyTestID('action-items')
       .find('li')
       .each(($ele) => {
         expect(actions).toContain($ele.text());

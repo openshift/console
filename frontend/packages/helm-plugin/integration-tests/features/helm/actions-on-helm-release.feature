@@ -1,4 +1,5 @@
-@helm @smoke
+# Added @broken-test due to the bug : https://issues.redhat.com/browse/ODC-6107
+@helm @smoke @broken-test
 Feature: Perform Actions on Helm Releases
               As a user, I want to perform the actions on the helm releases in topology page
 

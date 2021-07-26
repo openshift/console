@@ -13,8 +13,6 @@ import {
 } from '@console/dev-console/integration-tests/support/pages';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
-const actions = [helmActions.upgrade, helmActions.rollback, helmActions.uninstallHelmRelease];
-
 Given('helm release {string} is present in topology page', (workloadName: string) => {
   catalogPage.createHelmChartFromAddPage(workloadName);
 });
@@ -46,17 +44,17 @@ Given('user is on the topology sidebar of the helm release {string}', (helmRelea
 });
 
 When('user clicks on the Actions drop down menu', () => {
-  cy.byLegacyTestID('menu-toggle-button').click();
+  topologySidePane.clickActionsDropDown();
 });
 
 Then(
   'user is able to see the actions dropdown menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    cy.byLegacyTestID('action-menu-content')
-      .find('li')
-      .each(($ele) => {
-        expect(actions).toContain($ele.text());
-      });
+    topologySidePane.verifyActions(
+      helmActions.upgrade,
+      helmActions.rollback,
+      helmActions.uninstallHelmRelease,
+    );
   },
 );
 
@@ -72,11 +70,11 @@ When('user clicks on the Kebab menu', () => {
 Then(
   'user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    cy.byLegacyTestID('action-menu-content')
-      .find('li')
-      .each(($ele) => {
-        expect(actions).toContain($ele.text());
-      });
+    topologySidePane.verifyActions(
+      helmActions.upgrade,
+      helmActions.rollback,
+      helmActions.uninstallHelmRelease,
+    );
   },
 );
 

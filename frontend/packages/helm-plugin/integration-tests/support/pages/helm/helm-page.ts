@@ -59,7 +59,7 @@ export const helmPage = {
   },
   selectKebabMenu: () => {
     cy.get(helmPO.table).should('exist');
-    cy.byLegacyTestID('menu-toggle-button').click();
+    cy.byLegacyTestID('kebab-button').click();
   },
   verifyHelmChartsListed: () => {
     cy.get(helmPO.noHelmSearchMessage)
