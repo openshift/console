@@ -81,7 +81,11 @@ import {
   SilenceResource,
   silenceState,
   silencesToProps,
-} from './utils';
+} from '../monitoring/utils';
+import { DetailsPage } from './alert-logs-view';
+import { PodLogs } from '../pod-logs';
+import { podPhase } from '../../module/k8s/pods';
+import { navFactory } from '../utils';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { formatPrometheusDuration } from '../utils/datetime';
 import { ActionsMenu } from '../utils/dropdown';
@@ -670,7 +674,7 @@ const getSourceKey = (source) => {
 
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-    const { alert, loaded, loadError, namespace, rule, silencesLoaded } = props;
+    const { alert, loaded, loadError, namespace, rule, silencesLoaded, match } = props;
     const state = alertState(alert);
 
     const { t } = useTranslation();
@@ -681,6 +685,25 @@ export const AlertsDetailsPage = withFallback(
     const labelsMemoKey = JSON.stringify(alert?.labels);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
+
+    const alertPodObj = {
+      namespace: alert !== undefined ? alert.labels.namespace : undefined,
+      kind: 'Pod',
+      kindObj: {
+        apiVersion: 'v1',
+        label: 'Pod',
+        labelKey: 'public~Pod',
+        plural: 'pods',
+        abbr: 'P',
+        namespaced: true,
+        kind: 'Pod',
+        id: 'pod',
+        labelPlural: 'Pods',
+        labelPluralKey: 'public~Pods',
+      },
+      name: alert !== undefined ? alert.labels.pod : undefined,
+      badge: null,
+    };
 
     return (
       <>
@@ -718,6 +741,22 @@ export const AlertsDetailsPage = withFallback(
           <div className="co-m-pane__body">
             <ToggleGraph />
             <SectionHeading text={t('public~Alert details')} />
+            {alert !== undefined &&
+              alert.labels.namespace !== undefined &&
+              alert.labels.pod !== undefined && (
+                <DetailsPage
+                  match={match}
+                  namespace={alertPodObj.namespace}
+                  kind={alertPodObj.kind}
+                  kindObj={alertPodObj.kindObj}
+                  name={alertPodObj.name}
+                  badge={alertPodObj.badge}
+                  getResourceStatus={podPhase}
+                  alertURL={alert !== undefined ? alertURL(alert, alert.rule.id) : ''}
+                  //menuActions={menuActions}
+                  pages={[navFactory.logs(PodLogs)]}
+                />
+              )}
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
@@ -1796,6 +1835,7 @@ type AlertsDetailsPageProps = {
   namespace: string;
   rule: Rule;
   silencesLoaded: boolean;
+  match?: any;
 };
 
 type AlertMessageProps = {
