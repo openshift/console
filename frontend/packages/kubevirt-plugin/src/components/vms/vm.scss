@@ -17,3 +17,8 @@
     color: unset;
   }
 }
+
+.kv-vm-resource--boot-order {
+  display: flex;
+  justify-content: space-between;
+}

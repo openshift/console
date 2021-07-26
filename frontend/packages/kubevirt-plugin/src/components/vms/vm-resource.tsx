@@ -166,6 +166,15 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
           isVMRunningOrExpectedRunning(vm, vmi) &&
           isBootOrderChanged(new VMWrapper(vm), new VMIWrapper(vmi))
         }
+        customEditButton={
+          <VMEditWithPencil
+            isEdit={canEditWhileVMRunning}
+            onEditClick={() => BootOrderModal({ vmLikeEntity: vm, modalClassName: 'modal-lg' })}
+          >
+            {t('kubevirt-plugin~Edit')}
+          </VMEditWithPencil>
+        }
+        editClassName="kv-vm-resource--boot-order"
       >
         <BootOrderSummary devices={devices} />
       </VMDetailsItem>
