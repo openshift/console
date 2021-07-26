@@ -1165,6 +1165,19 @@ export const InfrastructureModel: K8sKind = {
   crd: true,
 };
 
+export const NetworkOperatorConfigModel: K8sKind = {
+  label: 'Network',
+  labelPlural: 'Networks',
+  apiVersion: 'v1',
+  apiGroup: 'operator.openshift.io',
+  plural: 'networks',
+  abbr: '',
+  namespaced: false,
+  kind: 'Network',
+  id: 'network',
+  crd: true,
+};
+
 export const ConsoleOperatorConfigModel: K8sKind = {
   label: 'Console',
   labelPlural: 'Consoles',

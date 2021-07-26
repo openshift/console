@@ -16,6 +16,7 @@ import { confirmModal } from '@console/internal/components/modals/confirm-modal'
 import { ButtonBar, history, resourcePathFromModel } from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
@@ -60,6 +61,7 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showSDNAlert, setShowSDNAlert] = React.useState(true);
+  const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setNetworkPolicy({ ...networkPolicy, name: event.currentTarget.value });
@@ -194,7 +196,7 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
       <div className="form-group co-create-networkpolicy__type">
         <Title headingLevel="h2">{t('public~Policy type')}</Title>
       </div>
-      {showSDNAlert && (
+      {showSDNAlert && networkFeaturesLoaded && networkFeatures.PolicyEgress === undefined && (
         <Alert
           variant="info"
           title={t(
@@ -215,14 +217,16 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
               name="denyAllIngress"
             />
           </div>
-          <div className="co-create-networkpolicy__deny-checkbox">
-            <Checkbox
-              label={t('public~Deny all egress traffic')}
-              onChange={handleDenyAllEgress}
-              checked={networkPolicy.egress.denyAll}
-              name="denyAllEgress"
-            />
-          </div>
+          {networkFeaturesLoaded && networkFeatures.PolicyEgress !== false && (
+            <div className="co-create-networkpolicy__deny-checkbox">
+              <Checkbox
+                label={t('public~Deny all egress traffic')}
+                onChange={handleDenyAllEgress}
+                checked={networkPolicy.egress.denyAll}
+                name="denyAllEgress"
+              />
+            </div>
+          )}
         </div>
       </div>
       {!networkPolicy.ingress.denyAll && (
