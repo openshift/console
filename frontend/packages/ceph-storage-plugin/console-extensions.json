@@ -9,10 +9,7 @@
       }
     },
     "flags": {
-      "required": [
-        "LSO_DEVICE_DISCOVERY",
-        "OCS_ATTACHED_DEVICES"
-      ]
+      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
@@ -25,10 +22,7 @@
       }
     },
     "flags": {
-      "required": [
-        "LSO_DEVICE_DISCOVERY",
-        "OCS_ATTACHED_DEVICES"
-      ]
+      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
   },
   {
@@ -41,9 +35,7 @@
       }
     },
     "flags": {
-      "required": [
-        "OCS"
-      ]
+      "required": ["OCS"]
     }
   },
   {
@@ -56,9 +48,7 @@
       }
     },
     "flags": {
-      "required": [
-        "OCS"
-      ]
+      "required": ["OCS"]
     }
   },
   {
@@ -70,9 +60,7 @@
       }
     },
     "flags": {
-      "required": [
-        "OCS"
-      ]
+      "required": ["OCS"]
     }
   },
   {
@@ -88,9 +76,7 @@
       }
     },
     "flags": {
-      "required": [
-        "MCG"
-      ]
+      "required": ["MCG"]
     }
   },
   {
@@ -106,9 +92,7 @@
       }
     },
     "flags": {
-      "required": [
-        "MCG"
-      ]
+      "required": ["MCG"]
     }
   },
   {
@@ -121,9 +105,7 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": [
-        "OCS"
-      ]
+      "required": ["OCS"]
     }
   },
   {
@@ -136,12 +118,8 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": [
-        "MCG"
-      ],
-      "disallowed": [
-        "OCS"
-      ]
+      "required": ["MCG"],
+      "disallowed": ["OCS"]
     }
   },
   {
@@ -152,7 +130,7 @@
         "version": "v1",
         "kind": "CephBlockPool"
       },
-      "component":{ "$codeRef": "blockPoolListPage.BlockPoolListPage" }
+      "component": { "$codeRef": "blockPoolListPage.BlockPoolListPage" }
     },
     "flags": {
       "required": ["OCS"]
@@ -179,10 +157,50 @@
         "version": "v1",
         "kind": "CephBlockPool"
       },
-      "component":{ "$codeRef": "blockPoolDetailsPage.default" }
+      "component": { "$codeRef": "blockPoolDetailsPage.default" }
     },
     "flags": {
       "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/:resourceKind/:resourceName",
+      "exact": true,
+      "component": {
+        "$codeRef": "resourceDetailsPage.GenericDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "bsCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "nssCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "bcCreate.default"
+      }
     }
   }
 ]

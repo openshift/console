@@ -811,6 +811,63 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).default,
     },
   },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Backing Store')
+        name: '%ceph-storage-plugin~Backing Store%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Bucket Class')
+        name: '%ceph-storage-plugin~Bucket Class%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Namespace Store')
+        name: '%ceph-storage-plugin~Namespace Store%',
+        href: 'resource/noobaa.io~v1alpha1~NamespaceStore',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
 ];
 
 export default plugin;
