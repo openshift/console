@@ -19,6 +19,7 @@ import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
 import { confirmModal, createAlertRoutingModal } from '../modals';
 import { Table, TableData, TableRow, TextFilter, RowFunction } from '../factory';
 import {
+  getClusterMonitoringConfig,
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
   receiverTypes,
@@ -475,7 +476,15 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
 };
 
 export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps> = React.memo(
-  ({ obj, ...props }) => {
+  ({ obj, cmc, ...props }) => {
+    const { config, errorMessage } = getClusterMonitoringConfig(cmc.data);
+    if (errorMessage !== '') {
+      return <div>{errorMessage}</div>;
+    }
+    if (!config?.alertmanagerMain?.enabled) {
+      return <div>Disabled</div>;
+    }
+
     const { t } = useTranslation();
     return (
       <>
@@ -492,6 +501,10 @@ export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps>
 
 type AlertmanagerConfigWrapperProps = {
   obj?: {
+    data?: K8sResourceKind;
+    [key: string]: any;
+  };
+  cmc?: {
     data?: K8sResourceKind;
     [key: string]: any;
   };
@@ -544,4 +557,12 @@ export type AlertmanagerConfig = {
 
 type RoutingLabelProps = {
   labels: { [key: string]: string };
+};
+
+export type ClusterMonitoringConfig = {
+  alertmanagerMain: AlertmanagerMainConfig;
+};
+
+export type AlertmanagerMainConfig = {
+  enabled: boolean;
 };

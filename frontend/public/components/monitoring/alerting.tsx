@@ -1615,6 +1615,13 @@ const AlertmanagerYAML = () => {
     <Firehose
       resources={[
         {
+          kind: 'ConfigMap',
+          name: 'cluster-monitoring-config',
+          namespace: 'openshift-monitoring',
+          isList: false,
+          prop: 'cmc',
+        },
+        {
           kind: 'Secret',
           name: 'alertmanager-main',
           namespace: 'openshift-monitoring',
@@ -1632,6 +1639,13 @@ const AlertmanagerConfig = () => {
   return (
     <Firehose
       resources={[
+        {
+          kind: 'ConfigMap',
+          name: 'cluster-monitoring-config',
+          namespace: 'openshift-monitoring',
+          isList: false,
+          prop: 'cmc',
+        },
         {
           kind: 'Secret',
           name: 'alertmanager-main',

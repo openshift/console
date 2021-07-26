@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64';
 import { safeLoad, safeDump } from 'js-yaml';
 
 import { k8sPatch, K8sResourceKind } from '../../module/k8s';
-import { AlertmanagerConfig } from './alert-manager-config';
+import { AlertmanagerConfig, ClusterMonitoringConfig } from './alert-manager-config';
 import { SecretModel } from '../../models';
 
 // t('public~PagerDuty')
@@ -59,4 +59,20 @@ export const patchAlertmanagerConfig = (
   const yamlEncodedString = Base64.encode(yamlString);
   const patch = [{ op: 'replace', path: '/data/alertmanager.yaml', value: yamlEncodedString }];
   return k8sPatch(SecretModel, secret, patch);
+};
+
+export const getClusterMonitoringConfig = (
+  configMap: K8sResourceKind,
+): { config?: ClusterMonitoringConfig; errorMessage?: string } => {
+  const configYaml = _.get(configMap, ['data', 'config.yaml']);
+  if (_.isEmpty(configYaml)) {
+    return { errorMessage: '' };
+  }
+
+  try {
+    const config = safeLoad(configYaml);
+    return { config, errorMessage: '' };
+  } catch (e) {
+    return { config: null, errorMessage: `Error loading config.yaml: ${e}` };
+  }
 };

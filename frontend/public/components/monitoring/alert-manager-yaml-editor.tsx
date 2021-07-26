@@ -7,7 +7,11 @@ import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { AsyncComponent, StatusBox } from '../utils';
-import { patchAlertmanagerConfig, getAlertmanagerYAML } from './alert-manager-utils';
+import {
+  patchAlertmanagerConfig,
+  getAlertmanagerYAML,
+  getClusterMonitoringConfig,
+} from './alert-manager-utils';
 
 const EditAlertmanagerYAML = (props) => (
   <AsyncComponent
@@ -92,7 +96,15 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj: se
 };
 
 export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapperProps> = React.memo(
-  ({ obj, ...props }) => {
+  ({ obj, cmc, ...props }) => {
+    const { config, errorMessage } = getClusterMonitoringConfig(cmc.data);
+    if (errorMessage !== '') {
+      return <div>{errorMessage}</div>;
+    }
+    if (!config?.alertmanagerMain?.enabled) {
+      return <div>Disabled</div>;
+    }
+
     const { t } = useTranslation();
     return (
       <>
