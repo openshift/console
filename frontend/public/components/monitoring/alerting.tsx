@@ -343,83 +343,97 @@ export const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = 
   </Popover>
 );
 
-export const alertStateHelp = (
-  <dl className="co-inline">
-    <dt>
-      <AlertStateIcon state={AlertStates.Pending} /> <strong>Pending: </strong>
-    </dt>
-    <dd>
-      The alert is active but is waiting for the duration that is specified in the alerting rule
-      before it fires.
-    </dd>
-    <dt>
-      <AlertStateIcon state={AlertStates.Firing} /> <strong>Firing: </strong>
-    </dt>
-    <dd>
-      The alert is firing because the alert condition is true and the optional `for` duration has
-      passed. The alert will continue to fire as long as the condition remains true.
-    </dd>
-    <dt>
-      <AlertStateIcon state={AlertStates.Silenced} /> <strong>Silenced: </strong>
-    </dt>
-    <dt></dt>
-    <dd>
-      The alert is now silenced for a defined time period. Silences temporarily mute alerts based on
-      a set of label selectors that you define. Notifications will not be sent for alerts that match
-      all the listed values or regular expressions.
-    </dd>
-  </dl>
-);
+export const AlertStateHelp: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <dl className="co-inline">
+      <dt>
+        <AlertStateIcon state={AlertStates.Pending} /> <strong>{t('public~Pending: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~The alert is active but is waiting for the duration that is specified in the alerting rule before it fires.',
+        )}
+      </dd>
+      <dt>
+        <AlertStateIcon state={AlertStates.Firing} /> <strong>{t('public~Firing: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~The alert is firing because the alert condition is true and the optional `for` duration has passed. The alert will continue to fire as long as the condition remains true.',
+        )}
+      </dd>
+      <dt>
+        <AlertStateIcon state={AlertStates.Silenced} /> <strong>{t('public~Silenced: ')}</strong>
+      </dt>
+      <dt></dt>
+      <dd>
+        {t(
+          'public~The alert is now silenced for a defined time period. Silences temporarily mute alerts based on a set of label selectors that you define. Notifications will not be sent for alerts that match all the listed values or regular expressions.',
+        )}
+      </dd>
+    </dl>
+  );
+};
 
-export const severityHelp = (
-  <dl className="co-inline">
-    <dt>
-      <SeverityIcon severity={AlertSeverity.Critical} /> <strong>Critical: </strong>
-    </dt>
-    <dd>
-      The condition that triggered the alert could have a critical impact. The alert requires
-      immediate attention when fired and is typically paged to an individual or to a critical
-      response team.
-    </dd>
-    <dt>
-      <SeverityIcon severity={AlertSeverity.Warning} /> <strong>Warning: </strong>
-    </dt>
-    <dd>
-      The alert provides a warning notification about something that might require attention in
-      order to prevent a problem from occurring. Warnings are typically routed to a ticketing system
-      for non-immediate review.
-    </dd>
-    <dt>
-      <SeverityIcon severity={AlertSeverity.Info} /> <strong>Info: </strong>
-    </dt>
-    <dd>The alert is provided for informational purposes only.</dd>
-    <dt>
-      <SeverityIcon severity={AlertSeverity.None} /> <strong>None: </strong>
-    </dt>
-    <dd>The alert has no defined severity.</dd>
-    <dd>You can also create custom severity definitions for user workload alerts.</dd>
-  </dl>
-);
+export const SeverityHelp: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <dl className="co-inline">
+      <dt>
+        <SeverityIcon severity={AlertSeverity.Critical} /> <strong>{t('public~Critical: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~The condition that triggered the alert could have a critical impact. The alert requires immediate attention when fired and is typically paged to an individual or to a critical response team.',
+        )}
+      </dd>
+      <dt>
+        <SeverityIcon severity={AlertSeverity.Warning} /> <strong>{t('public~Warning: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~The alert provides a warning notification about something that might require attention in order to prevent a problem from occurring. Warnings are typically routed to a ticketing system for non-immediate review.',
+        )}
+      </dd>
+      <dt>
+        <SeverityIcon severity={AlertSeverity.Info} /> <strong>{t('public~Info: ')}</strong>
+      </dt>
+      <dd>{t('public~The alert is provided for informational purposes only.')}</dd>
+      <dt>
+        <SeverityIcon severity={AlertSeverity.None} /> <strong>{t('public~None: ')}</strong>
+      </dt>
+      <dd>{t('public~The alert has no defined severity.')}</dd>
+      <dd>
+        {t('public~You can also create custom severity definitions for user workload alerts.')}
+      </dd>
+    </dl>
+  );
+};
 
-export const sourceHelp = (
-  <dl className="co-inline">
-    <dt>
-      <strong>Platform: </strong>
-    </dt>
-    <dd>
-      Platform-level alerts relate only to OpenShift namespaces. OpenShift namespaces provide core
-      OpenShift functionality.
-    </dd>
-    <dt>
-      <strong>User: </strong>
-    </dt>
-    <dd>
-      User workload alerts relate to user-defined namespaces. These alerts are user-created and are
-      customizable. User workload monitoring can be enabled post-installation to provide
-      observability into your own services.
-    </dd>
-  </dl>
-);
+export const SourceHelp: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <dl className="co-inline">
+      <dt>
+        <strong>{t('public~Platform: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~Platform-level alerts relate only to OpenShift namespaces. OpenShift namespaces provide core OpenShift functionality.',
+        )}
+      </dd>
+      <dt>
+        <strong>{t('public~User: ')}</strong>
+      </dt>
+      <dd>
+        {t(
+          'public~User workload alerts relate to user-defined namespaces. These alerts are user-created and are customizable. User workload monitoring can be enabled post-installation to provide observability into your own services.',
+        )}
+      </dd>
+    </dl>
+  );
+};
 
 export const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
@@ -634,7 +648,7 @@ export const getSilenceTableHeader = (t) => [
   },
 ];
 
-const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps => {
+const alertStateToProps = (state: RootState, { match, location }): AlertsDetailsPageProps => {
   const perspective = _.has(match.params, 'ns') ? 'dev' : 'admin';
   const namespace = match.params?.ns;
   const { data, loaded, loadError }: Alerts = alertsToProps(state, perspective);
@@ -651,6 +665,7 @@ const alertStateToProps = (state: RootState, { match }): AlertsDetailsPageProps 
     namespace,
     rule,
     silencesLoaded,
+    location,
   };
 };
 
@@ -734,7 +749,7 @@ export const AlertsDetailsPage = withFallback(
           {
             href: '',
             queryParams,
-            // t('details-page~Details')
+            // t('public~Details')
             nameKey: 'public~Details',
             component: Details,
             pageData: {
@@ -747,7 +762,7 @@ export const AlertsDetailsPage = withFallback(
           {
             href: 'logs',
             queryParams,
-            // t('details-page~Logs')
+            // t('public~Logs')
             nameKey: 'public~Logs',
             component: AlertLogs,
           },
@@ -882,7 +897,7 @@ export const AlertRulesDetailsPage = withFallback(
                     <dt>{t('public~Name')}</dt>
                     <dd>{name}</dd>
                     <dt>
-                      <PopoverField label={t('public~Severity')} body={severityHelp} />
+                      <PopoverField label={t('public~Severity')} body={SeverityHelp} />
                     </dt>
                     <dd>
                       <Severity severity={severity} />
@@ -899,7 +914,7 @@ export const AlertRulesDetailsPage = withFallback(
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     <dt>
-                      <PopoverField label={t('public~Source')} body={sourceHelp} />
+                      <PopoverField label={t('public~Source')} body={SourceHelp} />
                     </dt>
                     <dd>{rule && getSourceKey(_.startCase(alertingRuleSource(rule)))}</dd>
                     {_.isInteger(duration) && (

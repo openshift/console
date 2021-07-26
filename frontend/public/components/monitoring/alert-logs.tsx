@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { EmptyBox } from '@console/internal/components/utils';
 import { ContainerDropdown, getQueryArgument, ResourceLog, setQueryArgument } from '../utils';
@@ -31,6 +32,7 @@ type AlertDetailProps = {
 };
 
 const AlertLogs: React.FC<AlertLogsProps> = (props) => {
+  const { t } = useTranslation();
   const [containers, setContainers] = React.useState({});
   const [currentKey, setCurrentKey] = React.useState(getQueryArgument('container') || '');
   const [initContainers, setInitContainers] = React.useState({});
@@ -82,7 +84,7 @@ const AlertLogs: React.FC<AlertLogsProps> = (props) => {
           resourceStatus={currentContainerStatus}
         />
       ) : (
-        <EmptyBox label="alert logs" />
+        <EmptyBox label={t('public~alert logs')} />
       )}
     </div>
   );

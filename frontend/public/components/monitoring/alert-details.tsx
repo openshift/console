@@ -19,9 +19,9 @@ import {
   AlertState,
   AlertStateDescription,
   Severity,
-  severityHelp,
-  sourceHelp,
-  alertStateHelp,
+  SeverityHelp,
+  SourceHelp,
+  AlertStateHelp,
   MonitoringResourceIcon,
   ruleURL,
   SilenceTableRow,
@@ -76,7 +76,7 @@ export const Details: React.FC<DetailsPageProps> = (props) => {
                 <dt>{t('public~Name')}</dt>
                 <dd>{labels?.alertname}</dd>
                 <dt>
-                  <PopoverField label={t('public~Severity')} body={severityHelp} />
+                  <PopoverField label={t('public~Severity')} body={SeverityHelp} />
                 </dt>
                 <dd>
                   <Severity severity={labels?.severity} />
@@ -105,11 +105,11 @@ export const Details: React.FC<DetailsPageProps> = (props) => {
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>
-                  <PopoverField label={t('public~Source')} body={sourceHelp} />
+                  <PopoverField label={t('public~Source')} body={SourceHelp} />
                 </dt>
                 <dd>{alert && _.startCase(alertSource(alert))}</dd>
                 <dt>
-                  <PopoverField label={t('public~State')} body={alertStateHelp} />
+                  <PopoverField label={t('public~State')} body={AlertStateHelp} />
                 </dt>
                 <dd>
                   <AlertState state={state} />
