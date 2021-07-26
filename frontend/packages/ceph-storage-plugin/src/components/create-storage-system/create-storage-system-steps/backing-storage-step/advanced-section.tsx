@@ -15,6 +15,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
   deployment,
   isAdvancedOpen,
   dispatch,
+  hasOCS,
 }) => {
   const { t } = useTranslation();
 
@@ -39,6 +40,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
           label={t('ceph-storage-plugin~Multi cloud object gateway')}
           description={t('ceph-storage-plugin~Object storage')}
           value={DeploymentType.MCG}
+          isDisabled={hasOCS}
           isChecked={deployment === DeploymentType.MCG}
           onChange={handleSelection}
           id="deployment-type"
@@ -52,4 +54,5 @@ type AdvancedSelectionProps = {
   dispatch: WizardDispatch;
   deployment: WizardState['backingStorage']['deployment'];
   isAdvancedOpen: WizardState['backingStorage']['isAdvancedOpen'];
+  hasOCS: boolean;
 };

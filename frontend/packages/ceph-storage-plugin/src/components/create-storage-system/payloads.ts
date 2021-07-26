@@ -46,7 +46,7 @@ export const createNoobaaPayload = (): Payload => {
       plural,
     },
     payload: {
-      apiVersion,
+      apiVersion: apiVersionForModel(NooBaaSystemModel),
       kind,
       metadata: { name: 'noobaa', namespace: CEPH_STORAGE_NAMESPACE },
       spec: {

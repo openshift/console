@@ -218,6 +218,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           dispatch={dispatch}
           deployment={deployment}
           isAdvancedOpen={isAdvancedOpen}
+          hasOCS={hasOCS}
         />
       </Form>
     </ErrorHandler>
