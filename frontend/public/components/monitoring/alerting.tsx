@@ -85,7 +85,7 @@ import {
 import { PodLogs } from '../pod-logs';
 import { podPhase } from '../../module/k8s/pods';
 import { DetailsPage } from '../factory/details';
-import { AlertLogs } from './alert-logs';
+import AlertLogs from './alert-logs';
 import { navFactory } from '../utils';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { formatPrometheusDuration } from '../utils/datetime';
@@ -674,6 +674,7 @@ const getSourceKey = (source) => {
 }
 
 const Details: React.FC = (props) => {
+const Details = (props) => {
   const { alert, namespace, rule, silencesLoaded } = props;
   const state = alertState(alert);
   const { t } = useTranslation();
@@ -864,18 +865,11 @@ export const AlertsDetailsPage = withFallback(
 
     return (
       <DetailsPage
-        alert={alert}
-        loaded={loaded}
-        rule={rule}
-        silencesLoaded={silencesLoaded}
-        loadError={props.loadError}
         match={match}
         namespace={alertPodObj.namespace}
         kind={alertPodObj.kind}
         kindObj={alertPodObj.kindObj}
         name={alertPodObj.name}
-        //badge={alertPodObj.badge}
-        //getResourceStatus={podPhase}
         ele={ele}
         breadcrumbsFor={() => [
           {
@@ -884,10 +878,17 @@ export const AlertsDetailsPage = withFallback(
           },
           { name: t('public~Alert details'), path: undefined },
         ]}
-        //{...props}
-        //getResourceStatus={podPhase}
-        //menuActions={menuActions}
-        pages={[navFactory.details(Details), navFactory.logs(AlertLogs)]}
+        pages={[
+          navFactory.details(() => (
+            <Details
+              alert={alert}
+              rule={rule}
+              namespace={alertPodObj.namespace}
+              silencesLoaded={silencesLoaded}
+            />
+          )),
+          navFactory.logs(AlertLogs),
+        ]}
       />
     );
   }),
