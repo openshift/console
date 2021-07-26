@@ -5,7 +5,7 @@ export const IBMFlashSystemModel: K8sKind = {
   labelPlural: 'IBM Flash Systems',
   apiVersion: 'v1alpha1',
   apiGroup: 'odf.ibm.com',
-  plural: 'FlashSystemclusters',
+  plural: 'flashsystemclusters',
   abbr: 'FS',
   namespaced: true,
   kind: 'FlashSystemCluster',

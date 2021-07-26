@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Form,
   FormGroup,
   TextInput,
   InputGroup,
@@ -33,7 +32,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
   };
 
   return (
-    <Form>
+    <>
       <FormGroup
         label={t('ceph-storage-plugin~Endpoint')}
         fieldId="endpoint-input"
@@ -81,7 +80,7 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           </Tooltip>
         </InputGroup>
       </FormGroup>
-      <FormGroup label={t('ceph-storage-plugin~Poolname')} isRequired fieldId="poolname-input">
+      <FormGroup label={t('ceph-storage-plugin~Pool name')} isRequired fieldId="poolname-input">
         <TextInput
           id="poolname-input"
           value={formState.poolname}
@@ -90,11 +89,11 @@ export const FlashSystemConnectionDetails: React.FC<ExternalComponentProps<Flash
           isRequired
         />
       </FormGroup>
-    </Form>
+    </>
   );
 };
 
-export const FlashSystemPayload: CreatePayload<FlashSystemState> = (
+export const createFlashSystemPayload: CreatePayload<FlashSystemState> = (
   systemName,
   form,
   model,
@@ -161,5 +160,5 @@ export const FlashSystemPayload: CreatePayload<FlashSystemState> = (
   return [secretPayload, flashSystemPayload];
 };
 
-export const FlashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
+export const flashSystemCanGoToNextStep: CanGoToNextStep<FlashSystemState> = (state) =>
   !!state.endpoint && !!state.username && !!state.password && !!state.poolname;

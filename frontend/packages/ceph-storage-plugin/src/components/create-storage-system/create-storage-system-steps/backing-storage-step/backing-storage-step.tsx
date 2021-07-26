@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption, FormSelectProps, Radio } from '@patternfly/react-core';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import './backing-storage.scss';
 import { AdvancedSection } from './advanced-section';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
@@ -19,6 +18,7 @@ import {
 import { ErrorHandler } from '../../error-handler';
 import { ExternalStorage } from '../../external-storage/types';
 import { NO_PROVISIONER } from '../../../../constants';
+import './backing-storage-step.scss';
 
 const ExternalSystemSelection: React.FC<ExternalSystemSelectionProps> = ({
   dispatch,
