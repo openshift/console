@@ -91,7 +91,9 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             isLoading={false}
             error={false}
           >
-            <Link to={ocsPath}>{t('ceph-storage-plugin~OpenShift Container Storage')}</Link>
+            <Link data-test="ocs-link" to={ocsPath}>
+              {t('ceph-storage-plugin~OpenShift Container Storage')}
+            </Link>
           </DetailItem>
           <DetailItem
             key="cluster_name"

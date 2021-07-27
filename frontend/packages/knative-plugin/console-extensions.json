@@ -16,7 +16,7 @@
     "properties": {
       "id": "knative-event-source",
       "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace?catalogType=EventSource",
+      "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
       "icon": { "$codeRef": "icons.eventSourceIconSVG" }
@@ -161,6 +161,20 @@
       "template": {
         "$codeRef": "yamlTemplates.defaultYamlTemplate"
       }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useKnativeDeploymentActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
     }
   }
 ]

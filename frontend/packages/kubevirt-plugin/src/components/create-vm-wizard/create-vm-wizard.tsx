@@ -14,7 +14,6 @@ import { connectToFlags } from '@console/internal/reducers/connectToFlags';
 import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
@@ -25,6 +24,7 @@ import {
 } from '../../constants/vm';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
+import { usePrevious } from '../../hooks/use-previous';
 import { useUpdateStorages } from '../../hooks/use-update-data-volume';
 import { DataVolumeModel, VirtualMachineModel } from '../../models';
 import { getTemplateName } from '../../selectors/vm-template/basic';

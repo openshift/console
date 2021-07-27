@@ -18,4 +18,12 @@ export enum GitProvider {
   GITHUB = 'github',
   BITBUCKET = 'bitbucket',
   GITLAB = 'gitlab',
+  UNSURE = 'unsure',
+  INVALID = '',
+}
+
+export enum ImportStrategy {
+  S2I,
+  DOCKERFILE,
+  DEVFILE,
 }

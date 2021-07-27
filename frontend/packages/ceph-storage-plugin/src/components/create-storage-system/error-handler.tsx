@@ -31,6 +31,6 @@ export const ErrorHandler: React.FC<WizardStepProps> = ({ children, error, loade
 
 type WizardStepProps = {
   children: React.ReactElement;
-  error: any;
   loaded: boolean;
+  error: any;
 };

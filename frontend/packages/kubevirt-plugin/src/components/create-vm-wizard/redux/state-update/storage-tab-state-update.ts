@@ -1,4 +1,9 @@
-import { CLOUDINIT_DISK, LABEL_CDROM_SOURCE, ROOT_DISK_NAME } from '../../../../constants';
+import {
+  CLOUDINIT_DISK,
+  LABEL_CDROM_SOURCE,
+  ROOT_DISK_INSTALL_NAME,
+  ROOT_DISK_NAME,
+} from '../../../../constants';
 import { DiskBus } from '../../../../constants/vm/storage/disk-bus';
 import { DiskType } from '../../../../constants/vm/storage/disk-type';
 import { winToolsContainerNames } from '../../../../constants/vm/wintools';
@@ -388,8 +393,11 @@ const initialStorageWindowsUpdater = ({ id, prevState, dispatch, getState }: Upd
     }
     const cdRomDisk = new DiskWrapper(removableRootDisk?.disk, true)
       .setType(DiskType.CDROM, { bus: removableRootDisk?.disk?.disk?.bus })
+      .setName(ROOT_DISK_INSTALL_NAME)
       .asResource(true);
-
+    removableRootDisk.volume = new VolumeWrapper(removableRootDisk.volume)
+      .setName(ROOT_DISK_INSTALL_NAME)
+      .asResource();
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, removableRootDisk?.id));
     dispatch(
       vmWizardInternalActions[InternalActionType.UpdateStorage](id, {

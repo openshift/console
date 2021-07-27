@@ -4,7 +4,7 @@ describe('Check noobaa link in obejct service dashboard and perform SSO', () => 
   before(() => {
     cy.login();
     cy.install();
-    cy.visit('/ocs-dashboards/object-service');
+    cy.visit('/ocs-dashboards/object');
   });
 
   afterEach(() => {

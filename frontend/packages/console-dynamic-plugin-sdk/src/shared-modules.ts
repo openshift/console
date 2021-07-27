@@ -1,9 +1,11 @@
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { RemoteEntryModule } from './types';
 
 /**
  * Vendor modules shared between Console application and its dynamic plugins.
  */
-export const sharedVendorModules = ['react'];
+export const sharedVendorModules = ['react', 'react-router', 'react-router-dom', 'react-helmet'];
 
 /**
  * At runtime, Console will override (i.e. enforce Console-bundled implementation of) shared
@@ -13,7 +15,9 @@ export const sharedVendorModules = ['react'];
  */
 export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
   entryModule.override({
-    // eslint-disable-next-line
     react: async () => () => require('react'),
+    'react-router': async () => () => require('react-router'),
+    'react-router-dom': async () => () => require('react-router-dom'),
+    'react-helmet': async () => () => require('react-helmet'),
   });
 };

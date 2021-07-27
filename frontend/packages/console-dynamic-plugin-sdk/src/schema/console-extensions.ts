@@ -3,6 +3,7 @@ import { AddAction, AddActionGroup } from '../extensions/add-actions';
 import { SupportedCatalogExtensions } from '../extensions/catalog';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import { ContextProvider } from '../extensions/context-providers';
+import { CreateResource } from '../extensions/create-resource';
 import {
   DashboardsTab,
   DashboardsCard,
@@ -90,7 +91,8 @@ export type SupportedExtension =
   | TopologyCreateConnector
   | TopologyDataModelFactory
   | TopologyDisplayFilters
-  | TopologyDecoratorProvider;
+  | TopologyDecoratorProvider
+  | CreateResource;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

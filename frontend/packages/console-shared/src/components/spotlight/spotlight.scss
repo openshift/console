@@ -36,7 +36,7 @@
     mix-blend-mode: hard-light;
   }
   &__element-highlight-noanimate {
-    border: var(--pf-global--BorderWidth--xl) solid var(--pf-global--palette--blue-200);
+    border: var(--pf-global--BorderWidth--xl) solid var(--pf-global--palette--blue-100);
     background-color: var(--pf-global--palette--black-500);
     z-index: 9999;
   }
@@ -45,7 +45,8 @@
     position: absolute;
     box-shadow: inset 0px 0px 0px 4px var(--pf-global--palette--blue-200);
     opacity: 0;
-    animation: 0.4s ocs-spotlight-fade-in 0s ease-in-out, 5s ocs-spotlight-fade-out 12.8s ease-in-out;
+    animation: 0.4s ocs-spotlight-fade-in 0s ease-in-out,
+      5s ocs-spotlight-fade-out 12.8s ease-in-out;
     animation-fill-mode: forwards;
     &::after {
       content: '';

@@ -47,7 +47,6 @@ const validate = (scName, enableMinimal): ValidationType[] => {
 export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   state,
   dispatch,
-  mode,
 }) => {
   const { t } = useTranslation();
   const { nodes: selectedNodes, capacity: selectedCapacity, storageClass, enableMinimal } = state;
@@ -141,7 +140,14 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
-          {isTaintSupported && <EnableTaintNodes state={state} dispatch={dispatch} mode={mode} />}
+          {isTaintSupported && (
+            <EnableTaintNodes
+              enableTaint={state.enableTaint}
+              setEnableTaint={() =>
+                dispatch({ type: ActionType.SET_ENABLE_TAINT, payload: !state.enableTaint })
+              }
+            />
+          )}
           {!!validations.length &&
             validations.map((validation) => (
               <ValidationMessage key={validation} validation={validation} />
@@ -155,5 +161,4 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
 type SelectCapacityAndNodesProps = {
   state: InternalClusterState;
   dispatch: React.Dispatch<InternalClusterAction>;
-  mode: string;
 };

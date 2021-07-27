@@ -19,11 +19,11 @@ export default ({ vmName }) =>
           cy.get('[id=confirm-action]').click();
         }
       });
-      cy.get('[id=image-source-type-dropdown]').click();
+      cy.get('#image-source-type-dropdown').click();
       cy.contains('Import via Registry (creates PVC)').click();
-      cy.get('[id=provision-source-container').type(ProvisionSource.REGISTRY.getSource());
+      cy.get('#provision-source-container').type(ProvisionSource.REGISTRY.getSource());
       cy.get('@nextButton').click();
-      cy.get('[id=vm-name]')
+      cy.get('#vm-name')
         .clear()
         .type(`${vmName}-advanced-wizard`);
       cy.byLegacyTestID('wizard-customize').click();
@@ -33,16 +33,16 @@ export default ({ vmName }) =>
     });
 
     it('should open ssh accordion', () => {
-      cy.get('[id=ssh]').click();
+      cy.get('#ssh').click();
     });
 
     it('checking expose service is checked', () => {
-      cy.get('[id=ssh-service-checkbox]').should('be.checked');
+      cy.get('#ssh-service-checkbox').should('be.checked');
     });
 
     it('should continue to create vm', () => {
-      cy.get('[id=create-vm-wizard-reviewandcreate-btn]').click();
-      cy.get('[id=create-vm-wizard-submit-btn]').click();
+      cy.get('#create-vm-wizard-reviewandcreate-btn').click();
+      cy.get('#create-vm-wizard-submit-btn').click();
       cy.byLegacyTestID('kubevirt-wizard-success-result').should('be.visible');
     });
 

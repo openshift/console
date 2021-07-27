@@ -25,7 +25,7 @@ export const createModal: CreateModal = (getModalContainer) => {
       resolve();
     };
     Modal.setAppElement(document.getElementById('app-content'));
-    ReactDOM.render(getModalContainer(closeModal), modalContainer);
+    modalContainer && ReactDOM.render(getModalContainer(closeModal), modalContainer);
   });
   return { result };
 };

@@ -5,7 +5,6 @@ import { VMIPhase } from '../constants/vmi/phase';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../k8s/wrapper/vm/vmi-wrapper';
 import {
-  changedDisks,
   changedEnvDisks,
   changedNics,
   isBootOrderChanged,
@@ -16,7 +15,6 @@ import { getVMTabURL, redirectToTab } from './url';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {
   const vm = vmWrapper.asResource();
-  const modifiedDisks = changedDisks(vmWrapper, vmiWrapper);
   const modifiedEnvDisks = changedEnvDisks(vmWrapper, vmiWrapper);
   const modifiedNics = changedNics(vmWrapper, vmiWrapper);
 
@@ -48,12 +46,6 @@ export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper):
       execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.nics)),
       resourceNames: modifiedNics,
       vmTab: VMTabEnum.nics,
-    },
-    [IsPendingChange.disks]: {
-      isPendingChange: modifiedDisks.length > 0,
-      execAction: () => redirectToTab(getVMTabURL(vm, VMTabURLEnum.disks)),
-      resourceNames: modifiedDisks,
-      vmTab: VMTabEnum.disks,
     },
   };
 };

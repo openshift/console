@@ -27,6 +27,12 @@ describe(`Interacting with CatalogSource page`, () => {
 
     // verfiy catalogSource details page is open
     detailsPage.sectionHeaderShouldExist('CatalogSource details');
+
+    // verify catalogSource/'redhat-operators' is READY
+    cy.byTestSelector('details-item-value__Status', { timeout: 300000 }).should(
+      'have.text',
+      'READY',
+    ); // 5 mins
   });
 
   afterEach(() => {
@@ -45,7 +51,6 @@ describe(`Interacting with CatalogSource page`, () => {
 
     // validate Status field
     cy.byTestSelector('details-item-label__Status').should('be.visible');
-    cy.byTestSelector('details-item-value__Status').should('have.text', 'READY');
 
     // validate DisplayName field
     cy.byTestSelector('details-item-label__Display name').should('be.visible');

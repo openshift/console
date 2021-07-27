@@ -164,3 +164,5 @@ export const ActivityCard: React.FC = React.memo(() => {
     </DashboardCard>
   );
 });
+
+export default ActivityCard;

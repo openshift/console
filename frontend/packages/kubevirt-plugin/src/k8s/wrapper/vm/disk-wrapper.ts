@@ -62,6 +62,11 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
     return this;
   };
 
+  setName = (name: string) => {
+    this.data.name = name;
+    return this;
+  };
+
   isFirstBootableDevice = () => this.getBootOrder() === 1;
 
   hasBootOrder = () => this.getBootOrder() != null;

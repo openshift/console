@@ -1,0 +1,9 @@
+.kv-migration-tool--popover {
+  .modal-body {
+    background: var(--pf-global--BackgroundColor--100);
+  }
+}
+
+.kv-migration-tool--main {
+  margin-right: var(--pf-global--spacer--sm);
+}

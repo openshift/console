@@ -13,12 +13,12 @@ Follow the steps written below to integrate with the ODF wizard:
 /**
  *  Configures a new external storage vendor to the Storage System Creation wizard.
  */
-{
+export type ExternalStorage = {
   /** Display name of the external storage vendor. */
   displayName: string;
 
-  /** The model referring the `apiGroup`,`apiVersion` and `kind` of the external storage vendor's CRD. */
-  model: ExtensionK8sModel;
+  /** The model referring the `apiGroup`,`apiVersion`, `plural` and `kind` of the external storage vendor's CRD. */
+  model: Model;
 
   /** A React Functional Component to input the connection details of the external storage vendor. */
   Component: React.FunctionComponent<ExternalComponentProps<{}>>;
@@ -27,25 +27,29 @@ Follow the steps written below to integrate with the ODF wizard:
   createPayload: CreatePayload<{}>;
 
   /**  Handler function to validate the storage class page in order to move to the next step of wizard */
-  canGoToNextStep: (state: ExternalState, storageClassName: string) => boolean;
+  canGoToNextStep: CanGoToNextStep<{}>;
 };
+
 ```
 
 ```js
 
-/** The model referring the `apiGroup`,`apiVersion` and `kind` of the external storage vendor's CRD. */
+  /** The model referring the `apiGroup`,`apiVersion`, `plural` and `kind` of the external storage vendor's CRD. */
 
-type ExtensionK8sModel{
+type Model = {
     /* apiGroup of the external provider CRD */
-    group: string;
+    apiGroup: string;
 
     /* apiVersion of the external provider CRD */
-    version: string;
+    apiVersion: string;
 
     /* kind of the external provider CRD */
     kind: string;
-}
 
+    /* plural of the external provider CRD */
+    plural: string;
+
+}
 
 /** Props for `ExternalStorage.Component` to input the connection details of the external storage vendor. */
 

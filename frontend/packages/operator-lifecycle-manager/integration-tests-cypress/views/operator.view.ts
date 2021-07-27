@@ -132,7 +132,7 @@ export const operator = {
     testOperand: TestOperandProps,
     installedNamespace: string = GlobalInstalledNamespace,
   ) => {
-    const { name, tabName, exampleName } = testOperand;
+    const { tabName, exampleName } = testOperand;
     cy.log(`operand "${exampleName}" should exist for "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     cy.log(`navigate to the "${tabName}" tab`);
@@ -141,10 +141,7 @@ export const operator = {
     cy.log(`navigate to the operand "Details" tab`);
     cy.byTestOperandLink(exampleName).click();
     cy.url().should('match', new RegExp(`${exampleName}$`)); // url should end with example operand name
-    cy.get('[data-test-section-heading]')
-      .first()
-      .invoke('text')
-      .should('match', new RegExp(`^${name}`)); // 1st heading should start with operand name
+    detailsPage.titleShouldContain(exampleName);
   },
   deleteOperand: (
     operatorName: string,

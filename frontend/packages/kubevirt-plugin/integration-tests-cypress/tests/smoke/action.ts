@@ -1,5 +1,6 @@
 import { TEMPLATE_NAME, VM_STATUS } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
+import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import { virtualization } from '../../view/virtualization';
@@ -48,7 +49,7 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-765) Unpauses VM', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       vm.unpause(vmData);
     });
 
@@ -80,12 +81,12 @@ describe('Test VM/VMI actions', () => {
     });
 
     it('ID(CNV-1794) Unpauses VM', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       vm.unpause(vmData);
     });
 
     it('ID(CNV-4019) Unpauses VM via modal dialog', () => {
-      cy.pauseVM(vmData);
+      vm.pause(vmData);
       waitForStatus(VM_STATUS.Paused);
       cy.get(`button[id=${vmData.namespace}-${vmData.name}-status-edit]`).click();
       cy.byTestID('confirm-action').click();
@@ -108,10 +109,8 @@ describe('Test VM/VMI actions', () => {
     };
 
     beforeEach(() => {
-      cy.fixture('vmi-ephemeral').then((vmi) => {
-        vmi.metadata.namespace = testName;
-        cy.createResource(vmi);
-      });
+      vmiFixture.metadata.namespace = testName;
+      cy.createResource(vmiFixture);
       virtualization.vms.visit();
       waitForStatus(VM_STATUS.Running, vmiData);
     });

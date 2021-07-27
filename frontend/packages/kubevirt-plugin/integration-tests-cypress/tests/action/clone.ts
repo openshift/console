@@ -4,7 +4,7 @@ import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
 import { selectActionFromDropdown } from '../../view/actions';
 import * as cloneView from '../../view/clone';
-import { addNIC, addDisk } from '../../view/dialog';
+import { addDisk, addNIC } from '../../view/dialog';
 import { actionButtons } from '../../view/selector';
 import { tab } from '../../view/tab';
 import { virtualization } from '../../view/virtualization';
@@ -68,7 +68,7 @@ describe('Test VM Clone', () => {
       kind: 'NetworkAttachmentDefinition',
       metadata: {
         name: 'bridge-network',
-        namespace: testName,
+        namespace: vmData.namespace,
       },
     });
   });

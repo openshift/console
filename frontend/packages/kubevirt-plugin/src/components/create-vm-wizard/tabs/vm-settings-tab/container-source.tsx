@@ -37,7 +37,7 @@ export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
           onProvisionSourceStorageChange({
             ...storage,
             dataVolume: new DataVolumeWrapper(storage?.dataVolume, true)
-              .appendTypeData({ url })
+              .appendTypeData({ url: url?.trim() })
               .asResource(),
           });
       }

@@ -188,7 +188,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
     pvcs: PersistentVolumeClaimKind[];
   }> = ({ datavolumes, pvcs }) =>
     getStoragesData({
-      vmLikeEntity,
+      vmLikeEntity: !isVMRunning ? vmLikeEntity : vmi,
       datavolumes,
       pvcs,
     });
@@ -200,6 +200,8 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
         vmLikeEntity: !isVMI(vmLikeEntity) && vmLikeEntity,
         templateValidations,
         isVMRunning,
+        vm: asVM(vmLikeEntity),
+        vmi,
       }).result,
     );
 

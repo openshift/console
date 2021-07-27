@@ -337,7 +337,9 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           <TextInput
             value={state.container?.value}
             type="text"
-            onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
+            onChange={(payload) =>
+              dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload: payload?.trim() })
+            }
             aria-label={t('kubevirt-plugin~Container image')}
             isDisabled={disabled}
             id={getFieldId(VMSettingsField.CONTAINER_IMAGE)}
@@ -410,7 +412,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           isDisabled={disabled}
           label={
             <>
-              {t('kubevirt-plugin~Mount this as a CD-ROM boot source')}
+              {t('kubevirt-plugin~This is a CD-ROM boot source')}
               <FieldLevelHelp>
                 {t(
                   'kubevirt-plugin~CD-ROM requires an additional disk for the operating system to be installed onto. This disk will be added and can be customized when creating the virtual machine.',

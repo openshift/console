@@ -112,8 +112,8 @@
   "Kubelet Version": "Kubelet バージョン",
   "Kube-Proxy Version": "Kube-Proxy バージョン",
   "Terminal": "ターミナル",
-  "{{name}} · Details": "{{name}} の詳細",
-  "{{name}} Details": "{{name}} の詳細",
+  "{{name}} · Details": "{{name}}の詳細",
+  "{{name}} Details": "{{name}}の詳細",
   "Nodes": "ノード",
   "This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.": "このノードはクラスターに参加するように要求されています。その証明書署名要求を承認した後、ノードがワークロードの実行を開始します。",
   "This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.": "このノードには、保留中のサーバー証明書署名要求があります。このノードですべてのネットワーク機能を有効にするために要求を承認します。",
@@ -130,8 +130,8 @@
   "Approve Node Server CSR": "ノードサーバー CSR の承認",
   "Are you sure you want to approve server CSR for {{name}}?": "{{name}} のサーバー CSR を承認してもよいですか?",
   "Approve": "承認",
-  "Ready": "準備状態",
-  "Not Ready": "準備不完了",
+  "Ready": "準備完了",
+  "Not Ready": "準備未完了",
   "Approval Required": "承認が必要です",
   "Starting maintenance": "メンテナンスの開始",
   "Node is entering maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.": "ノードはメンテナンス状態になります。クラスターは、メンテナンス状態になってから 30 分後にノードのデータを自動的に再ビルドします。",
@@ -199,8 +199,5 @@
   "This host was provisioned outside of this cluster and added manually.": "このホストはこのクラスター外にプロビジョニングされ、手動で追加されています。",
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": "Baseboard Management Controller (BMC) の認証情報が提供されるまで、このホストで電源操作を行うことはできません。",
   "Under maintenance": "メンテナンス中",
-  "Stopping maintenance": "メンテナンスの停止",
-  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "電源を正常にオフするには、このホストで <1>メンテナンスを開始</1>して、すべての管理対象ワークロードをクラスター内の他のノードに移動します。",
-  "The bare metal host {{name}} will be restarted gracefully after all managed workloads are moved.": "ベアメタルホスト {{name}} は、すべての管理対象ワークロードを移動すると正常に再起動されます。",
-  "The bare metal host {{name}} will be restarted gracefully.": "ベアメタルホスト {{name}} は正常に再起動されます。"
+  "Stopping maintenance": "メンテナンスの停止"
 }

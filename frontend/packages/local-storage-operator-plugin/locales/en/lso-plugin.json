@@ -25,7 +25,7 @@
   "Node Selector": "Node Selector",
   "Local Volume Discovery": "Local Volume Discovery",
   "Allows you to discover the available disks on all available nodes": "Allows you to discover the available disks on all available nodes",
-  "Local Volume Set Name": "Local Volume Set Name",
+  "LocalVolumeSet Name": "LocalVolumeSet Name",
   "StorageClass Name": "StorageClass Name",
   "Filter Disks By": "Filter Disks By",
   "Uses the available disks that match the selected filters only on selected nodes.": "Uses the available disks that match the selected filters only on selected nodes.",

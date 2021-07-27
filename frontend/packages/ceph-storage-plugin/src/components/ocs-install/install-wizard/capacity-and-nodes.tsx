@@ -19,24 +19,10 @@ import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/in
 import { useDeepCompareMemoize, getName } from '@console/shared';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { scResource } from '../../../resources';
-import { arbiterText, MODES } from '../../../constants';
+import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
 import { AdvancedSubscription } from '../subscription-icon';
-import { ActionType, InternalClusterAction, InternalClusterState } from '../internal-mode/reducer';
 import './_capacity-and-nodes.scss';
-
-const EnableArbiterLabel: React.FC = () => {
-  const { t } = useTranslation();
-
-  return (
-    <div className="ocs-enable-arbiter-label">
-      <span className="ocs-enable-arbiter-label__title--padding">
-        {t('ceph-storage-plugin~Enable arbiter')}
-      </span>
-      <AdvancedSubscription />
-    </div>
-  );
-};
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text }) => {
   const { t } = useTranslation();
@@ -84,7 +70,23 @@ type SelectNodesDetailsProps = {
   memory: number;
 };
 
-export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispatch, mode }) => {
+const EnableArbiterLabel: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="ocs-enable-arbiter-label">
+      <span className="ocs-enable-arbiter-label__title--padding">
+        {t('ceph-storage-plugin~Enable arbiter')}
+      </span>
+      <AdvancedSubscription />
+    </div>
+  );
+};
+
+export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({
+  enableTaint,
+  setEnableTaint,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -106,20 +108,15 @@ export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispa
       )}
       className="ocs-enable-taint"
       id="taint-nodes"
-      isChecked={state.enableTaint}
-      onChange={() =>
-        mode === MODES.INTERNAL
-          ? dispatch({ type: ActionType.SET_ENABLE_TAINT, payload: !state.enableTaint })
-          : dispatch({ type: 'setEnableTaint', value: !state.enableTaint })
-      }
+      isChecked={enableTaint}
+      onChange={setEnableTaint}
     />
   );
 };
 
 type EnableTaintNodesProps = {
-  state: State | InternalClusterState;
-  dispatch: React.Dispatch<Action | InternalClusterAction>;
-  mode: string;
+  enableTaint: boolean;
+  setEnableTaint: () => void;
 };
 
 export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = ({

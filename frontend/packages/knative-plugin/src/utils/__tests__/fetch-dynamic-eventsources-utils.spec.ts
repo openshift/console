@@ -41,10 +41,28 @@ describe('fetch-dynamic-eventsources: EventSources', () => {
     expect(fetchSpy).toHaveBeenCalled();
   });
 
+  it('should return empty evenSourceModel and resultList when MultiClusterEnabled', async () => {
+    window.SERVER_FLAGS.clusters = ['clustera', 'clusterb'];
+    await fetchEventSourcesCrd();
+    const modelRefs = getEventSourceModels();
+    const resultModel = getDynamicEventSourcesResourceList('sample-app');
+    expect(resultModel).toHaveLength(0);
+    expect(modelRefs).toHaveLength(0);
+    window.SERVER_FLAGS.clusters = null;
+  });
+
   it('should fetch models for duck type in case of error', async () => {
-    jest.spyOn(coFetch, 'coFetch').mockImplementation(() => Promise.reject(new Error('Error')));
+    // Suppress the warning to clean up the test output
+    jest.spyOn(console, 'warn').mockImplementation(jest.fn());
+
+    jest
+      .spyOn(coFetch, 'coFetch')
+      .mockImplementation(() => Promise.reject(new Error('Test Error')));
     await fetchEventSourcesCrd();
     expect(getEventSourceModels()).toHaveLength(0);
+
+    // eslint-disable-next-line no-console
+    (console.warn as any).mockRestore();
   });
 
   it('should return true for event source model', async () => {
@@ -131,6 +149,16 @@ describe('fetch-dynamic-eventsources: Channels', () => {
     expectedRefs.forEach((ref) => {
       expect(modelRefs.includes(ref)).toBe(true);
     });
+  });
+
+  it('should return empty channelModel and resultList when MultiClusterEnabled', async () => {
+    window.SERVER_FLAGS.clusters = ['clustera', 'clusterb'];
+    await fetchChannelsCrd();
+    const modelRefs = getDynamicChannelModelRefs();
+    const resultModel = getDynamicChannelResourceList('sample-app');
+    expect(modelRefs).toHaveLength(0);
+    expect(resultModel).toHaveLength(0);
+    window.SERVER_FLAGS.clusters = null;
   });
 
   it('should return limit if passed to getDynamicChannelResourceList', async () => {

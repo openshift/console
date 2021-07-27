@@ -35,6 +35,8 @@ import {
   k8sPatch,
   k8sKill,
   k8sUpdate,
+  K8sResourceCommon,
+  K8sKind,
 } from '@console/internal/module/k8s';
 import {
   BlueArrowCircleUpIcon,
@@ -488,7 +490,8 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
     }
   }, [obj, waitingForUpdate]);
 
-  const k8sUpdateAndWait = (...args) => k8sUpdate(...args).then(() => setWaitingForUpdate(true));
+  const k8sUpdateAndWait = (kind: K8sKind, resource: K8sResourceCommon) =>
+    k8sUpdate(kind, resource).then(() => setWaitingForUpdate(true));
   const channelModal = () =>
     createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
   const approvalModal = () => createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });

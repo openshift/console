@@ -26,6 +26,7 @@ const isOperatorBackedWorkload = (
 const shouldHideHPA = (obj: K8sResourceCommon, customData?: { [key: string]: any }) =>
   isHelmResource(obj) || isOperatorBackedWorkload(obj, customData);
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const AddHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
@@ -44,6 +45,7 @@ export const AddHorizontalPodAutoScaler: KebabAction = (
   },
 });
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const EditHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,
@@ -62,6 +64,7 @@ export const EditHorizontalPodAutoScaler: KebabAction = (
   },
 });
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const DeleteHorizontalPodAutoScaler: KebabAction = (
   kind: K8sKind,
   obj: K8sResourceCommon,

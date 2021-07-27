@@ -91,7 +91,7 @@ describe('removeTrigger', () => {
         elWithMultipleTrigger,
         [
           {
-            opt: 'replace',
+            op: 'replace',
             path: '/spec/triggers',
             value: [TriggerTestData[TriggerTypes.BINDING_TEMPLATE_REF]],
           },

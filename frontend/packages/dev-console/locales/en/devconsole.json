@@ -40,6 +40,7 @@
   "Container Image": "Container Image",
   "From Catalog": "From Catalog",
   "Helm Charts": "Helm Charts",
+  "Edit {{applicationName}}": "Edit {{applicationName}}",
   "Access permissions needed": "Access permissions needed",
   "Unable to load": "Unable to load",
   "You do not have sufficient permissions to access these add options.": "You do not have sufficient permissions to access these add options.",

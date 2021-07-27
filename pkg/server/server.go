@@ -54,7 +54,8 @@ const (
 	gitopsEndpoint                   = "/api/gitops/"
 	devfileEndpoint                  = "/api/devfile/"
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
-	pluginsEndpoint                  = "/api/plugins/"
+	pluginAssetsEndpoint             = "/api/plugins/"
+	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
 
 	sha256Prefix = "sha256~"
@@ -430,18 +431,22 @@ func (s *Server) HTTPHandler() http.Handler {
 			Timeout:   120 * time.Second,
 			Transport: &http.Transport{TLSClientConfig: s.PluginsProxyTLSConfig},
 		},
-		s.ServiceAccountToken,
 		s.EnabledConsolePlugins,
+		s.PublicDir,
 	)
 
-	handle(pluginsEndpoint, http.StripPrefix(
-		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginsEndpoint),
+	handle(pluginAssetsEndpoint, http.StripPrefix(
+		proxy.SingleJoiningSlash(s.BaseURL.Path, pluginAssetsEndpoint),
 		authHandler(func(w http.ResponseWriter, r *http.Request) {
-			pluginsHandler.HandlePlugins(w, r)
+			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
 
 	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
+
+	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		pluginsHandler.HandleI18nResources(w, r)
+	})
 
 	// Helm Endpoints
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))

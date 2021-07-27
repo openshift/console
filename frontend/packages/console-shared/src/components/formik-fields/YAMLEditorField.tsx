@@ -56,7 +56,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   const hasSidebarContent = hasSchema || !isEmpty(samples) || !isEmpty(snippets);
 
   return (
-    <div className="osc-yaml-editor">
+    <div className="osc-yaml-editor" data-test="yaml-editor">
       <div className="osc-yaml-editor__editor">
         <AsyncComponent
           loader={() => import('../editor/YAMLEditor').then((c) => c.default)}

@@ -190,7 +190,7 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
               'ceph-storage-plugin~Each BackingStore can be used for one tier at a time. Selecting a BackingStore in one tier will remove the resource from the second tier option and vice versa.',
             )}
             aria-label={t(
-              "ceph-storage-plugin~Bucket created for OpenShift Container Storage's Service",
+              "ceph-storage-plugin~Bucket created for OpenShift Data Foundation's Service",
             )}
             isInline
           />

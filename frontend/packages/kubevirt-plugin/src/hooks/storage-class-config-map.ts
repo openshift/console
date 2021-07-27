@@ -23,9 +23,15 @@ export const useStorageClassConfigMap = (): UseConfigMapResult => {
       for (const namespace of STORAGE_CLASS_CONFIG_MAP_NAMESPACES) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          const configMap = await k8sGet(ConfigMapModel, STORAGE_CLASS_CONFIG_MAP_NAME, namespace, {
-            signal: controller.signal,
-          });
+          const configMap = await k8sGet(
+            ConfigMapModel,
+            STORAGE_CLASS_CONFIG_MAP_NAME,
+            namespace,
+            {},
+            {
+              signal: controller.signal,
+            },
+          );
           if (configMap && !controller.signal.aborted) {
             setStorageClassConfigMap(configMap);
             return;

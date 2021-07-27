@@ -30,7 +30,7 @@ const DropdownOptionsItem: React.FC<DropdownOptionsItemProps> = ({ title, scale 
       {title}
       <>
         &nbsp;
-        <div className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
+        <div className="co-resource-item__resource-api text-muted co-truncate pf-u-display-block co-nowrap small">
           {scale}
         </div>
       </>

@@ -79,18 +79,18 @@ export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProp
 
   return (
     <>
+      <div className="co-create-operand__breadcrumbs">
+        <BreadCrumbs
+          breadcrumbs={[
+            {
+              name: t('lso-plugin~Local Storage'),
+              path: resourcePath,
+            },
+            { name: t('lso-plugin~Create Local Volume Discovery'), path: '' },
+          ]}
+        />
+      </div>
       <div className="co-create-operand__header">
-        <div className="co-create-operand__header-buttons">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: t('lso-plugin~Local Storage'),
-                path: resourcePath,
-              },
-              { name: t('lso-plugin~Create Local Volume Discovery'), path: '' },
-            ]}
-          />
-        </div>
         <LocalVolumeDiscoveryHeader variant={TextVariants.h1} />
       </div>
       <Form

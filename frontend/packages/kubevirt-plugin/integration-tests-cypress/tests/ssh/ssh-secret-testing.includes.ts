@@ -1,7 +1,9 @@
+import sshFixure from '../../fixtures/ssh';
+
 // Not in ssh.spec until this is fixed: https://github.com/cypress-io/eslint-plugin-cypress/issues/43
 const AFTER_CREATE_WAIT_TIME = 3000;
 
-export default ({ vmName }) =>
+export default () =>
   describe('ID (CNV-5985) Test if ssh secret is present', () => {
     beforeEach(() => {
       // eslint-disable-next-line
@@ -12,15 +14,11 @@ export default ({ vmName }) =>
     });
 
     it('check vm ssh secret is present and equal to key', () => {
-      cy.byLegacyTestID(`authorizedsshkeys-${vmName}`).click();
+      cy.contains(`authorizedsshkeys-`).click();
       cy.contains('Reveal values').click();
       cy.byTestID('copy-to-clipboard')
         .invoke('text')
-        .then((val) => {
-          cy.fixture('ssh')
-            .its('key')
-            .should('eq', val);
-        });
+        .should('eq', sshFixure.key);
     });
 
     it('check project ssh secret is present and equal to key', () => {
@@ -28,11 +26,6 @@ export default ({ vmName }) =>
       cy.contains('Reveal values').click();
       cy.byTestID('copy-to-clipboard')
         .invoke('text')
-        .then((val) => {
-          console.log('val: ', val);
-          cy.fixture('ssh')
-            .its('key')
-            .should('eq', val);
-        });
+        .should('eq', sshFixure.key);
     });
   });

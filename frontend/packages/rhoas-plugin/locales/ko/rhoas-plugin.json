@@ -54,6 +54,5 @@
   "Cloud Service": "클라우드 서비스",
   "This resource represents service that exist outside your cluster": "이 리소스는 클러스터 외부에 존재하는 서비스를 나타냅니다.",
   "Details": "세부 정보",
-  "Resources": "리소스",
-  "Kafka Connection": "Kafka 연결"
+  "Resources": "리소스"
 }

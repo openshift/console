@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 import {
   ClusterServiceVersionAction,
-  DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
-  DashboardsTab,
   HorizontalNavTab,
   ModelDefinition,
   ModelFeatureFlag,
@@ -18,7 +16,6 @@ import {
   ResourceListPage,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
@@ -34,7 +31,6 @@ import {
   detectRGW,
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
-  OCS_CONVERGED_FLAG,
   MCG_FLAG,
   OCS_FLAG,
   detectComponents,
@@ -45,8 +41,6 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | HorizontalNavTab
   | ModelDefinition
-  | DashboardsTab
-  | DashboardsCard
   | DashboardsOverviewHealthResourceSubsystem<WatchCephResource>
   | RoutePage
   | CustomFeatureFlag
@@ -122,19 +116,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'persistent-storage',
-      navSection: 'storage',
-      // t('ceph-storage-plugin~Block and File')
-      title: '%ceph-storage-plugin~Block and File%',
-    },
-    flags: {
-      required: [OCS_CONVERGED_FLAG, CEPH_FLAG],
-      disallowed: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  {
     type: 'Page/Route',
     properties: {
       exact: true,
@@ -172,121 +153,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/ocs-install/install-page' /* webpackChunkName: "install-page" */).then(
           (m) => m.default,
         ),
-    },
-  },
-  // Ceph Storage Dashboard Left cards
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/details-card' /* webpackChunkName: "ceph-storage-details-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "ceph-storage-efficiency-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  // Ceph Storage Dashboard Main Cards
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/raw-capacity-card/raw-capacity-card' /* webpackChunkName: "raw-capacity-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/capacity-breakdown-card/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [CEPH_FLAG],
-    },
-  },
-  // Ceph Storage Dashboard Right Cards
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.RIGHT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
-        ).then((m) => m.ActivityCard),
-    },
-    flags: {
-      required: [CEPH_FLAG],
     },
   },
   {
@@ -341,7 +207,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Edit BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/update-block-pool-modal' /* webpackChunkName: "ceph-storage-update-block-pool-modal" */
         )
@@ -351,105 +217,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             console.error('Error loading block Pool Modal', e);
           });
       },
-    },
-  },
-  {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'independent-dashboard',
-      navSection: 'storage',
-      // t('ceph-storage-plugin~Block and File')
-      title: '%ceph-storage-plugin~Block and File%',
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG, CEPH_FLAG],
-    },
-  },
-  // Left Cards
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-external/details-card' /* webpackChunkName: "indepedent-details-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  // Center
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-external/status-card' /* webpackChunkName: "indepedent-status-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-external/breakdown-card' /* webpackChunkName: "independent-breakdown-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-external/utilization-card' /* webpackChunkName: "utilization-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
-    },
-  },
-  // Right
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'independent-dashboard',
-      position: GridPosition.RIGHT,
-      loader: () =>
-        import(
-          './components/dashboards/persistent-internal/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
-        ).then((m) => m.ActivityCard),
-    },
-    flags: {
-      required: [OCS_INDEPENDENT_FLAG],
     },
   },
   {
@@ -536,140 +303,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Tab',
-    properties: {
-      id: 'object-service',
-      navSection: 'storage',
-      // t('ceph-storage-plugin~Object')
-      title: '%ceph-storage-plugin~Object%',
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/status-card/status-card' /* webpackChunkName: "object-service-status-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/details-card/details-card' /* webpackChunkName: "object-service-details-card" */
-        ).then((m) => m.DetailsCard),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "object-service-storage-efficiency-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
-        ).then((m) => m.BucketsCard),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "object-service-capacity-breakdown-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.RIGHT,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/activity-card/activity-card' /* webpackChunkName: "object-service-activity-card" */
-        ).then((m) => m.default),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'object-service',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboards/object-service/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
-        ).then((m) => m.ResourceProvidersCard),
-    },
-    flags: {
-      required: [MCG_FLAG],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: `/ocs-dashboards`,
-      loader: () => import('./components/dashboards/ocs-dashboards').then((m) => m.DashboardsPage),
-    },
-    flags: {
-      required: [OCS_FLAG],
-    },
-  },
-  {
     type: 'Page/Resource/List',
     properties: {
       model: models.NooBaaObjectBucketModel,
@@ -735,6 +368,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      path: `/ocs-dashboards`,
+      loader: () => import('./components/dashboards/ocs-system-dashboard').then((m) => m.default),
+    },
+    flags: {
+      required: [OCS_FLAG],
+    },
+  },
+  {
     type: 'Project/Dashboard/Inventory/Item',
     properties: {
       model: models.NooBaaObjectBucketClaimModel,
@@ -781,7 +424,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Delete BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/delete-block-pool-modal' /* webpackChunkName: "ceph-storage-delete-block-pool-modal" */
         )
@@ -791,6 +434,81 @@ const plugin: Plugin<ConsumedExtensions> = [
             console.error('Error loading block Pool Modal', e);
           });
       },
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        name: '%ceph-storage-plugin~Storage Systems%',
+        href: 'systems',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-system/odf-system-list' /* webpackChunkName: "odf-system-list" */
+          )
+        ).default,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Backing Store')
+        name: '%ceph-storage-plugin~Backing Store%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Bucket Class')
+        name: '%ceph-storage-plugin~Bucket Class%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Namespace Store')
+        name: '%ceph-storage-plugin~Namespace Store%',
+        href: 'resource/noobaa.io~v1alpha1~NamespaceStore',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
     },
   },
 ];

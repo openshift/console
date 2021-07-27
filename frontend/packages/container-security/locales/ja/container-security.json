@@ -33,6 +33,5 @@
   "{{vulnImageCount, number}} total": "合計 {{vulnImageCount, number}}",
   "Fixable Container Images": "修正可能なコンテナーイメージ",
   "Impact": "影響",
-  "No vulnerabilities detected.": "脆弱性が検出されませんでした。",
-  "Vulnerability": "脆弱性"
+  "No vulnerabilities detected.": "脆弱性が検出されませんでした。"
 }

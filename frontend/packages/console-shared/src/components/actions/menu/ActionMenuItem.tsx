@@ -21,7 +21,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
   autoFocus,
   isAllowed,
 }) => {
-  const { id, label, icon, disabled, cta } = action;
+  const { label, icon, disabled, cta } = action;
   const { href, external } = cta as { href: string; external?: boolean };
   const isDisabled = !isAllowed || disabled;
   const classes = classNames({ 'pf-m-disabled': isDisabled });
@@ -59,7 +59,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       isDisabled={isDisabled}
-      data-test-action={id}
+      data-test-action={label}
       tabIndex={0} // Override PF tabIndex -1 to make action items tabbable
       translate="no" // Need to pass translate="no" as a workaround to a bug in @types/react.
       {...(external ? { to: href, isExternalLink: external } : {})}

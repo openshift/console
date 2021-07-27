@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Gallery, GalleryItem, Flex, FlexItem } from '@patternfly/react-core';
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import AlertItem from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { alertURL } from '@console/internal/components/monitoring/utils';
@@ -18,10 +18,17 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  HealthState,
+  healthStateMapping,
+} from '@console/shared/src/components/dashboard/status-card/states';
+import { SubsystemHealth } from '@console/plugin-sdk';
 import { getCephHealthState, getDataResiliencyState } from './utils';
+import { whitelistedHealthChecksRef } from './whitelisted-health-checks';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../queries';
 import { cephClusterResource } from '../../../../resources';
 import { filterCephAlerts } from '../../../../selectors';
+import './healthchecks.scss';
 
 const resiliencyProgressQuery = DATA_RESILIENCY_QUERY[StorageDashboardQuery.RESILIENCY_PROGRESS];
 
@@ -46,6 +53,28 @@ export const CephAlerts = withDashboardResources(
     );
   },
 );
+
+const CephHealthCheck: React.FC<CephHealthCheckProps> = ({ cephHealthState, healthCheck }) => {
+  const { t } = useTranslation();
+  return (
+    <Flex direction={{ default: 'row' }}>
+      <FlexItem>
+        {
+          (healthStateMapping[cephHealthState.state] || healthStateMapping[HealthState.UNKNOWN])
+            .icon
+        }
+      </FlexItem>
+      <FlexItem>{healthCheck?.details}</FlexItem>
+      <FlexItem>
+        {!!healthCheck.troubleshootLink && (
+          <a className="ceph-health-check-card__link" href={healthCheck.troubleshootLink}>
+            {t('ceph-storage-plugin~Troubleshoot')}
+          </a>
+        )}
+      </FlexItem>
+    </Flex>
+  );
+};
 
 export const StatusCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
@@ -74,6 +103,19 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
     t,
   );
 
+  const pattern = /[A-Z]+_*|error/g;
+  const healthChecks: CephHealthCheckType[] = [];
+  const cephDetails = data?.[0]?.status?.ceph?.details;
+  for (const key in cephDetails) {
+    if (pattern.test(key)) {
+      const healthCheckObject: CephHealthCheckType = {
+        details: cephDetails[key].message,
+        troubleshootLink: whitelistedHealthChecksRef[key] ?? null,
+      };
+      healthChecks.push(healthCheckObject);
+    }
+  }
+
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
@@ -87,7 +129,12 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
                 title={t('ceph-storage-plugin~Storage Cluster')}
                 state={cephHealthState.state}
                 details={cephHealthState.message}
-              />
+                popupTitle={healthChecks ? t('ceph-storage-plugin~Active health checks') : null}
+              >
+                {healthChecks?.map((healthCheck: CephHealthCheckType) => (
+                  <CephHealthCheck cephHealthState={cephHealthState} healthCheck={healthCheck} />
+                ))}
+              </HealthItem>
             </GalleryItem>
             <GalleryItem>
               <HealthItem
@@ -105,3 +152,13 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
 };
 
 export default withDashboardResources(StatusCard);
+
+type CephHealthCheckType = {
+  details: string;
+  troubleshootLink?: string;
+};
+
+type CephHealthCheckProps = {
+  cephHealthState: SubsystemHealth;
+  healthCheck: CephHealthCheckType;
+};

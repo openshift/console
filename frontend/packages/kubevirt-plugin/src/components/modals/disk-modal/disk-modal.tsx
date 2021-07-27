@@ -4,8 +4,6 @@ import {
   AlertVariant,
   Checkbox,
   Form,
-  FormSelect,
-  FormSelectOption,
   SelectOption,
   Stack,
   StackItem,
@@ -26,9 +24,11 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { NamespaceModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import {
   ConfigMapKind,
+  k8sCreate,
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
+import { DataVolumeModel } from '@console/kubevirt-plugin/src/models';
 import {
   AccessMode,
   DataVolumeSourceType,
@@ -39,6 +39,8 @@ import {
 } from '../../../constants/vm/storage';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
+import { addHotplugPersistent } from '../../../k8s/requests/vm/actions';
+import { addHotplugNonPersistent } from '../../../k8s/requests/vmi/actions';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
 import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -46,6 +48,8 @@ import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { getName } from '../../../selectors/selectors';
+import { VMIKind, VMKind } from '../../../types';
+import { V1AddVolumeOptions } from '../../../types/api';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
 import {
   getDialogUIError,
@@ -64,20 +68,17 @@ import { isFieldDisabled } from '../../../utils/ui/edit-config';
 import { isValidationError } from '../../../utils/validations/common';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
 import { validateDisk } from '../../../utils/validations/vm';
-import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { VMImportProvider } from '../../create-vm-wizard/types';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { FormRow } from '../../form/form-row';
-import {
-  asFormSelectValue,
-  FormSelectPlaceholderOption,
-} from '../../form/form-select-placeholder-option';
+import { asFormSelectValue } from '../../form/form-select-placeholder-option';
 import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
+import { HotplugFieldLevelHelp } from './HotplugFieldLevelHelp';
 import { StorageUISource } from './storage-ui-source';
 
 import './disk-modal.scss';
@@ -104,6 +105,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     templateValidations,
     editConfig,
     isVMRunning,
+    vm,
+    vmi,
     importProvider,
     baseImageName,
   } = props;
@@ -114,6 +117,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const volume = props.volume || new VolumeWrapper();
   const dataVolume = props.dataVolume || new DataVolumeWrapper();
   const tValidations = templateValidations || new TemplateValidations();
+  const [autoDetach, setAutoDetach] = React.useState(false);
 
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
@@ -140,7 +144,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   const combinedDiskSize = combinedDisk.getSize();
 
-  const [type, setType] = React.useState<DiskType>(disk.getType() || DiskType.DISK);
+  const [type, setType] = React.useState<DiskType>(
+    isVMRunning ? DiskType.DISK : disk.getType() || DiskType.DISK,
+  );
 
   const [source, setSource] = React.useState<StorageUISource>(
     combinedDisk.getInitialSource(isEditing),
@@ -169,8 +175,14 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const allowedBuses = [...validAllowedBuses].filter((b) => type.isBusSupported(b));
 
   const [bus, setBus] = React.useState<DiskBus>(
-    disk.getDiskBus() ||
-      (isEditing ? null : validAllowedBuses.has(DiskBus.VIRTIO) ? DiskBus.VIRTIO : allowedBuses[0]),
+    isVMRunning
+      ? DiskBus.SCSI
+      : disk.getDiskBus() ||
+          (isEditing
+            ? null
+            : validAllowedBuses.has(DiskBus.VIRTIO)
+            ? DiskBus.VIRTIO
+            : allowedBuses[0]),
   );
 
   const [size, setSize] = React.useState<string>(
@@ -194,10 +206,10 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const [enablePreallocation, setEnablePreallocation] = React.useState<boolean>(
     dataVolume.getPreallocation(),
   );
+  const pvcNameDataVolume = dataVolume.getPersistentVolumeClaimName();
 
   React.useEffect(() => {
     if (source.requiresPVC()) {
-      const pvcNameDataVolume = dataVolume.getPersistentVolumeClaimName();
       const pvcNamespaceDataVolume = dataVolume.getPersistentVolumeClaimNamespace();
       const pvc = persistentVolumeClaims?.data.find(
         ({ metadata }) =>
@@ -205,7 +217,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       );
       setVolumeMode((value) => VolumeMode.fromString(pvc?.spec?.volumeMode) || value);
     }
-  }, [dataVolume, persistentVolumeClaims, source]);
+  }, [dataVolume, persistentVolumeClaims, pvcNameDataVolume, source]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -230,7 +242,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     },
   });
 
-  let resultDataVolume;
+  let resultDataVolume: DataVolumeWrapper;
   if (source.requiresDatavolume()) {
     resultDataVolume = new DataVolumeWrapper()
       .init({
@@ -245,12 +257,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         url:
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
-      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
-      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
-      .setPreallocationDisk(enablePreallocation);
+      .setVolumeMode(volumeMode || null)
+      .setAccessModes(accessMode ? [accessMode] : null)
+      .setPreallocationDisk(enablePreallocation)
+      .setNamespace(vmNamespace);
   }
 
-  let resultPersistentVolumeClaim;
+  let resultPersistentVolumeClaim: PersistentVolumeClaimWrapper;
   if (source.requiresNewPVC()) {
     resultPersistentVolumeClaim = new PersistentVolumeClaimWrapper()
       .init({
@@ -287,14 +300,39 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     isValid,
   );
 
+  const bodyRequestAddVolume: V1AddVolumeOptions = {
+    disk: resultDisk.asResource(true),
+    name,
+    volumeSource: {
+      dataVolume: {
+        name: resultDataVolumeName,
+      },
+    },
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
     if (isValid) {
-      handlePromise(
-        onSubmit(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim),
-        close,
-      );
+      if (isVMRunning) {
+        const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
+        if (autoDetach) {
+          handlePromise(
+            dvRequest.then(() => addHotplugNonPersistent(vmi, bodyRequestAddVolume)),
+            close,
+          );
+        } else {
+          handlePromise(
+            dvRequest.then(() => addHotplugPersistent(vm, bodyRequestAddVolume)),
+            close,
+          );
+        }
+      } else {
+        handlePromise(
+          onSubmit(resultDisk, resultVolume, resultDataVolume, resultPersistentVolumeClaim),
+          close,
+        );
+      }
     } else {
       setShowUIError(true);
     }
@@ -360,20 +398,23 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   const onTogglePreallocation = () => setEnablePreallocation(!enablePreallocation);
 
+  let modalTitle;
+  if (isVMRunning) {
+    modalTitle = isEditing
+      ? t('kubevirt-plugin~Edit {{type}} (Hot-plugged)', { type })
+      : t('kubevirt-plugin~Add {{type}} (Hot-plugged)', { type });
+  } else {
+    modalTitle = isEditing
+      ? t('kubevirt-plugin~Edit {{type}}', { type })
+      : t('kubevirt-plugin~Add {{type}}', { type });
+  }
   return (
     <div className="modal-content">
       <ModalTitle>
-        {isEditing ? t('kubevirt-plugin~Edit') : t('kubevirt-plugin~Add')}{' '}
-        {t('kubevirt-plugin~{{type}}', { type: type.toString() })}
+        {modalTitle}
+        {isVMRunning && <HotplugFieldLevelHelp />}
       </ModalTitle>
       <ModalBody>
-        {isVMRunning && (
-          <PendingChangesAlert
-            warningMsg={t(
-              'kubevirt-plugin~The changes you are making require this virtual machine to be updated. Restart this VM to apply these changes.',
-            )}
-          />
-        )}
         <Form>
           <FormRow title={t('kubevirt-plugin~Source')} fieldId={asId('source')} isRequired>
             <FormPFSelect
@@ -386,8 +427,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               {StorageUISource.getAll()
                 .filter(
                   (storageUISource) =>
-                    storageUISource.canBeChangedToThisSource(type) ||
-                    !source.canBeChangedToThisSource(type),
+                    storageUISource.hotplugDiskSources(type, isVMRunning) ||
+                    !source.hotplugDiskSources(type, isVMRunning),
                 )
                 .sort((a, b) => a.getOrder() - b.getOrder())
                 .map((uiType) => {
@@ -524,29 +565,41 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           <FormRow
             title={t('kubevirt-plugin~Type')}
             fieldId={asId('type')}
-            validation={typeValidation}
             isRequired
+            validation={typeValidation}
           >
-            <FormSelect
-              onChange={onTypeChanged}
-              value={asFormSelectValue(type.getValue())}
-              id={asId('type')}
+            <FormPFSelect
+              menuAppendTo={() => document.body}
               isDisabled={isDisabled('type')}
+              selections={asFormSelectValue(t(type.getValue()))}
+              onSelect={(e, val) => onTypeChanged(val)}
+              toggleId={asId('type')}
             >
-              <FormSelectPlaceholderOption
-                isDisabled
-                placeholder={t('kubevirt-plugin~--- Select Type ---')}
-              />
               {DiskType.getAll()
                 .filter((dtype) => !dtype.isDeprecated() || dtype === type)
                 .map((dt) => (
-                  <FormSelectOption
+                  <SelectOption
                     key={dt.getValue()}
                     value={dt.getValue()}
-                    label={dt.toString()}
-                  />
+                    description={t('kubevirt-plugin~Hotplug is enabled only for "Disk" type')}
+                    isDisabled={isVMRunning && dt.getValue() !== DiskType.DISK.getValue()}
+                  >
+                    {t(dt.toString())}
+                  </SelectOption>
                 ))}
-            </FormSelect>
+            </FormPFSelect>
+          </FormRow>
+          <FormRow fieldId={asId('auto-detach')}>
+            <Checkbox
+              id={asId('auto-detach')}
+              label={t('kubevirt-plugin~Automatically detach this disk upon VM restart.')}
+              description={t(
+                'kubevirt-plugin~Enable automatic detachment is available only for hot-plugged disks.',
+              )}
+              isDisabled={!isVMRunning}
+              isChecked={autoDetach}
+              onChange={() => setAutoDetach(!autoDetach)}
+            />
           </FormRow>
           <FormRow
             title={t('kubevirt-plugin~Interface')}
@@ -569,6 +622,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   key={b.getValue()}
                   value={b.getValue()}
                   description={t(b.getDescriptionKey())}
+                  isDisabled={isVMRunning && b.getValue() !== DiskBus.SCSI.getValue()}
                 >
                   {t(b.toString())}
                   {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
@@ -708,7 +762,7 @@ export type DiskModalProps = {
     disk: DiskWrapper,
     volume: VolumeWrapper,
     dataVolume: DataVolumeWrapper,
-    persistentVolumeClaim: PersistentVolumeClaimWrapper,
+    persistentVolumeClaim?: PersistentVolumeClaimWrapper,
   ) => Promise<any>;
   namespaces?: FirehoseResult;
   storageClasses?: FirehoseResult<StorageClassResourceKind[]>;
@@ -723,6 +777,8 @@ export type DiskModalProps = {
   editConfig?: UIStorageEditConfig;
   baseImageName?: string;
   isVMRunning?: boolean;
+  vm?: VMKind;
+  vmi?: VMIKind;
   importProvider?: VMImportProvider;
 } & ModalComponentProps &
   HandlePromiseProps;

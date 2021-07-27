@@ -53,9 +53,8 @@ declare interface Window {
   store?: {}; // Redux store
   pluginStore?: {}; // Console plugin store
   loadPluginEntry?: Function;
-  loadPluginFromURL?: Function;
   Cypress?: {};
-  api: {};
+  api: {}; // Console dynamic plugin APIs
 }
 
 // TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for RelativeTimeFormat.
