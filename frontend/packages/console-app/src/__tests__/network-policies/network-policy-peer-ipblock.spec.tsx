@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { mount } from 'enzyme';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NetworkPolicyPeerIPBlock } from '../../components/network-policies/network-policy-peer-ipblock';
@@ -29,17 +29,30 @@ const networkPolicyPeerIPBlock = (
   />
 );
 
-describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
+describe('NetworkPolicyPeerIPBlock without permissions to fetch CNI type', () => {
   (useK8sGet as jest.Mock).mockReturnValue([null, true, 'error fetching CNI']);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
-  it('should render a warning in case the customer is using Openshift SDN', () => {
-    const alert = wrapper.find(Alert);
-    expect(alert.exists()).toBe(true);
-    expect(alert.props().title).toEqual(
-      `${i18nNS}~When using the OpenShift SDN cluster network provider, exceptions are not supported and would cause the entire IP block section to be ignored.`,
-    );
+  it('should render the exceptions section', () => {
+    expect(
+      wrapper
+        .find('label')
+        .findWhere((b) => b.text().includes(`${i18nNS}~Exceptions`))
+        .exists(),
+    ).toBe(true);
+    expect(wrapper.find('input[value="bar"]').exists()).toBe(true);
   });
+  it('should render a button to add an exception', () => {
+    const btn = wrapper.find(Button).findWhere((b) => b.text().includes(`${i18nNS}~Add exception`));
+    expect(btn.exists()).toBe(true);
+  });
+});
+
+describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
+  const unknownSDNSpec = { spec: { defaultNetwork: { type: 'Calico' } } };
+  (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
+  const wrapper = mount(networkPolicyPeerIPBlock);
+
   it('should render the exceptions section', () => {
     expect(
       wrapper
@@ -63,10 +76,6 @@ describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
   ]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
-  it('should not render any warning', () => {
-    const alert = wrapper.find(Alert);
-    expect(alert.exists()).toBe(false);
-  });
   it('should not render the exceptions section', () => {
     expect(
       wrapper
@@ -89,10 +98,6 @@ describe('NetworkPolicyPeerIPBlock with OVN Kubernetes CNI type', () => {
   ]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
-  it('should not render any warning', () => {
-    const alert = wrapper.find(Alert);
-    expect(alert.exists()).toBe(false);
-  });
   it('should render the exceptions section', () => {
     expect(
       wrapper

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Button, FormFieldGroupExpandable } from '@patternfly/react-core';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mount } from 'enzyme';
 import { ButtonBar } from '@console/internal/components/utils';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
-import { NetworkPolicy } from '../../components/network-policies/network-policy-model';
 
+const i18nNS = 'public';
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
   return {
@@ -16,15 +17,16 @@ jest.mock('react-i18next', () => {
     },
   };
 });
+jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
+  useK8sGet: jest.fn(),
+}));
 
-const i18nNS = 'public';
+const NetworkPolicyFormComponent = NetworkPolicyForm.WrappedComponent;
 
 describe('NetworkPolicyForm', () => {
-  let wrapper: ShallowWrapper<{}, { networkPolicy: NetworkPolicy }>;
-
-  beforeEach(() => {
-    wrapper = shallow(<NetworkPolicyForm namespace="default" />);
-  });
+  const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
+  (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
+  const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
 
   it('should render CreateNetworkPolicy component', () => {
     expect(wrapper.exists()).toBe(true);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,6 @@ import { NetworkPolicyIPBlock } from './network-policy-model';
 export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps> = (props) => {
   const { t } = useTranslation();
   const { onChange, ipBlock } = props;
-  const [showSDNAlert, setShowSDNAlert] = React.useState(true);
   const [networkFeatures, networkFeaturesLoaded] = useClusterNetworkFeatures();
 
   const handleCIDRChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,17 +42,6 @@ export const NetworkPolicyPeerIPBlock: React.FunctionComponent<PeerIPBlockProps>
       {networkFeaturesLoaded && networkFeatures.PolicyPeerIPBlockExceptions !== false && (
         <div className="form-group co-create-networkpolicy__exceptions">
           <label>{t('public~Exceptions')}</label>
-          {showSDNAlert && networkFeatures.PolicyPeerIPBlockExceptions === undefined && (
-            <div>
-              <Alert
-                variant="info"
-                title={t(
-                  'public~When using the OpenShift SDN cluster network provider, exceptions are not supported and would cause the entire IP block section to be ignored.',
-                )}
-                actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
-              />
-            </div>
-          )}
           {ipBlock.except.map((exc, idx) => (
             <div className="pf-c-input-group" key={exc.key}>
               <input

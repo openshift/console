@@ -13,11 +13,19 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Checkbox } from '@console/internal/components/checkbox';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
-import { ButtonBar, history, resourcePathFromModel } from '@console/internal/components/utils';
+import {
+  ButtonBar,
+  ExternalLink,
+  getNetworkPolicyDocLink,
+  history,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
 import { NetworkPolicyModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { useClusterNetworkFeatures } from '@console/internal/module/k8s/network';
-import { YellowExclamationTriangleIcon } from '@console/shared';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { FlagsObject } from '@console/internal/reducers/features';
+import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { NetworkPolicyConditionalSelector } from './network-policy-conditional-selector';
 import {
   isNetworkPolicyConversionError,
@@ -37,11 +45,14 @@ const emptyRule = (): NetworkPolicyRule => {
 
 type NetworkPolicyFormProps = {
   namespace: string;
+  flags: FlagsObject;
 };
 
-export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> = (props) => {
+const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps> = ({
+  namespace,
+  flags,
+}) => {
   const { t } = useTranslation();
-  const { namespace } = props;
 
   const emptyPolicy: NetworkPolicy = {
     name: '',
@@ -168,6 +179,35 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
 
   return (
     <Form onSubmit={save} className="co-create-networkpolicy">
+      {showSDNAlert &&
+        networkFeaturesLoaded &&
+        networkFeatures?.PolicyEgress === undefined &&
+        networkFeatures?.PolicyPeerIPBlockExceptions === undefined && (
+          <Alert
+            variant="info"
+            title={
+              <>
+                <p>{t('public~When using the OpenShift SDN cluster network provider:')}</p>
+                <ul>
+                  <li>{t('public~Egress network policy is not supported.')}</li>
+                  <li>
+                    {t(
+                      'public~IP block exceptions are not supported and would cause the entire IP block section to be ignored.',
+                    )}
+                  </li>
+                </ul>
+                <p>
+                  {t('public~More information:')}&nbsp;
+                  <ExternalLink
+                    href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                    text={t('public~NetworkPolicies documentation')}
+                  />
+                </p>
+              </>
+            }
+            actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
+          />
+        )}
       <div className="form-group co-create-networkpolicy__name">
         <label className="co-required" htmlFor="name">
           {t('public~Policy name')}
@@ -196,15 +236,6 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
       <div className="form-group co-create-networkpolicy__type">
         <Title headingLevel="h2">{t('public~Policy type')}</Title>
       </div>
-      {showSDNAlert && networkFeaturesLoaded && networkFeatures.PolicyEgress === undefined && (
-        <Alert
-          variant="info"
-          title={t(
-            'public~When using the OpenShift SDN cluster network provider, egress network policy is not supported.',
-          )}
-          actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
-        />
-      )}
       <div className="form-group co-create-networkpolicy__deny">
         <label>{t('public~Select default ingress and egress deny rules')}</label>
 
@@ -338,3 +369,5 @@ export const NetworkPolicyForm: React.FunctionComponent<NetworkPolicyFormProps> 
     </Form>
   );
 };
+
+export const NetworkPolicyForm = connectToFlags(FLAGS.OPENSHIFT)(NetworkPolicyFormComponent);

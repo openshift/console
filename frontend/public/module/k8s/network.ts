@@ -55,13 +55,17 @@ const featuresDocument: {
  *  returned)
  */
 export const useClusterNetworkFeatures = (): [ClusterNetworkFeatures, boolean] => {
-  const [features, setFeatures] = React.useState<ClusterNetworkFeatures>();
+  const [features, setFeatures] = React.useState<ClusterNetworkFeatures>(
+    featuresDocument[ClusterNetworkType.Unknown],
+  );
   const [featuresLoaded, setFeaturesLoaded] = React.useState(false);
   const [network, networkLoaded] = useK8sGet<K8sResourceKind>(clusterNetworkModel, networkName);
   React.useEffect(() => {
-    const cniType = ClusterNetworkType[network?.spec?.defaultNetwork?.type];
-    setFeatures(featuresDocument[cniType ? cniType : ClusterNetworkType.Unknown]);
-    setFeaturesLoaded(true);
+    if (networkLoaded) {
+      const cniType = ClusterNetworkType[network?.spec?.defaultNetwork?.type];
+      setFeatures(featuresDocument[cniType ?? ClusterNetworkType.Unknown]);
+      setFeaturesLoaded(true);
+    }
   }, [network, networkLoaded]);
 
   return [features, featuresLoaded];
