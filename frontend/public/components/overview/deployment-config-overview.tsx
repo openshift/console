@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';

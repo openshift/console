@@ -15,7 +15,6 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import { TYPE_VIRTUAL_MACHINE } from '@console/kubevirt-plugin/src/topology/components/const';
 import TopologyVmPanel from '@console/kubevirt-plugin/src/topology/TopologyVmPanel';
-// import TopologyHelmReleasePanel from '@console/helm-plugin/src/topology/TopologyHelmReleasePanel';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
 import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
@@ -67,7 +66,7 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
     if (selectedEntity.getType() === TYPE_VIRTUAL_MACHINE) {
       return <TopologyVmPanel vmNode={selectedEntity} />;
     }
-    return <TopologyResourcePanel item={selectedEntity.getData() as TopologyDataObject} />;
+    return <TopologyResourcePanel element={selectedEntity} />;
   }
 
   if (isEdge(selectedEntity)) {

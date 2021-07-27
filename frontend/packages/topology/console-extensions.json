@@ -5,5 +5,138 @@
       "scope": "devconsole",
       "reducer": { "$codeRef": "reduxReducer" }
     }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-details",
+      "label": "%topology~Details%"
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-resource",
+      "label": "%topology~Resources%"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-deployment-config",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getDeploymentConfigSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-deployment",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getDeploymentSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-daemon-set",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getDaemonSetSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-stateful-set",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getStatefulSetSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-jobs",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getJobSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-cron-jobs",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getCronJobSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-pods-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "workload.getPodsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-jobs-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "workload.getJobsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-builds-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "workload.getBuildsSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-network-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "section": { "$codeRef": "workload.getNetworkingSideBarTabSection" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 50,
+      "link": { "$codeRef": "workload.getWorkloadResourceLink" }
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workload.podsAdapterForWorkloads"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workload.podsAdapterForCronJobWorkload"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/build",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workload.buildsAdapterForWorkloads"
+      }
+    }
+  },
+  {
+    "type": "console.topology/adapter/network",
+    "properties": {
+      "adapt": {
+        "$codeRef": "workload.networkAdapterForWorkloads"
+      }
+    }
   }
 ]

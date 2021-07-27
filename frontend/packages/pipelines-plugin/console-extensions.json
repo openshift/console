@@ -177,5 +177,19 @@
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
     }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-pipelines-overview",
+      "tab": "topology-side-bar-tab-resource",
+      "insertBefore": "topology-tab-section-network-overview",
+      "section": {
+        "$codeRef": "topology.getPipelinesSideBarTabSection"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
   }
 ]

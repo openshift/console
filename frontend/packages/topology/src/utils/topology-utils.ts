@@ -113,9 +113,9 @@ export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K
   return topologyObject.resource || topologyObject.resources?.obj;
 };
 
-export const getResource = (node: Node): K8sResourceKind => {
+export const getResource = <T = K8sResourceKind>(node: Node): T => {
   const resource = (node as OdcBaseNode)?.getResource();
-  return resource || getTopologyResourceObject(node?.getData());
+  return (resource as T) || (getTopologyResourceObject(node?.getData()) as T);
 };
 
 export const getResourceKind = (node: Node): K8sResourceKindReference => {

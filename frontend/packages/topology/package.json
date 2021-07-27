@@ -23,7 +23,8 @@
       ]
     },
     "exposedModules": {
-      "reduxReducer": "src/utils/reducer.ts"
+      "reduxReducer": "src/utils/reducer.ts",
+      "workload": "src/components/workload"
     }
   }
 }
