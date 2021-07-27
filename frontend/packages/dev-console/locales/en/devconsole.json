@@ -467,6 +467,7 @@
   "Silence for": "Silence for",
   "Dashboard": "Dashboard",
   "Workload": "Workload",
+  "Inspect": "Inspect",
   "View metrics for {{title}}": "View metrics for {{title}}",
   "All workloads": "All workloads",
   "Filter by workload": "Filter by workload",

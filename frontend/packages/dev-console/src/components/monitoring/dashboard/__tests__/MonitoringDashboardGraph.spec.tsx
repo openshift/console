@@ -2,7 +2,6 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TFunction } from 'i18next';
 import * as redux from 'react-redux';
-import { PrometheusGraphLink } from '@console/internal/components/graphs/prometheus-graph';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
@@ -53,8 +52,8 @@ describe('Monitoring Dashboard graph', () => {
   it('should add link to line graph', () => {
     monitoringDashboardGraphProps.graphType = GraphTypes.line;
     const wrapper = shallow(<MonitoringDashboardGraph {...monitoringDashboardGraphProps} />);
-    expect(wrapper.find(PrometheusGraphLink).exists()).toBe(true);
-    expect(wrapper.find(PrometheusGraphLink).props().query).toEqual(
+    expect(wrapper.find('PrometheusGraphLink').exists()).toBe(true);
+    expect(wrapper.find('PrometheusGraphLink').prop('query')).toEqual(
       monitoringDashboardGraphProps.query,
     );
   });
