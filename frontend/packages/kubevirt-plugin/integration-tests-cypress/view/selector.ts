@@ -63,3 +63,6 @@ export enum storageClass {
   dropdown = 'button[id="form-ds-sc-select"]',
   selectMenu = '.pf-c-select__menu',
 }
+
+// yaml page
+export const createYAMLButton = 'button[data-test="save-changes"]';

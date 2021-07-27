@@ -1,7 +1,8 @@
 import { VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS, VMI_ACTION } from '../const/index';
 import { VirtualMachineData } from '../types/vm';
 import { detailViewAction, listViewAction } from './actions';
-import { detailsTab } from './selector';
+import { detailsTab, createYAMLButton } from './selector';
+import { create, vmYAML } from './selector-wizard';
 import { virtualization } from './virtualization';
 import { wizard } from './wizard';
 
@@ -103,5 +104,11 @@ export const vm = {
     waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
     action(VM_ACTION.Pause);
     waitForStatus(VM_STATUS.Paused, vmData);
+  },
+  createFromYAML: () => {
+    virtualization.vms.visit();
+    cy.get(create).click();
+    cy.get(vmYAML).click();
+    cy.get(createYAMLButton).click();
   },
 };
