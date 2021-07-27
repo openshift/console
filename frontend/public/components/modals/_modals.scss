@@ -41,6 +41,7 @@
   input, textarea {
     &.pf-c-form-control {
       background-color: transparent;
+      max-width: 100%;
       &[disabled],
       &[readonly] {
         background-color: rgba(128, 128, 128, 0.15);
