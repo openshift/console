@@ -53,5 +53,16 @@
       },
       "startsWith": ["operators.coreos.com", "clusterserviceversions"]
     }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-operator-link",
+      "tab": "topology-side-bar-tab-resource",
+      "insertBefore": "topology-tab-section-pods-overview",
+      "section": {
+        "$codeRef": "topology.getManagedByOperatorLinkSideBarTabSection"
+      }
+    }
   }
 ]

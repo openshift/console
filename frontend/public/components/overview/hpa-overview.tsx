@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 import * as React from 'react';
 import { HorizontalPodAutoscalerKind } from '../../module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '../utils';

@@ -1,3 +1,7 @@
+/**
+ * @deprecated
+ */
+
 import * as React from 'react';
 import {
   OverviewItem,

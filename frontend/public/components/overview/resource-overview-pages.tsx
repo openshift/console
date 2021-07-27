@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 import { Map as ImmutableMap } from 'immutable';
 
 import { GroupVersionKind, referenceForModel } from '../../module/k8s';

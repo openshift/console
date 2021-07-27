@@ -1,16 +1,16 @@
 import * as React from 'react';
+import { GraphElement } from '@patternfly/react-topology';
 import * as _ from 'lodash';
-import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
-import { ModifyApplication } from '../../actions/modify-application';
-import { TopologyDataObject } from '../../topology-types';
+// import { ModifyApplication } from '../../actions/modify-application';
+import TopologySideBarContent from './TopologySideBarContent';
 
 type TopologyResourcePanelProps = {
-  item: TopologyDataObject;
+  element: GraphElement;
 };
 
-const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ item }) => {
-  const resourceItemToShowOnSideBar = item && item.resources;
+const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ element }) => {
+  const item = element.getData();
 
   // adds extra check, custom sidebar for all knative resources excluding deployment
   const itemKind = item?.resource?.kind ?? null;
@@ -18,17 +18,9 @@ const TopologyResourcePanel: React.FC<TopologyResourcePanelProps> = ({ item }) =
     return <KnativeResourceOverviewPage item={item.resources} />;
   }
 
-  const customActions = [ModifyApplication];
+  // const customActions = [ModifyApplication];
 
-  return (
-    resourceItemToShowOnSideBar && (
-      <ResourceOverviewPage
-        item={resourceItemToShowOnSideBar}
-        kind={resourceItemToShowOnSideBar.obj.kind}
-        customActions={customActions}
-      />
-    )
-  );
+  return <TopologySideBarContent element={element} />;
 };
 
 export default TopologyResourcePanel;

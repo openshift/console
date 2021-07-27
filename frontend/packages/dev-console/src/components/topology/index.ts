@@ -3,3 +3,4 @@ export {
   providerProvidesServiceBinding,
   providerCreateServiceBinding,
 } from './relationship-provider';
+export * from './hpa-tab-section';

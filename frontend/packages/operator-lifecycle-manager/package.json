@@ -10,7 +10,8 @@
   "consolePlugin": {
     "entry": "src/plugin.tsx",
     "exposedModules": {
-      "utils": "src/utils/index.ts"
+      "utils": "src/utils/index.ts",
+      "topology": "src/components/topology"
     }
   }
 }

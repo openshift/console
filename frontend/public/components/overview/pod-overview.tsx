@@ -1,3 +1,6 @@
+/**
+ * @deprecated
+ */
 import * as React from 'react';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { OverviewItem } from '@console/shared';
