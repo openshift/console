@@ -6,7 +6,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ActionGroupWithIcons, DropdownField, RadioGroupField } from '@console/shared/src';
 import FormSection from '../../../import/section/FormSection';
 import { lifecycleActionType } from '../utils/deployment-strategy-utils';
-import { FailurePolicyOptions } from '../utils/types';
+import { getFailurePolicyOptions } from '../utils/types';
 import ExecNewPodForm from './ExecNewPodForm';
 import TagImagesForm from './TagImagesForm';
 import './LifecycleHookForm.scss';
@@ -58,7 +58,7 @@ const LifecycleHookForm: React.FC<LifecycleHookFormProps> = ({
           name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.failurePolicy`}
           label={t('devconsole~Failure Policy')}
           title={t('devconsole~Select a Failure Policy')}
-          items={FailurePolicyOptions}
+          items={getFailurePolicyOptions()}
           helpText={t('devconsole~Fail the deployment if the hook fails.')}
           fullWidth
           required

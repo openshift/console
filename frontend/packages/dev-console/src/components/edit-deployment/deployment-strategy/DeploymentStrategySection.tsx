@@ -9,7 +9,7 @@ import { getStrategyData } from '../utils/edit-deployment-utils';
 import CustomStrategy from './CustomStrategy';
 import RecreateStrategy from './RecreateStrategy';
 import RollingStrategy from './RollingStrategy';
-import { DeploymentStrategyType, DeploymentStrategyDropdownData } from './utils/types';
+import { DeploymentStrategyType, getDeploymentStrategyDropdownData } from './utils/types';
 
 export type DeploymentStrategySectionProps = {
   resourceType: string;
@@ -78,8 +78,8 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
       <DropdownField
         name="formData.deploymentStrategy.type"
         label={t('devconsole~Strategy type')}
-        items={DeploymentStrategyDropdownData[resourceType].items}
-        helpText={DeploymentStrategyDropdownData[resourceType].helpText[type]}
+        items={getDeploymentStrategyDropdownData()[resourceType].items}
+        helpText={getDeploymentStrategyDropdownData()[resourceType].helpText[type]}
         onChange={onChange}
         fullWidth
       />

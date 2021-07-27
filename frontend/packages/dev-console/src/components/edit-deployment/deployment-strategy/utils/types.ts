@@ -1,3 +1,4 @@
+import i18n from '@console/internal/i18n';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Resources } from '../../../import/import-types';
 
@@ -8,42 +9,48 @@ export enum DeploymentStrategyType {
   rollingUpdate = 'RollingUpdate',
 }
 
-export const KubernetesDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreateParams]: 'Recreate',
-  [DeploymentStrategyType.rollingUpdate]: 'Rolling Update',
-};
+export const getKubernetesDeploymentStrategyOptions = () => ({
+  [DeploymentStrategyType.recreateParams]: i18n.t('devconsole~Recreate'),
+  [DeploymentStrategyType.rollingUpdate]: i18n.t('devconsole~Rolling Update'),
+});
 
-export const OpenshiftDeploymentStrategyOptions = {
-  [DeploymentStrategyType.recreateParams]: 'Recreate',
-  [DeploymentStrategyType.rollingParams]: 'Rolling',
-  [DeploymentStrategyType.customParams]: 'Custom',
-};
+export const getOpenshiftDeploymentStrategyOptions = () => ({
+  [DeploymentStrategyType.recreateParams]: i18n.t('devconsole~Recreate'),
+  [DeploymentStrategyType.rollingParams]: i18n.t('devconsole~Rolling'),
+  [DeploymentStrategyType.customParams]: i18n.t('devconsole~Custom'),
+});
 
-export const KubernetesDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreateParams]: 'The recreate strategy has basic rollout behavior.',
-  [DeploymentStrategyType.rollingUpdate]:
-    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
-};
+export const getKubernetesDeploymentStrategyHelpText = () => ({
+  [DeploymentStrategyType.recreateParams]: i18n.t(
+    'devconsole~The recreate strategy has basic rollout behavior.',
+  ),
+  [DeploymentStrategyType.rollingUpdate]: i18n.t(
+    'devconsole~The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+  ),
+});
 
-export const OpenshiftDeploymentStrategyHelpText = {
-  [DeploymentStrategyType.recreateParams]:
-    'The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.',
-  [DeploymentStrategyType.rollingParams]:
-    'The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
-  [DeploymentStrategyType.customParams]:
-    'The custom strategy allows you to specify container image that will provide your own deployment behavior.',
-};
+export const getOpenshiftDeploymentStrategyHelpText = () => ({
+  [DeploymentStrategyType.recreateParams]: i18n.t(
+    'devconsole~The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.',
+  ),
+  [DeploymentStrategyType.rollingParams]: i18n.t(
+    'devconsole~The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+  ),
+  [DeploymentStrategyType.customParams]: i18n.t(
+    'devconsole~The custom strategy allows you to specify container image that will provide your own deployment behavior.',
+  ),
+});
 
-export const DeploymentStrategyDropdownData = {
+export const getDeploymentStrategyDropdownData = () => ({
   [Resources.Kubernetes]: {
-    items: KubernetesDeploymentStrategyOptions,
-    helpText: KubernetesDeploymentStrategyHelpText,
+    items: getKubernetesDeploymentStrategyOptions(),
+    helpText: getKubernetesDeploymentStrategyHelpText(),
   },
   [Resources.OpenShift]: {
-    items: OpenshiftDeploymentStrategyOptions,
-    helpText: OpenshiftDeploymentStrategyHelpText,
+    items: getOpenshiftDeploymentStrategyOptions(),
+    helpText: getOpenshiftDeploymentStrategyHelpText(),
   },
-};
+});
 
 export type StrategyFieldProps = {
   resourceType?: string;
@@ -61,8 +68,8 @@ export enum FailurePolicyType {
   Ignore = 'Ignore',
 }
 
-export const FailurePolicyOptions = {
-  [FailurePolicyType.Abort]: 'Abort',
-  [FailurePolicyType.Retry]: 'Retry',
-  [FailurePolicyType.Ignore]: 'Ignore',
-};
+export const getFailurePolicyOptions = () => ({
+  [FailurePolicyType.Abort]: i18n.t('devconsole~Abort'),
+  [FailurePolicyType.Retry]: i18n.t('devconsole~Retry'),
+  [FailurePolicyType.Ignore]: i18n.t('devconsole~Ignore'),
+});
