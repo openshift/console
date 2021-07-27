@@ -38,7 +38,22 @@ export enum nodeActions {
   DeleteRevision = 'Delete Revision',
 }
 
+export enum applicationGroupingsActions {
+  DeleteApplication = 'Delete Application',
+  AddtoApplication = 'Add to Application',
+}
+
 export enum authenticationTypes {
   ImageRegistryCredentials = 'Image registry credentials',
   UploadConfigurationFile = 'Upload configuration file',
+}
+
+export enum addToApplicationGroupings {
+  FromGit = 'From Git',
+  ContainerImage = 'Container Image',
+  FromDockerfile = 'From Dockerfile',
+  FromDevfile = 'From Devfile',
+  UploadJarfile = 'Upload JAR file',
+  EventSource = 'Event Source',
+  Channel = 'Channel',
 }

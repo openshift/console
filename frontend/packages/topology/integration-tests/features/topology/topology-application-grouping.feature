@@ -3,66 +3,42 @@ Feature: Application groupings in topology
               As a user, I want to check application groupings
 
         Background:
-            Given user has installed OpenShift Serverless Operator
-              And user is at developer perspective
-              And user has created or selected namespace "aut-topology-grouping"
+            Given user is at developer perspective
+              And user has created or selected namespace "aut-groupings-topoogy"
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Verify Application grouping sidebar: T-05-TC01
-            Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
-              And user is at the Topolgy page
-             When user clicks on an applicaton grouping "nodejs-ex-git-app"
-             Then user can see application sidebar
+            Given user is at Add page
+              And user has created workload "nodejs-ex-git" with resource type "Deployment" and application groupings "nodejs-ex-git-app"
+             When user clicks on application groupings "nodejs-ex-git-app"
+             Then user can see sidebar opens with Resources tab selected by default for application groupings
               And user is able to see workload "nodejs-ex-git" under resources tab in the sidebar
-              And user can see Add to Application and Delete Application in the Action menu
+              And user can see Actions dropdown menu
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Verify Application grouping context menu: T-05-TC02
-            Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
-              And user is at the Topolgy page
-             When user right clicks on Application "nodejs-ex-git-app" to open context menu
+            Given user is at Topology page
+             When user right clicks on Application "nodejs-ex-git-app" to open Context Menu
              Then user can view Add to Application and Delete Application options
 
 
-        @regression @to-do
+        @regression
         Scenario: Add to Application in Application grouping from Action menu: T-05-TC03
-            Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
-              And user is at the Topolgy page
-             When user clicks on an applicaton grouping "nodejs-ex-git-app"
-              And user clicks on Action menu and goes to Add to Application
-              And user clicks on From Git
-              And user fills the form and clicks Create
-              And user clicks on Add to Project on Action menu and clicks on Container Image
-              And user fills the form and clicks Create
-              And user clicks on Add to Project on Action menu and clicks on From Dockerfile
-              And user fills the form and clicks Create
-              And user clicks on Add to Project on Action menu and clicks on From Devfile
-              And user fills the form and clicks Create
-              And user clicks on Add to Project on Action menu and clicks on From Event Source
-              And user selects Api Server Source and clicks on Create Event Source
-              And user fills the form and clicks Create
-              And user clciks on Add to Project on Action menu and clicks on From Channel
-              And user clicks on Create
-             Then user can view options From Git, Container Image, From Dockerfile, From Devfile, Event Source, Channel
-
-
-        @regression @to-do
-        Scenario: Delete Application grouping from Action menu: T-05-TC04
-            Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
-              And user is at Topology page
-             When user clicks on applicaton grouping "nodejs-ex-git-app"
+            Given user is at Topology page
+             When user clicks on application groupings "nodejs-ex-git-app"
               And user clicks on Action menu
-              And user clicks on Delete Application
-              And user enters the name "nodejs-ex-git-app" in the Delete Application modal and clicks on Delete button
-             Then user can see the applicationgroup has been removed
+              And user clicks "Add to Application" from action menu
+              And user clicks on "From Git"
+              And user fills the form with workload name "added-application-1" and clicks Create
+             Then user can see "added-application-1" workload
 
-
-        @regression @to-do
-        Scenario: Delete Application grouping from context menu: T-05-TC05
-            Given user has created workload "nodejs-ex-git" in application grouping "nodejs-ex-git-app"
-             When user right clicks on applicaton grouping "nodejs-ex-git-app"
-              And user clicks on Delete Application
-              And user enters the name "nodejs-ex-git-app" in the Delete Application modal and clicks on Delete button
-             Then user can see the applicationgroup has been removed
+        @regression
+        Scenario: Delete Application grouping from Action menu: T-05-TC04
+            Given user is at Add page
+              And user has created workload "nodejs-1" with resource type "Deployment" and application groupings "app2"
+             When user right clicks on Application "app2" to open Context Menu
+              And user clicks on "Delete Application" from context action menu
+              And user enters the name "app2" in the Delete Application modal and clicks on Delete button
+             Then user will not see Application groupings "app2"

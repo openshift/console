@@ -14,9 +14,9 @@ export const createGitWorkload = (
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl(gitUrl);
   gitPage.verifyValidatedMessage();
-  gitPage.enterAppName(appName);
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);
+  gitPage.enterAppName(appName);
   if (isPipelineSelected === true) {
     gitPage.selectAddPipeline();
   }

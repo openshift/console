@@ -1,8 +1,13 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { nodeActions } from '@console/dev-console/integration-tests/support/constants';
+import {
+  nodeActions,
+  addToApplicationGroupings,
+  applicationGroupingsActions,
+} from '@console/dev-console/integration-tests/support/constants';
+import { topologyPO } from '../../page-objects/topology-po';
 
 export const topologyActions = {
-  selectAction: (action: nodeActions | string) => {
+  selectAction: (action: nodeActions | string | applicationGroupingsActions) => {
     switch (action) {
       case 'Edit Application Grouping':
       case 'Edit Application grouping':
@@ -110,8 +115,81 @@ export const topologyActions = {
           .click();
         break;
       }
+      case 'Delete Application':
+      case applicationGroupingsActions.DeleteApplication: {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case 'Add to Application':
+      case applicationGroupingsActions.AddtoApplication: {
+        cy.get(topologyPO.addToApplication)
+          .should('be.visible')
+          .click();
+        break;
+      }
       default: {
         throw new Error(`${action} is not available in action menu`);
+      }
+    }
+  },
+};
+
+export const addToApplication = {
+  selectAction: (action: addToApplicationGroupings | string) => {
+    switch (action) {
+      case addToApplicationGroupings.FromGit:
+      case 'From Git': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.FromDevfile:
+      case 'From Devfile': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.FromDockerfile:
+      case 'From Dockerfile': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.ContainerImage:
+      case 'Container Image': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.UploadJarfile:
+      case 'Upload JAR file': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.EventSource:
+      case 'Event Source': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      case addToApplicationGroupings.Channel:
+      case 'Channel': {
+        cy.byTestActionID(action)
+          .should('be.visible')
+          .click();
+        break;
+      }
+      default: {
+        throw new Error(`${action} is not available in menu`);
       }
     }
   },

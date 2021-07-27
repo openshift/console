@@ -4,7 +4,12 @@ import {
   sideBarTabs,
 } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { createHelmRelease, app } from '@console/dev-console/integration-tests/support/pages';
+import {
+  createHelmRelease,
+  app,
+  createForm,
+} from '@console/dev-console/integration-tests/support/pages';
+import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow';
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
@@ -168,8 +173,30 @@ export const topologyPage = {
   rightClickOnNode: (releaseName: string) => {
     topologyPage.getNode(releaseName).trigger('contextmenu', { force: true });
   },
+  rightClickOnApplicationGroupings: (appName: string) => {
+    const id = `[data-id="group:${appName}"]`;
+    cy.get(id)
+      .should('be.visible')
+      .first()
+      .trigger('contextmenu', { force: true });
+  },
   clickOnNode: (releaseName: string) => {
     topologyPage.getNode(releaseName).click({ force: true });
+  },
+  clickOnApplicationGroupings: (appName: string) => {
+    const id = `[data-id="group:${appName}"]`;
+    cy.get(id)
+      .should('be.visible')
+      .first()
+      .click({ force: true });
+  },
+  verifyApplicationGroupingsDeleted: (appName: string) => {
+    const id = `[data-id="group:${appName}"]`;
+    cy.get(id, { timeout: 50000 }).should('not.exist');
+  },
+  verifyApplicationGroupings: (workloadName: string) => {
+    cy.get(topologyPO.sidePane.applicationGroupingsTitle).should('be.visible');
+    cy.byLegacyTestID(workloadName).should('be.visible');
   },
   clickOnSinkBinding: (nodeName: string = 'sink-binding') => {
     topologyPage.getNode(nodeName).click({ force: true });
@@ -255,4 +282,28 @@ export const topologyPage = {
       .should('have.attr', 'xlink:href')
       .and('include', runTimeIcon);
   },
+  deleteApplication: (appName: string) => {
+    cy.get(topologyPO.graph.deleteApplication)
+      .clear()
+      .type(appName);
+    cy.get(topologyPO.graph.deleteWorkload).click();
+    cy.wait(15000);
+  },
+  verifyApplicationGroupingSidepane: () => {
+    cy.get(topologyPO.sidePane.applicationGroupingsTitle).should('be.visible');
+    cy.get(topologyPO.sidePane.resourcesTabApplicationGroupings).should('be.visible');
+  },
+};
+
+export const addGitWorkload = (
+  gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
+  componentName: string = 'nodejs-ex-git',
+  resourceType: string = 'Deployment',
+) => {
+  gitPage.enterGitUrl(gitUrl);
+  gitPage.verifyValidatedMessage();
+  gitPage.enterComponentName(componentName);
+  gitPage.selectResource(resourceType);
+  createForm.clickCreate();
+  app.waitForLoad();
 };
