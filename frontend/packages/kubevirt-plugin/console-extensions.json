@@ -508,6 +508,18 @@
     }
   },
   {
+    "type": "console.topology/data/panel",
+    "properties": {
+      "type": "virtual-machine",
+      "panel": {
+        "$codeRef": "topology.TopologyVmPanelComponent"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
     "type": "console.topology/data/factory",
     "properties": {
       "id": "kubevirt-topology-model-factory",

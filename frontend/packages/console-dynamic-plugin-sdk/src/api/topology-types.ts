@@ -47,6 +47,12 @@ export type ViewComponentFactory = (
   view?: TopologyViewType,
 ) => React.ComponentType<{ element: GraphElement }> | undefined;
 
+export type TopologyDataPanelComponent = React.ComponentType<{
+  selectedDetailsTab?: any;
+  onClickTab?: (name: string) => void;
+  item: Node;
+}>;
+
 export type TopologyDataModelDepicted = (resource: K8sResourceCommon, model: Model) => boolean;
 
 export type TopologyDataModelReconciler = (model: Model, resources: TopologyDataResources) => void;

@@ -18,6 +18,8 @@ import {
   TopologyCreateConnector as DynamicTopologyCreateConnector,
   TopologyDecoratorProvider as DynamicTopologyDecoratorProvider,
   TopologyDisplayFilters as DynamicTopologyDisplayFilters,
+  TopologyDataPanel,
+  isTopologyDataPanel,
 } from '@console/dynamic-plugin-sdk';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
@@ -142,6 +144,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const [dynamicExtensionDecorators, dynamicExtensionDecoratorsResolved] = useResolvedExtensions<
     DynamicTopologyDecoratorProvider
   >(isDynamicTopologyDecoratorProvider);
+
+  const [dynamicPanelExtensions, resolvedPanelExtensions] = useResolvedExtensions<
+    TopologyDataPanel
+  >(isTopologyDataPanel);
 
   const [topologyDecorators, setTopologyDecorators] = React.useState<{
     [key: string]: TopologyDecorator[];
@@ -315,7 +321,19 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBarDetails = getSelectedEntityDetails(selectedEntity);
+  const panelExtension = React.useMemo(() => {
+    if (resolvedPanelExtensions) {
+      const ext = dynamicPanelExtensions?.find(
+        (e) => e.properties.type === selectedEntity?.getType(),
+      );
+      const PanelExtension = ext?.properties?.panel;
+
+      return PanelExtension && <PanelExtension item={selectedEntity as any} />;
+    }
+    return null;
+  }, [dynamicPanelExtensions, resolvedPanelExtensions, selectedEntity]);
+
+  const topologySideBarDetails = panelExtension || getSelectedEntityDetails(selectedEntity);
 
   if (!filteredModel) {
     return null;

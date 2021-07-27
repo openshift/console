@@ -4,6 +4,7 @@ import {
   TopologyDataModelDepicted,
   TopologyDataModelGetter,
   TopologyDataModelReconciler,
+  TopologyDataPanelComponent,
   TopologyDecoratorGetter,
   TopologyDecoratorQuadrant,
   TopologyDisplayOption,
@@ -77,6 +78,17 @@ export type TopologyDecoratorProvider = ExtensionDeclaration<
   }
 >;
 
+/** Topology Data Panel Extension */
+export type TopologyDataPanel = ExtensionDeclaration<
+  'console.topology/data/panel',
+  {
+    // entity type of the panel
+    type: string;
+    // component specific to the panel
+    panel: CodeRef<TopologyDataPanelComponent>;
+  }
+>;
+
 // Type Guards
 
 export const isTopologyComponentFactory = (e: Extension): e is TopologyComponentFactory =>
@@ -87,6 +99,9 @@ export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConn
 
 export const isTopologyDataModelFactory = (e: Extension): e is TopologyDataModelFactory =>
   e.type === 'console.topology/data/factory';
+
+export const isTopologyDataPanel = (e: Extension): e is TopologyDataPanel =>
+  e.type === 'console.topology/data/panel';
 
 export const isTopologyDisplayFilters = (e: Extension): e is TopologyDisplayFilters =>
   e.type === 'console.topology/display/filters';

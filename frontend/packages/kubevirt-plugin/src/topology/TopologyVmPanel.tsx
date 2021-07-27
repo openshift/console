@@ -35,19 +35,19 @@ const dispatchToProps = (dispatch): PropsFromDispatch => ({
 });
 
 type OwnProps = {
-  vmNode: VMNode;
+  item: VMNode;
 };
 
 type TopologyVmPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
-  vmNode,
+  item,
   onClickTab,
 }: TopologyVmPanelProps) => {
   const { t } = useTranslation();
-  const name = vmNode.getLabel();
-  const vmData = vmNode.getData();
-  const vmObj = getResource(vmNode);
+  const name = item.getLabel();
+  const vmData = item.getData();
+  const vmObj = getResource(item);
   const { namespace } = vmObj.metadata;
   const actions = vmActions(vmObj, vmData);
 
@@ -83,7 +83,7 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
           { name: t('kubevirt-plugin~Details'), component: TopologyVmDetailsPanel },
           { name: t('kubevirt-plugin~Resources'), component: TopologyVmResourcesPanel },
         ]}
-        tabProps={{ vmNode }}
+        tabProps={{ vmNode: item }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
