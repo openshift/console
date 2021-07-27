@@ -11,9 +11,6 @@ export type BuildConfigData = {
 };
 
 export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigData => {
-  const [loaded, setLoaded] = React.useState<boolean>(false);
-  const [loadError, setLoadError] = React.useState<string>(null);
-  const [buildConfigs, setBuildConfigs] = React.useState<BuildConfigOverviewItem[]>();
   const { namespace } = resource.metadata;
   const watchedResources = React.useMemo(
     () => ({
@@ -33,22 +30,20 @@ export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigDa
 
   const resources = useK8sWatchResources(watchedResources);
 
-  React.useEffect(() => {
+  const result = React.useMemo(() => {
     const resourceWithLoadError = Object.values(resources).find((r) => r.loadError);
     if (resourceWithLoadError) {
-      setLoadError(resourceWithLoadError.loadError);
-      return;
+      return { loaded: false, loadError: resourceWithLoadError.loadError, buildConfigs: null };
     }
-    setLoadError(null);
     if (
       Object.keys(resources).length > 0 &&
       Object.keys(resources).every((key) => resources[key].loaded)
     ) {
       const resourceBuildConfigs = getBuildConfigsForResource(resource, resources);
-      setBuildConfigs(resourceBuildConfigs);
-      setLoaded(true);
+      return { loaded: true, loadError: null, buildConfigs: resourceBuildConfigs };
     }
+    return { loaded: false, loadError: null, buildConfigs: null };
   }, [resource, resources]);
 
-  return { loaded, loadError, buildConfigs };
+  return result;
 };

@@ -173,5 +173,15 @@ export type GraphData = {
   decorators?: { [key: string]: TopologyDecorator[] };
 };
 
+export type BuildConfigOverviewItem = K8sResourceCommon & {
+  builds: K8sResourceCommon[];
+};
+
+export type BuildConfigData = {
+  loaded: boolean;
+  loadError: string;
+  buildConfigs: BuildConfigOverviewItem[];
+};
+
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';
 export type ShowGroupingHintEventListener = EventListener<[Node, string]>;

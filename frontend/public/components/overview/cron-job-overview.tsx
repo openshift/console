@@ -1,3 +1,6 @@
+/**
+ * @deprecated [TopologySideBar] This files has been moved to @console/topology and delete this once all the side panels uses dynamic extensions
+ */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
