@@ -96,7 +96,7 @@ export const getLifecycleHookFormData = (lch: any): LifecycleHookFormData => {
 };
 
 export const getStrategyData = (
-  type: string,
+  type: DeploymentStrategyType,
   strategy: any,
   resName: string,
   resNamespace: string,
@@ -168,10 +168,10 @@ export const getStrategyData = (
 
 export const getStrategy = (
   deployment: K8sResourceKind,
-  resourceType: string,
+  resourceType: Resources,
 ): DeploymentStrategy => {
   const { strategy } = deployment.spec ?? {};
-  let type: string;
+  let type: DeploymentStrategyType;
 
   if (resourceType === Resources.OpenShift) {
     type = strategy?.type ?? DeploymentStrategyType.rollingParams;
@@ -205,7 +205,7 @@ export const getStrategy = (
 
 export const getTriggersAndImageStreamValues = (
   deployment: K8sResourceKind,
-  resourceType: string,
+  resourceType: Resources,
 ): TriggersAndImageStreamFormData => {
   let imageName: string;
   let imageTrigger;

@@ -4,15 +4,20 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DropdownField } from '@console/shared/src';
+import { Resources } from '../../import/import-types';
 import FormSection from '../../import/section/FormSection';
 import { getStrategyData } from '../utils/edit-deployment-utils';
 import CustomStrategy from './CustomStrategy';
 import RecreateStrategy from './RecreateStrategy';
 import RollingStrategy from './RollingStrategy';
-import { DeploymentStrategyType, DeploymentStrategyDropdownData } from './utils/types';
+import {
+  getDeploymentStrategyItems,
+  getDeploymentStrategyHelpText,
+} from './utils/deployment-strategy-utils';
+import { DeploymentStrategyType } from './utils/types';
 
 export type DeploymentStrategySectionProps = {
-  resourceType: string;
+  resourceType: Resources;
   resourceObj: K8sResourceKind;
 };
 
@@ -48,7 +53,7 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
   }, [type, resourceObj, resourceType]);
 
   const onChange = React.useCallback(
-    (value) => {
+    (value: DeploymentStrategyType) => {
       const strategyDefaultValues = getStrategyData(value, {}, resName, resNamespace, resourceType);
       const strategyData = {
         ..._.omit(resourceObj.spec?.strategy, [
@@ -78,8 +83,8 @@ const DeploymentStrategySection: React.FC<DeploymentStrategySectionProps> = ({
       <DropdownField
         name="formData.deploymentStrategy.type"
         label={t('devconsole~Strategy type')}
-        items={DeploymentStrategyDropdownData[resourceType].items}
-        helpText={DeploymentStrategyDropdownData[resourceType].helpText[type]}
+        items={getDeploymentStrategyItems(resourceType, t)}
+        helpText={getDeploymentStrategyHelpText(resourceType, type, t)}
         onChange={onChange}
         fullWidth
       />
