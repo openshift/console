@@ -122,7 +122,9 @@ export const operator = {
       .contains('Name')
       .parent()
       .within(() => {
-        cy.get('input').clear();
+        cy.get('input')
+          .should('not.be.disabled')
+          .clear();
         cy.get('input').type(exampleName);
       });
     cy.get(submitButton).click();
