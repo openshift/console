@@ -1169,7 +1169,7 @@ export const NetworkOperatorConfigModel: K8sKind = {
   label: 'Network',
   labelPlural: 'Networks',
   apiVersion: 'v1',
-  apiGroup: 'operator.openshift.io',
+  apiGroup: 'config.openshift.io',
   plural: 'networks',
   abbr: '',
   namespaced: false,

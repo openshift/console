@@ -47,7 +47,7 @@ describe('NetworkPolicyForm without permissions to fetch CNI type', () => {
 });
 
 describe('NetworkPolicyForm with Unknown CNI type', () => {
-  const unknownSDNSpec = { spec: { defaultNetwork: { type: 'Calico' } } };
+  const unknownSDNSpec = { spec: { networkType: 'Calico' } };
   (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
   const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
 
@@ -72,7 +72,7 @@ describe('NetworkPolicyForm with Unknown CNI type', () => {
 });
 
 describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
-  const openShiftSDNSpec = { spec: { defaultNetwork: { type: 'OpenShiftSDN' } } };
+  const openShiftSDNSpec = { spec: { networkType: 'OpenShiftSDN' } };
   (useK8sGet as jest.Mock).mockReturnValue([openShiftSDNSpec, true, null]);
   const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
 
@@ -94,7 +94,7 @@ describe('NetworkPolicyForm with Openshift SDN CNI type', () => {
 });
 
 describe('NetworkPolicyForm with OVN Kubernetes CNI type', () => {
-  const ovnK8sSpec = { spec: { defaultNetwork: { type: 'OVNKubernetes' } } };
+  const ovnK8sSpec = { spec: { networkType: 'OVNKubernetes' } };
   (useK8sGet as jest.Mock).mockReturnValue([ovnK8sSpec, true, null]);
   const wrapper = mount(<NetworkPolicyFormComponent flags={{ OPENSHIFT: true }} />);
 

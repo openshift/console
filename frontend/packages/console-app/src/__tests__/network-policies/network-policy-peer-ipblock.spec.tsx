@@ -49,7 +49,7 @@ describe('NetworkPolicyPeerIPBlock without permissions to fetch CNI type', () =>
 });
 
 describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
-  const unknownSDNSpec = { spec: { defaultNetwork: { type: 'Calico' } } };
+  const unknownSDNSpec = { spec: { networkType: 'Calico' } };
   (useK8sGet as jest.Mock).mockReturnValue([unknownSDNSpec, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
@@ -69,11 +69,7 @@ describe('NetworkPolicyPeerIPBlock with Unknown CNI type', () => {
 });
 
 describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
-  (useK8sGet as jest.Mock).mockReturnValue([
-    { spec: { defaultNetwork: { type: 'OpenShiftSDN' } } },
-    true,
-    null,
-  ]);
+  (useK8sGet as jest.Mock).mockReturnValue([{ spec: { networkType: 'OpenShiftSDN' } }, true, null]);
   const wrapper = mount(networkPolicyPeerIPBlock);
 
   it('should not render the exceptions section', () => {
@@ -92,7 +88,7 @@ describe('NetworkPolicyPeerIPBlock with OpenShift SDN CNI type', () => {
 
 describe('NetworkPolicyPeerIPBlock with OVN Kubernetes CNI type', () => {
   (useK8sGet as jest.Mock).mockReturnValue([
-    { spec: { defaultNetwork: { type: 'OVNKubernetes' } } },
+    { spec: { networkType: 'OVNKubernetes' } },
     true,
     null,
   ]);
