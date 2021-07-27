@@ -656,7 +656,7 @@
   "Help menu": "Help menu",
   "Select a workload": "Select a workload",
   "Add secret to workload": "Add secret to workload",
-  "addSecretDescription": "Add all values from <1></1>{{secretName}} to a workload as environment variables or a volume.",
+  "Add all values from <1></1>{{secretName}} to a workload as environment variables or a volume.": "Add all values from <1></1>{{secretName}} to a workload as environment variables or a volume.",
   "Add this secret to workload": "Add this secret to workload",
   "Add secret as": "Add secret as",
   "Prefix": "Prefix",
