@@ -170,14 +170,14 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
 
   const { t } = useTranslation();
   return (
-    <Dashboard>
+    <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
-          <DashboardCard>
+          <DashboardCard className="resource-metrics-dashboard__card">
             <DashboardCardHeader>
               <DashboardCardTitle>{t('public~Memory usage')}</DashboardCardTitle>
             </DashboardCardHeader>
-            <DashboardCardBody>
+            <DashboardCardBody className="resource-metrics-dashboard__card-body">
               <Area
                 byteDataType={ByteDataTypes.BinaryBytes}
                 humanize={humanizeBinaryBytes}
@@ -188,11 +188,11 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
           </DashboardCard>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard>
+          <DashboardCard className="resource-metrics-dashboard__card">
             <DashboardCardHeader>
               <DashboardCardTitle>{t('public~CPU usage')}</DashboardCardTitle>
             </DashboardCardHeader>
-            <DashboardCardBody>
+            <DashboardCardBody className="resource-metrics-dashboard__card-body">
               <Area
                 humanize={humanizeCpuCores}
                 query={`pod:container_cpu_usage:sum{pod='${podName}',container='',namespace='${namespace}'}`}
@@ -202,11 +202,11 @@ const BuildMetrics = requirePrometheus(({ obj }) => {
           </DashboardCard>
         </GridItem>
         <GridItem xl={6} lg={12}>
-          <DashboardCard>
+          <DashboardCard className="resource-metrics-dashboard__card">
             <DashboardCardHeader>
               <DashboardCardTitle>{t('public~Filesystem')}</DashboardCardTitle>
             </DashboardCardHeader>
-            <DashboardCardBody>
+            <DashboardCardBody className="resource-metrics-dashboard__card-body">
               <Area
                 byteDataType={ByteDataTypes.BinaryBytes}
                 humanize={humanizeBinaryBytes}

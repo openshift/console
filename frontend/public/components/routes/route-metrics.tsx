@@ -21,14 +21,14 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
     }
     const namespaceRouteQuery = `{exported_namespace="${obj.metadata.namespace}",route="${obj.metadata.name}"}[5m]`;
     return (
-      <Dashboard>
+      <Dashboard className="resource-metrics-dashboard">
         <Grid hasGutter>
           <GridItem xl={6} lg={12}>
-            <DashboardCard>
+            <DashboardCard className="resource-metrics-dashboard__card">
               <DashboardCardHeader>
                 <DashboardCardTitle>{t('public~Traffic in')}</DashboardCardTitle>
               </DashboardCardHeader>
-              <DashboardCardBody>
+              <DashboardCardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   humanize={humanizeDecimalBytesPerSec}
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_in_total${namespaceRouteQuery}))`}
@@ -37,11 +37,11 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
             </DashboardCard>
           </GridItem>
           <GridItem xl={6} lg={12}>
-            <DashboardCard>
+            <DashboardCard className="resource-metrics-dashboard__card">
               <DashboardCardHeader>
                 <DashboardCardTitle>{t('public~Traffic out')}</DashboardCardTitle>
               </DashboardCardHeader>
-              <DashboardCardBody>
+              <DashboardCardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   humanize={humanizeDecimalBytesPerSec}
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_server_bytes_out_total${namespaceRouteQuery}))`}
@@ -50,11 +50,11 @@ export const RouteMetrics = connectToFlags<RouteMetricsProps>(FLAGS.CAN_GET_NS)(
             </DashboardCard>
           </GridItem>
           <GridItem xl={6} lg={12}>
-            <DashboardCard>
+            <DashboardCard className="resource-metrics-dashboard__card">
               <DashboardCardHeader>
                 <DashboardCardTitle>{t('public~Connection rate')}</DashboardCardTitle>
               </DashboardCardHeader>
-              <DashboardCardBody>
+              <DashboardCardBody className="resource-metrics-dashboard__card-body">
                 <Area
                   query={`sum without (instance,exported_pod,exported_service,pod,server) (irate(haproxy_backend_connections_total${namespaceRouteQuery}))`}
                 />

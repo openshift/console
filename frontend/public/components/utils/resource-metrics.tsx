@@ -14,18 +14,12 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 const ResourceMetricsDashboardCard: React.FC<ResourceMetricsDashboardCardProps> = (props) => (
-  <DashboardCard>
+  <DashboardCard className="resource-metrics-dashboard__card">
     <DashboardCardHeader>
       <DashboardCardTitle>{props.title}</DashboardCardTitle>
     </DashboardCardHeader>
-    <DashboardCardBody>
-      <QueryBrowser
-        queries={props.queries}
-        disableZoom
-        hideControls
-        showLegend
-        wrapperClassName="query-browser__resource-metrics-wrapper"
-      />
+    <DashboardCardBody className="resource-metrics-dashboard__card-body">
+      <QueryBrowser queries={props.queries} disableZoom hideControls />
     </DashboardCardBody>
   </DashboardCard>
 );
@@ -34,7 +28,7 @@ export const ResourceMetricsDashboard: React.FC<ResourceMetricsDashboardProps> =
   const { t } = useTranslation();
   const queries = useResourceMetricsQueries(obj);
   return queries ? (
-    <Dashboard>
+    <Dashboard className="resource-metrics-dashboard">
       <Grid hasGutter>
         <GridItem xl={6} lg={12}>
           <ResourceMetricsDashboardCard
