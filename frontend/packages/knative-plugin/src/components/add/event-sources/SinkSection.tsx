@@ -169,7 +169,18 @@ const SinkSection: React.FC<SinkSectionProps> = ({ namespace, fullWidth }) => {
   const { t } = useTranslation();
   return (
     <FormSection
-      title={t('knative-plugin~Sink')}
+      title={
+        <>
+          {t('knative-plugin~Sink')}
+          <span
+            className="pf-c-form__label-required"
+            aria-hidden="true"
+            style={{ verticalAlign: 'top' }}
+          >
+            {' *'}
+          </span>
+        </>
+      }
       subTitle={t(
         'knative-plugin~Add a sink to route this Event source to a Channel, Broker, Knative Service or another route.',
       )}
