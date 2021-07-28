@@ -66,7 +66,7 @@ const factorOutError = <T>(list: (T | ConversionError)[]): T[] | ConversionError
   return list as T[];
 };
 
-const selectorToK8s = <T>(
+const selectorToK8s = (
   selector: string[][],
   emptyValue: Selector | undefined,
 ): Selector | undefined | ConversionError => {
@@ -136,11 +136,12 @@ const ruleToK8s = (
 export const networkPolicyToK8sResource = (
   from: NetworkPolicy,
 ): NetworkPolicyKind | ConversionError => {
-  const podSelector = selectorToK8s(from.podSelector, null);
+  const podSelector = selectorToK8s(from.podSelector, undefined);
   if (isError(podSelector)) {
     return podSelector;
   }
 
+  const policyTypes: string[] = [];
   const res: NetworkPolicyKind = {
     kind: 'NetworkPolicy',
     apiVersion: 'networking.k8s.io/v1',
@@ -150,14 +151,14 @@ export const networkPolicyToK8sResource = (
     },
     spec: {
       podSelector,
-      policyTypes: [],
+      policyTypes,
     },
   };
   if (from.ingress.denyAll) {
-    res.spec.policyTypes.push(networkPolicyTypeIngress);
+    policyTypes.push(networkPolicyTypeIngress);
     res.spec.ingress = [];
   } else if (from.ingress.rules.length > 0) {
-    res.spec.policyTypes.push(networkPolicyTypeIngress);
+    policyTypes.push(networkPolicyTypeIngress);
     const rules = factorOutError(from.ingress.rules.map((r) => ruleToK8s(r, 'ingress')));
     if (isError(rules)) {
       return rules;
@@ -165,10 +166,10 @@ export const networkPolicyToK8sResource = (
     res.spec.ingress = rules;
   }
   if (from.egress.denyAll) {
-    res.spec.policyTypes.push(networkPolicyTypeEgress);
+    policyTypes.push(networkPolicyTypeEgress);
     res.spec.egress = [];
   } else if (from.egress.rules.length > 0) {
-    res.spec.policyTypes.push(networkPolicyTypeEgress);
+    policyTypes.push(networkPolicyTypeEgress);
     const rules = factorOutError(from.egress.rules.map((r) => ruleToK8s(r, 'egress')));
     if (isError(rules)) {
       return rules;

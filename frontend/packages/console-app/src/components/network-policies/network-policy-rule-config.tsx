@@ -9,6 +9,7 @@ import {
   FormFieldGroupHeader,
 } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,7 +21,11 @@ import { NetworkPolicyPeerIPBlock } from './network-policy-peer-ipblock';
 import { NetworkPolicyPeerSelectors } from './network-policy-peer-selectors';
 import { NetworkPolicyPorts } from './network-policy-ports';
 
-const getPeerRuleTitle = (t, direction: 'ingress' | 'egress', peer: NetworkPolicyPeer) => {
+const getPeerRuleTitle = (
+  t: TFunction,
+  direction: 'ingress' | 'egress',
+  peer: NetworkPolicyPeer,
+) => {
   if (peer.ipBlock) {
     return direction === 'ingress'
       ? t('public~Allow traffic from peers by IP block')
@@ -76,7 +81,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
     onChange(rule);
   };
 
-  const removePeer = (idx) => {
+  const removePeer = (idx: number) => {
     rule.peers = [...rule.peers.slice(0, idx), ...rule.peers.slice(idx + 1)];
     onChange(rule);
   };
@@ -123,7 +128,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
             <NetworkPolicyPeerSelectors
               direction={direction}
               namespaceSelector={peer.namespaceSelector}
-              podSelector={peer.podSelector}
+              podSelector={peer.podSelector || []}
               onChange={(podSel, nsSel) => {
                 rule.peers[idx].podSelector = podSel;
                 rule.peers[idx].namespaceSelector = nsSel;
