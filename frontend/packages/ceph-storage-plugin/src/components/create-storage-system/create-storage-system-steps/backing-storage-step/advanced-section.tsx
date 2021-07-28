@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { DeploymentType } from '../../../../constants/create-storage-system';
 import { WizardDispatch, WizardState } from '../../reducer';
-import './backing-storage.scss';
+import './backing-storage-step.scss';
 
 export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
   deployment,

@@ -1,9 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormGroup, TextInput } from '@patternfly/react-core';
-import { getExternalStorage } from '../../../utils/create-storage-system';
-import { WizardDispatch, WizardState } from '../reducer';
-import { ExternalStateValues, ExternalStateKeys } from '../external-storage/types';
+import {
+  Form,
+  FormGroup,
+  TextContent,
+  TextInput,
+  TextVariants,
+  Text,
+} from '@patternfly/react-core';
+import { getExternalStorage } from '../../../../utils/create-storage-system';
+import { WizardDispatch, WizardState } from '../../reducer';
+import { ExternalStateValues, ExternalStateKeys } from '../../external-storage/types';
+import './create-storage-class-step.scss';
 
 export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({
   state,
@@ -13,7 +21,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { Component } = getExternalStorage(externalStorage) || {};
+  const { Component, displayName } = getExternalStorage(externalStorage) || {};
 
   const setForm = React.useCallback(
     (field: ExternalStateKeys, value: ExternalStateValues) =>
@@ -28,7 +36,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({
   );
 
   return (
-    <Form>
+    <Form className="odf-create-storage-class__form">
       <FormGroup label={t('ceph-storage-plugin~StorageClass name')} fieldId="storage-class-name">
         <TextInput
           id="storage-class-name"
@@ -44,6 +52,11 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({
           }
         />
       </FormGroup>
+      <TextContent>
+        <Text component={TextVariants.h4}>
+          {t('ceph-storage-plugin~{{displayName}} connection details', { displayName })}
+        </Text>
+      </TextContent>
       {Component && <Component setFormState={setForm} formState={state} />}
     </Form>
   );
