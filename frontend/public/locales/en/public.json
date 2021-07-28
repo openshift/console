@@ -458,6 +458,8 @@
   "Normal": "Normal",
   "Warning": "Warning",
   "Events by name or message": "Events by name or message",
+  "{{numRemaining}} more": "{{numRemaining}} more",
+  "Show less": "Show less",
   "All": "All",
   "No events": "No events",
   "No matching events": "No matching events",

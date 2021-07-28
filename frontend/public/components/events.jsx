@@ -228,6 +228,8 @@ export const EventsList = (props) => {
               key="resources-category"
               categoryName={t('public~Resource')}
               defaultIsOpen={false}
+              collapsedText={t('public~{{numRemaining}} more', { numRemaining: '${remaining}' })}
+              expandedText={t('public~Show less')}
             >
               {[...selected].map((chip) => {
                 const chipString = chip === resourceTypeAll ? t('public~All') : chip;
