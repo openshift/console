@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@console/dynamic-plugin-sdk@link:../packages/console-dynamic-plugin-sdk":
+"@console/dynamic-plugin-sdk@link:../packages/console-dynamic-plugin-sdk/dist":
   version "0.0.0"
   uid ""
 

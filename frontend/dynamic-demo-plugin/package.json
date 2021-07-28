@@ -13,7 +13,7 @@
     "react": "17.0.1"
   },
   "devDependencies": {
-    "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk",
+    "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk/dist",
     "@types/react": "16.8.13",
     "http-server": "0.12.x",
     "ts-loader": "6.2.2",
@@ -29,7 +29,8 @@
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
       "barUtils": "./utils/bar",
-      "telemetry": "./utils/telemetry"
+      "telemetry": "./utils/telemetry",
+      "extensionConsumer": "./components/ExtensionConsumer.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
