@@ -13,6 +13,7 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
+import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
@@ -21,6 +22,7 @@ import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
 import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
+import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import {
   getTemplateValidationsFromTemplate,
   getVMTemplateNamespacedName,
@@ -147,10 +149,11 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
 
 type VMDisksProps = VMTabProps & {
   vmi?: VMIKind;
-  isCommonTemplate?: boolean;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isCommonTemplate }) => {
+export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi }) => {
+  const commonTemplate = new VMTemplateWrapper(vmLikeEntity).asResource(true);
+  const isCommon = isCommonTemplate(commonTemplate);
   const vmTemplateQuery = getVMTemplateNamespacedName(vmLikeEntity);
   const [vmTemplate] = useK8sWatchResource<TemplateKind>({
     kind: TemplateModel.kind,
@@ -211,9 +214,9 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
       resources={resources}
       flatten={flatten}
       createButtonText={t('kubevirt-plugin~Add Disk')}
-      canCreate={!isVMI(vmLikeEntity)}
+      canCreate
       createProps={{
-        isDisabled: isLocked || isCommonTemplate,
+        isDisabled: isLocked || isCommon || isVMI(vmLikeEntity),
         onClick: createFn,
         id: 'add-disk',
       }}
@@ -222,7 +225,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ obj: vmLikeEntity, vmi, isComm
         vmLikeEntity,
         vmi,
         withProgress,
-        isDisabled: isLocked || isCommonTemplate,
+        isDisabled: isLocked || isCommon,
         templateValidations,
         columnClasses: diskTableColumnClasses,
         showGuestAgentHelp: true,
