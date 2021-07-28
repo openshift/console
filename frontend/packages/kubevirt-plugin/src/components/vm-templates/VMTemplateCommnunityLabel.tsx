@@ -16,10 +16,10 @@ export const VMTemplateCommnunityLabel: React.FC<VMTemplateLabelProps> = ({
   const { t } = useTranslation();
   const provider = getTemplateProvider(t, template);
   const templateSupport = getTemplateSupport(template);
-  const isRedHatCommunity =
-    ['red hat', 'redhat'].includes(provider.toLowerCase()) && templateSupport.provider !== 'Full';
+  const isCommunity =
+    !['red hat', 'redhat'].includes(provider.toLowerCase()) && templateSupport.provider !== 'Full';
 
-  if (!isRedHatCommunity) {
+  if (!isCommunity) {
     return null;
   }
 
