@@ -42,8 +42,6 @@ const VMIActionRequest = async (
   const response = body
     ? await coFetch(url, {
         method,
-        name: getName(vmi),
-        namespace: getNamespace(vmi),
         body: JSON.stringify(body),
       })
     : await coFetch(url, { method });

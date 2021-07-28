@@ -1,6 +1,8 @@
-import { coFetch, shouldLogout, validateStatus, RetryError } from '../../public/co-fetch';
+import { RetryError } from '../../error/http-error';
+import { consoleFetch } from '../console-fetch';
+import { shouldLogout, validateStatus } from '../console-fetch-utils';
 
-describe('coFetch', () => {
+describe('consoleFetch', () => {
   const json = async () => ({
     details: {
       kind: 'clusterresourcequotas',
@@ -37,55 +39,65 @@ describe('coFetch', () => {
 
   it('should throw RetryError', async () => {
     await expect(
-      validateStatus({ status: 409, json, headers }, '', 'GET', true),
+      validateStatus({ status: 409, json, headers } as Response, '', 'GET', true),
     ).rejects.not.toBeInstanceOf(RetryError);
     await expect(
-      validateStatus({ status: 409, json, headers }, '', 'POST', true),
+      validateStatus({ status: 409, json, headers } as Response, '', 'POST', true),
     ).rejects.toBeInstanceOf(RetryError);
     await expect(
       validateStatus(
-        { status: 409, json: async () => ({ details: { kind: 'resourcequotas' } }), headers },
+        {
+          status: 409,
+          json: async () => ({ details: { kind: 'resourcequotas' } }),
+          headers,
+        } as Response,
         '',
         'POST',
         true,
       ),
     ).rejects.toBeInstanceOf(RetryError);
     await expect(
-      validateStatus({ status: 409, json: async () => ({}), headers }, '', 'POST', true),
+      validateStatus(
+        { status: 409, json: async () => ({}), headers } as Response,
+        '',
+        'POST',
+        true,
+      ),
     ).rejects.not.toBeInstanceOf(RetryError);
     await expect(
-      validateStatus({ status: 409, json, headers }, '', 'POST', false),
+      validateStatus({ status: 409, json, headers } as Response, '', 'POST', false),
     ).rejects.not.toBeInstanceOf(RetryError);
     await expect(
-      validateStatus({ status: 429, headers: emptyHeaders }, '', 'POST', true),
+      validateStatus({ status: 429, headers: emptyHeaders } as Response, '', 'POST', true),
     ).rejects.toBeInstanceOf(RetryError);
     await expect(
-      validateStatus({ status: 429, headers: emptyHeaders }, '', 'POST', false),
+      validateStatus({ status: 429, headers: emptyHeaders } as Response, '', 'POST', false),
     ).rejects.not.toBeInstanceOf(RetryError);
   });
 
   it('should retry up to 3 times when RetryError is thrown', async () => {
     window.fetch = jest.fn(() => Promise.resolve({ status: 404, headers: emptyHeaders }));
+
     try {
-      await coFetch('');
+      await consoleFetch('');
     } catch {
       // ignore
     }
     expect(window.fetch).toHaveBeenCalledTimes(1);
 
-    window.fetch.mockClear();
+    (window.fetch as jest.Mock).mockClear();
     window.fetch = jest.fn(() => Promise.resolve({ status: 429, headers: emptyHeaders }));
     try {
-      await coFetch('');
+      await consoleFetch('');
     } catch {
       // ignore
     }
     expect(window.fetch).toHaveBeenCalledTimes(3);
 
-    window.fetch.mockClear();
+    (window.fetch as jest.Mock).mockClear();
     window.fetch = jest.fn(() => Promise.resolve({ status: 409, json, headers }));
     try {
-      await coFetch('', { method: 'POST' });
+      await consoleFetch('', { method: 'POST' });
     } catch {
       // ignore
     }

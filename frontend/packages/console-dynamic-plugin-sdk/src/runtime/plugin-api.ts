@@ -8,6 +8,9 @@ export const exposePluginAPI = () => {
       .useK8sWatchResources,
     useResolvedExtensions: require('@console/dynamic-plugin-sdk/src/api/useResolvedExtensions')
       .useResolvedExtensions,
+    consoleFetch: require('@console/dynamic-plugin-sdk/src/utils/fetch').consoleFetch,
+    consoleFetchJSON: require('@console/dynamic-plugin-sdk/src/utils/fetch').consoleFetchJSON,
+    consoleFetchText: require('@console/dynamic-plugin-sdk/src/utils/fetch').consoleFetchText,
   };
   window.internalAPI = {
     AcitivityItem: require('@console/shared/src/components/dashboard/activity-card/ActivityItem')
