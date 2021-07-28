@@ -20,6 +20,7 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
     cy.visit('/');
     nav.sidenav.switcher.changePerspectiveTo('Administrator');
     nav.sidenav.switcher.shouldHaveText('Administrator');
+    operator.install(testOperator.name, testOperator.operatorHubCardTestID);
   });
 
   afterEach(() => {
@@ -33,9 +34,7 @@ describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstall
   });
 
   it(`Globally installs ${testOperator.name} operator in ${GlobalInstalledNamespace} and creates ${testOperand.name} operand`, () => {
-    operator.install(testOperator.name, testOperator.operatorHubCardTestID);
     operator.installedSucceeded(testOperator.name);
-
     operator.navToDetailsPage(testOperator.name);
     cy.byTestSectionHeading('Provided APIs').should('exist');
     cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
