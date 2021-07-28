@@ -185,28 +185,25 @@ const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps
         networkFeatures?.PolicyPeerIPBlockExceptions === undefined && (
           <Alert
             variant="info"
-            title={
-              <>
-                <p>{t('public~When using the OpenShift SDN cluster network provider:')}</p>
-                <ul>
-                  <li>{t('public~Egress network policy is not supported.')}</li>
-                  <li>
-                    {t(
-                      'public~IP block exceptions are not supported and would cause the entire IP block section to be ignored.',
-                    )}
-                  </li>
-                </ul>
-                <p>
-                  {t('public~More information:')}&nbsp;
-                  <ExternalLink
-                    href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-                    text={t('public~NetworkPolicies documentation')}
-                  />
-                </p>
-              </>
-            }
+            title={<p>{t('public~When using the OpenShift SDN cluster network provider:')}</p>}
             actionClose={<AlertActionCloseButton onClose={() => setShowSDNAlert(false)} />}
-          />
+          >
+            <ul>
+              <li>{t('public~Egress network policy is not supported.')}</li>
+              <li>
+                {t(
+                  'public~IP block exceptions are not supported and would cause the entire IP block section to be ignored.',
+                )}
+              </li>
+            </ul>
+            <p>
+              {t('public~More information:')}&nbsp;
+              <ExternalLink
+                href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
+                text={t('public~NetworkPolicies documentation')}
+              />
+            </p>
+          </Alert>
         )}
       <div className="form-group co-create-networkpolicy__name">
         <label className="co-required" htmlFor="name">
