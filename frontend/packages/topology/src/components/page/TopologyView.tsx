@@ -259,7 +259,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         model,
         filters,
         application,
-        displayFilterExtensions.map((extension) => extension.properties.applyDisplayOptions),
+        [...displayFilterExtensions, ...dynamicDisplayFilterExtensions].map(
+          (extension) => extension.properties.applyDisplayOptions,
+        ),
         onSupportedFiltersChange,
         onSupportedKindsChange,
       );
@@ -274,6 +276,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     onSupportedFiltersChange,
     onSupportedKindsChange,
     displayFilterExtensions,
+    dynamicDisplayFilterExtensions,
   ]);
 
   React.useEffect(() => {

@@ -11,10 +11,12 @@
   "consolePlugin": {
     "entry": "src/plugin.ts",
     "exposedModules": {
-      "icons": "src/utils/icons.ts",
-      "catalog": "src/catalog",
-      "actions": "src/actions",
-      "helmTopology": "src/topology/sidebar"
+      "helmActions": "src/actions",
+      "helmCatalog": "src/catalog",
+      "helmComponents": "src/components",
+      "helmTopology": "src/topology",
+      "helmTopologySidebar": "src/topology/sidebar",
+      "helmUtils": "src/utils"
     }
   }
 }
