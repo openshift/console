@@ -1,6 +1,9 @@
 import * as _ from 'lodash';
+import { ByteDataTypes } from '@console/dynamic-plugin-sdk/src/api/internal';
 import { DataPoint } from '@console/internal/components/graphs';
 import { getType } from '@console/internal/components/utils/units';
+
+export { ByteDataTypes };
 
 const log = (x: number, y: number) => {
   return Math.log(y) / Math.log(x);
@@ -39,10 +42,3 @@ export type ProcessFrameResult = {
   processedData: DataPoint[][];
   unit: string;
 };
-
-export enum ByteDataTypes {
-  BinaryBytes = 'binaryBytes',
-  BinaryBytesWithoutB = 'binaryBytesWithoutB',
-  DecimalBytes = 'decimalBytes',
-  DecimalBytesWithoutB = 'decimalBytesWithoutB',
-}

@@ -14,6 +14,7 @@ import {
   K8sResourceKindReference,
   WatchK8sResults,
 } from '../extensions/console-types';
+import { PrometheusAlert } from './common-types';
 
 export type Point = [number, number];
 
@@ -75,21 +76,6 @@ export type TopologyDisplayOption = {
   labelKey?: string;
   priority: number;
   value: boolean;
-};
-
-export const enum AlertStates {
-  Firing = 'firing',
-  NotFiring = 'not-firing',
-  Pending = 'pending',
-  Silenced = 'silenced',
-}
-
-export type PrometheusAlert = {
-  activeAt?: string;
-  annotations: { [key: string]: string };
-  labels: { [key: string]: string };
-  state: AlertStates;
-  value?: number | string;
 };
 
 export type OverviewItem<T = K8sResourceCommon> = {

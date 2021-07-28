@@ -55,6 +55,7 @@ declare interface Window {
   loadPluginEntry?: Function;
   Cypress?: {};
   api: {}; // Console dynamic plugin APIs
+  internalAPI: {};
 }
 
 // TODO: Remove when upgrading to TypeScript 4.1.2+, which has a type for RelativeTimeFormat.

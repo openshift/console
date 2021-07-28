@@ -13,6 +13,7 @@ import {
   DashboardsInventoryItemGroup as DynamicDashboardsInventoryItemGroup,
   isDashboardsInventoryItemGroup as isDynamicDashboardsInventoryItemGroup,
 } from '@console/dynamic-plugin-sdk';
+import { ResourceInventoryItemProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 import { pluralize } from '@console/internal/components/utils';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
@@ -368,21 +369,6 @@ type StatusLinkProps = StatusProps & {
 export type ExpandedComponentProps = {
   resource: K8sResourceKind[];
   additionalResources?: { [key: string]: K8sResourceKind[] };
-};
-
-type ResourceInventoryItemProps = {
-  resources: K8sResourceKind[];
-  additionalResources?: { [key: string]: K8sResourceKind[] };
-  mapper?: StatusGroupMapper;
-  kind: K8sKind;
-  isLoading: boolean;
-  namespace?: string;
-  error: boolean;
-  showLink?: boolean;
-  TitleComponent?: React.ComponentType<{}>;
-  ExpandedComponent?: React.ComponentType<{}>;
-  basePath?: string;
-  dataTest?: string;
 };
 
 type ResourceTitleComponentComponent = {

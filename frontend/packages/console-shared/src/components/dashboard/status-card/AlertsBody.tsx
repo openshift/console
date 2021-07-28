@@ -7,6 +7,7 @@ import {
 } from '@patternfly/react-core';
 import { UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { AlertsBodyProps } from '@console/dynamic-plugin-sdk/src/api/internal';
 
 const AlertsBody: React.FC<AlertsBodyProps> = ({ error = false, children }) => {
   const { t } = useTranslation();
@@ -26,8 +27,3 @@ const AlertsBody: React.FC<AlertsBodyProps> = ({ error = false, children }) => {
   );
 };
 export default AlertsBody;
-
-type AlertsBodyProps = {
-  error?: boolean;
-  children?: React.ReactNode;
-};
