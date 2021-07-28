@@ -14,7 +14,6 @@ import {
   DiskType,
   VolumeType,
 } from '../../../../constants/vm/storage';
-import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
@@ -92,22 +91,24 @@ const getContainerStorage = (
   };
 };
 
-const containerNames = winToolsContainerNames();
-
-export const windowsToolsStorage: VMWizardStorage = {
-  type: VMWizardStorageType.WINDOWS_GUEST_TOOLS,
-  disk: DiskWrapper.initializeFromSimpleData({
-    name: WINTOOLS_DISK_NAME,
-    type: DiskType.CDROM,
-    bus: DiskBus.SATA,
-  }).asResource(),
-  volume: VolumeWrapper.initializeFromSimpleData({
-    name: WINTOOLS_DISK_NAME,
-    type: VolumeType.CONTAINER_DISK,
-    typeData: {
-      image: containerNames[window.SERVER_FLAGS.branding] || containerNames?.okd,
-    },
-  }).asResource(),
+export const windowsToolsStorage = (containerImages: {
+  [key: string]: Promise<string> | string;
+}) => {
+  return {
+    type: VMWizardStorageType.WINDOWS_GUEST_TOOLS,
+    disk: DiskWrapper.initializeFromSimpleData({
+      name: WINTOOLS_DISK_NAME,
+      type: DiskType.CDROM,
+      bus: DiskBus.SATA,
+    }).asResource(),
+    volume: VolumeWrapper.initializeFromSimpleData({
+      name: WINTOOLS_DISK_NAME,
+      type: VolumeType.CONTAINER_DISK,
+      typeData: {
+        image: (containerImages?.[window.SERVER_FLAGS.branding] || containerImages?.okd) as string,
+      },
+    }).asResource(),
+  };
 };
 
 export const getBaseImageStorage = (

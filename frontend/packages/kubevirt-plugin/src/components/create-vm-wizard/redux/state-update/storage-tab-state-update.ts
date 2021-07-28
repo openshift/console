@@ -1,38 +1,40 @@
 import { ValidationErrorType } from '@console/shared/src';
-import { VMSettingsField, VMWizardStorage, VMWizardStorageType, VMWizardProps } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import {
-  hasStoragesChanged,
-  iGetProvisionSourceStorage,
-  iGetProvisionSourceAdditionalStorage,
-  iGetStorages,
-} from '../../selectors/immutable/storage';
-import {
-  getNewProvisionSourceStorage,
-  windowsToolsStorage,
-} from '../initial-state/storage-tab-initial-state';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+
+import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
-import { getNextIDResolver } from '../../../../utils/utils';
-import { getStorages } from '../../selectors/selectors';
-import { vmWizardInternalActions } from '../internal-actions';
-import { getTemplateValidation } from '../../selectors/template';
-import { getVolumeContainerImage, isWinToolsImage } from '../../../../selectors/vm';
-import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import {
-  hasVMSettingsValueChanged,
-  iGetVmSettingValue,
-} from '../../selectors/immutable/vm-settings';
-import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { toShallowJS } from '../../../../utils/immutable';
-import { getEmptyInstallStorage } from '../../../../utils/storage';
-import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../selectors/config-map/sc-defaults';
+import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
+import { getVolumeContainerImage, isWinToolsImage } from '../../../../selectors/vm';
+import { toShallowJS } from '../../../../utils/immutable';
+import { getEmptyInstallStorage } from '../../../../utils/storage';
+import { getNextIDResolver } from '../../../../utils/utils';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { StorageUISource } from '../../../modals/disk-modal/storage-ui-source';
+import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
+import {
+  hasStoragesChanged,
+  iGetProvisionSourceAdditionalStorage,
+  iGetProvisionSourceStorage,
+  iGetStorages,
+} from '../../selectors/immutable/storage';
+import {
+  hasVMSettingsValueChanged,
+  iGetVmSettingValue,
+} from '../../selectors/immutable/vm-settings';
+import { getStorages, getV2VConfigMap } from '../../selectors/selectors';
+import { getTemplateValidation } from '../../selectors/template';
+import { VMSettingsField, VMWizardProps, VMWizardStorage, VMWizardStorageType } from '../../types';
+import {
+  getNewProvisionSourceStorage,
+  windowsToolsStorage,
+} from '../initial-state/storage-tab-initial-state';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -140,7 +142,12 @@ const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOption
   );
 
   if (mountWindowsGuestTools && !windowsTools) {
-    dispatch(vmWizardInternalActions[InternalActionType.UpdateStorage](id, windowsToolsStorage));
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](
+        id,
+        windowsToolsStorage(winToolsContainerNames(getV2VConfigMap(state))),
+      ),
+    );
   }
   if (!mountWindowsGuestTools && windowsTools) {
     dispatch(vmWizardInternalActions[InternalActionType.RemoveStorage](id, windowsTools.id));
