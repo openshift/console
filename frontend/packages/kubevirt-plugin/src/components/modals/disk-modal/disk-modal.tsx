@@ -257,8 +257,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         url:
           source.getDataVolumeSourceType() === DataVolumeSourceType.REGISTRY ? containerImage : url,
       })
-      .setVolumeMode(volumeMode || null)
-      .setAccessModes(accessMode ? [accessMode] : null)
+      .setVolumeMode(applySP && spVolumeMode ? spVolumeMode : volumeMode || null)
+      .setAccessModes(applySP && spAccessMode ? [spAccessMode] : accessMode ? [accessMode] : null)
       .setPreallocationDisk(enablePreallocation)
       .setNamespace(vmNamespace);
   }
