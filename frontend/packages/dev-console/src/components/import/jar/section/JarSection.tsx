@@ -76,12 +76,12 @@ const JarSection: React.FunctionComponent = () => {
       <InputField
         type={TextInputTypes.text}
         name="fileUpload.javaArgs"
-        label={t('devconsole~Optional Java commands')}
+        label={t('devconsole~Optional Java arguments')}
         helpText={t(
-          'devconsole~Java commands are application specific and can be added to customize your application.',
+          'devconsole~Optional Java arguments are saved as JAVA_ARGS environment variable to customize your application.',
         )}
         data-test-id="upload-jar-form-java-args"
-        placeholder={t('devconsole~Enter Java commands here')}
+        placeholder={t('devconsole~JAVA_ARGS')}
       />
     </FormSection>
   );
