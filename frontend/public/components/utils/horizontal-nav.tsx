@@ -333,6 +333,7 @@ export type HorizontalNavProps = {
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
   customData?: any;
+  alertURL?: string;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {
