@@ -372,7 +372,7 @@ export const menuActionDeleteVMorCancelImport = (
   actionArgs: ActionArgs,
 ): KebabOption => {
   const { status, vmImport } = actionArgs.vmStatusBundle;
-  if (status.getGroup() === StatusGroup.VMIMPORT && !status.isCompleted() && vmImport) {
+  if (status?.getGroup() === StatusGroup.VMIMPORT && !status?.isCompleted() && vmImport) {
     return menuActionDeleteVMImport(VirtualMachineImportModel, vmImport, actionArgs, {
       vm,
     });
