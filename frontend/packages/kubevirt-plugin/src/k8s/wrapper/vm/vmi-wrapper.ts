@@ -4,7 +4,6 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 import { VirtualMachineInstanceModel } from '../../../models';
-import { findKeySuffixValue } from '../../../selectors/utils';
 import { transformDevices } from '../../../selectors/vm/devices';
 import {
   getVMIAffinity,
@@ -18,6 +17,7 @@ import {
 /* eslint-disable lines-between-class-members */
 import { CPURaw, VMIKind, VMISpec } from '../../../types';
 import { V1Disk, V1Volume } from '../../../types/api';
+import { findKeySuffixValue } from '../../../utils';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { VMILikeMethods } from './types';
 

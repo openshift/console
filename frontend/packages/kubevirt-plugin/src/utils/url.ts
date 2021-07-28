@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 import { history } from '@console/internal/components/utils/router';
 import { k8sBasePath, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { VMTabURLEnum } from '../components/vms/types';
 import { VMWizardURLParams } from '../constants/url-params';
 import { VMWizardMode, VMWizardName, VMWizardView } from '../constants/vm';
+import { getName, getNamespace } from '../selectors';
 import { isCommonTemplate } from '../selectors/vm-template/basic';
 import { VMKind } from '../types';
 import { VMWizardBootSourceParams, VMWizardInitialData } from '../types/url';

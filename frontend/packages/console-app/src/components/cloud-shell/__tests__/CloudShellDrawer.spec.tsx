@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Drawer } from '@console/shared';
+import CloseButton from '@console/shared/src/components/close-button';
 import CloudShellDrawer from '../CloudShellDrawer';
 
 jest.mock('react-i18next', () => {
@@ -38,8 +39,8 @@ describe('CloudShellDrawerComponent', () => {
     const closeButton = wrapper
       .find(Drawer)
       .shallow()
-      .find('[data-test-id="cloudshell-terminal-close"]');
-    expect(closeButton.props()['aria-label']).toEqual(`${i18nNS}~Close terminal`);
+      .find(CloseButton);
+    expect(closeButton.props().ariaLabel).toEqual(`${i18nNS}~Close terminal`);
     closeButton.simulate('click');
     expect(onClose).toHaveBeenCalled();
   });

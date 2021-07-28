@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { ExternalLink } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { TileViewPage } from '@console/internal/components/utils/tile-view-page';
+import i18n from '@console/internal/i18n';
 import {
   COMMUNITY_PROVIDERS_WARNING_USERSETTINGS_KEY as userSettingsKey,
   COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY as storeKey,
@@ -93,26 +94,20 @@ const operatorHubFilterGroups = [
   'infraFeatures',
 ];
 
-// t('olm~Source')
-// t('olm~Provider')
-// t('olm~Install state')
-// t('olm~Capability level')
-// t('olm~Infrastructure features')
-const operatorHubFilterMap = {
-  catalogSourceDisplayName: 'Source',
-  provider: 'Provider',
-  installState: 'Install state',
-  capabilityLevel: 'Capability level',
-  infraFeatures: 'Infrastructure features',
-};
-
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
-const determineCategories = (items) => {
-  const newCategories = {};
+type Category = {
+  id: string;
+  label: string;
+  field: 'categories';
+  values: string[];
+};
+
+export const determineCategories = (items: OperatorHubItem[]): Record<string, Category> => {
+  const newCategories: Record<string, Category> = {};
   _.each(items, (item) => {
     _.each(item.categories, (category) => {
-      if (!newCategories[category]) {
+      if (!newCategories[category] && category) {
         newCategories[category] = {
           id: category,
           label: category,
@@ -133,7 +128,7 @@ const determineCategories = (items) => {
       categories[key] = newCategories[key];
       return categories;
     },
-    {},
+    {} as Record<string, Category>,
   );
 };
 
@@ -237,22 +232,8 @@ const sortFilterValues = (values, field) => {
   return _.sortBy(values, sorter);
 };
 
-const determineAvailableFilters = (initialFilters, items, filterGroups) => {
+const determineAvailableFilters = (initialFilters, items: OperatorHubItem[], filterGroups) => {
   const filters = _.cloneDeep(initialFilters);
-
-  // Always show both install state filters
-  filters.installState = {
-    Installed: {
-      label: 'Installed',
-      value: 'Installed',
-      active: false,
-    },
-    'Not Installed': {
-      label: 'Not Installed',
-      value: 'Not Installed',
-      active: false,
-    },
-  };
 
   _.each(filterGroups, (field) => {
     const values = [];
@@ -292,6 +273,25 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
       _.set(filters, [field, nextValue.value], nextValue),
     );
   });
+
+  // Always show both install state filters
+  if (!filters.installState) {
+    filters.installState = {
+      Installed: {
+        label: i18n.t('olm~Installed'),
+        value: 'Installed',
+        active: false,
+      },
+      'Not Installed': {
+        label: i18n.t('olm~Not Installed'),
+        value: 'Not Installed',
+        active: false,
+      },
+    };
+  } else {
+    _.set(filters, 'installState.Installed.label', i18n.t('olm~Installed'));
+    _.set(filters, 'installState.Not Installed.label', i18n.t('olm~Not Installed'));
+  }
 
   return filters;
 };
@@ -345,6 +345,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       alt=""
     />
   );
+
   return (
     <CatalogTile
       className="co-catalog-tile"
@@ -356,7 +357,7 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
       description={description}
       onClick={() => onClick(item)}
       footer={
-        installed ? (
+        installed && !item.isInstalling ? (
           <span>
             <GreenCheckCircleIcon /> {t('olm~Installed')}
           </span>
@@ -467,6 +468,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     );
   }
 
+  const filterGroupNameMap = {
+    catalogSourceDisplayName: t('olm~Source'),
+    provider: t('olm~Provider'),
+    installState: t('olm~Install state'),
+    capabilityLevel: t('olm~Capability level'),
+    infraFeatures: t('olm~Infrastructure features'),
+  };
+
   return (
     <>
       <TileViewPage
@@ -475,9 +484,10 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         getAvailableCategories={determineCategories}
         getAvailableFilters={determineAvailableFilters}
         filterGroups={operatorHubFilterGroups}
-        filterGroupNameMap={operatorHubFilterMap}
+        filterGroupNameMap={filterGroupNameMap}
         keywordCompare={keywordCompare}
         renderTile={renderTile}
+        emptyStateTitle={t('olm~No Results Match the Filter Criteria')}
         emptyStateInfo={t(
           'olm~No OperatorHub items are being shown due to the filters being applied.',
         )}
@@ -522,6 +532,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                       'pf-c-button',
                       { 'pf-m-secondary': remoteWorkflowUrl },
                       { 'pf-m-primary': !remoteWorkflowUrl },
+                      { 'pf-m-disabled': detailsItem.isInstalling },
                       'co-catalog-page__overlay-action',
                     )}
                     data-test-id="operator-install-btn"

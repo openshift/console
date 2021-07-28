@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { FocusTrap, MenuToggle } from '@patternfly/react-core';
+import { MenuToggle } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { checkAccess } from '@console/internal/components/utils';
-import { Popper } from '../../popper';
-import ActionMenuContent from './ActionMenuContent';
-import { ActionMenuVariant, MenuOption } from './menu-types';
+import { ActionMenuVariant, MenuOption } from '../types';
+import ActionMenuRenderer from './ActionMenuRenderer';
 
 type ActionMenuProps = {
   actions: Action[];
@@ -31,8 +30,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
   const [active, setActive] = React.useState<boolean>(false);
   const toggleRef = React.useRef<HTMLButtonElement>();
   const toggleRefCb = React.useCallback(() => toggleRef.current, []);
-  const menuRef = React.useRef<HTMLDivElement>();
-  const menuRefCb = React.useCallback(() => menuRef.current, []);
   const toggleLabel = label || t('console-shared~Actions');
   const menuOptions = options || actions;
 
@@ -96,36 +93,19 @@ const ActionMenu: React.FC<ActionMenuProps> = ({
           aria-expanded={active}
           aria-label={toggleLabel}
           aria-haspopup="true"
-          data-test-id="menu-toggle-button"
+          data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
           onClick={toggleMenu}
           {...(isKebabVariant ? { onFocus: handleHover, onMouseEnter: handleHover } : {})}
         >
           {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
         </MenuToggle>
-        <Popper
+        <ActionMenuRenderer
           open={!isDisabled && active}
-          placement="bottom-end"
+          options={menuOptions}
+          toggleRef={toggleRefCb}
+          onClick={hideMenu}
           onRequestClose={handleRequestClose}
-          reference={toggleRefCb}
-          closeOnEsc
-          closeOnOutsideClick
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-              returnFocusOnDeactivate: false,
-              fallbackFocus: menuRefCb,
-            }}
-          >
-            <div ref={menuRef} className="pf-c-menu pf-m-flyout">
-              <ActionMenuContent
-                options={menuOptions}
-                onClick={hideMenu}
-                focusItem={menuOptions[0]}
-              />
-            </div>
-          </FocusTrap>
-        </Popper>
+        />
       </div>
     )
   );

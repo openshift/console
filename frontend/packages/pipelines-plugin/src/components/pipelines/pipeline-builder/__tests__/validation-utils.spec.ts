@@ -793,7 +793,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.outputs[0].resource',
-              'Resource type has changed, reselect.',
+              'Resource type has changed; reselect.',
             ),
           );
       });
@@ -825,7 +825,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].resources.inputs[0].resource',
-              'Resource name has changed, reselect.',
+              'Resource name has changed; reselect.',
             ),
           );
       });
@@ -1051,7 +1051,7 @@ describe('Pipeline Build validation schema', () => {
           .catch(
             hasError(
               'formData.tasks[0].workspaces[0].workspace',
-              'Workspace name has changed, reselect.',
+              'Workspace name has changed; reselect.',
             ),
           );
       });

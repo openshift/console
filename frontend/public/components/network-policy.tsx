@@ -4,7 +4,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { connectToFlags, FlagsObject } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { FlagsObject } from '../reducers/features';
 import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
@@ -114,9 +115,21 @@ const NetworkPoliciesList = (props) => {
   );
 };
 
-export const NetworkPoliciesPage = (props) => (
-  <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />
-);
+export const NetworkPoliciesPage = (props) => {
+  const createProps = {
+    to: `/k8s/ns/${props.namespace || 'default'}/networkpolicies/~new/form`,
+  };
+
+  return (
+    <ListPage
+      ListComponent={NetworkPoliciesList}
+      kind={kind}
+      canCreate={true}
+      createProps={createProps}
+      {...props}
+    />
+  );
+};
 
 const IngressHeader = () => {
   const { t } = useTranslation();

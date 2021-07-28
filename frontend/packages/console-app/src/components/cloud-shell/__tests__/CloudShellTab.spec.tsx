@@ -14,21 +14,31 @@ jest.mock('react-i18next', () => {
 });
 
 describe('CloudShellTab', () => {
-  it('should render CloudShellTerminal', () => {
-    spyOn(shared, 'useFlag').and.returnValue(true);
-    const cloudShellTabWrapper = shallow(<CloudShellTab />);
-    expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(true);
-  });
-
   it('should not render redirect component if flag check is pending', () => {
     spyOn(shared, 'useFlag').and.returnValue(undefined);
+    window.SERVER_FLAGS.clusters = ['clustera'];
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
     expect(cloudShellTabWrapper.find(Redirect).exists()).toBe(false);
   });
 
-  it('should render redirect component if terminal operator is not installed', () => {
+  it('should render redirect component if both Devworkspaceflag and not Multicluster', () => {
     spyOn(shared, 'useFlag').and.returnValue(false);
+    window.SERVER_FLAGS.clusters = ['clustera'];
     const cloudShellTabWrapper = shallow(<CloudShellTab />);
     expect(cloudShellTabWrapper.find(Redirect).exists()).toBe(true);
+  });
+
+  it('should not render CloudShellTerminal when Devworkspaceflag flags is true and Multicluster', () => {
+    spyOn(shared, 'useFlag').and.returnValue(true);
+    window.SERVER_FLAGS.clusters = ['clustera', 'clusterb'];
+    const cloudShellTabWrapper = shallow(<CloudShellTab />);
+    expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(false);
+  });
+
+  it('should render CloudShellTerminal when Devworkspaceflag is true and not MultiCluster', () => {
+    spyOn(shared, 'useFlag').and.returnValue(true);
+    window.SERVER_FLAGS.clusters = ['clustera'];
+    const cloudShellTabWrapper = shallow(<CloudShellTab />);
+    expect(cloudShellTabWrapper.find(CloudShellTerminal).exists()).toBe(true);
   });
 });

@@ -1,0 +1,47 @@
+.co-create-networkpolicy {
+  &__alert {
+    margin-bottom: 0;
+  }
+}
+
+.co-create-networkpolicy__deny-checkboxes {
+  display: flex;
+}
+
+.co-create-networkpolicy__deny-checkbox {
+  padding-right: 1rem;
+}
+
+/* Style override for FormFieldGroupExpandable: bigger font (~h2), move toggle icon a little bit lower */
+.co-create-networkpolicy__expandable-xl > .pf-c-form__field-group-header .pf-c-form__field-group-header-title-text {
+  font-family: var(--pf-global--FontFamily--heading--sans-serif);
+  font-size: var(--pf-global--FontSize--xl);
+  font-weight: var(--pf-global--FontWeight--normal);
+  line-height: var(--pf-global--LineHeight--md);
+}
+
+.co-create-networkpolicy__expandable-xl > .pf-c-form__field-group-toggle {
+  margin-top: 0.3rem;
+}
+
+.co-create-networkpolicy__rule-header {
+  display: flex;
+}
+
+.co-create-networkpolicy__rule-header label {
+  margin-top: 0.6rem;
+}
+
+.co-create-networkpolicy__rule-header-right {
+  margin-left: auto;
+}
+
+.co-create-networkpolicy__rule-header .pf-m-secondary {
+  color: var(--pf-global--primary-color--100);
+  padding-left: var(--pf-global--spacer--md);
+  padding-right: var(--pf-global--spacer--md);
+}
+
+.co-create-networkpolicy__rule-header .pf-m-secondary .pf-c-dropdown__toggle-icon {
+  margin-right: 0;
+}

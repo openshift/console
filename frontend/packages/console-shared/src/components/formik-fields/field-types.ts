@@ -1,5 +1,5 @@
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { RowRendererProps } from './multi-column-field/MultiColumnFieldRow';
 
@@ -88,7 +88,6 @@ export interface EnvironmentFieldProps extends FieldProps {
 export interface ResourceLimitFieldProps extends FieldProps {
   unitName: string;
   unitOptions: object;
-  defaultUnitSize: string;
   fullWidth?: boolean;
 }
 
@@ -106,7 +105,7 @@ export interface MultiColumnFieldProps extends FieldProps {
 
 export interface YAMLEditorFieldProps extends FieldProps {
   model?: K8sKind;
-  schema?: JSONSchema6;
+  schema?: JSONSchema7;
   onChange?: (value: string) => void;
   onSave?: () => void;
 }

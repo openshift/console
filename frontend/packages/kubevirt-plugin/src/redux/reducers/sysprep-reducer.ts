@@ -1,11 +1,11 @@
+import {
+  AUTOUNATTEND,
+  SysprepData,
+  UNATTEND,
+} from '../../components/create-vm-wizard/tabs/advanced-tab/sysprep/utils/sysprep-utils';
 import { SysprepActionsNames } from '../actions/sysprep-actions';
 
-type SysprepInitialState = {
-  unattended: string | null;
-  autoUnattended: string | null;
-};
-
-const initialState: SysprepInitialState = { unattended: null, autoUnattended: null };
+const initialState: SysprepData = { [UNATTEND]: null, [AUTOUNATTEND]: null };
 
 const sysprepReducer = (state = initialState, { type, payload }) => {
   switch (type) {

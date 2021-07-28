@@ -7,6 +7,5 @@
   "Network attachment definition name must start/end with alphanumeric character": "ネットワーク接続定義名は英数字で開始/終了する必要があります",
   "Network attachment definition name cannot contain uppercase characters": "ネットワーク接続定義名に大文字は使用できません",
   "Network attachment definition name is too long": "ネットワーク接続定義名が長すぎます",
-  "Network attachment definition name is too short": "ネットワーク接続定義名が短すぎます",
-  "Network attachment definition name cannot start/end with dash": "ネットワーク割り当て定義名はダッシュで開始または終了できません"
+  "Network attachment definition name is too short": "ネットワーク接続定義名が短すぎます"
 }

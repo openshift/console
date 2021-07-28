@@ -69,11 +69,11 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   ];
   return activeNamespace ? (
     <>
-      <PageHeading title={t('devconsole~Monitoring')} />
+      <PageHeading title={t('devconsole~Observe')} />
       <HorizontalNav pages={pages} match={match} noStatusBox />
     </>
   ) : (
-    <CreateProjectListPage title={t('devconsole~Monitoring')}>
+    <CreateProjectListPage title={t('devconsole~Observe')}>
       {(openProjectModal) => (
         <Trans t={t} ns="devconsole">
           Select a Project to view monitoring metrics or{' '}
@@ -94,7 +94,7 @@ export const MonitoringPage: React.FC<MonitoringPageProps> = (props) => {
   return (
     <>
       <Helmet>
-        <title>{t('devconsole~Monitoring')}</title>
+        <title>{t('devconsole~Observe')}</title>
       </Helmet>
       <NamespacedPage
         hideApplications

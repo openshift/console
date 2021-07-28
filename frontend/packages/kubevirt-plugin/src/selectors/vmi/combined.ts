@@ -1,8 +1,8 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
 import { DEFAULT_RDP_PORT, TEMPLATE_VM_NAME_LABEL } from '../../constants/vm';
 import { VMIKind } from '../../types/vm';
 import { isConnectionEncrypted } from '../../utils/url';
+import { getName } from '../selectors';
 import { getServicePort } from '../service/selectors';
 import { getVMIApiPath, getVMISubresourcePath } from './selectors';
 

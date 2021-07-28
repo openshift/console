@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu, CloseButton } from '@console/internal/components/utils';
+import { ActionsMenu } from '@console/internal/components/utils';
+import CloseButton from '@console/shared/src/components/close-button';
 import { TaskKind } from '../../../../types';
 import PipelineResourceRef from '../../../shared/common/PipelineResourceRef';
 import TaskSidebarShortcuts from './TaskSidebarShortcuts';
@@ -23,7 +24,10 @@ const TaskSidebarHeader: React.FC<TaskSidebarHeaderProps> = ({
   return (
     <div className="opp-task-sidebar-header">
       <div className="co-sidebar-dismiss clearfix">
-        <CloseButton onClick={onClose} />
+        <CloseButton
+          onClick={onClose}
+          additionalClassName="co-close-button--float-right co-sidebar-dismiss__close-button"
+        />
       </div>
       <div className="opp-task-sidebar-header__title">
         <h1 className="co-m-pane__heading">

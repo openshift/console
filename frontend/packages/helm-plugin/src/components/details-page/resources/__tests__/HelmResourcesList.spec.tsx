@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { TFunction } from 'i18next';
-import { Table } from '@console/internal/components/factory';
+import { Table, ComponentProps } from '@console/internal/components/factory';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
 import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
@@ -45,7 +45,7 @@ describe('HelmResourcesList', () => {
     const headers = helmResourcesList
       .find(Table)
       .props()
-      .Header();
+      .Header({} as ComponentProps);
 
     expectedHelmResourcesHeader.forEach((header, i) => {
       expect(headers[i].title).toBe(header);

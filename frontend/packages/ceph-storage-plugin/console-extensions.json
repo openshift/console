@@ -4,7 +4,9 @@
     "properties": {
       "alert": "CephOSDDiskUnavailable",
       "text": "%ceph-storage-plugin~Troubleshoot%",
-      "action": { "$codeRef": "alert.getAlertActionPath" }
+      "action": {
+        "$codeRef": "alert.getAlertActionPath"
+      }
     },
     "flags": {
       "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
@@ -15,7 +17,9 @@
     "properties": {
       "alert": "CephOSDDiskNotResponding",
       "text": "%ceph-storage-plugin~Troubleshoot%",
-      "action": { "$codeRef": "alert.getAlertActionPath" }
+      "action": {
+        "$codeRef": "alert.getAlertActionPath"
+      }
     },
     "flags": {
       "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
@@ -26,7 +30,9 @@
     "properties": {
       "alert": "CephClusterNearFull",
       "text": "%ceph-storage-plugin~Add Capacity%",
-      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+      "action": {
+        "$codeRef": "alert.launchClusterExpansionModal"
+      }
     },
     "flags": {
       "required": ["OCS"]
@@ -37,7 +43,9 @@
     "properties": {
       "alert": "CephClusterCriticallyFull",
       "text": "%ceph-storage-plugin~Add Capacity%",
-      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+      "action": {
+        "$codeRef": "alert.launchClusterExpansionModal"
+      }
     },
     "flags": {
       "required": ["OCS"]
@@ -47,7 +55,9 @@
     "type": "console.storage-provider",
     "properties": {
       "name": "ObjectBucketClaim",
-      "Component": { "$codeRef": "storageProvider" }
+      "Component": {
+        "$codeRef": "storageProvider"
+      }
     },
     "flags": {
       "required": ["OCS"]
@@ -110,6 +120,87 @@
     "flags": {
       "required": ["MCG"],
       "disallowed": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "ceph.rook.io",
+        "version": "v1",
+        "kind": "CephBlockPool"
+      },
+      "component": { "$codeRef": "blockPoolListPage.BlockPoolListPage" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/k8s/ns/:ns/ceph.rook.io~v1~CephBlockPool/~new"],
+      "component": {
+        "$codeRef": "blockPoolCreatePage.default"
+      }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "ceph.rook.io",
+        "version": "v1",
+        "kind": "CephBlockPool"
+      },
+      "component": { "$codeRef": "blockPoolDetailsPage.default" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/:resourceKind/:resourceName",
+      "exact": true,
+      "component": {
+        "$codeRef": "resourceDetailsPage.GenericDetailsPage"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "bsCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "nssCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/~new",
+      "exact": true,
+      "component": {
+        "$codeRef": "bcCreate.default"
+      }
     }
   }
 ]

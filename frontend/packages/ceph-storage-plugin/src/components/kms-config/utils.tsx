@@ -14,6 +14,7 @@ import { Action } from '../ocs-install/attached-devices-mode/reducer';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
 import { StorageClassClusterAction } from '../../utils/kms-encryption';
+import { CreateStorageSystemAction } from '../create-storage-system/reducer';
 
 export const parseURL = (url: string) => {
   try {
@@ -138,15 +139,15 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
   };
 
   if (kms.caCert) {
-    resources.push(k8sCreate(SecretModel, kms.caCert, CEPH_STORAGE_NAMESPACE));
+    resources.push(k8sCreate(SecretModel, kms.caCert, { ns: CEPH_STORAGE_NAMESPACE }));
   }
 
   if (kms.clientCert) {
-    resources.push(k8sCreate(SecretModel, kms.clientCert, CEPH_STORAGE_NAMESPACE));
+    resources.push(k8sCreate(SecretModel, kms.clientCert, { ns: CEPH_STORAGE_NAMESPACE }));
   }
 
   if (kms.clientKey) {
-    resources.push(k8sCreate(SecretModel, kms.clientKey, CEPH_STORAGE_NAMESPACE));
+    resources.push(k8sCreate(SecretModel, kms.clientKey, { ns: CEPH_STORAGE_NAMESPACE }));
   }
 
   if (update) {
@@ -160,18 +161,22 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
     ];
     resources.push(k8sPatch(ConfigMapModel, csiConfigObj, cmPatch));
   } else {
-    resources.push(k8sCreate(SecretModel, tokenSecret, CEPH_STORAGE_NAMESPACE));
-    resources.push(k8sCreate(ConfigMapModel, configMapObj, CEPH_STORAGE_NAMESPACE));
-    resources.push(k8sCreate(ConfigMapModel, csiConfigObj, CEPH_STORAGE_NAMESPACE));
+    resources.push(k8sCreate(SecretModel, tokenSecret, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(ConfigMapModel, configMapObj, { ns: CEPH_STORAGE_NAMESPACE }));
+    resources.push(k8sCreate(ConfigMapModel, csiConfigObj, { ns: CEPH_STORAGE_NAMESPACE }));
   }
 
   return resources;
 };
 
+export type EncryptionDispatch = React.Dispatch<
+  Action | InternalClusterAction | StorageClassClusterAction | CreateStorageSystemAction
+>;
+
 export const setEncryptionDispatch = (
   keyType: any,
   mode: string,
-  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>,
+  dispatch: EncryptionDispatch,
   valueType?: any,
 ) => {
   const stateType = mode === MODES.ATTACHED_DEVICES ? _.camelCase(keyType) : keyType;

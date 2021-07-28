@@ -4,16 +4,15 @@ import * as _ from 'lodash-es';
 
 import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
-import { FLAGS } from '@console/shared';
+import { FLAGS } from '@console/shared/src/constants';
 import {
   featureReducer,
   featureReducerName,
   defaults,
-  connectToFlags,
-  stateToFlagsObject,
   getFlagsObject,
   FeatureState,
 } from '../../public/reducers/features';
+import { connectToFlags, stateToFlagsObject } from '../../public/reducers/connectToFlags';
 import { RootState } from '../../public/redux';
 
 describe('featureReducer', () => {

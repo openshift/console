@@ -9,7 +9,6 @@ import {
 } from '@console/internal/components/factory';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVMI } from '../../../k8s/requests/vmi/actions';
@@ -18,6 +17,7 @@ import {
   getKubevirtModelAvailableAPIVersion,
   kubevirtReferenceForModel,
 } from '../../../models/kubevirtReferenceForModel';
+import { getName, getNamespace } from '../../../selectors';
 import { getVMIVolumes } from '../../../selectors/vmi';
 import { VMIKind } from '../../../types';
 import { redirectToList } from './utils';

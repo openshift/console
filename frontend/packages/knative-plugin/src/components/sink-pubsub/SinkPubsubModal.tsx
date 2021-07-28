@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as fuzzy from 'fuzzysearch';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import {
   ModalTitle,
@@ -56,12 +56,15 @@ const SinkPubsubModal: React.FC<Props> = ({
     [setFieldValue, setFieldTouched, validateForm],
   );
   const dirty = values?.ref?.name !== initialValues.ref.name;
+
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
       <ModalTitle>{labelTitle}</ModalTitle>
       <ModalBody>
         <p>
-          {t('knative-plugin~Connects')} <strong>{resourceName}</strong> {t('knative-plugin~to')}
+          <Trans t={t} ns="knative-plugin" i18nKey="Connects <strong>{{resourceName}}</strong> to">
+            Connects <strong>{{ resourceName }}</strong> to
+          </Trans>
         </p>
         <FormSection fullWidth>
           <ResourceDropdownField

@@ -83,8 +83,6 @@ export enum SinkType {
   Uri = 'uri',
 }
 
-export const EVENT_SOURCES_APP = 'event-sources-app';
-
 export const sourceSinkType = (t: TFunction) => {
   return {
     Resource: {
@@ -110,4 +108,18 @@ export interface AddChannelFormData {
 export interface ChannelListProps {
   loaded: boolean;
   channelList: string[];
+}
+
+export interface AddBrokerFormYamlValues {
+  editorType: string;
+  showCanUseYAMLMessage: boolean;
+  formData: BrokerFormData;
+  yamlData: string;
+}
+
+export interface BrokerFormData {
+  project: ProjectData;
+  application: ApplicationData;
+  name: string;
+  spec: {};
 }

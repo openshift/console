@@ -153,7 +153,7 @@ Feature: Create Application from git form
 
 
         # Marking this scenario as @manual, because due to git-rate limit issue, below scenarios are failing
-        @manual
+        @regression @manual
         Scenario Outline: Builder iamge detected for git url "<git_url>": A-06-TC12
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
@@ -172,3 +172,33 @@ Feature: Create Application from git form
                   | https://github.com/sclorg/django-ex.git        | django-ex-git-app  | django-ex-git         |
                   | https://github.com/spring-projects/spring-boot | spring-bottom-app  | openshift-quickstarts |
                   | https://github.com/sclorg/nodejs-ex.git        | nodejs-ex-git-app  | nodejs-ex-git         |
+
+
+        @regression @manual
+        Scenario Outline: Dotnet Builder image detection for git url "<git_url>": A-06-TC13
+            Given user is at Import from git page
+             When user enters Git Repo url as "<git_url>"
+              And warning message "Unable to detect the Builder Image" displays in Builder section
+              And user clicks on "Show advanced Git options" link
+              And user clears Context dir field
+              And user enters Context dir as "<dir_name>"
+             Then git url gets Validated
+              And user is able to see "Builder Image(s) detected" message in Builder section
+              And .NET builder image card tile is highlighted with * mark
+
+        Examples:
+                  | git_url                                                   | dir_name | app_name              | name              |
+                  | https://github.com/redhat-developer/s2i-dotnetcore-ex.git | /app     | dotnetcore-ex-git-app | dotnetcore-ex-git |
+
+
+        @regression @manual
+        Scenario Outline: "Unable to detect the builder image" warning message displays for server related git urls: A-06-TC14
+            Given user is at Import from git page
+             When user enters Git Repo url as "<git_url>"
+             Then git url gets Validated
+              And user is able to see warning message "Unable to detect the Builder Image" in Builder section
+
+        Examples:
+                  | git_url                                | builder_image |
+                  | https://github.com/sclorg/httpd-ex.git | httpd         |
+                  | https://github.com/sclorg/nginx-ex.git | Nginx         |

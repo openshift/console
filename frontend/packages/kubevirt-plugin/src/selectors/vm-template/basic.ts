@@ -1,7 +1,7 @@
 import { TFunction } from 'i18next';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ANNOTATIONS } from '@console/shared/src/constants/common';
 import {
+  ANNOTATIONS,
   TEMPLATE_DEPRECATED_ANNOTATION,
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,
   TEMPLATE_PARENT_PROVIDER_URL,

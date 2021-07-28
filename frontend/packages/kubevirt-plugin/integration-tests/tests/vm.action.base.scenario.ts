@@ -11,7 +11,7 @@ import {
   createResource,
   removeLeakableResource,
   removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import { unpauseButton } from '../views/dialogs/editStatusView';
 import { vmLinkByName } from '../views/vms.list.view';
 import { getVMManifest } from './mocks/mocks';

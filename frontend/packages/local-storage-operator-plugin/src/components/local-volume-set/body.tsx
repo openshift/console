@@ -64,7 +64,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   return (
     <>
       <FormGroup
-        label={t('lso-plugin~Local Volume Set Name')}
+        label={t('lso-plugin~LocalVolumeSet Name')}
         isRequired
         fieldId="create-lvs-volume-set-name"
       >

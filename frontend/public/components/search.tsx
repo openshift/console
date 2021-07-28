@@ -199,9 +199,9 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     return (
       <span className="co-search-group__accordion-label">
         {labelPluralKey ? t(labelPluralKey) : labelPlural}{' '}
-        <span className="text-muted show small">
+        <div className="text-muted small">
           {apiGroup || 'core'}/{apiVersion}
-        </span>
+        </div>
       </span>
     );
   };
@@ -335,7 +335,6 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
 export const SearchPage = withStartGuide(SearchPage_);
 
 export type SearchProps = {
-  location: any;
   namespace: string;
   noProjectsAvailable: boolean;
 };

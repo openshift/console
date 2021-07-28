@@ -1,6 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-import { VolumeType } from '../../../constants';
+import { VolumeType, ObjectEnum } from '../../../constants';
 import {
   SelectDropdownData,
   SelectDropdownObjectEnum,
@@ -185,5 +184,18 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       );
     }
     return this !== StorageUISource.IMPORT_DISK && this !== StorageUISource.OTHER;
+  };
+
+  hotplugDiskSources = (diskType: DiskType, isVMRunning: boolean) => {
+    if (isVMRunning) {
+      return (
+        this === StorageUISource.ATTACH_DISK ||
+        this === StorageUISource.ATTACH_CLONED_DISK ||
+        this === StorageUISource.URL ||
+        this === StorageUISource.CONTAINER ||
+        this === StorageUISource.BLANK
+      );
+    }
+    return this.canBeChangedToThisSource(diskType);
   };
 }

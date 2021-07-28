@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { asValidationObject, ValidationErrorType } from '@console/shared';
 import { VMwareFirmware } from '../../../../../constants/v2v-import/vmware/vmware-firmware';
+import { asValidationObject, ValidationErrorType } from '../../../../../selectors';
 import { iGet, iGetIn } from '../../../../../utils/immutable';
 import { iGetFieldValue } from '../../../selectors/immutable/field';
 import {

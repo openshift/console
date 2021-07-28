@@ -7,11 +7,11 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import CloseButton from '@console/shared/src/components/close-button';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
-import { CloseButton } from '../utils/close-button';
 import i18next from 'i18next';
 
 export const createModal: CreateModal = (getModalContainer) => {
@@ -25,7 +25,7 @@ export const createModal: CreateModal = (getModalContainer) => {
       resolve();
     };
     Modal.setAppElement(document.getElementById('app-content'));
-    ReactDOM.render(getModalContainer(closeModal), modalContainer);
+    modalContainer && ReactDOM.render(getModalContainer(closeModal), modalContainer);
   });
   return { result };
 };
@@ -80,6 +80,7 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
             e.stopPropagation();
             close(e);
           }}
+          additionalClassName="co-close-button--float-right"
         />
       )}
     </h1>

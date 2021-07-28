@@ -24,8 +24,8 @@ export const getGuidedTour = (): TourDataType => ({
     },
     {
       placement: 'right',
-      // t('devconsole~Monitoring')
-      heading: '%devconsole~Monitoring%',
+      // t('devconsole~Observe')
+      heading: '%devconsole~Observe%',
       // t('devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.')
       content:
         '%devconsole~Monitor application metrics, create custom metrics queries and view and silence alerts in your project.%',

@@ -1,10 +1,6 @@
 import * as _ from 'lodash';
-import {
-  asValidationObject,
-  ValidationErrorType,
-  ValidationObject,
-} from '@console/shared/src/utils/validation';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { asValidationObject, ValidationErrorType, ValidationObject } from '../../../../selectors';
 import { UIValidation } from '../../../../types/ui/ui';
 import {
   iGet,

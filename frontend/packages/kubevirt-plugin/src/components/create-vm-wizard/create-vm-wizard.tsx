@@ -7,16 +7,13 @@ import { connect } from 'react-redux';
 import { match as RouterMatch } from 'react-router';
 import { compose } from 'redux';
 import { Firehose, history } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  connectToFlags,
-  featureReducerName,
-  FlagsObject,
-} from '@console/internal/reducers/features';
+import { connectToFlags } from '@console/internal/reducers/connectToFlags';
+import { featureReducerName, FlagsObject } from '@console/internal/reducers/features';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { FLAGS } from '@console/shared';
-import { usePrevious } from '@console/shared/src/hooks/previous';
 import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
@@ -27,9 +24,11 @@ import {
 } from '../../constants/vm';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
+import { usePrevious } from '../../hooks/use-previous';
 import { useUpdateStorages } from '../../hooks/use-update-data-volume';
-import { VirtualMachineModel } from '../../models';
+import { DataVolumeModel, VirtualMachineModel } from '../../models';
 import { getTemplateName } from '../../selectors/vm-template/basic';
+import { isWindows } from '../../selectors/vm/combined';
 import { FirehoseResourceEnhanced } from '../../types/custom';
 import { ITemplate } from '../../types/template';
 import { VMWizardInitialData } from '../../types/url';
@@ -183,7 +182,16 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       template: templateName,
     });
   };
-
+  const isWindowsTemplate = React.useMemo(
+    () =>
+      isWindows(
+        props?.iUserTemplate ||
+          immutableListToShallowJS(iGetLoadedData(props?.commonTemplates))?.find(
+            (tmp) => tmp.metadata.name === props?.initialData?.commonTemplateName,
+          ),
+      ),
+    [props],
+  );
   const goBackToEditingSteps = () =>
     props.onResultsChanged(getResultInitialState({}).value, null, false, false);
 
@@ -257,7 +265,11 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
         <>
           <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
           <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-          <AdvancedTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED} />
+          <AdvancedTab
+            wizardReduxID={reduxID}
+            key={VMWizardTab.ADVANCED}
+            isWindowsTemplate={isWindowsTemplate}
+          />
         </>
       ),
     },
@@ -353,6 +365,7 @@ const wizardDispatchToProps = (dispatch, props) => ({
           initialData: props.initialData,
           storageClassConfigMap: undefined,
           openshiftCNVBaseImages: undefined,
+          dataVolumes: props.dataVolumes,
           isSimpleView: props.isSimpleView,
         },
         dataIDReferences: props.dataIDReferences,
@@ -405,7 +418,10 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
   const activeNamespace = match && match.params && match.params.ns;
   const searchParams = new URLSearchParams(location && location.search);
   const userMode = searchParams.get(VMWizardURLParams.MODE) || VMWizardMode.VM;
-
+  const [dataVolumes] = useK8sWatchResource({
+    kind: referenceForModel(DataVolumeModel),
+    isList: true,
+  });
   const initialData = parseVMWizardInitialData(searchParams);
 
   let resources: FirehoseResourceEnhanced[] = [];
@@ -505,6 +521,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
         dataIDReferences={dataIDReferences}
         storageClassConfigMap={storageClassConfigMap}
         openshiftCNVBaseImages={openshiftCNVBaseImages}
+        dataVolumes={dataVolumes}
         reduxID={reduxID}
         onClose={history.goBack}
         initialData={initialData}

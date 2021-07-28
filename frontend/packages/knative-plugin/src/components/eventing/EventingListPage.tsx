@@ -25,9 +25,13 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   const menuActions: MenuActions = {
     eventSource: {
       label: t('knative-plugin~Event Source'),
-      onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource`,
+      onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource&provider=["Red+Hat"]`,
     },
-    brokers: { label: t('knative-plugin~Broker'), model: EventingBrokerModel },
+    brokers: {
+      label: t('knative-plugin~Broker'),
+      model: EventingBrokerModel,
+      onSelection: () => `/broker/ns/${nsSelected}`,
+    },
     channels: {
       label: t('knative-plugin~Channel'),
       onSelection: () => `/channel/ns/${nsSelected}`,

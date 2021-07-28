@@ -61,6 +61,7 @@ type ConsumedExtensions =
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 const blockPoolRef = referenceForModel(models.CephBlockPoolModel);
+const storageSystemGvk = referenceForModel(models.StorageSystemModel);
 
 const OCS_MODEL_FLAG = 'OCS_MODEL';
 
@@ -131,6 +132,22 @@ const plugin: Plugin<ConsumedExtensions> = [
     flags: {
       required: [OCS_CONVERGED_FLAG, CEPH_FLAG],
       disallowed: [OCS_INDEPENDENT_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [
+        `/k8s/ns/:ns/${referenceForModel(
+          ClusterServiceVersionModel,
+        )}/:appName/${storageSystemGvk}/~new`,
+        `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${storageSystemGvk}/~new`,
+      ],
+      loader: () =>
+        import(
+          './components/create-storage-system/create-storage-system' /* webpackChunkName: "create-storage-system" */
+        ).then((m) => m.default),
     },
   },
   {
@@ -324,7 +341,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Edit BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/update-block-pool-modal' /* webpackChunkName: "ceph-storage-update-block-pool-modal" */
         )
@@ -764,7 +781,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%ceph-storage-plugin~Delete BlockPool%',
       apiGroup: models.CephBlockPoolModel.apiGroup,
       callback: (kind, obj) => () => {
-        const props = { kind, blockPoolConfig: obj };
+        const props = { blockPoolConfig: obj };
         import(
           './components/modals/block-pool-modal/delete-block-pool-modal' /* webpackChunkName: "ceph-storage-delete-block-pool-modal" */
         )
@@ -774,6 +791,81 @@ const plugin: Plugin<ConsumedExtensions> = [
             console.error('Error loading block Pool Modal', e);
           });
       },
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        name: '%ceph-storage-plugin~Storage Systems%',
+        href: 'systems',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-system/odf-system-list' /* webpackChunkName: "odf-system-list" */
+          )
+        ).default,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Backing Store')
+        name: '%ceph-storage-plugin~Backing Store%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Bucket Class')
+        name: '%ceph-storage-plugin~Bucket Class%',
+        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
+    },
+  },
+  // Adding this Extension because dynamic endpoint is not avbl
+  // Todo(bipuladh): Remove once SDK is mature enough to support list page
+  {
+    type: 'HorizontalNavTab',
+    properties: {
+      model: models.StorageSystemModel,
+      page: {
+        // t('ceph-storage-plugin~Namespace Store')
+        name: '%ceph-storage-plugin~Namespace Store%',
+        href: 'resource/noobaa.io~v1alpha1~NamespaceStore',
+      },
+      loader: async () =>
+        (
+          await import(
+            './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
+          )
+        ).BackingStoreListPage,
     },
   },
 ];

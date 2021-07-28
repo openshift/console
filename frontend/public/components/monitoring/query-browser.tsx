@@ -56,6 +56,7 @@ import {
   timeFormatter,
   timeFormatterWithSeconds,
 } from '../utils/datetime';
+import { formatNumber } from './format';
 import { PrometheusAPIError } from './types';
 import { ONE_MINUTE } from '@console/shared/src/constants/time';
 
@@ -71,7 +72,13 @@ export const colors = theme.line.colorScale;
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
   v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
+
 const formatValue = (v: number): string => (v < 0 ? '-' : '') + formatPositiveValue(Math.abs(v));
+
+const valueFormatter = (units: string): ((v: number) => string) =>
+  ['ms', 's', 'bytes', 'Bps', 'pps'].includes(units)
+    ? (v: number) => formatNumber(String(v), undefined, units)
+    : formatValue;
 
 export const Error: React.FC<ErrorProps> = ({ error, title = 'An error occurred' }) => (
   <Alert isInline className="co-alert" title={title} variant="danger">
@@ -173,7 +180,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
       color: style[i]?.fill,
       name: style[i]?.name,
       total: point._y1 ?? point.y,
-      value: point.y,
+      value: valueFormatter(style[i]?.units)(point.y),
     }))
     // For stacked graphs, this filters out data series that have no data for this timestamp
     .filter(({ value }) => value !== null)
@@ -206,7 +213,7 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
                 <div className="query-browser__tooltip-group" key={i}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: s.color }} />
                   <div className="co-nowrap co-truncate">{s.name}</div>
-                  <div className="query-browser__tooltip-value">{formatValue(s.value)}</div>
+                  <div className="query-browser__tooltip-value">{s.value}</div>
                 </div>
               ))}
             </div>
@@ -266,6 +273,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     isStack,
     showLegend,
     span,
+    units,
     width,
   }) => {
     const data: GraphSeries[] = [];
@@ -300,7 +308,7 @@ const Graph: React.FC<GraphProps> = React.memo(
       return <GraphEmpty />;
     }
 
-    let yTickFormat = formatValue;
+    let yTickFormat = valueFormatter(units);
 
     if (isStack) {
       // Specify Y axis range if all values are zero, but otherwise let Chart set it automatically
@@ -375,7 +383,7 @@ const Graph: React.FC<GraphProps> = React.memo(
             const color = colors[i % colors.length];
             const style = {
               data: { [isStack ? 'fill' : 'stroke']: color },
-              labels: { fill: color, name: tooltipSeriesNames[i] },
+              labels: { fill: color, name: tooltipSeriesNames[i], units },
             };
             return (
               // We need to use the `name` prop to prevent an error in VictorySharedEvents when
@@ -471,6 +479,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   onZoom,
   showLegend,
   span,
+  units,
   width,
 }) => {
   const [isZooming, setIsZooming] = React.useState(false);
@@ -542,6 +551,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
         isStack={isStack}
         showLegend={showLegend}
         span={span}
+        units={units}
         width={width}
       />
     </div>
@@ -575,6 +585,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   showLegend,
   showStackedControl = false,
   timespan,
+  units,
   wrapperClassName,
 }) => {
   const { t } = useTranslation();
@@ -854,6 +865,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                       isStack={canStack && isStacked}
                       showLegend={showLegend}
                       span={span}
+                      units={units}
                       width={width}
                     />
                   ) : (
@@ -866,6 +878,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                       onZoom={zoomableGraphOnZoom}
                       showLegend={showLegend}
                       span={span}
+                      units={units}
                       width={width}
                     />
                   )}
@@ -918,6 +931,7 @@ type GraphProps = {
   isStack?: boolean;
   showLegend?: boolean;
   span: number;
+  units: string;
   width: number;
 };
 
@@ -943,6 +957,7 @@ export type QueryBrowserProps = {
   showLegend?: boolean;
   showStackedControl?: boolean;
   timespan?: number;
+  units?: string;
   wrapperClassName?: string;
 };
 

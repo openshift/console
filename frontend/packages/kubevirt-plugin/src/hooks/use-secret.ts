@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
-import { k8sCreate, k8sUpdate, SecretKind } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate, SecretKind, K8sKind } from '@console/internal/module/k8s';
 
 type useSecretArgs = {
   secretName: string;
@@ -32,7 +32,11 @@ const useSecret = ({ secretName, namespace }: useSecretArgs) => {
       selectedNamespace: string,
       opts?: { secretName: string; create: boolean },
     ) => {
-      const createOrUpdate = opts?.create ? k8sCreate : secret ? k8sUpdate : k8sCreate;
+      const createOrUpdate: (kind: K8sKind, data: SecretKind) => Promise<SecretKind> = opts?.create
+        ? k8sCreate
+        : secret
+        ? k8sUpdate
+        : k8sCreate;
       try {
         await createOrUpdate(SecretModel, {
           kind: SecretModel.kind,

@@ -5,7 +5,7 @@ import {
   getNamespace,
   ValidationErrorType,
   ValidationObject,
-} from '@console/shared';
+} from '../../selectors';
 import { parseURL } from '../url';
 
 export const isValidationError = (validationObject: ValidationObject) =>

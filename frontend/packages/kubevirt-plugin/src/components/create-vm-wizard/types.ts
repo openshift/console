@@ -22,6 +22,7 @@ export enum VMWizardProps {
   isProviderImport = 'isProviderImport',
   isTemplateInitialized = 'isTemplateInitialized',
   userTemplates = 'userTemplates',
+  dataVolumes = 'dataVolumes',
   userTemplate = 'userTemplate',
   activeNamespace = 'activeNamespace',
   openshiftFlag = 'openshiftFlag',
@@ -229,6 +230,7 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
   | VMWizardProps.openshiftCNVBaseImages
+  | VMWizardProps.dataVolumes
   | VMWizardProps.storageClassConfigMap
   | VMWizardProps.nads
   | VMWareProviderProps.deployment
@@ -247,6 +249,7 @@ export type CommonDataProp =
   | VMWizardProps.isCreateTemplate
   | VMWizardProps.isProviderImport
   | VMWizardProps.isTemplateInitialized
+  | VMWizardProps.dataVolumes
   | VMWizardProps.initialData
   | ChangedCommonDataProp;
 
@@ -261,6 +264,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.commonTemplates,
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.openshiftCNVBaseImages,
+  VMWizardProps.dataVolumes,
   VMWizardProps.nads,
   VMWareProviderProps.deployment,
   VMWareProviderProps.deploymentPods,
@@ -277,6 +281,7 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
 export const DirectCommonDataProps = new Set<ChangedCommonDataProp>([
   VMWizardProps.storageClassConfigMap,
   VMWizardProps.openshiftCNVBaseImages,
+  VMWizardProps.dataVolumes,
 ]);
 
 export type CommonData = {
@@ -295,6 +300,7 @@ export type CommonData = {
       loadError: string;
       data: PersistentVolumeClaimKind[];
     };
+    [VMWizardProps.dataVolumes]?: {};
     initialData: VMWizardInitialData;
   };
   dataIDReferences?: IDReferences;

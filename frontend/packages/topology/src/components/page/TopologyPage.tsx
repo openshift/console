@@ -7,11 +7,9 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import ProjectsExistWrapper from '@console/dev-console/src/components/ProjectsExistWrapper';
 import { ErrorBoundaryFallback } from '@console/internal/components/error';
+import { withStartGuide } from '@console/internal/components/start-guide';
 import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
-import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
@@ -34,7 +32,37 @@ interface TopologyPageProps {
   defaultViewType?: TopologyViewType;
 }
 
-const TopologyPage: React.FC<TopologyPageProps> = ({
+type PageContentsProps = {
+  match: RMatch<{
+    name?: string;
+  }>;
+  viewType: TopologyViewType;
+};
+
+const PageContents: React.FC<PageContentsProps> = ({ match, viewType }) => {
+  const { t } = useTranslation();
+  const namespace = match.params.name;
+
+  return namespace ? (
+    <TopologyDataRenderer viewType={viewType} />
+  ) : (
+    <CreateProjectListPage title={t('topology~Topology')}>
+      {(openProjectModal) => (
+        <Trans t={t} ns="topology">
+          Select a Project to view the topology or{' '}
+          <Button isInline variant="link" onClick={openProjectModal}>
+            create a Project
+          </Button>
+          .
+        </Trans>
+      )}
+    </CreateProjectListPage>
+  );
+};
+
+const PageContentsWithStartGuide = withStartGuide(PageContents);
+
+export const TopologyPage: React.FC<TopologyPageProps> = ({
   match,
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
   hideProjects = false,
@@ -53,9 +81,6 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
   const namespace = match.params.name;
   const queryParams = useQueryParams();
   let viewType = queryParams.get('view') as TopologyViewType;
-  const { projects } = useK8sWatchResources<{ [key: string]: K8sResourceKind[] }>({
-    projects: { kind: 'Project', isList: true },
-  });
   if (!viewType) {
     // Backwards Compatibility, check path. Otherwise use any stored preference
     viewType = matchPath(match.path, {
@@ -68,7 +93,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
           exact: true,
         })
       ? TopologyViewType.graph
-      : isTopologyViewStateLoaded && ((topologyViewState as TopologyViewType) || defaultViewType);
+      : isTopologyViewStateLoaded && (topologyViewState || defaultViewType);
     viewType && setQueryArgument('view', viewType);
   }
 
@@ -86,6 +111,12 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
     }
   };
 
+  const namespacedPageVariant = namespace
+    ? viewType === TopologyViewType.graph
+      ? NamespacedPageVariants.default
+      : NamespacedPageVariants.light
+    : NamespacedPageVariants.light;
+
   return (
     <FilterProvider>
       <DataModelProvider namespace={namespace}>
@@ -93,11 +124,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
           <title>{t('topology~Topology')}</title>
         </Helmet>
         <NamespacedPage
-          variant={
-            viewType === TopologyViewType.graph
-              ? NamespacedPageVariants.default
-              : NamespacedPageVariants.light
-          }
+          variant={namespacedPageVariant}
           onNamespaceChange={handleNamespaceChange}
           hideProjects={hideProjects}
           toolbar={<TopologyPageToolbar viewType={viewType} onViewChange={onViewChange} />}
@@ -105,23 +132,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
             viewType === TopologyViewType.graph ? 'topology-graph-page' : 'topology-list-page'
           }
         >
-          <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
-            {namespace ? (
-              <TopologyDataRenderer viewType={viewType} />
-            ) : (
-              <CreateProjectListPage title={t('topology~Topology')}>
-                {(openProjectModal) => (
-                  <Trans t={t} ns="topology">
-                    Select a Project to view the topology or{' '}
-                    <Button isInline variant="link" onClick={openProjectModal}>
-                      create a Project
-                    </Button>
-                    .
-                  </Trans>
-                )}
-              </CreateProjectListPage>
-            )}
-          </ProjectsExistWrapper>
+          <PageContentsWithStartGuide match={match} viewType={viewType} />
         </NamespacedPage>
       </DataModelProvider>
     </FilterProvider>

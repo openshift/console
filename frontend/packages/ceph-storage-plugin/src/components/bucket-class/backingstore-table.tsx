@@ -13,7 +13,9 @@ import {
   getUID,
   useDeepCompareMemoize,
 } from '@console/shared';
-import { Table, ListPage, getFilteredRows } from '@console/internal/components/factory';
+import { Table, ListPage } from '@console/internal/components/factory';
+import { getFilteredRows } from '@console/internal/components/factory/table-data-hook';
+import { Filter } from '@console/internal/components/factory/table';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
@@ -78,7 +80,7 @@ const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
   const {
     customData: { onRowsSelected, preSelected },
     data,
-    filters = {},
+    filters,
   } = props;
   const visibleRows = getFilteredRows(filters, null, data);
   const visibleUIDs = React.useMemo(() => new Set<string>(visibleRows?.map(getUID)), [visibleRows]);
@@ -188,7 +190,7 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
               'ceph-storage-plugin~Each BackingStore can be used for one tier at a time. Selecting a BackingStore in one tier will remove the resource from the second tier option and vice versa.',
             )}
             aria-label={t(
-              "ceph-storage-plugin~Bucket created for OpenShift Container Storage's Service",
+              "ceph-storage-plugin~Bucket created for OpenShift Data Foundation's Service",
             )}
             isInline
           />
@@ -274,7 +276,7 @@ type BackingStoreTableProps = {
     onRowsSelected?: (arg: BackingStoreKind[]) => void;
     preSelected?: string[];
   };
-  filters?: {};
+  filters?: Filter[];
   preSelected?: string[];
 };
 

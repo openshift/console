@@ -9,7 +9,7 @@
       {
         "apiGroups": ["cdi.kubevirt.io"],
         "resources": ["datavolumes/source"],
-        "verbs": ["create"]
+        "verbs": ["*"]
       }
     ]
   },
@@ -18,13 +18,13 @@
     "kind": "RoleBinding",
     "metadata": {
       "name": "joe-cdi-cloner-01",
-      "namespace": "kubevirt-os-images"
+      "namespace": "source"
     },
     "subjects": [
       {
-        "kind": "User",
-        "name": "system:serviceaccount:test:default",
-        "apiGroup": "rbac.authorization.k8s.io"
+        "kind": "ServiceAccount",
+        "name": "default",
+       "namespace": "destination"
       }
     ],
     "roleRef": {

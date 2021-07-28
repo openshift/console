@@ -11,9 +11,9 @@ import { AngleRightIcon } from '@patternfly/react-icons';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { orderExtensionBasedOnInsertBeforeAndAfter } from '@console/shared';
 import { Popper } from '../../popper';
+import { GroupedMenuOption, MenuOption, MenuOptionType } from '../types';
+import { getMenuOptionType } from '../utils';
 import ActionMenuItem from './ActionMenuItem';
-import { GroupedMenuOption, MenuOption, MenuOptionType } from './menu-types';
-import { getMenuOptionType } from './menu-utils';
 
 type GroupMenuContentProps = {
   option: GroupedMenuOption;
@@ -128,7 +128,7 @@ type ActionMenuContentProps = {
 const ActionMenuContent: React.FC<ActionMenuContentProps> = ({ options, onClick, focusItem }) => {
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(options);
   return (
-    <MenuContent data-test-id="action-menu-content" translate="no">
+    <MenuContent data-test-id="action-items" translate="no">
       <MenuList translate="no">
         {sortedOptions.map((option) => {
           const optionType = getMenuOptionType(option);

@@ -1,4 +1,7 @@
 // Not in ssh.spec until this is fixed: https://github.com/cypress-io/eslint-plugin-cypress/issues/43
+import { VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
+import { detailsTab } from '../../view/selector';
+
 const AFTER_CREATE_WAIT_TIME = 3000;
 
 export default ({ vmName }) =>
@@ -9,6 +12,12 @@ export default ({ vmName }) =>
         .then((link) => cy.visit(link.attr('href')));
       cy.byLegacyTestID(vmName).click();
       cy.byLegacyTestID('horizontal-link-Details').click();
+
+      // ensure vm is running before check ssh details
+      cy.get(detailsTab.vmStatus, { timeout: VM_ACTION_TIMEOUT.VM_IMPORT }).should(
+        'contain',
+        VM_STATUS.Running,
+      );
     });
 
     it('checking ssh user has value', () => {

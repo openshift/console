@@ -4,35 +4,36 @@ import { Grid } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
+import { useUtilizationDuration } from '@console/shared';
 
 import './utilization-card.scss';
 
-const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) => {
+const UtilizationAxis: React.FC = () => {
   const [containerRef, width] = useRefWidth();
+  const { startDate, endDate } = useUtilizationDuration();
+
   const { t } = useTranslation();
   return (
     <div ref={containerRef}>
-      {!!timestamps.length && (
-        <ChartAxis
-          containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
-          scale={{ x: 'time' }}
-          domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
-          tickFormat={timeFormatter.format}
-          orientation="top"
-          height={15}
-          width={width}
-          padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
-          style={{
-            axis: { visibility: 'hidden' },
-          }}
-          fixLabelOverlap
-        />
-      )}
+      <ChartAxis
+        containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
+        scale={{ x: 'time' }}
+        domain={{ x: [startDate, endDate] }}
+        tickFormat={timeFormatter.format}
+        orientation="top"
+        height={15}
+        width={width}
+        padding={{ top: 30, bottom: 0, left: 70, right: 0 }}
+        style={{
+          axis: { visibility: 'hidden' },
+        }}
+        fixLabelOverlap
+      />
     </div>
   );
 };
 
-export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
+export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ children }) => {
   const { t } = useTranslation();
   const axis = (
     <div className="co-utilization-card__item">
@@ -45,7 +46,7 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
         </span>
       </div>
       <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">
-        <UtilizationAxis timestamps={timestamps} />
+        <UtilizationAxis />
       </div>
     </div>
   );
@@ -64,9 +65,4 @@ export default UtilizationBody;
 
 type UtilizationBodyProps = {
   children: React.ReactNode;
-  timestamps: Date[];
-};
-
-type UtilizationAxisProps = {
-  timestamps: Date[];
 };

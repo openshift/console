@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ActionGroup, Button, ButtonVariant } from '@patternfly/react-core';
-import { CheckIcon, CloseIcon } from '@patternfly/react-icons';
+import { CheckIcon } from '@patternfly/react-icons';
+import CloseButton from '@console/shared/src/components/close-button';
 import { ActionGroupWithIconsProps } from './form-utils-types';
 
 const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
@@ -22,15 +23,11 @@ const ActionGroupWithIcons: React.FC<ActionGroupWithIconsProps> = ({
           <CheckIcon />
         </Button>
       )}
-      <Button
-        type="button"
-        data-test-id="close-icon"
-        variant={ButtonVariant.plain}
+      <CloseButton
+        additionalClassName="co-close-button--no-padding"
+        dataTestID="close-icon"
         onClick={onClose}
-        style={{ padding: '0' }}
-      >
-        <CloseIcon />
-      </Button>
+      />
     </ActionGroup>
   );
 };

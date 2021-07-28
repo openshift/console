@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ValidationErrorType } from '@console/shared';
 import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { ValidationErrorType } from '../../../../selectors';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';

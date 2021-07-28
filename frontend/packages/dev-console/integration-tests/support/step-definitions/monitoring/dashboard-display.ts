@@ -12,7 +12,7 @@ Given('user has workloads of all resource types', () => {
 });
 
 When('user navigates to Monitoring page', () => {
-  navigateTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Observe);
 });
 
 When('user selects the workload {string} from the dropdown', (workloadName: string) => {

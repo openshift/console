@@ -1,0 +1,39 @@
+.odf-install__chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .odf-install_capacity-header {
+    text-align: center;
+    font-size: var(--pf-global--FontSize--xl);
+    margin-bottom: var(--pf-c-wizard__main-body--PaddingBottom);
+  }
+  
+  .odf-install__stats {
+    display: flex;
+    font-size: var(--pf-global--FontSize--md);
+    margin-bottom: var(--pf-global--spacer--xs);
+    text-align: center;
+  }
+
+  .odf-install__node-list-btn {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .odf-install_stats--divider {
+    border-right: var(--pf-global--BorderWidth--sm) solid var(--pf-global--Color--light-300);
+    height: var(--pf-global--LineHeight--sm);
+    margin: 0 var(--pf-global--spacer--sm);
+  }
+
+  .odf-install__disk-list-btn {
+    padding-top: 0;
+    padding-left: 0;
+  }
+
+  .odf-install__lso_storageclass-donut_spinner {
+    margin-top: 50%;
+  }

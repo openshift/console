@@ -207,11 +207,31 @@ export type StoragePoolKind = K8sResourceCommon & {
     parameters?: {
       compression_mode: string;
     };
+    mirroring?: {
+      enabled: boolean;
+    };
   };
   status?: {
     phase?: string;
+    mirroringStatus?: {
+      lastChecked: string;
+      summary: {
+        image_health: string;
+        states: ImageStates | {};
+      };
+    };
   };
 };
+
+export enum ImageStates {
+  STARTING_REPLAY = 'starting_replay',
+  STOPPING_REPLAY = 'stopping_replay',
+  REPLAYING = 'replaying',
+  STOPPED = 'stopped',
+  ERROR = 'error',
+  SYNCING = 'syncing',
+  UNKNOWN = 'unknown',
+}
 
 export type StorageClusterKind = K8sResourceCommon & {
   spec: {
@@ -305,5 +325,20 @@ export type Payload = K8sResourceCommon & {
 export type OcsStorageClassKind = StorageClassResourceKind & {
   parameters: {
     pool: string;
+  };
+};
+
+export type StorageSystemKind = K8sResourceCommon & {
+  spec: {
+    // kind is a string as `<kind>.<apiGroup>/<apiVersion>`, describing the managed storage vendor CR
+    kind: string;
+    // name describes the name of managed storage vendor CR
+    name: string;
+    // namespace describes the name of managed storage vendor CR
+    namespace: string;
+  };
+  status: {
+    phase?: string;
+    conditions?: any;
   };
 };

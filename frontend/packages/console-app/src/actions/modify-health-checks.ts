@@ -21,6 +21,7 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
   return `/k8s/ns/${namespace}/${resourceKind}/${name}/containers/${containerName}/health-checks`;
 };
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
     // t('console-app~Add Health Checks')
@@ -37,6 +38,7 @@ export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpti
   };
 };
 
+/** @deprecated - Moving to Extensible Action for Deployment resource, see @console/app/src/actions */
 export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
     // t('console-app~Edit Health Checks')

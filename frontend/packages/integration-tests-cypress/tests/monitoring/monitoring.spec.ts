@@ -40,8 +40,8 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('displays and filters the Alerts list page, links to detail pages', () => {
-    cy.log('use sidebar nav to go to Monitoring -> Alerting');
-    nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
+    cy.log('use sidebar nav to go to Observe -> Alerting');
+    nav.sidenav.clickNavLink(['Observe', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');
     projectDropdown.shouldNotExist();

@@ -10,6 +10,7 @@ export interface FormSectionProps {
   children: React.ReactNode;
   flexLayout?: boolean;
   extraMargin?: boolean;
+  dataTest?: string;
 }
 
 const flexStyle: React.CSSProperties = {
@@ -26,6 +27,7 @@ const FormSection: React.FC<FormSectionProps> = ({
   children,
   flexLayout,
   extraMargin,
+  dataTest,
 }) => (
   <div
     className={cx('pf-c-form', {
@@ -33,6 +35,7 @@ const FormSection: React.FC<FormSectionProps> = ({
       'odc-form-section--extra-margin': extraMargin,
     })}
     style={flexLayout ? flexStyle : {}}
+    data-test={dataTest}
   >
     {title && <h2 className="odc-form-section__heading">{title}</h2>}
     {subTitle && <FormHelperText isHidden={false}>{subTitle}</FormHelperText>}

@@ -293,7 +293,12 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     <div className={classNames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && (
-          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
+          <NavBar
+            pages={pages}
+            baseURL={props.match.url}
+            basePath={props.match.path}
+            alertURL={props.alertURL}
+          />
         )}
       </div>
       {renderContent(routes)}
@@ -313,6 +318,7 @@ export type NavBarProps = {
   history: History;
   location: Location<any>;
   match: match<any>;
+  alertURL?: string;
 };
 
 export type HorizontalNavProps = {
@@ -327,6 +333,7 @@ export type HorizontalNavProps = {
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
   customData?: any;
+  alertURL?: string;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {

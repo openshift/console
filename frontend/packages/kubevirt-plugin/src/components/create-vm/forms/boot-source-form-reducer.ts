@@ -1,6 +1,6 @@
-import { asValidationObject, ValidationObject } from '@console/shared';
 import { AccessMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
+import { asValidationObject, ValidationObject } from '../../../selectors';
 import {
   isPositiveNumber,
   validateContainer,

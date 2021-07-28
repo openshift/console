@@ -7,32 +7,33 @@ Feature: Topology chart area
               And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Empty state of topology: T-06-TC01
              When user navigates to Topology page
              Then user sees Topology page with message "No resources found"
 
 
-        @regression @to-do
+        @regression
         Scenario: Navigate to Add page from Empty state of topology: T-06-TC02
             Given user is at the Topology page
              When user clicks on "Add page" link in the topology page
-             Then user will be redirected too Add page
+             Then user will be redirected to Add page
 
 
-        @regression @to-do
+        @regression
         Scenario: Add to project option in Empty state of topology: T-06-TC03
             Given user is at the Topology page
-             When user clicks on "Start building your application" link in the topology page
+             When user clicks on "Start building your application" link in the empty topology page
              Then user will be able to see Add to project search bar
 
 
-        @smoke @to-do
+        @smoke
         Scenario: Topology with workloads: T-06-TC04
-            Given user has created a workload named "nodejs-ex-git"
-              And user has created knative workload "nodejs-ex-git-1"
+            Given user has created a deployment workload named "nodejs-ex-git-1"
+              And user has created a deployment config workload "nodejs-ex-git-2"
              When user navigates to Topology page
-             Then user sees different workloads in topology chart area
+             Then user sees "nodejs-ex-git-1" and "nodejs-ex-git-2" workloads in topology chart area
+
 
 
         @regression @manual
@@ -134,16 +135,18 @@ Feature: Topology chart area
              Then user sees the chart area is reset to original
 
 
-        @regression @to-do
-        Scenario: Topology filter by resource: T-06-TC14
-            Given user created two workloads with resource type "Deployment" and "Deployment-Config"
+        @regression
+        Scenario Outline: Topology filter by resource: T-06-TC14
+            Given user created "<resource_type>" workload
              When user is at Topology page chart view
               And user clicks the filter by resource on top
-              And user will see "Deployment" and "Deployment-Config" options with '1' associated with it
-              And user clicks on Deployment
-              And user can see only the deployment workload
-              And user clicks on Deployment-Config
-             Then user can see only the deployment-config workload
+              And user clicks on "<resource_type>" option
+             Then user can see only the "<resource_type>" workload
+
+        Examples:
+                  | resource_type    |
+                  | Deployment       |
+                  | DeploymentConfig |
 
 
         @regression @to-do

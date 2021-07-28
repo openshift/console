@@ -3,8 +3,10 @@ import {
   IMPORTING,
   OS_IMAGES_NS,
   TEMPLATE_BASE_IMAGE,
+  TEMPLATE_METADATA_NAME,
   TEMPLATE_NAME,
   TEST_PROVIDER,
+  VM_STATUS,
 } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
@@ -37,16 +39,16 @@ describe('test vm template source image', () => {
     addSource.addBootSource(ProvisionSource.REGISTRY);
     virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
-    virtualization.templates.deleteSource(TEMPLATE_NAME);
+    virtualization.templates.deleteSource(TEMPLATE_METADATA_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
-  xit('ID(CNV-5650) add URL image and delete', () => {
+  it('ID(CNV-5650) add URL image and delete', () => {
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.URL);
     virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
-    virtualization.templates.deleteSource(TEMPLATE_NAME);
+    virtualization.templates.deleteSource(TEMPLATE_METADATA_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
@@ -57,9 +59,9 @@ describe('test vm template source image', () => {
       pvcName: testName,
       pvcNamespace: 'default',
     });
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Cloning');
+    virtualization.templates.testSource(TEMPLATE_NAME, VM_STATUS.Cloning);
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
-    virtualization.templates.deleteSource(TEMPLATE_NAME);
+    virtualization.templates.deleteSource(TEMPLATE_METADATA_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 
@@ -74,7 +76,7 @@ describe('test vm template source image', () => {
     addSource.addBootSource(ProvisionSource.UPLOAD);
     virtualization.templates.testSource(TEMPLATE_NAME, 'Uploading');
     virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
-    virtualization.templates.deleteSource(TEMPLATE_NAME);
+    virtualization.templates.deleteSource(TEMPLATE_METADATA_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 });
@@ -85,7 +87,7 @@ describe('test vm template source image provider', () => {
     addSource.addBootSource(ProvisionSource.REGISTRY, undefined, 'fooProvider');
     virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
     virtualization.templates.testSource(TEMPLATE_NAME, 'fooProvider');
-    virtualization.templates.deleteSource(TEMPLATE_NAME);
+    virtualization.templates.deleteSource(TEMPLATE_METADATA_NAME);
     virtualization.templates.testSource(TEMPLATE_NAME, ADD_SOURCE);
   });
 });

@@ -1,13 +1,8 @@
 // Bootstrap Core variables and mixins
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
-@import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
 
 // Patternfly Core variables and mixins
 @import '~patternfly/dist/sass/patternfly/variables';
-@import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
-@import '~patternfly/dist/sass/patternfly/mixins';
-@import '~patternfly/dist/sass/patternfly/icons';
-@import '~patternfly-react/dist/sass/patternfly-react';
 
 // OpenShift variables
 @import '../../../public/style/vars';
@@ -153,15 +148,19 @@ $co-affinity-row-margin: 15px;
 
 .co-create-operand__header {
   border-bottom: 1px solid #ddd;
-  padding: 10px 15px;
+  padding: 0 15px 10px;
   @media (min-width: $screen-sm-min) {
     padding: 0 30px 15px;
   }
 }
 
-.co-create-operand__header-buttons {
+.co-create-operand__breadcrumbs {
   align-items: baseline;
   display: flex;
+  padding: 10px 15px;
+  @media (min-width: $screen-sm-min) {
+    padding: 0 30px 15px;
+  }
 }
 
 .co-create-operand__header-text {

@@ -1,6 +1,6 @@
 import { K8sKind, K8sResourceKind, OwnerReference } from '@console/internal/module/k8s/types';
 /* eslint-disable lines-between-class-members */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+import { ObjectEnum } from '../../../constants/object-enum';
 import {
   getCreationTimestamp,
   getLabels,
@@ -8,8 +8,8 @@ import {
   getNamespace,
   getOwnerReferences,
   hasLabel,
-} from '@console/shared/src/selectors/common';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+} from '../../../selectors';
+import { compareOwnerReference } from '../../../utils';
 import { K8sResourceKindMethods } from '../types/types';
 import { ObjectWithTypePropertyWrapper } from './object-with-type-property-wrapper';
 import { clearMetadata, clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';

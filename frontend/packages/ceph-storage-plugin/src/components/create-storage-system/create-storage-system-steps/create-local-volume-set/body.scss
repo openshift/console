@@ -1,0 +1,51 @@
+.odf-create-lvs__all-nodes-radio--padding {
+    padding-bottom: var(--pf-global--spacer--sm);
+  }
+
+.odf-create-lvs__filter-volumes-text--margin {
+  margin: 0;
+}
+
+.odf-create-lvs__max-disk-limit-help-text--margin {
+  margin-top: 0;
+}
+
+.odf-create-lvs__node-selection-table--margin {
+  margin-top: 0;
+}
+
+.odf-create-lvs__disk-mode-dropdown--margin {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.odf-create-lvs__device-type-dropdown--margin {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.odf-create-lvs__disk-size-form-group--margin {
+  margin: var(--pf-global--spacer--lg) 0;
+}
+
+.odf-create-lvs__disk-size-form-group-div {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 22em;
+}
+
+.odf-create-lvs__disk-size-form-group-max-min-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.odf-create-lvs__disk-input {
+  max-width: 100px;
+}
+
+.odf-create-lvs__select-nodes {
+// overrides extra space added by `co-m-nav-title`
+  .co-m-nav-title {
+    padding: 0;
+    margin: 0;
+  }
+}

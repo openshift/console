@@ -3,7 +3,6 @@ import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getGitService, GitProvider } from '@console/git-service';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { parseDevfile } from '@console/internal/module/k8s';
 import { getLimitsDataFromResource } from '@console/shared/src';
 import { SAMPLE_APPLICATION_GROUP } from '../../../const';
 import { DevfileSuggestedResources } from '../import-types';
@@ -56,7 +55,8 @@ export const useDevfileServer = (
     }
 
     setParsingDevfile(true);
-    parseDevfile(devfileData)
+    coFetchJSON
+      .post('/api/devfile/', devfileData)
       .then((value: DevfileSuggestedResources) => {
         setParsingDevfile(false);
         if (value) {
@@ -123,7 +123,7 @@ export const useDevfileSource = () => {
   React.useEffect(() => {
     if (devfileSourceUrl) {
       const gitType = detectGitType(devfileSourceUrl);
-      const gitService = getGitService({ url: devfileSourceUrl }, gitType as GitProvider);
+      const gitService = getGitService(devfileSourceUrl, gitType as GitProvider);
       setFieldValue('devfile.devfileSourceUrl', devfileSourceUrl);
       gitService
         .getDevfileContent()

@@ -8,7 +8,6 @@ export const kebabButton = 'kebab-button';
 
 export const selectActionFromDropdown = (action: string, selector: string) => {
   cy.byLegacyTestID(selector).click();
-  cy.byLegacyTestID(selector).should('be.visible');
   cy.byTestActionID(action).click();
 };
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace } from '../../../../selectors';
 import { getVMLikeModel } from '../../../../selectors/vm';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { TModal } from './tolerations-modal';

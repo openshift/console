@@ -3,6 +3,8 @@ import { browser } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { getInterfaces } from '../../src/selectors/vm/selectors';
+import { getVMIDisks } from '../../src/selectors/vmi/basic';
 import {
   click,
   createResource,
@@ -10,9 +12,7 @@ import {
   deleteResource,
   deleteResources,
   withResource,
-} from '@console/shared/src/test-utils/utils';
-import { getInterfaces } from '../../src/selectors/vm/selectors';
-import { getVMIDisks } from '../../src/selectors/vmi/basic';
+} from '../utils/shared-utils';
 import { nicModel, nicType } from '../views/dialogs/networkInterface.view';
 import { createNICButton } from '../views/kubevirtUIResource.view';
 import { dropDownItemMain, dropDownList } from '../views/uiResource.view';

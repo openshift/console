@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip } from '@patternfly/react-core';
+import { StackItem, Tooltip } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import cn from 'classnames';
 import * as copy from 'copy-to-clipboard';
@@ -12,7 +12,7 @@ import {
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
-import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 import { StatusGroup } from '../../constants/status-group';
 import { VMStatus } from '../../constants/vm/vm-status';
 import useSSHCommand from '../../hooks/use-ssh-command';
@@ -24,6 +24,11 @@ import { cancelMigration } from '../../k8s/requests/vmim';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
+import { getName, getNamespace } from '../../selectors';
+import {
+  getAutoRemovedOrPersistentDiskName,
+  getHotplugDiskNames,
+} from '../../selectors/disks/hotplug';
 import {
   isVMCreated,
   isVMExpectedRunning,
@@ -40,7 +45,8 @@ import { cloneVMModal } from '../modals/clone-vm-modal';
 import { confirmVMIModal } from '../modals/menu-actions-modals/confirm-vmi-modal';
 import { deleteVMModal } from '../modals/menu-actions-modals/delete-vm-modal';
 import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
-import { ActionMessage } from './constants';
+import { RemovalDiskAlert } from '../vm-disks/RemovalDiskAlert';
+import { ActionMessage } from './ActionMessage';
 
 import './menu-actions.scss';
 
@@ -167,7 +173,19 @@ const menuActionStop = (
         // t('kubevirt-plugin~Stop Virtual Machine alert')
         alertTitleKey: 'kubevirt-plugin~Stop Virtual Machine alert',
         // t('kubevirt-plugin~stop')
-        message: <ActionMessage obj={vm} actionKey="kubevirt-plugin~stop" />,
+        message: (
+          <ActionMessage obj={vm} actionKey="kubevirt-plugin~stop">
+            <StackItem>
+              <RemovalDiskAlert
+                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
+                  vm,
+                  getHotplugDiskNames(vmi),
+                  true,
+                )}
+              />
+            </StackItem>
+          </ActionMessage>
+        ),
         // t('kubevirt-plugin~Stop')
         btnTextKey: 'kubevirt-plugin~Stop',
         executeFn: () => stopVM(vm),
@@ -197,7 +215,19 @@ const menuActionRestart = (
         // t('kubevirt-plugin~Restart Virtual Machine alert')
         alertTitleKey: 'kubevirt-plugin~Restart Virtual Machine alert',
         // t('kubevirt-plugin~restart')
-        message: <ActionMessage obj={vm} actionKey="kubevirt-plugin~restart" />,
+        message: (
+          <ActionMessage obj={vm} actionKey="kubevirt-plugin~restart">
+            <StackItem>
+              <RemovalDiskAlert
+                hotplugDiskNames={getAutoRemovedOrPersistentDiskName(
+                  vm,
+                  getHotplugDiskNames(vmi),
+                  true,
+                )}
+              />
+            </StackItem>
+          </ActionMessage>
+        ),
         // t('kubevirt-plugin~Restart')
         btnTextKey: 'kubevirt-plugin~Restart',
         executeFn: () => restartVM(vm),

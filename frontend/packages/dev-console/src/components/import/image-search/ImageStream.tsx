@@ -49,7 +49,8 @@ const ImageStream: React.FC<{
   label?: string;
   required?: boolean;
   formContextField?: string;
-}> = ({ disabled = false, label, required = false, formContextField }) => {
+  dataTest?: string;
+}> = ({ disabled = false, label, required = false, formContextField, dataTest }) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
@@ -89,6 +90,7 @@ const ImageStream: React.FC<{
           helperTextInvalid={helperTextInvalid}
           label={label}
           required={required}
+          data-test={dataTest}
         >
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">

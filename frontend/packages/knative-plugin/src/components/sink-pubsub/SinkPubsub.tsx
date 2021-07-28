@@ -7,14 +7,14 @@ import SinkPubsubModal from './SinkPubsubModal';
 
 export interface SinkPubsubProps {
   source: K8sResourceKind;
+  resourceType: string;
   cancel?: () => void;
   close?: () => void;
 }
 
-const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
+const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, resourceType, cancel, close }) => {
   const { t } = useTranslation();
   const {
-    kind: sourceKind,
     metadata: { namespace, name },
     spec,
   } = source;
@@ -60,7 +60,7 @@ const SinkPubsub: React.FC<SinkPubsubProps> = ({ source, cancel, close }) => {
           {...formikProps}
           resourceName={name}
           resourceDropdown={resourcesDropdownField}
-          labelTitle={t('knative-plugin~Move {{sourceKind}}', { sourceKind })}
+          labelTitle={t('knative-plugin~Move {{kind}}', { kind: resourceType })}
           cancel={cancel}
         />
       )}

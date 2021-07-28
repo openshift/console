@@ -42,7 +42,6 @@ export const TimeDurationDropdown: React.FC<TimeDurationDropdownProps> = ({
       <Dropdown
         title={TimeUnits.HOUR}
         selectedKey={unit}
-        className="btn-group"
         items={TimeUnits}
         onChange={onUnitChange}
         required={required}

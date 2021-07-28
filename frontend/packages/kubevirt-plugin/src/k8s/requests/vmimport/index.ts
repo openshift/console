@@ -1,7 +1,7 @@
 import { k8sGet, k8sKill } from '@console/internal/module/k8s';
-import { getDeletetionTimestamp, getName, getNamespace } from '@console/shared/src';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
+import { getDeletetionTimestamp, getName, getNamespace } from '../../../selectors';
 import { VMKind } from '../../../types/vm';
 import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';

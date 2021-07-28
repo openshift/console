@@ -36,7 +36,7 @@ describe('test dev console', () => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
-    cy.cdiCloner(testName);
+    cy.cdiCloner(testName, OS_IMAGES_NS);
     cy.createDataVolume(TEMPLATE_BASE_IMAGE, OS_IMAGES_NS);
   });
 
@@ -88,7 +88,6 @@ describe('test dev console', () => {
       cy.get('#ssh-service-checkbox').click();
       cy.get('button[type="submit"]').click();
       cy.get('button[type="submit"]').should('not.exist');
-      cy.screenshot('after_vm_created');
     });
   });
 

@@ -235,11 +235,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": [
-        "/k8s/ns/:ns/virtualmachines/:name",
-        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachine/:name",
-        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachine/:name"
-      ],
+      "path": ["/k8s/ns/:ns/virtualmachines/:name"],
       "component": {
         "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage"
       }
@@ -249,13 +245,37 @@
     }
   },
   {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachine"
+      },
+      "component": { "$codeRef": "VirtualMachinesDetailsPage.VirtualMachinesDetailsPage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
-      "path": [
-        "/k8s/ns/:ns/virtualmachineinstances/:name",
-        "/k8s/ns/:ns/kubevirt.io~v1~VirtualMachineInstance/:name",
-        "/k8s/ns/:ns/kubevirt.io~v1alpha3~VirtualMachineInstance/:name"
-      ],
+      "path": ["/k8s/ns/:ns/virtualmachineinstances/:name"],
+      "component": {
+        "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "kind": "VirtualMachineInstance"
+      },
       "component": {
         "$codeRef": "VirtualMachinesInstanceDetailsPage.VirtualMachinesInstanceDetailsPage"
       }
@@ -328,12 +348,12 @@
     }
   },
   {
-    "type": "console.page/route",
+    "type": "console.page/resource/details",
     "properties": {
-      "path": [
-        "/k8s/ns/:ns/virtualmachinesnapshots/:name",
-        "/k8s/ns/:ns/snapshot.kubevirt.io~v1alpha1~VirtualMachineSnapshot/:name"
-      ],
+      "model": {
+        "group": "snapshot.kubevirt.io",
+        "kind": "VirtualMachineSnapshot"
+      },
       "component": {
         "$codeRef": "SnapshotDetailsPage.SnapshotDetailsPage"
       }

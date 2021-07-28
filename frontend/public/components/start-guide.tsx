@@ -7,7 +7,7 @@ import { Button } from '@patternfly/react-core';
 import { FLAGS } from '@console/shared/src/constants';
 import { createProjectMessageStateToProps } from '../reducers/ui';
 import { Disabled, HintBlock, ExternalLink, openshiftHelpBase, LinkifyExternal } from './utils';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { ProjectModel } from '../models';
 import { createProjectModal } from './modals/create-namespace-modal';
 
@@ -47,8 +47,13 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
   ),
 );
 
-export const withStartGuide = (WrappedComponent, disable: boolean = true) =>
-  connectToFlags(
+type WithStartGuide = <P>(
+  WrappedComponent: React.ComponentType<P & WithStartGuideProps>,
+  disable?: boolean,
+) => React.ComponentType<P>;
+
+export const withStartGuide: WithStartGuide = (WrappedComponent, disable = true) =>
+  connectToFlags<any>(
     FLAGS.SHOW_OPENSHIFT_START_GUIDE,
     FLAGS.CAN_CREATE_PROJECT,
   )(({ flags, ...rest }: any) => {

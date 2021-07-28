@@ -6,10 +6,10 @@ import {
   SecretKind,
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
-import { getRandomChars } from '@console/shared';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { V1Disk, V1Volume } from '../../../types/api';
+import { getRandomChars } from '../../../utils';
 import {
   configMapKind,
   configMapRef,

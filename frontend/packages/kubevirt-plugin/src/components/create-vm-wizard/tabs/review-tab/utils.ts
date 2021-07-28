@@ -4,8 +4,8 @@ import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/c
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { getTemplateFlavorData } from '../../../../selectors/vm-template/advanced';
 import { ITemplate } from '../../../../types/template';
+import { getBooleanReadableValue } from '../../../../utils';
 import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
-import { getBooleanReadableValue } from '../../../../utils/strings';
 import { FormFieldType } from '../../form/form-field';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';

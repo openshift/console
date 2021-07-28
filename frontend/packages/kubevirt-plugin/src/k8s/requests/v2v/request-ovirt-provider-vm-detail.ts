@@ -1,6 +1,6 @@
-import { PatchBuilder } from '@console/shared/src/k8s';
 import { OVirtProviderModel } from '../../../models';
 import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
+import { PatchBuilder } from '../../helpers/patch';
 
 const { warn } = console;
 

@@ -13,7 +13,11 @@ const AdvancedSection: React.FC<{ resourceType: string }> = ({ resourceType }) =
     setVisibleItems([...visibleItems, item]);
   };
   return (
-    <FormSection title={t('devconsole~Advanced options')} fullWidth>
+    <FormSection
+      title={t('devconsole~Advanced options')}
+      dataTest="advanced-options-section"
+      fullWidth
+    >
       <ProgressiveList
         text={t('devconsole~Click on the names to access advanced options for')}
         visibleItems={visibleItems}

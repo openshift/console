@@ -1,17 +1,15 @@
 import * as React from 'react';
 import {
-  Node,
   GraphElement,
   withDragNode,
   withSelection,
   withDndDrop,
   withCreateConnector,
 } from '@patternfly/react-topology';
-import { kebabOptionsToMenu } from '@console/internal/components/utils';
+import { contextMenuActions } from '@console/topology/src/actions/contextMenuActions';
 import {
   WorkloadNode,
   noRegroupWorkloadContextMenu,
-  createMenuItems,
   createConnectorCallback,
   NodeComponentProps,
   nodeDragSourceSpec,
@@ -21,12 +19,8 @@ import {
   CreateConnector,
 } from '@console/topology/src/components/graph-view';
 import { withEditReviewAccess } from '@console/topology/src/utils';
-import { helmReleaseActions } from '../actions/helmReleaseActions';
 import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from './const';
 import HelmRelease from './HelmRelease';
-
-export const helmReleaseContextMenu = (element: Node) =>
-  createMenuItems(kebabOptionsToMenu(helmReleaseActions(element)));
 
 export const getHelmComponentFactory = (
   kind,
@@ -35,7 +29,7 @@ export const getHelmComponentFactory = (
   switch (type) {
     case TYPE_HELM_RELEASE:
       return withSelection({ controlled: true })(
-        withContextMenu(helmReleaseContextMenu)(withNoDrop()(HelmRelease)),
+        withContextMenu(contextMenuActions)(withNoDrop()(HelmRelease)),
       );
     case TYPE_HELM_WORKLOAD:
       return withCreateConnector(

@@ -1,5 +1,3 @@
-import { getOwnerReferences } from '@console/shared/src';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import {
   BinaryUnit,
   stringValueUnitSplit,
@@ -7,6 +5,7 @@ import {
 } from '../../../components/form/size-unit-utils';
 import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import { DataVolumeModel } from '../../../models';
+import { getOwnerReferences } from '../../../selectors';
 import {
   getDataVolumeAccessModes,
   getDataVolumePreallocationDisk,
@@ -15,6 +14,7 @@ import {
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
 import { V1alpha1DataVolume } from '../../../types/api';
+import { compareOwnerReference } from '../../../utils';
 import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 
@@ -101,6 +101,12 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
   setStorageClassName = (storageClassName: string) => {
     this.ensurePath('spec.pvc');
     this.data.spec.pvc.storageClassName = storageClassName;
+    return this;
+  };
+
+  setNamespace = (ns: string) => {
+    this.ensurePath('metadata.namespace');
+    this.data.metadata.namespace = ns;
     return this;
   };
 

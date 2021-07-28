@@ -12,12 +12,13 @@ import {
 } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { dimensifyRow, PendingStatus } from '@console/shared';
+import { PendingStatus } from '@console/shared';
 import { SuccessStatus } from '@console/shared/src/components/status/statuses';
 import { getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { isVMIRunning } from '../../../selectors/vmi';
 import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
+import { dimensifyRow } from '../../../utils';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
 import { customizeTemplateActions } from '../menu-actions';
 import { getTemplateOSIcon } from '../os-icons';

@@ -1,4 +1,4 @@
-import { click, fillInput } from '@console/shared/src/test-utils/utils';
+import { click, fillInput } from '../../utils/shared-utils';
 import * as view from '../../views/dialogs/networkInterface.view';
 import * as wizardView from '../../views/importWizard.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';

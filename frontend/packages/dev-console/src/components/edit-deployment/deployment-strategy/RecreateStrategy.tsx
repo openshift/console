@@ -9,7 +9,7 @@ import { StrategyFieldProps } from './utils/types';
 const RecreateStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resourceObj }) => {
   const { t } = useTranslation();
   return resourceType === Resources.OpenShift ? (
-    <>
+    <div data-test="recreateParams">
       <InputField
         name="formData.deploymentStrategy.recreateParams.timeoutSeconds"
         style={{ maxWidth: 'unset' }}
@@ -20,7 +20,7 @@ const RecreateStrategy: React.FC<StrategyFieldProps> = ({ resourceType, resource
         )}
       />
       <AdvancedStrategyOptions dataAttribute="recreateParams" resourceObj={resourceObj} />
-    </>
+    </div>
   ) : null;
 };
 

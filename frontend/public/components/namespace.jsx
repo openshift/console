@@ -71,7 +71,8 @@ import {
 } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
-import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
+import { featureReducerName, flagPending } from '../reducers/features';
 import { setFlag } from '../actions/features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { OverviewListPage } from './overview';
@@ -858,10 +859,16 @@ export const PullSecret = (props) => {
     configureNamespacePullSecretModal({ namespace: props.namespace, pullSecret: data });
 
   return (
-    <Button variant="link" type="button" isInline onClick={modal}>
-      {_.get(data, 'metadata.name') || t('public~Not configured')}
-      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-    </Button>
+    <>
+      {data ? (
+        <ResourceLink kind="Secret" name={data.metadata.name} namespace={data.metadata.namespace} />
+      ) : (
+        <Button variant="link" type="button" isInline onClick={modal}>
+          {t('public~Not configured')}
+          <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+        </Button>
+      )}
+    </>
   );
 };
 

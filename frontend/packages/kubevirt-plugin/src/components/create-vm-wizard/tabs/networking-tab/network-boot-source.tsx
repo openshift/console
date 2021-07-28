@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { ValidationErrorType } from '@console/shared';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+import { ValidationErrorType } from '../../../../selectors';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { FormRow } from '../../../form/form-row';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';

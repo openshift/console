@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, ButtonVariant, SelectOption, Text, TextContent } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { ValidationErrorType } from '@console/shared';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { ValidationErrorType } from '../../../../selectors';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { FormField, FormFieldType } from '../../form/form-field';
@@ -105,7 +105,7 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
   ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
     const { t } = useTranslation();
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
-    const sources: string[] = iGet(provisionSourceField, 'sources');
+    const sources: string[] = iGet(provisionSourceField, 'sources').toJS();
     const validationType = iGetIn(provisionSourceField, ['validation', 'type']);
 
     return (
@@ -118,14 +118,14 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
           >
             {(sources || [])
               .map(ProvisionSource.fromString)
-              .sort((a, b) => a.getOrder() - b.getOrder())
+              .sort((a, b) => a?.getOrder() - b?.getOrder())
               .map((source) => (
                 <SelectOption
-                  key={source.getValue()}
-                  value={source.getValue()}
-                  description={t(source.getDescriptionKey())}
+                  key={source?.getValue()}
+                  value={source?.getValue()}
+                  description={t(source?.getDescriptionKey())}
                 >
-                  {t(source.toString())}
+                  {t(source?.toString())}
                 </SelectOption>
               ))}
           </FormPFSelect>

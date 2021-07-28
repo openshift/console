@@ -4,8 +4,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { Button, Chip, ChipGroup } from '@patternfly/react-core';
-import { CloseIcon } from '@patternfly/react-icons';
+import { Chip, ChipGroup } from '@patternfly/react-core';
 import { Trans, useTranslation, withTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
@@ -21,7 +20,7 @@ import {
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared/src/constants';
 import {
   Box,
@@ -35,6 +34,7 @@ import {
   TogglePlay,
 } from './utils';
 import { EventStreamList } from './utils/event-stream';
+import CloseButton from '@console/shared/src/components/close-button';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -210,7 +210,7 @@ export const EventsList = (props) => {
             className="co-search-group__resource"
           />
           <Dropdown
-            className="btn-group co-search-group__resource"
+            className="co-search-group__resource"
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
@@ -238,9 +238,7 @@ export const EventsList = (props) => {
                   </Chip>
                 );
               })}
-              <Button variant="plain" aria-label={t('public~Close')} onClick={clearSelection}>
-                <CloseIcon />
-              </Button>
+              <CloseButton onClick={clearSelection} />
             </ChipGroup>
           )}
         </div>
@@ -265,7 +263,7 @@ export const NoEvents = () => {
   const { t } = useTranslation();
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="text-center cos-status-box__detail">{t('public~No events')}</div>
+      <div className="pf-u-text-align-center cos-status-box__detail">{t('public~No events')}</div>
     </Box>
   );
 };
@@ -275,7 +273,7 @@ export const NoMatchingEvents = ({ allCount }) => {
   return (
     <Box className="co-sysevent-stream__status-box-empty">
       <div className="cos-status-box__title">{t('public~No matching events')}</div>
-      <div className="text-center cos-status-box__detail">
+      <div className="pf-u-text-align-center cos-status-box__detail">
         {allCount >= maxMessages
           ? t('public~{{allCount}}+ events exist, but none match the current filter', { allCount })
           : t('public~{{allCount}} events exist, but none match the current filter', { allCount })}
@@ -291,7 +289,7 @@ export const ErrorLoadingEvents = () => {
       <div className="cos-status-box__title cos-error-title">
         {t('public~Error loading events')}
       </div>
-      <div className="cos-status-box__detail text-center">
+      <div className="cos-status-box__detail pf-u-text-align-center">
         {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
       </div>
     </Box>

@@ -3,19 +3,20 @@ import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { DASH, dimensifyRow, getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
+import { getCreationTimestamp, getName, getNamespace } from '../../selectors';
 import {
   getVmRestoreTime,
   isVmRestoreProgressing,
   isVMSnapshotReady,
 } from '../../selectors/snapshot/snapshot';
 import { VMRestore, VMSnapshot } from '../../types';
+import { DASH, dimensifyRow } from '../../utils';
 import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
+import { VMLabel } from '../VMLabel';
 import { VMSnapshotRowCustomData } from './types';
 import { VMSnapshotStatus } from './vm-snapshot-status';
-import { VMRunningSnapshotLabel } from './VMRunningSnapshotLabel';
 
 const { Delete } = Kebab.factory;
 
@@ -68,10 +69,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
       <TableData id={`${snapshotName}-online-snapshot`} className={dimensify()}>
         {indications
           ? indications.map((indication) => (
-              <VMRunningSnapshotLabel
-                key={`${snapshotName}-${indication}`}
-                indication={indication}
-              />
+              <VMLabel key={`${snapshotName}-${indication}`} indication={indication} />
             ))
           : DASH}
       </TableData>

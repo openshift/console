@@ -35,7 +35,7 @@ const AddHealthChecksForm: React.FC<AddHealthChecksFormProps> = ({
   );
 
   if (_.isEmpty(container)) {
-    return <div className="text-center">{t('devconsole~Container not found')}</div>;
+    return <div className="pf-u-text-align-center">{t('devconsole~Container not found')}</div>;
   }
 
   const handleSubmit = (values, actions) => {

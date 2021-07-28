@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FLAGS } from '@console/shared/src/constants';
 import { Area } from '@console/internal/components/graphs/area';
 import { humanizeDecimalBytesPerSec } from '@console/internal/components/utils';
-import { connectToFlags, WithFlagsProps } from '../../reducers/features';
+import { connectToFlags, WithFlagsProps } from '../../reducers/connectToFlags';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Grid, GridItem } from '@patternfly/react-core';

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
 import {
@@ -9,6 +10,7 @@ import {
 import { mapLimitsRequests } from '@console/internal/components/graphs/utils';
 import { Humanize } from '@console/internal/components/utils/types';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
+import { useUtilizationDuration } from '@console/shared/src/hooks';
 import {
   YellowExclamationTriangleIcon,
   RedExclamationCircleIcon,
@@ -40,6 +42,10 @@ const getCurrentData = (
   return current;
 };
 
+const lastTimeInSeries = (series: DataPoint[]) => new Date(_.last(series)?.x ?? 0).getTime();
+const getMaxDate = (data: DataPoint[][]) =>
+  new Date(Math.max(...(data?.map?.(lastTimeInSeries) ?? [])) ?? 0);
+
 export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> = React.memo(
   ({
     title,
@@ -53,12 +59,16 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
     byteDataType,
   }) => {
     const { t } = useTranslation();
+    const { endDate, startDate, updateEndDate } = useUtilizationDuration();
     const current = data.map((datum, index) =>
       getCurrentData(humanizeValue, queries[index].desc, datum, dataUnits && dataUnits[index]),
     );
+    const maxDate = getMaxDate(data);
+    React.useEffect(() => updateEndDate(maxDate), [maxDate, updateEndDate]);
     const chart = (
       <AreaChart
         data={error ? [[]] : data}
+        domain={{ x: [startDate, endDate] }}
         loading={!error && isLoading}
         query={queries.map((q) => q.query)}
         xAxis={false}
@@ -125,9 +135,9 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     limit,
     requested,
     setLimitReqState,
-    setTimestamps,
   }) => {
     const { t } = useTranslation();
+    const { startDate, endDate, updateEndDate } = useUtilizationDuration();
     const { data, chartStyle } = mapLimitsRequests(
       utilization,
       limit,
@@ -135,11 +145,8 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
       trimSecondsXMutator,
     );
     const [utilizationData, limitData, requestedData] = data;
-    React.useEffect(() => {
-      setTimestamps &&
-        utilizationData &&
-        setTimestamps(utilizationData.map((datum) => datum.x as Date));
-    }, [setTimestamps, utilizationData]);
+    const maxDate = getMaxDate([utilizationData]);
+    React.useEffect(() => updateEndDate(maxDate), [updateEndDate, maxDate]);
     const current = utilizationData?.length ? utilizationData[utilizationData.length - 1].y : null;
 
     let humanMax: string;
@@ -159,6 +166,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
 
     const chart = (
       <AreaChart
+        domain={{ x: [startDate, endDate] }}
         ariaChartLinkLabel={t('console-shared~View {{title}} metrics in query browser', {
           title,
         })}
@@ -301,7 +309,6 @@ type UtilizationItemProps = {
   byteDataType?: ByteDataTypes;
   TopConsumerPopover?: React.ComponentType<TopConsumerPopoverProp>;
   setLimitReqState?: (state: LimitRequested) => void;
-  setTimestamps?: (timestamps: Date[]) => void;
 };
 
 type MultilineUtilizationItemProps = {

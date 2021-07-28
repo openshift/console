@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem } from '@console/internal/components/utils';
@@ -213,7 +213,7 @@ export type DescriptorDetailsItemProps = {
   obj: K8sResourceKind;
   model: K8sKind;
   onError?: (e: Error) => void;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
   type: DescriptorType;
 };
 

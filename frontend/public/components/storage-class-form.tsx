@@ -708,7 +708,7 @@ class StorageClassFormWithTranslation extends React.Component<
     const dataParameters = _.pickBy(
       _.mapValues(this.state.newStorageClass.parameters, (value, key) => {
         let finalValue = value.value;
-        if (this.storageTypes[type].parameters[key].format) {
+        if (this.storageTypes[type].parameters[key]?.format) {
           finalValue = this.storageTypes[type].parameters[key].format(value.value);
         }
         return finalValue;

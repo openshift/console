@@ -8,6 +8,7 @@ export const EXPECT_LOGIN_SCRIPT_PATH = './utils/expect-login.sh';
 
 export const TEMPLATE_NAME = 'Red Hat Enterprise Linux 6.0+ VM';
 export const TEMPLATE_BASE_IMAGE = 'rhel6';
+export const TEMPLATE_METADATA_NAME = 'rhel6-server-small';
 
 export const TEST_PROVIDER = 'test-provider';
 export const IMPORTING = 'Importing';
@@ -34,6 +35,7 @@ export enum VM_ACTION {
   Start = 'Start Virtual Machine',
   Stop = 'Stop Virtual Machine',
   Unpause = 'Unpause Virtual Machine',
+  Pause = 'Pause Virtual Machine',
 }
 
 export enum VMI_ACTION {
@@ -49,6 +51,7 @@ export enum VM_STATUS {
   Migrating = 'Migration',
   Stopping = 'Stopping',
   Running = 'Running',
+  Cloning = 'Cloning',
   Off = 'Off',
 }
 
@@ -56,6 +59,7 @@ export enum VM_ACTION_TIMEOUT {
   VM_BOOTUP = 180000,
   VM_IMPORT = 360000,
   VM_IMPORT_AND_BOOTUP = 900000,
+  VM_MIGRATE = 600000,
 }
 
 export enum Flavor {

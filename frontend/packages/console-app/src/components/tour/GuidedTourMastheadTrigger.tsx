@@ -7,20 +7,23 @@ type GuidedTourMastheadTriggerProps = {
   className?: string;
 };
 
-const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = ({ className }) => {
-  const { tourDispatch, tour } = React.useContext(TourContext);
-  const { t } = useTranslation();
+const GuidedTourMastheadTrigger: React.FC<GuidedTourMastheadTriggerProps> = React.forwardRef(
+  ({ className }, ref: React.LegacyRef<HTMLButtonElement>) => {
+    const { tourDispatch, tour } = React.useContext(TourContext);
+    const { t } = useTranslation();
 
-  if (!tour) return null;
-  return (
-    <button
-      className={className}
-      type="button"
-      onClick={() => tourDispatch({ type: TourActions.start })}
-    >
-      {t('console-app~Guided tour')}
-    </button>
-  );
-};
+    if (!tour) return null;
+    return (
+      <button
+        className={className}
+        type="button"
+        ref={ref}
+        onClick={() => tourDispatch({ type: TourActions.start })}
+      >
+        {t('console-app~Guided tour')}
+      </button>
+    );
+  },
+);
 
 export default GuidedTourMastheadTrigger;

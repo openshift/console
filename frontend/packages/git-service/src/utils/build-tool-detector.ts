@@ -11,13 +11,10 @@ export function detectBuildTypes(files: string[]): BuildType[] {
 }
 
 export function isModernWebApp(packageJsonContent: string): boolean {
-  const packageJson = JSON.parse(packageJsonContent);
-  let isWebApp = false;
-  WebAppDependencies.forEach((dep) => {
-    if (dep in packageJson.dependencies) {
-      isWebApp = true;
-    }
-  });
-
-  return isWebApp;
+  try {
+    const packageJson = JSON.parse(packageJsonContent);
+    return WebAppDependencies.some((dep) => dep in packageJson.dependencies);
+  } catch {
+    return false;
+  }
 }

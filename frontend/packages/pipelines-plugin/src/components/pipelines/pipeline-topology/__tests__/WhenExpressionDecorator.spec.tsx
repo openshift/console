@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
+import { chart_color_green_400 as successColor } from '@patternfly/react-tokens/dist/js/chart_color_green_400';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { runStatus } from '../../../../utils/pipeline-augment';
 import WhenExpressionDecorator from '../WhenExpressionDecorator';
@@ -14,8 +15,11 @@ describe('WhenExpressionDecorator', () => {
   const props: WhenExpressionDecoratorProps = {
     width: 10,
     height: 10,
-    color: 'white',
+    status: runStatus.Failed,
+    isPipelineRun: true,
+    isFinallyTask: false,
   };
+
   beforeEach(() => {
     wrapper = shallow(<WhenExpressionDecorator {...props} />);
   });
@@ -23,7 +27,7 @@ describe('WhenExpressionDecorator', () => {
   it('should render diamond shape when expression decorator', () => {
     const diamondShape = wrapper.find('rect');
     expect(diamondShape.exists()).toBe(true);
-    expect(diamondShape.props().fill).toBe(props.color);
+    expect(diamondShape.props().fill).toBe(successColor.value);
     expect(diamondShape.props().width).toBe(props.width);
     expect(diamondShape.props().height).toBe(props.height);
   });
@@ -76,7 +80,9 @@ describe('WhenExpressionDecorator', () => {
 
     expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
     wrapper.setProps({ enableTooltip: true, status: runStatus.Failed });
-    expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
+    expect(wrapper.find(Tooltip).props().content).toEqual(
+      whenExpressionContent('When expression was met'),
+    );
     wrapper.setProps({ enableTooltip: true, status: runStatus.Pending });
     expect(wrapper.find(Tooltip).props().content).toEqual(whenExpressionContent('When expression'));
     wrapper.setProps({ enableTooltip: true, status: runStatus['In Progress'] });

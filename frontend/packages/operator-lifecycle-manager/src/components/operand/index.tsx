@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { match } from 'react-router-dom';
@@ -17,6 +17,7 @@ import {
   TableData,
   RowFunctionArgs,
   Flatten,
+  Filter,
 } from '@console/internal/components/factory';
 import { deleteModal } from '@console/internal/components/modals';
 import {
@@ -492,7 +493,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
 
   const schema =
     crd?.spec?.versions?.find((v) => v.name === version)?.schema?.openAPIV3Schema ??
-    (definitionFor(kindObj) as JSONSchema6);
+    (definitionFor(kindObj) as JSONSchema7);
 
   const {
     podStatuses,
@@ -680,7 +681,7 @@ export type OperandListProps = {
   loaded: boolean;
   kinds?: GroupVersionKind[];
   data: K8sResourceKind[];
-  filters: { [key: string]: any };
+  filters?: Filter[];
   reduxID?: string;
   reduxIDs?: string[];
   rowSplitter?: any;
@@ -716,7 +717,7 @@ type PodStatusesProps = {
   kindObj: K8sKind;
   obj: K8sResourceKind;
   podStatusDescriptors: StatusDescriptor[];
-  schema?: JSONSchema6;
+  schema?: JSONSchema7;
 };
 
 export type OperandDetailsProps = {

@@ -1,9 +1,8 @@
 import { PodKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getOwnerReferences } from '@console/shared/src/selectors';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { OS_WINDOWS_PREFIX } from '../../constants';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
-import { buildOwnerReference } from '../../utils';
+import { buildOwnerReference, compareOwnerReference } from '../../utils';
+import { getName, getNamespace, getOwnerReferences } from '../selectors';
 import { getOperatingSystem } from './selectors';
 
 export const isWindows = (vm: VMGenericLikeEntityKind): boolean =>

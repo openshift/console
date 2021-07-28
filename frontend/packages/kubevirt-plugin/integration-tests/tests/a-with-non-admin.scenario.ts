@@ -12,7 +12,7 @@ import {
   removeLeakedResources,
   withResource,
   withResources,
-} from '@console/shared/src/test-utils/utils';
+} from '../utils/shared-utils';
 import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';

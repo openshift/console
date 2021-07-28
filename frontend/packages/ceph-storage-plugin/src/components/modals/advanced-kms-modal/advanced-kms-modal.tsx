@@ -14,22 +14,19 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
 import { FieldLevelHelp } from '@console/internal/components/utils/field-level-help';
-
-import { State, Action } from '../../ocs-install/attached-devices-mode/reducer';
-import {
-  InternalClusterState,
-  InternalClusterAction,
-  ActionType,
-} from '../../ocs-install/internal-mode/reducer';
+import { State } from '../../ocs-install/attached-devices-mode/reducer';
+import { InternalClusterState, ActionType } from '../../ocs-install/internal-mode/reducer';
 import { KMSMaxFileUploadSize } from '../../../constants';
 import {
   setEncryptionDispatch,
   generateCASecret,
   generateClientSecret,
   generateClientKeySecret,
+  EncryptionDispatch,
 } from '../../kms-config/utils';
-import { StorageClassState, StorageClassClusterAction } from '../../../utils/kms-encryption';
+import { StorageClassState } from '../../../utils/kms-encryption';
 import './advanced-kms-modal.scss';
+import { WizardState } from '../../create-storage-system/reducer';
 
 export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps) => {
   const { close, cancel, errorMessage, inProgress, state, dispatch, mode } = props;
@@ -73,7 +70,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
   );
 
   const vaultTLSTooltip = t(
-    `ceph-storage-plugin~The name to use as the SNI host when OpenShift Container Storage connecting via TLS to the Vault server`,
+    `ceph-storage-plugin~The name to use as the SNI host when OpenShift Data Foundation connecting via TLS to the Vault server`,
   );
 
   const submit = (event: React.FormEvent<EventTarget>) => {
@@ -98,8 +95,9 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
     clientKey && clientCertificate !== ''
       ? (kmsAdvanced.clientKey = generateClientKeySecret(clientKey))
       : (kmsAdvanced.clientKey = null);
-
-    setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsAdvanced);
+    mode
+      ? setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsAdvanced)
+      : dispatch({ type: 'securityAndNetwork/setKms', payload: kmsAdvanced });
     close();
   };
   const readFile = (file: File, fn: Function, fileFn: Function) => {
@@ -257,8 +255,8 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 });
 
 export type AdvancedKMSModalProps = {
-  state: InternalClusterState | State | StorageClassState;
-  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>;
+  state: InternalClusterState | State | StorageClassState | WizardState['securityAndNetwork'];
+  dispatch: EncryptionDispatch;
   mode?: string;
 } & HandlePromiseProps &
   ModalComponentProps;

@@ -1,4 +1,3 @@
-import { getName } from '@console/shared/src';
 import { EnhancedK8sMethods } from '../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import {
   cleanupAndGetResults,
@@ -11,6 +10,7 @@ import {
 import { deleteOvirtProviderObject } from '../../../../../../k8s/requests/v2v/delete-ovrt-provider-object';
 import { requestOvirtProviderCRVMDetail } from '../../../../../../k8s/requests/v2v/request-ovirt-provider-vm-detail';
 import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
+import { getName } from '../../../../../../selectors/selectors';
 import { getV2VConnectionName } from '../../../../../../selectors/v2v';
 import { getSimpleV2VPRoviderStatus } from '../../../../../../statuses/v2v';
 import {

@@ -160,7 +160,7 @@ describe(OperandList.displayName, () => {
     resources = [testResourceInstance];
     spyOn(extensionHooks, 'useExtensions').and.returnValue([]);
     // eslint-disable-next-line react/jsx-pascal-case
-    wrapper = shallow(<OperandList loaded data={resources} filters={{}} />);
+    wrapper = shallow(<OperandList loaded data={resources} />);
   });
 
   it('renders a `Table` of the custom resource instances of the given kind', () => {

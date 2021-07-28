@@ -29,7 +29,7 @@ const RoutesOverviewListItem: React.FC<RoutesOverviewListItemProps> = ({
           )}
         </div>
         {percent.length > 0 && (
-          <span className="col-xs-2 text-right">{totalPercent || percent}</span>
+          <span className="col-xs-2 pf-u-text-align-right">{totalPercent || percent}</span>
         )}
       </div>
     </li>

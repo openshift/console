@@ -6,9 +6,9 @@ import {
   PersistentVolumeClaimKind,
   TemplateKind,
 } from '@console/internal/module/k8s';
-import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
+  ANNOTATIONS,
   AccessMode,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
@@ -31,7 +31,7 @@ import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForM
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
-import { buildOwnerReference } from '../../../utils';
+import { getRandomChars, buildOwnerReference } from '../../../utils';
 import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import { VMTemplateWrapper } from '../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';

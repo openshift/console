@@ -2,11 +2,11 @@ import * as React from 'react';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { ConfigMapModel } from '@console/internal/models';
 import { ConfigMapKind, k8sGet } from '@console/internal/module/k8s';
-import { joinGrammaticallyListOfItems } from '@console/shared/src';
 import {
   STORAGE_CLASS_CONFIG_MAP_NAME,
   STORAGE_CLASS_CONFIG_MAP_NAMESPACES,
 } from '../constants/sc';
+import { joinGrammaticallyListOfItems } from '../utils';
 
 type UseConfigMapResult = [ConfigMapKind, boolean, string];
 
@@ -23,9 +23,15 @@ export const useStorageClassConfigMap = (): UseConfigMapResult => {
       for (const namespace of STORAGE_CLASS_CONFIG_MAP_NAMESPACES) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          const configMap = await k8sGet(ConfigMapModel, STORAGE_CLASS_CONFIG_MAP_NAME, namespace, {
-            signal: controller.signal,
-          });
+          const configMap = await k8sGet(
+            ConfigMapModel,
+            STORAGE_CLASS_CONFIG_MAP_NAME,
+            namespace,
+            {},
+            {
+              signal: controller.signal,
+            },
+          );
           if (configMap && !controller.signal.aborted) {
             setStorageClassConfigMap(configMap);
             return;

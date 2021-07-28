@@ -32,6 +32,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   style,
   kind,
   menuActions,
+  customActionMenu,
   customData,
 }) => {
   const { t } = useTranslation();
@@ -64,7 +65,9 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={obj} customData={customData} />
+        {customActionMenu || (
+          <ResourceKebab actions={menuActions} kind={kind} resource={obj} customData={customData} />
+        )}
       </TableData>
     </TableRow>
   );
@@ -76,7 +79,8 @@ type WorkloadTableRowProps = {
   rowKey: string;
   style: object;
   kind: string;
-  menuActions: KebabAction[];
+  menuActions?: KebabAction[];
+  customActionMenu?: React.ReactNode; // Renders a custom action menu.
   customData?: { [key: string]: any };
 };
 

@@ -467,7 +467,7 @@ const RouteDetails: React.FC<RoutesDetailsProps> = ({ obj: route }) => {
       )}
       {_.isEmpty(route.status.ingress) ? (
         <div className="cos-status-box">
-          <div className="text-center">{t('public~No route status')}</div>
+          <div className="pf-u-text-align-center">{t('public~No route status')}</div>
         </div>
       ) : (
         <div className="co-m-pane__body">

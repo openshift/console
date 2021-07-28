@@ -1,6 +1,6 @@
 /* eslint-disable lines-between-class-members,no-underscore-dangle */
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { getStringEnumValues } from '../../utils/types';
+import { ObjectEnum } from '../object-enum';
 import { StatusSimpleLabel } from '../status-constants';
 import { StatusEnum, StatusMetadata } from '../status-enum';
 import { StatusGroup } from '../status-group';

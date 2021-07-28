@@ -5,6 +5,7 @@ import SinkPubsub from './SinkPubsub';
 
 type SinkPubsubControllerProps = {
   source: K8sResourceKind;
+  resourceType: string;
 };
 
 const SinkPubsubController: React.FC<SinkPubsubControllerProps> = ({ source, ...props }) => (

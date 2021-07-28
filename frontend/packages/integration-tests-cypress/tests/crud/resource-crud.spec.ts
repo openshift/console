@@ -90,6 +90,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'StorageClass',
     'Route',
     'PersistentVolumeClaim',
+    'NetworkPolicy',
     'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
 

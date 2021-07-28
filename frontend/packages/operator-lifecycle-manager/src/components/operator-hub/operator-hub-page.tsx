@@ -19,9 +19,19 @@ import { withFallback } from '@console/shared/src/components/error/error-boundar
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { iconFor } from '..';
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
-import { PackageManifestModel, OperatorGroupModel, SubscriptionModel } from '../../models';
-import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../../types';
-import { installedFor, subscriptionFor } from '../operator-group';
+import {
+  ClusterServiceVersionModel,
+  PackageManifestModel,
+  OperatorGroupModel,
+  SubscriptionModel,
+} from '../../models';
+import {
+  ClusterServiceVersionKind,
+  PackageManifestKind,
+  OperatorGroupKind,
+  SubscriptionKind,
+} from '../../types';
+import { subscriptionFor } from '../operator-group';
 import { OperatorHubTileView } from './operator-hub-items';
 import { getCatalogSourceDisplayName } from './operator-hub-utils';
 import {
@@ -37,18 +47,26 @@ const ANNOTATIONS_WITH_JSON = [
   OperatorHubCSVAnnotationKey.validSubscription,
 ];
 
+const clusterServiceVersionFor = (
+  clusterServiceVersions: ClusterServiceVersionKind[],
+  csvName: string,
+): ClusterServiceVersionKind => {
+  return clusterServiceVersions?.find((csv) => csv.metadata.name === csvName);
+};
+
 export const OperatorHubList: React.FC<OperatorHubListProps> = ({
   loaded,
   loadError,
-  marketplacePackageManifest,
+  marketplacePackageManifests,
   namespace,
-  operatorGroup,
-  packageManifest,
-  subscription,
+  operatorGroups,
+  packageManifests,
+  subscriptions,
+  clusterServiceVersions,
 }) => {
   const { t } = useTranslation();
   const items: OperatorHubItem[] = React.useMemo(() => {
-    return [...(marketplacePackageManifest?.data ?? []), ...(packageManifest?.data ?? [])]
+    return [...(marketplacePackageManifests?.data ?? []), ...(packageManifests?.data ?? [])]
       .filter((pkg) => {
         const { channels, defaultChannel } = pkg.status ?? {};
         // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
@@ -97,23 +115,33 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             [OperatorHubCSVAnnotationKey.supportWorkflow]: marketplaceSupportWorkflow,
           } = currentCSVAnnotations;
 
+          const subscription =
+            loaded &&
+            subscriptionFor(subscriptions?.data)(operatorGroups?.data)(pkg.status.packageName)(
+              namespace,
+            );
+
+          const clusterServiceVersion =
+            loaded &&
+            clusterServiceVersionFor(
+              clusterServiceVersions?.data,
+              subscription?.status?.currentCSV,
+            );
+
+          const installed = loaded && clusterServiceVersion?.status?.phase === 'Succeeded';
+
           return {
             obj: pkg,
             kind: PackageManifestModel.kind,
             name: currentCSVDesc?.displayName ?? pkg.metadata.name,
             uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
-            installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
-              namespace,
-            ),
-            subscription: subscriptionFor(subscription.data)(operatorGroup.data)(
-              pkg.status.packageName,
-            )(namespace),
-            // FIXME: Just use `installed`
-            installState: installedFor(subscription.data)(operatorGroup.data)(
-              pkg.status.packageName,
-            )(namespace)
-              ? InstalledState.Installed
-              : InstalledState.NotInstalled,
+            installed,
+            isInstalling:
+              loaded &&
+              !_.isNil(subscription) &&
+              clusterServiceVersion?.status?.phase !== 'Succeeded',
+            subscription,
+            installState: installed ? InstalledState.Installed : InstalledState.NotInstalled,
             imgUrl: iconFor(pkg),
             description: currentCSVAnnotations.description || currentCSVDesc.description,
             longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
@@ -143,11 +171,13 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
         },
       );
   }, [
-    marketplacePackageManifest,
+    clusterServiceVersions,
+    loaded,
+    marketplacePackageManifests,
     namespace,
-    operatorGroup.data,
-    packageManifest,
-    subscription.data,
+    operatorGroups,
+    packageManifests,
+    subscriptions,
   ]);
 
   const uniqueItems = _.uniqBy(items, 'uid');
@@ -215,14 +245,14 @@ export const OperatorHubPage = withFallback(
                 {
                   isList: true,
                   kind: referenceForModel(OperatorGroupModel),
-                  prop: 'operatorGroup',
+                  prop: 'operatorGroups',
                 },
                 {
                   isList: true,
                   kind: referenceForModel(PackageManifestModel),
                   namespace: props.match.params.ns,
                   selector: { 'openshift-marketplace': 'true' },
-                  prop: 'marketplacePackageManifest',
+                  prop: 'marketplacePackageManifests',
                 },
                 {
                   isList: true,
@@ -232,12 +262,19 @@ export const OperatorHubPage = withFallback(
                     { key: 'opsrc-owner-name', operator: 'DoesNotExist' },
                     { key: 'csc-owner-name', operator: 'DoesNotExist' },
                   ]),
-                  prop: 'packageManifest',
+                  prop: 'packageManifests',
                 },
                 {
                   isList: true,
                   kind: referenceForModel(SubscriptionModel),
-                  prop: 'subscription',
+                  prop: 'subscriptions',
+                },
+                {
+                  kind: referenceForModel(ClusterServiceVersionModel),
+                  namespaced: true,
+                  isList: true,
+                  namespace: props.match.params.ns,
+                  prop: 'clusterServiceVersions',
                 },
               ]}
             >
@@ -258,12 +295,13 @@ export type OperatorHubPageProps = {
 
 export type OperatorHubListProps = {
   namespace?: string;
-  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
-  packageManifest: { loaded: boolean; data?: PackageManifestKind[] };
-  marketplacePackageManifest: { loaded: boolean; data?: PackageManifestKind[] };
-  subscription: { loaded: boolean; data?: SubscriptionKind[] };
+  operatorGroups: { loaded: boolean; data?: OperatorGroupKind[] };
+  packageManifests: { loaded: boolean; data?: PackageManifestKind[] };
+  marketplacePackageManifests: { loaded: boolean; data?: PackageManifestKind[] };
+  subscriptions: { loaded: boolean; data?: SubscriptionKind[] };
   loaded: boolean;
   loadError?: string;
+  clusterServiceVersions: { loaded: boolean; data?: ClusterServiceVersionKind[] };
 };
 
 OperatorHubList.displayName = 'OperatorHubList';

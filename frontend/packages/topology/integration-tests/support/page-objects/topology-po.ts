@@ -4,6 +4,7 @@ export const topologyPO = {
   title: 'h1.ocs-page-layout__title',
   search: '[data-test-id="item-filter"]',
   emptyStateIcon: 'div.pf-c-empty-state__icon',
+  emptyText: '[data-test="no-resources-found"]',
   graph: {
     reset: '#reset-view',
     zoomIn: '#zoom-in',
@@ -23,14 +24,20 @@ export const topologyPO = {
     applicationGroupingTitle: '.odc-topology-list-view__application-label',
     addNewAnnotations: '[data-test="add-button"]',
     connector: '[data-test-id="edge-handler"]',
+    displayOptions: {
+      connenctivityMode: '[id="showGroups"]',
+      consumptionMode: '[id="hideGroups"]',
+      expandSwitchToggle: '.pf-c-switch__input',
+      applicationGroupingsDisabled: '.pf-c-check.pf-c-select__menu-item.pf-m-disabled',
+    },
     filterByResource: {
-      filterByResourceDropDown: '.pf-c-select__toggle-text',
-      deploymentResource: '.co-m-resource-icon.co-m-resource-deployment',
-      deploymentConfigResource: '.co-m-resource-icon.co-m-resource-deploymentconfig',
+      filterByResourceDropDown: '[data-test="filter-by-resource"]',
     },
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',
     },
+    addLink: '[data-test="add-page"]',
+    quickSearch: '[data-test="quick-search-bar"]',
   },
   list: {
     appName: '#HelmRelease ul li div',
@@ -39,6 +46,7 @@ export const topologyPO = {
   },
   sidePane: {
     actionsDropDown: '[data-test-id="actions-menu-button"]',
+    showPodCount: '[id$=show-pod-count]',
     dialog: '[role="dialog"]',
     title: '[role="dialog"] h1',
     tabs: '[role="dialog"] li button',
@@ -215,4 +223,11 @@ export const topologyPO = {
     },
     tickButton: '[data-test-id="check-icon"]',
   },
+};
+
+export const typeOfWorkload = (workload: string) => {
+  return `[data-test~="icon"][data-test~="${workload
+    .toLowerCase()
+    .replace(' ', '')
+    .trim()}"]`;
 };

@@ -16,7 +16,7 @@
     "properties": {
       "id": "knative-event-source",
       "groupId": "developer-catalog",
-      "href": "/catalog/ns/:namespace?catalogType=EventSource",
+      "href": "/catalog/ns/:namespace?catalogType=EventSource&provider=[\"Red+Hat\"]",
       "label": "%knative-plugin~Event Source%",
       "description": "%knative-plugin~Create an Event source to register interest in a class of events from a particular system%",
       "icon": { "$codeRef": "icons.eventSourceIconSVG" }
@@ -33,7 +33,25 @@
       "href": "/channel/ns/:namespace",
       "label": "%knative-plugin~Channel%",
       "description": "%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%",
-      "icon": { "$codeRef": "icons.channelIconSVG" }
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [
+        { "group": "eventing.knative.dev", "resource": "channels", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["KNATIVE_EVENTING", "FLAG_KNATIVE_EVENTING_BROKER"]
+    },
+    "properties": {
+      "id": "knative-eventing-broker",
+      "groupId": "serverless",
+      "href": "/broker/ns/:namespace",
+      "label": "%knative-plugin~Broker%",
+      "description": "%knative-plugin~Create a Broker to define an event mesh for collecting a pool of events and route those events based on attributes, through triggers%",
+      "icon": { "$codeRef": "icons.channelIconSVG" },
+      "accessReview": [{ "group": "eventing.knative.dev", "resource": "brokers", "verb": "create" }]
     }
   },
   {
@@ -143,6 +161,20 @@
       "template": {
         "$codeRef": "yamlTemplates.defaultYamlTemplate"
       }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "Deployment"
+      },
+      "provider": { "$codeRef": "actions.useKnativeDeploymentActionsProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
     }
   }
 ]

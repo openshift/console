@@ -18,6 +18,7 @@ describe('TopologyShortcuts tests', () => {
         supportedFileTypes: undefined,
         isEmptyModel: true,
         viewType: TopologyViewType.graph,
+        allImportAccess: true,
       }),
     );
 
@@ -41,6 +42,7 @@ describe('TopologyShortcuts tests', () => {
         supportedFileTypes: ['jar'],
         isEmptyModel: true,
         viewType: TopologyViewType.graph,
+        allImportAccess: true,
       }),
     );
 
@@ -56,6 +58,7 @@ describe('TopologyShortcuts tests', () => {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.list,
+        allImportAccess: true,
       }),
     );
 
@@ -72,6 +75,7 @@ describe('TopologyShortcuts tests', () => {
         supportedFileTypes: ['jar'],
         isEmptyModel: false,
         viewType: TopologyViewType.graph,
+        allImportAccess: true,
       }),
     );
     expect(wrapper.find('[data-test-id="move"]').exists()).toBe(true);
@@ -81,5 +85,40 @@ describe('TopologyShortcuts tests', () => {
     expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
     expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
     expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(true);
+  });
+  it('should show only view details and quick search actions in list view', () => {
+    const wrapper = shallow(
+      getTopologyShortcuts(jest.fn(), {
+        supportedFileTypes: ['jar'],
+        isEmptyModel: false,
+        viewType: TopologyViewType.list,
+        allImportAccess: false,
+      }),
+    );
+    expect(wrapper.find('[data-test-id="move"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(false);
+  });
+
+  it('should show only view details and quick search actions in graph view', () => {
+    const wrapper = shallow(
+      getTopologyShortcuts(jest.fn(), {
+        supportedFileTypes: ['jar'],
+        isEmptyModel: false,
+        viewType: TopologyViewType.graph,
+        allImportAccess: false,
+      }),
+    );
+    expect(wrapper.find('[data-test-id="move"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="view-details"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="open-quick-search"]').exists()).toBe(true);
+    expect(wrapper.find('[data-test-id="create-connector-handle"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="context-menu"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="edit-application-grouping"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="upload-file"]').exists()).toBe(false);
   });
 });

@@ -7,7 +7,6 @@
  */
 import * as _ from 'lodash';
 import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { alignWithDNS1123 } from '@console/shared/src';
 import { VMwareFirmware } from '../../../../../../constants/v2v-import/vmware/vmware-firmware';
 import {
   CUSTOM_FLAVOR,
@@ -27,6 +26,7 @@ import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../../../selectors/config-map/sc-defaults';
+import { alignWithDNS1123 } from '../../../../../../utils';
 import { toShallowJS } from '../../../../../../utils/immutable';
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 import { iGetVMWareFieldAttribute } from '../../../../selectors/immutable/provider/vmware/selectors';

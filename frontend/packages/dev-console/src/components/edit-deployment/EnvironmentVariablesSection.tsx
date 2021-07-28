@@ -16,7 +16,10 @@ const EnvironmentVariablesSection: React.FC<{ resourceObj: K8sResourceKind }> = 
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormSection title={t('devconsole~Environment Variables')}>
+    <FormSection
+      title={t('devconsole~Environment Variables')}
+      dataTest="environment-variables-section"
+    >
       <ContainerField />
       <EnvironmentField
         name="formData.envs"

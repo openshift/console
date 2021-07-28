@@ -9,6 +9,7 @@ const ScalingSection: React.FC<{ name: string }> = ({ name }) => {
     <FormSection
       title={t('devconsole~Scaling')}
       subTitle={t('devconsole~Replicas are scaled manually based on CPU usage.')}
+      dataTest="scaling"
     >
       <NumberSpinnerField
         name={name}

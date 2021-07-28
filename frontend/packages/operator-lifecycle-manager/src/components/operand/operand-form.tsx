@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { JSONSchema6 } from 'json-schema';
+import { JSONSchema7 } from 'json-schema';
 import * as _ from 'lodash';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import {
@@ -109,5 +109,5 @@ export type OperandFormProps = {
   model: K8sKind;
   providedAPI: ProvidedAPI;
   prune?: (data: any) => any;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
 };

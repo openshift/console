@@ -102,3 +102,8 @@ export type NodeCreatorSetup = (
   width?: number,
   height?: number,
 ) => NodeCreator<PipelineRunAfterNodeModelData>;
+
+export type DiamondStateType = {
+  tooltipContent: string;
+  diamondColor: string;
+};

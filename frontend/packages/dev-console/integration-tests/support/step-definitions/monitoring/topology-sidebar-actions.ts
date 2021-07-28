@@ -26,7 +26,7 @@ Given('user has installed helm release {string}', (helmReleaseName: string) => {
 });
 
 When('user clicks on Monitoring tab', () => {
-  topologySidePane.selectTab(sideBarTabs.monitoring);
+  topologySidePane.selectTab(sideBarTabs.observe);
 });
 
 When('user selects {string} from Context Menu', (menuOption: string) => {
@@ -123,13 +123,13 @@ When('user right clicks on the {string} to open the Context Menu', (nodeName: st
 });
 
 Then('user will be taken to Dashboard tab on the Monitoring page', () => {
-  detailsPage.titleShouldContain(pageTitle.Monitoring);
+  detailsPage.titleShouldContain(pageTitle.Observe);
 });
 
 Then('user wont see Monitoring tab', () => {
   topologySidePane.verify();
   cy.get(topologyPO.sidePane.tabName)
-    .contains(sideBarTabs.monitoring)
+    .contains(sideBarTabs.observe)
     .should('not.be.visible');
 });
 

@@ -36,7 +36,7 @@ body,
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
-  height: 100% // doesn't work on safari without height 
+  height: 100% // doesn't work on safari without height
 }
 
 .co-p-has-sidebar {
@@ -47,6 +47,12 @@ body,
 
   &__body {
     flex: 1 1 700px;
+  }
+
+  &__close-button {
+    font-size: 21px !important;
+    line-height: 1 !important;
+    padding: 0 !important;
   }
 
   &__sidebar {
