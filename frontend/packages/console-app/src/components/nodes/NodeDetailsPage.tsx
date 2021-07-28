@@ -10,10 +10,11 @@ import { nodeStatus } from '../../status/node';
 import { menuActions } from './menu-actions';
 import NodeDashboard from './node-dashboard/NodeDashboard';
 import NodeDetails from './NodeDetails';
+import NodeLogs from './NodeLogs';
 import NodeTerminal from './NodeTerminal';
 
 const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
-  const { editYaml, events, pods } = navFactory;
+  const { editYaml, events, logs, pods } = navFactory;
   const { t } = useTranslation();
 
   const pagesFor = React.useCallback(
@@ -36,6 +37,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
           customData={{ showNamespaceOverride: true }}
         />
       )),
+      logs(NodeLogs),
       events(ResourceEventStream),
       ...(!_.some(
         node?.metadata?.labels,
@@ -46,7 +48,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
         ? [{ href: 'terminal', name: t('console-app~Terminal'), component: NodeTerminal }]
         : []),
     ],
-    [editYaml, events, pods, t],
+    [editYaml, events, logs, pods, t],
   );
 
   return (
