@@ -9,22 +9,19 @@ import {
   WithSelectionProps,
 } from '@patternfly/react-topology';
 import { connect } from 'react-redux';
-import { referenceForModel } from '@console/internal/module/k8s';
+import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
+import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { RootState } from '@console/internal/redux';
+import { obsOrKafkaConnectionDropTargetSpec } from '@console/rhoas-plugin/src/topology/components/rhoasComponentUtils';
 import { calculateRadius } from '@console/shared';
 import { TrapezoidBaseNode } from '@console/topology/src/components/graph-view/components/nodes';
-import { getServiceBindingStatus } from '@console/topology/src/utils';
-import { kafkaIcon } from '../../const';
-import { KafkaConnectionModel } from '../../models';
-import { obsOrKafkaConnectionDropTargetSpec } from './rhoasComponentUtils';
-
-import './KafkaNode.scss';
+import { getServiceBindingStatus, getTopologyResourceObject } from '@console/topology/src/utils';
 
 interface StateProps {
   serviceBinding: boolean;
 }
 
-type KafkaNodeProps = {
+type BindableNodeProps = {
   element: Node;
   tooltipLabel?: string;
 } & WithSelectionProps &
@@ -33,7 +30,7 @@ type KafkaNodeProps = {
   WithCreateConnectorProps &
   StateProps;
 
-const KafkaNode: React.FC<KafkaNodeProps> = ({
+const BindableNode: React.FC<BindableNodeProps> = ({
   element,
   selected,
   onSelect,
@@ -49,16 +46,20 @@ const KafkaNode: React.FC<KafkaNodeProps> = ({
     serviceBinding,
   ]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...props });
+  const resourceObj = getTopologyResourceObject(element.getData());
+  const resourceModel = modelFor(referenceFor(resourceObj));
+  // const kindResource = referenceForModel(resourceModel);
 
+  // const defaultIcon = getImageForIconClass(`icon-openshift`);
   return (
     <TrapezoidBaseNode
       className="KafkaNode"
       tooltipLabel={tooltipLabel}
       onSelect={onSelect}
-      icon={kafkaIcon}
+      icon={openshiftImg}
       innerRadius={iconRadius}
       selected={selected}
-      kind={referenceForModel(KafkaConnectionModel)}
+      kind={resourceModel && referenceForModel(resourceModel)}
       element={element}
       outerRadius={radius}
       {...props}
@@ -74,4 +75,4 @@ const mapStateToProps = (state: RootState): StateProps => {
   };
 };
 
-export default connect(mapStateToProps)(observer(KafkaNode));
+export default connect(mapStateToProps)(observer(BindableNode));
