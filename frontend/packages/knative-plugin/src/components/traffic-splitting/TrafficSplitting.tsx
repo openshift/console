@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sPatch, K8sResourceKind, Patch } from '@console/internal/module/k8s';
 import { ServiceModel } from '../../models';
 import { Traffic } from '../../types';
-import { getRevisionItems, constructObjForUpdate } from '../../utils/traffic-splitting-utils';
+import { getRevisionItems, trafficDataForPatch } from '../../utils/traffic-splitting-utils';
 import TrafficSplittingModal from './TrafficSplittingModal';
 
 export interface TrafficSplittingProps {
@@ -46,8 +46,8 @@ const TrafficSplitting: React.FC<TrafficSplittingProps> = ({
     }, []),
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
-    const obj = constructObjForUpdate(values.trafficSplitting, service);
-    return k8sUpdate(ServiceModel, obj)
+    const ksvcPatch: Patch[] = trafficDataForPatch(values.trafficSplitting, service);
+    return k8sPatch(ServiceModel, service, ksvcPatch)
       .then(() => {
         action.setStatus({ error: '' });
         close();
