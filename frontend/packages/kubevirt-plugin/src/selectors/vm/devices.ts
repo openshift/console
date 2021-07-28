@@ -5,7 +5,7 @@ import { BootableDeviceType, V1NetworkInterface } from '../../types';
 import { V1Disk } from '../../types/api';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { getBootableDisks, getDisks, getInterfaces } from './selectors';
-import { asVM } from './vmlike';
+import { asVM } from './vm';
 
 export const getBootDeviceIndex = <D extends V1Disk | V1NetworkInterface>(
   devices: D[],

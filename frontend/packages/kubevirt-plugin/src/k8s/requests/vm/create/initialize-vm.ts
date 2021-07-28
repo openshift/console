@@ -9,8 +9,8 @@ import {
   VolumeType,
 } from '../../../../constants/vm';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
-import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
+import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm/volume';
 import { resolveDataVolumeName } from '../../../../utils';
 import {
   CloudInitDataFormKeys,

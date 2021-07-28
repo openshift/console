@@ -2,13 +2,13 @@ import { history } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMWizardName } from '../../constants';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
-import { getFlavor, getWorkloadProfile } from '../../selectors/vm';
 import {
   getTemplateName,
   isCommonTemplate,
   isDeprecatedTemplate,
 } from '../../selectors/vm-template/basic';
 import { getFlavorData } from '../../selectors/vm/flavor-data';
+import { getFlavor, getWorkloadProfile } from '../../selectors/vm/selectors';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 import { TemplateItem } from '../../types/template';
 import { getVMWizardCreateLink } from '../../utils/url';

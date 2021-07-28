@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { getDeviceBootOrder } from '../../../selectors/vm';
+import { getDeviceBootOrder } from '../../../selectors/vm/devices';
 import { getSimpleName } from '../../../utils';
 import { PatchBuilder } from '../../helpers/patch';
 

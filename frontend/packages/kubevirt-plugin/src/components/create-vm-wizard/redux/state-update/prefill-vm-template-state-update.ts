@@ -7,18 +7,6 @@ import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { getName } from '../../../../selectors';
-import {
-  DEFAULT_CPU,
-  getCPU,
-  getDataVolumeTemplates,
-  getDisks,
-  getInterfaces,
-  getMemory,
-  getNetworks,
-  getVolumes,
-  hasAutoAttachPodInterface,
-  parseCPU,
-} from '../../../../selectors/vm';
 import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
 import {
   getTemplateFlavors,
@@ -27,6 +15,17 @@ import {
   getTemplateWorkloadProfiles,
 } from '../../../../selectors/vm-template/advanced';
 import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
+import { DEFAULT_CPU, parseCPU } from '../../../../selectors/vm/cpu';
+import {
+  getCPU,
+  getDataVolumeTemplates,
+  getDisks,
+  getInterfaces,
+  getMemory,
+  getNetworks,
+  getVolumes,
+  hasAutoAttachPodInterface,
+} from '../../../../selectors/vm/selectors';
 import { isWinToolsImage } from '../../../../selectors/vm/winimage';
 import { V1alpha1DataVolume, V1Volume } from '../../../../types/api';
 import { V1Network } from '../../../../types/vm';

@@ -7,7 +7,6 @@ import { humanizeBinaryBytes, SectionHeading } from '@console/internal/component
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { BOOT_SOURCE_AVAILABLE } from '../../../constants';
 import { getNamespace, getDescription } from '../../../selectors/selectors';
-import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm';
 import {
   getTemplateFlavorData,
   getTemplateSizeRequirementInBytes,
@@ -18,6 +17,7 @@ import {
   getTemplateProvider,
   templateProviders,
 } from '../../../selectors/vm-template/basic';
+import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm/selectors';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { V1alpha1DataVolume } from '../../../types/api';

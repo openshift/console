@@ -29,7 +29,7 @@ import {
 } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
-import { getVolumes } from '../../../selectors/vm';
+import { getVolumes } from '../../../selectors/vm/selectors';
 import { VMIKind, VMKind, VMSnapshot } from '../../../types/vm';
 import { redirectToList } from './utils';
 import { VMIUsersAlert } from './vmi-users-alert';

@@ -12,7 +12,7 @@ import {
 } from '../../../../constants/vm';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
 import { getAnnotations, getValueByPrefix } from '../../../../selectors/selectors';
-import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
+import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm/selectors';
 import { findHighestKeyBySuffixValue } from '../../../../utils';
 import {
   CloudInitDataFormKeys,

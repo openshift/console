@@ -23,15 +23,15 @@ import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
+import { isBootOrderChanged } from '../../../selectors/vm-like/next-run-changes';
 import {
-  asVM,
   getBootableDevices,
   getBootableDevicesInOrder,
   getTransformedDevices,
-  getVMLikeModel,
-  isVMRunningOrExpectedRunning,
-} from '../../../selectors/vm';
-import { isBootOrderChanged } from '../../../selectors/vm-like/next-run-changes';
+} from '../../../selectors/vm/devices';
+import { isVMRunningOrExpectedRunning } from '../../../selectors/vm/selectors';
+import { asVM } from '../../../selectors/vm/vm';
+import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { BootableDeviceType, VMIKind } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { createBasicLookup, getLoadedData } from '../../../utils';

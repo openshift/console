@@ -36,7 +36,7 @@ import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../selectors';
-import { getVMLikeModel } from '../../selectors/vm';
+import { getVMLikeModel } from '../../selectors/vm/vmlike';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../types';
 import { VMILikeEntityKind } from '../../types/vmLike';

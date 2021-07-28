@@ -1,5 +1,5 @@
 import { isVMI } from '../../../selectors/check-type';
-import { asVM } from '../../../selectors/vm/vmlike';
+import { asVM } from '../../../selectors/vm/vm';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
 import { VMILikeWrapper } from '../types/vmlike';
 import { VMWrapper } from '../vm/vm-wrapper';

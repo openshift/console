@@ -7,12 +7,12 @@ import { ConsoleType } from '../../../constants/vm/console-type';
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { isWindows } from '../../../selectors/vm/combined';
 import {
   getCloudInitVolume,
   getIsGraphicsConsoleAttached,
   getIsSerialConsoleAttached,
-  isWindows,
-} from '../../../selectors/vm';
+} from '../../../selectors/vm/selectors';
 import { isVMIPaused, isVMIRunning } from '../../../selectors/vmi';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types/vm';

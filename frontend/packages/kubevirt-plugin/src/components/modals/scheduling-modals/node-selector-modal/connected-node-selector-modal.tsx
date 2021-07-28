@@ -3,7 +3,7 @@ import { createModalLauncher, ModalComponentProps } from '@console/internal/comp
 import { Firehose } from '@console/internal/components/utils';
 import { NodeModel } from '@console/internal/models';
 import { getName, getNamespace } from '../../../../selectors';
-import { getVMLikeModel } from '../../../../selectors/vm';
+import { getVMLikeModel } from '../../../../selectors/vm/vmlike';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
 import { NSModal } from './node-selector-modal';
 

@@ -6,7 +6,8 @@ import { AccessMode, DiskType, VolumeMode, VolumeType } from '../../../constants
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace, getOwnerReferences } from '../../../selectors';
-import { asVM, getDataVolumeTemplates } from '../../../selectors/vm';
+import { getDataVolumeTemplates } from '../../../selectors/vm/selectors';
+import { asVM } from '../../../selectors/vm/vm';
 import { isWinToolsImage } from '../../../selectors/vm/winimage';
 import { V1DataVolumeTemplateSpec } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1PersistentVolumeClaim, V1Volume } from '../../../types/api';

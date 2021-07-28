@@ -30,11 +30,11 @@ import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VirtualMachineModel } from '../../../models';
 import { getNamespace } from '../../../selectors';
 import { isVM } from '../../../selectors/check-type';
-import { getVMLikeModel } from '../../../selectors/vm';
 import {
   getTemplateValidationsFromTemplate,
   getVMTemplateNamespacedName,
 } from '../../../selectors/vm-template/selectors';
+import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { V1Disk, V1Volume } from '../../../types/api';
 import { VMKind } from '../../../types/vm';
 import { getRandomChars, getResource } from '../../../utils';

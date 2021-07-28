@@ -4,7 +4,7 @@ import { VMIKind, VMKind } from '../../types';
 import { createBasicLookup } from '../../utils';
 import { getPvcImportPodName, getPvcUploadPodName } from '../pvc/selectors';
 import { getName, getNamespace, getOwnerReferences, getUID } from '../selectors';
-import { getDataVolumeTemplates } from '../vm';
+import { getDataVolumeTemplates } from '../vm/selectors';
 
 export const getHostName = (pod: PodKind) =>
   get(pod, 'spec.hostname') as PodKind['spec']['hostname'];

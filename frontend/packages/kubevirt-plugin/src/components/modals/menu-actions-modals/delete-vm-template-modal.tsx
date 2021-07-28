@@ -15,7 +15,8 @@ import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volu
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVMTemplate } from '../../../k8s/requests/vmtemplate/actions';
 import { getName, getNamespace } from '../../../selectors';
-import { asVM, getVolumes } from '../../../selectors/vm';
+import { getVolumes } from '../../../selectors/vm/selectors';
+import { asVM } from '../../../selectors/vm/vm';
 import { redirectToList } from './utils';
 
 export const DeleteVMTemplateModal = withHandlePromise((props: DeleteVMTemplateModalProps) => {

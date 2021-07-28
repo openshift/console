@@ -5,7 +5,7 @@ import {
 } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../../../models';
 import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForModel';
-import { isVMExpectedRunning } from '../../../selectors/vm';
+import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import { VMIKind, VMKind } from '../../../types/vm';
 import { CloneTo, VMClone } from '../../helpers/vm-clone';
 import { stopVM } from './actions';
