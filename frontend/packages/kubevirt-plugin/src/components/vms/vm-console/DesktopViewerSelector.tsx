@@ -6,6 +6,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { ServiceModel } from '@console/internal/models';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { DEFAULT_RDP_PORT, NetworkType, TEMPLATE_VM_NAME_LABEL } from '../../../constants';
+import { ConsoleType } from '../../../constants/vm/console-type';
 import { getRdpAddressPort } from '../../../selectors/service';
 import { getNetworks } from '../../../selectors/vm';
 import { getVMIAvailableStatusInterfaces, isGuestAgentConnected } from '../../../selectors/vmi';
@@ -96,7 +97,11 @@ const RdpServiceNotConfigured: React.FC<RdpServiceNotConfiguredProps> = ({ vm })
 };
 
 const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (props) => {
-  const { vm, vmi, vmPod } = props;
+  const { setConsoleType, vm, vmi, vmPod } = props;
+
+  React.useEffect(() => {
+    setConsoleType(ConsoleType.DESKTOP_VIEWER);
+  });
 
   // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
   // So read all services and filter on frontend.
@@ -187,6 +192,7 @@ type DesktopViewerSelectorProps = {
   vm: VMKind;
   vmi: VMIKind;
   vmPod: PodKind;
+  setConsoleType: (consoleType: ConsoleType) => void;
 };
 
 type RdpServiceNotConfiguredProps = {

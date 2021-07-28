@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { constants, SerialConsole } from '@patternfly/react-console';
 import { WSFactory } from '@console/internal/module/ws-factory';
+import { ConsoleType } from '../../../../constants/vm/console-type';
 import { getName } from '../../../../selectors';
 import { getSerialConsoleConnectionDetails } from '../../../../selectors/vmi';
 import { VMIKind } from '../../../../types';
@@ -27,11 +28,15 @@ interface WebSocket {
 
 // KubeVirt serial console is accessed via WebSocket proxy in k8s API.
 // Protocol used is "plain.kubevirt.io", means binary and single channel - forwarding of unix socket only (vmhandler sources).
-const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi }) => {
+const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi, setConsoleType }) => {
   const { host, path } = getSerialConsoleConnectionDetails(vmi);
   const [status, setStatus] = React.useState(LOADING);
   const terminalRef = React.useRef(null);
   const socket = React.useRef<WebSocket>(null);
+
+  React.useEffect(() => {
+    setConsoleType(ConsoleType.SERIAL);
+  }, [setConsoleType]);
 
   const onBackendDisconnected = React.useCallback((event?: any) => {
     debug('Backend has disconnected');
@@ -120,6 +125,7 @@ SerialConsoleConnector.displayName = constants.SERIAL_CONSOLE_TYPE; // for child
 
 type SerialConsoleConnectorProps = {
   vmi: VMIKind;
+  setConsoleType: (consoleType: ConsoleType) => void;
 };
 
 export default SerialConsoleConnector;

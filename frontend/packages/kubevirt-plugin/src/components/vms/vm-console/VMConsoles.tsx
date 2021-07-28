@@ -49,6 +49,14 @@ const VMNotReady: React.FC = () => {
   );
 };
 
+const getAvailableType = (showVNCOption, showSerialOption) => {
+  if (showVNCOption) {
+    return ConsoleType.VNC;
+  }
+
+  return showSerialOption ? ConsoleType.SERIAL : null;
+};
+
 const VMConsoles: React.FC<VMConsolesProps> = ({
   vm,
   vmi,
@@ -60,8 +68,13 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
+
   const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false && renderVNCConsole;
   const showSerialOption = getIsSerialConsoleAttached(vm) !== false;
+  const [consoleType, setConsoleType] = React.useState(
+    type || getAvailableType(showVNCOption, showSerialOption),
+  );
+
   const cloudInitVolume = getCloudInitVolume(vm);
   const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
   const cloudInitHelper = new CloudInitDataHelper(data);
@@ -88,17 +101,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
     (!showVNCOption && type === ConsoleType.VNC) ||
     (!showSerialOption && type === ConsoleType.SERIAL);
 
-  const getAvailableType = () => {
-    if (showVNCOption) {
-      return ConsoleType.VNC;
-    }
-    if (showSerialOption) {
-      return ConsoleType.SERIAL;
-    }
-    return null;
-  };
-
-  const consoleType = typeNotSupported || type == null ? getAvailableType() : type;
+  // const consoleType = typeNotSupported || type == null ? getAvailableType() : type;
 
   const isPaused = isVMIPaused(((vm as any) as VMIKind) || vmi);
 
@@ -116,7 +119,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
               )
             }
           >
-            {t('kubevirt-plugin~Open Console in new Window')}
+            {t('kubevirt-plugin~Open Console in New Window')}
           </Button>
         </StackItem>
       )}
@@ -125,7 +128,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           <Alert variant="info" isInline title={t('kubevirt-plugin~Guest login credentials')}>
             <Trans ns="kubevirt-plugin">
               The following credentials for this operating system were created via{' '}
-              <strong>Cloud-init</strong>. If unsuccessful cloud-init could be improperly
+              <strong>cloud-init</strong>. If unsuccessful, cloud-init could be improperly
               configured. Please contact the image provider for more information.
             </Trans>
             <p>
@@ -156,7 +159,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             variant="danger"
             actionClose={<AlertActionCloseButton onClose={() => setShowAlert(false)} />}
             title={t(
-              'kubevirt-plugin~Selected type {{typeName}} is unsupported, falling back to a supported type',
+              'kubevirt-plugin~Selected type {{typeName}} is unsupported. Falling back to a supported type',
               { typeName: type.toPatternflyLabel() },
             )}
           />
@@ -167,7 +170,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           <Alert
             isInline
             variant="danger"
-            title={t('kubevirt-plugin~Console is open on another tab/window')}
+            title={t('kubevirt-plugin~Console is open in another tab/window')}
           />
         </StackItem>
       )}
@@ -184,9 +187,16 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       )}
       <StackItem>
         <AccessConsoles preselectedType={consoleType?.toPatternflyLabel()}>
-          {showSerialOption && <SerialConsoleConnector vmi={vmi} />}
-          {showVNCOption && <VncConsoleConnector vmi={vmi} />}
-          {isWindows(vm) && <DesktopViewerSelector vmPod={vmStatusBundle.pod} vm={vm} vmi={vmi} />}
+          {showSerialOption && <SerialConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
+          {showVNCOption && <VncConsoleConnector vmi={vmi} setConsoleType={setConsoleType} />}
+          {isWindows(vm) && (
+            <DesktopViewerSelector
+              vmPod={vmStatusBundle.pod}
+              vm={vm}
+              vmi={vmi}
+              setConsoleType={setConsoleType}
+            />
+          )}
         </AccessConsoles>
       </StackItem>
     </Stack>
