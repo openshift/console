@@ -144,7 +144,7 @@ const ImageStreamTagDropdown: React.FC<{ disabled?: boolean; formContextField?: 
     return () => {
       unmounted.current = true;
     };
-  });
+  }, []);
 
   return (
     <DropdownField
