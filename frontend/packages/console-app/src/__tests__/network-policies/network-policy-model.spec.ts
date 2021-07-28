@@ -29,7 +29,7 @@ describe('NetworkPolicy model conversion', () => {
       spec: {
         egress: [],
         ingress: [],
-        podSelector: null,
+        podSelector: undefined,
         policyTypes: ['Ingress', 'Egress'],
       },
     });
@@ -218,7 +218,7 @@ describe('NetworkPolicy model conversion', () => {
             ],
           },
         ],
-        podSelector: null,
+        podSelector: undefined,
         policyTypes: ['Ingress'],
       },
     });
@@ -258,7 +258,7 @@ describe('NetworkPolicy model conversion', () => {
         namespace: 'ns',
       },
       spec: {
-        podSelector: null,
+        podSelector: undefined,
         policyTypes: ['Ingress'],
         ingress: [
           {

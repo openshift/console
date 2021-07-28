@@ -4,7 +4,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { AsyncComponent } from '@console/internal/components/utils/async';
 
-const NameValueEditorComponent = (props) => (
+const NameValueEditorComponent = (props: any) => (
   <AsyncComponent
     loader={() =>
       import('@console/internal/components/utils/name-value-editor').then((c) => c.NameValueEditor)
@@ -27,7 +27,7 @@ export const NetworkPolicyConditionalSelector: React.FunctionComponent<NetworkPo
   const { selectorType, helpText, values, onChange } = props;
   const [isVisible, setVisible] = React.useState(false);
 
-  const handleSelectorChange = (updated) => {
+  const handleSelectorChange = (updated: { nameValuePairs: string[][] }) => {
     onChange(updated.nameValuePairs);
   };
 

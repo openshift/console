@@ -1060,7 +1060,7 @@ export type PersistentVolumeClaimKind = K8sResourceCommon & {
 
 export type NetworkPolicyKind = K8sResourceCommon & {
   spec: {
-    podSelector: Selector;
+    podSelector?: Selector;
     ingress?: {
       from?: NetworkPolicyPeer[];
       ports?: NetworkPolicyPort[];
