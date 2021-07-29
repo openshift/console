@@ -54,13 +54,13 @@ const menuActions = [
   ModifyLabels,
   ModifyAnnotations,
   Edit,
-  (kind, obj) => ({
+  (kind, pvc) => ({
     label: i18next.t('public~Delete PersistentVolumeClaim'),
     callback: () =>
       deletePVCModal({
-        pvc: obj,
+        pvc,
       }),
-    accessReview: asAccessReview(kind, obj, 'delete'),
+    accessReview: asAccessReview(kind, pvc, 'delete'),
   }),
 ];
 
@@ -431,9 +431,11 @@ export const PersistentVolumeClaimsPage = (props) => {
     />
   );
 };
+
 export const PersistentVolumeClaimsDetailsPage = (props) => (
   <DetailsPage
     {...props}
+    getResourceStatus={(pvc) => (pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase)}
     menuActions={menuActions}
     pages={[
       navFactory.details(Details),
