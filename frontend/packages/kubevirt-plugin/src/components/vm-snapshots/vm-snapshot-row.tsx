@@ -81,7 +81,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
             id={`${snapshotName}-restore-btn`}
             variant="secondary"
             onClick={() => snapshotRestoreModal({ snapshot })}
-            isDisabled={
+            isAriaDisabled={
               isDisabled ||
               !isVMSnapshotReady(snapshot) ||
               isVmRestoreProgressing(relevantRestore) ||
