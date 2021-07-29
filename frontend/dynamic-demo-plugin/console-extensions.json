@@ -8,6 +8,66 @@
  */
 [
   {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "dynamic-section",
+      "perspective": "dev",
+      "name": "Dynamic section"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/dynamic-route-1"],
+      "component": {
+        "$codeRef": "exampleNavs.DynamicPage1"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dynamic-route-1",
+      "perspective": "dev",
+      "section": "dynamic-section",
+      "name": "Dynamic Nav 1",
+      "href": "/dynamic-route-1"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/dynamic-route-2"],
+      "component": {
+        "$codeRef": "exampleNavs.DynamicPage2"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "dynamic-route-2",
+      "perspective": "dev",
+      "section": "dynamic-section",
+      "name": "Dynamic Nav 2",
+      "href": "/dynamic-route-2"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
     "type": "console.flag",
     "properties": {
       "handler": { "$codeRef": "barUtils.testHandler" }
