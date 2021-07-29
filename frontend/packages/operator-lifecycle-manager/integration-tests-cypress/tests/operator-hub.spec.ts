@@ -61,7 +61,7 @@ describe('Interacting with OperatorHub', () => {
   });
 
   it('filters Operators by name', () => {
-    const operatorName = 'Alcide kAudit Operator';
+    const operatorName = 'Couchbase Operator';
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.get('.catalog-tile-pf')
       .its('length')

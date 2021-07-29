@@ -109,7 +109,9 @@ export const operator = {
     cy.log(`create operand "${exampleName}" for "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`).click();
+    cy.byLegacyTestID(`horizontal-link-${tabName}`)
+      .last()
+      .click();
     cy.byTestID('msg-box-title').should('contain', 'No operands found');
     cy.byTestID('msg-box-detail').should(
       'contain',
@@ -136,7 +138,9 @@ export const operator = {
     cy.log(`operand "${exampleName}" should exist for "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`).click();
+    cy.byLegacyTestID(`horizontal-link-${tabName}`)
+      .last()
+      .click();
     cy.byTestOperandLink(exampleName).should('contain', exampleName);
     cy.log(`navigate to the operand "Details" tab`);
     cy.byTestOperandLink(exampleName).click();
@@ -152,7 +156,9 @@ export const operator = {
     cy.log(`delete operand: ${exampleName}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`).click();
+    cy.byLegacyTestID(`horizontal-link-${tabName}`)
+      .last()
+      .click();
     // drilldown to Operand details page
     cy.byTestOperandLink(exampleName).click();
     detailsPage.clickPageActionFromDropdown(`Delete ${operandKind}`);
@@ -169,7 +175,9 @@ export const operator = {
     cy.log(`operand "${exampleName}" should not exist`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     cy.log(`navigate to the "${tabName}" tab`);
-    cy.byLegacyTestID(`horizontal-link-${tabName}`).click();
+    cy.byLegacyTestID(`horizontal-link-${tabName}`)
+      .last()
+      .click();
     cy.byTestOperandLink(exampleName).should('not.exist');
   },
   uninstall: (operatorName: string, installedNamespace: string = GlobalInstalledNamespace) => {
