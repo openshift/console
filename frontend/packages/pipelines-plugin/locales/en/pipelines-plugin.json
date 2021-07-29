@@ -161,6 +161,7 @@
   "Add workspace": "Add workspace",
   "Error loading the tasks.": "Error loading the tasks.",
   "Unable to locate any tasks.": "Unable to locate any tasks.",
+  "Open hint": "Open hint",
   "Resources aren't in beta, so it is recommended to use workspaces instead.": "Resources aren't in beta, so it is recommended to use workspaces instead.",
   "Invalid runAfter": "Invalid runAfter",
   "TaskSpec or TaskRef must be provided.": "TaskSpec or TaskRef must be provided.",
