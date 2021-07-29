@@ -112,7 +112,14 @@ export const validateDisk = (
         ? volume.getContainerImage()
         : dataVolume?.getContainer();
     addRequired(container);
-    validations.container = validateContainer(container);
+    Promise.resolve(container)
+      .then((value) => {
+        validations.container = validateContainer(value);
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      });
   }
 
   if (source.requiresDatavolume()) {
