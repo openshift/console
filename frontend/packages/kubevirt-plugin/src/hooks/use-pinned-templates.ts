@@ -3,8 +3,10 @@ import { TEMPLATE_PIN, TEMPLATE_PIN_PROMOTED } from '../constants';
 import { TemplateItem } from '../types/template';
 import { useLocalStorage } from './use-local-storage';
 
+const PROMOTED_TEMPLATES = ['rhel7-server-small', 'rhel8-server-small'];
+
 const isPromoted = (templateItem: TemplateItem): boolean =>
-  templateItem.isCommon && templateItem.metadata.name.includes('rhel');
+  templateItem.isCommon && PROMOTED_TEMPLATES.includes(templateItem.metadata.name);
 
 export const usePinnedTemplates = (): [
   (item: TemplateItem) => boolean,
