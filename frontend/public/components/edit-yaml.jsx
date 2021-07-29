@@ -235,12 +235,26 @@ export const EditYAML_ = connect(stateToProps)(
           });
         }
 
+        appendYAMLString(yaml) {
+          const currentYAML = this.getEditor().getValue();
+          return _.isEmpty(currentYAML)
+            ? yaml
+            : `${currentYAML.trim()}${
+                currentYAML.trim().endsWith('---') ? '\n' : '\n---\n'
+              }${yaml}`;
+        }
+
         convertObjToYAMLString(obj) {
-          const { t } = this.props;
+          const { t, allowMultiple, clearFileUpload } = this.props;
           let yaml = '';
           if (obj) {
             if (_.isString(obj)) {
-              yaml = obj;
+              if (allowMultiple) {
+                yaml = this.appendYAMLString(obj);
+                clearFileUpload();
+              } else {
+                yaml = obj;
+              }
             } else {
               try {
                 yaml = safeDump(obj);
