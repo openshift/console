@@ -1,17 +1,18 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { History, Location } from 'history';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-dom';
-
-import { EmptyBox, LoadingBox, StatusBox } from './status-box';
-import { PodsPage } from '../pod';
-import { AsyncComponent } from './async';
+import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
+import { ErrorBoundary } from '@console/shared/src/components/error/error-boundary';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
-import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
+import { ErrorBoundaryFallback } from '../error';
+import { PodsPage } from '../pod';
+import { AsyncComponent } from './async';
 import { ResourceMetricsDashboard } from './resource-metrics';
+import { EmptyBox, LoadingBox, StatusBox } from './status-box';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -276,13 +277,15 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     const path = `${props.match.path}/${p.path || p.href}`;
     const render = (params) => {
       return (
-        <p.component
-          {...componentProps}
-          {...extraResources}
-          {...p.pageData}
-          params={params}
-          customData={props.customData}
-        />
+        <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+          <p.component
+            {...componentProps}
+            {...extraResources}
+            {...p.pageData}
+            params={params}
+            customData={props.customData}
+          />
+        </ErrorBoundary>
       );
     };
     return <Route path={path} exact key={p.nameKey || p.name} render={render} />;
