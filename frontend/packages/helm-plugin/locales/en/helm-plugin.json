@@ -52,7 +52,6 @@
   "All data entered for version <1>{{currentVersion}}</1> will be reset": "All data entered for version <1>{{currentVersion}}</1> will be reset",
   "Proceed": "Proceed",
   "Cancel": "Cancel",
-  "Select the chart version.": "Select the chart version.",
   "Select the version to upgrade to.": "Select the version to upgrade to.",
   "No versions available": "No versions available",
   "For more information on the chart, refer to this <2>README</2>": "For more information on the chart, refer to this <2>README</2>",
