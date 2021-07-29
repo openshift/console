@@ -55,7 +55,7 @@ const HelmReleaseHistoryKebab: React.FC<HelmReleaseHistoryKebabProps> = ({ obj }
   return <ActionMenu actions={menuActions} />;
 };
 
-const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => (
+const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style, customData }) => (
   <TableRow id={obj.revision} index={index} trKey={key} style={style}>
     <TableData className={tableColumnClasses.revision}>{obj.version}</TableData>
     <TableData className={tableColumnClasses.updated}>
@@ -69,7 +69,9 @@ const HelmReleaseHistoryRow: RowFunction = ({ obj, index, key, style }) => (
     <TableData className={tableColumnClasses.appVersion}>{obj.chart.metadata.appVersion}</TableData>
     <TableData className={tableColumnClasses.description}>{obj.info.description}</TableData>
     <TableData className={tableColumnClasses.kebab}>
-      <HelmReleaseHistoryKebab obj={obj} />
+      {customData?.totalRevisions > 1 && customData?.latestHelmReleaseVersion !== obj.version && (
+        <HelmReleaseHistoryKebab obj={obj} />
+      )}
     </TableData>
   </TableRow>
 );

@@ -5,7 +5,7 @@ import { deleteResourceModal } from '@console/shared';
 import { HelmActionsScope } from './types';
 
 export const getHelmDeleteAction = (
-  { releaseName, namespace, redirect }: HelmActionsScope,
+  { release: { name: releaseName, namespace }, redirect }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
   id: 'delete-helm',
@@ -30,7 +30,7 @@ export const getHelmDeleteAction = (
 });
 
 export const getHelmUpgradeAction = (
-  { releaseName, namespace, actionOrigin }: HelmActionsScope,
+  { release: { name: releaseName, namespace }, actionOrigin }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
   id: 'upgrade-helm',
@@ -41,7 +41,7 @@ export const getHelmUpgradeAction = (
 });
 
 export const getHelmRollbackAction = (
-  { releaseName, namespace, actionOrigin }: HelmActionsScope,
+  { release: { name: releaseName, namespace }, actionOrigin }: HelmActionsScope,
   t: TFunction,
 ): Action => ({
   id: 'rollback-helm',

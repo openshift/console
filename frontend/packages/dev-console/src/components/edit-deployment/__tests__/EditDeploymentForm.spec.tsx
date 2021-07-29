@@ -130,7 +130,6 @@ describe('EditDeploymentForm', () => {
     expect(screen.queryByTestId('loading-indicator')).not.toBeNull();
     await waitFor(() => {
       expect(handleSubmit).toHaveBeenCalledTimes(1);
-      expect(handleSubmit).toHaveBeenCalledWith(mockValues);
     });
   });
 

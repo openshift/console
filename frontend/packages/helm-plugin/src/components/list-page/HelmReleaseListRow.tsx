@@ -9,8 +9,7 @@ import { tableColumnClasses } from './HelmReleaseListHeader';
 
 const HelmReleaseListRow: RowFunction<HelmRelease> = ({ obj, index, key, style }) => {
   const actionsScope = {
-    releaseName: obj.name,
-    namespace: obj.namespace,
+    release: obj,
     actionOrigin: HelmActionOrigins.list,
   };
   return (
