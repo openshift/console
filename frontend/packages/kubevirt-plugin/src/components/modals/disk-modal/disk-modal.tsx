@@ -46,6 +46,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { ValidationErrorType } from '../../../selectors';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { getName } from '../../../selectors/selectors';
 import { VMIKind, VMKind } from '../../../types';
@@ -401,8 +402,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   let modalTitle;
   if (isVMRunning) {
     modalTitle = isEditing
-      ? t('kubevirt-plugin~Edit {{type}} (Hot-plugged)', { type })
-      : t('kubevirt-plugin~Add {{type}} (Hot-plugged)', { type });
+      ? t('kubevirt-plugin~Edit {{type}} (Hot plugged)', { type })
+      : t('kubevirt-plugin~Add {{type}} (Hot plugged)', { type });
   } else {
     modalTitle = isEditing
       ? t('kubevirt-plugin~Edit {{type}}', { type })
@@ -567,6 +568,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             fieldId={asId('type')}
             isRequired
             validation={typeValidation}
+            validationMessage={t('kubevirt-plugin~Hot plug is enabled only for "Disk" type')}
+            validationType={ValidationErrorType.Info}
           >
             <FormPFSelect
               menuAppendTo={() => document.body}
@@ -581,7 +584,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   <SelectOption
                     key={dt.getValue()}
                     value={dt.getValue()}
-                    description={t('kubevirt-plugin~Hotplug is enabled only for "Disk" type')}
                     isDisabled={isVMRunning && dt.getValue() !== DiskType.DISK.getValue()}
                   >
                     {t(dt.toString())}
@@ -592,9 +594,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
           <FormRow fieldId={asId('auto-detach')}>
             <Checkbox
               id={asId('auto-detach')}
-              label={t('kubevirt-plugin~Automatically detach this disk upon VM restart.')}
+              label={t('kubevirt-plugin~Automatically detach this disk when this VM restarts')}
               description={t(
-                'kubevirt-plugin~Enable automatic detachment is available only for hot-plugged disks.',
+                'kubevirt-plugin~Enable automatic detachment is available only for hot-plugged disks',
               )}
               isDisabled={!isVMRunning}
               isChecked={autoDetach}
@@ -606,6 +608,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             fieldId={asId('interface')}
             isRequired
             validation={busValidation}
+            validationMessage={t('kubevirt-plugin~Hot plug is enabled only for "scsi" interface')}
+            validationType={ValidationErrorType.Info}
           >
             <FormPFSelect
               menuAppendTo={() => document.body}
