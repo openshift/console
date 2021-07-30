@@ -1,21 +1,29 @@
 import * as React from 'react';
 import { constants, VncConsole } from '@patternfly/react-console';
+import { ConsoleType } from '../../../../constants/vm/console-type';
 import { getVMIApiPath, getVMISubresourcePath } from '../../../../selectors/vmi';
 import { VMIKind } from '../../../../types';
 import { isConnectionEncrypted } from '../../../../utils/url';
 
-const VncConsoleConnector: React.FC<VncConsoleConnectorProps> = ({ vmi }) => (
-  // the novnc library requires protocol to be specified so the URL must be absolute - including host:port
-  <VncConsole
-    encrypt={isConnectionEncrypted()}
-    host={window.location.hostname}
-    port={window.location.port || (isConnectionEncrypted() ? '443' : '80')}
-    // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
-    path={`${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc`}
-  />
-);
+const VncConsoleConnector: React.FC<VncConsoleConnectorProps> = ({ vmi, setConsoleType }) => {
+  React.useEffect(() => {
+    setConsoleType(ConsoleType.VNC);
+  }, [setConsoleType]);
+
+  return (
+    // the novnc library requires protocol to be specified so the URL must be absolute - including host:port
+    <VncConsole
+      encrypt={isConnectionEncrypted()}
+      host={window.location.hostname}
+      port={window.location.port || (isConnectionEncrypted() ? '443' : '80')}
+      // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
+      path={`${getVMISubresourcePath()}/${getVMIApiPath(vmi)}/vnc`}
+    />
+  );
+};
 
 type VncConsoleConnectorProps = {
+  setConsoleType: (consoleType: ConsoleType) => void;
   vmi: VMIKind;
 };
 
