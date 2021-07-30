@@ -19,6 +19,10 @@ $global-notification-text: $color-pf-white;
     cursor: pointer;
     text-decoration: underline;
   }
+
+  button {
+    color: $global-notification-text !important;
+  }
 }
 
 .co-global-notification__text {

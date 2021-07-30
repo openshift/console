@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 
 import { FLAGS } from '@console/shared/src/constants';
 import { createProjectMessageStateToProps } from '../reducers/ui';
@@ -12,39 +13,50 @@ import { ProjectModel } from '../models';
 import { createProjectModal } from './modals/create-namespace-modal';
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
-  ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => (
-    <>
-      {canCreateProject ? (
+  ({ canCreateProject = true, createProjectMessage }: OpenShiftGettingStartedProps) => {
+    const { t } = useTranslation();
+    return (
+      <>
+        {canCreateProject ? (
+          <p>
+            {t(
+              'public~OpenShift helps you quickly develop, host, and scale applications. To get started, create a project for your application.',
+            )}
+          </p>
+        ) : (
+          <p>
+            {t(
+              "public~OpenShift helps you quickly develop, host, and scale applications. To get started, you'll need a project. Currently, you can't create or access any projects.",
+            )}
+            {!createProjectMessage && (
+              <>&nbsp;{t("public~You'll need to contact a cluster administrator for help.")}</>
+            )}
+          </p>
+        )}
+        {createProjectMessage && (
+          <p className="co-pre-line">
+            <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
+          </p>
+        )}
         <p>
-          OpenShift helps you quickly develop, host, and scale applications. To get started, create
-          a project for your application.
+          <Trans t={t} ns="public">
+            To learn more, visit the OpenShift{' '}
+            <ExternalLink href={openshiftHelpBase} text="documentation" />.
+          </Trans>
         </p>
-      ) : (
         <p>
-          OpenShift helps you quickly develop, host, and scale applications. To get started, you'll
-          need a project. Currently, you can't create or access any projects.
-          {!createProjectMessage && " You'll need to contact a cluster administrator for help."}
+          <Trans t={t} ns="public">
+            Download the <Link to="/command-line-tools">command-line tools</Link>
+          </Trans>
         </p>
-      )}
-      {createProjectMessage && (
-        <p className="co-pre-line">
-          <LinkifyExternal>{createProjectMessage}</LinkifyExternal>
-        </p>
-      )}
-      <p>
-        To learn more, visit the OpenShift{' '}
-        <ExternalLink href={openshiftHelpBase} text="documentation" />.
-      </p>
-      <p>
-        Download the <Link to="/command-line-tools">command-line tools</Link>
-      </p>
-      {canCreateProject && (
-        <Button variant="link" onClick={() => createProjectModal({ blocking: true })}>
-          Create a new project
-        </Button>
-      )}
-    </>
-  ),
+        {canCreateProject && (
+          <Button variant="link" onClick={() => createProjectModal({ blocking: true })}>
+            {t('public~Create a new project')}
+          </Button>
+        )}
+      </>
+    );
+  },
 );
 
 type WithStartGuide = <P>(
