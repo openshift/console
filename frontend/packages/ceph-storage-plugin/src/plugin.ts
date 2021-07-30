@@ -33,6 +33,8 @@ import {
   OCS_INDEPENDENT_FLAG,
   MCG_FLAG,
   OCS_FLAG,
+  ODF_MANAGED_FLAG,
+  detectManagedODF,
   detectComponents,
 } from './features';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
@@ -98,6 +100,15 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [MCG_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Custom',
+    properties: {
+      detect: detectManagedODF,
+    },
+    flags: {
+      required: [OCS_FLAG],
     },
   },
   {
@@ -375,6 +386,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_FLAG],
+      disallowed: [ODF_MANAGED_FLAG],
     },
   },
   {
@@ -463,7 +475,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       page: {
         // t('ceph-storage-plugin~Backing Store')
         name: '%ceph-storage-plugin~Backing Store%',
-        href: 'resource/noobaa.io~v1alpha1~BucketClass',
+        href: 'resource/noobaa.io~v1alpha1~BackingStore',
       },
       loader: async () =>
         (
@@ -489,7 +501,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           await import(
             './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
           )
-        ).BackingStoreListPage,
+        ).BucketClassListPage,
     },
   },
   // Adding this Extension because dynamic endpoint is not avbl
@@ -508,7 +520,7 @@ const plugin: Plugin<ConsumedExtensions> = [
           await import(
             './components/odf-resources/resource-list-page' /* webpackChunkName: "odf-system-list" */
           )
-        ).BackingStoreListPage,
+        ).NamespaceStoreListPage,
     },
   },
 ];

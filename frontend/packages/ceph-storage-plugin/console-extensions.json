@@ -105,7 +105,8 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_MANAGED"]
     }
   },
   {
@@ -176,7 +177,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~BackingStore/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "bsCreate.default"
@@ -186,7 +187,7 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~NamespaceStore/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "nssCreate.default"
@@ -196,10 +197,20 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/~new",
+      "path": "/odf/resource/noobaa.io~v1alpha1~BucketClass/create/~new",
       "exact": true,
       "component": {
         "$codeRef": "bcCreate.default"
+      }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName",
+      "exact": false,
+      "component": {
+        "$codeRef": "odfSystemDashboard.default"
       }
     }
   }
