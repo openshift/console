@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "type": "console.perspective",
+    "properties": {
+      "id": "test",
+      "name": "Test Perspective",
+      "icon": { "$codeRef": "perspective.icon" },
+      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
+      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" }
+    }
+  }
+]

@@ -8,7 +8,6 @@ import {
   ModelFeatureFlag,
   ResourceListPage,
   ResourceDetailsPage,
-  Perspective,
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
@@ -23,7 +22,6 @@ import {
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import { getFooHealthState, getBarHealthState } from './components/dashboards/health';
 import { DemoGroupIcon } from './components/dashboards/inventory';
-import TestIcon from './components/test-icon';
 import { FooBarModel } from './models';
 
 type ConsumedExtensions =
@@ -31,7 +29,6 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
-  | Perspective
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem
@@ -77,17 +74,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/test-pages' /* webpackChunkName: "demo" */).then(
           (m) => m.DummyResourceDetailsPage,
         ),
-    },
-  },
-  {
-    type: 'Perspective',
-    properties: {
-      id: 'test',
-      name: 'Test Perspective',
-      icon: TestIcon,
-      getLandingPageURL: () => '/test',
-      getK8sLandingPageURL: () => '/test',
-      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
   {
