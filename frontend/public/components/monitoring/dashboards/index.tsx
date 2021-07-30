@@ -45,6 +45,7 @@ import {
   Panel,
 } from './types';
 import { useBoolean } from '../hooks/useBoolean';
+import { useIsVisible } from '../hooks/useIsVisible';
 
 const NUM_SAMPLES = 30;
 
@@ -439,6 +440,9 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     UI.getIn(['monitoringDashboards', 'variables']),
   );
 
+  const ref = React.useRef();
+  const [, wasEverVisible] = useIsVisible(ref);
+
   const formatSeriesTitle = React.useCallback(
     (labels, i) => {
       const legendFormat = panel.targets?.[i]?.legendFormat;
@@ -489,32 +493,36 @@ const Card: React.FC<CardProps> = ({ panel }) => {
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
           {!isLoading && <QueryBrowserLink queries={queries} />}
         </DashboardCardHeader>
-        <DashboardCardBody className="co-dashboard-card__body--dashboard-graph">
-          {isLoading ? (
-            <LoadingInline />
-          ) : (
-            <>
-              {panel.type === 'grafana-piechart-panel' && (
-                <BarChart pollInterval={pollInterval} query={queries[0]} />
-              )}
-              {panel.type === 'graph' && (
-                <Graph
-                  formatSeriesTitle={formatSeriesTitle}
-                  isStack={panel.stack}
-                  pollInterval={pollInterval}
-                  queries={queries}
-                  showLegend={panel.legend?.show}
-                  units={panel.yaxes?.[0]?.format}
-                />
-              )}
-              {(panel.type === 'singlestat' || panel.type === 'gauge') && (
-                <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
-              )}
-              {panel.type === 'table' && (
-                <Table panel={panel} pollInterval={pollInterval} queries={queries} />
-              )}
-            </>
-          )}
+        <DashboardCardBody className="co-dashboard-card__body--dashboard">
+          <div className="monitoring-dashboards__card-body-content " ref={ref}>
+            {isLoading || !wasEverVisible ? (
+              <div className={panel.type === 'graph' ? 'query-browser__wrapper' : ''}>
+                <LoadingInline />
+              </div>
+            ) : (
+              <>
+                {panel.type === 'grafana-piechart-panel' && (
+                  <BarChart pollInterval={pollInterval} query={queries[0]} />
+                )}
+                {panel.type === 'graph' && (
+                  <Graph
+                    formatSeriesTitle={formatSeriesTitle}
+                    isStack={panel.stack}
+                    pollInterval={pollInterval}
+                    queries={queries}
+                    showLegend={panel.legend?.show}
+                    units={panel.yaxes?.[0]?.format}
+                  />
+                )}
+                {(panel.type === 'singlestat' || panel.type === 'gauge') && (
+                  <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
+                )}
+                {panel.type === 'table' && (
+                  <Table panel={panel} pollInterval={pollInterval} queries={queries} />
+                )}
+              </>
+            )}
+          </div>
         </DashboardCardBody>
       </DashboardCard>
     </div>

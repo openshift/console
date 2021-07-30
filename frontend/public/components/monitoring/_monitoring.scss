@@ -43,7 +43,7 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
   height: calc(100% - 20px);
   margin: 0 0 20px 0;
 
-  .co-dashboard-card__body--dashboard-graph {
+  .co-dashboard-card__body--dashboard {
     // Add extra padding to the right. X-axis times with AM/PM at certain screen widths can overflow the card otherwise.
     padding: 10px 15px 10px 10px;
   }
@@ -61,8 +61,13 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
   .query-browser__wrapper {
     border: 0;
     margin: 0;
+    min-height: 240px;
     padding: 0;
   }
+}
+
+.monitoring-dashboards__card-body-content {
+  height: 100%;
 }
 
 .monitoring-dashboards__card-header {
@@ -195,7 +200,6 @@ $screen-phone-landscape-min-width: 567px;
 
 .monitoring-dashboards__single-stat {
   font-size: var(--pf-global--FontSize--3xl);
-  padding-bottom: 0;
 }
 
 .monitoring-dashboards__table {
