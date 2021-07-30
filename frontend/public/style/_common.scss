@@ -44,6 +44,10 @@ dl.co-inline {
   }
 }
 
+.co-button-help-icon {
+  padding: 0 5px; // override default left and right padding to bring help icon closer to text
+}
+
 .co-m-pane__filter-bar {
   display: flex;
   flex-wrap: wrap;
