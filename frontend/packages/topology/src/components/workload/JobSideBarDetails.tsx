@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import {
   DetailsItem,
@@ -48,7 +48,7 @@ const JobSideBarDetails: React.FC<JobSideBarDetailsProps> = ({ job }) => {
 
 export const getJobSideBarDetails = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource<JobKind>(element as Node);
+  const resource = getResource<JobKind>(element);
   if (resource.kind !== JobModel.kind) return undefined;
   return <JobSideBarDetails job={resource} />;
 };

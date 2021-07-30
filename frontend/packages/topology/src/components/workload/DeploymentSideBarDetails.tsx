@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DeploymentDetailsList } from '@console/internal/components/deployment';
 import {
@@ -51,7 +51,7 @@ const DeploymentSideBarDetails: React.FC<DeploymentSideBarDetailsProps> = ({ dep
 
 export const getDeploymentSideBarDetails = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource<DeploymentKind>(element as Node);
+  const resource = getResource<DeploymentKind>(element);
   if (resource.kind !== DeploymentModel.kind) return undefined;
   return <DeploymentSideBarDetails deployment={resource} />;
 };

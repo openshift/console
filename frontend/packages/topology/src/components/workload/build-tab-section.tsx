@@ -19,27 +19,29 @@ const BuildTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
     data?: BuildConfigData;
     loaded: boolean;
   }>({ loaded: false });
-  const [buildAdapterExtensions, extensionsLoaded] = useResolvedExtensions<BuildAdapter>(
+  const [buildAdapterExtensions, extensionsResolved] = useResolvedExtensions<BuildAdapter>(
     isBuildAdapter,
   );
   const buildAdapter = React.useMemo(
     () =>
       getDataFromAdapter<AdapterDataType<BuildConfigData>, BuildAdapter>(element, [
         buildAdapterExtensions,
-        extensionsLoaded,
+        extensionsResolved,
       ]),
-    [buildAdapterExtensions, element, extensionsLoaded],
+    [buildAdapterExtensions, element, extensionsResolved],
   );
   const handleAdapterResolved = React.useCallback((data) => {
     setBuildConfigsData({ data, loaded: true });
   }, []);
   return buildAdapter ? (
     <SideBarTabSection>
-      <ResolveAdapter<BuildConfigData>
-        resource={buildAdapter.resource}
-        useAdapterHook={buildAdapter.provider}
-        onAdapterDataResolved={handleAdapterResolved}
-      />
+      {extensionsResolved && (
+        <ResolveAdapter<BuildConfigData>
+          resource={buildAdapter.resource}
+          useAdapterHook={buildAdapter.provider}
+          onAdapterDataResolved={handleAdapterResolved}
+        />
+      )}
       {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
     </SideBarTabSection>
   ) : null;

@@ -113,7 +113,7 @@ export const getTopologyResourceObject = (topologyObject: TopologyDataObject): K
   return topologyObject.resource || topologyObject.resources?.obj;
 };
 
-export const getResource = <T = K8sResourceKind>(node: Node): T => {
+export const getResource = <T = K8sResourceKind>(node: GraphElement): T => {
   const resource = (node as OdcBaseNode)?.getResource();
   return (resource as T) || (getTopologyResourceObject(node?.getData()) as T);
 };

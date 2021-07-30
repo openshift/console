@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { ResourceSummary } from '@console/internal/components/utils';
 import { StatefulSetModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -22,7 +22,7 @@ const StatefulSetSideBarDetails: React.FC<StatefulSetSideBarDetailsProps> = ({ s
 
 export const getStatefulSetSideBarDetails = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (resource.kind !== StatefulSetModel.kind) return undefined;
   return <StatefulSetSideBarDetails ss={resource} />;
 };

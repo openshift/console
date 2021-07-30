@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
   K8sResourceCommon,
+  NetworkAdapterType,
   PodsAdapterDataType,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
@@ -41,14 +42,19 @@ export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E 
 const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const buildConfigsData = useBuildConfigsWatcher(resource);
   const { podData, loaded, loadError } = usePodsWatcher(resource);
-  return { pods: podData?.pods, loaded, loadError, buildConfigsData };
+  return React.useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigsData }), [
+    buildConfigsData,
+    loadError,
+    loaded,
+    podData,
+  ]);
 };
 
 export const podsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -66,7 +72,7 @@ export const buildsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<BuildConfigData> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -80,9 +86,11 @@ export const buildsAdapterForWorkloads = (
   return { resource, provider: useBuildConfigsWatcher };
 };
 
-export const networkAdapterForWorkloads = (element: GraphElement): AdapterDataType | undefined => {
+export const networkAdapterForWorkloads = (
+  element: GraphElement,
+): NetworkAdapterType | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -138,7 +146,7 @@ export const podsAdapterForCronJobWorkload = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (resource.kind !== CronJobModel.kind) return undefined;
   return { resource, provider: usePodsAdapterForCronJobWorkloads };
 };
