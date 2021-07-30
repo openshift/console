@@ -1,4 +1,5 @@
 {
+  "Developer": "Developer",
   "Developer Catalog": "Developer Catalog",
   "Git Repository": "Git Repository",
   "Container images": "Container images",
@@ -576,7 +577,6 @@
   "Select a Project to search inside or <2>create a Project</2>.": "Select a Project to search inside or <2>create a Project</2>.",
   "BindableService": "BindableService",
   "BindableServices": "BindableServices",
-  "Developer": "Developer",
   "Invalid import option provided": "Invalid import option provided",
   "Add to Application": "Add to Application",
   "Add to Project": "Add to Project",

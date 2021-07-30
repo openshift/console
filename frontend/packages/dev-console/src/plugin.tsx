@@ -1,16 +1,11 @@
-import * as React from 'react';
-import { CodeIcon } from '@patternfly/react-icons';
 import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { SecretModel, ConfigMapModel } from '@console/internal/models';
-import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelFeatureFlag,
   KebabActions,
   ResourceListPage,
   ResourceDetailsPage,
-  Perspective,
   RoutePage,
   OverviewResourceTab,
   OverviewTabSection,
@@ -25,7 +20,6 @@ import { getGuidedTour } from './components/guided-tour';
 import { getBindableServiceResources } from './components/topology/bindable-services/bindable-service-resources';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 
 const getBindableServicesTopologyDataModel = () =>
   import(
@@ -42,7 +36,6 @@ type ConsumedExtensions =
   | CustomFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
-  | Perspective
   | RoutePage
   | KebabActions
   | OverviewResourceTab
@@ -62,20 +55,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "monitoring-overview" */
         ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'Perspective',
-    properties: {
-      id: 'dev',
-      // t('devconsole~Developer')
-      name: '%devconsole~Developer%',
-      icon: <CodeIcon />,
-      defaultPins: [referenceForModel(ConfigMapModel), referenceForModel(SecretModel)],
-      getLandingPageURL: (flags, isFirstVisit) => (isFirstVisit ? '/add' : '/topology'),
-      getK8sLandingPageURL: () => '/add',
-      getImportRedirectURL: (project) => `/topology/ns/${project}`,
-      usePerspectiveDetection,
     },
   },
   {
