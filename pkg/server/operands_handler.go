@@ -2,48 +2,49 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
-	"os/user"
-	"path/filepath"
 
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/operator-framework/kubectl-operator/pkg/action"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type OperandsListHandler struct {
-	APIServerURL string
+	APIServerURL    string
+	User            auth.User
+	TLSClientConfig tls.Config
 }
 
-func GetConfig(APIServerURL string) (*rest.Config, error) {
-	// Try the in-cluster config building config with API Server URL and KUBECONFIG env var.
-	// First try the in-cluster config
-	if c, err := rest.InClusterConfig(); err == nil {
-		return c, nil
-	}
-	// BuildConfigFromFlags is a helper function that builds configs from a master url or a kubeconfig filepath
-	if c, err := clientcmd.BuildConfigFromFlags(APIServerURL, os.Getenv("KUBECONFIG")); err == nil {
-		return c, nil
-	}
-	// If no in-cluster config, try the default location in the user's home directory
-	if usr, err := user.Current(); err == nil {
-		if c, err := clientcmd.BuildConfigFromFlags(
-			APIServerURL, filepath.Join(usr.HomeDir, ".kube", "config")); err == nil {
-			return c, nil
+func (o *OperandsListHandler) GetConfig() (*rest.Config, error) {
+	var tlsClientConfig rest.TLSClientConfig
+	if o.TLSClientConfig.InsecureSkipVerify {
+		// off-cluster mode
+		tlsClientConfig.Insecure = true
+	} else {
+		inCluster, err := rest.InClusterConfig()
+		if err != nil {
+			return nil, err
+
 		}
+		tlsClientConfig = inCluster.TLSClientConfig
 	}
 
-	return nil, fmt.Errorf("could not locate a kubeconfig")
+	config := &rest.Config{
+		Host:            o.APIServerURL,
+		TLSClientConfig: tlsClientConfig,
+		BearerToken:     o.User.Token,
+	}
+	return config, nil
 }
 
-func (o *OperandsListHandler) OperandsListHandler(w http.ResponseWriter, r *http.Request) {
+func (o *OperandsListHandler) OperandsListHandler(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.Header().Set("Allow", "GET")
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
@@ -65,7 +66,7 @@ func (o *OperandsListHandler) OperandsListHandler(w http.ResponseWriter, r *http
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	config, err := GetConfig(o.APIServerURL)
+	config, err := o.GetConfig()
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get new config for operator client: %v", err)
 		klog.Error(errMsg)

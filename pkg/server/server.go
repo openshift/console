@@ -131,6 +131,7 @@ type Server struct {
 	MeteringProxyConfig              *proxy.Config
 	TerminalProxyTLSConfig           *tls.Config
 	PluginsProxyTLSConfig            *tls.Config
+	OperandsProxyTLSConfig           *tls.Config
 	GitOpsProxyConfig                *proxy.Config
 	// A lister for resource listing of a particular kind
 	MonitoringDashboardConfigMapLister ResourceLister
@@ -414,8 +415,8 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
-		authHandler(func(w http.ResponseWriter, r *http.Request) {
-			operandsListHandler.OperandsListHandler(w, r)
+		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+			operandsListHandler.OperandsListHandler(user, w, r)
 		}),
 	))
 
