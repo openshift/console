@@ -56,6 +56,7 @@ const (
 	devfileSamplesEndpoint           = "/api/devfile/samples/"
 	pluginAssetsEndpoint             = "/api/plugins/"
 	localesEndpoint                  = "/locales/resource.json"
+	updatesEndpoint                  = "/api/check-updates"
 
 	sha256Prefix = "sha256~"
 )
@@ -440,6 +441,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			pluginsHandler.HandlePluginAssets(w, r)
 		}),
 	))
+
+	handle(updatesEndpoint, authHandler(pluginsHandler.HandleCheckUpdates))
 
 	handleFunc(localesEndpoint, func(w http.ResponseWriter, r *http.Request) {
 		pluginsHandler.HandleI18nResources(w, r)
