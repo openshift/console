@@ -1,5 +1,4 @@
-import { isNavItem } from '@console/dynamic-plugin-sdk';
-import { isPerspective } from '@console/plugin-sdk';
+import { isNavItem, isPerspective } from '@console/dynamic-plugin-sdk';
 import { testedExtensions } from '../plugin-test-utils';
 
 describe('NavItem', () => {

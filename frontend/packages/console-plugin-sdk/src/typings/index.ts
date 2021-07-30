@@ -8,7 +8,6 @@ export * from './models';
 export * from './nav-section';
 export * from './overview';
 export * from './pages';
-export * from './perspectives';
 export * from './global-configs';
 export * from './clusterserviceversions';
 export * from './horizontal-nav';

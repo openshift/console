@@ -1,5 +1,28 @@
 [
   {
+    "type": "console.perspective",
+    "properties": {
+      "id": "dev",
+      "name": "%devconsole~Developer%",
+      "icon": { "$codeRef": "perspective.icon" },
+      "defaultPins": [
+        {
+          "group": "",
+          "version": "v1",
+          "kind": "ConfigMap"
+        },
+        {
+          "group": "",
+          "version": "v1",
+          "kind": "Secret"
+        }
+      ],
+      "landingPageURL": { "$codeRef": "perspective.getLandingPageURL" },
+      "importRedirectURL": { "$codeRef": "perspective.getImportRedirectURL" },
+      "usePerspectiveDetection": { "$codeRef": "perspective.usePerspectiveDetection" }
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "developer-catalog",

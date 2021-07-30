@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
+import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import { history } from '../utils';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useActivePerspective, ACM_LINK_ID } from '@console/shared';
@@ -13,6 +14,39 @@ import * as acmIcon from '../../imgs/ACM-icon.svg';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
+};
+
+type PerspectiveDropdownItemProps = {
+  perspective: Perspective;
+  activePerspective: string;
+  onClick: (perspective: Perspective) => void;
+};
+
+const PerspectiveDropdownItem: React.FC<PerspectiveDropdownItemProps> = ({
+  perspective,
+  activePerspective,
+  onClick,
+}) => {
+  const LazyIcon = React.useMemo(() => React.lazy(perspective.properties.icon), [
+    perspective.properties.icon,
+  ]);
+  return (
+    <DropdownItem
+      key={perspective.properties.id}
+      onClick={(e: React.MouseEvent<HTMLLinkElement>) => {
+        e.preventDefault();
+        onClick(perspective);
+      }}
+      isHovered={perspective.properties.id === activePerspective}
+    >
+      <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
+        <span className="oc-nav-header__icon">
+          <LazyIcon />
+        </span>
+        {perspective.properties.name}
+      </Title>
+    </DropdownItem>
+  );
 };
 
 const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
@@ -30,13 +64,12 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   );
   const { t } = useTranslation();
   const togglePerspectiveOpen = React.useCallback(() => {
-    setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
-  }, [isPerspectiveDropdownOpen]);
+    setPerspectiveDropdownOpen((isOpen) => !isOpen);
+  }, []);
   const fireTelemetryEvent = useTelemetry();
 
   const onPerspectiveSelect = React.useCallback(
-    (event: React.MouseEvent<HTMLLinkElement>, perspective: Perspective): void => {
-      event.preventDefault();
+    (perspective: Perspective): void => {
       if (perspective.properties.id !== activePerspective) {
         setActivePerspective(perspective.properties.id);
         // Navigate to root and let the default page determine where to go to next
@@ -51,63 +84,39 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     [activePerspective, fireTelemetryEvent, onPerspectiveSelected, setActivePerspective],
   );
 
-  const renderToggle = React.useCallback(
-    (icon: React.ReactNode, name: string) => (
-      <DropdownToggle
-        isOpen={isPerspectiveDropdownOpen}
-        onToggle={togglePerspectiveOpen}
-        toggleIndicator={CaretDownIcon}
-        data-test-id="perspective-switcher-toggle"
-      >
-        <Title headingLevel="h2" size="md">
-          <span className="oc-nav-header__icon">{icon}</span>
-          {name}
-        </Title>
-      </DropdownToggle>
-    ),
-    [isPerspectiveDropdownOpen, togglePerspectiveOpen],
-  );
-
-  const perspectiveItems = React.useMemo(() => {
-    const items = perspectiveExtensions.map((nextPerspective: Perspective) => (
+  const perspectiveItems = perspectiveExtensions.map((nextPerspective) => (
+    <PerspectiveDropdownItem
+      key={nextPerspective.uid}
+      perspective={nextPerspective}
+      activePerspective={activePerspective}
+      onClick={onPerspectiveSelect}
+    />
+  ));
+  if (acmLink) {
+    perspectiveItems.push(
       <DropdownItem
-        key={nextPerspective.properties.id}
-        onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
-          onPerspectiveSelect(event, nextPerspective)
-        }
-        isHovered={nextPerspective.properties.id === activePerspective}
+        key={ACM_LINK_ID}
+        onClick={() => {
+          window.location.href = acmLink.spec.href;
+        }}
+        isHovered={ACM_LINK_ID === activePerspective}
       >
         <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
-          <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
-          {nextPerspective.properties.name}
+          <span className="oc-nav-header__icon">
+            <img src={acmIcon} height="12em" width="12em" alt="" />
+          </span>
+          {t('public~Advanced Cluster Management')}
         </Title>
-      </DropdownItem>
-    ));
-    if (acmLink) {
-      items.push(
-        <DropdownItem
-          key={ACM_LINK_ID}
-          onClick={() => {
-            window.location.href = acmLink.spec.href;
-          }}
-          isHovered={ACM_LINK_ID === activePerspective}
-        >
-          <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
-            <span className="oc-nav-header__icon">
-              <img src={acmIcon} height="12em" width="12em" alt="" />
-            </span>
-            {t('public~Advanced Cluster Management')}
-          </Title>
-        </DropdownItem>,
-      );
-    }
-    return items;
-  }, [acmLink, activePerspective, onPerspectiveSelect, perspectiveExtensions, t]);
+      </DropdownItem>,
+    );
+  }
 
   const { icon, name } = React.useMemo(
     () => perspectiveExtensions.find((p) => p.properties.id === activePerspective).properties,
     [activePerspective, perspectiveExtensions],
   );
+
+  const LazyIcon = React.useMemo(() => React.lazy(icon), [icon]);
 
   return (
     <div
@@ -117,7 +126,19 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
     >
       <Dropdown
         isOpen={isPerspectiveDropdownOpen}
-        toggle={renderToggle(icon, name)}
+        toggle={
+          <DropdownToggle
+            isOpen={isPerspectiveDropdownOpen}
+            onToggle={togglePerspectiveOpen}
+            toggleIndicator={CaretDownIcon}
+            data-test-id="perspective-switcher-toggle"
+          >
+            <Title headingLevel="h2" size="md">
+              <span className="oc-nav-header__icon">{<LazyIcon />}</span>
+              {name}
+            </Title>
+          </DropdownToggle>
+        }
         dropdownItems={perspectiveItems}
         data-test-id="perspective-switcher-menu"
       />

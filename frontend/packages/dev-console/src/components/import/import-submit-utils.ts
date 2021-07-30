@@ -1,6 +1,7 @@
 import * as GitUrlParse from 'git-url-parse';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
+import { Perspective } from '@console/dynamic-plugin-sdk';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
@@ -39,7 +40,6 @@ import {
   updateServiceAccount,
   getSecretAnnotations,
 } from '@console/pipelines-plugin/src/utils/pipeline-utils';
-import { Perspective } from '@console/plugin-sdk';
 import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
@@ -749,12 +749,12 @@ export const createOrUpdateResources = async (
   return responses;
 };
 
-export const handleRedirect = (
+export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
   history.push(redirectURL);
 };

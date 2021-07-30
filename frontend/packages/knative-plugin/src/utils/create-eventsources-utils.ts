@@ -3,6 +3,7 @@ import {
   getAppLabels,
   getCommonAnnotations,
 } from '@console/dev-console/src/utils/resource-label-utils';
+import { Perspective } from '@console/dynamic-plugin-sdk';
 import { checkAccess, history } from '@console/internal/components/utils';
 import {
   K8sResourceKind,
@@ -15,7 +16,6 @@ import {
   Descriptor,
   SpecCapability,
 } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
-import { Perspective } from '@console/plugin-sdk';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
@@ -333,13 +333,13 @@ export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
   return servers;
 };
 
-export const handleRedirect = (
+export const handleRedirect = async (
   project: string,
   perspective: string,
   perspectiveExtensions: Perspective[],
 ) => {
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
-  const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+  const redirectURL = (await perspectiveData.properties.importRedirectURL())(project);
   history.push(redirectURL);
 };
 

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Skeleton, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { isPerspective, Perspective } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 import { usePreferredPerspective } from './usePreferredPerspective';
 
 const PerspectiveDropdown: React.FC = () => {
