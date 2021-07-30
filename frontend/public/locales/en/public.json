@@ -1727,6 +1727,7 @@
   "When using the OpenShift SDN cluster network provider:": "When using the OpenShift SDN cluster network provider:",
   "Egress network policy is not supported.": "Egress network policy is not supported.",
   "IP block exceptions are not supported and would cause the entire IP block section to be ignored.": "IP block exceptions are not supported and would cause the entire IP block section to be ignored.",
+  "Refer to your cluster administrator to know which network provider is used.": "Refer to your cluster administrator to know which network provider is used.",
   "More information:": "More information:",
   "Policy name": "Policy name",
   "If no pod selector is provided, the policy will apply to all pods in the namespace.": "If no pod selector is provided, the policy will apply to all pods in the namespace.",

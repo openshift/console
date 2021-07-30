@@ -197,6 +197,9 @@ const NetworkPolicyFormComponent: React.FunctionComponent<NetworkPolicyFormProps
               </li>
             </ul>
             <p>
+              {t('Refer to your cluster administrator to know which network provider is used.')}
+            </p>
+            <p>
               {t('public~More information:')}&nbsp;
               <ExternalLink
                 href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
