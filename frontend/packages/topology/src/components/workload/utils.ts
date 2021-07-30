@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
   K8sResourceCommon,
@@ -48,7 +48,7 @@ export const podsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -66,7 +66,7 @@ export const buildsAdapterForWorkloads = (
   element: GraphElement,
 ): AdapterDataType<BuildConfigData> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -82,7 +82,7 @@ export const buildsAdapterForWorkloads = (
 
 export const networkAdapterForWorkloads = (element: GraphElement): AdapterDataType | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (
     ![
       DeploymentConfigModel.kind,
@@ -138,7 +138,7 @@ export const podsAdapterForCronJobWorkload = (
   element: GraphElement,
 ): AdapterDataType<PodsAdapterDataType> | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (resource.kind !== CronJobModel.kind) return undefined;
   return { resource, provider: usePodsAdapterForCronJobWorkloads };
 };

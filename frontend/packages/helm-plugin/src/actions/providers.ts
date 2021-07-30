@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { getResource } from '@console/topology/src/utils';
 import { TYPE_HELM_RELEASE } from '../topology/components/const';
@@ -27,7 +27,7 @@ export const useHelmActionProviderForTopology = (element: GraphElement) => {
     const {
       namespace,
       labels: { version },
-    } = getResource(element as Node).metadata;
+    } = getResource(element).metadata;
 
     return {
       release: {

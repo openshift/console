@@ -1,8 +1,28 @@
+import { TFunction } from 'i18next';
+import { Action } from '@console/dynamic-plugin-sdk';
 import { KebabOption } from '@console/internal/components/utils';
 import { truncateMiddle } from '@console/internal/components/utils/truncate-middle';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { RESOURCE_NAME_TRUNCATE_LENGTH } from '@console/shared/src/constants';
 import { editApplicationModal } from '@console/topology/src/components/modals';
+
+export const getModifyApplicationAction = (
+  kind: K8sKind,
+  obj: K8sResourceKind,
+  t: TFunction,
+): Action => {
+  return {
+    id: 'modify-application',
+    label: t('topology~Edit Application grouping'),
+    cta: () =>
+      editApplicationModal({
+        resourceKind: kind,
+        resource: obj,
+        blocking: true,
+        initialApplication: '',
+      }),
+  };
+};
 
 export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { DetailsItem, ResourceSummary, Timestamp } from '@console/internal/components/utils';
 import { CronJobModel } from '@console/internal/models';
@@ -50,7 +50,7 @@ const CronJobSideBarDetails: React.FC<CronJobSideBarDetailsProps> = ({ cronjob }
 
 export const getCronJobSideBarDetails = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource<CronJobKind>(element as Node);
+  const resource = getResource<CronJobKind>(element);
   if (resource.kind !== CronJobModel.kind) return undefined;
   return <CronJobSideBarDetails cronjob={resource} />;
 };

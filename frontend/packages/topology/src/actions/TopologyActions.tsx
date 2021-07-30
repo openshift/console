@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { referenceFor } from '@console/internal/module/k8s';
 import { ActionMenu, ActionMenuVariant, ActionServiceProvider } from '@console/shared';
 import { getResource } from '../utils';
@@ -9,16 +9,22 @@ type TopologyActionsProps = {
 };
 
 const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
-  const resource = getResource(element as Node);
+  const context = React.useMemo(() => {
+    const resource = getResource(element);
+    return {
+      'topology-actions': element,
+      [referenceFor(resource)]: resource,
+    };
+  }, [element]);
   return (
-    <ActionServiceProvider
-      context={{ 'topology-actions': element, [referenceFor(resource)]: resource }}
-    >
-      {({ actions, options, loaded }) =>
-        loaded && (
-          <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
-        )
-      }
+    <ActionServiceProvider context={context}>
+      {({ actions, options, loaded }) => {
+        return (
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        );
+      }}
     </ActionServiceProvider>
   );
 };

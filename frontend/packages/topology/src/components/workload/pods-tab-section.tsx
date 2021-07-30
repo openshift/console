@@ -14,7 +14,9 @@ import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
 const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
-  const [podAdapterExtension, loaded] = useResolvedExtensions<PodAdapter>(isPodAdapter);
+  const [podAdapterExtension, podAdapterExtensionResolved] = useResolvedExtensions<PodAdapter>(
+    isPodAdapter,
+  );
   const [{ data: podsData, loaded: podsDataLoaded }, setPodData] = React.useState<{
     data?: PodsAdapterDataType<PodKind>;
     loaded: boolean;
@@ -23,20 +25,22 @@ const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
     () =>
       getDataFromAdapter<AdapterDataType<PodsAdapterDataType<PodKind>>, PodAdapter>(element, [
         podAdapterExtension,
-        loaded,
+        podAdapterExtensionResolved,
       ]),
-    [element, podAdapterExtension, loaded],
+    [element, podAdapterExtension, podAdapterExtensionResolved],
   );
   const handleAdapterResolved = React.useCallback((data) => {
     setPodData({ data, loaded: true });
   }, []);
   return podAdapter ? (
     <SideBarTabSection>
-      <ResolveAdapter<PodsAdapterDataType<PodKind>>
-        resource={podAdapter.resource}
-        useAdapterHook={podAdapter.provider}
-        onAdapterDataResolved={handleAdapterResolved}
-      />
+      {podAdapterExtensionResolved && (
+        <ResolveAdapter<PodsAdapterDataType<PodKind>>
+          resource={podAdapter.resource}
+          useAdapterHook={podAdapter.provider}
+          onAdapterDataResolved={handleAdapterResolved}
+        />
+      )}
       {podsDataLoaded && podsData.loaded && !podsData.loadError && (
         <PodsOverviewContent obj={podAdapter.resource} {...podsData} />
       )}

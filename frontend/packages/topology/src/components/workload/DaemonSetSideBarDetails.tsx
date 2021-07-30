@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { DaemonSetDetailsList } from '@console/internal/components/daemon-set';
 import { ResourceSummary, StatusBox } from '@console/internal/components/utils';
 import { DaemonSetModel } from '@console/internal/models';
@@ -40,7 +40,7 @@ const DaemonSetSideBarDetails: React.FC<DaemonSetOverviewDetailsProps> = ({ ds }
 
 export const getDaemonSetSideBarDetails = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (resource.kind !== DaemonSetModel.kind) return undefined;
   return <DaemonSetSideBarDetails ds={resource} />;
 };

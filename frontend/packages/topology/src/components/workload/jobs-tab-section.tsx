@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { K8sResourceCommon } from '@console/dynamic-plugin-sdk/src';
 import { CronJobModel } from '@console/internal/models';
 import { useJobsForCronJobWatcher, SideBarTabSection } from '@console/shared';
@@ -18,7 +18,7 @@ const JobsTabSection: React.FC<{ resource: K8sResourceCommon }> = ({ resource })
 
 export const getJobsSideBarTabSection = (element: GraphElement) => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
-  const resource = getResource(element as Node);
+  const resource = getResource(element);
   if (resource.kind !== CronJobModel.kind) return undefined;
   return <JobsTabSection resource={resource} />;
 };

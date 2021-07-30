@@ -1,5 +1,5 @@
 /**
- * @deprecated
+ * @deprecated [TopologySideBar] There is no visualization a Pod resource on the topology/list view. this file contains unused code, delete this once all the side bars uses dynamic extensions
  */
 import * as React from 'react';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';

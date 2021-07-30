@@ -1,5 +1,5 @@
 /**
- * @deprecated
+ * @deprecated [TopologySideBar] delete this file once all the side panels uses dynamic extensions.
  */
 
 import * as React from 'react';
