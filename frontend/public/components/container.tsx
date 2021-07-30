@@ -246,134 +246,134 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   const { imageName, imageTag } = getImageNameAndTag(container.image);
 
   return (
-    <div className="co-m-pane__body">
-      <ScrollToTopOnMount />
-
-      <div className="row">
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Container details')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~State')}</dt>
-            <dd>
-              <Status status={stateValue} />
-            </dd>
-            <dt>{t('public~ID')}</dt>
-            <dd>
-              {status.containerID ? (
-                <div className="co-break-all co-select-to-copy">{status.containerID}</div>
-              ) : (
-                '-'
-              )}
-            </dd>
-            <dt>{t('public~Restarts')}</dt>
-            <dd>{status.restartCount}</dd>
-            <dt>{t('public~Resource requests')}</dt>
-            <dd>{getResourceRequestsValue(container) || '-'}</dd>
-            <dt>{t('public~Resource limits')}</dt>
-            <dd>{getResourceLimitsValue(container) || '-'}</dd>
-            <dt>{t('public~Lifecycle hooks')}</dt>
-            <dd>
-              <Lifecycle lifecycle={container.lifecycle} />
-            </dd>
-            <dt>{t('public~Readiness probe')}</dt>
-            <dd>
-              <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
-            </dd>
-            <dt>{t('public~Liveness probe')}</dt>
-            <dd>
-              <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
-            </dd>
-            <dt>{t('public~Started')}</dt>
-            <dd>
-              <Timestamp timestamp={state.startedAt} />
-            </dd>
-            <dt>{t('public~Finished')}</dt>
-            <dd>
-              <Timestamp timestamp={state.finishedAt} />
-            </dd>
-            <dt>{t('public~Pod')}</dt>
-            <dd>
-              <ResourceLink
-                kind="Pod"
-                name={props.match.params.podName}
-                namespace={props.match.params.ns}
-              />
-            </dd>
-          </dl>
-        </div>
-
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Image details')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Image')}</dt>
-            <dd>
-              {imageName ? <div className="co-break-all co-select-to-copy">{imageName}</div> : '-'}
-            </dd>
-            <dt>{t('public~Image version/tag')}</dt>
-            <dd>{imageTag || '-'}</dd>
-            <dt>{t('public~Command')}</dt>
-            <dd>
-              {container.command ? (
-                <pre>
-                  <code>{container.command.join(' ')}</code>
-                </pre>
-              ) : (
-                <span>-</span>
-              )}
-            </dd>
-            <dt>{t('public~Args')}</dt>
-            <dd>
-              {container.args ? (
-                <pre>
-                  <code>{container.args.join(' ')}</code>
-                </pre>
-              ) : (
-                <span>-</span>
-              )}
-            </dd>
-            <dt>{t('public~Pull policy')}</dt>
-            <dd>{getPullPolicyLabel(container)}</dd>
-          </dl>
-        </div>
-
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Network')} />
-          <dl className="co-m-pane__details">
-            <dt>{t('public~Node')}</dt>
-            <dd>
-              <NodeLink name={pod.spec.nodeName} />
-            </dd>
-            <dt>{t('public~Pod IP')}</dt>
-            <dd>{pod.status.podIP || '-'}</dd>
-          </dl>
-        </div>
-      </div>
-
-      <hr />
-
-      <div className="row">
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Ports')} />
-          <div className="co-table-container">
-            <Ports ports={container.ports} />
+    <>
+      <div className="co-m-pane__body">
+        <ScrollToTopOnMount />
+        <div className="row">
+          <div className="col-lg-6">
+            <SectionHeading text={t('public~Container details')} />
+            <dl className="co-m-pane__details">
+              <dt>{t('public~State')}</dt>
+              <dd>
+                <Status status={stateValue} />
+              </dd>
+              <dt>{t('public~ID')}</dt>
+              <dd>
+                {status.containerID ? (
+                  <div className="co-break-all co-select-to-copy">{status.containerID}</div>
+                ) : (
+                  '-'
+                )}
+              </dd>
+              <dt>{t('public~Restarts')}</dt>
+              <dd>{status.restartCount}</dd>
+              <dt>{t('public~Resource requests')}</dt>
+              <dd>{getResourceRequestsValue(container) || '-'}</dd>
+              <dt>{t('public~Resource limits')}</dt>
+              <dd>{getResourceLimitsValue(container) || '-'}</dd>
+              <dt>{t('public~Lifecycle hooks')}</dt>
+              <dd>
+                <Lifecycle lifecycle={container.lifecycle} />
+              </dd>
+              <dt>{t('public~Readiness probe')}</dt>
+              <dd>
+                <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
+              </dd>
+              <dt>{t('public~Liveness probe')}</dt>
+              <dd>
+                <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
+              </dd>
+              <dt>{t('public~Started')}</dt>
+              <dd>
+                <Timestamp timestamp={state.startedAt} />
+              </dd>
+              <dt>{t('public~Finished')}</dt>
+              <dd>
+                <Timestamp timestamp={state.finishedAt} />
+              </dd>
+              <dt>{t('public~Pod')}</dt>
+              <dd>
+                <ResourceLink
+                  kind="Pod"
+                  name={props.match.params.podName}
+                  namespace={props.match.params.ns}
+                />
+              </dd>
+            </dl>
           </div>
-        </div>
 
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Mounted volumes')} />
-          <div className="co-table-container">
-            <VolumeMounts volumeMounts={container.volumeMounts} />
+          <div className="col-lg-6">
+            <SectionHeading text={t('public~Image details')} />
+            <dl className="co-m-pane__details">
+              <dt>{t('public~Image')}</dt>
+              <dd>
+                {imageName ? (
+                  <div className="co-break-all co-select-to-copy">{imageName}</div>
+                ) : (
+                  '-'
+                )}
+              </dd>
+              <dt>{t('public~Image version/tag')}</dt>
+              <dd>{imageTag || '-'}</dd>
+              <dt>{t('public~Command')}</dt>
+              <dd>
+                {container.command ? (
+                  <pre>
+                    <code>{container.command.join(' ')}</code>
+                  </pre>
+                ) : (
+                  <span>-</span>
+                )}
+              </dd>
+              <dt>{t('public~Args')}</dt>
+              <dd>
+                {container.args ? (
+                  <pre>
+                    <code>{container.args.join(' ')}</code>
+                  </pre>
+                ) : (
+                  <span>-</span>
+                )}
+              </dd>
+              <dt>{t('public~Pull policy')}</dt>
+              <dd>{getPullPolicyLabel(container)}</dd>
+            </dl>
           </div>
-        </div>
 
-        <div className="col-lg-4">
-          <SectionHeading text={t('public~Environment variables')} />
-          <div className="co-table-container">
-            <Env env={container.env} />
+          <div className="col-lg-6">
+            <SectionHeading text={t('public~Network')} />
+            <dl className="co-m-pane__details">
+              <dt>{t('public~Node')}</dt>
+              <dd>
+                <NodeLink name={pod.spec.nodeName} />
+              </dd>
+              <dt>{t('public~Pod IP')}</dt>
+              <dd>{pod.status.podIP || '-'}</dd>
+            </dl>
           </div>
         </div>
       </div>
-    </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~Ports')} />
+        <div className="co-table-container">
+          <Ports ports={container.ports} />
+        </div>
+      </div>
+
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~Mounted volumes')} />
+        <div className="co-table-container">
+          <VolumeMounts volumeMounts={container.volumeMounts} />
+        </div>
+      </div>
+
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('public~Environment variables')} />
+        <div className="co-table-container">
+          <Env env={container.env} />
+        </div>
+      </div>
+    </>
   );
 };
 ContainerDetails.displayName = 'ContainerDetails';
