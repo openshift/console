@@ -58,12 +58,23 @@ const DatetimeTextInput = (props) => {
   );
 };
 
-const durationOff = '-';
-const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
-const durationItems = _.zipObject(durations, durations);
-
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
   const { t } = useTranslation();
+
+  const durationOff = '-';
+  const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'];
+  const internationalizedDurationItems = [
+    durationOff,
+    t('public~30m'),
+    t('public~1h'),
+    t('public~2h'),
+    t('public~6h'),
+    t('public~12h'),
+    t('public~1d'),
+    t('public~2d'),
+    t('public~1w'),
+  ];
+  const durationItems = _.zipObject(durations, internationalizedDurationItems);
 
   const now = new Date();
 
@@ -235,7 +246,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                     isDisabled
                     value={
                       isStartNow
-                        ? t('public~{{duration}} from now', { duration })
+                        ? t('public~{{duration}} from now', { duration: durationItems[duration] })
                         : getEndsAtValue()
                     }
                   />
