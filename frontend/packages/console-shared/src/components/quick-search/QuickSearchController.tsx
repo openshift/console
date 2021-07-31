@@ -13,6 +13,7 @@ type QuickSearchControllerProps = {
   isOpen: boolean;
   icon?: React.ReactNode;
   limitItemCount: number;
+  disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
@@ -26,6 +27,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   icon,
   isOpen,
   setIsOpen,
+  disableKeyboardOpen = false,
 }) => {
   const { t } = useTranslation();
 
@@ -74,7 +76,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         return;
       }
 
-      if (e.code === 'Space' && e.ctrlKey) {
+      if (!disableKeyboardOpen && e.code === 'Space' && e.ctrlKey) {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -85,7 +87,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [setIsOpen]);
+  }, [setIsOpen, disableKeyboardOpen]);
 
   return (
     <QuickSearchModal

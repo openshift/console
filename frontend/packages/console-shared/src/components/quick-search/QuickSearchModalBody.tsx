@@ -166,8 +166,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
 
   const getModalHeight = () => {
     let height: number = 60;
+    const itemsHeight = viewAll?.length ? 388 : 365;
     if (catalogItems?.length > 0) {
-      height += 388 + (viewAll?.length - 1) * 23;
+      height += itemsHeight + (viewAll?.length - 1) * 23;
     }
     return height;
   };

@@ -59,6 +59,7 @@ const Contents: React.FC<{
       viewContainer={viewContainer}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
+      disableKeyboardOpen
       limitItemCount={0}
       icon={<PlusCircleIcon width="1.5em" height="1.5em" />}
     />

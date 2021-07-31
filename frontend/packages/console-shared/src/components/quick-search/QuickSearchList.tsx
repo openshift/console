@@ -61,7 +61,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     if (selectedItemId) {
       const element = document.getElementById(selectedItemId);
       if (element) {
-        element?.scrollIntoView({ block: 'nearest' });
+        element.scrollIntoView({ block: 'nearest' });
       }
     }
   }, [selectedItemId]);
