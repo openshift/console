@@ -110,7 +110,7 @@ describe('Test VM/VMI actions', () => {
 
     beforeEach(() => {
       vmiFixture.metadata.namespace = testName;
-      cy.createResource(vmiFixture);
+      cy.applyResource(vmiFixture);
       virtualization.vms.visit();
       waitForStatus(VM_STATUS.Running, vmiData);
     });
