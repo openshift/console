@@ -64,7 +64,9 @@ const CephHealthCheck: React.FC<CephHealthCheckProps> = ({ cephHealthState, heal
             .icon
         }
       </FlexItem>
-      <FlexItem>{healthCheck?.details}</FlexItem>
+      <FlexItem>
+        <div data-test="healthcheck-message">{healthCheck?.details}</div>
+      </FlexItem>
       <FlexItem>
         {!!healthCheck.troubleshootLink && (
           <a className="ceph-health-check-card__link" href={healthCheck.troubleshootLink}>
@@ -109,6 +111,7 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
   for (const key in cephDetails) {
     if (pattern.test(key)) {
       const healthCheckObject: CephHealthCheckType = {
+        id: key,
         details: cephDetails[key].message,
         troubleshootLink: whitelistedHealthChecksRef[key] ?? null,
       };
@@ -154,6 +157,7 @@ export const StatusCard: React.FC<DashboardItemProps> = ({
 export default withDashboardResources(StatusCard);
 
 type CephHealthCheckType = {
+  id: string;
   details: string;
   troubleshootLink?: string;
 };
