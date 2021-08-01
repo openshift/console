@@ -302,9 +302,9 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
                 })
               }
             >
-              {tolerationsWrapperCount > 0
-                ? `${tolerationsWrapperCount} Toleration rules`
-                : t('kubevirt-plugin~No Toleration rules')}
+              {t('kubevirt-plugin~{{count}} Toleration rule', {
+                count: tolerationsWrapperCount,
+              })}
             </VMEditWithPencil>
           </VMDetailsItem>
 
@@ -319,9 +319,9 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
                 affinityModal({ vmLikeEntity: vm, blocking: true, modalClassName: 'modal-lg' })
               }
             >
-              {affinityWrapperCount > 0
-                ? `${affinityWrapperCount} Affinity rules`
-                : t('kubevirt-plugin~No Affinity rules')}
+              {t('kubevirt-plugin~{{count}} Affinity rule', {
+                count: affinityWrapperCount,
+              })}
             </VMEditWithPencil>
           </VMDetailsItem>
         </dl>
