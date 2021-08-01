@@ -188,7 +188,7 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(
         subsystem.url,
         (subsystem as DashboardsOverviewHealthURLSubsystem<any>['properties']).fetch
           ? (subsystem as DashboardsOverviewHealthURLSubsystem<any>['properties']).fetch
-          : null,
+          : undefined,
       );
       if (modelExists) {
         watchK8sResource(subsystem.additionalResource);
