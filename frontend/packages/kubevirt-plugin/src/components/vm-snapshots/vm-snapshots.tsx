@@ -13,7 +13,8 @@ import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForMode
 import { getName, getNamespace } from '../../selectors';
 import { isVMI } from '../../selectors/check-type';
 import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm/vm';
 import { VMSnapshot } from '../../types';
 import { dimensifyHeader } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';

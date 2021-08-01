@@ -1,8 +1,8 @@
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { apiVersionForModel } from '@console/internal/module/k8s/k8s-ref';
 import { K8sKind } from '@console/internal/module/k8s/types';
 import { click } from '../../utils/shared-utils';
 import * as view from '../../views/uiResource.view';
-import { apiVersionForModel } from '../utils/selectors';
 import { getResourceObject } from '../utils/utils';
 
 export class UIResource {

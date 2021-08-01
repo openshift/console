@@ -4,13 +4,13 @@ import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { getName, getNamespace } from '../../selectors';
 import {
-  asVM,
   getDataVolumeTemplates,
   getDisks,
   getInterfaces,
-  getVolumeDataVolumeName,
   getVolumes,
-} from '../../selectors/vm';
+} from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm/vm';
+import { getVolumeDataVolumeName } from '../../selectors/vm/volume';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { ObjectEnum } from '../object-enum';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';

@@ -8,6 +8,7 @@ import {
 } from '../../../selectors/dv/selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
 import { getStorageSize } from '../../../selectors/selectors';
+import { getFlavorData } from '../../../selectors/vm/flavor-data';
 import {
   getCPU,
   getDataVolumeTemplates,
@@ -18,8 +19,7 @@ import {
   getOperatingSystemName,
   getVolumes,
   getWorkloadProfile,
-} from '../../../selectors/vm';
-import { getFlavorData } from '../../../selectors/vm/flavor-data';
+} from '../../../selectors/vm/selectors';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { VMKind } from '../../../types/vm';
 import { DASH } from '../../../utils';

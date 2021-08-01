@@ -15,10 +15,15 @@ import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getLabel, getName, getNamespace, getNodeName } from '../../selectors';
 import { findVMIPod } from '../../selectors/pod/selectors';
 import { getDescription } from '../../selectors/selectors';
-import { getOperatingSystem, getOperatingSystemName, getVMLikeModel } from '../../selectors/vm';
 import { isBootOrderChanged, isFlavorChanged } from '../../selectors/vm-like/next-run-changes';
 import { getFlavorData } from '../../selectors/vm/flavor-data';
-import { isVMIReady, isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import {
+  getOperatingSystem,
+  getOperatingSystemName,
+  isVMIReady,
+  isVMRunningOrExpectedRunning,
+} from '../../selectors/vm/selectors';
+import { getVMLikeModel } from '../../selectors/vm/vmlike';
 import { getVMINodeName, isVMIPaused } from '../../selectors/vmi';
 import { getVmiIpAddresses } from '../../selectors/vmi/ip-address';
 import { VMStatusBundle } from '../../statuses/vm/types';

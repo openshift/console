@@ -20,7 +20,6 @@ import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } fro
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getNamespace } from '../../selectors';
 import { isVM, isVMI } from '../../selectors/check-type';
-import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import {
@@ -28,6 +27,7 @@ import {
   getVMTemplateNamespacedName,
 } from '../../selectors/vm-template/selectors';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm/vm';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';

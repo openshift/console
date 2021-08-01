@@ -8,7 +8,7 @@ import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { DEFAULT_RDP_PORT, NetworkType, TEMPLATE_VM_NAME_LABEL } from '../../../constants';
 import { ConsoleType } from '../../../constants/vm/console-type';
 import { getRdpAddressPort } from '../../../selectors/service';
-import { getNetworks } from '../../../selectors/vm';
+import { getNetworks } from '../../../selectors/vm/selectors';
 import { getVMIAvailableStatusInterfaces, isGuestAgentConnected } from '../../../selectors/vmi';
 import { VMIKind, VMKind } from '../../../types';
 

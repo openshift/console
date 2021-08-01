@@ -15,7 +15,8 @@ import {
   getStatusConditionOfType,
   getStatusPhase,
 } from '../../selectors/selectors';
-import { findConversionPod, isVMCreated, isVMExpectedRunning } from '../../selectors/vm';
+import { findConversionPod } from '../../selectors/vm/combined';
+import { isVMCreated, isVMExpectedRunning } from '../../selectors/vm/selectors';
 import {
   findVMIMigration,
   getMigrationStatusPhase,

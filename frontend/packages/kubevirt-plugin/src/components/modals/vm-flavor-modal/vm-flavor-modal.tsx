@@ -25,19 +25,14 @@ import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
-import {
-  asVM,
-  getCPU,
-  getFlavor,
-  getMemory,
-  getVMLikeModel,
-  vCPUCount,
-} from '../../../selectors/vm';
 import { isCustomFlavor, toUIFlavor } from '../../../selectors/vm-like/flavor';
 import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
 import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
 import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
-import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
+import { vCPUCount } from '../../../selectors/vm/cpu';
+import { getCPU, getFlavor, getMemory, isVMExpectedRunning } from '../../../selectors/vm/selectors';
+import { asVM } from '../../../selectors/vm/vm';
+import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { VMIKind } from '../../../types/vm';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getLoadedData, getDialogUIError } from '../../../utils';

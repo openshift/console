@@ -25,7 +25,6 @@ import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
 import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
-import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
 import {
   getDefaultDiskBus,
   getTemplateFlavorData,
@@ -33,6 +32,8 @@ import {
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic';
+import { vCPUCount } from '../../../selectors/vm/cpu';
+import { getCPU, getWorkloadProfile } from '../../../selectors/vm/selectors';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
 import { TemplateItem } from '../../../types/template';

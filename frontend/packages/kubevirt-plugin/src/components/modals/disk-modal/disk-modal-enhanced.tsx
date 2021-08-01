@@ -23,7 +23,7 @@ import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { getName, getNamespace } from '../../../selectors';
 import { isTemplate } from '../../../selectors/check-type';
-import { getVMLikeModel } from '../../../selectors/vm';
+import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';

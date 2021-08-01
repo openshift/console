@@ -18,12 +18,11 @@ import {
   getPvcStorageSize,
   getPvcVolumeMode,
 } from '../../selectors/pvc/selectors';
+import { getOperatingSystem, getOperatingSystemName } from '../../selectors/vm/selectors';
 import {
-  getOperatingSystem,
-  getOperatingSystemName,
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
-} from '../../selectors/vm';
+} from '../../selectors/vm/volume';
 import { V1DataVolumeTemplateSpec, VMKind } from '../../types/vm';
 import { createBasicLookup, generateDataVolumeName, getBasicID } from '../../utils';
 import { VMWrapper } from '../wrapper/vm/vm-wrapper';

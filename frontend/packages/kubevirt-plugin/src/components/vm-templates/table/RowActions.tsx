@@ -6,16 +6,16 @@ import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { useSupportModal } from '../../../hooks/use-support-modal';
 import {
-  getCPU,
-  getOperatingSystemName,
-  getWorkloadProfile,
-  vCPUCount,
-} from '../../../selectors/vm';
-import {
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { selectVM } from '../../../selectors/vm-template/basic';
+import { vCPUCount } from '../../../selectors/vm/cpu';
+import {
+  getCPU,
+  getOperatingSystemName,
+  getWorkloadProfile,
+} from '../../../selectors/vm/selectors';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { createVMAction } from '../utils';
 import { VMTemplateCommnunityLabel } from '../VMTemplateCommnunityLabel';

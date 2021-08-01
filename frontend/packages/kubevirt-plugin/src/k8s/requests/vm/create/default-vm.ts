@@ -7,8 +7,8 @@ import {
 } from '../../../../constants/vm';
 import { ProcessedTemplatesModel } from '../../../../models/models';
 import { getAnnotations, getValueByPrefix } from '../../../../selectors/selectors';
-import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { selectVM } from '../../../../selectors/vm-template/basic';
+import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm/selectors';
 import { VMKind } from '../../../../types/vm';
 import { findHighestKeyBySuffixValue } from '../../../../utils';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';

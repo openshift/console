@@ -5,9 +5,9 @@ import {
   getDataVolumeTemplates,
   getDisks,
   getInterfaces,
-  getVolumeDataVolumeName,
   getVolumes,
-} from '../../../selectors/vm';
+} from '../../../selectors/vm/selectors';
+import { getVolumeDataVolumeName } from '../../../selectors/vm/volume';
 import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getSimpleName } from '../../../utils';

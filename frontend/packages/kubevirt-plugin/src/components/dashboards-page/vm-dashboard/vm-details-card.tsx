@@ -28,7 +28,7 @@ import {
   getUID,
 } from '../../../selectors';
 import { findVMIPod } from '../../../selectors/pod/selectors';
-import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm';
+import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm/selectors';
 import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
 import {
   getGuestAgentFieldNotAvailMsg,

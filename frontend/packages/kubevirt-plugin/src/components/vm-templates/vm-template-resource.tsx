@@ -4,7 +4,6 @@ import { LabelList, ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { getDescription } from '../../selectors/selectors';
-import { asVM, getTransformedDevices, getVMLikeModel } from '../../selectors/vm';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import {
   getTemplateParentProvider,
@@ -13,7 +12,10 @@ import {
   isCommonTemplate,
 } from '../../selectors/vm-template/basic';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
+import { getTransformedDevices } from '../../selectors/vm/devices';
 import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
+import { asVM } from '../../selectors/vm/vm';
+import { getVMLikeModel } from '../../selectors/vm/vmlike';
 import { TemplateSourceStatus } from '../../statuses/template/types';
 import { getBasicID, prefixedID } from '../../utils';
 import { BootOrderSummary } from '../boot-order';

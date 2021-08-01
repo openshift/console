@@ -22,12 +22,12 @@ import { winToolsContainerNames } from '../../../../constants/vm/wintools';
 import { VirtualMachineModel } from '../../../../models';
 import { getKubevirtAvailableModel } from '../../../../models/kubevirtReferenceForModel';
 import { ProcessedTemplatesModel } from '../../../../models/models';
-import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import {
   getTemplateOperatingSystems,
   isWindowsTemplate,
 } from '../../../../selectors/vm-template/advanced';
 import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
+import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm/selectors';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../../statuses/template/types';
 import { VMKind } from '../../../../types';
 import { ignoreCaseSort } from '../../../../utils/sort';

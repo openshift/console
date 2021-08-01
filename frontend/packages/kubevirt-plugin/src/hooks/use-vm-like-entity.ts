@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { kubevirtReferenceForModel } from '../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../selectors';
-import { getVMLikeModel } from '../selectors/vm';
+import { getVMLikeModel } from '../selectors/vm/vmlike';
 import { VMGenericLikeEntityKind } from '../types/vmLike';
 
 export const useUpToDateVMLikeEntity = <P extends VMGenericLikeEntityKind>(vmLikeEntity: P): P => {

@@ -29,12 +29,11 @@ import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace, ValidationErrorType, getDescription } from '../../../selectors';
+import { getVolumes, isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
-  getVolumes,
-  isVMExpectedRunning,
-} from '../../../selectors/vm';
+} from '../../../selectors/vm/volume';
 import { VMKind, VMIKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';

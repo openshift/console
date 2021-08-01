@@ -22,7 +22,7 @@ import { VirtualMachineSnapshotModel } from '../../../models';
 import { kubevirtReferenceForModel } from '../../../models/kubevirtReferenceForModel';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
-import { getDisks, getNetworks } from '../../../selectors/vm';
+import { getDisks, getNetworks } from '../../../selectors/vm/selectors';
 import { getVMLikeModel } from '../../../selectors/vm/vmlike';
 import { getVMIDisks, getVMINetworks } from '../../../selectors/vmi';
 import { VMSnapshot } from '../../../types';
