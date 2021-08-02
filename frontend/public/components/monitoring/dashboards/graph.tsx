@@ -17,6 +17,7 @@ type Props = {
   queries: string[];
   showLegend?: boolean;
   units: string;
+  onZoomHandle?: (timeRange: number, endTime: number) => void;
 };
 
 const Graph: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const Graph: React.FC<Props> = ({
   queries,
   showLegend,
   units,
+  onZoomHandle,
 }) => {
   const dispatch = useDispatch();
   const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
@@ -37,8 +39,9 @@ const Graph: React.FC<Props> = ({
     (from, to) => {
       dispatch(monitoringDashboardsSetEndTime(to));
       dispatch(monitoringDashboardsSetTimespan(to - from));
+      onZoomHandle?.(to - from, to);
     },
-    [dispatch],
+    [dispatch, onZoomHandle],
   );
 
   return (

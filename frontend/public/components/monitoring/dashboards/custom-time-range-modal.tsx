@@ -20,6 +20,7 @@ import {
   ModalTitle,
 } from '../../factory/modal';
 import { toISODateString, twentyFourHourTime } from '../../utils/datetime';
+import { setQueryArguments } from '../../utils';
 
 const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
   const { t } = useTranslation();
@@ -50,6 +51,10 @@ const CustomTimeRangeModal = ({ cancel, close }: ModalComponentProps) => {
     if (_.isInteger(from) && _.isInteger(to)) {
       dispatch(monitoringDashboardsSetEndTime(to));
       dispatch(monitoringDashboardsSetTimespan(to - from));
+      setQueryArguments({
+        endTime: to.toString(),
+        timeRange: (to - from).toString(),
+      });
       close();
     }
   };

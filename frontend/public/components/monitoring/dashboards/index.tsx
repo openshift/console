@@ -31,7 +31,15 @@ import {
 import { ErrorBoundaryFallback } from '../../error';
 import { RootState } from '../../../redux';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
-import { history, LoadingInline, useSafeFetch } from '../../utils';
+import {
+  getQueryArgument,
+  history,
+  LoadingInline,
+  removeQueryArgument,
+  setQueryArgument,
+  setQueryArguments,
+  useSafeFetch,
+} from '../../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
@@ -205,7 +213,10 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
   }, [dispatch, name, query, safeFetch, timespan]);
 
   const onChange = React.useCallback(
-    (v: string) => dispatch(monitoringDashboardsPatchVariable(name, { value: v })),
+    (v: string) => {
+      setQueryArgument(name, v);
+      dispatch(monitoringDashboardsPatchVariable(name, { value: v }));
+    },
     [dispatch, name],
   );
 
@@ -217,6 +228,10 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
   _.each(options, (option) => {
     items[option] = option;
   });
+
+  if (getQueryArgument(name) !== value) {
+    setQueryArgument(name, value);
+  }
 
   return (
     <VariableDropdown
@@ -311,7 +326,9 @@ export const TimespanDropdown = () => {
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'timespan']),
   );
+  const timeSpanFromParams = getQueryArgument('timeRange');
   const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
+  const endTimeFromParams = getQueryArgument('endTime');
 
   const dispatch = useDispatch();
   const onChange = React.useCallback(
@@ -319,6 +336,8 @@ export const TimespanDropdown = () => {
       if (v === CUSTOM_TIME_RANGE_KEY) {
         customTimeRangeModal({});
       } else {
+        setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
+        removeQueryArgument('endTime');
         dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
         dispatch(monitoringDashboardsSetEndTime(null));
       }
@@ -347,21 +366,32 @@ export const TimespanDropdown = () => {
       items={timespanOptions}
       label={t('public~Time range')}
       onChange={onChange}
-      selectedKey={endTime ? CUSTOM_TIME_RANGE_KEY : formatPrometheusDuration(timespan)}
+      selectedKey={
+        endTime || endTimeFromParams
+          ? CUSTOM_TIME_RANGE_KEY
+          : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
+      }
     />
   );
 };
 
 export const PollIntervalDropdown = () => {
   const { t } = useTranslation();
-
+  const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const interval = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'pollInterval']),
   );
 
   const dispatch = useDispatch();
   const setInterval = React.useCallback(
-    (v: number) => dispatch(monitoringDashboardsSetPollInterval(v)),
+    (v: number) => {
+      if (v) {
+        setQueryArgument('refreshInterval', v.toString());
+      } else {
+        removeQueryArgument('refreshInterval');
+      }
+      dispatch(monitoringDashboardsSetPollInterval(v));
+    },
     [dispatch],
   );
 
@@ -372,7 +402,7 @@ export const PollIntervalDropdown = () => {
       </label>
       <IntervalDropdown
         id="refresh-interval-dropdown"
-        interval={interval}
+        interval={_.toNumber(refreshIntervalFromParams) || interval}
         setInterval={setInterval}
       />
     </div>
@@ -481,6 +511,13 @@ const Card: React.FC<CardProps> = ({ panel }) => {
 
   const panelClassModifier = getPanelClassModifier(panel);
 
+  const handleZoom = (timeRange: number, endTime: number) => {
+    setQueryArguments({
+      endTime: endTime.toString(),
+      timeRange: timeRange.toString(),
+    });
+  };
+
   return (
     <div
       className={`monitoring-dashboards__panel monitoring-dashboards__panel--${panelClassModifier}`}
@@ -512,6 +549,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
                     queries={queries}
                     showLegend={panel.legend?.show}
                     units={panel.yaxes?.[0]?.format}
+                    onZoomHandle={handleZoom}
                   />
                 )}
                 {(panel.type === 'singlestat' || panel.type === 'gauge') && (
@@ -631,14 +669,41 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 
   const changeBoard = React.useCallback(
     (newBoard: string) => {
+      let timeSpan: string;
+      let endTime: string;
+      let url = `/monitoring/dashboards/${newBoard}`;
+
+      const refreshInterval = getQueryArgument('refreshInterval');
+
+      if (board) {
+        timeSpan = null;
+        endTime = null;
+        // persist only the refresh Interval when dashboard is changed
+        if (refreshInterval) {
+          const params = new URLSearchParams({ refreshInterval });
+          url = `${url}?${params.toString()}`;
+        }
+      } else {
+        timeSpan = getQueryArgument('timeRange');
+        endTime = getQueryArgument('endTime');
+        // persist all query params on page reload
+        if (window.location.search) {
+          url = `${url}${window.location.search}`;
+        }
+      }
       if (newBoard !== board) {
         const data = _.find(boards, { name: newBoard })?.data;
 
         const allVariables = {};
         _.each(data?.templating?.list, (v) => {
           if (v.type === 'query' || v.type === 'interval') {
+            // Look for query param that is equal to the variable name
+            let value = getQueryArgument(v.name);
+
             // Look for an option that should be selected by default
-            let value = _.find(v.options, { selected: true })?.value;
+            if (value === null) {
+              value = _.find(v.options, { selected: true })?.value;
+            }
 
             // If no default option was found, default to "All" (if present)
             if (value === undefined && v.includeAll) {
@@ -657,22 +722,30 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         });
         dispatch(monitoringDashboardsPatchAllVariables(allVariables));
 
-        // Set time range options to their defaults since they may have been changed on the
-        // previous dashboard
-        dispatch(monitoringDashboardsSetEndTime(null));
-        dispatch(monitoringDashboardsSetTimespan(MONITORING_DASHBOARDS_DEFAULT_TIMESPAN));
+        // Set time range and poll interval options to their defaults or from the query params if available
+
+        if (refreshInterval) {
+          dispatch(monitoringDashboardsSetPollInterval(_.toNumber(refreshInterval)));
+        }
+        dispatch(monitoringDashboardsSetEndTime(_.toNumber(endTime) || null));
+        dispatch(
+          monitoringDashboardsSetTimespan(
+            _.toNumber(timeSpan) || MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
+          ),
+        );
 
         setBoard(newBoard);
-        history.replace(`/monitoring/dashboards/${newBoard}`);
+        history.replace(url);
       }
     },
     [board, boards, dispatch],
   );
 
-  // Default to displaying the first board
+  // Display dashboard present in the params or show the first board
   React.useEffect(() => {
     if (!board && !_.isEmpty(boards)) {
-      changeBoard(match.params.board || boards?.[0]?.name);
+      const boardName = match.params.board || boards?.[0]?.name;
+      changeBoard(boardName);
     }
   }, [board, boards, changeBoard, match.params.board]);
 
