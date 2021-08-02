@@ -1,11 +1,11 @@
 import {
   DEFAULTS_VALUES,
+  OS_IMAGES_NS,
+  TEMPLATE_BASE_IMAGE,
+  TEMPLATE_NAME,
   VM_ACTION,
   VM_ACTION_TIMEOUT,
   VM_STATUS,
-  OS_IMAGES_NS,
-  TEMPLATE_NAME,
-  TEMPLATE_BASE_IMAGE,
 } from '../../const/index';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
@@ -17,9 +17,9 @@ import {
 } from '../../view/actions';
 import { alertTitle, confirmCloneButton } from '../../view/clone';
 import {
-  switchPerspective,
-  Perspective,
   addHeader,
+  Perspective,
+  switchPerspective,
   topologyHeader,
 } from '../../view/dev-perspective';
 import { detailsTab } from '../../view/selector';
@@ -60,6 +60,12 @@ describe('test dev console', () => {
       metadata: {
         name: `${vm.name}-clone`,
         namespace: testName,
+      },
+    });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
       },
     });
     switchPerspective(Perspective.Administrator);

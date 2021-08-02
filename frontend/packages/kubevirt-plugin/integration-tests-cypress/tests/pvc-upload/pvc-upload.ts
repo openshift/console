@@ -1,4 +1,4 @@
-import { TEMPLATE_BASE_IMAGE, TEMPLATE_NAME, OS_IMAGES_NS } from '../../const/index';
+import { OS_IMAGES_NS, TEMPLATE_BASE_IMAGE, TEMPLATE_NAME } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
@@ -38,6 +38,12 @@ describe('kubevirt PVC upload', () => {
       metadata: {
         name: vmData.name,
         namespace: vmData.namespace,
+      },
+    });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
       },
     });
     cy.exec('rm -fr /tmp/cirros.*');

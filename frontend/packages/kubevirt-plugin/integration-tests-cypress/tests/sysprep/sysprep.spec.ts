@@ -10,6 +10,15 @@ describe('ID (CNV-6821) Sysprep testing', () => {
     cy.createProject(testName);
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   it('should navigate to advanced wizard - advanced tab', () => {
     cy.get('[data-test=nav]')
       .filter('[href$=virtualization]')
@@ -69,10 +78,5 @@ describe('ID (CNV-6821) Sysprep testing', () => {
       .filter(':contains("ConfigMaps")')
       .click();
     cy.byLegacyTestID(`sysprep-config-${vmName}`).should('be.visible');
-  });
-
-  after(() => {
-    cy.deleteProject(testName);
-    cy.visit('');
   });
 });

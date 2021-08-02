@@ -19,6 +19,15 @@ describe('test vm template source image', () => {
     cy.createProject(testName);
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   beforeEach(() => {
     virtualization.templates.visit();
     cy.deleteResource({

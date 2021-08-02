@@ -72,12 +72,17 @@ describe('Test VM creation', () => {
         },
       });
     });
-
     cy.deleteResource({
       kind: 'NetworkAttachmentDefinition',
       metadata: {
         name: 'bridge-network',
         namespace: testName,
+      },
+    });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
       },
     });
   });

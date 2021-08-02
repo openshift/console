@@ -11,6 +11,15 @@ describe('test VM template support', () => {
     cy.createProject(testName);
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   beforeEach(() => {
     virtualization.templates.visit();
   });

@@ -35,6 +35,12 @@ describe('Test VM Migration', () => {
         namespace: vmData.namespace,
       },
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   it('ID(CNV-6764) Migrate VM action button is not displayed when VM is off', () => {

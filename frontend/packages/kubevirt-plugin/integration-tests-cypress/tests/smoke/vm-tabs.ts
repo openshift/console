@@ -3,7 +3,7 @@ import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
 import { virtualization } from '../../view/virtualization';
-import { waitForStatus, vm } from '../../view/vm';
+import { vm, waitForStatus } from '../../view/vm';
 
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,
@@ -29,6 +29,12 @@ describe('smoke tests', () => {
       metadata: {
         name: vmData.name,
         namespace: vmData.namespace,
+      },
+    });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
       },
     });
   });

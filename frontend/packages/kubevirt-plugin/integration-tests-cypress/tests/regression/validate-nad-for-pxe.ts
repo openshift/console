@@ -21,6 +21,15 @@ describe('Validate NAD for PXE provision source', () => {
     virtualization.vms.visit();
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   it('ID(CNV-5045) Verify PXE provision source must have NAD available', () => {
     wizard.vm.open();
     wizard.vm.selectTemplate(vmData);
