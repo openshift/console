@@ -86,7 +86,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
         {isHotplugDisk(vmi, diskName)
-          ? t('kubevirt-plugin~Detach {{diskName}} hotplug disk', { diskName })
+          ? t('kubevirt-plugin~Detach {{diskName}} hot-plugged disk', { diskName })
           : t('kubevirt-plugin~Detach {{diskName}} disk', { diskName })}
       </ModalTitle>
       <ModalBody>

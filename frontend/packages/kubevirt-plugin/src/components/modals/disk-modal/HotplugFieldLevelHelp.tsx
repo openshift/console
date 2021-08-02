@@ -9,10 +9,10 @@ export const HotplugFieldLevelHelp = () => {
     <FieldLevelHelp popoverHasAutoWidth>
       <Stack hasGutter>
         <StackItem>
-          <b>{t('kubevirt-plugin~Hot-plug disk')}</b>
+          <b>{t('kubevirt-plugin~Hot-plugged disk')}</b>
         </StackItem>
         <StackItem>
-          {t('kubevirt-plugin~The disk will be immediately added (hot-plugged) to the running VM.')}
+          {t('kubevirt-plugin~The disk will be immediately added (hot plugged) to the running VM.')}
         </StackItem>
       </Stack>
     </FieldLevelHelp>

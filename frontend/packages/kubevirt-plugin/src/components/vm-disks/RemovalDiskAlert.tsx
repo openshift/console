@@ -13,11 +13,11 @@ export const RemovalDiskAlert: React.FC<{
         isInline
         variant={AlertVariant.warning}
         title={t(
-          'kubevirt-plugin~The following hotplugged disks will be removed from virtual machine',
+          'kubevirt-plugin~The following hot-plugged disks will be removed from the virtual machine',
         )}
       >
         <Trans t={t} ns="kubevirt-plugin">
-          <strong>{diskList}</strong> will be removed.
+          <strong>{diskList}</strong>
         </Trans>
       </Alert>
     )
