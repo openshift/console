@@ -8,8 +8,8 @@ import {
 } from '@console/internal/module/k8s';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
-  ANNOTATIONS,
   AccessMode,
+  ANNOTATIONS,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
@@ -31,7 +31,7 @@ import { getKubevirtAvailableModel } from '../../../models/kubevirtReferenceForM
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
 import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMKind } from '../../../types';
-import { getRandomChars, buildOwnerReference } from '../../../utils';
+import { buildOwnerReference, getRandomChars } from '../../../utils';
 import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import { VMTemplateWrapper } from '../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
@@ -146,6 +146,7 @@ export const createVMForCustomization = async (
   pvcs: PersistentVolumeClaimKind[],
   provider: string,
   support: string,
+  V2VConfigMapImages: { [key: string]: string },
 ): Promise<VMKind> => {
   const templateWrapper = new VMTemplateWrapper(template, true);
 
@@ -185,7 +186,7 @@ export const createVMForCustomization = async (
     undefined,
     undefined,
     undefined,
-    undefined,
+    V2VConfigMapImages,
     size,
     false,
   );
