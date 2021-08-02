@@ -11,7 +11,7 @@ import { FormFieldRow } from '../../form/form-field-row';
 import { VMWizardStorage } from '../../types';
 
 export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
-  ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {
+  ({ field, provisionSourceStorage, onProvisionSourceStorageChange, imageName }) => {
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
     const volumeWrapper = new VolumeWrapper(storage?.volume);
 
@@ -52,7 +52,7 @@ export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
         <FormField value={value} isDisabled={isDisabled}>
           <TextInput onChange={onChange} />
         </FormField>
-        <ContainerSourceHelp />
+        <ContainerSourceHelp imageName={imageName} />
       </FormFieldRow>
     );
   },
@@ -62,4 +62,5 @@ type ContainerSourceProps = {
   field: any;
   provisionSourceStorage: any;
   onProvisionSourceStorageChange: (provisionSourceStorage: any) => void;
+  imageName: string;
 };

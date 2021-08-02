@@ -479,7 +479,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 value={containerImage}
                 onChange={setContainerImage}
               />
-              <ContainerSourceHelp />
+              <ContainerSourceHelp imageName={baseImageName} />
             </FormRow>
           )}
           {source.requiresNamespace() && (
