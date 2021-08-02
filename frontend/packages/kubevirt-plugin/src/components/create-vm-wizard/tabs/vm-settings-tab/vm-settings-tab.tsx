@@ -173,6 +173,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         field={getField(VMSettingsField.CONTAINER_IMAGE)}
         onProvisionSourceStorageChange={updateStorage}
         provisionSourceStorage={provisionSourceStorage}
+        imageName={commonTemplateName}
       />
       <URLSource
         field={getField(VMSettingsField.IMAGE_URL)}

@@ -13,8 +13,12 @@ export const CLOUD = 'cloud';
 export const SSH = 'ssh';
 export const SYSPREP = 'sysprep';
 
-export const EXAMPLE_CONTAINER = 'registry.redhat.io/rhel8/rhel-guest-image';
+export const RHEL = 'rhel';
+export const CENTOS = 'centos';
+
+export const RHEL_EXAMPLE_CONTAINER = 'registry.redhat.io/rhel8/rhel-guest-image';
 export const FEDORA_EXAMPLE_CONTAINER = 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest';
+export const CENTOS_EXAMPLE_CONTAINER = 'quay.io/kubevirt/centos8-container-disk-images:latest';
 export const CENTOS_IMAGE_LINK = 'https://cloud.centos.org/centos/';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =

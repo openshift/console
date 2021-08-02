@@ -344,7 +344,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             isDisabled={disabled}
             id={getFieldId(VMSettingsField.CONTAINER_IMAGE)}
           />
-          <ContainerSourceHelp />
+          <ContainerSourceHelp imageName={baseImageName} />
         </FormRow>
       )}
       {state.dataSource?.value === ProvisionSource.DISK.getValue() && (
