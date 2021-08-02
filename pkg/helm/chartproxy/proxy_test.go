@@ -10,6 +10,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"
+	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
 )
@@ -174,7 +175,12 @@ func TestProxy_IndexFile(t *testing.T) {
 				t.Error(err)
 			}
 			if tt.mergedFile != "" {
-				expectedIndexFile, err := repo.LoadIndexFile(tt.mergedFile)
+				data, err := ioutil.ReadFile(tt.mergedFile)
+				if err != nil {
+					t.Error(err)
+				}
+				expectedIndexFile := &repo.IndexFile{}
+				err = yaml.UnmarshalStrict(data, expectedIndexFile)
 				if err != nil {
 					t.Error(err)
 				}
