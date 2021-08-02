@@ -14,8 +14,7 @@ const testOperand: TestOperandProps = {
   exampleName: `example-servicebinding`,
 };
 
-// TODO: seeing two "Service Binding" horiz. tabs on operator detail page, re-enabled when fixed
-xdescribe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
+describe(`Globally installing "${testOperator.name}" operator in ${GlobalInstalledNamespace}`, () => {
   before(() => {
     cy.login();
     cy.visit('/');
