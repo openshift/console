@@ -14,6 +14,7 @@ export const getModifyApplicationAction = (
   return {
     id: 'modify-application',
     label: t('topology~Edit Application grouping'),
+    insertBefore: 'edit-pod-count',
     cta: () =>
       editApplicationModal({
         resourceKind: kind,

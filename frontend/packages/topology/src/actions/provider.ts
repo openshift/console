@@ -14,6 +14,9 @@ export const useTopologyWorloadActionProvider = (element: GraphElement) => {
     const k8sKind = modelFor(referenceFor(resource));
     return [getModifyApplicationAction(k8sKind, resource, t)];
   }, [element, t]);
-  if (element.getType() !== TYPE_WORKLOAD) return [[], true, undefined];
-  return [actions, true, undefined];
+
+  return useMemo(() => {
+    if (element.getType() !== TYPE_WORKLOAD) return [[], true, undefined];
+    return [actions, true, undefined];
+  }, [actions, element]);
 };

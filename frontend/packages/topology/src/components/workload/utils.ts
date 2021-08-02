@@ -3,6 +3,7 @@ import { GraphElement } from '@patternfly/react-topology';
 import {
   AdapterDataType,
   K8sResourceCommon,
+  NetworkAdapterType,
   PodsAdapterDataType,
   ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
@@ -41,7 +42,12 @@ export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E 
 const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDataType => {
   const buildConfigsData = useBuildConfigsWatcher(resource);
   const { podData, loaded, loadError } = usePodsWatcher(resource);
-  return { pods: podData?.pods, loaded, loadError, buildConfigsData };
+  return React.useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigsData }), [
+    buildConfigsData,
+    loadError,
+    loaded,
+    podData,
+  ]);
 };
 
 export const podsAdapterForWorkloads = (
@@ -80,7 +86,9 @@ export const buildsAdapterForWorkloads = (
   return { resource, provider: useBuildConfigsWatcher };
 };
 
-export const networkAdapterForWorkloads = (element: GraphElement): AdapterDataType | undefined => {
+export const networkAdapterForWorkloads = (
+  element: GraphElement,
+): NetworkAdapterType | undefined => {
   if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource(element);
   if (

@@ -93,7 +93,7 @@ export type BuildAdapter = ExtensionDeclaration<
 export type NetworkAdapter = ExtensionDeclaration<
   'console.topology/adapter/network',
   {
-    adapt: CodeRef<(element: GraphElement) => { resource: K8sResourceCommon } | undefined>;
+    adapt: CodeRef<(element: GraphElement) => NetworkAdapterType | undefined>;
   }
 >;
 
@@ -158,4 +158,8 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
   loaded: boolean;
   loadError: string;
   buildConfigsData?: BuildConfigData;
+};
+
+export type NetworkAdapterType = {
+  resource: K8sResourceCommon;
 };
