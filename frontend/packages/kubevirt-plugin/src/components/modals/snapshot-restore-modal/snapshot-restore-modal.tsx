@@ -12,7 +12,7 @@ import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
 import { getName, getNamespace } from '../../../selectors';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 import { VMSnapshot } from '../../../types';
-import { getRandomChars, buildOwnerReference } from '../../../utils';
+import { getRandomChars } from '../../../utils';
 import { ModalFooter } from '../modal/modal-footer';
 
 const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps) => {
@@ -24,14 +24,12 @@ const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps
     e.preventDefault();
     const restoreName = `${snapshotName}-restore-${getRandomChars()}`;
     const namespace = getNamespace(snapshot);
-    const snapshotRestoreWrapper = new VMRestoreWrapper()
-      .init({
-        name: restoreName,
-        namespace,
-        snapshotName,
-        vmName: getVmSnapshotVmName(snapshot),
-      })
-      .addOwnerReferences(buildOwnerReference(snapshot));
+    const snapshotRestoreWrapper = new VMRestoreWrapper().init({
+      name: restoreName,
+      namespace,
+      snapshotName,
+      vmName: getVmSnapshotVmName(snapshot),
+    });
 
     handlePromise(
       k8sCreate(snapshotRestoreWrapper.getModel(), snapshotRestoreWrapper.asResource()),
