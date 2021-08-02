@@ -71,6 +71,12 @@ describe('Test VM Clone', () => {
         namespace: vmData.namespace,
       },
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   it('ID(CNV-1730) Displays warning in clone wizard when cloned VM is running', () => {

@@ -48,7 +48,12 @@ describe('test custom template creation support', () => {
   });
 
   after(() => {
-    cy.deleteTestProject(testName);
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   it('ID(CNV-5729) create custom template from common template with no boot source', () => {

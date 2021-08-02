@@ -21,6 +21,12 @@ describe('smoke tests', () => {
         namespace: testName,
       },
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   describe('visit vmi list page', () => {

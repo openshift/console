@@ -37,6 +37,12 @@ describe('test vm template source image', () => {
         namespace: OS_IMAGES_NS,
       },
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   it('customize common template source', () => {

@@ -6,6 +6,15 @@ describe('ID(CNV-5654) test vm empty state', () => {
     cy.createProject(testName);
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   beforeEach(() => {
     virtualization.vms.visit();
   });

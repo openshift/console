@@ -19,10 +19,14 @@ describe('Connect to a VM using SSH testing', () => {
     cy.createProject(testName);
   });
 
-  sshTestingFunctions.forEach((fn) => fn({ vmName: `${testName}-vm` }));
-
   after(() => {
-    cy.deleteProject(testName);
-    cy.visit('');
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
+
+  sshTestingFunctions.forEach((fn) => fn({ vmName: `${testName}-vm` }));
 });

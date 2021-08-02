@@ -10,6 +10,15 @@ describe('smoke tests', () => {
     cy.createProject(testName);
   });
 
+  after(() => {
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
+
   describe('visit template list page', () => {
     it('template list page is loaded', () => {
       virtualization.templates.visit();

@@ -16,6 +16,19 @@ const vmData: VirtualMachineData = {
   startOnCreation: false,
 };
 
+const vmFixture = {
+  kind: 'VirtualMachine',
+  metadata: {
+    name: vmData.name,
+    namespace: vmData.namespace,
+  },
+};
+
+const vmiData: VirtualMachineData = {
+  name: `smoke-test-vmi-actions-${testName}`,
+  namespace: testName,
+};
+
 describe('Test VM/VMI actions', () => {
   before(() => {
     cy.Login();
@@ -24,11 +37,12 @@ describe('Test VM/VMI actions', () => {
   });
 
   after(() => {
+    cy.deleteResource(vmFixture);
+    cy.deleteResource(vmiFixture);
     cy.deleteResource({
-      kind: 'VirtualMachine',
+      kind: 'Namespace',
       metadata: {
-        name: vmData.name,
-        namespace: vmData.namespace,
+        name: testName,
       },
     });
   });
@@ -103,13 +117,10 @@ describe('Test VM/VMI actions', () => {
   });
 
   describe('Test vmi action', () => {
-    const vmiData: VirtualMachineData = {
-      name: 'vmi-ephemeral',
-      namespace: testName,
-    };
-
     beforeEach(() => {
+      vmiFixture.metadata.name = vmiData.name;
       vmiFixture.metadata.namespace = testName;
+      cy.deleteResource(vmiFixture);
       cy.applyResource(vmiFixture);
       virtualization.vms.visit();
       waitForStatus(VM_STATUS.Running, vmiData);
@@ -117,17 +128,17 @@ describe('Test VM/VMI actions', () => {
 
     it('ID(CNV-3693) Test VMI list view action', () => {
       vm.delete();
-      cy.byLegacyTestID('vmi-ephemeral').should('not.exist');
+      cy.byLegacyTestID(vmiData.name).should('not.exist');
     });
 
     it('ID(CNV-3699) Test VMI detail view action', () => {
-      cy.byLegacyTestID('vmi-ephemeral')
+      cy.byLegacyTestID(vmiData.name)
         .should('exist')
         .click();
       cy.byLegacyTestID('horizontal-link-Details').click();
       cy.get('.loading-box__loaded').should('be.visible');
       vm.delete();
-      cy.byLegacyTestID('vmi-ephemeral').should('not.exist');
+      cy.byLegacyTestID(vmiData.name).should('not.exist');
     });
   });
 });

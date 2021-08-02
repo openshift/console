@@ -32,6 +32,12 @@ describe('Test vm creation', () => {
         namespace: vmData.namespace,
       },
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   it('ID(CNV-6732) [bz1942839] validate virtio-win-image of windows vm', () => {

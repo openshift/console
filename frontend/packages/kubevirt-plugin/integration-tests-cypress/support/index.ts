@@ -2,9 +2,9 @@ import { ConfigMapKind } from '@console/internal/module/k8s';
 import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import { V1alpha1DataVolume } from '../../src/types/api';
 import {
+  EXPECT_LOGIN_SCRIPT_PATH,
   KUBEVIRT_PROJECT_NAME,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
-  EXPECT_LOGIN_SCRIPT_PATH,
 } from '../const';
 import nadFixture from '../fixtures/nad';
 import { VirtualMachineData } from '../types/vm';
@@ -35,6 +35,17 @@ declare global {
 
 Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
+
+  // If cluster resource, ommit namespace
+  if (!resource.metadata.namespace) {
+    cy.exec(
+      `kubectl delete --ignore-not-found=${ignoreNotFound} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s`,
+      { timeout: 120000 },
+    );
+
+    return;
+  }
+
   cy.exec(
     `kubectl delete --ignore-not-found=${ignoreNotFound} -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s`,
     { timeout: 120000 },

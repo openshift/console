@@ -54,6 +54,12 @@ describe('Test vm creation', () => {
         },
       });
     });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
   });
 
   [fedoraData, rhelData, winData].forEach((data) => {
