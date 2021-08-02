@@ -20,7 +20,7 @@ oc -n kubevirt-hyperconverged wait deployment/virt-operator --for=condition=Avai
 oc create namespace openshift-cnv
 
 # Setup storage
-oc create -f https://raw.githubusercontent.com/openshift/console/master/frontend/packages/kubevirt-plugin/integration-tests/ci-scripts/hostpath-provisioner-setup.yml
+oc create -f https://raw.githubusercontent.com/openshift/console/release-4.8/frontend/packages/kubevirt-plugin/integration-tests/ci-scripts/hostpath-provisioner-setup.yml
 
 oc patch storageclass hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
@@ -76,7 +76,7 @@ echo "Common templates created"
 oc annotate -n kubevirt-hyperconverged deployments ssp-operator kubevirt.io/operator.paused="true"
 
 # Annotate templates
-curl https://raw.githubusercontent.com/openshift/console/master/frontend/packages/kubevirt-plugin/integration-tests/ci-scripts/add-support-annotations.sh | bash
+curl https://raw.githubusercontent.com/openshift/console/release-4.8/frontend/packages/kubevirt-plugin/integration-tests/ci-scripts/add-support-annotations.sh | bash
 
 # Unpause the SSP operator
 oc annotate -n kubevirt-hyperconverged deployments ssp-operator kubevirt.io/operator.paused-
