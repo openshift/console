@@ -8,18 +8,12 @@ import {
   WithDragNodeProps,
   WithSelectionProps,
 } from '@patternfly/react-topology';
-import { connect } from 'react-redux';
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
-import { RootState } from '@console/internal/redux';
-import { obsOrKafkaConnectionDropTargetSpec } from '@console/rhoas-plugin/src/topology/components/rhoasComponentUtils';
 import { calculateRadius } from '@console/shared';
 import { TrapezoidBaseNode } from '@console/topology/src/components/graph-view/components/nodes';
-import { getServiceBindingStatus, getTopologyResourceObject } from '@console/topology/src/utils';
-
-interface StateProps {
-  serviceBinding: boolean;
-}
+import { getTopologyResourceObject } from '@console/topology/src/utils';
+import { getRelationshipProvider } from '@console/topology/src/utils/relationship-provider-utils';
 
 type BindableNodeProps = {
   element: Node;
@@ -27,36 +21,31 @@ type BindableNodeProps = {
 } & WithSelectionProps &
   WithDragNodeProps &
   WithContextMenuProps &
-  WithCreateConnectorProps &
-  StateProps;
+  WithCreateConnectorProps;
 
 const BindableNode: React.FC<BindableNodeProps> = ({
   element,
   selected,
   onSelect,
-  serviceBinding,
   tooltipLabel,
   ...props
 }) => {
+  const spec = React.useMemo(() => getRelationshipProvider(), []);
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const iconRadius = Math.min(width, height) * 0.25;
   const { radius } = calculateRadius(size);
-  const spec = React.useMemo(() => obsOrKafkaConnectionDropTargetSpec(serviceBinding), [
-    serviceBinding,
-  ]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...props });
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
-  // const kindResource = referenceForModel(resourceModel);
+  const iconData = element.getData()?.data?.icon || openshiftImg;
 
-  // const defaultIcon = getImageForIconClass(`icon-openshift`);
   return (
     <TrapezoidBaseNode
-      className="KafkaNode"
+      className="bindable-node"
       tooltipLabel={tooltipLabel}
       onSelect={onSelect}
-      icon={openshiftImg}
+      icon={iconData}
       innerRadius={iconRadius}
       selected={selected}
       kind={resourceModel && referenceForModel(resourceModel)}
@@ -69,10 +58,4 @@ const BindableNode: React.FC<BindableNodeProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    serviceBinding: getServiceBindingStatus(state),
-  };
-};
-
-export default connect(mapStateToProps)(observer(BindableNode));
+export default observer(BindableNode);

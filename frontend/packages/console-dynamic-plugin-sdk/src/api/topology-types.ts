@@ -63,6 +63,10 @@ export type CreateConnectionGetter = (
   target?: Node,
 ) => CreateConnection;
 
+export type RelationshipProviderProvides = (source: Node, target: Node) => Promise<boolean>;
+
+export type RelationshipProviderCreate = (source: Node, target: Node) => Promise<void>;
+
 export enum TopologyDisplayFilterType {
   show = 'show',
   expand = 'expand',

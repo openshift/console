@@ -16,7 +16,7 @@ import { withEditReviewAccess } from '@console/topology/src/utils';
 import BindableNode from './BindableNode';
 import { TYPE_BINDABLE_NODE } from './const';
 
-export const getDevConsoleComponentFactory = (
+const getDevConsoleComponentFactory = (
   kind,
   type,
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -38,3 +38,5 @@ export const getDevConsoleComponentFactory = (
       return undefined;
   }
 };
+
+export default getDevConsoleComponentFactory;

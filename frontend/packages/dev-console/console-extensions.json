@@ -462,7 +462,7 @@
     "type": "console.topology/component/factory",
     "properties": {
       "getFactory": {
-        "$codeRef": "topology.componentFactory"
+        "$codeRef": "topology.getDevConsoleComponentFactory"
       }
     }
   },
@@ -482,16 +482,24 @@
       },
       "workloadKeys": ["bindables"],
       "getDataModel": {
-        "$codeRef": "topology.getDataModel"
+        "$codeRef": "topology.getBindableDevConsoleTopologyDataModel"
       }
     }
   },
   {
-    "type": "console.topology/create/connector",
+    "type": "console.topology/relationship/provider",
     "properties": {
-      "getCreateConnector": {
-        "$codeRef": "topology.createConnector"
-      }
+      "provides": {
+        "$codeRef": "topology.providerProvidesServiceBinding"
+      },
+      "tooltip": "%devconsole~Create Service Binding%",
+      "create": {
+        "$codeRef": "topology.providerCreateServiceBinding"
+      },
+      "priority": 100
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
     }
   }
 ]

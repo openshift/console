@@ -12,6 +12,7 @@
   "Provider": "Provider",
   "Serving": "Serving",
   "Eventing": "Eventing",
+  "Create Service Binding": "Create Service Binding",
   "Add Subscription": "Add Subscription",
   "Add Trigger": "Add Trigger",
   "Delete Revision": "Delete Revision",

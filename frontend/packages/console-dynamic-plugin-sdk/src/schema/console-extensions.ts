@@ -43,6 +43,7 @@ import {
   TopologyDataModelFactory,
   TopologyDecoratorProvider,
   TopologyDisplayFilters,
+  TopologyRelationshipProvider,
 } from '../extensions/topology';
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
 import { YAMLTemplate } from '../extensions/yaml-templates';
@@ -92,6 +93,7 @@ export type SupportedExtension =
   | TopologyDataModelFactory
   | TopologyDisplayFilters
   | TopologyDecoratorProvider
+  | TopologyRelationshipProvider
   | CreateResource;
 
 /**
