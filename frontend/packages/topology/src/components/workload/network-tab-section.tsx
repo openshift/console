@@ -6,7 +6,7 @@ import {
   NetworkAdapter,
   K8sResourceCommon,
 } from '@console/dynamic-plugin-sdk';
-import { SideBarTabSection } from '@console/shared';
+import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { NetworkingOverview } from './NetworkingOverview';
 import { getDataFromAdapter } from './utils';
 
@@ -23,9 +23,9 @@ const NetworkTabSection: React.FC<{ element: GraphElement }> = ({ element }) => 
     [element, extensionsLoaded, networkAdapterExtensions],
   );
   return networkAdapter ? (
-    <SideBarTabSection>
+    <TopologySideBarTabSection>
       <NetworkingOverview obj={networkAdapter.resource} />
-    </SideBarTabSection>
+    </TopologySideBarTabSection>
   ) : null;
 };
 

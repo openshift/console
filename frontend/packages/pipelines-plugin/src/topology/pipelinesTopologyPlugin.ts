@@ -8,7 +8,11 @@ import { TopologyDecoratorQuadrant } from '@console/topology/src/topology-types'
 import { FLAG_OPENSHIFT_PIPELINE } from '../const';
 import { tknPipelineAndPipelineRunsWatchResources } from '../utils/pipeline-plugin-utils';
 import { getPipelineRunDecorator } from './build-decorators';
-import { getDataModelReconciler } from './index';
+
+const getDataModelReconciler = () =>
+  import(
+    './getPipelinesDataModelReconciler' /* webpackChunkName: "operators-topology-components" */
+  ).then((m) => m.getPipelinesDataModelReconciler);
 
 export type PipelineTopologyConsumedExtensions =
   | TopologyDecoratorProvider

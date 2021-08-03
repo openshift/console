@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GraphElement } from '@patternfly/react-topology';
-import { TopologyActions } from '../../../actions';
+import TopologyActions from '../../../actions/TopologyActions';
 import { useDetailsResourceLink } from '../providers/useDetailsResourceLink';
 import SideBarAlerts from './SideBarAlerts';
 import './SideBarHeading.scss';

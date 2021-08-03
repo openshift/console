@@ -6,7 +6,8 @@ import {
   isBuildAdapter,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src';
-import { BuildConfigData, SideBarTabSection } from '@console/shared';
+import { BuildConfigData } from '@console/shared';
+import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import { BuildOverview } from './BuildOverview';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
@@ -34,7 +35,7 @@ const BuildTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
     setBuildConfigsData({ data, loaded: true });
   }, []);
   return buildAdapter ? (
-    <SideBarTabSection>
+    <TopologySideBarTabSection>
       {extensionsResolved && (
         <ResolveAdapter<BuildConfigData>
           resource={buildAdapter.resource}
@@ -43,7 +44,7 @@ const BuildTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
         />
       )}
       {buildConfigsDataLoaded && <BuildOverview buildConfigs={buildConfigs.buildConfigs} />}
-    </SideBarTabSection>
+    </TopologySideBarTabSection>
   ) : null;
 };
 

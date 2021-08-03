@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ChartLabel } from '@patternfly/react-charts';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -50,7 +49,7 @@ type JobOverviewItemProps = {
 
 const JobsOverviewList: React.FC<JobsOverviewListProps> = ({ jobs }) => (
   <ul className="list-group">
-    {_.map(jobs, (job) => (
+    {jobs?.map((job) => (
       <JobOverviewItem key={job.metadata.uid} job={job} />
     ))}
   </ul>
@@ -74,16 +73,16 @@ export const JobsOverview: React.FC<JobsOverviewProps> = ({
   return (
     <>
       <SidebarSectionHeading text="Jobs">
-        {_.size(jobs) > MAX_JOBS && (
+        {jobs?.length > MAX_JOBS && (
           <Link className="sidebar__section-view-all" to={linkTo}>
-            {t('topology~View all ({{jobCount}})', { jobCount: _.size(jobs) })}
+            {t('topology~View all ({{jobCount}})', { jobCount: jobs.length })}
           </Link>
         )}
       </SidebarSectionHeading>
-      {_.isEmpty(jobs) ? (
+      {!(jobs?.length > 0) ? (
         <span className="text-muted">{emptyMessage}</span>
       ) : (
-        <JobsOverviewList jobs={_.take(jobs, MAX_JOBS)} />
+        <JobsOverviewList jobs={jobs.slice(0, MAX_JOBS)} />
       )}
     </>
   );

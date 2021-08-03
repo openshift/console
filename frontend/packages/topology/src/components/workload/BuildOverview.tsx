@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { BuildLogLink, BuildNumberLink } from '@console/internal/components/build';
 import { errorModal } from '@console/internal/components/modals/error-modal';
@@ -64,7 +63,7 @@ const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
     default:
       return (
         <Trans t={t} ns="topology">
-          Build <BuildNumberLink build={build} /> is {_.toLower(build.status.phase)}
+          Build <BuildNumberLink build={build} /> is {build.status?.phase?.toLowerCase()}
         </Trans>
       );
   }
@@ -153,25 +152,25 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
           )}
         </div>
       </li>
-      {_.isEmpty(builds) ? (
+      {!(builds?.length > 0) ? (
         <li className="list-group-item">
           <span className="text-muted">{t('topology~No Builds found for this Build Config.')}</span>
         </li>
       ) : (
-        _.map(builds, (build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
+        builds.map((build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
       )}
     </ul>
   );
 };
 export const BuildOverview: React.FC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {
   const { t } = useTranslation();
-  if (_.isEmpty(buildConfigs)) {
+  if (!(buildConfigs?.length > 0)) {
     return null;
   }
   return (
     <div className="build-overview">
       <SidebarSectionHeading text={t('topology~Builds')} />
-      {_.map(buildConfigs, (buildConfig) => (
+      {buildConfigs.map((buildConfig) => (
         <BuildOverviewList key={buildConfig.metadata.uid} buildConfig={buildConfig} />
       ))}
     </div>

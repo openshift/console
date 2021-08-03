@@ -8,8 +8,8 @@ import {
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk';
 import { PodKind } from '@console/internal/module/k8s';
-import { SideBarTabSection } from '@console/shared';
 import { PodsOverviewContent } from '@console/shared/src/components/pod/PodsOverview';
+import TopologySideBarTabSection from '../side-bar/TopologySideBarTabSection';
 import ResolveAdapter from './ResolveAdapter';
 import { getDataFromAdapter } from './utils';
 
@@ -33,7 +33,7 @@ const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
     setPodData({ data, loaded: true });
   }, []);
   return podAdapter ? (
-    <SideBarTabSection>
+    <TopologySideBarTabSection>
       {podAdapterExtensionResolved && (
         <ResolveAdapter<PodsAdapterDataType<PodKind>>
           resource={podAdapter.resource}
@@ -44,7 +44,7 @@ const PodsTabSection: React.FC<{ element: GraphElement }> = ({ element }) => {
       {podsDataLoaded && podsData.loaded && !podsData.loadError && (
         <PodsOverviewContent obj={podAdapter.resource} {...podsData} />
       )}
-    </SideBarTabSection>
+    </TopologySideBarTabSection>
   ) : null;
 };
 
