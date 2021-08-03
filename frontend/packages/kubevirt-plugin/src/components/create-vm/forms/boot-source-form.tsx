@@ -8,29 +8,23 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import {
-  dropdownUnits,
-  getAccessModeForProvisioner,
-} from '@console/internal/components/storage/shared';
+import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
+import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   FieldLevelHelp,
   ListDropdown,
   LoadingInline,
   RequestSizeInput,
 } from '@console/internal/components/utils';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { AccessMode, ANNOTATION_SOURCE_PROVIDER, VolumeMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
-import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-  getDefaultStorageClass,
-  isConfigMapContainsScModes,
-} from '../../../selectors/config-map/sc-defaults';
+import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
+import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
-import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { getGiBUploadPVCSizeByImage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
@@ -48,42 +42,33 @@ type AdvancedSectionProps = {
   disabled?: boolean;
   storageClasses: StorageClassResourceKind[];
   storageClassesLoaded: boolean;
-  scAllowed: boolean;
+  scAllowed?: boolean;
   scAllowedLoading: boolean;
 };
 
 const AdvancedSection: React.FC<AdvancedSectionProps> = ({
   state,
   dispatch,
-  disabled,
   storageClasses,
   storageClassesLoaded,
-  scAllowed,
   scAllowedLoading,
 }) => {
   const { t } = useTranslation();
 
-  const [scConfigMap, cmLoaded] = useStorageClassConfigMap();
-
-  const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
   const updatedStorageClass = storageClasses?.find(
     (sc) => sc.metadata.name === state.storageClass?.value,
   );
   const storageClassName = updatedStorageClass?.metadata?.name;
+
+  const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
+
+  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
+    storageClassName || defaultSCName,
+  );
+
+  const [applySP, setApplySP] = React.useState<boolean>(true);
+
   const provisioner = updatedStorageClass?.provisioner || '';
-  let accessModes: string[] = getAccessModeForProvisioner(provisioner);
-
-  if (!scAllowedLoading && !scAllowed && scConfigMap) {
-    accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
-  }
-
-  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
-    return [
-      getDefaultSCAccessModes(scConfigMap, storageClassName)?.[0],
-      getDefaultSCVolumeMode(scConfigMap, storageClassName),
-      isConfigMapContainsScModes(scConfigMap, storageClassName),
-    ];
-  }, [scConfigMap, storageClassName]);
 
   const handleStorageClass = React.useCallback(
     (scName: string) => {
@@ -95,8 +80,27 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
     [dispatch],
   );
 
+  const handleAccessAndVolumeModeChange = React.useCallback(
+    (accessMode = AccessMode.READ_WRITE_ONCE, volumeMode = VolumeMode.FILESYSTEM) => {
+      dispatch({
+        type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
+        payload: accessMode.getValue(),
+      });
+      dispatch({
+        type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+        payload: volumeMode.getValue(),
+      });
+    },
+    [dispatch],
+  );
+
+  const onStorageClassNameChanged = (newSC) => {
+    handleStorageClass(newSC?.metadata?.name);
+    handleAccessAndVolumeModeChange(spAccessMode, spVolumeMode);
+  };
+
   React.useEffect(() => {
-    if (!scAllowedLoading && storageClassesLoaded && cmLoaded && !state.storageClass?.value) {
+    if (storageClassesLoaded && !state.storageClass?.value) {
       if (defaultSCName) {
         handleStorageClass(defaultSCName);
       } else {
@@ -104,137 +108,86 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
         firstSc && handleStorageClass(firstSc);
       }
     }
+  }, [storageClassesLoaded, defaultSCName, state.storageClass, storageClasses, handleStorageClass]);
+
+  React.useEffect(() => {
+    if (spLoaded && applySP && isSPSettingProvided) {
+      handleAccessAndVolumeModeChange(spAccessMode, spVolumeMode);
+    }
   }, [
-    defaultSCName,
-    handleStorageClass,
-    storageClassesLoaded,
+    spLoaded,
+    applySP,
+    isSPSettingProvided,
     state.storageClass,
-    dispatch,
-    scConfigMap,
-    cmLoaded,
-    scAllowedLoading,
-    storageClasses,
+    spAccessMode,
+    spVolumeMode,
+    handleAccessAndVolumeModeChange,
   ]);
 
-  React.useEffect(() => {
-    if (state.storageClass?.value) {
-      if (defaultAccessMode.getValue() !== state?.accessMode?.value) {
-        dispatch({
-          type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
-          payload: defaultAccessMode.getValue(),
-        });
-      }
-
-      if (defaultVolumeMode.getValue() !== state?.volumeMode?.value) {
-        dispatch({
-          type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-          payload: defaultVolumeMode.getValue(),
-        });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultAccessMode, defaultVolumeMode, state.storageClass]);
-
-  React.useEffect(() => {
-    const isPVC = state.dataSource?.value === ProvisionSource.DISK.getValue();
-    dispatch({
-      type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-      payload: isPVC ? state.pvcVolumeMode?.value : defaultVolumeMode.getValue(),
-    });
-    dispatch({
-      type: BOOT_ACTION_TYPE.SET_VOLUME_MODE_FLAG,
-      payload: isPVC,
-    });
-  }, [state.pvcVolumeMode, state.dataSource, dispatch, defaultVolumeMode]);
-
-  return cmLoaded && storageClassesLoaded && !scAllowedLoading ? (
+  return storageClassesLoaded && !scAllowedLoading ? (
     <Form>
-      {scAllowed && !!storageClasses?.length && (
-        <FormRow fieldId="form-ds-sc" title={t('kubevirt-plugin~Storage class')} isRequired>
-          <FormPFSelect
-            value={state.storageClass?.value}
-            onSelect={(e, value: string) => handleStorageClass(value)}
-            aria-label={t('kubevirt-plugin~Select Storage Class')}
-            selections={[state.storageClass?.value]}
-            isDisabled={disabled}
-            toggleId="form-ds-sc-select"
-          >
-            {storageClasses?.map((sc) => (
-              <SelectOption key={sc.metadata.uid} value={sc.metadata.name}>
-                {defaultSCName === sc.metadata.name
-                  ? t('kubevirt-plugin~{{name}} (default)', { name: sc.metadata.name })
-                  : sc.metadata.name}
-              </SelectOption>
-            ))}
-          </FormPFSelect>
-        </FormRow>
-      )}
-      <FormRow fieldId="form-ds-access-mode" title={t('kubevirt-plugin~Access mode')} isRequired>
-        <FormPFSelect
-          aria-label={t('kubevirt-plugin~Select access mode')}
-          onSelect={(e, value: AccessMode) =>
-            dispatch({
-              type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
-              payload: value.getValue(),
-            })
-          }
-          selections={AccessMode.fromString(state.accessMode?.value)}
-          isDisabled={!scAllowed || disabled}
-          toggleId="form-ds-access-mode-select"
-        >
-          {accessModes.map((am) => {
-            const accessMode = AccessMode.fromString(am);
-            return (
-              <SelectOption key={accessMode.getValue()} value={accessMode}>
-                {accessMode.toString().concat(
-                  accessMode.getValue() !== defaultAccessMode.getValue() && isScModesKnown
-                    ? t(
-                        'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
-                        {
-                          storageClassName,
-                        },
-                      )
-                    : '',
-                )}
-              </SelectOption>
-            );
-          })}
-        </FormPFSelect>
+      <FormRow fieldId="form-ds-sc" isRequired>
+        <StorageClassDropdown
+          name={t('kubevirt-plugin~Storage Class')}
+          onChange={(sc) => onStorageClassNameChanged(sc)}
+          data-test="storage-class-dropdown"
+        />
       </FormRow>
-      <FormRow fieldId="form-ds-volume-mode" title={t('kubevirt-plugin~Volume mode')} isRequired>
-        <FormPFSelect
-          aria-label={t('kubevirt-plugin~Select volume mode')}
-          onSelect={(e, value: VolumeMode) =>
-            dispatch({
-              type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-              payload: value.getValue(),
-            })
-          }
-          selections={VolumeMode.fromString(state.volumeMode?.value)}
-          isDisabled={disabled || state.volumeModeFlag.value}
-          toggleId="form-ds-volume-mode-select"
-        >
-          {VolumeMode.getAll().map((vm) => (
-            <SelectOption key={vm.getValue()} value={vm}>
-              {vm.toString().concat(
-                vm.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
-                  ? t('kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class', {
-                      storageClassName,
-                    })
-                  : '',
-              )}
-            </SelectOption>
-          ))}
-        </FormPFSelect>
-        {state.volumeModeFlag.value && (
-          <div className="pf-c-form__helper-text" aria-live="polite">
-            {t('kubevirt-plugin~Volume Mode is set by Source PVC')}
+      <>
+        <FormRow fieldId="form-ds-apply-sp">
+          <Checkbox
+            id="apply-storage-provider"
+            description={t(
+              'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
+            )}
+            isChecked={applySP}
+            onChange={() => setApplySP(!applySP)}
+            isDisabled={!isSPSettingProvided}
+            label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
+            data-test="apply-storage-provider"
+          />
+        </FormRow>
+        {!spLoaded ? (
+          <LoadingInline />
+        ) : isSPSettingProvided && applySP ? (
+          <FormRow fieldId="form-ds-sp-settings" data-test="sp-default-settings">
+            {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
+              accessMode: spAccessMode?.getValue(),
+              volumeMode: spVolumeMode?.getValue(),
+            })}
+          </FormRow>
+        ) : (
+          <div data-test="sp-no-default-settings">
+            <FormRow fieldId="form-ds-access-mode" isRequired>
+              <AccessModeSelector
+                onChange={(aMode) => {
+                  dispatch({
+                    type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
+                    payload: aMode,
+                  });
+                }}
+                provisioner={provisioner}
+                loaded
+                availableAccessModes={initialAccessModes}
+              />
+            </FormRow>
+            <FormRow fieldId="form-ds-volume-mode" isRequired>
+              <VolumeModeSelector
+                onChange={(vMode) => {
+                  dispatch({
+                    type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+                    payload: vMode,
+                  });
+                }}
+                provisioner={provisioner}
+                accessMode={state.accessMode?.value}
+                storageClass={storageClassName}
+                loaded
+              />
+            </FormRow>
           </div>
         )}
-      </FormRow>
-      <FormRow fieldId="form-sc-alert">
-        <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
-      </FormRow>
+      </>
     </Form>
   ) : (
     <LoadingInline />

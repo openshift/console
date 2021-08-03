@@ -18,6 +18,7 @@ import {
   ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
+  LoadingInline,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
@@ -81,7 +82,6 @@ import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { HotplugFieldLevelHelp } from './HotplugFieldLevelHelp';
 import { StorageUISource } from './storage-ui-source';
-
 import './disk-modal.scss';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
@@ -660,6 +660,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 <StorageClassDropdown
                   name={t('kubevirt-plugin~Storage Class')}
                   onChange={(scName) => onStorageClassNameChanged(scName)}
+                  data-test="storage-class-dropdown"
                 />
               </StackItem>
               {source.requiresVolumeModeOrAccessModes() && (
@@ -674,10 +675,13 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       onChange={() => setApplySP(!applySP)}
                       isDisabled={!isSPSettingProvided}
                       label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
+                      data-test="apply-storage-provider"
                     />
                   </StackItem>
-                  {isSPSettingProvided && applySP ? (
-                    <StackItem>
+                  {!spLoaded ? (
+                    <LoadingInline />
+                  ) : isSPSettingProvided && applySP ? (
+                    <StackItem data-test="sp-default-settings">
                       {t(
                         'kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}',
                         {
@@ -687,7 +691,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       )}
                     </StackItem>
                   ) : (
-                    <>
+                    <div data-test="sp-no-default-settings">
                       <StackItem>
                         <AccessModeSelector
                           onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
@@ -706,7 +710,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           loaded
                         />
                       </StackItem>
-                    </>
+                    </div>
                   )}
                 </>
               )}
