@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Text, TextVariants } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useHistory } from 'react-router-dom';
 import {
@@ -15,7 +15,6 @@ import {
   SubscriptionsKind,
 } from '../../../utils/migration-tool-utils';
 import { ModalFooter } from '../../modals/modal/modal-footer';
-
 import './migration-tool.scss';
 
 type MigrationToolProps = ModalComponentProps & {
@@ -44,26 +43,20 @@ const MigrationTool: React.FC<MigrationToolProps> = ({
       <ModalBody>
         {mtvOperator ? (
           mtvSubscription ? (
-            <Text component={TextVariants.p}>
-              {t(
-                'kubevirt-plugin~The Migration Toolkit operator is successfully installed, please install Forklift instance in order to use the Migration Toolkit',
-              )}
-            </Text>
+            t(
+              'kubevirt-plugin~The Migration Toolkit operator is successfully installed, please deploy Migration Tool instance in order to use the Migration Toolkit',
+            )
           ) : (
             <Trans t={t} ns="kubevirt-plugin">
-              <Text component={TextVariants.p}>
-                The Migration Tool for Virtualization Operator facilitates the migration of multiple
-                Virtual Machine workloads to Openshift Virtualization.
-              </Text>
-              <Text component={TextVariants.p}>
-                Clicking the Install Migration Toolkit button will take you to the{' '}
-                <Link onClick={close} to={'/operatorhub'}>
-                  OperatorHub.
-                </Link>
-              </Text>
-              <Text component={TextVariants.p}>
-                After the operator installation, please restart the Forklift instance
-              </Text>
+              The Migration Tool for Virtualization Operator facilitates the migration of multiple
+              Virtual Machine workloads to Openshift Virtualization. Clicking the Install Migration
+              Toolkit button will take you to the{' '}
+              <Link onClick={close} to={'/operatorhub'}>
+                OperatorHub.
+              </Link>{' '}
+              After the operator installation, please deploy the instance by clicking on
+              ForkliftController -&gt; Create an instance. For more information please refer to the{' '}
+              <ExternalLink href="https://red.ht/mtv-docs">official documentation</ExternalLink>
             </Trans>
           )
         ) : (
@@ -87,7 +80,7 @@ const MigrationTool: React.FC<MigrationToolProps> = ({
         onCancel={close}
         submitButtonText={
           mtvSubscription
-            ? t('kubevirt-plugin~Install ForkLift Instance')
+            ? t('kubevirt-plugin~Deploy Migration Tool Instance')
             : t('kubevirt-plugin~Install Migration Tool')
         }
         cancelButtonText={t('kubevirt-plugin~Close')}
