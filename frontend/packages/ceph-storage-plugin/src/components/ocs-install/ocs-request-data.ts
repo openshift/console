@@ -180,12 +180,12 @@ export const getOCSRequestData = (
         ),
       ],
       ...Object.assign(
-        publicNetwork
+        publicNetwork || clusterNetwork
           ? {
               network: {
                 provider: 'multus',
                 selectors: {
-                  public: publicNetwork,
+                  ...Object.assign(publicNetwork ? { public: publicNetwork } : {}),
                   ...Object.assign(clusterNetwork ? { cluster: clusterNetwork } : {}),
                 },
               },
