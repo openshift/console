@@ -73,24 +73,39 @@ jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   ],
 }));
 
-jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
-  useK8sModel: () => [
-    {
-      abbr: 'TR',
-      apiGroup: 'testapp.coreos.com',
-      apiVersion: 'v1alpha1',
-      crd: true,
-      kind: 'TestResource',
-      label: 'Test Resource',
-      labelPlural: 'Test Resources',
-      namespaced: true,
-      plural: 'testresources',
-      verbs: ['create'],
-    },
-    false,
-    null,
-  ],
-}));
+jest.mock('@console/shared/src/hooks/useK8sModel', () => {
+  return {
+    useK8sModel: (groupVersionKind) => [
+      groupVersionKind === 'TestResourceRO'
+        ? {
+            abbr: 'TR',
+            apiGroup: 'testapp.coreos.com',
+            apiVersion: 'v1alpha1',
+            crd: true,
+            kind: 'TestResourceRO',
+            label: 'Test Resource',
+            labelPlural: 'Test Resources',
+            namespaced: true,
+            plural: 'testresources',
+            verbs: ['get'],
+          }
+        : {
+            abbr: 'TR',
+            apiGroup: 'testapp.coreos.com',
+            apiVersion: 'v1alpha1',
+            crd: true,
+            kind: 'TestResource',
+            label: 'Test Resource',
+            labelPlural: 'Test Resources',
+            namespaced: true,
+            plural: 'testresources',
+            verbs: ['create'],
+          },
+      false,
+      null,
+    ],
+  };
+});
 
 const i18nNS = 'public';
 
@@ -588,14 +603,8 @@ describe(ProvidedAPIPage.displayName, () => {
   let wrapper: ShallowWrapper<ProvidedAPIPageProps>;
 
   it('does not allow creation if "create" not included in the verbs for the model', () => {
-    const readonlyModel = _.cloneDeep(testModel);
-    readonlyModel.verbs = ['get'];
     wrapper = shallow(
-      <ProvidedAPIPage.WrappedComponent
-        kindObj={readonlyModel}
-        kind={k8sModels.referenceForModel(readonlyModel)}
-        csv={testClusterServiceVersion}
-      />,
+      <ProvidedAPIPage kind="TestResourceRO" csv={testClusterServiceVersion} namespace="foo" />,
     );
 
     expect(wrapper.find(ListPage).props().canCreate).toBe(false);

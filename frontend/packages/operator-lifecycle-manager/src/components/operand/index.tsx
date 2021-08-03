@@ -24,7 +24,6 @@ import {
   Kebab,
   KebabAction,
   LabelList,
-  LoadingBox,
   MsgBox,
   ResourceKebab,
   ResourceSummary,
@@ -69,6 +68,7 @@ import { DescriptorType, StatusCapability, StatusDescriptor } from '../descripto
 import { isMainStatusDescriptor } from '../descriptors/utils';
 import { providedAPIsForCSV, referenceForProvidedAPI } from '../index';
 import { Resources } from '../k8s-resource';
+import ModelStatusBox from '../model-status-box';
 import { csvNameFromWindow, OperandLink } from './operand-link';
 
 export const getOperandActions = (
@@ -426,34 +426,24 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
   );
 };
 
-export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
-  const { t } = useTranslation();
-  const { namespace, kind, kindsInFlight, kindObj, csv } = props;
-  if (!kindObj) {
-    return kindsInFlight ? (
-      <LoadingBox />
-    ) : (
-      <ErrorPage404
-        message={t(
-          "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
-          { kind: kindForReference(kind) },
-        )}
-      />
-    );
-  }
-
+export const ProvidedAPIPage: React.FC<ProvidedAPIPageProps> = (props) => {
+  const { namespace, kind, csv } = props;
   const to = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`;
+
+  const [model] = useK8sModel(kind);
   return (
-    <ListPage
-      kind={kind}
-      ListComponent={OperandList}
-      canCreate={kindObj?.verbs?.includes('create')}
-      createProps={{ to }}
-      namespace={kindObj.namespaced ? namespace : null}
-      badge={getBadgeFromType(kindObj.badge)}
-    />
+    <ModelStatusBox groupVersionKind={kind}>
+      <ListPage
+        kind={kind}
+        ListComponent={OperandList}
+        canCreate={model?.verbs?.includes('create')}
+        createProps={{ to }}
+        namespace={model?.namespaced ? namespace : null}
+        badge={getBadgeFromType(model?.badge)}
+      />
+    </ModelStatusBox>
   );
-});
+};
 
 const OperandDetailsSection: React.FC = ({ children }) => (
   <div className="co-operand-details__section co-operand-details__section--info">{children}</div>
@@ -707,9 +697,7 @@ export type ProvidedAPIsPageProps = {
 
 export type ProvidedAPIPageProps = {
   csv: ClusterServiceVersionKind;
-  kindsInFlight?: boolean;
   kind: GroupVersionKind;
-  kindObj: K8sKind;
   namespace: string;
 };
 

@@ -36,6 +36,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { exampleForModel, providedAPIForModel } from '..';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import ModelStatusBox from '../model-status-box';
 import { DEFAULT_K8S_SCHEMA } from './const';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
@@ -168,40 +169,42 @@ const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
       <Helmet>
         <title>{t('olm~Create {{item}}', { item: kindForReference(match.params.plural) })}</title>
       </Helmet>
-      {loaded && !_.isEmpty(csv) && model && (
-        <div className="co-create-operand__breadcrumbs">
-          <BreadCrumbs
-            breadcrumbs={[
-              {
-                name: csv.spec.displayName,
-                path: resourcePathFromModel(
-                  ClusterServiceVersionModel,
-                  csv.metadata.name,
-                  csv.metadata.namespace,
-                ),
-              },
-              {
-                name: t('olm~Create {{item}}', { item: model.label }),
-                path: window.location.pathname,
-              },
-            ]}
+      <ModelStatusBox groupVersionKind={match.params.plural}>
+        {loaded && !_.isEmpty(csv) && (
+          <div className="co-create-operand__breadcrumbs">
+            <BreadCrumbs
+              breadcrumbs={[
+                {
+                  name: csv.spec.displayName,
+                  path: resourcePathFromModel(
+                    ClusterServiceVersionModel,
+                    csv.metadata.name,
+                    csv.metadata.namespace,
+                  ),
+                },
+                {
+                  name: t('olm~Create {{item}}', { item: model?.label }),
+                  path: window.location.pathname,
+                },
+              ]}
+            />
+          </div>
+        )}
+        {createResourceExtension ? (
+          <AsyncComponent
+            loader={createResourceExtension.properties.component}
+            namespace={match.params.ns}
           />
-        </div>
-      )}
-      {createResourceExtension ? (
-        <AsyncComponent
-          loader={createResourceExtension.properties.component}
-          namespace={match.params.ns}
-        />
-      ) : (
-        <CreateOperand
-          match={match}
-          initialEditorType={EditorType.Form}
-          csv={csv}
-          loaded={loaded}
-          loadError={loadError}
-        />
-      )}
+        ) : (
+          <CreateOperand
+            match={match}
+            initialEditorType={EditorType.Form}
+            csv={csv}
+            loaded={loaded}
+            loadError={loadError}
+          />
+        )}
+      </ModelStatusBox>
     </>
   );
 };
