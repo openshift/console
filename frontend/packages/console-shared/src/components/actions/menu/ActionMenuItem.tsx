@@ -61,7 +61,6 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
       isDisabled={isDisabled}
       data-test-action={label}
       tabIndex={0} // Override PF tabIndex -1 to make action items tabbable
-      translate="no" // Need to pass translate="no" as a workaround to a bug in @types/react.
       {...(external ? { to: href, isExternalLink: external } : {})}
     >
       {label}
