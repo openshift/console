@@ -209,7 +209,8 @@
     "type": "console.topology/details/tab",
     "properties": {
       "id": "helm-release-panel-tab-releaseNotes",
-      "label": "%helm-plugin~Release notes%"
+      "label": "%helm-plugin~Release notes%",
+      "insertAfter": "topology-side-bar-tab-resource"
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
