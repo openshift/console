@@ -37,18 +37,6 @@ Feature: Install the Helm Release
               And Topology page have the helm chart workload "quarkus"
 
 
-        @smoke
-        Scenario: Install Helm Chart from +Add Page using Form View: HR-06-TC04
-            Given user is at Add page
-             When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs v0.0.1" card from catalog page
-              And user clicks on the Install Helm Chart button on side bar
-              And user enters Release Name as "nodejs-example-1"
-              And user clicks on the Install button
-             Then user will be redirected to Topology page
-              And Topology page have the helm chart workload "nodejs-example-1"
-
-
         @regression
         Scenario: Chart versions drop down menu: HR-06-TC05
             Given user is at Add page

@@ -15,7 +15,7 @@ Feature: Helm Chart
               And user is able to see helm charts
 
 
-        @manual
+        @regression @manual
         Scenario: Check the meta data for the importing helm charts from index.yaml: HR-02-TC02
             Given user is at Add page
              When user opens the Network tab
@@ -24,7 +24,7 @@ Feature: Helm Chart
              Then user sees that the kubeversion of each chart is either equal to or less than the kubeversion of cluster
 
 
-        @manual
+        @regression @manual
         Scenario: Check the chart versions in the chart version dropdown if they are compatible with the cluster: HR-02-TC03
             Given user is at the Install Helm Chart page
              When user clicks on the Chart Version dropdown menu
