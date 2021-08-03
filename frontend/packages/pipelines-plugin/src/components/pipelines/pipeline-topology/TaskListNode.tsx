@@ -16,6 +16,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
     clusterTaskList = [],
     namespaceTaskList = [],
     onNewTask = () => {},
+    onTaskSearch = () => {},
     onRemoveTask = () => {},
   } = element.getData() || {};
 
@@ -27,6 +28,7 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
       unselectedText={unselectedText}
       onRemoveTask={onRemoveTask}
       onNewTask={onNewTask}
+      onTaskSearch={onTaskSearch}
     />
   );
 };

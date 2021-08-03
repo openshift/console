@@ -21,14 +21,18 @@ interface QuickSearchModalBodyProps {
   searchPlaceholder: string;
   namespace: string;
   closeModal: () => void;
+  limitItemCount: number;
+  icon?: React.ReactNode;
 }
 
 const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   searchCatalog,
   namespace,
   closeModal,
+  limitItemCount,
   searchPlaceholder,
   allCatalogItemsLoaded,
+  icon,
 }) => {
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
@@ -38,7 +42,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [selectedItemId, setSelectedItemId] = React.useState<string>('');
   const [selectedItem, setSelectedItem] = React.useState<CatalogItem>(null);
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
-  const listCatalogItems = catalogItems?.slice(0, 5);
+  const listCatalogItems =
+    limitItemCount > 0 ? catalogItems?.slice(0, limitItemCount) : catalogItems;
   const ref = React.useRef<HTMLDivElement>(null);
   const fireTelemetryEvent = useTelemetry();
 
@@ -161,8 +166,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
 
   const getModalHeight = () => {
     let height: number = 60;
+    const itemsHeight = viewAll?.length ? 388 : 365;
     if (catalogItems?.length > 0) {
-      height += 388 + (viewAll?.length - 1) * 23;
+      height += itemsHeight + (viewAll?.length - 1) * 23;
     }
     return height;
   };
@@ -175,6 +181,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
         onSearch={onSearch}
         showNoResults={catalogItems?.length === 0}
         itemsLoaded={allCatalogItemsLoaded}
+        icon={icon}
         autoFocus
       />
       {catalogItems && selectedItem && (
@@ -187,6 +194,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           closeModal={closeModal}
           selectedItem={selectedItem}
           namespace={namespace}
+          limitItemCount={limitItemCount}
           onSelect={(itemId) => {
             setSelectedItemId(itemId);
             setSelectedItem(catalogItems?.find((item) => item.uid === itemId));

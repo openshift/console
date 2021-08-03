@@ -12,6 +12,8 @@ interface QuickSearchModalProps {
   searchCatalog: (searchTerm: string) => QuickSearchData;
   searchPlaceholder: string;
   viewContainer?: HTMLElement;
+  limitItemCount: number;
+  icon?: React.ReactNode;
 }
 
 const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
@@ -22,6 +24,8 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   searchPlaceholder,
   allCatalogItemsLoaded,
   viewContainer,
+  icon,
+  limitItemCount,
 }) => {
   const { t } = useTranslation();
 
@@ -42,6 +46,8 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         searchPlaceholder={searchPlaceholder}
         namespace={namespace}
         closeModal={closeModal}
+        limitItemCount={limitItemCount}
+        icon={icon}
       />
     </Modal>
   ) : null;

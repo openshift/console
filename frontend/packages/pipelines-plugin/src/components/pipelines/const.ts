@@ -4,7 +4,14 @@ export enum StartedByLabel {
 export enum StartedByAnnotation {
   user = 'pipeline.openshift.io/started-by',
 }
+export enum TektonTaskAnnotation {
+  minVersion = ' tekton.dev/pipelines.minVersion',
+  tags = 'tekton.dev/tags',
+}
 
+export enum TektonTaskLabel {
+  providerType = 'operator.tekton.dev/provider-type',
+}
 export enum TektonResourceLabel {
   pipeline = 'tekton.dev/pipeline',
   pipelinerun = 'tekton.dev/pipelineRun',

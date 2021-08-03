@@ -1,5 +1,6 @@
 import { EdgeModel, NodeModel } from '@patternfly/react-topology';
 import { PipelineKind, TaskKind, PipelineRunKind, PipelineTask } from '../../../types';
+import { TaskSearchCallback } from '../pipeline-builder/types';
 import { AddNodeDirection, NodeType } from './const';
 
 // Builder Callbacks
@@ -44,6 +45,7 @@ export type BuilderFinallyNodeData = {
   task: FinallyNodeTask & {
     finallyListTasks?: FinallyListTask[];
     addNewFinallyListNode?: () => void;
+    onTaskSearch: TaskSearchCallback;
   };
 };
 export type FinallyNodeModel = FinallyNodeData & {
@@ -64,6 +66,7 @@ export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
   namespaceTaskList: TaskKind[];
   onNewTask: NewTaskNodeCallback;
   onRemoveTask: RemoveListTaskCallback | null;
+  onTaskSearch: TaskSearchCallback;
 };
 export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
   error?: string;

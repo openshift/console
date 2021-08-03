@@ -57,6 +57,10 @@ export const pipelineBuilderPage = {
       .clear()
       .type(pipelineName);
   },
+  AddTask: (taskName: string = 'kn') => {
+    cy.get('input.odc-quick-search-bar__input').type(taskName);
+    cy.get('button.odc-quick-search-details__form-button').click();
+  },
   selectTask: (taskName: string = 'kn') => {
     cy.get('body').then(($body) => {
       if ($body.text().includes('Unable to locate any tasks.')) {
@@ -64,7 +68,7 @@ export const pipelineBuilderPage = {
       }
     });
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
-    cy.byTestActionID(taskName).click({ force: true });
+    pipelineBuilderPage.AddTask(taskName);
   },
   clickOnTask: (taskName: string) => cy.get(`[data-id="${taskName}"] text`).click({ force: true }),
   selectParallelTask: (taskName: string) => {
@@ -73,7 +77,7 @@ export const pipelineBuilderPage = {
       .eq(2)
       .click({ force: true });
     cy.get(pipelineBuilderPO.formView.parallelTask).click();
-    cy.byTestActionID(taskName).click();
+    pipelineBuilderPage.AddTask(taskName);
   },
   selectSeriesTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
@@ -81,7 +85,7 @@ export const pipelineBuilderPage = {
       .first()
       .click({ force: true });
     cy.get(pipelineBuilderPO.formView.seriesTask).click();
-    cy.byTestActionID(taskName).click();
+    pipelineBuilderPage.AddTask(taskName);
   },
   clickOnAddWorkSpace: () => {
     cy.byButtonText('Add workspace').click();
@@ -212,6 +216,6 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.finallyTaskList).click({ force: true }),
   selectFinallyTask: (taskName: string) => {
     cy.get(pipelineBuilderPO.formView.finallyTaskList).click({ force: true });
-    cy.byTestActionID(taskName).click({ force: true });
+    pipelineBuilderPage.AddTask(taskName);
   },
 };
