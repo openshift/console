@@ -516,5 +516,6 @@
   "Add to Application": "アプリケーションに追加",
   "Add to Project": "プロジェクトに追加",
   "Image name from external registry": "外部レジストリーからのイメージ名",
-  "Image stream tag from internal registry": "内部レジストリーからのイメージストリームタグ"
+  "Image stream tag from internal registry": "内部レジストリーからのイメージストリームタグ",
+  "Inspect": "検査する"
 }

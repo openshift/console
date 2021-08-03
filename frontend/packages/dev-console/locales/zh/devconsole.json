@@ -516,5 +516,6 @@
   "Add to Application": "添加至应用程序",
   "Add to Project": "添加至项目",
   "Image name from external registry": "来自外部容器镜像仓库的镜像名称",
-  "Image stream tag from internal registry": "内部容器镜像仓库的镜像流标签"
+  "Image stream tag from internal registry": "内部容器镜像仓库的镜像流标签",
+  "Inspect": "检查"
 }

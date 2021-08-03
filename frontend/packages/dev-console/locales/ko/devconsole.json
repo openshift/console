@@ -516,5 +516,6 @@
   "Add to Application": "애플리케이션에 추가",
   "Add to Project": "프로젝트에 추가",
   "Image name from external registry": "외부 레지스트리의 이미지 이름",
-  "Image stream tag from internal registry": "내부 레지스트리의 이미지 스트림 태그"
+  "Image stream tag from internal registry": "내부 레지스트리의 이미지 스트림 태그",
+  "Inspect": "검사 하 다"
 }
