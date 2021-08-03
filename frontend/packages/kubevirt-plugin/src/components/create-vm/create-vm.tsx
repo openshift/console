@@ -47,7 +47,6 @@ import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
 import { BootSource } from './tabs/boot-source';
 import { ReviewAndCreate } from './tabs/review-create';
 import { SelectTemplate } from './tabs/select-template';
-
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
 
@@ -183,7 +182,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     isList: true,
   });
 
-  const [V2VConfigMapImages, V2VConfigMapImagesLoaded, V2VConfigMapImagesError] = useV2VConfigMap();
+  const [V2VConfigMapImages, V2VConfigMapImagesLoaded] = useV2VConfigMap();
 
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const {
@@ -199,7 +198,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
   const loaded = resourcesLoaded && projectsLoaded && scLoaded && V2VConfigMapImagesLoaded;
-  const loadError = resourcesLoadError || projectsError || scError || V2VConfigMapImagesError;
+  const loadError = resourcesLoadError || projectsError || scError;
 
   const sourceStatus =
     selectedTemplate &&
