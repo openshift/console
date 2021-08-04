@@ -1,24 +1,7 @@
-export const getHelmTopologyDataModel = () =>
-  import('./helm-data-transformer' /* webpackChunkName: "helm-topology-components" */).then((m) =>
-    m.getHelmTopologyDataModel(),
-  );
+import { getHelmTopologyDataModel as getTopologyDataModel } from './helm-data-transformer';
 
-export const getHelmComponentFactory = () =>
-  import(
-    './components/helmComponentFactory' /* webpackChunkName: "helm-topology-components" */
-  ).then((m) => m.getHelmComponentFactory);
+export { getHelmComponentFactory } from './components/helmComponentFactory';
+export { isHelmResourceInModel } from './isHelmResource';
+export { getTopologyFilters, applyHelmDisplayOptions } from './helmFilters';
 
-export const getIsHelmResource = () =>
-  import('./isHelmResource' /* webpackChunkName: "helm-topology-components" */).then(
-    (m) => m.isHelmResourceInModel,
-  );
-
-export const getTopologyFilters = () =>
-  import('./helmFilters' /* webpackChunkName: "helm-topology-components" */).then(
-    (m) => m.getTopologyFilters,
-  );
-
-export const applyDisplayOptions = () =>
-  import('./helmFilters' /* webpackChunkName: "helm-topology-components" */).then((m) =>
-    m.applyDisplayOptions(),
-  );
+export const getHelmTopologyDataModel = getTopologyDataModel();

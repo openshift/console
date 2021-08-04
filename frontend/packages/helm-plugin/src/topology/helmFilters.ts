@@ -33,5 +33,3 @@ export const applyHelmDisplayOptions = (model: Model, filters: DisplayFilters): 
   });
   return appliedFilters;
 };
-
-export const applyDisplayOptions = () => applyHelmDisplayOptions;
