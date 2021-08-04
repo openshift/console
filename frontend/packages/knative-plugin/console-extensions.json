@@ -171,7 +171,21 @@
         "version": "v1",
         "kind": "Deployment"
       },
-      "provider": { "$codeRef": "actions.useKnativeDeploymentActionsProvider" }
+      "provider": { "$codeRef": "actions.useMakeServerlessActionProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_SERVING_SERVICE"]
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "actions.useMakeServerlessActionProvider" }
     },
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE"]

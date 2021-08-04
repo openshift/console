@@ -3,8 +3,21 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { Status } from '@console/shared';
-import { getJobTypeAndCompletions, K8sKind, JobKind, K8sResourceKind } from '../module/k8s';
+import {
+  Status,
+  ActionServiceProvider,
+  ActionMenu,
+  LazyActionMenu,
+  ActionMenuVariant,
+} from '@console/shared';
+import {
+  getJobTypeAndCompletions,
+  K8sKind,
+  JobKind,
+  K8sResourceKind,
+  referenceForModel,
+  referenceFor,
+} from '../module/k8s';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { configureJobParallelismModal } from './modals';
@@ -15,7 +28,6 @@ import {
   KebabAction,
   LabelList,
   PodsComponent,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -60,6 +72,8 @@ const tableColumnClasses = [
 
 const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
   const { type, completions } = getJobTypeAndCompletions(job);
+  const resourceKind = referenceFor(job);
+  const context = { [resourceKind]: job };
   return (
     <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -81,7 +95,7 @@ const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind="Job" resource={job} />
+        <LazyActionMenu context={context} />
       </TableData>
     </TableRow>
   );
@@ -172,6 +186,19 @@ const JobPods: React.FC<JobPodsProps> = (props) => (
 
 const { details, pods, editYaml, events } = navFactory;
 const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
   return (
     <DetailsPage
       {...props}
@@ -179,7 +206,7 @@ const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => {
         job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null
       }
       kind={kind}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[details(JobDetails), editYaml(), pods(JobPods), events(ResourceEventStream)]}
     />
   );

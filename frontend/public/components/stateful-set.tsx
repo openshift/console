@@ -2,7 +2,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { K8sResourceKind } from '../module/k8s';
+import {
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+  LazyActionMenu,
+} from '@console/shared';
+import { K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 
@@ -35,13 +41,16 @@ export const menuActions: KebabAction[] = [
 const kind = 'StatefulSet';
 
 const StatefulSetTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
+  const customActionMenu = <LazyActionMenu context={context} />;
   return (
     <WorkloadTableRow
       obj={obj}
       index={index}
       rowKey={key}
       style={style}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       kind={kind}
     />
   );
@@ -124,9 +133,22 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (props) => (
-  <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={pages} />
-);
+export const StatefulSetsDetailsPage: React.FC<StatefulSetsDetailsPageProps> = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+  return <DetailsPage {...props} kind={kind} customActionMenu={customActionMenu} pages={pages} />;
+};
 
 type EnvironmentPageProps = {
   obj: K8sResourceKind;

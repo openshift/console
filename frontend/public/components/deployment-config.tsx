@@ -1,10 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
-import { Status, useCsvWatchResource } from '@console/shared';
+import {
+  Status,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+  LazyActionMenu,
+} from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
@@ -15,8 +17,14 @@ import {
   EditHorizontalPodAutoScaler,
   hideActionForHPAs,
 } from '@console/app/src/actions/modify-hpa';
-import { getActiveNamespace } from '@console/internal/reducers/ui';
-import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import {
+  k8sCreate,
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceForModel,
+  referenceFor,
+} from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
@@ -290,15 +298,25 @@ const pages = [
 export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPageProps> = (
   props,
 ) => {
-  const ns = useSelector((state: RootState) => getActiveNamespace(state));
-  const { csvData } = useCsvWatchResource(ns);
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
   return (
     <DetailsPage
       {...props}
       kind={DeploymentConfigsReference}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={pages}
-      customData={{ csvs: csvData }}
     />
   );
 };
@@ -307,13 +325,16 @@ DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 const kind = 'DeploymentConfig';
 
 const DeploymentConfigTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+  const resourceKind = referenceFor(obj);
+  const context = { [resourceKind]: obj };
+  const customActionMenu = <LazyActionMenu context={context} />;
   return (
     <WorkloadTableRow
       obj={obj}
       index={index}
       rowKey={key}
       style={style}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       kind={kind}
     />
   );
@@ -339,13 +360,11 @@ export const DeploymentConfigsList: React.FC = (props) => {
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => {
-  const { csvData } = useCsvWatchResource(props.namespace);
   return (
     <ListPage
       kind={DeploymentConfigsReference}
       ListComponent={DeploymentConfigsList}
       canCreate={true}
-      customData={{ csvs: csvData }}
       {...props}
     />
   );

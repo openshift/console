@@ -3,7 +3,13 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { getPodsForResource } from '@console/shared';
+import {
+  getPodsForResource,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+  LazyActionMenu,
+} from '@console/shared';
 import {
   DetailsPage,
   ListPage,
@@ -13,13 +19,18 @@ import {
   RowFunction,
   ListPageWrapper,
 } from './factory';
-import { CronJobKind, K8sResourceCommon, K8sResourceKind } from '../module/k8s';
+import {
+  CronJobKind,
+  K8sResourceCommon,
+  K8sResourceKind,
+  referenceForModel,
+  referenceFor,
+} from '../module/k8s';
 import {
   ContainerTable,
   DetailsItem,
   Firehose,
   Kebab,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -47,6 +58,8 @@ const tableColumnClasses = [
 ];
 
 const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, style }) => {
+  const resourceKind = referenceFor(cronjob);
+  const context = { [resourceKind]: cronjob };
   return (
     <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -70,7 +83,7 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
         {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={cronjob} />
+        <LazyActionMenu context={context} />
       </TableData>
     </TableRow>
   );
@@ -281,20 +294,35 @@ export const CronJobsPage: React.FC<CronJobsPageProps> = (props) => (
   <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />
 );
 
-export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={kind}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(CronJobDetails),
-      navFactory.editYaml(),
-      navFactory.pods(CronJobPodsComponent),
-      navFactory.jobs(CronJobJobsComponent),
-      navFactory.events(ResourceEventStream),
-    ]}
-  />
-);
+export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+  return (
+    <DetailsPage
+      {...props}
+      kind={kind}
+      customActionMenu={customActionMenu}
+      pages={[
+        navFactory.details(CronJobDetails),
+        navFactory.editYaml(),
+        navFactory.pods(CronJobPodsComponent),
+        navFactory.jobs(CronJobJobsComponent),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 
 type CronJobDetailsProps = {
   obj: CronJobKind;

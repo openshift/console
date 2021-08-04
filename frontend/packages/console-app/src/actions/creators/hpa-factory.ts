@@ -1,5 +1,7 @@
+import * as React from 'react';
 import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
+import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import {
   K8sResourceKind,
@@ -8,7 +10,17 @@ import {
   K8sResourceCommon,
   HorizontalPodAutoscalerKind,
 } from '@console/internal/module/k8s';
-import { deleteHPAModal } from '@console/shared';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
+import {
+  deleteHPAModal,
+  isHelmResource,
+  isOperatorBackedService,
+  useActiveNamespace,
+} from '@console/shared';
+import { doesHpaMatch } from '@console/shared/src/utils/hpa-utils';
 import { ResourceActionFactory } from './common-factory';
 
 const hpaRoute = ({ metadata: { name, namespace } }: K8sResourceCommon, kind: K8sKind) =>
@@ -73,4 +85,47 @@ export const getHpaActions = (
     HpaActionFactory.EditHorizontalPodAutoScaler(kind, obj),
     HpaActionFactory.DeleteHorizontalPodAutoScaler(kind, obj, relatedHPAs[0]),
   ];
+};
+
+type DeploymentActionExtraResources = {
+  hpas: HorizontalPodAutoscalerKind[];
+  csvs: ClusterServiceVersionKind[];
+};
+
+export const useHPAActions = (kindObj: K8sKind, resource: K8sResourceKind) => {
+  const [namespace] = useActiveNamespace();
+  const watchedResources = React.useMemo(
+    () => ({
+      hpas: {
+        isList: true,
+        kind: HorizontalPodAutoscalerModel.kind,
+        namespace,
+        optional: true,
+      },
+      csvs: {
+        isList: true,
+        kind: referenceForModel(ClusterServiceVersionModel),
+        namespace,
+        optional: true,
+      },
+    }),
+    [namespace],
+  );
+  const extraResources = useK8sWatchResources<DeploymentActionExtraResources>(watchedResources);
+  const relatedHPAs = React.useMemo(() => extraResources.hpas.data.filter(doesHpaMatch(resource)), [
+    extraResources.hpas.data,
+    resource,
+  ]);
+
+  const supportsHPA = React.useMemo(
+    () =>
+      !(isHelmResource(resource) || isOperatorBackedService(resource, extraResources.csvs.data)),
+    [extraResources.csvs.data, resource],
+  );
+
+  const result = React.useMemo(() => {
+    return [supportsHPA ? getHpaActions(kindObj, resource, relatedHPAs) : [], relatedHPAs];
+  }, [kindObj, relatedHPAs, resource, supportsHPA]);
+
+  return result;
 };

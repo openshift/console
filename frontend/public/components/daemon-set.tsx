@@ -4,8 +4,15 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
-import { usePodsWatcher, PodRing } from '@console/shared';
-import { K8sResourceKind } from '../module/k8s';
+import {
+  usePodsWatcher,
+  PodRing,
+  LazyActionMenu,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+} from '@console/shared';
+import { K8sResourceKind, referenceFor, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   AsyncComponent,
@@ -17,7 +24,6 @@ import {
   LabelList,
   navFactory,
   PodsComponent,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
@@ -171,6 +177,8 @@ export const DaemonSets: React.FC = (props) => {
     key,
     style,
   }) => {
+    const resourceKind = referenceFor(daemonset);
+    const context = { [resourceKind]: daemonset };
     return (
       <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={tableColumnClasses[0]}>
@@ -204,7 +212,7 @@ export const DaemonSets: React.FC = (props) => {
           <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[5]}>
-          <ResourceKebab actions={menuActions} kind={kind} resource={daemonset} />
+          <LazyActionMenu context={context} />
         </TableData>
       </TableRow>
     );
@@ -229,21 +237,36 @@ const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
   <PodsComponent {...props} customData={{ showNodes: true }} />
 );
 
-export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    kind={kind}
-    menuActions={menuActions}
-    pages={[
-      details(detailsPage(DaemonSetDetails)),
-      metrics(),
-      editYaml(),
-      pods(DaemonSetPods),
-      envEditor(EnvironmentTab),
-      events(ResourceEventStream),
-    ]}
-  />
-);
+export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
+  return (
+    <DetailsPage
+      {...props}
+      kind={kind}
+      customActionMenu={customActionMenu}
+      pages={[
+        details(detailsPage(DaemonSetDetails)),
+        metrics(),
+        editYaml(),
+        pods(DaemonSetPods),
+        envEditor(EnvironmentTab),
+        events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 
 type DaemonSetDetailsListProps = {
   ds: K8sResourceKind;
