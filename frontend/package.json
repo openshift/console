@@ -199,7 +199,6 @@
     "umd-compat-loader": "2.1.1",
     "url-polyfill": "^1.1.5",
     "url-search-params-polyfill": "2.x",
-    "victory-core": "^35.3.5",
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^4.10.0",
