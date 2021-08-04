@@ -8,7 +8,8 @@ import { perspective, projectNameSpace, navigateTo } from '../../pages';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  cy.testA11y('Developer perspective with guide tour modal');
+  // Due to bug ODC-6231
+  // cy.testA11y('Developer perspective with guide tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Commenting below line, because it is executing on every test scenario - we will remove this in future releases
