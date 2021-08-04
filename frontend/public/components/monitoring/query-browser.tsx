@@ -176,14 +176,18 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
   const isOnLeft = x > (width - 40) / 2;
 
   const allSeries = activePoints
-    .map((point, i) => ({
-      color: style[i]?.fill,
-      name: style[i]?.name,
-      total: point._y1 ?? point.y,
-      value: valueFormatter(style[i]?.units)(point.y),
-    }))
-    // For stacked graphs, this filters out data series that have no data for this timestamp
-    .filter(({ value }) => value !== null)
+    .flatMap((point, i) =>
+      point.y === null
+        ? []
+        : [
+            {
+              color: style[i]?.fill,
+              name: style[i]?.name,
+              total: point._y1 ?? point.y,
+              value: valueFormatter(style[i]?.units)(point.y),
+            },
+          ],
+    )
     .sort((a, b) => b.total - a.total)
     .slice(0, TOOLTIP_MAX_ENTRIES);
 
