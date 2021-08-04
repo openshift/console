@@ -14,9 +14,13 @@ import { useMonitoringAlerts } from './useMonitoringAlerts';
 
 type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;
+  dynamicResources?: WatchK8sResources<any>;
 };
 
-const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficData }) => {
+const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({
+  trafficData,
+  dynamicResources,
+}) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const { namespace } = dataModelContext;
   const filters = useDisplayFilters();
@@ -30,7 +34,10 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
 
   const debouncedUpdateResources = useDebounceCallback(setResources, 250);
 
-  const updatedResources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
+  const updatedResources = useK8sWatchResources<TopologyResourcesObject>({
+    ...resourcesList,
+    ...dynamicResources,
+  });
   React.useEffect(() => debouncedUpdateResources(updatedResources), [
     debouncedUpdateResources,
     updatedResources,

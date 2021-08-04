@@ -1,11 +1,18 @@
+import * as React from 'react';
 import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
-import { K8sResourceKind, apiVersionForModel } from '@console/internal/module/k8s';
+import { ExtensionHook, WatchK8sResources } from '@console/dynamic-plugin-sdk';
+import {
+  K8sResourceKind,
+  apiVersionForModel,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager/src/types';
 import {
   getDefaultOperatorIcon,
   getImageForCSVIcon,
   getOperatorBackedServiceKindMap,
   OverviewItem,
+  useActiveNamespace,
 } from '@console/shared/src';
 import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
@@ -126,4 +133,25 @@ export const getRhoasTopologyDataModel = (
     });
   }
   return Promise.resolve(rhoasDataModel);
+};
+
+export const useResources: ExtensionHook<WatchK8sResources<any>> = () => {
+  const [namespace] = useActiveNamespace();
+  const resources = React.useMemo<[WatchK8sResources<any>, boolean, any]>(
+    () => [
+      {
+        kafkaConnections: {
+          isList: true,
+          kind: referenceForModel(KafkaConnectionModel),
+          namespace,
+          optional: true,
+        },
+      },
+      true,
+      undefined,
+    ],
+    [namespace],
+  );
+
+  return resources;
 };

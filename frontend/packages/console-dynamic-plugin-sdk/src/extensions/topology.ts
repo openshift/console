@@ -1,3 +1,4 @@
+import { ExtensionHook } from '../api/common-types';
 import {
   CreateConnectionGetter,
   RelationshipProviderCreate,
@@ -12,7 +13,7 @@ import {
   ViewComponentFactory,
 } from '../api/topology-types';
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
-import { WatchK8sResourcesGeneric } from './console-types';
+import { WatchK8sResources } from './console-types';
 
 /** Getter for a ViewComponentFactory */
 export type TopologyComponentFactory = ExtensionDeclaration<
@@ -40,8 +41,8 @@ export type TopologyDataModelFactory = ExtensionDeclaration<
     id: string;
     /** Priority for the factory */
     priority: number;
-    /** Resources to be fetched from useK8sWatchResources hook. */
-    resources?: WatchK8sResourcesGeneric;
+    /** React hook that returns resources to watch with useK8sWatchResources */
+    resources?: CodeRef<ExtensionHook<WatchK8sResources<any>>>;
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */

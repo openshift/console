@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  isTopologyDataModelFactory as isDynamicTopologyDataModelFactory,
-  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
-} from '@console/dynamic-plugin-sdk';
+import { FirehoseResource } from '@console/dynamic-plugin-sdk';
 import { Firehose } from '@console/internal/components/utils';
 import { useExtensions } from '@console/plugin-sdk/src';
 import { ResourceDropdown } from '@console/shared';
-import { getNamespacedDynamicModelFactories } from '../../data-transforms/DataModelProvider';
+import { DynamicWatchResourcesLoader } from '../../data-transforms/DataModelProvider';
 import { getBaseWatchedResources } from '../../data-transforms/transform-utils';
 import { isTopologyDataModelFactory, TopologyDataModelFactory } from '../../extensions';
 
@@ -46,18 +43,10 @@ interface ApplicationDropdownProps {
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
   const { t } = useTranslation();
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
-  const dynamicModelFactories = useExtensions<DynamicTopologyDataModelFactory>(
-    isDynamicTopologyDataModelFactory,
-  );
 
-  const namespacedDynamicFactories = React.useMemo(
-    () => getNamespacedDynamicModelFactories(dynamicModelFactories),
-    [dynamicModelFactories],
-  );
-
-  const resources = React.useMemo(() => {
+  const resources: FirehoseResource[] = React.useMemo(() => {
     let watchedBaseResources = getBaseWatchedResources(namespace);
-    [...modelFactories, ...namespacedDynamicFactories].forEach((modelFactory) => {
+    modelFactories.forEach((modelFactory) => {
       const factoryResources = modelFactory.properties.resources?.(namespace);
       if (factoryResources) {
         watchedBaseResources = {
@@ -70,16 +59,30 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
       ...watchedBaseResources[key],
       prop: key,
     }));
-  }, [namespacedDynamicFactories, modelFactories, namespace]);
+  }, [modelFactories, namespace]);
 
   return (
-    <Firehose resources={resources}>
-      <ResourceDropdown
-        {...props}
-        placeholder={t('topology~Select an Application')}
-        dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
-      />
-    </Firehose>
+    <DynamicWatchResourcesLoader>
+      {(dynamicResources, loaded) => (
+        <Firehose
+          resources={[
+            ...resources,
+            ...(loaded
+              ? Object.keys(dynamicResources).map((key) => ({
+                  ...dynamicResources[key],
+                  prop: key,
+                }))
+              : []),
+          ]}
+        >
+          <ResourceDropdown
+            {...props}
+            placeholder={t('topology~Select an Application')}
+            dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
+          />
+        </Firehose>
+      )}
+    </DynamicWatchResourcesLoader>
   );
 };
 

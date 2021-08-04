@@ -182,7 +182,7 @@
       "id": "helm-topology-model-factory",
       "priority": 400,
       "resources": {
-        "secrets": { "opts": { "isList": true, "kind": "Secret", "optional": true } }
+        "$codeRef": "helmTopology.useResources"
       },
       "getDataModel": { "$codeRef": "helmTopology.getHelmTopologyDataModel" },
       "isResourceDepicted": { "$codeRef": "helmTopology.isHelmResourceInModel" }

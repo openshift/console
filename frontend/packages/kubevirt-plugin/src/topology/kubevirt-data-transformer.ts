@@ -1,12 +1,16 @@
+import * as React from 'react';
 import { Model } from '@patternfly/react-topology';
+import { ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { TemplateModel } from '@console/internal/models';
 import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
   PodKind,
   referenceFor,
+  WatchK8sResources,
 } from '@console/internal/module/k8s';
-import { OverviewItem } from '@console/shared';
+import { OverviewItem, useActiveNamespace } from '@console/shared';
 import {
   getTopologyGroupItems,
   getTopologyNodeItem,
@@ -14,8 +18,11 @@ import {
   WorkloadModelProps,
 } from '@console/topology/src/data-transforms/transform-utils';
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
-import { VirtualMachineModel } from '../models';
-import { getKubevirtModelAvailableAPIVersion } from '../models/kubevirtReferenceForModel';
+import * as models from '../models';
+import {
+  getKubevirtModelAvailableAPIVersion,
+  kubevirtReferenceForModel,
+} from '../models/kubevirtReferenceForModel';
 import { getVMStatus } from '../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
@@ -35,10 +42,10 @@ export const getOperatingSystemImage = (vm: VMKind, templates: K8sResourceKind[]
 
 export const createVMOverviewItem = (vm: K8sResourceKind): OverviewItem => {
   if (!vm.apiVersion) {
-    vm.apiVersion = getKubevirtModelAvailableAPIVersion(VirtualMachineModel);
+    vm.apiVersion = getKubevirtModelAvailableAPIVersion(models.VirtualMachineModel);
   }
   if (!vm.kind) {
-    vm.kind = VirtualMachineModel.kind;
+    vm.kind = models.VirtualMachineModel.kind;
   }
 
   return {
@@ -108,4 +115,61 @@ export const getKubevirtTopologyDataModel = (
   }
 
   return Promise.resolve(vmsDataModel);
+};
+
+export const useKubevirtResources: ExtensionHook<WatchK8sResources<any>> = () => {
+  const [namespace] = useActiveNamespace();
+  const resources = React.useMemo<[WatchK8sResources<any>, boolean, any]>(
+    () => [
+      {
+        virtualmachines: {
+          isList: true,
+          kind: kubevirtReferenceForModel(models.VirtualMachineModel),
+          namespace,
+          optional: true,
+        },
+        virtualmachineinstances: {
+          isList: true,
+          kind: kubevirtReferenceForModel(models.VirtualMachineInstanceModel),
+          namespace,
+          optional: true,
+        },
+        virtualmachinetemplates: {
+          isList: true,
+          kind: TemplateModel.kind,
+          selector: {
+            matchLabels: { 'template.kubevirt.io/type': 'base' },
+          },
+          optional: true,
+        },
+        migrations: {
+          isList: true,
+          kind: kubevirtReferenceForModel(models.VirtualMachineInstanceMigrationModel),
+          namespace,
+          optional: true,
+        },
+        dataVolumes: {
+          isList: true,
+          optional: true,
+          kind: kubevirtReferenceForModel(models.DataVolumeModel),
+        },
+        vmImports: {
+          isList: true,
+          optional: true,
+          kind: kubevirtReferenceForModel(models.VirtualMachineImportModel),
+        },
+        pods: {
+          isList: true,
+          kind: 'Pod',
+          namespace,
+          optional: true,
+        },
+      },
+      true,
+      undefined,
+    ],
+    [namespace],
+  );
+
+  return resources;
 };

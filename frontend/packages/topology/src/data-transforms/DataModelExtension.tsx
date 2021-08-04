@@ -1,15 +1,23 @@
 import * as React from 'react';
+import {
+  ResolvedExtension,
+  TopologyDataModelFactory as DynamicTopologyDataModelFactory,
+  WatchK8sResources,
+} from '@console/dynamic-plugin-sdk';
 import { useDeepCompareMemoize } from '@console/shared';
 import { TopologyDataModelFactory } from '../extensions/topology';
 import { ModelContext, ExtensibleModel, ModelExtensionContext } from './ModelContext';
 
 interface DataModelExtensionProps {
-  dataModelFactory: TopologyDataModelFactory['properties'];
+  dataModelFactory: ResolvedExtension<
+    TopologyDataModelFactory | DynamicTopologyDataModelFactory
+  >['properties'];
 }
 
 const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { id, priority, resources } = dataModelFactory;
+  const { id, priority } = dataModelFactory;
+  const resources = dataModelFactory.resources as (namespace: string) => WatchK8sResources<any>;
   const workloadKeys = useDeepCompareMemoize(dataModelFactory.workloadKeys);
   const extensionContext = React.useRef<ModelExtensionContext>({
     priority,
@@ -29,45 +37,24 @@ const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactor
 
       const { getDataModel, isResourceDepicted, getDataModelReconciler } = dataModelFactory;
       if (getDataModel) {
-        getDataModel()
-          .then((getter) => {
-            extensionContext.current.dataModelGetter = getter;
-            dataModelContext.updateExtension(id, extensionContext.current);
-          })
-          .catch(() => {
-            extensionContext.current.dataModelGetter = () => Promise.resolve({});
-            dataModelContext.updateExtension(id, extensionContext.current);
-          });
+        extensionContext.current.dataModelGetter = getDataModel;
+        dataModelContext.updateExtension(id, extensionContext.current);
       } else {
         extensionContext.current.dataModelGetter = () => Promise.resolve({});
         dataModelContext.updateExtension(id, extensionContext.current);
       }
 
       if (isResourceDepicted) {
-        isResourceDepicted()
-          .then((depicter) => {
-            extensionContext.current.dataModelDepicter = depicter;
-            dataModelContext.updateExtension(id, extensionContext.current);
-          })
-          .catch(() => {
-            extensionContext.current.dataModelDepicter = () => false;
-            dataModelContext.updateExtension(id, extensionContext.current);
-          });
+        extensionContext.current.dataModelDepicter = isResourceDepicted;
+        dataModelContext.updateExtension(id, extensionContext.current);
       } else {
         extensionContext.current.dataModelDepicter = () => false;
         dataModelContext.updateExtension(id, extensionContext.current);
       }
 
       if (getDataModelReconciler) {
-        getDataModelReconciler()
-          .then((reconciler) => {
-            extensionContext.current.dataModelReconciler = reconciler;
-            dataModelContext.updateExtension(id, extensionContext.current);
-          })
-          .catch(() => {
-            extensionContext.current.dataModelReconciler = () => {};
-            dataModelContext.updateExtension(id, extensionContext.current);
-          });
+        extensionContext.current.dataModelReconciler = getDataModelReconciler;
+        dataModelContext.updateExtension(id, extensionContext.current);
       } else {
         extensionContext.current.dataModelReconciler = () => {};
         dataModelContext.updateExtension(id, extensionContext.current);

@@ -1,4 +1,4 @@
-import { ExtensionK8sGroupKindModel, PrometheusLabels, PrometheusValue } from '../api/common-types';
+import { PrometheusLabels, PrometheusValue } from '../api/common-types';
 
 export type OwnerReference = {
   name: string;
@@ -171,13 +171,6 @@ export type WatchK8sResults<R extends ResourcesObject> = {
 
 export type WatchK8sResources<R extends ResourcesObject> = {
   [k in keyof R]: WatchK8sResource;
-};
-
-export type WatchK8sResourcesGeneric = {
-  [key: string]: {
-    model?: ExtensionK8sGroupKindModel;
-    opts?: Partial<WatchK8sResource>;
-  };
 };
 
 export type FirehoseResource = {

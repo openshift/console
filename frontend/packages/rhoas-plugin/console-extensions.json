@@ -120,17 +120,7 @@
       "id": "rhoas-topology-model-factory",
       "priority": 400,
       "resources": {
-        "kafkaConnections": {
-          "model": {
-            "kind": "KafkaConnection",
-            "group": "rhoas.redhat.com",
-            "version": "v1alpha1"
-          },
-          "opts": {
-            "isList": true,
-            "optional": true
-          }
-        }
+        "$codeRef": "topology.useResources"
       },
       "workloadKeys": ["kafkaConnections"],
       "getDataModel": {

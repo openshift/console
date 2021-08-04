@@ -1,8 +1,14 @@
+import * as React from 'react';
 import { Model, NodeModel } from '@patternfly/react-topology';
+import { ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { SecretModel } from '@console/internal/models';
-import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { createOverviewItemForType, WORKLOAD_TYPES } from '@console/shared';
+import {
+  apiVersionForModel,
+  K8sResourceKind,
+  WatchK8sResources,
+} from '@console/internal/module/k8s';
+import { createOverviewItemForType, useActiveNamespace, WORKLOAD_TYPES } from '@console/shared';
 import {
   addToTopologyDataModel,
   createTopologyNodeData,
@@ -118,7 +124,7 @@ export const getHelmGraphModelFromMap = (
   const secrets = resources?.secrets?.data ?? [];
   WORKLOAD_TYPES.forEach((key) => {
     helmResources[key] = [];
-    if (resources[key]?.data && resources[key].data.length) {
+    if (resources[key]?.data?.length) {
       const typedDataModel: Model = {
         nodes: [],
         edges: [],
@@ -224,4 +230,18 @@ export const getHelmTopologyDataModel = () => {
 
     return Promise.resolve(getHelmGraphModelFromMap(helmResourcesMap, resources));
   };
+};
+
+export const useHelmResources: ExtensionHook<WatchK8sResources<any>> = () => {
+  const [namespace] = useActiveNamespace();
+  const resources = React.useMemo<[WatchK8sResources<any>, boolean, any]>(
+    () => [
+      { secrets: { isList: true, kind: 'Secret', namespace, optional: true } },
+      true,
+      undefined,
+    ],
+    [namespace],
+  );
+
+  return resources;
 };
