@@ -7,6 +7,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
+import useV2VConfigMap from '../../../../hooks/use-v2v-config-map';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
@@ -36,7 +37,6 @@ import { OS } from './os';
 import { ProvisionSourceComponent } from './provision-source';
 import { URLSource } from './url-source';
 import { WorkloadSelect } from './workload-profile';
-
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
 
@@ -56,6 +56,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   onFieldAttributeChange,
 }) => {
   const { t } = useTranslation();
+  useV2VConfigMap();
   const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
   const getFieldValue = React.useCallback(
     (key: VMSettingsField) => iGetIn(vmSettings, [key, 'value']),
