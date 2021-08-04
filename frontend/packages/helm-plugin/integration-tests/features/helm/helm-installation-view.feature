@@ -4,7 +4,7 @@ Feature: Helm Chart Installation View
 
 
         Background:
-            Given user has created or selected namespace "aut-helm-installation"
+            Given user has created or selected namespace "aut-helm"
 
 
         @regression

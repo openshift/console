@@ -3,7 +3,7 @@ Feature: Actions on Helm release in topology page
         User will be able to open the context menu and side bar for the helm releases
 
         Background:
-            Given user has created or selected namespace "aut-helm-topology"
+            Given user has created or selected namespace "aut-helm"
 
 
         @smoke

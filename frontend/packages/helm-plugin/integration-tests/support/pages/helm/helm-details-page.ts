@@ -1,5 +1,8 @@
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { helmActions } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
+
+const actions = [helmActions.upgrade, helmActions.rollback, helmActions.uninstallHelmRelease];
 
 export const helmDetailsPage = {
   verifyTitle: () => cy.byTestSectionHeading('Helm Release details').should('be.visible'),
@@ -9,11 +12,10 @@ export const helmDetailsPage = {
   verifyRevisionHistoryTab: () => cy.get(helmPO.revisionHistoryTab).should('be.visible'),
   clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
   verifyActionsInActionMenu: () => {
-    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
     cy.byLegacyTestID('action-items')
-      .children()
-      .each(($el) => {
-        expect(actions).toContain($el.text());
+      .find('li')
+      .each(($ele) => {
+        expect(actions).toContain($ele.text());
       });
   },
   verifyFieldValue: (fieldName: string, fieldValue: string) => {
