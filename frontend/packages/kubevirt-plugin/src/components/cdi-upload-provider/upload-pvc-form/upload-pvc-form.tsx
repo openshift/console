@@ -7,9 +7,10 @@ import {
   FileUpload,
   FormSelect,
   FormSelectOption,
-  SelectOption,
   Split,
   SplitItem,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 import axios from 'axios';
 import cx from 'classnames';
@@ -17,14 +18,14 @@ import { TFunction } from 'i18next';
 import { Helmet } from 'react-helmet';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
-import {
-  dropdownUnits,
-  getAccessModeForProvisioner,
-} from '@console/internal/components/storage/shared';
+import { AccessModeSelector } from '@console/app/src/components/access-modes/access-mode';
+import { VolumeModeSelector } from '@console/app/src/components/volume-modes/volume-mode';
+import { dropdownUnits, initialAccessModes } from '@console/internal/components/storage/shared';
 import {
   ButtonBar,
   ExternalLink,
   history,
+  LoadingInline,
   RequestSizeInput,
   ResourceLink,
   resourcePath,
@@ -35,6 +36,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
   PersistentVolumeClaimModel,
   StorageClassModel,
@@ -49,35 +51,27 @@ import {
   TemplateKind,
 } from '@console/internal/module/k8s';
 import {
-  AccessMode,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
-  VolumeMode,
 } from '../../../constants';
 import { LABEL_CDROM_SOURCE } from '../../../constants/vm/constants';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../../hooks/use-base-images';
+import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import {
   createUploadPVC,
   PVCInitError,
 } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { DataVolumeModel } from '../../../models';
 import { getKubevirtModelAvailableAPIVersion } from '../../../models/kubevirtReferenceForModel';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-  getDefaultStorageClass,
-  isConfigMapContainsScModes,
-} from '../../../selectors/config-map/sc-defaults';
+import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
 import { getDataVolumeStorageSize } from '../../../selectors/dv/selectors';
 import { getName, getNamespace, getParameterValue } from '../../../selectors/selectors';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { OperatingSystemRecord } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
-import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
-import { FormPFSelect } from '../../form/form-pf-select';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
 import { BinaryUnit, convertToBytes } from '../../form/size-unit-utils';
 import { CDIUploadContext } from '../cdi-upload-provider';
@@ -87,7 +81,6 @@ import {
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
 import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
-
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -141,7 +134,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const operatingSystemHaveDV = operatingSystems.find(
     (os) => os?.baseImageName && os?.baseImageNamespace,
   );
-  const [storageClassName, setStorageClass] = React.useState('');
+  const [storageClassName, setStorageClassName] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [namespace, setNamespace] = React.useState(props.namespace);
   const [accessMode, setAccessMode] = React.useState('');
@@ -156,26 +149,17 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
   const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
   const provisioner = updatedStorageClass?.provisioner || '';
-  let accessModes: string[] = getAccessModeForProvisioner(provisioner);
-
-  if (storageClasses?.length === 0 && scConfigMap) {
-    accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
-  }
-
-  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
-    return [
-      getDefaultSCAccessModes(scConfigMap, storageClassName)?.[0],
-      getDefaultSCVolumeMode(scConfigMap, storageClassName),
-      isConfigMapContainsScModes(scConfigMap, storageClassName),
-    ];
-  }, [scConfigMap, storageClassName]);
+  const [applySP, setApplySP] = React.useState<boolean>(true);
+  const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
+    storageClassName || defaultSCName,
+  );
 
   React.useEffect(() => {
     if (!storageClassName) {
       if (defaultSCName) {
-        setStorageClass(defaultSCName);
+        setStorageClassName(defaultSCName);
       } else {
-        setStorageClass(storageClasses?.[0]?.metadata?.name);
+        setStorageClassName(storageClasses?.[0]?.metadata?.name);
       }
     }
   }, [defaultSCName, storageClassName, storageClasses]);
@@ -190,17 +174,17 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   }, [fileValue, os]);
 
   React.useEffect(() => {
-    if (storageClassName) {
-      if (defaultAccessMode.getValue() !== accessMode) {
-        setAccessMode(defaultAccessMode.getValue());
+    if (storageClassName && spLoaded && applySP && isSPSettingProvided) {
+      if (spAccessMode.getValue() !== accessMode) {
+        setAccessMode(spAccessMode.getValue());
       }
 
-      if (defaultVolumeMode.getValue() !== volumeMode) {
-        setVolumeMode(defaultVolumeMode.getValue());
+      if (spVolumeMode.getValue() !== volumeMode) {
+        setVolumeMode(spVolumeMode.getValue());
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultAccessMode, defaultVolumeMode, storageClassName]);
+  }, [spLoaded, spAccessMode, spVolumeMode, storageClassName]);
 
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
@@ -480,25 +464,28 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
       <div className="form-group">
         <Split hasGutter>
           <SplitItem className="kv--create-upload__flexitem">
-            <label className="control-label co-required" htmlFor="upload-form-ds-sc-select">
-              {t('kubevirt-plugin~Storage Class')}
-            </label>
-            <FormPFSelect
-              value={storageClassName}
-              onSelect={(e, value: string) => setStorageClass(value)}
-              aria-label={t('kubevirt-plugin~Select Storage Class')}
-              selections={[storageClassName]}
-              isDisabled={isLoading}
-              toggleId="upload-form-ds-sc-select"
-            >
-              {storageClasses?.map((sc) => (
-                <SelectOption key={sc.metadata.uid} value={sc.metadata.name}>
-                  {defaultSCName === sc.metadata.name
-                    ? t('kubevirt-plugin~{{name}} (default)', { name: sc.metadata.name })
-                    : sc.metadata.name}
-                </SelectOption>
-              ))}
-            </FormPFSelect>
+            <Stack hasGutter>
+              <StackItem>
+                <StorageClassDropdown
+                  name={t('kubevirt-plugin~Storage Class')}
+                  onChange={(sc) => setStorageClassName(sc?.metadata?.name)}
+                  data-test="storage-class-dropdown"
+                />
+              </StackItem>
+              <StackItem>
+                <Checkbox
+                  id="apply-storage-provider"
+                  description={t(
+                    'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
+                  )}
+                  isChecked={applySP}
+                  onChange={() => setApplySP(!applySP)}
+                  isDisabled={!isSPSettingProvided}
+                  label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
+                  data-test="apply-storage-provider"
+                />
+              </StackItem>
+            </Stack>
           </SplitItem>
           <SplitItem className="kv--create-upload__flexitem">
             <label className="control-label co-required" htmlFor="request-size-input">
@@ -522,63 +509,36 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </SplitItem>
         </Split>
       </div>
-      <label className="control-label co-required" htmlFor="upload-form-ds-access-mode-select">
-        {t('kubevirt-plugin~Access Mode')}
-      </label>
-      <div className="form-group">
-        <FormPFSelect
-          aria-label={t('kubevirt-plugin~Select access mode')}
-          onSelect={(e, value: AccessMode) => setAccessMode(value.getValue())}
-          selections={AccessMode.fromString(accessMode)}
-          isDisabled={isLoading}
-          toggleId="upload-form-ds-access-mode-select"
-        >
-          {accessModes.map((am) => {
-            const aMode = AccessMode.fromString(am);
-            return (
-              <SelectOption key={aMode.getValue()} value={aMode}>
-                {aMode.toString().concat(
-                  aMode.getValue() !== defaultAccessMode.getValue() && isScModesKnown
-                    ? t(
-                        'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
-                        {
-                          storageClassName,
-                        },
-                      )
-                    : '',
-                )}
-              </SelectOption>
-            );
+      {!spLoaded ? (
+        <LoadingInline />
+      ) : applySP && isSPSettingProvided ? (
+        <div className="form-group" data-test="sp-default-settings">
+          {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
+            accessMode: spAccessMode?.getValue(),
+            volumeMode: spVolumeMode?.getValue(),
           })}
-        </FormPFSelect>
-      </div>
-      <label className="control-label co-required" htmlFor="upload-form-ds-volume-mode-select">
-        {t('kubevirt-plugin~Volume Mode')}
-      </label>
-      <div className="form-group">
-        <FormPFSelect
-          aria-label={t('kubevirt-plugin~Select volume mode')}
-          onSelect={(e, value: VolumeMode) => setVolumeMode(value.getValue())}
-          selections={VolumeMode.fromString(volumeMode)}
-          isDisabled={isLoading}
-          toggleId="upload-form-ds-volume-mode-select"
-        >
-          {VolumeMode.getAll().map((vm) => (
-            <SelectOption key={vm.getValue()} value={vm}>
-              {vm.toString().concat(
-                vm.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
-                  ? t('kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class', {
-                      storageClassName,
-                    })
-                  : '',
-              )}
-            </SelectOption>
-          ))}
-        </FormPFSelect>
-      </div>
-      <div className="form-group">
-        <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
-      </div>
+        </div>
+      ) : (
+        <div data-test="sp-no-default-settings">
+          <div className="form-group">
+            <AccessModeSelector
+              onChange={(aMode) => setAccessMode(aMode)}
+              provisioner={provisioner}
+              loaded
+              availableAccessModes={initialAccessModes}
+            />
+          </div>
+          <div className="form-group">
+            <VolumeModeSelector
+              onChange={(vMode) => setVolumeMode(vMode)}
+              provisioner={provisioner}
+              accessMode={accessMode}
+              storageClass={storageClassName}
+              loaded
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
