@@ -118,7 +118,6 @@ const Contents: React.FC<{
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       disableKeyboardOpen
-      limitItemCount={0}
       icon={<PlusCircleIcon width="1.5em" height="1.5em" />}
       detailsRenderer={(props) => <PipelineQuickSearchDetails {...props} />}
     />
