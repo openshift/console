@@ -8,6 +8,7 @@ import {
   ClusterServiceVersionStatus,
 } from '../types';
 import i18n from '@console/internal/i18n';
+import { upgradeRequiresApproval } from '../utils';
 
 const pedingPhases = [
   ClusterServiceVersionPhase.CSVPhasePending,
@@ -70,10 +71,15 @@ export const getSubscriptionStatus = (subscription: SubscriptionKind): Subscript
         title: i18n.t('olm~Upgrade available'),
       };
     case SubscriptionState.SubscriptionStateUpgradePending:
-      return {
-        status,
-        title: i18n.t('olm~Upgrading'),
-      };
+      return upgradeRequiresApproval(subscription)
+        ? {
+            status: SubscriptionState.SubscriptionStateUpgradeAvailable,
+            title: i18n.t('olm~Upgrade available'),
+          }
+        : {
+            status,
+            title: i18n.t('olm~Upgrading'),
+          };
     case SubscriptionState.SubscriptionStateAtLatest:
       return {
         status,
