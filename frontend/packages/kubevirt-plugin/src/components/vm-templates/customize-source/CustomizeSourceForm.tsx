@@ -41,6 +41,7 @@ import {
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants/vm/constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
+import useV2VConfigMap from '../../../hooks/use-v2v-config-map';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
@@ -75,6 +76,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     { name, namespace, cloudInit, injectCloudInit, selectedTemplate, size, provider, support },
     formDispatch,
   ] = React.useReducer(formReducer, initFormState(urlParams.get('ns')));
+  const [V2VConfigMapImages, V2VConfigMapImagesLoaded] = useV2VConfigMap();
 
   const [templates, loaded, loadError] = useK8sWatchResource<TemplateKind[]>({
     kind: TemplateModel.kind,
@@ -225,6 +227,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
         template?.isCommon ? baseImages : pvcs,
         provider,
         support,
+        V2VConfigMapImages,
       );
       const vmParams = new URLSearchParams();
       vmParams.append('vm', vm.metadata.name);
@@ -257,7 +260,13 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
         <Divider component="div" />
         <GridItem span={6} className="kv-customize-source">
           <StatusBox
-            loaded={loaded && imagesLoaded && pvcsLoaded && loadvmWithCutomBootSource}
+            loaded={
+              loaded &&
+              imagesLoaded &&
+              pvcsLoaded &&
+              loadvmWithCutomBootSource &&
+              V2VConfigMapImagesLoaded
+            }
             loadError={loadError || error || pvcsError || vmWithCustomBootSourceError}
             data={selectedTemplate}
           >
