@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { TFunction } from 'i18next';
 import { Kebab, ResourceKebab } from '@console/internal/components/utils';
 import {
   RowFunction,
@@ -15,49 +16,60 @@ import {
   referenceForModel,
   FirehoseResourcesResult,
 } from '@console/internal/module/k8s';
-import { StatusIcon } from '@console/shared';
-import { sortable } from '@patternfly/react-table';
+import { Status } from '@console/shared';
+import { sortable, wrappable } from '@patternfly/react-table';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { ColumnLayout } from '@console/internal/components/modals/column-management-modal';
 import ODFSystemLink from './system-link';
-import { getGVK, SystemMetrics, normalizeMetrics } from './utils';
+import { getGVK, normalizeMetrics } from './utils';
 import { getActions } from './actions';
 import { StorageSystemModel } from '../../models';
 import { StorageSystemKind } from '../../types';
 import { ODF_QUERIES, ODFQueries } from '../../queries';
+import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 
 const tableColumnClasses = [
-  'pf-u-w-25-on-xl',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-md',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
-  'pf-m-hidden pf-m-visible-on-lg pf-u-w-10-on-xl',
+  'pf-u-w-15-on-xl',
+  'pf-m-hidden pf-m-visible-on-md pf-u-w-12-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-12-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-12-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-12-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-12-on-xl',
+  'pf-m-hidden pf-m-visible-on-lg pf-u-w-12-on-xl',
   Kebab.columnClass,
 ];
 
-const SystemTableRow: RowFunction<StorageSystemKind> = ({ obj, index, key, style, customData }) => {
-  const { t } = useTranslation();
-  const { apiGroup, apiVersion, kind } = getGVK(obj.spec.kind);
+type CustomData = {
+  normalizedMetrics: ReturnType<typeof normalizeMetrics>;
+  t: TFunction;
+};
+
+const SystemTableRow: RowFunction<StorageSystemKind, CustomData> = ({
+  obj,
+  index,
+  key,
+  style,
+  customData,
+}) => {
+  const { apiGroup, apiVersion, kind } = getGVK(obj?.spec?.kind);
   const systemKind = referenceForGroupVersionKind(apiGroup)(apiVersion)(kind);
-  const systemName = obj.spec.name;
+  const providerName = obj?.spec?.name;
+  const systemName = obj?.metadata?.name;
+  const { normalizedMetrics, t } = customData;
 
   const { rawCapacity, usedCapacity, iops, throughput, latency } =
-    (customData as SystemMetrics)?.metrics?.[systemName] || {};
+    normalizedMetrics?.[systemName] || {};
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ODFSystemLink kind={systemKind} name={systemName} />
+        <ODFSystemLink kind={systemKind} systemName={systemName} providerName={providerName} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <span>
-          <StatusIcon status={obj?.status?.phase} /> {obj?.status?.phase}
-        </span>
+        <Status status={obj?.metadata?.deletionTimestamp ? 'Terminating' : obj?.status?.phase} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{rawCapacity?.string || '-'}</TableData>
       <TableData className={tableColumnClasses[3]}>{usedCapacity?.string || '-'}</TableData>
@@ -83,27 +95,32 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
       {
         title: t('ceph-storage-plugin~Name'),
         sortField: 'metadata.name',
-        transforms: [sortable],
+        transforms: [sortable, wrappable],
         props: { className: tableColumnClasses[0] },
       },
       {
         title: t('ceph-storage-plugin~Status'),
+        transforms: [wrappable],
         props: { className: tableColumnClasses[1] },
       },
       {
         title: t('ceph-storage-plugin~Raw Capacity'),
+        transforms: [wrappable],
         props: { className: tableColumnClasses[2] },
       },
       {
         title: t('ceph-storage-plugin~Used capacity'),
+        transforms: [wrappable],
         props: { className: tableColumnClasses[3] },
       },
       {
         title: t('ceph-storage-plugin~IOPS'),
+        transforms: [wrappable],
         props: { className: tableColumnClasses[4] },
       },
       {
         title: t('ceph-storage-plugin~Throughput'),
+        transforms: [wrappable],
         props: { className: tableColumnClasses[5] },
       },
       {
@@ -139,12 +156,19 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
     query: ODF_QUERIES[ODFQueries.USED_CAPACITY],
   });
 
-  const normalizedMetrics = normalizeMetrics(latency, throughput, rawCapacity, usedCapacity, iops);
+  const normalizedMetrics = normalizeMetrics(
+    props.data,
+    latency,
+    throughput,
+    rawCapacity,
+    usedCapacity,
+    iops,
+  );
 
   return (
     <Table
       {...props}
-      customData={normalizedMetrics}
+      customData={{ normalizedMetrics, t }}
       aria-label={t('ceph-storage-plugin~Storage Systems')}
       Header={Header}
       Row={SystemTableRow}
@@ -165,6 +189,7 @@ const StorageSystemListPage: React.FC<RouteComponentProps> = (props) => {
       showTitle={false}
       ListComponent={StorageSystemList}
       kind={referenceForModel(StorageSystemModel)}
+      namespace={CEPH_STORAGE_NAMESPACE}
       canCreate
       createProps={createProps}
     />
@@ -188,6 +213,7 @@ type StorageSystemListProps = {
   labelFilterPlaceholder?: string;
   label?: string;
   staticFilters?: { key: string; value: string }[];
+  data?: StorageSystemKind[];
 };
 
 export default StorageSystemListPage;
