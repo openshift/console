@@ -30,7 +30,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
       <>
         <Title headingLevel="h4">{props.selectedItem.name}</Title>
         {props.selectedItem.provider && (
-          <span className="odc-quick-search-details__provider">
+          <span className="ocs-quick-search-details__provider">
             {t('console-shared~Provided by {{provider}}', {
               provider: props.selectedItem.provider,
             })}
@@ -38,14 +38,14 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
         )}
         <Button
           variant={ButtonVariant.primary}
-          className="odc-quick-search-details__form-button"
+          className="ocs-quick-search-details__form-button"
           onClick={(e) => {
             handleCta(e, props.selectedItem, props.closeModal, fireTelemetryEvent);
           }}
         >
           {props.selectedItem.cta.label}
         </Button>
-        <TextContent className="odc-quick-search-details__description">
+        <TextContent className="ocs-quick-search-details__description">
           {props.selectedItem.description}
         </TextContent>
       </>
@@ -54,7 +54,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
   const detailsContentRenderer: DetailsRendererFunction = detailsRenderer ?? defaultContentRenderer;
 
   return (
-    <div className="odc-quick-search-details">
+    <div className="ocs-quick-search-details">
       {detailsContentRenderer({ selectedItem, closeModal })}
     </div>
   );
