@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import SwitchToYAMLAlert from '@console/shared/src/components/alerts/SwitchToYAMLAlert';
+import { Resources } from '../import/import-types';
 import AdvancedSection from './AdvancedSection';
 import DeploymentStrategySection from './deployment-strategy/DeploymentStrategySection';
 import EnvironmentVariablesSection from './EnvironmentVariablesSection';
 import ImagesSection from './images/ImagesSection';
 
 export type EditDeploymentFormEditorProps = {
-  resourceType: string;
+  resourceType: Resources;
   resourceObj: K8sResourceKind;
 };
 
