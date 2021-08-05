@@ -1,6 +1,17 @@
 import * as React from 'react';
 import { AccessConsoles } from '@patternfly/react-console';
-import { Alert, AlertActionCloseButton, Button, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionToggle,
+  Alert,
+  AlertActionCloseButton,
+  Button,
+  ClipboardCopy,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { ConsoleType } from '../../../constants/vm/console-type';
@@ -67,8 +78,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 }) => {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = React.useState(true);
-  const [showPassword, setShowPassword] = React.useState(false);
-
+  const [showCredentials, setShowCredentials] = React.useState<boolean>(false);
   const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false && renderVNCConsole;
   const showSerialOption = getIsSerialConsoleAttached(vm) !== false;
   const [consoleType, setConsoleType] = React.useState(
@@ -125,31 +135,33 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       )}
       {cloudInitPassword && (
         <StackItem>
-          <Alert variant="info" isInline title={t('kubevirt-plugin~Guest login credentials')}>
-            <Trans ns="kubevirt-plugin">
-              The following credentials for this operating system were created via{' '}
-              <strong>cloud-init</strong>. If unsuccessful, cloud-init could be improperly
-              configured. Please contact the image provider for more information.
-            </Trans>
-            <p>
-              <strong>{t('kubevirt-plugin~User name:')} </strong>{' '}
-              {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
-              {'  '}
-              <strong>{t('kubevirt-plugin~Password:')} </strong>{' '}
-              {showPassword ? (
-                <>
-                  {cloudInitPassword}{' '}
-                  <Button isSmall isInline variant="link" onClick={() => setShowPassword(false)}>
-                    {t('kubevirt-plugin~Hide password')}
-                  </Button>
-                </>
-              ) : (
-                <Button isSmall isInline variant="link" onClick={() => setShowPassword(true)}>
-                  {t('kubevirt-plugin~Show password')}
-                </Button>
-              )}
-            </p>
-          </Alert>
+          <Accordion>
+            <AccordionItem>
+              <AccordionToggle
+                id="cloudinit-credentials"
+                onClick={() => setShowCredentials(!showCredentials)}
+                isExpanded={showCredentials}
+              >
+                {t('kubevirt-plugin~Guest login credentials')}
+              </AccordionToggle>
+              <AccordionContent isHidden={!showCredentials}>
+                <Trans ns="kubevirt-plugin">
+                  The following credentials for this operating system were created via{' '}
+                  <strong>cloud-init</strong>. If unsuccessful, cloud-init could be improperly
+                  configured. Please contact the image provider for more information.
+                </Trans>
+                <p>
+                  <strong>{t('kubevirt-plugin~User name:')} </strong>{' '}
+                  {cloudInitUsername || CLOUD_INIT_MISSING_USERNAME}
+                  {'  '}
+                  <strong>{t('kubevirt-plugin~Password:')} </strong>{' '}
+                  <ClipboardCopy variant="inline-compact" isCode>
+                    {cloudInitPassword}
+                  </ClipboardCopy>
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </StackItem>
       )}
       {typeNotSupported && showAlert && (
