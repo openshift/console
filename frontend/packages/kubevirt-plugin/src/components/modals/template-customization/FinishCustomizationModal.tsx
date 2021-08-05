@@ -10,8 +10,8 @@ import {
 import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
+import { SEAL_BOOT_SOURCE_URL } from '../../../constants/vm-templates';
 import { ModalFooter } from '../modal/modal-footer';
-
 import './finish-customization-modal.scss';
 
 const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
@@ -52,7 +52,7 @@ const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
               isChecked={confirmed}
               className="kv-finish-modal__checkbox"
             />
-            <ExternalLink href="foo">
+            <ExternalLink href={SEAL_BOOT_SOURCE_URL}>
               {t('kubevirt-plugin~How to seal boot source for template usage')}
             </ExternalLink>
           </StackItem>
