@@ -68,13 +68,18 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   subscription,
 }) => {
   const { t } = useTranslation();
-  const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>({
-    kind: referenceForModel(ClusterServiceVersionModel),
-    name: subscription?.status?.installedCSV,
-    namespace: subscription?.metadata?.namespace,
-    isList: false,
-    namespaced: true,
-  });
+
+  const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>(
+    subscription?.status?.installedCSV
+      ? {
+          kind: referenceForModel(ClusterServiceVersionModel),
+          name: subscription?.status?.installedCSV,
+          namespace: subscription?.metadata?.namespace,
+          isList: false,
+          namespaced: true,
+        }
+      : null,
+  );
   const nsPath = `/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}`;
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`
