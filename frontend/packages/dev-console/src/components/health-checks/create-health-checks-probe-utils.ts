@@ -14,8 +14,11 @@ export const constructProbeData = (data: HealthCheckProbeData, resourceType?: Re
     ...(data.requestType === RequestType.HTTPGET && {
       httpGet: {
         ...data[data.requestType],
-        ...(data[data.requestType]?.scheme?.[0] === 'HTTPS' && {
-          scheme: data[data.requestType].scheme[0],
+        ...(_.isArray(data[data.requestType]?.scheme) && {
+          scheme:
+            data[data.requestType].scheme[0] === 'HTTPS'
+              ? data[data.requestType].scheme[0]
+              : 'HTTP',
         }),
         port: resourceType === Resources.KnativeService ? 0 : _.toInteger(data.httpGet.port),
       },
