@@ -105,7 +105,8 @@
       "href": "/ocs-dashboards"
     },
     "flags": {
-      "required": ["OCS"]
+      "required": ["OCS"],
+      "disallowed": ["ODF_MANAGED"]
     }
   },
   {

@@ -32,6 +32,7 @@ export const MINIMUM_NODES = 3;
 export const SECOND = 1000;
 export const OCS_NS = 'openshift-storage';
 export const NB_PROVISIONER = 'noobaa.io/obc';
+export const ODF_MANAGED_LABEL = 'odf-managed-service';
 export enum StoreType {
   BS = 'BackingStore',
   NS = 'NamespaceStore',
