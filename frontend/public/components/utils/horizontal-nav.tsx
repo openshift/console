@@ -51,14 +51,14 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
   }
 }
 
-export type Page = {
+export type Page<D = any> = {
   href?: string;
   path?: string;
   name?: string;
   nameKey?: string;
-  component?: React.ComponentType<PageComponentProps>;
+  component?: React.ComponentType<PageComponentProps & D>;
   badge?: React.ReactNode;
-  pageData?: any;
+  pageData?: D;
 };
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };

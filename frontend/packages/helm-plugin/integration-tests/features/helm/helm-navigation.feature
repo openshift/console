@@ -3,7 +3,7 @@ Feature: Navigations on Helm Chart
               As a user, I want to navigate to different pages related to Helm Charts
 
         Background:
-            Given user has created or selected namespace "aut-helm-navigation"
+            Given user has created or selected namespace "aut-helm"
 
 
         @smoke

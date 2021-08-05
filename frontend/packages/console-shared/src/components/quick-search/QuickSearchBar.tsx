@@ -11,6 +11,7 @@ interface QuickSearchBarProps {
   searchTerm: string;
   onSearch: (searchTerm: string) => void;
   searchPlaceholder: string;
+  icon?: React.ReactNode;
 }
 
 const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
@@ -20,14 +21,13 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
   searchTerm,
   searchPlaceholder,
   onSearch,
+  icon,
 }) => {
   const { t } = useTranslation();
 
   return (
     <InputGroup className="odc-quick-search-bar" data-test="quick-search-bar">
-      <InputGroupText>
-        <QuickSearchIcon />
-      </InputGroupText>
+      <InputGroupText>{icon || <QuickSearchIcon />}</InputGroupText>
       <TextInput
         type="search"
         aria-label={t('console-shared~Quick search bar')}

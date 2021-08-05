@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { DashboardAlerts } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/status-card';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -19,6 +20,7 @@ const StatusCard: React.FC = () => {
       <DashboardCardBody isLoading={!obj}>
         <NodeHealth />
         <NodeAlerts />
+        <DashboardAlerts labelSelector={{ node: obj.metadata.name }} />
       </DashboardCardBody>
     </DashboardCard>
   );

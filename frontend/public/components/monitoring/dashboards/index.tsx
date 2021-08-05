@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Button, Dropdown, DropdownToggle, DropdownItem, Label } from '@patternfly/react-core';
+import { Button, Label, Select, SelectOption } from '@patternfly/react-core';
 import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -40,13 +40,12 @@ import {
   setQueryArguments,
   useSafeFetch,
 } from '../../utils';
-import { formatPrometheusDuration, parsePrometheusDuration } from '../../utils/datetime';
 import IntervalDropdown from '../poll-interval-dropdown';
 import BarChart from './bar-chart';
-import customTimeRangeModal from './custom-time-range-modal';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
+import TimespanDropdown from './timespan-dropdown';
 import {
   MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
   MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY,
@@ -104,75 +103,68 @@ const evaluateTemplate = (
   return result;
 };
 
-const VariableDropdown: React.FC<VariableDropdownProps> = ({
-  id,
-  isError = false,
+const FilterSelect: React.FC<FilterSelectProps> = ({
   items,
-  label,
   onChange,
+  OptionComponent,
   selectedKey,
 }) => {
   const { t } = useTranslation();
 
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
+  const [isOpen, , open, close] = useBoolean(false);
+  const [filterText, setFilterText] = React.useState<string>();
+
+  const onSelect = (e, v: string): void => {
+    onChange(v);
+    close();
+    setFilterText(undefined);
+  };
+
+  const onToggle = (isExpanded: boolean) => {
+    if (isExpanded) {
+      open();
+    } else {
+      close();
+      setFilterText(undefined);
+    }
+  };
+
+  // filterText is lower-cased before being saved in state
+  const filteredItems = filterText
+    ? _.pickBy(items, (v) => v.toLowerCase().includes(filterText))
+    : items;
 
   return (
-    <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label htmlFor={`${id}-dropdown`} className="monitoring-dashboards__dropdown-title">
-        {label}
-      </label>
-      {isError ? (
-        <Dropdown
-          toggle={
-            <DropdownToggle
-              className="monitoring-dashboards__dropdown-button"
-              id={`${id}-dropdown`}
-              isDisabled={true}
-            >
-              <RedExclamationCircleIcon /> {t('public~Error loading options')}
-            </DropdownToggle>
-          }
-        />
-      ) : (
-        <Dropdown
-          dropdownItems={_.map(items, (name, key) => (
-            <DropdownItem component="button" key={key} onClick={() => onChange(key)}>
-              {name}
-            </DropdownItem>
-          ))}
-          isOpen={isOpen}
-          onSelect={setClosed}
-          toggle={
-            <DropdownToggle
-              className="monitoring-dashboards__dropdown-button"
-              id={`${id}-dropdown`}
-              onToggle={toggleIsOpen}
-            >
-              {items[selectedKey]}
-            </DropdownToggle>
-          }
-          className="monitoring-dashboards__variable-dropdown"
-        />
-      )}
-    </div>
+    <Select
+      className="monitoring-dashboards__variable-dropdown"
+      hasInlineFilter={_.size(items) > 1}
+      inlineFilterPlaceholderText={t('public~Filter options')}
+      isOpen={isOpen}
+      onFilter={() => null}
+      onSelect={onSelect}
+      onToggle={onToggle}
+      onTypeaheadInputChanged={(v) => setFilterText(v.toLowerCase())}
+      placeholderText={items[selectedKey]}
+    >
+      {_.map(filteredItems, (v, k) => (
+        <OptionComponent key={k} itemKey={k} value={v} />
+      ))}
+    </Select>
   );
 };
 
-const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, name }) => {
+const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
+  const { t } = useTranslation();
+
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'timespan']),
   );
-  const { includeAll, isHidden, options, query, value } = useSelector(({ UI }: RootState) => {
-    const variables = UI.getIn(['monitoringDashboards', 'variables']);
-    const variable = variables.toJS()[name];
-    return {
-      includeAll: variable.includeAll,
-      isHidden: variable.isHidden,
-      options: variable.options,
-      query: evaluateTemplate(variable.query, variables, timespan),
-      value: variable.value,
-    };
-  });
+
+  const variables = useSelector(({ UI }: RootState) =>
+    UI.getIn(['monitoringDashboards', 'variables']),
+  );
+  const variable = variables.toJS()[name];
+  const query = evaluateTemplate(variable.query, variables, timespan);
 
   const dispatch = useDispatch();
 
@@ -220,28 +212,47 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
     [dispatch, name],
   );
 
-  if (isHidden || (!isError && _.isEmpty(options))) {
+  if (variable.isHidden || (!isError && _.isEmpty(variable.options))) {
     return null;
   }
 
-  const items = includeAll ? { [MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY]: 'All' } : {};
-  _.each(options, (option) => {
+  const items = variable.includeAll
+    ? { [MONITORING_DASHBOARDS_VARIABLE_ALL_OPTION_KEY]: 'All' }
+    : {};
+  _.each(variable.options, (option) => {
     items[option] = option;
   });
 
-  if (getQueryArgument(name) !== value) {
-    setQueryArgument(name, value);
+  if (getQueryArgument(name) !== variable.value) {
+    setQueryArgument(name, variable.value);
   }
 
+  const OptionComponent = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
+
   return (
-    <VariableDropdown
-      id={id}
-      isError={isError}
-      items={items}
-      label={name}
-      onChange={onChange}
-      selectedKey={value}
-    />
+    <div className="form-group monitoring-dashboards__dropdown-wrap">
+      <label htmlFor={`${id}-dropdown`} className="monitoring-dashboards__dropdown-title">
+        {name}
+      </label>
+      {isError ? (
+        <Select
+          isDisabled={true}
+          onToggle={() => {}}
+          placeholderText={
+            <>
+              <RedExclamationCircleIcon /> {t('public~Error loading options')}
+            </>
+          }
+        />
+      ) : (
+        <FilterSelect
+          items={items}
+          onChange={onChange}
+          OptionComponent={OptionComponent}
+          selectedKey={variable.value}
+        />
+      )}
+    </div>
   );
 };
 
@@ -253,16 +264,14 @@ const AllVariableDropdowns = () => {
   return (
     <>
       {variables.keySeq().map((name: string) => (
-        <SingleVariableDropdown key={name} id={name} name={name} />
+        <VariableDropdown key={name} id={name} name={name} />
       ))}
     </>
   );
 };
 
-const DashboardDropdown = ({ items, onChange, selectedKey }) => {
+const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ items, onChange, selectedKey }) => {
   const { t } = useTranslation();
-
-  const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
   const tagColors: ('red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange')[] = [
     'red',
@@ -276,102 +285,35 @@ const DashboardDropdown = ({ items, onChange, selectedKey }) => {
   const allTags = _.flatMap(items, 'tags');
   const uniqueTags = _.uniq(allTags);
 
+  const OptionComponent = ({ itemKey }) => (
+    <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
+      {items[itemKey]?.title}
+      {items[itemKey]?.tags.map((tag, i) => (
+        <Label
+          className="monitoring-dashboards__dashboard_dropdown_tag"
+          color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
+          key={i}
+        >
+          {tag}
+        </Label>
+      ))}
+    </SelectOption>
+  );
+
+  const selectItems = _.mapValues(items, 'title');
+
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
       <label className="monitoring-dashboards__dropdown-title" htmlFor="monitoring-board-dropdown">
         {t('public~Dashboard')}
       </label>
-      <Dropdown
-        className="monitoring-dashboards__variable-dropdown"
-        dropdownItems={_.map(items, (item, key) => (
-          <DropdownItem
-            className="monitoring-dashboards__dashboard_dropdown_item"
-            component="button"
-            key={key}
-            onClick={() => onChange(key)}
-          >
-            {item.title}
-            {item.tags.map((tag, i) => (
-              <Label
-                className="monitoring-dashboards__dashboard_dropdown_tag"
-                color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
-                key={i}
-              >
-                {tag}
-              </Label>
-            ))}
-          </DropdownItem>
-        ))}
-        isOpen={isOpen}
-        onSelect={setClosed}
-        toggle={
-          <DropdownToggle
-            className="monitoring-dashboards__dropdown-button"
-            id="monitoring-board-dropdown"
-            onToggle={toggleIsOpen}
-          >
-            {items[selectedKey]?.title}
-          </DropdownToggle>
-        }
+      <FilterSelect
+        items={selectItems}
+        onChange={onChange}
+        OptionComponent={OptionComponent}
+        selectedKey={selectedKey}
       />
     </div>
-  );
-};
-
-const CUSTOM_TIME_RANGE_KEY = 'CUSTOM_TIME_RANGE_KEY';
-
-export const TimespanDropdown = () => {
-  const { t } = useTranslation();
-
-  const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
-  );
-  const timeSpanFromParams = getQueryArgument('timeRange');
-  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
-  const endTimeFromParams = getQueryArgument('endTime');
-
-  const dispatch = useDispatch();
-  const onChange = React.useCallback(
-    (v: string) => {
-      if (v === CUSTOM_TIME_RANGE_KEY) {
-        customTimeRangeModal({});
-      } else {
-        setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
-        removeQueryArgument('endTime');
-        dispatch(monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
-        dispatch(monitoringDashboardsSetEndTime(null));
-      }
-    },
-    [dispatch],
-  );
-
-  const timespanOptions = {
-    [CUSTOM_TIME_RANGE_KEY]: t('public~Custom time range'),
-    '5m': t('public~Last {{count}} minute', { count: 5 }),
-    '15m': t('public~Last {{count}} minute', { count: 15 }),
-    '30m': t('public~Last {{count}} minute', { count: 30 }),
-    '1h': t('public~Last {{count}} hour', { count: 1 }),
-    '2h': t('public~Last {{count}} hour', { count: 2 }),
-    '6h': t('public~Last {{count}} hour', { count: 6 }),
-    '12h': t('public~Last {{count}} hour', { count: 12 }),
-    '1d': t('public~Last {{count}} day', { count: 1 }),
-    '2d': t('public~Last {{count}} day', { count: 2 }),
-    '1w': t('public~Last {{count}} week', { count: 1 }),
-    '2w': t('public~Last {{count}} week', { count: 2 }),
-  };
-
-  return (
-    <VariableDropdown
-      id="monitoring-time-range-dropdown"
-      items={timespanOptions}
-      label={t('public~Time range')}
-      onChange={onChange}
-      selectedKey={
-        endTime || endTimeFromParams
-          ? CUSTOM_TIME_RANGE_KEY
-          : formatPrometheusDuration(_.toNumber(timeSpanFromParams) || timespan)
-      }
-    />
   );
 };
 
@@ -821,7 +763,7 @@ type Board = {
     templating: {
       list: TemplateVariable[];
     };
-    tags: string;
+    tags: string[];
     title: string;
   };
   name: string;
@@ -835,18 +777,27 @@ type Variable = {
   value?: string;
 };
 
-type VariableDropdownProps = {
-  id: string;
-  isError?: boolean;
+type FilterSelectProps = {
   items: { [key: string]: string };
-  label: string;
   onChange: (v: string) => void;
+  OptionComponent: React.FC<{ itemKey: string; value: string }>;
   selectedKey: string;
 };
 
-type SingleVariableDropdownProps = {
+type VariableDropdownProps = {
   id: string;
   name: string;
+};
+
+type DashboardDropdownProps = {
+  items: {
+    [key: string]: {
+      tags: string[];
+      title: string;
+    };
+  };
+  onChange: (v: string) => void;
+  selectedKey: string;
 };
 
 type BoardProps = {

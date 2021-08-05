@@ -53,7 +53,7 @@ const HPAFormikForm: React.FC<HPAFormikFormProps> = ({ existingHPA, targetResour
     const invalidUsageError = getInvalidUsageError(hpa, values);
     if (invalidUsageError) {
       helpers.setStatus({ submitError: invalidUsageError });
-      return Promise.reject();
+      return Promise.resolve();
     }
 
     const method: (

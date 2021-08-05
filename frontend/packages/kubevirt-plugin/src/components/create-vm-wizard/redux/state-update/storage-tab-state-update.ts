@@ -150,9 +150,10 @@ const windowsToolsUpdater = ({ id, prevState, dispatch, getState }: UpdateOption
     id,
     VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
   );
-  const windowsTools = getStorages(state, id).find(
-    (storage) => !!isWinToolsImage(getVolumeContainerImage(storage.volume)),
-  );
+  const windowsTools = getStorages(state, id).find((storage) => {
+    const volumeImage = getVolumeContainerImage(storage.volume);
+    return volumeImage && !!isWinToolsImage(volumeImage, getV2VConfigMap(state));
+  });
 
   if (mountWindowsGuestTools && !windowsTools) {
     dispatch(

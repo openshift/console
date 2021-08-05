@@ -11,6 +11,9 @@ type QuickSearchControllerProps = {
   searchPlaceholder: string;
   allItemsLoaded: boolean;
   isOpen: boolean;
+  icon?: React.ReactNode;
+  limitItemCount: number;
+  disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
@@ -20,11 +23,15 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   searchPlaceholder,
   viewContainer,
   allItemsLoaded,
+  limitItemCount,
+  icon,
   isOpen,
   setIsOpen,
+  disableKeyboardOpen = false,
 }) => {
   const { t } = useTranslation();
 
+  const isLimitedList = limitItemCount > 0;
   const searchCatalog = React.useCallback(
     (searchTerm: string): QuickSearchData => {
       return quickSearchProviders.reduce(
@@ -34,7 +41,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
             : [];
           const itemCount = items.length;
           const viewAllLink =
-            itemCount > 0
+            itemCount > 0 && isLimitedList
               ? [
                   {
                     label: t(quickSearchProvider.catalogLinkLabel, { itemCount }),
@@ -59,7 +66,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         { filteredItems: [], viewAllLinks: [], catalogItemTypes: [] },
       );
     },
-    [namespace, quickSearchProviders, t],
+    [isLimitedList, namespace, quickSearchProviders, t],
   );
 
   React.useEffect(() => {
@@ -69,7 +76,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         return;
       }
 
-      if (e.code === 'Space' && e.ctrlKey) {
+      if (!disableKeyboardOpen && e.code === 'Space' && e.ctrlKey) {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -80,10 +87,12 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, [setIsOpen]);
+  }, [setIsOpen, disableKeyboardOpen]);
 
   return (
     <QuickSearchModal
+      limitItemCount={limitItemCount}
+      icon={icon}
       isOpen={isOpen}
       closeModal={() => setIsOpen(false)}
       namespace={namespace}

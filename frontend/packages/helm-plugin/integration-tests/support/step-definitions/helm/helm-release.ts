@@ -1,5 +1,9 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import {
+  devNavigationMenu,
+  helmActions,
+} from '@console/dev-console/integration-tests/support/constants';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
   topologyPage,
   topologySidePane,
@@ -28,9 +32,9 @@ Then(
   'user is able to see the context menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
     cy.get('ul[role="menu"]').should('be.visible');
-    cy.byTestActionID('Upgrade').should('be.visible');
-    cy.byTestActionID('Rollback').should('be.visible');
-    cy.byTestActionID('Uninstall Helm Release').should('be.visible');
+    cy.get(helmPO.helmActions.upgrade).should('be.visible');
+    cy.get(helmPO.helmActions.rollBack).should('be.visible');
+    cy.get(helmPO.helmActions.uninstallHelmRelease).should('be.visible');
   },
 );
 
@@ -40,18 +44,17 @@ Given('user is on the topology sidebar of the helm release {string}', (helmRelea
 });
 
 When('user clicks on the Actions drop down menu', () => {
-  cy.byLegacyTestID('actions-menu-button').click();
+  topologySidePane.clickActionsDropDown();
 });
 
 Then(
   'user is able to see the actions dropdown menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
-    cy.byLegacyTestID('action-items')
-      .children()
-      .each(($ele) => {
-        expect(actions).toContain($ele.text());
-      });
+    topologySidePane.verifyActions(
+      helmActions.upgrade,
+      helmActions.rollback,
+      helmActions.uninstallHelmRelease,
+    );
   },
 );
 
@@ -67,17 +70,16 @@ When('user clicks on the Kebab menu', () => {
 Then(
   'user is able to see kebab menu with actions Upgrade, Rollback and Uninstall Helm Release',
   () => {
-    const actions = ['Upgrade', 'Rollback', 'Uninstall Helm Release'];
-    cy.byLegacyTestID('action-items')
-      .children()
-      .each(($ele) => {
-        expect(actions).toContain($ele.text());
-      });
+    topologySidePane.verifyActions(
+      helmActions.upgrade,
+      helmActions.rollback,
+      helmActions.uninstallHelmRelease,
+    );
   },
 );
 
 When('user clicks on the {string} action', (actionName: string) => {
-  cy.byTestActionID(actionName).click();
+  helmPage.selectHelmActionFromMenu(actionName);
 });
 
 When('user upgrades the chart Version', () => {

@@ -162,14 +162,14 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
             errorsText: ajv.errorsText(),
           }),
         });
-        return Promise.reject();
+        return Promise.resolve();
       }
     } else if (yamlData) {
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
         actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
-        return Promise.reject();
+        return Promise.resolve();
       }
     }
 

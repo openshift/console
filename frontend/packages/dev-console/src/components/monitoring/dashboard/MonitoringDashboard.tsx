@@ -4,10 +4,8 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
-import {
-  TimespanDropdown,
-  PollIntervalDropdown,
-} from '@console/internal/components/monitoring/dashboards';
+import { PollIntervalDropdown } from '@console/internal/components/monitoring/dashboards';
+import TimespanDropdown from '@console/internal/components/monitoring/dashboards/timespan-dropdown';
 import {
   getURLSearchParams,
   setQueryArguments,

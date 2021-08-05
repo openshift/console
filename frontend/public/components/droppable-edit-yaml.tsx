@@ -88,7 +88,7 @@ export const DroppableEditYAML = withDragDropContext<DroppableEditYAMLProps>(
       if (!monitor) {
         return;
       }
-      this.setState({ errors: [] });
+      this.clearFileUpload();
       if (allowMultiple) {
         monitor.getItem().files.forEach((yamlFile) => {
           this.readFileContents(yamlFile);

@@ -155,5 +155,27 @@
       },
       "template": { "$codeRef": "yamlTemplates.newClusterTaskTemplate" }
     }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Red Hat",
+      "title": "%pipelines-plugin~Red Hat%",
+      "catalogDescription": "%pipelines-plugin~Browse for openshift pipeline tasks available in the cluster.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Red Hat",
+      "provider": { "$codeRef": "catalog.TektonTaskProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
   }
 ]

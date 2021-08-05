@@ -49,6 +49,7 @@ const defaultState = {
     type: null,
     parameters: {},
     reclaim: null,
+    volumeBindingMode: 'WaitForFirstConsumer',
     expansion: true,
   },
   customParams: [['', '']],
@@ -154,7 +155,7 @@ class StorageClassFormWithTranslation extends React.Component<
 
   // For 'other' storage type
   defaultStorageTypes = Object.freeze({
-    ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisoners
+    ...this.getExtensionsStorageClassProvisioners(Provisioner.OTHERS), // Plugin provisioners
     local: {
       title: 'Local', // t('public~Local')
       provisioner: 'kubernetes.io/no-provisioner',
@@ -238,7 +239,7 @@ class StorageClassFormWithTranslation extends React.Component<
               params['replication-type'].value === 'regional-pd' &&
               _.get(params, 'zone.value', '') !== ''
             ) {
-              return 'Zone cannot be specified when replication type regional-pd is chosen.Use zones instead.'; // t('public~Zone cannot be specified when replication type regional-pd is chosen.Use zones instead.')
+              return 'Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.'; // t('public~Zone cannot be specified when replication type regional-pd is chosen. Use zones instead.')
             }
             return null;
           },
@@ -402,6 +403,7 @@ class StorageClassFormWithTranslation extends React.Component<
           hintText: 'Datastore', // t('public~Datastore')
         },
       },
+      volumeBindingMode: 'Immediate',
     },
     portworxVolume: {
       title: 'Portworx Volume',
@@ -562,6 +564,11 @@ class StorageClassFormWithTranslation extends React.Component<
     Delete: 'Delete',
   };
 
+  volumeBindingModes = {
+    Immediate: 'Immediate',
+    WaitForFirstConsumer: 'WaitForFirstConsumer',
+  };
+
   // Accepts a list of CSI provisioners and it checks if the
   // provisioner is listed in CSIStorageTypes object
   // if yes then return the provisioner with parameters that
@@ -676,7 +683,13 @@ class StorageClassFormWithTranslation extends React.Component<
       error: null,
     });
     this.setState({ newStorageClass: this.addDefaultParams() }, () => {
-      const { description, type, reclaim, expansion } = this.state.newStorageClass;
+      const {
+        description,
+        type,
+        reclaim,
+        expansion,
+        volumeBindingMode,
+      } = this.state.newStorageClass;
       const dataParameters = this.getFormParams();
       const annotations = description ? { description } : {};
       const data: StorageClass = {
@@ -692,7 +705,6 @@ class StorageClassFormWithTranslation extends React.Component<
         data.reclaimPolicy = reclaim;
       }
 
-      const volumeBindingMode = this.storageTypes[type]?.volumeBindingMode;
       if (volumeBindingMode) {
         data.volumeBindingMode = volumeBindingMode;
       }
@@ -982,6 +994,8 @@ class StorageClassFormWithTranslation extends React.Component<
     const { newStorageClass, fieldErrors } = this.state;
     const reclaimPolicyKey =
       newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
+    const volumeBindingModeKey =
+      newStorageClass.volumeBindingMode || this.volumeBindingModes.WaitForFirstConsumer;
     const expansionFlag =
       newStorageClass.type && this.storageTypes[newStorageClass.type].allowVolumeExpansion;
     const allowExpansion = expansionFlag ? newStorageClass.expansion : false;
@@ -1045,6 +1059,25 @@ class StorageClassFormWithTranslation extends React.Component<
             <span className="help-block">
               {t(
                 'public~Determines what happens to persistent volumes when the associated persistent volume claim is deleted. Defaults to "Delete"',
+              )}
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label className="co-required" htmlFor="storage-class-volume-binding-mode">
+              {t('public~Volume binding mode')}
+            </label>
+            <Dropdown
+              title={t('public~Select volume binding mode')}
+              items={this.volumeBindingModes}
+              dropDownClassName="dropdown--full-width"
+              selectedKey={volumeBindingModeKey}
+              onChange={(event) => this.setStorageHandler('volumeBindingMode', event)}
+              id="storage-class-volume-binding-mode"
+            />
+            <span className="help-block">
+              {t(
+                'public~Determines when persistent volume claims will be provisioned and bound. Defaults to "WaitForFirstConsumer"',
               )}
             </span>
           </div>
@@ -1161,6 +1194,7 @@ export type StorageClassData = {
   description: string;
   parameters: any;
   reclaim: string;
+  volumeBindingMode: string;
   expansion: boolean;
 };
 

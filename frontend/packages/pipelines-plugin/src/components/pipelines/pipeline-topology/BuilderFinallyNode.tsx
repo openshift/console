@@ -10,7 +10,7 @@ import {
   FINALLY_NODE_PADDING,
   FINALLY_NODE_VERTICAL_SPACING,
   FINALLY_ADD_LINK_TEXT_HEIGHT,
-  BUILDER_NODE_ERROR_RADIUS,
+  BUILDER_NODE_DECORATOR_RADIUS,
   FINALLY_ADD_LINK_SIZE,
   WHEN_EXPRESSION_SPACING,
 } from './const';
@@ -30,7 +30,13 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
   const { t } = useTranslation();
   const { width, height } = element.getBounds();
   const { clusterTaskList = [], namespaceTaskList = [], task, namespace } = element.getData();
-  const { addNewFinallyListNode, finallyTasks = [], finallyListTasks = [] } = task;
+
+  const {
+    addNewFinallyListNode,
+    finallyTasks = [],
+    finallyListTasks = [],
+    onTaskSearch = () => {},
+  } = task;
   const allTasksLength = finallyTasks.length + finallyListTasks.length;
   const nodeCenter = NODE_HEIGHT + NODE_HEIGHT / 2;
   const leftPadding = FINALLY_NODE_PADDING + WHEN_EXPRESSION_SPACING;
@@ -76,7 +82,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
             {ft.error && (
               <ErrorNodeDecorator
                 x={BUILDER_NODE_ADD_RADIUS / 2}
-                y={BUILDER_NODE_ERROR_RADIUS / 4}
+                y={BUILDER_NODE_DECORATOR_RADIUS / 4}
                 errorStr={ft.error}
               />
             )}
@@ -108,6 +114,7 @@ const BuilderFinallyNode: React.FC<BuilderFinallyNodeProps> = ({ element }) => {
               listOptions={[...clusterTaskList, ...namespaceTaskList]}
               onRemoveTask={flt.onRemoveTask}
               onNewTask={flt.convertList}
+              onTaskSearch={onTaskSearch}
             />
           </g>
         </g>

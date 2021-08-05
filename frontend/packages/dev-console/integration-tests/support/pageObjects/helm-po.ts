@@ -34,4 +34,9 @@ export const helmPO = {
   sidePane: {
     chartVersion: '.properties-side-panel-pf-property-value',
   },
+  helmActions: {
+    upgrade: '[data-test-action="Upgrade"]',
+    rollBack: '[data-test-action="Rollback"]',
+    uninstallHelmRelease: '[data-test-action="Uninstall Helm Release"]',
+  },
 };

@@ -1,4 +1,4 @@
-import { messages } from '@console/dev-console/integration-tests/support/constants';
+import { helmActions, messages } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const helmPage = {
@@ -160,5 +160,24 @@ export const helmPage = {
           .click();
       }
     });
+  },
+  selectHelmActionFromMenu: (actionName: helmActions | string) => {
+    switch (actionName) {
+      case 'Upgrade':
+      case helmActions.upgrade:
+        cy.get(helmPO.helmActions.upgrade).click();
+        break;
+      case 'Rollback':
+      case helmActions.rollback:
+        cy.get(helmPO.helmActions.rollBack).click();
+        break;
+      case 'Uninstall Helm Release':
+      case helmActions.uninstallHelmRelease:
+        cy.get(helmPO.helmActions.uninstallHelmRelease).click();
+        break;
+      default:
+        cy.log(`${actionName} is not available in dropdown menu`);
+        break;
+    }
   },
 };

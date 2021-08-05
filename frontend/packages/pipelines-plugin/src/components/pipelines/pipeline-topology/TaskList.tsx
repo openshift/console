@@ -1,20 +1,15 @@
 import * as React from 'react';
-import { FocusTrap, Tooltip } from '@patternfly/react-core';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { Tooltip } from '@patternfly/react-core';
 import { useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  KebabItem,
-  KebabOption,
-  ResourceIcon,
-  truncateMiddle,
-} from '@console/internal/components/utils';
+import { KebabOption, ResourceIcon, truncateMiddle } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import Popper from '@console/shared/src/components/popper/Popper';
 import { TaskKind } from '../../../types';
 import { getResourceModelFromTaskKind } from '../../../utils/pipeline-augment';
+import { BUILDER_NODE_ADD_RADIUS } from './const';
+import RemoveNodeDecorator from './RemoveNodeDecorator';
 import { NewTaskNodeCallback } from './types';
 
 type KeyedKebabOption = KebabOption & { key: string };
@@ -42,17 +37,17 @@ const TaskList: React.FC<any> = ({
   unselectedText,
   onRemoveTask,
   onNewTask,
+  onTaskSearch,
 }) => {
   const { t } = useTranslation();
   const triggerRef = React.useRef(null);
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const [hover, hoverRef] = useHover();
 
   const options = _.sortBy(
     listOptions.map((task) => taskToOption(task, onNewTask)),
     (o) => o.label,
   );
-  const unselectedTaskText = unselectedText || t('pipelines-plugin~Select task');
+  const unselectedTaskText = unselectedText || t('pipelines-plugin~Add task');
 
   const truncatedTaskText = React.useMemo(
     () =>
@@ -63,7 +58,7 @@ const TaskList: React.FC<any> = ({
     [unselectedTaskText],
   );
   const renderText = (
-    <text x={width / 2 - 10} y={height / 2 + 1}>
+    <text x={width / 2} y={height / 2 + 1}>
       {truncatedTaskText}
     </text>
   );
@@ -74,7 +69,10 @@ const TaskList: React.FC<any> = ({
         data-test="task-list"
         ref={hoverRef}
         className="odc-task-list-node__trigger"
-        onClick={() => setMenuOpen(!isMenuOpen)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onTaskSearch(onNewTask);
+        }}
       >
         <rect
           ref={triggerRef}
@@ -100,61 +98,25 @@ const TaskList: React.FC<any> = ({
               width={width}
               height={hover ? 2 : 1}
             />
+
+            {onRemoveTask && hover && (
+              <g>
+                <RemoveNodeDecorator
+                  removeCallback={onRemoveTask}
+                  x={120}
+                  y={BUILDER_NODE_ADD_RADIUS / 4}
+                  content={t('pipelines-plugin~Delete task')}
+                />
+              </g>
+            )}
             {unselectedTaskText !== truncatedTaskText ? (
               <Tooltip content={unselectedTaskText}>{renderText}</Tooltip>
             ) : (
               renderText
             )}
-            <g transform={`translate(${width - 30}, ${height / 4})`}>
-              <CaretDownIcon />
-            </g>
           </g>
         )}
       </g>
-      <Popper
-        open={isMenuOpen}
-        placement="bottom-start"
-        closeOnEsc
-        closeOnOutsideClick
-        onRequestClose={(e) => {
-          if (!e || !triggerRef?.current?.contains(e.target as Element)) {
-            setMenuOpen(false);
-          }
-        }}
-        reference={() => triggerRef.current}
-      >
-        <FocusTrap
-          focusTrapOptions={{ clickOutsideDeactivates: true, returnFocusOnDeactivate: false }}
-        >
-          <div className="pf-c-dropdown pf-m-expanded odc-task-list-node__container">
-            <ul className="pf-c-dropdown__menu pf-m-align-right oc-kebab__popper-items odc-task-list-node__list-items">
-              {options.map((option) => (
-                <li key={option.key}>
-                  <KebabItem
-                    option={option}
-                    onClick={() => {
-                      option.callback && option.callback();
-                    }}
-                  />
-                </li>
-              ))}
-              {onRemoveTask && (
-                <>
-                  <li>
-                    <hr className="odc-task-list-node__divider" />
-                  </li>
-                  <li>
-                    <KebabItem
-                      option={{ label: t('pipelines-plugin~Delete task'), callback: onRemoveTask }}
-                      onClick={onRemoveTask}
-                    />
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-        </FocusTrap>
-      </Popper>
     </>
   );
 };

@@ -33,6 +33,7 @@ import {
   UpdateOperationConvertToTaskData,
   UpdateOperationFixInvalidTaskListData,
   UpdateTasksCallback,
+  TaskSearchCallback,
   BuilderTasksErrorGroup,
   TaskErrors,
 } from './types';
@@ -91,6 +92,7 @@ const useConnectFinally = (
   taskGroup: PipelineBuilderTaskGroup,
   onTaskSelection: SelectTaskCallback,
   onUpdateTasks: UpdateTasksCallback,
+  onTaskSearch: TaskSearchCallback,
   taskResources: PipelineBuilderTaskResources,
   tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
@@ -128,6 +130,7 @@ const useConnectFinally = (
       name: finallyNodeName,
       runAfter: regularRunAfters,
       addNewFinallyListNode,
+      onTaskSearch,
       finallyTasks: taskGroup.finallyTasks.map((ft, idx) => ({
         ...ft,
         onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft), true),
@@ -152,6 +155,7 @@ const useConnectFinally = (
 export const useNodes = (
   onTaskSelection: SelectTaskCallback,
   onUpdateTasks: UpdateTasksCallback,
+  onTaskSearch: TaskSearchCallback,
   taskGroup: PipelineBuilderTaskGroup,
   taskResources: PipelineBuilderTaskResources,
   tasksInError: BuilderTasksErrorGroup,
@@ -181,6 +185,7 @@ export const useNodes = (
       onNewTask: (resource: TaskKind) => {
         onNewTask(resource, name, runAfter);
       },
+      onTaskSearch,
       onRemoveTask: firstTask
         ? null
         : () => {
@@ -211,6 +216,7 @@ export const useNodes = (
           data,
         });
       },
+      onTaskSearch,
       onRemoveTask: () => {
         onUpdateTasks(taskGroupRef.current, {
           type: UpdateOperationType.REMOVE_TASK,
@@ -256,6 +262,7 @@ export const useNodes = (
     taskGroup,
     onTaskSelection,
     onUpdateTasks,
+    onTaskSearch,
     taskResources,
     tasksInError.finally,
   );

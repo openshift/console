@@ -10,6 +10,7 @@ import {
   PipelineBuilderTaskGroup,
   SelectTaskCallback,
   UpdateTasksCallback,
+  TaskSearchCallback,
 } from './types';
 
 import './PipelineBuilderForm.scss';
@@ -19,12 +20,20 @@ type PipelineBuilderFormEditorProps = {
   taskGroup: PipelineBuilderTaskGroup;
   taskResources: PipelineBuilderTaskResources;
   onTaskSelection: SelectTaskCallback;
+  onTaskSearch: TaskSearchCallback;
   onUpdateTasks: UpdateTasksCallback;
 };
 
 const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (props) => {
   const { t } = useTranslation();
-  const { hasExistingPipeline, taskGroup, taskResources, onTaskSelection, onUpdateTasks } = props;
+  const {
+    hasExistingPipeline,
+    taskGroup,
+    taskResources,
+    onTaskSelection,
+    onUpdateTasks,
+    onTaskSearch,
+  } = props;
 
   return (
     <>
@@ -46,6 +55,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
         <PipelineBuilderVisualization
           onTaskSelection={onTaskSelection}
           onUpdateTasks={onUpdateTasks}
+          onTaskSearch={onTaskSearch}
           taskGroup={taskGroup}
           taskResources={taskResources}
         />

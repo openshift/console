@@ -1,5 +1,63 @@
 import { TFunction } from 'i18next';
-import { LifecycleAction } from './types';
+import { Resources } from '../../../import/import-types';
+import { DeploymentStrategyType, LifecycleAction } from './types';
+
+export const getDeploymentStrategyItems = (resourceType: Resources, t: TFunction) => {
+  switch (resourceType) {
+    case Resources.Kubernetes:
+      return {
+        [DeploymentStrategyType.recreateParams]: t('devconsole~Recreate'),
+        [DeploymentStrategyType.rollingUpdate]: t('devconsole~Rolling Update'),
+      };
+    case Resources.OpenShift:
+      return {
+        [DeploymentStrategyType.recreateParams]: t('devconsole~Recreate'),
+        [DeploymentStrategyType.rollingParams]: t('devconsole~Rolling'),
+        [DeploymentStrategyType.customParams]: t('devconsole~Custom'),
+      };
+    default:
+      return {};
+  }
+};
+
+export const getDeploymentStrategyHelpText = (
+  resourceType: Resources,
+  deploymentStrategyType: DeploymentStrategyType,
+  t: TFunction,
+): string => {
+  switch (resourceType) {
+    case Resources.Kubernetes:
+      switch (deploymentStrategyType) {
+        case DeploymentStrategyType.recreateParams:
+          return t('devconsole~The recreate strategy has basic rollout behavior.');
+        case DeploymentStrategyType.rollingUpdate:
+          return t(
+            'devconsole~The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+          );
+        default:
+          return null;
+      }
+    case Resources.OpenShift:
+      switch (deploymentStrategyType) {
+        case DeploymentStrategyType.recreateParams:
+          return t(
+            'devconsole~The recreate strategy has basic rollout behavior and supports lifecycle hooks for injecting code into the deployment process.',
+          );
+        case DeploymentStrategyType.rollingParams:
+          return t(
+            'devconsole~The rolling strategy will wait for pods to pass their readiness check, scale down old components and then scale up.',
+          );
+        case DeploymentStrategyType.customParams:
+          return t(
+            'devconsole~The custom strategy allows you to specify container image that will provide your own deployment behavior.',
+          );
+        default:
+          return null;
+      }
+    default:
+      return null;
+  }
+};
 
 export const lifecycleActionType = (t: TFunction) => {
   return {

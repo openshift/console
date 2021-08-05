@@ -9,7 +9,7 @@
   scrollbar-color: var(--pf-global--BackgroundColor--light-300) var(--pf-global--palette--white);
 
   &__form-button {
-    margin: var(--pf-global--spacer--md) 0px;
+    margin: var(--pf-global--spacer--md) 0px !important;
     width: max-content;
   }
 

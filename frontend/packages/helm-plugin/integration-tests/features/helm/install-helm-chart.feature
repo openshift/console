@@ -3,7 +3,7 @@ Feature: Install the Helm Release
               As a user, I want to install the helm release
 
         Background:
-            Given user has created or selected namespace "aut-helm-chart"
+            Given user has created or selected namespace "aut-helm"
 
 
         @smoke
@@ -28,14 +28,13 @@ Feature: Install the Helm Release
         Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-06-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Quarkus v0.0.3" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user selects YAML view
-              And user selects the Chart Version "0.2.1 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
-             When user selects "Proceed" button from Change Chart version confirmation dialog
-              And user clicks on the Install button
+              And user selects the Chart Version "0.0.2 (Provided by Red Hat Helm Charts)"
+             When user clicks on the Install button
              Then user will be redirected to Topology page
-              And Topology page have the helm chart workload "nodejs-ex-k"
+              And Topology page have the helm chart workload "quarkus"
 
 
         @smoke

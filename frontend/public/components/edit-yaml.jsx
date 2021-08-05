@@ -84,7 +84,6 @@ export const EditYAML_ = connect(stateToProps)(
             initialized: false,
             stale: false,
             sampleObj: props.sampleObj,
-            fileUpload: props.fileUpload,
             showSidebar: !!props.create,
             owner: null,
           };
@@ -180,7 +179,7 @@ export const EditYAML_ = connect(stateToProps)(
             );
           } else if (nextProps.fileUpload) {
             this.loadYaml(
-              !_.isEqual(this.state.fileUpload, nextProps.fileUpload),
+              !_.isEqual(this.props.fileUpload, nextProps.fileUpload),
               nextProps.fileUpload,
             );
           } else {
@@ -235,12 +234,19 @@ export const EditYAML_ = connect(stateToProps)(
           });
         }
 
+        appendYAMLString(yaml) {
+          const currentYAML = this.getEditor().getValue();
+          return _.isEmpty(currentYAML)
+            ? yaml
+            : `${currentYAML}${currentYAML.trim().endsWith('---') ? '\n' : '\n---\n'}${yaml}`;
+        }
+
         convertObjToYAMLString(obj) {
-          const { t } = this.props;
+          const { t, allowMultiple } = this.props;
           let yaml = '';
           if (obj) {
             if (_.isString(obj)) {
-              yaml = obj;
+              yaml = allowMultiple ? this.appendYAMLString(obj) : obj;
             } else {
               try {
                 yaml = safeDump(obj);

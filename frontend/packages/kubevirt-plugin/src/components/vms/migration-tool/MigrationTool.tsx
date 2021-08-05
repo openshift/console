@@ -34,7 +34,7 @@ const MigrationTool = () => {
           }
         >
           {!mtvSubscription && t('kubevirt-plugin~Install Migration Tool')}
-          {mtvSubscription && !mtvForkLift && t('kubevirt-plugin~Install ForkLift Instance')}
+          {mtvSubscription && !mtvForkLift && t('kubevirt-plugin~Deploy Migration Tool Instance')}
           {mtvSubscription && mtvForkLift && t('kubevirt-plugin~ForkLift Instance is building...')}
         </Button>
       )}
