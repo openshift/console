@@ -12,6 +12,13 @@ describe('ID (CNV-6821) Sysprep testing', () => {
 
   after(() => {
     cy.deleteResource({
+      kind: 'VirtualMachine',
+      metadata: {
+        namespace: testName,
+        name: `${testName}-vm`,
+      },
+    });
+    cy.deleteResource({
       kind: 'Namespace',
       metadata: {
         name: testName,

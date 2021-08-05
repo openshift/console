@@ -21,6 +21,20 @@ describe('Connect to a VM using SSH testing', () => {
 
   after(() => {
     cy.deleteResource({
+      kind: 'VirtualMachine',
+      metadata: {
+        namespace: testName,
+        name: `${testName}-vm`,
+      },
+    });
+    cy.deleteResource({
+      kind: 'VirtualMachine',
+      metadata: {
+        namespace: testName,
+        name: `${testName}-vm-advanced-wizard`,
+      },
+    });
+    cy.deleteResource({
       kind: 'Namespace',
       metadata: {
         name: testName,
