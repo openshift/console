@@ -310,16 +310,16 @@ const PollConsoleUpdates = React.memo(() => {
   if (pluginsStateInitialized && (pluginsChanged || consoleCommitChanged)) {
     toastContext.addToast({
       variant: AlertVariant.warning,
-      title: t('console-app~Web console update is available'),
+      title: t('public~Web console update is available'),
       content: t(
-        'console-app~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
+        'public~There has been an update to the web console. Ensure any changes have been saved and refresh your browser to access the latest version.',
       ),
       timeout: false,
       dismissible: true,
       actions: [
         {
           dismiss: true,
-          label: t('console-app~Refresh web console'),
+          label: t('public~Refresh web console'),
           callback: () => window.location.reload(),
         },
       ],
