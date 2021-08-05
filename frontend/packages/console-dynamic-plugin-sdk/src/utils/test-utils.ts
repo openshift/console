@@ -7,11 +7,13 @@ export const getPluginManifest = (
   name: string,
   version: string,
   extensions: Extension[] = [],
+  disableStaticPlugins?: string[],
 ): ConsolePluginManifestJSON => ({
   name,
   version,
   extensions: extensions as SupportedExtension[],
   dependencies: { '@console/pluginAPI': '*' },
+  disableStaticPlugins,
 });
 
 export const getExecutableCodeRefMock = <T = any>(

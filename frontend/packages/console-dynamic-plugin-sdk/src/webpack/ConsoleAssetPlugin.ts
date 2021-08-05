@@ -58,6 +58,7 @@ export class ConsoleAssetPlugin {
       displayName: pkg.consolePlugin.displayName,
       description: pkg.consolePlugin.description,
       dependencies: pkg.consolePlugin.dependencies,
+      disableStaticPlugins: pkg.consolePlugin.disableStaticPlugins,
       extensions: ext,
     };
   }
