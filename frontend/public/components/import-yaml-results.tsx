@@ -95,36 +95,25 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
     })),
   );
   const [inFlight, setInFlight] = React.useState(true);
-  const [errors, setErrors] = React.useState(false);
+  const errors = importStatus.some((s) => s.error);
+
   React.useEffect(() => {
-    const requests = createResources(importResources);
-    Promise.allSettled(requests).then(() => {
-      setInFlight(false);
-    });
-    requests.forEach((resourceRequest, index) => {
-      resourceRequest
-        .then(() =>
-          setImportStatus((prevResources) => {
-            const nextResources = [...prevResources];
-            nextResources[index] = {
-              creating: false,
-              message: t('public~Created'),
-            };
-            return nextResources;
-          }),
-        )
-        .catch((error) => {
-          setErrors(true);
-          setImportStatus((prevResources) => {
-            const nextResources = [...prevResources];
-            nextResources[index] = {
+    createResources(importResources).then((results) => {
+      setImportStatus(
+        results.map((result) => {
+          if (result.status === 'fulfilled') {
+            return { creating: false, message: t('public~Created') };
+          }
+          if (result.status === 'rejected') {
+            return {
               creating: false,
               error: true,
-              message: t('public~Error: {{error}}', { error: error.message }),
+              message: t('public~Error: {{error}}', { error: result?.reason?.substring(11) }),
             };
-            return nextResources;
-          });
-        });
+          }
+        }),
+      );
+      setInFlight(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -193,7 +182,12 @@ export const ImportYAMLResults: React.FC<ImportYAMLResultsProps> = ({
             <>
               {errors && (
                 <div className="co-import-yaml-results-page__footer">
-                  <Button variant="primary" type="button" onClick={onRetry}>
+                  <Button
+                    variant="primary"
+                    type="button"
+                    onClick={onRetry}
+                    data-test="retry-failed-resources"
+                  >
                     {t('public~Retry failed resources')}
                   </Button>
                 </div>
