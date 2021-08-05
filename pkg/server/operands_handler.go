@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,29 +16,15 @@ import (
 )
 
 type OperandsListHandler struct {
-	APIServerURL    string
-	User            auth.User
-	TLSClientConfig tls.Config
+	APIServerURL string
+	Client       *http.Client
 }
 
-func (o *OperandsListHandler) GetConfig() (*rest.Config, error) {
-	var tlsClientConfig rest.TLSClientConfig
-	if o.TLSClientConfig.InsecureSkipVerify {
-		// off-cluster mode
-		tlsClientConfig.Insecure = true
-	} else {
-		inCluster, err := rest.InClusterConfig()
-		if err != nil {
-			return nil, err
-
-		}
-		tlsClientConfig = inCluster.TLSClientConfig
-	}
-
+func (o *OperandsListHandler) GetConfig(user *auth.User) (*rest.Config, error) {
 	config := &rest.Config{
-		Host:            o.APIServerURL,
-		TLSClientConfig: tlsClientConfig,
-		BearerToken:     o.User.Token,
+		Host:        o.APIServerURL,
+		Transport:   o.Client.Transport,
+		BearerToken: user.Token,
 	}
 	return config, nil
 }
@@ -50,6 +35,7 @@ func (o *OperandsListHandler) OperandsListHandler(user *auth.User, w http.Respon
 		serverutils.SendResponse(w, http.StatusMethodNotAllowed, serverutils.ApiError{Err: "Method unsupported, the only supported methods is GET"})
 		return
 	}
+
 	query := r.URL.Query()
 	operatorName := query.Get("name")
 	operatorNamespace := query.Get("namespace")
@@ -66,7 +52,7 @@ func (o *OperandsListHandler) OperandsListHandler(user *auth.User, w http.Respon
 		serverutils.SendResponse(w, http.StatusInternalServerError, serverutils.ApiError{Err: errMsg})
 		return
 	}
-	config, err := o.GetConfig()
+	config, err := o.GetConfig(user)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to get new config for operator client: %v", err)
 		klog.Error(errMsg)

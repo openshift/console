@@ -58,7 +58,7 @@ const (
 	localesEndpoint                  = "/locales/resource.json"
 	updatesEndpoint                  = "/api/check-updates"
 	operandsListEndpoint             = "/api/list-operands/"
-	sha256Prefix = "sha256~"
+	sha256Prefix                     = "sha256~"
 )
 
 type jsGlobals struct {
@@ -412,6 +412,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	// List operator operands endpoint
 	operandsListHandler := &OperandsListHandler{
 		APIServerURL: s.KubeAPIServerURL,
+		Client:       s.K8sClient,
 	}
 	handle(operandsListEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, operandsListEndpoint),
