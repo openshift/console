@@ -37,6 +37,8 @@ export const createStorageClass = (scName: string, poolName?: string, encrypted?
   cy.byTestID(poolName || 'ocs-storagecluster-cephblockpool').click();
 
   cy.log('Creating new StorageClass');
+  cy.byTestID('storage-class-volume-binding-mode').click();
+  cy.byTestDropDownMenu('Immediate').click();
   cy.byLegacyTestID('storage-class-form')
     .get('button#save-changes')
     .click();
