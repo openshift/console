@@ -30,7 +30,8 @@
     "exposedModules": {
       "barUtils": "./utils/bar",
       "telemetry": "./utils/telemetry",
-      "extensionConsumer": "./components/ExtensionConsumer.tsx"
+      "extensionConsumer": "./components/ExtensionConsumer.tsx",
+      "utilityConsumer": "./components/UtilityConsumer.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
