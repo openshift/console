@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import useCloudinitValidations from '../../../../../hooks/use-cloudinit-validations';
+import useSSHKeys from '../../../../../hooks/use-ssh-keys';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
@@ -21,7 +22,6 @@ import { cloudinitFormChildren } from './CloudinitForm';
 import CloudinitFormOrYamlSelector from './CloudinitFormOrYamlSelector';
 import CloudInitInfoHelper from './CloudinitInfoHelper';
 import { onDataChanged } from './utils/cloudinit-utils';
-
 import './cloud-init.scss';
 
 const fieldsMapper: FieldsMapper = {
@@ -50,10 +50,10 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   );
 
   const dataSSHKeys = React.useMemo(() => new CloudInitDataHelper({ userData: data }), [data]);
-
+  const { tempSSHKey } = useSSHKeys();
   const authKeysData = React.useMemo(
-    () => dataSSHKeys.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [],
-    [dataSSHKeys],
+    () => dataSSHKeys.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [tempSSHKey || ''],
+    [dataSSHKeys, tempSSHKey],
   );
 
   const [yaml, setYaml] = React.useState<string>();
@@ -61,9 +61,7 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   const [view, setView] = React.useState<ViewComponent>(ViewComponent.form);
   const [isYamlValid, setIsYamlValid] = React.useState<boolean>(true);
 
-  const [authKeys, setAuthKeys] = React.useState<string[]>(
-    isEmpty(authKeysData) ? [''] : authKeysData,
-  );
+  const [authKeys, setAuthKeys] = React.useState<string[]>(authKeysData);
 
   const { validationSchema, validationStatus, isValid } = useCloudinitValidations(wizardReduxID);
 
@@ -80,10 +78,19 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   }, [yamlAsJS]);
 
   React.useEffect(() => {
-    /* eslint-disable-next-line @typescript-eslint/camelcase */
-    !isEmpty(yamlAsJS) && setYaml(yamlParser.dump({ ...yamlAsJS, ssh_authorized_keys: authKeys }));
+    !isEmpty(yamlAsJS) &&
+      !isEmpty(yaml) &&
+      isEqual(authKeysData, authKeys) &&
+      setYaml(
+        yamlParser.dump({
+          ...yamlParser.load(yaml),
+          ...yamlAsJS,
+          /* eslint-disable-next-line @typescript-eslint/camelcase */
+          ssh_authorized_keys: authKeys,
+        }),
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authKeys]);
+  }, [authKeys, yaml, yamlAsJS]);
 
   React.useEffect(() => {
     yaml &&
