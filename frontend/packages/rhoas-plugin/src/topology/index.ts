@@ -1,5 +1,5 @@
-export { default as getRhoasComponentFactory } from './components/rhoasComponentFactory';
-export { default as getRhoasTopologyDataModel } from './rhoas-data-transformer';
+export { getRhoasComponentFactory } from './components/rhoasComponentFactory';
+export { getRhoasTopologyDataModel } from './rhoas-data-transformer';
 export {
   providerProvidesKafkaConnection,
   providerCreateKafkaConnection,

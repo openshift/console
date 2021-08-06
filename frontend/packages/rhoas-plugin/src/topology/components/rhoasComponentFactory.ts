@@ -5,7 +5,6 @@ import {
   withSelection,
   withCreateConnector,
 } from '@patternfly/react-topology';
-import BindableNode from '@console/dev-console/src/components/topology/components/BindableNode';
 import {
   createConnectorCallback,
   nodeDragSourceSpec,
@@ -13,10 +12,11 @@ import {
   CreateConnector,
   noRegroupWorkloadContextMenu,
 } from '@console/topology/src/components/graph-view';
+import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from './const';
 
-const getRhoasComponentFactory = (
+export const getRhoasComponentFactory = (
   kind,
   type,
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -39,5 +39,3 @@ const getRhoasComponentFactory = (
       return undefined;
   }
 };
-
-export default getRhoasComponentFactory;

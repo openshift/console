@@ -11,9 +11,9 @@ import {
 import * as openshiftImg from '@console/internal/imgs/logos/openshift.svg';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { calculateRadius } from '@console/shared';
-import { TrapezoidBaseNode } from '@console/topology/src/components/graph-view/components/nodes';
-import { getTopologyResourceObject } from '@console/topology/src/utils';
-import { getRelationshipProvider } from '@console/topology/src/utils/relationship-provider-utils';
+import { getTopologyResourceObject } from '../../../../../utils';
+import { getRelationshipProvider } from '../../../../../utils/relationship-provider-utils';
+import TrapezoidBaseNode from './TrapezoidBaseNode';
 
 type BindableNodeProps = {
   element: Node;

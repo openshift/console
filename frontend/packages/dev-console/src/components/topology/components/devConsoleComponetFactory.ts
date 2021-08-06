@@ -12,11 +12,11 @@ import {
   CreateConnector,
   noRegroupWorkloadContextMenu,
 } from '@console/topology/src/components/graph-view';
+import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
 import { withEditReviewAccess } from '@console/topology/src/utils';
-import BindableNode from './BindableNode';
-import { TYPE_BINDABLE_NODE } from './const';
+import { TYPE_BINDABLE_NODE } from '../const';
 
-const getDevConsoleComponentFactory = (
+export const getDevConsoleComponentFactory = (
   kind,
   type,
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -38,5 +38,3 @@ const getDevConsoleComponentFactory = (
       return undefined;
   }
 };
-
-export default getDevConsoleComponentFactory;

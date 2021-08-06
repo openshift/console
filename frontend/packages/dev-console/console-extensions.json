@@ -467,26 +467,6 @@
     }
   },
   {
-    "type": "console.topology/data/factory",
-    "properties": {
-      "id": "devconsole-bindable-topology-model-factory",
-      "priority": 200,
-      "resources": {
-        "bindables": {
-          "model": { "kind": "IntegrationPlatform", "group": "camel.apache.org", "version": "v1" },
-          "opts": {
-            "isList": true,
-            "optional": true
-          }
-        }
-      },
-      "workloadKeys": ["bindables"],
-      "getDataModel": {
-        "$codeRef": "topology.getBindableDevConsoleTopologyDataModel"
-      }
-    }
-  },
-  {
     "type": "console.topology/relationship/provider",
     "properties": {
       "provides": {
