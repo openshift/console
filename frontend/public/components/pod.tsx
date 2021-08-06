@@ -10,7 +10,14 @@ import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover, Grid, GridItem } from '@patternfly/react-core';
-import { Status, TableColumnsType } from '@console/shared';
+import {
+  Status,
+  TableColumnsType,
+  LazyActionMenu,
+  ActionServiceProvider,
+  ActionMenu,
+  ActionMenuVariant,
+} from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   withUserSettingsCompatibility,
@@ -22,7 +29,13 @@ import {
 } from '@console/shared/src/constants/common';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
-import { ContainerSpec, K8sResourceKindReference, PodKind, referenceForModel } from '../module/k8s';
+import {
+  ContainerSpec,
+  K8sResourceKindReference,
+  PodKind,
+  referenceForModel,
+  referenceFor,
+} from '../module/k8s';
 import {
   getRestartPolicyLabel,
   podPhase,
@@ -40,7 +53,6 @@ import {
   NodeLink,
   OwnerReferences,
   ResourceIcon,
-  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   ScrollToTopOnMount,
@@ -338,6 +350,8 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     const columns: Set<string> =
       tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns(showNodes);
     const { t } = useTranslation();
+    const resourceKind = referenceFor(pod);
+    const context = { [resourceKind]: pod };
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={podColumnInfo.name.classes}>
@@ -426,12 +440,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
           {pod?.status?.podIP ?? '-'}
         </TableData>
         <TableData className={Kebab.columnClass}>
-          <ResourceKebab
-            actions={menuActions}
-            kind={kind}
-            resource={pod}
-            isDisabled={phase === 'Terminating'}
-          />
+          <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
         </TableData>
       </TableRow>
     );
@@ -790,13 +799,26 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
 );
 
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
+  const customActionMenu = (kindObj, obj) => {
+    const resourceKind = referenceForModel(kindObj);
+    const context = { [resourceKind]: obj };
+    return (
+      <ActionServiceProvider context={context}>
+        {({ actions, options, loaded }) =>
+          loaded && (
+            <ActionMenu actions={actions} options={options} variant={ActionMenuVariant.DROPDOWN} />
+          )
+        }
+      </ActionServiceProvider>
+    );
+  };
   // t('public~Terminal')
   // t('public~Metrics')
   return (
     <DetailsPage
       {...props}
       getResourceStatus={podPhase}
-      menuActions={menuActions}
+      customActionMenu={customActionMenu}
       pages={[
         navFactory.details(Details),
         navFactory.metrics(PodMetrics),

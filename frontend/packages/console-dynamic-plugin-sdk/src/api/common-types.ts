@@ -24,6 +24,12 @@ export type ExtensionK8sGroupKindModel = {
   kind: string;
 };
 
+export type ExtensionK8sKindVersionModel = {
+  group?: string;
+  version: string;
+  kind: string;
+};
+
 export type K8sKind = {
   abbr: string;
   kind: string;

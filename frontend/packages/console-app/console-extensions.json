@@ -76,5 +76,70 @@
       },
       "provider": { "$codeRef": "actions.useDeploymentActionsProvider" }
     }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps.openshift.io",
+        "version": "v1",
+        "kind": "DeploymentConfig"
+      },
+      "provider": { "$codeRef": "actions.useDeploymentConfigActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "StatefulSet"
+      },
+      "provider": { "$codeRef": "actions.useStatefulSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "apps",
+        "version": "v1",
+        "kind": "DaemonSet"
+      },
+      "provider": { "$codeRef": "actions.useDaemonSetActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "batch",
+        "version": "v1",
+        "kind": "Job"
+      },
+      "provider": { "$codeRef": "actions.useJobActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "group": "batch",
+        "version": "v1beta1",
+        "kind": "CronJob"
+      },
+      "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
+    }
+  },
+  {
+    "type": "console.action/resource-provider",
+    "properties": {
+      "model": {
+        "version": "v1",
+        "kind": "Pod"
+      },
+      "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
+    }
   }
 ]

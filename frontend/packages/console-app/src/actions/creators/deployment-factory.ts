@@ -2,9 +2,26 @@ import i18next from 'i18next';
 import { Action } from '@console/dynamic-plugin-sdk';
 import { configureUpdateStrategyModal, errorModal } from '@console/internal/components/modals';
 import { togglePaused, asAccessReview } from '@console/internal/components/utils';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { DeploymentConfigModel } from '@console/internal/models';
+import { K8sResourceKind, K8sKind, k8sCreate } from '@console/internal/module/k8s';
 import { resourceLimitsModal } from '../../components/modals/resource-limits';
 import { ResourceActionFactory } from './common-factory';
+
+const deploymentConfigRollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
+  const req = {
+    kind: 'DeploymentRequest',
+    apiVersion: 'apps.openshift.io/v1',
+    name: dc.metadata.name,
+    latest: true,
+    force: true,
+  };
+  const opts = {
+    name: dc.metadata.name,
+    ns: dc.metadata.namespace,
+    path: 'instantiate',
+  };
+  return k8sCreate(DeploymentConfigModel, req, opts);
+};
 
 export const DeploymentActionFactory: ResourceActionFactory = {
   EditDeployment: (kind: K8sKind, obj: K8sResourceKind): Action => ({
@@ -28,7 +45,7 @@ export const DeploymentActionFactory: ResourceActionFactory = {
       verb: 'patch',
     },
   }),
-  PauseAction: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+  PauseRollout: (kind: K8sKind, obj: K8sResourceKind): Action => ({
     id: 'pause-rollout',
     label: obj.spec.paused
       ? i18next.t('console-app~Resume rollouts')
@@ -40,6 +57,23 @@ export const DeploymentActionFactory: ResourceActionFactory = {
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
+    },
+  }),
+  StartDCRollout: (kind: K8sKind, obj: K8sResourceKind): Action => ({
+    id: 'start-rollout',
+    label: i18next.t('console-app~Start rollout'),
+    cta: () =>
+      deploymentConfigRollout(obj).catch((err) => {
+        const error = err.message;
+        errorModal({ error });
+      }),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.plural,
+      subresource: 'instantiate',
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'create',
     },
   }),
   EditResourceLimits: (kind: K8sKind, obj: K8sResourceKind): Action => ({

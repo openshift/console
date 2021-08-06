@@ -7,6 +7,7 @@ import {
   isResourceActionProvider,
   ResourceActionProvider,
   useResolvedExtensions,
+  ExtensionK8sGroupModel,
 } from '@console/dynamic-plugin-sdk';
 import { referenceForExtensionModel } from '@console/internal/module/k8s';
 import ActionsHookResolver from './ActionsHookResolver';
@@ -40,7 +41,8 @@ const ActionsLoader: React.FC<ActionsLoaderProps> = ({
 
   const resourceProviderGuard = React.useCallback(
     (e): e is ResourceActionProvider =>
-      isResourceActionProvider(e) && referenceForExtensionModel(e.properties.model) === contextId,
+      isResourceActionProvider(e) &&
+      referenceForExtensionModel(e.properties.model as ExtensionK8sGroupModel) === contextId,
     [contextId],
   );
 
