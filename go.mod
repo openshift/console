@@ -14,16 +14,16 @@ require (
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
-	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
+	golang.org/x/net v0.0.0-20210224082022-3d97a244fca7
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
-	gopkg.in/yaml.v2 v2.3.0
-	helm.sh/helm/v3 v3.5.0
-	k8s.io/api v0.20.1
-	k8s.io/apiextensions-apiserver v0.20.1
-	k8s.io/apimachinery v0.20.1
-	k8s.io/cli-runtime v0.20.1
-	k8s.io/client-go v0.20.1
+	gopkg.in/yaml.v2 v2.4.0
+	helm.sh/helm/v3 v3.6.2
+	k8s.io/api v0.21.0
+	k8s.io/apiextensions-apiserver v0.21.0
+	k8s.io/apimachinery v0.21.0
+	k8s.io/cli-runtime v0.21.0
+	k8s.io/client-go v0.21.0
 	k8s.io/klog v1.0.0
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/yaml v1.2.0

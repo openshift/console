@@ -14,6 +14,7 @@ import (
 	fakeclient "k8s.io/client-go/dynamic/fake"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 	fakeclienttest "k8s.io/client-go/testing"
+	"sigs.k8s.io/yaml"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
 )
@@ -353,15 +354,20 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 			}
 
 			if err == nil && tt.indexFile != "" {
-				var expectedIndex *helmrepo.IndexFile
+				expectedIndexPath := tt.indexFile
 				if tt.expectedIndexFile != "" {
-					expectedIndex, err = helmrepo.LoadIndexFile(tt.expectedIndexFile)
-				} else {
-					expectedIndex, err = helmrepo.LoadIndexFile(tt.indexFile)
+					expectedIndexPath = tt.expectedIndexFile
 				}
+				data, err := ioutil.ReadFile(expectedIndexPath)
 				if err != nil {
 					t.Error(err)
 				}
+				expectedIndex := &helmrepo.IndexFile{}
+				err = yaml.UnmarshalStrict(data, expectedIndex)
+				if err != nil {
+					t.Error(err)
+				}
+
 				if !reflect.DeepEqual(expectedIndex.Entries, index.Entries) {
 					t.Errorf("Expected index %v but got %v", expectedIndex, index)
 				}
