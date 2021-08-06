@@ -1,1 +1,1 @@
-export * from './SideBarTabSection';
+export { default as SideBarTabSection } from './SideBarTabSection';

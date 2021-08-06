@@ -199,7 +199,7 @@
     "type": "console.topology/details/resource-link",
     "properties": {
       "priority": 100,
-      "link": { "$codeRef": "helmTopology.getHelmReleasePanelResourceLink" }
+      "link": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelResourceLink" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -221,7 +221,7 @@
     "properties": {
       "id": "helm-release-panel-tab-section-details",
       "tab": "topology-side-bar-tab-details",
-      "section": { "$codeRef": "helmTopology.getHelmReleasePanelDetailsTabSection" }
+      "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelDetailsTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
@@ -232,7 +232,7 @@
     "properties": {
       "id": "helm-release-panel-tab-section-resource",
       "tab": "topology-side-bar-tab-resource",
-      "section": { "$codeRef": "helmTopology.getHelmReleasePanelResourceTabSection" }
+      "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelResourceTabSection" }
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
