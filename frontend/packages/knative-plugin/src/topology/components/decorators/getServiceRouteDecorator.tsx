@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Node } from '@patternfly/react-topology';
+import { Node } from '@patternfly/react-topology/src/types';
 import { TYPE_KNATIVE_SERVICE } from '../../const';
 import ServiceRouteDecorator from './ServiceRouteDecorator';
 
