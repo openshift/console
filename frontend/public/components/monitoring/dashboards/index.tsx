@@ -204,6 +204,12 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
     }
   }, [dispatch, name, query, safeFetch, timespan]);
 
+  React.useEffect(() => {
+    if (variable.value && variable.value !== getQueryArgument(name)) {
+      setQueryArgument(name, variable.value);
+    }
+  }, [name, variable.value]);
+
   const onChange = React.useCallback(
     (v: string) => {
       setQueryArgument(name, v);
@@ -222,10 +228,6 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   _.each(variable.options, (option) => {
     items[option] = option;
   });
-
-  if (getQueryArgument(name) !== variable.value) {
-    setQueryArgument(name, variable.value);
-  }
 
   const OptionComponent = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
 
