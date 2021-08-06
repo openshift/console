@@ -12,7 +12,6 @@ import {
 } from '../types';
 import { deepForOwn } from '../utils/object';
 import { settleAllPromises } from '../utils/promise';
-import { mergeExtensionProperties } from '../utils/store';
 
 const codeRefSymbol = Symbol('CodeRef');
 
@@ -113,9 +112,8 @@ export const resolveExtension = async <
   extension: E,
 ): Promise<R> => {
   const valueResolutions: Promise<void>[] = [];
-  const resolvedProperties = { ...extension.properties };
 
-  deepForOwn<CodeRef>(resolvedProperties, isExecutableCodeRef, (ref, key, obj) => {
+  deepForOwn<CodeRef>(extension.properties, isExecutableCodeRef, (ref, key, obj) => {
     valueResolutions.push(
       ref().then((resolvedValue) => {
         obj[key] = resolvedValue;
@@ -123,11 +121,7 @@ export const resolveExtension = async <
     );
   });
 
-  if (valueResolutions.length === 0) {
-    return (extension as unknown) as R;
-  }
-
   await settleAllPromises(valueResolutions);
 
-  return (mergeExtensionProperties(extension, resolvedProperties) as unknown) as R;
+  return (extension as unknown) as R;
 };

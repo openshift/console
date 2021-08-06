@@ -1,6 +1,5 @@
 import * as Combinatorics from 'js-combinatorics';
 import * as _ from 'lodash';
-import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
 import {
   getPluginManifest,
   getExecutableCodeRefMock,
@@ -220,59 +219,6 @@ describe('getGatingFlagNames', () => {
     ].map(sanitizeExtension);
 
     expect(getGatingFlagNames(extensions)).toEqual(['foo', 'bar', 'baz', 'qux', 'test']);
-  });
-});
-
-describe('mergeExtensionProperties', () => {
-  it('shallowly merges the given object into extension properties', () => {
-    expect(
-      mergeExtensionProperties(
-        {
-          type: 'Foo/Bar',
-          properties: {},
-        },
-        {
-          test: true,
-          qux: { foo: ['value'], baz: 1 },
-        },
-      ),
-    ).toEqual({
-      type: 'Foo/Bar',
-      properties: {
-        test: true,
-        qux: { foo: ['value'], baz: 1 },
-      },
-    });
-
-    expect(
-      mergeExtensionProperties(
-        {
-          type: 'Foo/Bar',
-          properties: {
-            test: true,
-            qux: { foo: ['value'], baz: 1 },
-          },
-        },
-        {
-          test: false,
-          qux: { baz: 2 },
-        },
-      ),
-    ).toEqual({
-      type: 'Foo/Bar',
-      properties: {
-        test: false,
-        qux: { foo: ['value'], baz: 2 },
-      },
-    });
-  });
-
-  it('returns a new extension instance', () => {
-    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
-    const updatedExtension = mergeExtensionProperties(testExtension, {});
-
-    expect(updatedExtension).not.toBe(testExtension);
-    expect(Object.isFrozen(updatedExtension)).toBe(true);
   });
 });
 

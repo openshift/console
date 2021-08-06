@@ -1,31 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
+import { translateExtension } from '../utils/extension-i18n';
 import useTranslationExt from '../utils/useTranslationExt';
 import { subscribeToExtensions } from './pluginSubscriptionService';
-
-const translate = (obj: any, t: (str: string) => string): typeof obj => {
-  if (typeof obj === 'string') {
-    return t(obj);
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map((a) => translate(a, t));
-  }
-
-  // Check for plain object and ensure it is not a React component.
-  // Simple check for React component is sufficient.
-  if (_.isPlainObject(obj) && !obj.$$typeof) {
-    return Object.keys(obj).reduce((acc, key) => {
-      acc[key] = translate(obj[key], t);
-      return acc;
-    }, {});
-  }
-
-  return obj;
-};
 
 /**
  * React hook for consuming Console extensions.
@@ -78,9 +57,7 @@ export const useExtensions = <E extends Extension>(
   const trySubscribe = React.useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
-        extensionsInUseRef.current = extensions.map((e) =>
-          mergeExtensionProperties(e, translate(e.properties, t)),
-        );
+        extensionsInUseRef.current = extensions.map((e) => translateExtension(e, t));
         isMountedRef.current && forceRender();
       }, ...latestTypeGuardsRef.current);
     }

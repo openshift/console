@@ -274,21 +274,19 @@ describe('resolveExtension', () => {
     });
   });
 
-  it('returns the same extension instance if it has no CodeRef functions', async () => {
-    const e: Extension = {
-      type: 'Foo',
-      properties: { test: true },
-    };
+  it('returns the same extension instance', async () => {
+    const extensions: Extension[] = [
+      {
+        type: 'Foo',
+        properties: { test: true },
+      },
+      {
+        type: 'Foo',
+        properties: { test: true, qux: getExecutableCodeRefMock('value1') },
+      },
+    ];
 
-    expect(await resolveExtension(e)).toBe(e);
-  });
-
-  it('returns a new extension instance if it has CodeRef functions', async () => {
-    const e: Extension = {
-      type: 'Foo',
-      properties: { test: true, qux: getExecutableCodeRefMock('value1') },
-    };
-
-    expect(await resolveExtension(e)).not.toBe(e);
+    expect(await resolveExtension(extensions[0])).toBe(extensions[0]);
+    expect(await resolveExtension(extensions[1])).toBe(extensions[1]);
   });
 });

@@ -9,12 +9,13 @@ const testPredicate = (value): value is TestValue =>
   typeof value.test === 'number';
 
 describe('deepForOwn', () => {
-  it('recursively iterates over matching property values', () => {
+  it('recursively executes callback for matching values', () => {
     const obj = {
       foo: { test: 1 },
-      bar: {
-        qux: { test: 2 },
-        mux: { test: 3, boom: true },
+      bar: [{ test: 2 }, { test: 3 }],
+      baz: {
+        qux: { test: 4 },
+        mux: { test: 5, boom: [{ test: 6 }] },
       },
     };
 
@@ -22,24 +23,11 @@ describe('deepForOwn', () => {
 
     deepForOwn<TestValue>(obj, testPredicate, valueCallback);
 
-    expect(valueCallback.mock.calls.length).toBe(2);
+    expect(valueCallback.mock.calls.length).toBe(5);
     expect(valueCallback.mock.calls[0]).toEqual([{ test: 1 }, 'foo', obj]);
-    expect(valueCallback.mock.calls[1]).toEqual([{ test: 2 }, 'qux', obj.bar]);
-  });
-
-  it('does not iterate over array elements', () => {
-    const obj = {
-      foo: [{ test: 1 }],
-      bar: {
-        qux: [{ test: 2 }],
-        mux: [{ test: 3, boom: true }],
-      },
-    };
-
-    const valueCallback = jest.fn();
-
-    deepForOwn<TestValue>(obj, testPredicate, valueCallback);
-
-    expect(valueCallback).not.toHaveBeenCalled();
+    expect(valueCallback.mock.calls[1]).toEqual([{ test: 2 }, '0', obj.bar]);
+    expect(valueCallback.mock.calls[2]).toEqual([{ test: 3 }, '1', obj.bar]);
+    expect(valueCallback.mock.calls[3]).toEqual([{ test: 4 }, 'qux', obj.baz]);
+    expect(valueCallback.mock.calls[4]).toEqual([{ test: 6 }, '0', obj.baz.mux.boom]);
   });
 });
