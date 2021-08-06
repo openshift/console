@@ -19,13 +19,13 @@
 
 .co-images-stream-tag-timeline__circle-icon,
 .co-images-stream-tag-timeline__square-icon {
-  color: $color-pf-black-300;
+  color: $pf-color-black-300;
   left: 8px;
   position: relative;
 }
 
 .co-images-stream-tag-timeline__info {
-  background: $color-pf-black-150;
+  background: $pf-color-black-150;
   border-radius: 3px;
   line-height: 30px;
   margin: 8px 0 24px 40px;
@@ -43,7 +43,7 @@
 }
 
 .co-images-stream-tag-timeline__line {
-  border: 2px solid $color-pf-black-300;
+  border: 2px solid $pf-color-black-300;
   left: 14px;
   position: relative;
 }

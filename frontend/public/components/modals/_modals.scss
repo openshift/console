@@ -18,6 +18,7 @@
   height: 100%;
   overflow-y: auto;
   padding: 0;
+  position: relative;
   @include scroll-shadows-vertical;
   -webkit-overflow-scrolling: touch;
 }
@@ -51,11 +52,17 @@
 }
 
 .modal-content {
+  background-color: $pf-color-white;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.2);
+  @include box-shadow(0 3px 9px rgba(0, 0, 0, .5));
   display: flex;
   flex-direction: column;
   height: 100%;
+  // Remove focus outline from opened modal
+  outline: 0;
   position: relative;
-  @media(min-width: $screen-sm-min) {
+  @media(min-width: $pf-global--breakpoint--md) {
     // Desktop only responsive max-height allows modal to adjust to content height and enable scroll shadows if needed.
     max-height: calc(100vh - 60px);
     // Dropdown workaround:  use when modal content can expand (taints, tolerations)
@@ -82,8 +89,16 @@
 
 // setting a height on modal-dialog enables flex child height to shrink and become scrollable
 .modal-dialog {
+  margin: 10px;
   margin-bottom: 0;
   outline: 0;
+  position: relative;
+  width: auto;
+
+  @media (min-width: $pf-global--breakpoint--md) {
+    margin: 30px auto;
+    width: 600px;
+  }
 
   @media(max-width: $screen-xs-max) and (orientation: portrait) {
     height: calc(100% - 20px); // subtract height margin-top 10px + margin-bottom 10px

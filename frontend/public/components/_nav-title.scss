@@ -1,5 +1,5 @@
 .co-actions {
-  align-items: flex-start; // Keep dropdown menu positioned correctly when titles wrap
+  align-items: baseline; // Keep dropdown menu positioned correctly
   display: flex;
   @media(max-width: $screen-xs){
     align-items: flex-end;

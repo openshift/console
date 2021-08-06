@@ -18,6 +18,10 @@ dt {
   font-weight: var(--pf-global--FontWeight--bold);
 }
 
+fieldset {
+  border: 0;
+}
+
 input[type="number"] {
   -webkit-appearance: textfield;
   appearance: textfield;

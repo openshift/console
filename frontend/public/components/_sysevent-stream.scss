@@ -17,7 +17,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent-stream__connection-error {
-  color: $color-pf-red;
+  color: $pf-color-red-100;
 }
 
 .co-sysevent-stream__timeline {
@@ -42,7 +42,7 @@ $color-dark-border: #ddd;
 
 .co-sysevent-stream__status-box-empty {
   border-style: solid;
-  border-color: $color-pf-black-200;
+  border-color: $pf-color-black-200;
   border-width: 1px 0;
 }
 
@@ -76,7 +76,7 @@ $color-dark-border: #ddd;
 .co-sysevent__box {
   background-color: #fff; // prevent overlapping text if events overlap each other
   border: solid 1px $color-dark-border;
-  border-bottom-color: $color-pf-black-200;
+  border-bottom-color: $pf-color-black-200;
   flex: none;
   padding: 10px;
   width: 100%;
@@ -140,7 +140,7 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent__icon-line {
-  background-color: $color-pf-black-200;
+  background-color: $pf-color-black-200;
   height: 3px;
   position: absolute;
   top: 50%;
@@ -156,7 +156,7 @@ $color-dark-border: #ddd;
 
   .co-sysevent__box {
     flex: 1 2 auto;
-    border: solid 1px $color-pf-black-200;
+    border: solid 1px $pf-color-black-200;
     min-width: 0%; // necessary for wrapping since its a flex child
   }
 
@@ -170,8 +170,8 @@ $color-dark-border: #ddd;
   }
 
   .co-sysevent-stream__timeline {
-    border-bottom: 3px solid $color-pf-black-200;
-    border-left: 3px solid $color-pf-black-200;
+    border-bottom: 3px solid $pf-color-black-200;
+    border-left: 3px solid $pf-color-black-200;
     margin-left: 10px;
     &--empty {
       border: 0;

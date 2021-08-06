@@ -1,5 +1,5 @@
-$color-row-filter-border: $color-pf-black-300;
-$color-row-filter-border--active: $color-pf-blue-300;
+$color-row-filter-border: $pf-color-black-300;
+$color-row-filter-border--active: $pf-color-blue-300;
 
 .co-m-row-filter__controls {
   display: flex;
@@ -37,7 +37,7 @@ $color-row-filter-border--active: $color-pf-blue-300;
 }
 
 .row-filter__box {
-  background: $color-pf-black-150;
+  background: $pf-color-black-150;
   display: inline-block;
   margin: 0 -1px -1px 0;
   padding: 7px 10px;
@@ -61,7 +61,7 @@ $color-row-filter-border--active: $color-pf-blue-300;
 }
 
 .row-filter__box--active {
-  background: $color-pf-blue-50;
+  background: $pf-color-blue-50;
   border-color: $color-row-filter-border--active !important;
   // z-index is because latter blocks overlap the joining outline of former blocks
   z-index: 1;
@@ -71,14 +71,14 @@ $color-row-filter-border--active: $color-pf-blue-300;
 }
 
 .row-filter__box--empty {
-  color: $color-pf-black-500 !important;
+  color: $pf-color-black-500 !important;
   .row-filter__number-bubble {
     background: inherit;
   }
 }
 
 .row-filter__number-bubble {
-  background: $color-pf-white;
+  background: $pf-color-white;
   border-radius: 4px;
   border: 1px solid $color-row-filter-border;
   display: inline-block;

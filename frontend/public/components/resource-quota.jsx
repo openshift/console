@@ -198,8 +198,8 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
   );
 };
 
-export const QuotaScopesInline = ({ scopes, className }) => {
-  return <span className={classNames(className)}>({scopes.join(', ')})</span>;
+export const QuotaScopesInline = ({ scopes }) => {
+  return <span>({scopes.join(', ')})</span>;
 };
 
 export const QuotaScopesList = ({ scopes }) => {

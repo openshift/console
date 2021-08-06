@@ -5,7 +5,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
   display: flex;
   flex-shrink: 0; // prevent collapse of tabs
   list-style: none;
-  margin: 0;
+  margin: 0 !important;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0;
@@ -16,7 +16,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
   }
   &--within-sidebar {
     border-top: 1px solid $color-grey-background-border;
-    margin-bottom: $grid-gutter-width;
+    margin-bottom: $grid-gutter-width !important;
     margin-left: -($grid-gutter-width / 2);
     margin-right: -($grid-gutter-width / 2);
     overflow: visible; // so focus indicator is not clipped since these don't need to scroll
@@ -42,7 +42,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
   button {
     background: transparent;
     border: 0;
-    color: $color-pf-black-700;
+    color: $pf-color-black-700;
     display: block;
     padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr 8px;
     position: relative;
@@ -52,7 +52,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
       color: #252525;
       text-decoration: none;
       &::after {
-        background: $color-pf-black-400;
+        background: $pf-color-black-400;
       }
     }
     &::after {
@@ -68,9 +68,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: ($grid-gutter-width / 2);
   &.co-m-horizontal-nav-item--active {
     a,
     button {
-      color: $link-color;
+      color: var(--pf-global--link--Color);
       &::after {
-        background: $link-color;
+        background: var(--pf-global--link--Color);
       }
     }
   }

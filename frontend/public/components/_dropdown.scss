@@ -1,8 +1,8 @@
 @import '~@patternfly/patternfly/sass-utilities/scss-variables';
 
-$color-bookmarker--hover: $color-pf-black-500;
-$color-bookmarker: $color-pf-black-400;
-$dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
+$color-bookmarker--hover: $pf-color-black-500;
+$color-bookmarker: $pf-color-black-400;
+$dropdown-background--hover: $pf-color-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
 
 .dropdown--full-width {
   &,
@@ -27,7 +27,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .dropdown-menu__divider {
-  background-color: $color-pf-black-200;
+  background-color: $pf-color-black-200;
   height: 1px;
   flex-grow: 1;
   margin: 9px 0;
@@ -35,7 +35,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .dropdown-menu__header {
-  color: $color-pf-black-600;
+  color: $pf-color-black-600;
   flex-grow: 1;
   font-size: ($font-size-base - 1);
   padding: 3px 10px;

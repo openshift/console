@@ -4,44 +4,20 @@
 $consoleWebDistPath: './';
 
 // PatternFly color variables -- imported here so they can be used throughout
-// PF3 color variables
-@import '~patternfly/dist/sass/patternfly/color-variables';
-// PF4 color variables
-// Note these vars have slightly different names to PF3 ones (imported above)
-// i.e., $color-pf-black-100 (PF3) vs $pf-color-black-100 (PF4)
 @import '~@patternfly/patternfly/sass-utilities/colors';
+
+// Enable use within shared components and packages
+@import "../style/ancillary/bootstrap-variables";
 
 
 // == Overrides of external dependency variables
 
 // FontAwesome font path.
 $fa-font-path: $consoleWebDistPath + '/';
-// Use PatternFly 4 font family in PatternFly 3.
-$font-family-base: var(--pf-global--FontFamily--sans-serif);
-$font-size-base: 14px;
-// Use PatternFly 4 heading font sizes in Patternfly 3.
-$font-size-h1: var(--pf-global--FontSize--2xl);
-$font-size-h2: 20px; // must be literal value because of calculation in patternfly/dist/sass/patternfly/_list-view.scss
-$font-size-h3: var(--pf-global--FontSize--lg);
-$font-size-h4: var(--pf-global--FontSize--md);
-$font-size-h5: var(--pf-global--FontSize--md);
-$font-size-h6: var(--pf-global--FontSize--md);
-// Patternfly 3 defaults to 40px, which leaves a lot more whitespace than we're used to.
-$grid-gutter-width: 30px;
-// Use PatternFly 4 headings font styles in PatternFly 3.
-$headings-font-family: var(--pf-global--FontFamily--heading--sans-serif);
-$headings-font-weight: var(--pf-global--FontWeight--normal);
-$kbd-bg: transparent;
-$kbd-color: $color-pf-black-600;
-// Match Patternfly 4 link colors
-$link-color: var(--pf-global--link--Color);
-$link-hover-color: var(--pf-global--link--Color--hover);
-// Disable PatternFly 4 reset.
-$pf-global--enable-reset: false;
-$pf-global--enable-shield: true;
+
 // PatternFly 4 font path.
 $pf-global--font-path: '~@patternfly/patternfly/assets/fonts';
-$table-border-color: $color-pf-black-200;
+$table-border-color: $pf-color-black-200;
 
 :root {
   --pf-global--FontSize--md: 14px; // Numerical value required, same as $font-size-base
@@ -67,20 +43,20 @@ $color-co-m-row-hover: #fafafa;
 $color-application-dark: $pf-color-green-500;
 $color-configmap-dark: $pf-color-purple-600;
 $color-container-dark: $pf-color-blue-300;
-$color-error: $color-pf-red-100;
+$color-error: $pf-color-red-100;
 $color-grey-background-border: #ccc;
 $color-ingress-dark: $pf-color-purple-700;
 $color-namespace-dark: $pf-color-green-600;
 $color-node-dark: $pf-color-purple-400;
 $color-pod-dark: $pf-color-cyan-300;
 $color-pod-overlord: $pf-color-blue-500;
-$color-primary: $color-pf-blue-300;
+$color-primary: $pf-color-blue-300;
 $color-rbac-binding-dark: $pf-color-light-blue-500;
 $color-rbac-role-dark: $pf-color-gold-600;
 $color-secret-dark: $pf-color-orange-400;
 $color-service-dark: $pf-color-light-green-500;
-$color-text-muted: $color-pf-black-600;
-$color-text-secondary: $color-pf-black-600;
+$color-text-muted: $pf-color-black-600;
+$color-text-secondary: $pf-color-black-600;
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;
