@@ -6,10 +6,10 @@ Feature: Filter for Alert state and Severity
         Background:
             Given user is at developer perspective
               And user is at Add page
-              And user has created or selected namespace "aut-monitoring-alerts"
+              And user has created or selected namespace "aut-observe-alerts"
         # To configure the alerts on cluster - need to execute below yaml files from monitoring YAMLs test data
         # cluster-monitoring-config.yaml, workload-monitoring-config.yaml, prometheous-example.yaml
-              And user is at Monitoring page
+              And user is at Observe page
 
 
         @smoke
@@ -105,7 +105,7 @@ Feature: Filter for Alert state and Severity
         Scenario: Navigating to Metrics tab from Alert details page: M-03-TC09
             Given user is on Alert details page
              When user clicks on View in Metrics
-             Then user will be taken to Metrics tab in Monitoring
+             Then user will be taken to Metrics tab in Observe
 
 
         @regression @to-do
@@ -145,7 +145,7 @@ Feature: Filter for Alert state and Severity
         Scenario: Navigating to Metrics tab from Alert rule details page: M-03-TC14
             Given user is on Alert rule details page
              When user clicks on View in Metrics
-             Then user will be taken to Metrics tab in Monitoring
+             Then user will be taken to Metrics tab in Observe page
 
 
         @regression @to-do
