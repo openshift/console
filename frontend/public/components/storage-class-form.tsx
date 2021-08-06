@@ -1074,6 +1074,7 @@ class StorageClassFormWithTranslation extends React.Component<
               selectedKey={volumeBindingModeKey}
               onChange={(event) => this.setStorageHandler('volumeBindingMode', event)}
               id="storage-class-volume-binding-mode"
+              dataTest="storage-class-volume-binding-mode"
             />
             <span className="help-block">
               {t(
