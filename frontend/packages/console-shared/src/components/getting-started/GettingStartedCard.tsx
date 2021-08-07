@@ -94,7 +94,6 @@ export const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
                   onClick={link.onClick}
                 >
                   {link.title}
-                  {link.external}
                 </SimpleListItem>
               ),
             )}
