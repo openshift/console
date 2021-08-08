@@ -1,3 +1,7 @@
+import { testName } from '../../support';
+import { tab } from '../../views/tab';
+import { virtualization } from '../../views/virtualization';
+
 const template = 'rhel6-server-small';
 
 describe('smoke tests', () => {
@@ -26,17 +30,17 @@ describe('smoke tests', () => {
     });
 
     it('template yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      tab.navigateToYAML();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('template network tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Network Interfaces').click();
+      tab.navigateToNetwork();
       cy.get('button[id="add-nic"]').should('be.visible');
     });
 
     it('template disk tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Disks').click();
+      tab.navigateToDisk();
       cy.get('button[id="add-disk"]').should('be.visible');
     });
   });

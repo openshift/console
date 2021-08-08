@@ -1,6 +1,8 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
 import { K8S_KIND } from '../../utils/const/index';
+import { tab } from '../../views/tab';
+import { virtualization } from '../../views/virtualization';
 
 const vmiName = 'vmi-ephemeral';
 
@@ -38,32 +40,32 @@ describe('smoke tests', () => {
     });
 
     it('vmi details tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
       cy.contains('Virtual Machine Instance Details').should('be.visible');
     });
 
     it('vmi yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      tab.navigateToYAML();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('vmi events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      tab.navigateToEvents();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 
     it('vmi console tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Console').click();
+      tab.navigateToConsole();
       cy.get('.loading-box__loaded').should('be.visible');
     });
 
     it('vmi network tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Network Interfaces').click();
+      tab.navigateToNetwork();
       cy.get('.loading-box__loaded').should('be.visible');
     });
 
     it('vmi disk tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Disks').click();
+      tab.navigateToDisk();
       cy.get('.loading-box__loaded').should('be.visible');
     });
   });

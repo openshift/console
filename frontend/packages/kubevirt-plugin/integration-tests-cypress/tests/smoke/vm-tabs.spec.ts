@@ -3,11 +3,12 @@ import { VirtualMachineData } from '../../types/vm';
 import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { vm, waitForStatus } from '../../views/vm';
+import { tab } from '../../views/tab';
 
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL8,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
@@ -47,43 +48,43 @@ describe('smoke tests', () => {
     });
 
     it('vm details tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
       cy.contains('Virtual Machine Details').should('be.visible');
       waitForStatus(VM_STATUS.Running);
     });
 
     it('vm yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      tab.navigateToYAML();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('vm environment tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Environment').click();
+      tab.navigateToEnvironment();
       cy.contains('Add Config Map, Secret or Service Account').should('be.visible');
     });
 
     it('vm events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      tab.navigateToEvents();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 
     it('vm console tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Console').click();
+      tab.navigateToConsole();
       cy.get('.loading-box__loaded').should('be.visible');
     });
 
     it('vm network tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Network Interfaces').click();
+      tab.navigateToNetwork();
       cy.get('button[id="add-nic"]').should('be.visible');
     });
 
     it('vm disk tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Disks').click();
+      tab.navigateToDisk();
       cy.get('button[id="add-disk"]').should('be.visible');
     });
 
     it('vm snapshot tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Snapshots').click();
+      tab.navigateToSnapshot();
       cy.get('button[id="add-snapshot"]').should('be.visible');
     });
   });
@@ -98,32 +99,32 @@ describe('smoke tests', () => {
     });
 
     it('vm/vmi details tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
       cy.contains('Virtual Machine Instance Details').should('be.visible');
     });
 
     it('vm/vmi yaml tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~YAML').click();
+      tab.navigateToYAML();
       cy.get('.yaml-editor').should('be.visible');
     });
 
     it('vm/vmi events tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-public~Events').click();
+      tab.navigateToEvents();
       cy.get('.co-sysevent-stream').should('be.visible');
     });
 
     it('vm/vmi console tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Console').click();
+      tab.navigateToConsole();
       cy.get('.loading-box__loaded').should('be.visible');
     });
 
     it('vm/vmi network tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Network Interfaces').click();
+      tab.navigateToNetwork();
       cy.get('.loading-box__loaded').should('be.visible');
     });
 
     it('vm/vmi disk tab is loaded', () => {
-      cy.byLegacyTestID('horizontal-link-Disks').click();
+      tab.navigateToDisk();
       cy.get('.loading-box__loaded').should('be.visible');
     });
   });

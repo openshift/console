@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { ProvisionSource } from '../../utils/const/provisionSource';
+import { tab } from '../../views/tab';
 
 const vmName = `${testName}-vm-advanced-wizard`;
 
@@ -64,8 +65,8 @@ describe('ID (CNV-6821) Sysprep testing', () => {
     cy.get('.pf-c-button.pf-m-primary')
       .filter(':contains("virtual machine")')
       .click();
-    cy.byLegacyTestID('horizontal-link-Disks').click();
-    cy.get('[data-id=sysprep').should('be.visible');
+    tab.navigateToDisk();
+    cy.get('[data-id=sysprep]').should('be.visible');
   });
 
   it('should check sysprep configmap is present', () => {

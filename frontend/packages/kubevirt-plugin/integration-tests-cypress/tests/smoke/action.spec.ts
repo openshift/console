@@ -4,11 +4,12 @@ import { VirtualMachineData } from '../../types/vm';
 import { K8S_KIND, TEMPLATE, VM_STATUS } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { vm, waitForStatus } from '../../views/vm';
+import { tab } from '../../views/tab';
 
 const vmData: VirtualMachineData = {
   name: `smoke-test-vm-actions-${testName}`,
   namespace: testName,
-  template: TEMPLATE.RHEL7,
+  template: TEMPLATE.RHEL7.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
@@ -68,7 +69,7 @@ describe('Test VM/VMI actions', () => {
       cy.byLegacyTestID(vmData.name)
         .should('exist')
         .click();
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
       waitForStatus(VM_STATUS.Stopped);
     });
 
@@ -121,7 +122,7 @@ describe('Test VM/VMI actions', () => {
       cy.byLegacyTestID(vmiData.name)
         .should('exist')
         .click();
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
       cy.get('.loading-box__loaded').should('be.visible');
       vm.delete();
       cy.byLegacyTestID(vmiData.name).should('not.exist');

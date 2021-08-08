@@ -31,7 +31,7 @@ describe('ID(CNV-5654) test vm empty state', () => {
   it('Empty state has link to templates tab', () => {
     virtualization.vms.emptyState.clickTemplatesTab();
     cy.url().should('include', '/virtualization/templates');
-    cy.byLegacyTestID('horizontal-link-Templates')
+    cy.byTestID('horizontal-link-Templates')
       .parent()
       .should('have.class', 'co-m-horizontal-nav-item--active');
   });

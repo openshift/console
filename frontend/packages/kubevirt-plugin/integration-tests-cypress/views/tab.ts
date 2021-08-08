@@ -10,9 +10,14 @@ export enum tabs {
   Snapshots = 'horizontal-link-Snapshots',
 }
 
-export const navigateToTab = (tab: string) => {
+export const navigateToTabLegacy = (tab: string) => {
   cy.byLegacyTestID(tab).should('be.visible');
   cy.byLegacyTestID(tab).click({ force: true });
+};
+
+export const navigateToTab = (tab: string) => {
+  cy.byTestID(tab).should('be.visible');
+  cy.byTestID(tab).click();
 };
 
 export const tab = {

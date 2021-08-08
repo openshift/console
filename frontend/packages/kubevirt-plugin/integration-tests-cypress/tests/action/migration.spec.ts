@@ -75,7 +75,7 @@ describe('Test VM Migration', () => {
       cy.byLegacyTestID(vmData.name)
         .should('exist')
         .click();
-      cy.byLegacyTestID('horizontal-link-Details').click();
+      tab.navigateToDetails();
 
       // migrate again
       cy.get(detailsTab.vmNode).then(($node) => {

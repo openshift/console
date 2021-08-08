@@ -200,6 +200,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
             <Link
               to={`${baseURL.replace(/\/$/, '')}/${href}`}
               data-test-id={`horizontal-link-${nameKey || name}`}
+              data-test={`horizontal-link-${nameKey || name}`}
             >
               {nameKey ? t(nameKey) : name}
             </Link>
