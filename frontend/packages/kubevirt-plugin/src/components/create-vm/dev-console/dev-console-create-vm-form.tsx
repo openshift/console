@@ -128,7 +128,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     tempSSHKey,
   } = useSSHKeys();
   const { createOrDeleteSSHService } = useSSHService();
-  const [V2VConfigMapImages, V2VConfigMapLoaded, V2VConfigMapError] = useV2VConfigMap();
+  const [V2VConfigMapImages, V2VConfigMapLoaded] = useV2VConfigMap();
   const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
 
   const handleNamespaceChange = (newNamespace: string): void => {
@@ -163,7 +163,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
         <StatusBox
           data={template}
           loaded={resourcesLoaded && vmsLoaded && V2VConfigMapLoaded}
-          loadError={resourcesLoadError || V2VConfigMapError}
+          loadError={resourcesLoadError}
           label={t('kubevirt-plugin~Virtual Machine Template')}
           EmptyMsg={() => <DevConsoleCreateVmFormEmptyState templateParam={templateParam} t={t} />}
         >
