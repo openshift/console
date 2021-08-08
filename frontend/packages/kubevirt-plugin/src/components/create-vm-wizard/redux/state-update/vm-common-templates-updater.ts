@@ -1,9 +1,5 @@
 import { CLOUDINIT_DISK, DiskBus, DiskType, VolumeType } from '../../../../constants/vm';
-import {
-  CloudInitDataFormKeys,
-  CloudInitDataHelper,
-  generateCloudInitPassword,
-} from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import {
@@ -52,10 +48,6 @@ export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: Up
   );
 
   if (!cloudInitHelper.isEmpty()) {
-    if (cloudInitHelper.hasKey(CloudInitDataFormKeys.PASSWORD)) {
-      cloudInitHelper.set(CloudInitDataFormKeys.PASSWORD, generateCloudInitPassword());
-    }
-
     let isCloudInitForm = false;
     if (cloudInitHelper.includesOnlyFormValues()) {
       isCloudInitForm = true;
