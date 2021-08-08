@@ -40,7 +40,7 @@ Cypress.Commands.add('deleteResource', (resource, ignoreNotFound = true) => {
   if (!resource.metadata.namespace) {
     cy.exec(
       `kubectl delete --ignore-not-found=${ignoreNotFound} --cascade ${kind} ${resource.metadata.name} --wait=true --timeout=120s || true`,
-      { timeout: 130000 },
+      { timeout: 180000 },
     );
 
     return;
