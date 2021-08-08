@@ -60,7 +60,7 @@ describe('test VM template support', () => {
       virtualization.templates.clickCreate('CentOS 7.0+ VM');
       cy.get('.ReactModal__Overlay').within(() => {
         cy.get('a').should('have.attr', 'href', 'https://www.centos.org');
-        cy.byLegacyTestID('modal-cancel-action').click();
+        cy.byTestID('modal-cancel-action').click();
       });
     });
 
@@ -83,7 +83,7 @@ describe('test VM template support', () => {
       virtualization.templates.clickCreate(TEMPLATE_NAME);
       cy.get('.ReactModal__Overlay').within(() => {
         cy.get('a').should('have.attr', 'href', 'https://www.centos.org');
-        cy.byLegacyTestID('modal-cancel-action').click();
+        cy.byTestID('modal-cancel-action').click();
       });
     });
 

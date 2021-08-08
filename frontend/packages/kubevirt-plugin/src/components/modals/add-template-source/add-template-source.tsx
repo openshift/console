@@ -292,6 +292,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
               variant="secondary"
               data-test-id="modal-cancel-action"
               onClick={cancel}
+              data-test="modal-cancel-action"
             >
               {t('kubevirt-plugin~Close')}
             </Button>

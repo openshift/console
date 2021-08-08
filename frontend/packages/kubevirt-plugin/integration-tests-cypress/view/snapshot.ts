@@ -1,12 +1,12 @@
 export const takeSnapshotBtn = 'button[id="add-snapshot"]';
 export const saveBtn = 'button[data-test="confirm-action"]';
-export const cancelBtn = 'button=[data-test-id="modal-cancel-action"]';
+export const cancelBtn = 'button=[data-test="modal-cancel-action"]';
 export const snapshotName = 'input[id="snapshot-name"]';
 export const approveCheckbox = 'input[id="approve-checkbox"]';
 export const kebabBtn = 'button[data-test-id="kebab-button"]';
 export const deleteBtn = 'button[data-test-action="Delete VirtualMachineSnapshot"]';
 export const modalConfirmBtn = 'button[data-test="confirm-action"]';
-export const modalCancelBtn = 'button[data-test-id="modal-cancel-action"]';
+export const modalCancelBtn = 'button[data-test="modal-cancel-action"]';
 
 export const snapshotRow = (name: string) => `[data-test-id="${name}]"`;
 export const status = (name: string) => `td[id="${name}-snapshot-status"]`;

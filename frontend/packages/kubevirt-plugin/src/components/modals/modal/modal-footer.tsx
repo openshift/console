@@ -9,7 +9,6 @@ import {
 } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-
 import './modal-footer.scss';
 
 type ModalErrorMessageProps = {
@@ -111,6 +110,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({
             variant={ButtonVariant.secondary}
             data-test-id="modal-cancel-action"
             onClick={onCancel}
+            data-test="modal-cancel-action"
           >
             {cancelButtonText || t('kubevirt-plugin~Cancel')}
           </Button>

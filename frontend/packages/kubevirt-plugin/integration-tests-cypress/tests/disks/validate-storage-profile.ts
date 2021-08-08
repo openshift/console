@@ -3,6 +3,7 @@ import { TEMPLATE_NAME } from '../../const/index';
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
+import { tab } from '../../view/tab';
 import { virtualization } from '../../view/virtualization';
 import { vm } from '../../view/vm';
 
@@ -120,10 +121,10 @@ describe('ID(CNV-6923) Verify storageProfile with a fake storageClass', () => {
   });
 
   it('ID(CNV-6922) Verify storageProfile in add disk modal', () => {
-    cy.byLegacyTestID('horizontal-link-Disks').click();
+    tab.navigateToDisk();
     cy.byTestID('item-create').click();
     cy.validateSPSettings();
-    cy.byLegacyTestID('modal-cancel-action').click();
+    cy.byTestID('modal-cancel-action').click();
   });
   it('ID(CNV-6921) Verify storageProfile in template add boot source modal', () => {
     virtualization.templates.visit();
@@ -133,7 +134,7 @@ describe('ID(CNV-6923) Verify storageProfile with a fake storageClass', () => {
       .click();
     cy.contains('Advanced Storage settings').click();
     cy.validateSPSettings();
-    cy.byLegacyTestID('modal-cancel-action').click();
+    cy.byTestID('modal-cancel-action').click();
   });
   it('ID(CNV-6920) Verify storageProfile in upload PVC form', () => {
     cy.visit(`/k8s/ns/${testName}/persistentvolumeclaims`);

@@ -57,7 +57,7 @@ describe('Test VM Migration', () => {
         await click(confirmButton);
         await browser.wait(until.presenceOf(errorAlert), PAGE_LOAD_TIMEOUT_SECS);
         expect(await errorAlert.getText()).toContain('all PVCs must be shared');
-        const cancelButton = $('[data-test-id="modal-cancel-action"]');
+        const cancelButton = $('[data-test="modal-cancel-action"]');
         click(cancelButton);
       }
     },

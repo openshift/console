@@ -20,7 +20,7 @@ export enum detailsTab {
 export enum actionButtons {
   actionDropdownButton = 'actions-menu-button',
   confirmButton = '[data-test="confirm-action"]',
-  cancelButton = '[data-test-id="modal-cancel-action"]',
+  cancelButton = '[data-test="modal-cancel-action"]',
   confirmCloneButton = 'button[id="confirm-action"]',
   kebabButton = 'kebab-button',
 }
@@ -28,7 +28,7 @@ export enum actionButtons {
 // modal
 export const modalTitle = '[data-test-id="modal-title"]';
 export const modalConfirm = '[data-test="confirm-action"]';
-export const modalCancel = '[data-test-id="modal-cancel-action"]';
+export const modalCancel = '[data-test="modal-cancel-action"]';
 export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 
 // alert
