@@ -66,9 +66,10 @@ export DBUS_SESSION_BUS_ADDRESS
 
 SCENARIO="${1:-e2e}"
 
-if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ] && [ "$SCENARIO" != "ceph" ]; then
-  CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
-fi
+case $SCENARIO in
+  login|olmFull|ceph|kubevirt-gating) ;; # no protractor tests
+  *) CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO";;
+esac
 
 # Disable color codes in Cypress since they do not render well CI test logs.
 # https://docs.cypress.io/guides/guides/continuous-integration.html#Colors

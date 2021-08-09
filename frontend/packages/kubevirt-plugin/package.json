@@ -33,9 +33,6 @@
       ],
       "kubevirt-v2v": [
         "integration-tests/v2v/*.scenario.ts"
-      ],
-      "kubevirt-gating": [
-        "integration-tests/tests/vm.tab.snapshots.scenario.ts"
       ]
     },
     "exposedModules": {
