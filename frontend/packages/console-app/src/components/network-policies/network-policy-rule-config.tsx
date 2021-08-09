@@ -9,7 +9,7 @@ import {
   FormFieldGroupHeader,
 } from '@patternfly/react-core';
 import { TrashIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,24 +21,20 @@ import { NetworkPolicyPeerIPBlock } from './network-policy-peer-ipblock';
 import { NetworkPolicyPeerSelectors } from './network-policy-peer-selectors';
 import { NetworkPolicyPorts } from './network-policy-ports';
 
-const getPeerRuleTitle = (
-  t: TFunction,
-  direction: 'ingress' | 'egress',
-  peer: NetworkPolicyPeer,
-) => {
+const getPeerRuleTitle = (direction: 'ingress' | 'egress', peer: NetworkPolicyPeer) => {
   if (peer.ipBlock) {
     return direction === 'ingress'
-      ? t('public~Allow traffic from peers by IP block')
-      : t('public~Allow traffic to peers by IP block');
+      ? i18next.t('public~Allow traffic from peers by IP block')
+      : i18next.t('public~Allow traffic to peers by IP block');
   }
   if (peer.namespaceSelector) {
     return direction === 'ingress'
-      ? t('public~Allow traffic from pods inside the cluster')
-      : t('public~Allow traffic to pods inside the cluster');
+      ? i18next.t('public~Allow traffic from pods inside the cluster')
+      : i18next.t('public~Allow traffic to pods inside the cluster');
   }
   return direction === 'ingress'
-    ? t('public~Allow traffic from pods in the same namespace')
-    : t('public~Allow traffic to pods in the same namespace');
+    ? i18next.t('public~Allow traffic from pods in the same namespace')
+    : i18next.t('public~Allow traffic to pods in the same namespace');
 };
 
 const emptyPeer = (type: NetworkPolicyPeerType): NetworkPolicyPeer => {
@@ -144,7 +140,7 @@ export const NetworkPolicyRuleConfigPanel: React.FunctionComponent<RuleConfigPro
                 header={
                   <FormFieldGroupHeader
                     titleText={{
-                      text: getPeerRuleTitle(t, direction, peer),
+                      text: getPeerRuleTitle(direction, peer),
                       id: `peer-header-${idx}`,
                     }}
                     actions={
