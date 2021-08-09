@@ -14,8 +14,7 @@ export type Disk = {
   source?: DISK_SOURCE;
   bootable?: boolean;
   autoDetach?: boolean;
-  url?: string;
-  pvc?: string;
+  preallocation?: boolean;
 };
 
 export type Network = {
