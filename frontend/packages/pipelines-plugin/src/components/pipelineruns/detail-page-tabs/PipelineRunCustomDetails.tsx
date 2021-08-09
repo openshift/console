@@ -8,6 +8,7 @@ import {
   getPipelineResourceLinks,
 } from '../../pipelines/detail-page-tabs';
 import DynamicResourceLinkList from '../../pipelines/resource-overview/DynamicResourceLinkList';
+import RepositoryLinkList from '../../repository/RepositoryLinkList';
 import PipelineResourceRef from '../../shared/common/PipelineResourceRef';
 import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResourceLinkList';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
@@ -52,6 +53,7 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         title={t('pipelines-plugin~PipelineResources')}
         namespace={pipelineRun.metadata.namespace}
       />
+      <RepositoryLinkList pipelineRun={pipelineRun} />
       <WorkspaceResourceLinkList
         workspaces={pipelineRun.spec.workspaces}
         namespace={pipelineRun.metadata.namespace}

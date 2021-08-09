@@ -3100,6 +3100,70 @@ export const pipelineTestData: PipelineTestData = {
   },
 };
 
+export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
+  PipelineRunWithNoRepoLabel: {
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'pipeline-with-repo',
+      labels: {
+        'pipelinesascode.tekton.dev/branch': 'main',
+        'pipelinesascode.tekton.dev/url-repository': 'demoapp',
+      },
+      namespace: 'test',
+    },
+    spec: {},
+  },
+  PipelineRunWithRepoLabel: {
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'pipeline-with-repo',
+      labels: {
+        'pipelinesascode.tekton.dev/repository': 'repo1',
+        'pipelinesascode.tekton.dev/url-repository': 'demoapp',
+        'pipelinesascode.tekton.dev/url-org': 'karthikka',
+      },
+      namespace: 'test',
+    },
+    spec: {},
+  },
+  PipelineRunWithBranchLabel: {
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'pipeline-with-repo',
+      labels: {
+        'pipelinesascode.tekton.dev/repository': 'repo1',
+        'pipelinesascode.tekton.dev/branch': 'main',
+      },
+      namespace: 'test',
+    },
+    spec: {},
+  },
+  PipelineRunWithSHALabel: {
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'pipeline-with-repo',
+      labels: {
+        'pipelinesascode.tekton.dev/repository': 'repo1',
+        'pipelinesascode.tekton.dev/sha': 'abcd123456abcd',
+      },
+      namespace: 'test',
+    },
+    spec: {},
+  },
+  PipelineRunWithEventTypeLabel: {
+    kind: 'PipelineRun',
+    metadata: {
+      name: 'pipeline-with-repo',
+      labels: {
+        'pipelinesascode.tekton.dev/repository': 'repo1',
+        'pipelinesascode.tekton.dev/event-type': 'pull-request',
+      },
+      namespace: 'test',
+    },
+    spec: {},
+  },
+};
+
 type TaskTestData = {
   v1alpha1: { buildah: TaskKindAlpha };
   v1beta1: { buildah: TaskKind };
