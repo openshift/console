@@ -3,9 +3,9 @@ import { useFormikContext } from 'formik';
 import i18next from 'i18next';
 import * as _ from 'lodash';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
-import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { ResourceIcon } from '@console/internal/components/utils';
 import { TaskKind } from '../../../types';
-import { TektonTaskAnnotation, TektonTaskLabel } from '../../pipelines/const';
+import { TektonTaskAnnotation, TektonTaskLabel, TektonTaskProviders } from '../../pipelines/const';
 import { PipelineBuilderFormikValues } from '../../pipelines/pipeline-builder/types';
 
 const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] => {
@@ -14,23 +14,24 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
     (acc, task) => {
       const { uid, name, annotations = {}, creationTimestamp, labels = {} } = task.metadata;
       const { description } = task.spec;
-      const tags = (annotations[TektonTaskAnnotation.tags] || '').split(/\s*,\s*/);
+      const tags = annotations[TektonTaskAnnotation.tags]?.split(/\s*,\s*/) || [];
+      const categories = annotations[TektonTaskAnnotation.categories]?.split(/\s*,\s*/) || [];
       const provider = labels[TektonTaskLabel.providerType];
-      const iconClass = 'icon-build';
-      const imgUrl = getImageForIconClass(iconClass);
-
+      const versions = labels[TektonTaskLabel.version]
+        ? [{ id: labels[TektonTaskLabel.version], version: labels[TektonTaskLabel.version] }]
+        : [];
       const normalizedTektonTask: CatalogItem<TaskKind> = {
         uid,
-        type: 'Red Hat',
+        type: TektonTaskProviders.redhat,
         name,
         description,
         provider,
         tags,
         creationTimestamp,
         icon: {
-          url: imgUrl,
-          class: iconClass,
+          node: <ResourceIcon kind={task.kind} />,
         },
+        attributes: { installed: labels[TektonTaskLabel.version], versions, categories },
         cta: {
           label: i18next.t('pipelines-plugin~Add'),
           callback: () => {},

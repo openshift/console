@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { QuickSearchDetailsProps } from './QuickSearchDetails';
 import QuickSearchModal from './QuickSearchModal';
 import { QuickSearchData, QuickSearchProviders } from './utils/quick-search-types';
 import { quickSearch } from './utils/quick-search-utils';
@@ -15,6 +16,7 @@ type QuickSearchControllerProps = {
   limitItemCount: number;
   disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  detailsRenderer?: (props: QuickSearchDetailsProps) => React.ReactNode;
 };
 
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
@@ -28,6 +30,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   isOpen,
   setIsOpen,
   disableKeyboardOpen = false,
+  detailsRenderer,
 }) => {
   const { t } = useTranslation();
 
@@ -100,6 +103,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
       allCatalogItemsLoaded={allItemsLoaded}
       searchCatalog={searchCatalog}
       viewContainer={viewContainer}
+      detailsRenderer={detailsRenderer}
     />
   );
 };

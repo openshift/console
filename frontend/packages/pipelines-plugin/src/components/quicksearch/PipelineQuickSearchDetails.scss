@@ -1,0 +1,19 @@
+.opp-quick-search-details {
+  &__form-button {
+    margin: var(--pf-global--spacer--md) 0px !important;
+    width: max-content;
+  }
+
+  &__provider {
+    color: var(--pf-global--Color--200)
+  }
+
+  &__description {
+    font-size: 15px !important;
+  }
+
+  &__badges-section {
+    margin: var(--pf-global--spacer--md) 0px;
+    --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm) !important;
+  }
+}

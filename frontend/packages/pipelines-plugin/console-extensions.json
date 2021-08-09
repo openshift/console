@@ -168,11 +168,33 @@
     }
   },
   {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Community",
+      "title": "%pipelines-plugin~Community%",
+      "catalogDescription": "%pipelines-plugin~Browse tekton hub tasks.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
     "type": "console.catalog/item-provider",
     "properties": {
       "catalogId": "pipelines-task-catalog",
       "type": "Red Hat",
       "provider": { "$codeRef": "catalog.TektonTaskProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "pipelines-task-catalog",
+      "type": "Community",
+      "provider": { "$codeRef": "catalog.TektonHubTaskProvider" }
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]

@@ -6,17 +6,17 @@ import './QuickSearchDetails.scss';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { handleCta } from './utils/quick-search-utils';
 
-interface QuickSearchDetailsProps {
+export interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
   closeModal: () => void;
+  detailsRenderer?: (props: any) => React.ReactNode;
 }
 
-const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, closeModal }) => {
+const DefaultContent = ({ selectedItem, closeModal }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
-
   return (
-    <div className="odc-quick-search-details">
+    <>
       <Title headingLevel="h4">{selectedItem.name}</Title>
       {selectedItem.provider && (
         <span className="odc-quick-search-details__provider">
@@ -35,7 +35,16 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, c
       <TextContent className="odc-quick-search-details__description">
         {selectedItem.description}
       </TextContent>
-    </div>
+    </>
+  );
+};
+const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({
+  selectedItem,
+  closeModal,
+  detailsRenderer = DefaultContent,
+}) => {
+  return (
+    <div className="odc-quick-search-details">{detailsRenderer({ selectedItem, closeModal })}</div>
   );
 };
 

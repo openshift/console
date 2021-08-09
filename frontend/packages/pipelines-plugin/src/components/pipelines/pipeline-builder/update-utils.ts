@@ -87,10 +87,12 @@ const convertListToTask: UpdateOperationAction<UpdateOperationConvertToTaskData>
   taskGrouping,
   data,
 ) => {
-  const { name, resource, runAfter } = data;
+  const { name, resource, runAfter, metadata = {} } = data;
   const { tasks, listTasks, finallyTasks } = taskGrouping;
   const usedNames = getTaskNames([...tasks, ...finallyTasks]);
-  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter, {
+    metadata,
+  });
   return {
     ...taskGrouping,
     tasks: [
@@ -235,10 +237,12 @@ const fixInvalidListTask: UpdateOperationAction<UpdateOperationFixInvalidTaskLis
   taskGrouping,
   data,
 ) => {
-  const { existingName, resource, runAfter } = data;
+  const { existingName, resource, runAfter, metadata = {} } = data;
   const { tasks, listTasks } = taskGrouping;
   const usedNames = getTaskNames(tasks);
-  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter);
+  const newPipelineTask: PipelineTask = convertResourceToTask(usedNames, resource, runAfter, {
+    metadata,
+  });
 
   return {
     ...taskGrouping,

@@ -14,7 +14,12 @@ import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { TektonTaskSpec, PipelineTaskRef, TaskKind, WhenExpression } from '../../../../types';
 import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
-import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
+import { PipelineBuilderTaskMetadata } from '../../pipeline-builder/types';
+import {
+  BUILDER_NODE_ADD_RADIUS,
+  WHEN_EXPRESSSION_DIAMOND_SIZE,
+} from '../../pipeline-topology/const';
+import InstallingNodeDecorator from '../../pipeline-topology/InstallingNodeDecorator';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
@@ -29,6 +34,7 @@ type PipelineVisualizationTask = {
   runAfter?: string[];
   when?: WhenExpression[];
   status?: TaskStatus;
+  metadata?: PipelineBuilderTaskMetadata;
 };
 interface TaskProps {
   pipelineRunName?: string;
@@ -184,6 +190,15 @@ const TaskComponent: React.FC<TaskProps> = ({
 
   let taskPill = (
     <g ref={hoverRef}>
+      {!!pipelineTask?.metadata?.installing && (
+        <g>
+          <InstallingNodeDecorator
+            x={0}
+            y={BUILDER_NODE_ADD_RADIUS / 4}
+            content={'pipelines-plugin~Installing'}
+          />
+        </g>
+      )}
       <SvgDropShadowFilter dy={1} id={FILTER_ID} />
       <rect
         filter={hover ? createSvgIdUrl(FILTER_ID) : ''}

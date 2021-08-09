@@ -87,16 +87,17 @@ export type CatalogItem<T extends any = any> = {
   supportUrl?: string;
   documentationUrl?: string;
   attributes?: {
-    [key: string]: string;
+    [key: string]: any;
   };
   cta?: {
     label: string;
     href?: string;
-    callback?: () => void;
+    callback?: (props?: { [key: string]: string }) => void;
   };
   icon?: {
     url?: string;
     class?: string;
+    node?: React.ReactNode;
   };
   details?: {
     properties?: CatalogItemDetailsProperty[];

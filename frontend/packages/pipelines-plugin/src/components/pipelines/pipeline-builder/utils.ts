@@ -26,6 +26,7 @@ import {
   PipelineBuilderFormValues,
   PipelineBuilderFormYamlValues,
   PipelineBuilderTaskBase,
+  PipelineBuilderTaskMetadata,
   PipelineBuilderTaskResources,
   TaskErrors,
   TaskType,
@@ -94,7 +95,16 @@ export const findTask = (
     ) {
       return null;
     }
-
+    if (task?.metadata?.installing) {
+      return {
+        apiVersion: apiVersionForModel(TaskModel),
+        kind: TaskModel.kind,
+        metadata: {
+          name: task.name,
+        },
+        spec: { steps: [] },
+      };
+    }
     const {
       taskRef: { kind, name },
     } = task;
@@ -249,10 +259,12 @@ export const convertResourceToTask = (
   usedNames: string[],
   resource: TaskKind,
   runAfter?: string[],
+  metadata?: { metadata: PipelineBuilderTaskMetadata },
 ): PipelineTask => {
   const kind = resource.kind ?? TaskModel.kind;
   return {
     name: safeName(usedNames, resource.metadata.name),
+    ...(metadata ?? {}),
     runAfter,
     taskRef: {
       kind,
@@ -301,7 +313,7 @@ export const removeEmptyFormFields = (task: PipelineTask): PipelineTask => {
     const workspaces = task.workspaces?.filter((workspace) => workspace.workspace);
     trimmedTask = { ...trimmedTask, workspaces };
   }
-  return trimmedTask;
+  return _.omit(trimmedTask, 'metadata');
 };
 
 export const convertBuilderFormToPipeline = (

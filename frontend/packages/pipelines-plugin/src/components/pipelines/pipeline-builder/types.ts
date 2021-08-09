@@ -44,6 +44,10 @@ export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
   highlightedIds: string[];
 };
 
+export type PipelineBuilderTaskMetadata = {
+  installing?: boolean;
+};
+
 export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: TektonParam[];
@@ -102,6 +106,7 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;
   resource: TaskKind;
   runAfter?: string[];
+  metadata?: PipelineBuilderTaskMetadata;
 };
 export type UpdateOperationConvertToFinallyTaskData = {
   listTaskName: string;
@@ -110,6 +115,7 @@ export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
   existingName: string;
   resource: TaskKind;
   runAfter?: string[];
+  metadata?: PipelineBuilderTaskMetadata;
 };
 export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {
   listTaskName: string;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikTouched } from 'formik';
+import { omit } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -174,6 +175,16 @@ export const useNodes = (
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.CONVERT_LIST_TO_TASK, data });
   };
 
+  const onNewInstallingTask = (resource: TaskKind, name: string, runAfter?: string[]) => {
+    const data: UpdateOperationConvertToTaskData = {
+      resource,
+      name,
+      runAfter,
+      metadata: { installing: true },
+    };
+    onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.CONVERT_LIST_TO_TASK, data });
+  };
+
   const newListNode = (
     name: string,
     runAfter?: string[],
@@ -183,7 +194,9 @@ export const useNodes = (
       namespaceTaskList: namespacedTasks,
       clusterTaskList: clusterTasks,
       onNewTask: (resource: TaskKind) => {
-        onNewTask(resource, name, runAfter);
+        resource.kind
+          ? onNewTask(resource, name, runAfter)
+          : onNewInstallingTask(resource, name, runAfter);
       },
       onTaskSearch,
       onRemoveTask: firstTask
@@ -209,6 +222,7 @@ export const useNodes = (
           existingName: name,
           resource,
           runAfter,
+          metadata: { installing: true },
         };
 
         onUpdateTasks(taskGroupRef.current, {
@@ -229,7 +243,9 @@ export const useNodes = (
       },
     });
 
-  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task));
+  const invalidTaskList = taskGroup.tasks.filter(
+    (task) => !task?.metadata?.installing && !findTask(taskResources, task),
+  );
   const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task));
 
   const invalidTaskListNodes: PipelineTaskListNodeModel[] = invalidTaskList.map((task) =>
@@ -305,4 +321,23 @@ export const useExplicitPipelineTaskTouch = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspacesTouched, resourcesTouched]);
+};
+
+export const useMetadataCleanup = () => {
+  const { values, setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
+
+  React.useEffect(() => {
+    const { tasks } = values.formData;
+    tasks.map((task, index) => {
+      if (task.metadata?.installing) {
+        const installedTask = values.taskResources.namespacedTasks.find(
+          (nt) => nt.metadata.name === task?.taskRef.name,
+        );
+        if (installedTask) {
+          setFieldValue(`formData.tasks.${index}`, omit(values.formData.tasks[index], 'metadata'));
+        }
+      }
+      return task;
+    });
+  }, [setFieldValue, values]);
 };

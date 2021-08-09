@@ -3,7 +3,7 @@ import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import cx from 'classnames';
 import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import QuickSearchDetails from './QuickSearchDetails';
+import QuickSearchDetails, { QuickSearchDetailsProps } from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';
 import './QuickSearchContent.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
@@ -21,6 +21,7 @@ interface QuickSearchContentProps {
   viewAll?: CatalogLinkData[];
   closeModal: () => void;
   limitItemCount: number;
+  detailsRenderer?: (props: QuickSearchDetailsProps) => React.ReactNode;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
@@ -34,6 +35,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   onSelect,
   closeModal,
   limitItemCount,
+  detailsRenderer,
 }) => {
   return (
     <Split className="odc-quick-search-content">
@@ -56,7 +58,11 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
       </SplitItem>
       <Divider component="div" isVertical />
       <SplitItem className="odc-quick-search-content__details">
-        <QuickSearchDetails selectedItem={selectedItem} closeModal={closeModal} />
+        <QuickSearchDetails
+          detailsRenderer={detailsRenderer}
+          selectedItem={selectedItem}
+          closeModal={closeModal}
+        />
       </SplitItem>
     </Split>
   );
