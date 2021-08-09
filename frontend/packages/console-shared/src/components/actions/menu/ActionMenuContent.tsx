@@ -85,7 +85,6 @@ const SubMenuContent: React.FC<GroupMenuContentProps> = ({ option, onClick }) =>
         onKeyDown={handleNodeKeyDown}
         data-test-action={option.id}
         tabIndex={0}
-        translate="no"
       >
         {option.label}
       </MenuItem>
@@ -129,7 +128,7 @@ const ActionMenuContent: React.FC<ActionMenuContentProps> = ({ options, onClick,
   const sortedOptions = orderExtensionBasedOnInsertBeforeAndAfter(options);
   return (
     <MenuContent data-test-id="action-items" translate="no">
-      <MenuList translate="no">
+      <MenuList>
         {sortedOptions.map((option) => {
           const optionType = getMenuOptionType(option);
           switch (optionType) {
