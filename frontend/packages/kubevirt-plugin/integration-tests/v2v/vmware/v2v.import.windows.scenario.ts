@@ -13,7 +13,7 @@ describe('Kubevirt import Windows 10 VM using wizard', () => {
     async () => {
       const vm = await wizard.import(vmwareWindowsVMConfig);
       await withResource(leakedResources, vm.asResource(), async () => {
-        await vm.waitForStatus(VM_STATUS.Off, V2V_VM_IMPORT_TIMEOUT);
+        await vm.waitForStatus(VM_STATUS.Stopped, V2V_VM_IMPORT_TIMEOUT);
       });
     },
     V2V_VM_IMPORT_TIMEOUT,

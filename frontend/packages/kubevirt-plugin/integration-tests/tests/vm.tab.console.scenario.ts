@@ -66,7 +66,7 @@ describe('KubeVirt VM console - VNC/Serial', () => {
   beforeAll(async () => {
     createResource(vmResource);
     await testVM.navigateToDetail();
-    await testVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+    await testVM.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
     await testVM.detailViewAction(VM_ACTION.Start);
     // wait for the VM to boot up
     execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${testVM.name} ${testVM.namespace}`);

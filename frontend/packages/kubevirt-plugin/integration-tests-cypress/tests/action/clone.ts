@@ -39,7 +39,7 @@ describe('Test VM Clone', () => {
     cy.cdiCloner(testName, 'default');
     cy.createNAD(testName);
     virtualization.vms.visit();
-    waitForStatus(VM_STATUS.Off, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+    waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
   });
 
   after(() => {
@@ -132,7 +132,7 @@ describe('Test VM Clone', () => {
       .should('exist')
       .click();
     tab.navigateToDetails();
-    waitForStatus(VM_STATUS.Off);
+    waitForStatus(VM_STATUS.Stopped);
   });
 
   it('ID(CNV-1733) Start cloned VM on creation', () => {

@@ -11,7 +11,6 @@ import {
 import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
@@ -27,38 +26,31 @@ import {
   FirehoseResult,
   history,
   Kebab,
-  KebabOption,
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import {
-  NamespaceModel,
-  NodeModel,
-  PersistentVolumeClaimModel,
-  PodModel,
-} from '@console/internal/models';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { NamespaceModel, NodeModel } from '@console/internal/models';
+import { K8sKind } from '@console/internal/module/k8s';
+import GenericStatus from '@console/shared/src/components/status/GenericStatus';
 import { VMWizardMode, VMWizardName } from '../../constants';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { printableToVMStatus, VMStatus } from '../../constants/vm/vm-status';
 import { useNamespace } from '../../hooks/use-namespace';
-import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
-import {
-  DataVolumeModel,
-  VirtualMachineImportModel,
-  VirtualMachineInstanceMigrationModel,
-  VirtualMachineInstanceModel,
-  VirtualMachineModel,
-} from '../../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
-import { getCreationTimestamp, getLabels, getName, getNamespace, getUID } from '../../selectors';
-import { isVM, isVMI, isVMImport } from '../../selectors/check-type';
+import {
+  getCreationTimestamp,
+  getLabels,
+  getName,
+  getNamespace,
+  getOwnerReferences,
+  getUID,
+} from '../../selectors';
+import { isVM, isVMI } from '../../selectors/check-type';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
-import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { getVMStatus } from '../../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../../types';
-import { V1alpha1DataVolume } from '../../types/api';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VMILikeEntityKind } from '../../types/vmLike';
 import {
@@ -70,9 +62,11 @@ import {
 } from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VMStatus } from '../vm-status/vm-status';
-import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
-import { vmStatusFilter } from './table-filters';
+import { LazyVmRowKebab } from '../vm-status/lazy-vm-row-kebab';
+import { LazyVMStatus } from '../vm-status/lazy-vm-status';
+import { useVmStatusResources, VmStatusResourcesValue } from '../vm-status/use-vm-status-resources';
+import { getVMStatusIcon } from '../vm-status/vm-status';
+import { vmStatusFilterNew } from './table-filters';
 import VMIP from './VMIP';
 
 import './vm.scss';
@@ -81,6 +75,7 @@ const tableColumnClasses = [
   'pf-u-w-16-on-xl pf-u-w-50-on-xs',
   'pf-m-hidden pf-m-visible-on-lg',
   '',
+  'pf-m-hidden pf-m-visible-on-xl',
   'pf-m-hidden pf-m-visible-on-xl',
   'pf-m-hidden pf-m-visible-on-lg',
   '',
@@ -106,6 +101,9 @@ const VMHeader = (t: TFunction) => () =>
         transforms: [sortable],
       },
       {
+        title: t('kubevirt-plugin~Conditions'),
+      },
+      {
         title: t('kubevirt-plugin~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
@@ -125,36 +123,27 @@ const VMHeader = (t: TFunction) => () =>
     tableColumnClasses,
   );
 
-const PendingChanges: React.FC = () => {
-  const { t } = useTranslation();
-  return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
-};
-
-const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
-  const { vm, vmi, vmImport } = obj;
-  const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
+const VMRow: RowFunction<VMRowObjType, VmStatusResourcesValue> = ({
+  obj,
+  index,
+  key,
+  style,
+  customData: vmStatusResources,
+}) => {
+  const { vm, vmi } = obj;
+  const { name, namespace, creationTimestamp, uid, node } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
+  const arePendingChanges = hasPendingChanges(vm, vmi);
+  const printableStatus = obj?.metadata?.status;
+  const status: VMStatus = printableToVMStatus?.[printableStatus];
 
-  let options: KebabOption[];
   let model: K8sKind;
 
-  if (vmImport) {
-    model = VirtualMachineImportModel;
-    options = vmImportMenuActions.map((action) => action(model, vmImport));
-  } else if (vm) {
+  if (vm) {
     model = VirtualMachineModel;
-    options = vmMenuActions.map((action) =>
-      action(model, vm, {
-        vmStatusBundle,
-        vmi,
-      }),
-    );
   } else if (vmi) {
     model = VirtualMachineInstanceModel;
-    options = vmiMenuActions.map((action) => action(model, vmi));
   }
-
-  const arePendingChanges = hasPendingChanges(vm, vmi);
 
   return (
     <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
@@ -165,13 +154,22 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       <TableData className={dimensify()}>
-        <VMStatus
+        {status ? (
+          <GenericStatus
+            title={printableStatus}
+            Icon={getVMStatusIcon(status === VMStatus.PAUSED, status, arePendingChanges)}
+          />
+        ) : (
+          '-'
+        )}
+      </TableData>
+      <TableData className={dimensify()}>
+        <LazyVMStatus
           vm={vm}
           vmi={vmi}
-          vmStatusBundle={vmStatusBundle}
-          arePendingChanges={arePendingChanges}
+          printableStatus={printableStatus}
+          vmStatusResources={vmStatusResources}
         />
-        {arePendingChanges && <PendingChanges />}
       </TableData>
       <TableData className={dimensify()}>
         <Timestamp timestamp={creationTimestamp} />
@@ -183,7 +181,13 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
       </TableData>
       <TableData className={dimensify()}>{vmi && <VMIP data={getVmiIpAddresses(vmi)} />}</TableData>
       <TableData className={dimensify(true)}>
-        <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
+        <LazyVmRowKebab
+          key={`kebab-for-${uid}`}
+          id={`kebab-for-${uid}`}
+          vm={vm}
+          vmi={vmi}
+          vmStatusResources={vmStatusResources}
+        />
       </TableData>
     </TableRow>
   );
@@ -193,6 +197,7 @@ const VMListEmpty: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const namespace = useNamespace();
+
   const searchText = 'virtual machine';
   const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
     kind: kubevirtReferenceForModel(QuickStartModel),
@@ -205,6 +210,7 @@ const VMListEmpty: React.FC = () => {
         displayName.toLowerCase().includes(searchText) ||
         description.toLowerCase().includes(searchText),
     );
+
   return (
     <EmptyState>
       <EmptyStateIcon icon={VirtualMachineIcon} />
@@ -276,162 +282,79 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
   const { t } = useTranslation();
   const { skipAccessReview, noProjectsAvailable, showTitle } = props.customData;
   const namespace = props.match.params.ns;
+  const vmStatusResources = useVmStatusResources(namespace);
 
-  const resources = [
-    {
-      kind: kubevirtReferenceForModel(VirtualMachineModel),
-      namespace,
-      prop: 'vms',
-    },
-    {
-      kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
-      namespace,
-      prop: 'vmis',
-    },
-    {
-      kind: PodModel.kind,
-      namespace,
-      prop: 'pods',
-    },
-    {
-      kind: kubevirtReferenceForModel(VirtualMachineInstanceMigrationModel),
-      namespace,
-      prop: 'migrations',
-    },
-    {
-      kind: PersistentVolumeClaimModel.kind,
-      isList: true,
-      namespace,
-      prop: 'pvcs',
-    },
-    {
-      kind: kubevirtReferenceForModel(DataVolumeModel),
-      isList: true,
-      namespace,
-      prop: 'dataVolumes',
-    },
-    {
-      kind: kubevirtReferenceForModel(VirtualMachineImportModel),
-      isList: true,
-      namespace,
-      prop: 'vmImports',
-      optional: true,
-    },
-  ];
+  const resources = React.useMemo(
+    () => [
+      {
+        kind: kubevirtReferenceForModel(VirtualMachineModel),
+        namespace,
+        prop: 'vms',
+      },
+      {
+        kind: kubevirtReferenceForModel(VirtualMachineInstanceModel),
+        namespace,
+        prop: 'vmis',
+      },
+    ],
+    [namespace],
+  );
 
   const flatten = ({
     vms,
     vmis,
-    pods,
-    migrations,
-    pvcs,
-    dataVolumes,
-    vmImports,
   }: {
     vms: FirehoseResult<VMKind[]>;
     vmis: FirehoseResult<VMIKind[]>;
-    pods: FirehoseResult<PodKind[]>;
-    migrations: FirehoseResult;
-    pvcs: FirehoseResult<PersistentVolumeClaimKind[]>;
-    dataVolumes: FirehoseResult<V1alpha1DataVolume[]>;
-    vmImports: FirehoseResult<VMImportKind[]>;
   }) => {
     const loadedVMs = getLoadedData(vms);
     const loadedVMIs = getLoadedData(vmis);
-    const loadedPods = getLoadedData(pods);
-    const loadedMigrations = getLoadedData(migrations);
-    const loadedVMImports = getLoadedData(vmImports);
-    const loadedPVCs = getLoadedData(pvcs);
-    const loadedDataVolumes = getLoadedData(dataVolumes);
-    const isVMImportLoaded = !vmImports || vmImports.loaded || vmImports.loadError; // go in when CRD missing or no permissions
 
-    if (
-      ![
-        loadedVMs,
-        loadedVMIs,
-        loadedPods,
-        loadedMigrations,
-        loadedDataVolumes,
-        isVMImportLoaded,
-      ].every((v) => v)
-    ) {
+    if (![loadedVMs, loadedVMIs].every((v) => v)) {
       return null;
     }
-
     const vmisLookup = createLookup<VMIKind>(vmis, getBasicID);
 
-    const uniqueVMImportsByTargetName = _.sortedUniqBy(
-      [...(loadedVMImports || [])].sort((a, b) =>
-        new Date(getCreationTimestamp(a)) > new Date(getCreationTimestamp(b)) ? -1 : 1,
+    const virtualMachines = [
+      ...loadedVMs,
+      ...loadedVMIs.filter(
+        (vmi) => !getOwnerReferences(vmi)?.find((owner) => owner.kind === VirtualMachineModel.kind),
       ),
-      (vmImport) => new VMImportWrappper(vmImport).getResolvedVMTargetName(),
-    );
+    ];
 
-    const virtualMachines = _.unionBy(
-      // order of arrays designates the priority
-      loadedVMs,
-      loadedVMIs,
-      uniqueVMImportsByTargetName,
-      (entity: VMKind | VMIKind | VMImportKind) =>
-        entity.kind === VirtualMachineImportModel.kind
-          ? `${getNamespace(entity)}-${new VMImportWrappper(entity).getResolvedVMTargetName()}`
-          : getBasicID(entity),
-    );
+    return virtualMachines.map((obj: VMILikeEntityKind) => {
+      const objectBundle: ObjectBundle = { vm: null, vmi: null, vmImport: null };
+      const lookupID = getBasicID(obj);
 
-    return virtualMachines
-      .map((obj: VMILikeEntityKind | VMImportKind) => {
-        const lookupID = getBasicID(obj);
-        const objectBundle: ObjectBundle = { vm: null, vmi: null, vmImport: null };
-        let vmStatusBundle: VMStatusBundle;
-        let vmImportStatus: V2VVMImportStatus;
-
-        if (isVMImport(obj)) {
-          objectBundle.vmImport = obj;
-          const { vmImportStatus: importstatus, ...bundle } = getVMImportStatusAsVMStatus({
-            vmImport: obj,
-          });
-          vmStatusBundle = bundle;
-          vmImportStatus = importstatus;
-        } else {
-          if (isVM(obj)) {
-            objectBundle.vm = obj;
-            objectBundle.vmi = vmisLookup[lookupID];
-          } else if (isVMI(obj)) {
-            objectBundle.vmi = obj;
-          }
-
-          vmStatusBundle = getVMStatus({
-            vm: objectBundle.vm,
-            vmi: objectBundle.vmi,
-            pods: loadedPods,
-            migrations: loadedMigrations,
-            pvcs: loadedPVCs,
-            dataVolumes: loadedDataVolumes,
-            vmImports: loadedVMImports,
-          });
-        }
-
-        return {
-          metadata: {
-            name: getName(obj),
-            namespace: getNamespace(obj),
-            node: getVMINodeName(objectBundle.vmi),
-            creationTimestamp: getCreationTimestamp(obj),
-            uid: getUID(obj),
-            status: vmStatusBundle.status.toSimpleSortString(),
-            vmStatusBundle,
-            vmImportStatus,
-            lookupID,
-            labels: getLabels(obj),
-          },
-          ...objectBundle,
-        };
-      })
-      .filter(({ vmImport, metadata }) => !(vmImport && metadata.vmImportStatus?.isCompleted()));
+      if (isVM(obj)) {
+        objectBundle.vm = obj;
+        objectBundle.vmi = vmisLookup[lookupID];
+      } else if (isVMI(obj)) {
+        objectBundle.vmi = obj;
+      }
+      return {
+        metadata: {
+          name: getName(obj),
+          namespace: getNamespace(obj),
+          creationTimestamp: getCreationTimestamp(obj),
+          node: getVMINodeName(objectBundle.vmi),
+          uid: getUID(obj),
+          lookupID,
+          labels: getLabels(obj),
+          status: isVM(obj)
+            ? obj?.status?.printableStatus
+            : isVMI(obj)
+            ? obj?.status?.phase
+            : 'Unknown',
+        },
+        ...objectBundle,
+      };
+    });
   };
 
   const createAccessReview = skipAccessReview ? null : { model: VirtualMachineModel, namespace };
   const modifiedProps = Object.assign({}, { mock: noProjectsAvailable }, props);
+
   return (
     <MultiListPage
       {...modifiedProps}
@@ -439,11 +362,12 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       createButtonText={t('kubevirt-plugin~Create virtual machine')}
       title={VirtualMachineModel.labelPlural}
       showTitle={showTitle}
-      rowFilters={[vmStatusFilter]}
+      rowFilters={[vmStatusFilterNew]}
       ListComponent={VMList}
       resources={resources}
       flatten={flatten}
       label={VirtualMachineModel.labelPlural}
+      customData={vmStatusResources}
     />
   );
 };
@@ -454,7 +378,7 @@ type ObjectBundle = {
   vmImport: VMImportKind;
 };
 
-type VMRowObjType = {
+export type VMRowObjType = {
   metadata: {
     name: string;
     namespace: string;
@@ -478,5 +402,6 @@ type VirtualMachinesPageProps = {
     showTitle?: boolean;
     skipAccessReview?: boolean;
     noProjectsAvailable?: boolean;
+    namespace: string;
   };
 };

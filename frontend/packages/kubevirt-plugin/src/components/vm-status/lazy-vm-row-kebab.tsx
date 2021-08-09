@@ -3,7 +3,7 @@ import { Kebab, KebabOption } from '@console/internal/components/utils';
 import { useDeepCompareMemoize } from '../../hooks/use-deep-compare-memoize';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { getVMStatus } from '../../statuses/vm/vm-status';
+import { getVMConditionsStatus } from '../../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../../types';
 import { vmiMenuActions, vmMenuActions } from '../vms/menu-actions';
 import { VmStatusResourcesValue } from './use-vm-status-resources';
@@ -23,10 +23,10 @@ export const LazyVmRowKebab: React.FC<LazyVmRowKebabProps> = ({
   vmi,
   vmStatusResources,
 }) => {
-  const { pods, migrations, pvcs, dvs, loaded } = vmStatusResources;
+  const { pods, migrations, loaded, dvs, pvcs } = vmStatusResources;
   const vmStatusBundle = useDeepCompareMemoize(
     loaded
-      ? getVMStatus({ vm, vmi, pods, migrations, pvcs, dataVolumes: dvs, vmImports: [] })
+      ? getVMConditionsStatus({ vm, vmi, pods, migrations, dataVolumes: dvs, pvcs })
       : ({} as VMStatusBundle),
   );
 
@@ -44,7 +44,7 @@ export const LazyVmRowKebab: React.FC<LazyVmRowKebabProps> = ({
     }
 
     return [];
-  }, [vm, vmi, vmStatusBundle]);
+  }, [vm, vmStatusBundle, vmi]);
 
   return <Kebab options={options} key={key} id={id} isDisabled={!loaded} />;
 };

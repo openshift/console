@@ -24,7 +24,7 @@ describe('Test VM Migration', () => {
     cy.createProject(testName);
     vm.create(vmData);
     virtualization.vms.visit();
-    waitForStatus(VM_STATUS.Off);
+    waitForStatus(VM_STATUS.Stopped);
   });
 
   after(() => {

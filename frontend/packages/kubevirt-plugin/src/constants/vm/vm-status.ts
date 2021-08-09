@@ -39,7 +39,7 @@ export enum VMStatusSimpleLabel {
   Migrating = 'Migrating',
   Stopping = 'Stopping',
   Running = 'Running',
-  Off = 'Off',
+  Stopped = 'Stopped',
   Deleting = 'Deleting',
 }
 
@@ -59,7 +59,7 @@ const isVMStatusSimpleLabel = (label: string): label is VMStatusSimpleLabel | St
 type VMStatusMetadata = StatusMetadata & { isMigrating?: boolean };
 
 export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel> {
-  static readonly OFF = new VMStatus('VMStatus_OFF', VMStatusSimpleLabel.Off); // normal state
+  static readonly STOPPED = new VMStatus('VMStatus_STOPPED', VMStatusSimpleLabel.Stopped); // normal state
   static readonly RUNNING = new VMStatus('VMStatus_RUNNING', VMStatusSimpleLabel.Running); // normal state
   static readonly PAUSED = new VMStatus('VMStatus_PAUSED', VMStatusSimpleLabel.Paused); // normal state
   static readonly STARTING = new VMStatus('VMStatus_STARTING', VMStatusSimpleLabel.Starting, {
@@ -214,3 +214,15 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
     return VMStatus.stringMapper[`VMStatus_${v2VVMImportStatus.getValue()}`];
   };
 }
+
+export const printableToVMStatus = {
+  Stopped: VMStatus.STOPPED,
+  Migrating: VMStatus.MIGRATING,
+  Provisioning: VMStatus.STARTING,
+  Starting: VMStatus.STARTING,
+  Running: VMStatus.RUNNING,
+  Paused: VMStatus.PAUSED,
+  Stopping: VMStatus.STOPPING,
+  Terminating: VMStatus.DELETING,
+  Unknown: VMStatus.UNKNOWN,
+};

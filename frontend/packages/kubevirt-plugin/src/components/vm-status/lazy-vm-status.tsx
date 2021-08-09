@@ -2,11 +2,15 @@ import * as React from 'react';
 import { Button, ButtonVariant, Skeleton } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
-import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
+import {
+  VMStatus,
+  VMStatus as VMStatusEnum,
+  VMStatusSimpleLabel,
+} from '../../constants/vm/vm-status';
 import { useDeepCompareMemoize } from '../../hooks/use-deep-compare-memoize';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { getVMStatus } from '../../statuses/vm/vm-status';
+import { getVMConditionsStatus } from '../../statuses/vm/vm-status';
 import { VMIKind, VMKind } from '../../types';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { VmStatusResourcesValue } from './use-vm-status-resources';
@@ -30,18 +34,36 @@ const PendingChanges: React.FC = () => {
   return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
 };
 
-export const LazyVMStatus: React.FC<LazyVMStatusProps> = ({ vm, vmi, vmStatusResources }) => {
+export const LazyVMStatus: React.FC<LazyVMStatusProps> = ({
+  vm,
+  vmi,
+  vmStatusResources,
+  printableStatus,
+}) => {
   const { t } = useTranslation();
   const vmiLike = vm || vmi;
   const { pods, migrations, pvcs, dvs, loaded } = vmStatusResources;
 
   const vmStatus = useDeepCompareMemoize(
     loaded
-      ? getVMStatus({ vm, vmi, pods, migrations, pvcs, dataVolumes: dvs, vmImports: [] })
+      ? getVMConditionsStatus({ vm, vmi, pods, migrations, dataVolumes: dvs, pvcs })
       : ({} as VMStatusBundle),
   );
 
+  if (!loaded) {
+    return <Skeleton screenreaderText="Loading status" />;
+  }
+
   const { status, pod, progress, importerPodsStatuses } = vmStatus;
+
+  if (
+    status === VMStatus.UNKNOWN ||
+    printableStatus === VMStatusSimpleLabel.Stopping ||
+    printableStatus === VMStatusSimpleLabel.Stopped
+  ) {
+    return <>-</>;
+  }
+
   const message = vmStatus?.message || vmStatus?.detailedMessage;
   const detailedMessage = vmStatus?.message ? vmStatus?.detailedMessage : null;
   const title = t(status?.getLabelKey()) || status?.toString(t(getStatusSuffixLabelKey(vmStatus)));
@@ -62,9 +84,7 @@ export const LazyVMStatus: React.FC<LazyVMStatusProps> = ({ vm, vmi, vmStatusRes
 
   const Icon = status && getVMStatusIcon(isPaused, status, arePendingChanges);
 
-  return !loaded ? (
-    <Skeleton screenreaderText="Loading status" />
-  ) : (
+  return (
     <>
       <GenericStatus title={title} Icon={Icon} popoverTitle={popoverTitle}>
         {(message || isPaused) && (
@@ -98,5 +118,6 @@ export const LazyVMStatus: React.FC<LazyVMStatusProps> = ({ vm, vmi, vmStatusRes
 type LazyVMStatusProps = {
   vm: VMKind;
   vmi?: VMIKind;
+  printableStatus?: string;
   vmStatusResources: VmStatusResourcesValue;
 };

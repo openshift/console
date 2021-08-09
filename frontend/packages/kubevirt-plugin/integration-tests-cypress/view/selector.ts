@@ -8,6 +8,7 @@ export enum detailsTab {
   vmTemplate = '[data-test-id="details-Template"]',
   vmOwner = '[data-test-selector="details-item-value__Owner"]',
   vmStatus = '[data-test="status-text"]',
+  vmPrintableStatus = '[data-test="vm-printable-status-text"]',
   vmPod = '[data-test-id="details-Pod"]',
   vmBootOrder = '[data-test-id="details-Boot Order"]',
   vmIP = '[data-test-id="details-IP Address"]',

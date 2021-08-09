@@ -22,12 +22,14 @@ import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
 } from '../../constants/v2v';
+import { FLAG_KUBEVIRT_HAS_PRINTABLESTATUS } from '../../flags/const';
 import { VirtualMachineModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
 import MigrationTool from './migration-tool/MigrationTool';
 import { VirtualMachinesPage } from './vm';
+import { VirtualMachinesPage as NewVirtualMachinesPage } from './vm-page-new';
 
 import './virtualization.scss';
 
@@ -101,6 +103,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
   const [isOpen, setOpen] = React.useState(false);
   const [importAllowed, setImportAllowed] = useSafetyFirst(false);
   const openshiftFlag = useFlag(FLAGS.OPENSHIFT);
+  const printableVmStatusFlag = useFlag(FLAG_KUBEVIRT_HAS_PRINTABLESTATUS);
 
   React.useEffect(() => {
     VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES.forEach((configMapNamespace) => {
@@ -131,7 +134,7 @@ export const WrappedVirtualizationPage: React.FC<VirtualizationPageProps> = (pro
     {
       href: '',
       name: t('kubevirt-plugin~Virtual Machines'),
-      component: VirtualMachinesPage,
+      component: printableVmStatusFlag ? NewVirtualMachinesPage : VirtualMachinesPage,
     },
   ];
 

@@ -70,8 +70,8 @@ export const getVMStatusGroups: StatusGroupMapper = (
       count: 0,
       filterType: 'vm-status',
     },
-    'vm-off': {
-      statusIDs: [VMStatusSimpleLabel.Off],
+    'vm-stopped': {
+      statusIDs: [VMStatusSimpleLabel.Stopped],
       count: 0,
       filterType: 'vm-status',
     },

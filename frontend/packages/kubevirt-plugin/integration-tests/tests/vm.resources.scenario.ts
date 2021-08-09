@@ -50,7 +50,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
 
   beforeAll(async () => {
     createResources([multusNAD, testVM]);
-    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+    await vm.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
   });
 
   afterAll(() => {
