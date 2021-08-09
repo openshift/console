@@ -29,6 +29,7 @@ const ExecNewPodForm: React.FC<ExecNewPodFormProps> = ({
       <DropdownField
         name={`formData.deploymentStrategy.${dataAttribute}.${lifecycleHook}.lch.execNewPod.containerName`}
         label={t('devconsole~Container name')}
+        title={t('devconsole~Select container name')}
         items={getContainerNames(containers)}
         fullWidth
         required

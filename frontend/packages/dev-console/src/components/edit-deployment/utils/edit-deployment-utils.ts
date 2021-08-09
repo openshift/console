@@ -360,6 +360,7 @@ export const getUpdatedStrategy = (strategy: DeploymentStrategy, resourceType: s
     'recreateParams',
     'customParams',
     'imageStreamData',
+    'rollingUpdate',
   ]);
   switch (type) {
     case DeploymentStrategyType.recreateParams: {
