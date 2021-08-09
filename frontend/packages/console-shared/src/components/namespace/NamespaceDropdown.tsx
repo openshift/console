@@ -88,6 +88,7 @@ const Filter: React.FC<{
         }
         onChange={(value: string) => onFilterChange(value)}
         ref={filterRef}
+        data-test="project filter"
       />
     </MenuInput>
   );
@@ -135,13 +136,14 @@ const NamespaceGroup: React.FC<{
 }> = ({ isFavorites, options, selectedKey, favorites }) => {
   const { t } = useTranslation();
   const label = isFavorites ? t('console-shared~Favorites') : t('console-shared~Projects');
+  const dataTest = isFavorites ? 'favorites menu' : 'projects menu';
 
   return options.length === 0 ? null : (
     <>
       <Divider />
       {/*
         //@ts-ignore */}
-      <MenuGroup label={label}>
+      <MenuGroup label={label} data-test={dataTest}>
         {/*
         //@ts-ignore */}
         <MenuList>
@@ -398,7 +400,7 @@ const NamespaceDropdown: React.FC<NamespaceDropdownProps> = ({
   };
 
   return (
-    <div className="co-namespace-dropdown">
+    <div className="co-namespace-dropdown" data-test="namespace dropdown">
       <NamespaceMenuToggle
         disabled={disabled}
         menu={<NamespaceMenu {...NamespaceMenuProps} />}

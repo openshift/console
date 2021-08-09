@@ -21,7 +21,7 @@ export const app = {
     app.waitForDocumentLoad();
   },
   waitForNameSpacesToLoad: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
+    cy.byTestID('namespace dropdown').should('be.visible');
   },
 };
 
@@ -142,10 +142,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
 
 export const projectNameSpace = {
   clickProjectDropdown: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .find('button')
-      .first()
-      .click();
+    cy.byTestID('namespace dropdown').click();
   },
   selectCreateProjectOption: () => {
     cy.document().then((doc) => {
@@ -163,28 +160,28 @@ export const projectNameSpace = {
 
   selectOrCreateProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    cy.get('[role="listbox"]')
+    cy.byTestID('namespace dropdown')
       .find('li')
-      .should('have.length.gt', 5);
-    // Bug: ODC-6164 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-    // cy.testA11y('Create Project modal');
-    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-dropdown__toggle-text')
-      .first()
+      .should('have.length.gte', 2);
+    cy.testA11y('Create Project modal');
+    cy.byTestID('project filter').type(projectName);
+    cy.byTestID('namespace dropdown')
+      .get('.pf-c-menu-toggle__text')
       .as('projectNameSpaceDropdown');
     app.waitForDocumentLoad();
-    cy.get('[role="listbox"]').then(($el) => {
-      if ($el.find('li[role="option"]').length === 0) {
+    cy.get('[data-test="namespace dropdown"]').then(($el) => {
+      if ($el.find('[data-test="projects menu"] li').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         projectNameSpace.enterProjectName(projectName);
         cy.byTestID('confirm-action').click();
         app.waitForLoad();
       } else {
-        cy.get('[role="listbox"]')
-          .find('li[role="option"]')
-          .each(($ele) => {
+        cy.get('[data-test="projects menu"]')
+          .find('li')
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .each(($ele, index, $list) => {
             if ($ele.text() === projectName) {
-              cy.get(`[id="${projectName}-link"]`).click();
+              cy.wrap($el).click();
             }
           });
         cy.get('@projectNameSpaceDropdown').then(($el1) => {
@@ -204,7 +201,7 @@ export const projectNameSpace = {
 
   selectProject: (projectName: string) => {
     projectNameSpace.clickProjectDropdown();
-    cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.byTestID('project filter').type(projectName);
     cy.get(`[id="${projectName}-link"]`).click();
     cy.log(`User has selected namespace ${projectName}`);
   },

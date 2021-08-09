@@ -8,7 +8,7 @@ const WAIT = ELEMENT_WAIT;
 export const topologyNavigate = element(by.css('[data-test-id="topology-header"]'));
 
 // Namespace Bar in topology
-export const namespaceBar = element(by.css('[data-test-id="namespace-bar-dropdown"]'));
+export const namespaceBar = element(by.css('[data-test="namespace dropdown"]'));
 
 // Topology is empty
 export const emptyStateTitle = element(by.className('odc-empty-state__title'));
