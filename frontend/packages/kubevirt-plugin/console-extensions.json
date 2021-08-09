@@ -1,24 +1,8 @@
 [
   {
-    "type": "console.flag/model",
+    "type": "console.flag",
     "properties": {
-      "model": {
-        "group": "kubevirt.io",
-        "version": "v1alpha3",
-        "kind": "VirtualMachine"
-      },
-      "flag": "KUBEVIRT"
-    }
-  },
-  {
-    "type": "console.flag/model",
-    "properties": {
-      "model": {
-        "group": "kubevirt.io",
-        "version": "v1",
-        "kind": "VirtualMachine"
-      },
-      "flag": "KUBEVIRT"
+      "handler": { "$codeRef": "kubevirtFlags.detectKubevirtVirtualMachines" }
     }
   },
   {

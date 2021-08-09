@@ -11,6 +11,8 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
+import { VirtualMachineModel } from '../../models';
+import { getKubevirtAvailableModel } from '../../models/kubevirtReferenceForModel';
 import { getFullResourceId } from '../../utils/utils';
 import { Wrapper } from '../wrapper/common/wrapper';
 import { K8sResourceKindMethods } from '../wrapper/types/types';
@@ -75,8 +77,13 @@ export class EnhancedK8sMethods {
     enhancedOpts?: EnhancedOpts,
   ) => {
     try {
+      let result = null;
+
       this.registerKind(kind);
-      const result = await _k8sCreate(kind, data, opts);
+      result =
+        kind.kind === VirtualMachineModel.kind
+          ? await _k8sCreate(getKubevirtAvailableModel(VirtualMachineModel), data, opts)
+          : await _k8sCreate(kind, data, opts);
       this.appendHistory(new HistoryItem(HistoryType.CREATE, result), enhancedOpts);
       return result;
     } catch (error) {
