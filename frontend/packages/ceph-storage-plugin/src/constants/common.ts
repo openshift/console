@@ -2,6 +2,7 @@ export const CEPH_HEALTHY = 'is healthy';
 export const CEPH_DEGRADED = 'health is degraded';
 export const CEPH_ERROR = 'health is in error state';
 export const CEPH_UNKNOWN = 'is not available';
+export const CEPH_BRAND_NAME = 'Red Hat Ceph Storage';
 export const CEPH_STORAGE_NAMESPACE = 'openshift-storage';
 export const PROJECTS = 'Projects';
 export const STORAGE_CLASSES = 'Storage Classes';
