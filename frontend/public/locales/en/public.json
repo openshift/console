@@ -761,7 +761,7 @@
   "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.": "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.",
   "{{description}} for": "{{description}} for",
   "Labels for": "Labels for",
-  "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.",
+  "Determines the set of pods targeted by this {{kind}}.": "Determines the set of pods targeted by this {{kind}}.",
   "Edit language preference": "Edit language preference",
   "Language": "Language",
   "Select language": "Select language",
