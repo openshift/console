@@ -576,5 +576,50 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-vm-details",
+      "tab": "topology-side-bar-tab-details",
+      "section": {
+        "$codeRef": "topologySidebar.getVmSidePanelDetailsTabSection"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/pod",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelPodsAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/adapter/network",
+    "properties": {
+      "adapt": {
+        "$codeRef": "topologySidebar.getVmSidePanelNetworkAdapter"
+      }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.topology/details/resource-link",
+    "properties": {
+      "priority": 100,
+      "link": { "$codeRef": "topologySidebar.getVmSideBarResourceLink" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

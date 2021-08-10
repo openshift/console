@@ -65,7 +65,8 @@
       "dashboardInventory": "src/components/dashboards-page/overview-dashboard/inventory.tsx",
       "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx",
       "topology": "src/topology/topology-plugin.ts",
-      "kubevirtFlags": "src/flags"
+      "kubevirtFlags": "src/flags",
+      "topologySidebar": "src/topology/vm-tab-sections.tsx"
     }
   }
 }
