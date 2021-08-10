@@ -482,7 +482,7 @@ export const IngressModel: K8sKind = {
   // t('public~Ingresses')
   labelPluralKey: 'public~Ingresses',
   apiGroup: 'networking.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   plural: 'ingresses',
   abbr: 'I',
   namespaced: true,

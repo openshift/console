@@ -419,7 +419,7 @@ spec:
   .setIn(
     [referenceForModel(k8sModels.IngressModel), 'default'],
     `
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: example
@@ -429,9 +429,12 @@ spec:
     http:
       paths:
       - path: /testpath
+        pathType: Prefix
         backend:
-          serviceName: test
-          servicePort: 80
+          service:
+            name: test
+            port:
+              number: 80
 `,
   )
   .setIn(

@@ -548,6 +548,7 @@
   "Import more YAML": "Import more YAML",
   "Host": "Host",
   "Path": "Path",
+  "Path type": "Path type",
   "Service": "Service",
   "Service port": "Service port",
   "Ingress details": "Ingress details",
