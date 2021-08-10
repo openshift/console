@@ -1,0 +1,67 @@
+[
+  {
+    "type": "console.perspective",
+    "properties": {
+      "id": "test",
+      "name": "Test",
+      "icon": { "$codeRef": "perspectiveIcons.testIcon" },
+      "default": true,
+      "landingPageURL": { "$codeRef": "perspectiveURLS.fakeURL" },
+      "importRedirectURL": { "$codeRef": "perspectiveURLS.fakeURL" }
+    }
+  },
+  {
+    "type": "console.perspective",
+    "properties": {
+      "id": "test-2",
+      "name": "Other Test",
+      "icon": { "$codeRef": "perspectiveIcons.test2Icon" },
+      "landingPageURL": { "$codeRef": "perspectiveURLS.fakeURL" },
+      "importRedirectURL": { "$codeRef": "perspectiveURLS.fakeURL" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test",
+      "perspective": "test",
+      "name": "Test Page",
+      "href": "/test"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "test-section",
+      "perspective": "test-2",
+      "name": "Test Section"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test",
+      "perspective": "test-2",
+      "section": "test-section",
+      "name": "Link B",
+      "href": "/test"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test",
+      "perspective": "test-2",
+      "section": "test-section",
+      "name": "Link A",
+      "href": "/test"
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/test",
+      "component": { "$codeRef": "testRoutePage" }
+    }
+  }
+]

@@ -22,6 +22,7 @@ import {
   UseK8sModel,
   UseK8sModels,
   UseActivePerspective,
+  WithActivePerspectiveHOC,
 } from '../extensions/console-types';
 
 export const useK8sWatchResource: UseK8sWatchResource = require('@console/internal/components/utils/k8s-watch-hook')
@@ -38,6 +39,8 @@ export const consoleFetchText: ConsoleFetchText = require('@console/dynamic-plug
   .consoleFetchText;
 
 export const useActivePerspective: UseActivePerspective = require('@console/dynamic-plugin-sdk/src/perspective/useActivePerspective')
+  .default;
+export const withActivePerspective: WithActivePerspectiveHOC = require('@console/dynamic-plugin-sdk/src/perspective/withActivePerspective')
   .default;
 
 /**

@@ -38,7 +38,8 @@ const sharedPluginTest = new RegExp(`node_modules\\/(${getSharedPluginModules().
 const config: Configuration = {
   entry: [
     './polyfills.js',
-    './public/components/app.jsx',
+    // './public/components/app.jsx',
+    './packages/console-mount/src/app.tsx',
     'monaco-editor-core/esm/vs/editor/editor.worker.js',
   ],
   output: {

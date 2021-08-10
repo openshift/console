@@ -5,9 +5,14 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ANNOTATIONS, withActivePerspective } from '@console/shared';
+import { ANNOTATIONS } from '@console/shared';
 
-import { Perspective, isPerspective } from '@console/dynamic-plugin-sdk';
+import {
+  Perspective,
+  isPerspective,
+  withActivePerspective,
+  WithActivePerspectiveProps,
+} from '@console/dynamic-plugin-sdk';
 import { withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
@@ -379,8 +384,7 @@ type TemplateFormProps = ExtensionsProps & {
   obj: any;
   preselectedNamespace: string;
   models: any;
-  activePerspective: string;
-};
+} & WithActivePerspectiveProps;
 
 type TemplateFormState = {
   namespace: string;

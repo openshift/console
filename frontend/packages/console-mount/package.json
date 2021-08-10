@@ -1,0 +1,24 @@
+{
+  "name": "@console/mount",
+  "version": "0.0.0-fixed",
+  "description": "OpenShift Console Mount Foundation",
+  "main": "src/app.tsx",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/console-mount/src/**\",\"!**/__tests__/**\",\"!packages/console-mount/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/console-mount",
+    "test": "yarn --cwd ../.. test packages/console-mount"
+  },
+  "dependencies": {
+    "@console/dynamic-plugin-sdk": "0.0.0-fixed",
+    "@console/plugin-sdk": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx",
+    "exposedModules": {
+      "testRoutePage": "src/demo/TestRoutePage.tsx",
+      "perspectiveIcons": "src/demo/perspectiveIcons.tsx",
+      "perspectiveURLS": "src/demo/perspectiveURLs.ts"
+    }
+  }
+}

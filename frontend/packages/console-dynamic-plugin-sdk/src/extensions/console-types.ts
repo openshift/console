@@ -427,3 +427,12 @@ export type UseActivePerspective = () => [
   PerspectiveType,
   React.Dispatch<React.SetStateAction<PerspectiveType>>,
 ];
+
+export type WithActivePerspectiveProps = {
+  activePerspective: PerspectiveType;
+  setActivePerspective: React.Dispatch<React.SetStateAction<PerspectiveType>>;
+};
+
+export type WithActivePerspectiveHOC = <Props extends WithActivePerspectiveProps>(
+  Component: React.ComponentType<Props>,
+) => (props: Omit<Props, keyof WithActivePerspectiveProps>) => React.ReactElement<Props>;

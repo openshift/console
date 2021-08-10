@@ -1,0 +1,57 @@
+.cm-perspective-switcher {
+  border-bottom: 1px solid var(--pf-global--BackgroundColor--dark-200);
+  padding: 0.6rem var(--pf-global--spacer--sm);
+
+  @media screen and (min-width: 786px) {
+    padding-left: var(--pf-global--spacer--md);
+    padding-right: var(--pf-global--spacer--md);
+  }
+
+  &__icon {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
+  .pf-c-dropdown {
+    width: 100%;
+    cursor: pointer;
+
+    &.pf-m-expanded .pf-c-dropdown__toggle {
+      background-color: var(--pf-global--BackgroundColor--dark-200);
+    }
+  }
+  .pf-c-dropdown__menu-item  {
+    padding-left: 7px;
+  }
+
+  .pf-c-dropdown__menu-item,
+    // For Edge
+  .pf-c-dropdown__toggle {
+    h1 {
+      font-size: var(--pf-c-nav__subnav__link--FontSize);
+    }
+  }
+
+  .pf-c-dropdown__toggle {
+    font-size: var(--pf-c-nav__subnav__link--FontSize);
+    justify-content: space-between;
+    width: 100%;
+
+    .pf-c-dropdown__toggle-icon {
+      color: var(--pf-global--Color--light-100);
+      font-size: var(--pf-c-nav__link--FontSize);
+    }
+
+    .pf-c-title {
+      color: var(--pf-global--Color--light-100);
+      &.pf-m-md {
+        font-size: var(--pf-c-nav__link--FontSize);
+        font-family: var(--pf-global--FontFamily--sans-serif); // Use RedHatText to match side nav links because buttons by default use RedHatDisplay
+      }
+    }
+
+    // Needed until https://github.com/patternfly/patternfly-design/issues/1068 is resolved
+    &:before {
+      border: none;
+    }
+  }
+}

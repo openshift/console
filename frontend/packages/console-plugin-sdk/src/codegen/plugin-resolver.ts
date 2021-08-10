@@ -11,7 +11,7 @@ export const consolePkgScope = '@console';
 const consolePkgGlob = 'packages/*/package.json';
 
 // the name of Console application package
-const consoleAppName = `${consolePkgScope}/app`;
+const consoleAppName = `${consolePkgScope}/mount`;
 
 // env. variable used to override the active plugin list
 const consolePluginOverrideEnvVar = 'CONSOLE_PLUGINS';

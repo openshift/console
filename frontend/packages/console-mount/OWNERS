@@ -1,0 +1,13 @@
+reviewers:
+  - andrewballantyne
+  - christianvogt
+  - kdoberst
+  - rohitkrai03
+  - spadgett
+approvers:
+  - andrewballantyne
+  - christianvogt
+  - rohitkrai03
+  - spadgett
+labels:
+  - component/mount
