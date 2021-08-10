@@ -44,7 +44,7 @@ import { StorageClusterKind, NetworkType, NavUtils } from '../../../types';
 import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../ocs-request-data';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
-import { createKmsResources } from '../../kms-config/utils';
+import { createClusterKmsResources } from '../../kms-config/utils';
 import '../install-wizard/install-wizard.scss';
 import './attached-devices.scss';
 
@@ -87,7 +87,7 @@ const createCluster = async (
     );
     const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
     if (encryption.advanced && kms.hasHandled) {
-      promises.push(...createKmsResources(kms));
+      promises.push(...createClusterKmsResources(kms));
     }
     if (enableTaint) {
       promises.push(...taintNodes(nodes));

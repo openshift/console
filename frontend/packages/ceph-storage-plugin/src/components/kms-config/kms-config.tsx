@@ -22,7 +22,6 @@ import { InternalClusterState, ActionType } from '../ocs-install/internal-mode/r
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
 import { State } from '../ocs-install/attached-devices-mode/reducer';
-import { StorageClassState } from '../../utils/kms-encryption';
 import { WizardState } from '../create-storage-system/reducer';
 
 import './kms-config.scss';
@@ -145,6 +144,10 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         className={`${className}__form-body`}
         helperTextInvalid="This is a required field"
         validated={isValid(kms.name.valid)}
+        helperText={
+          !mode &&
+          t('ceph-storage-plugin~A unique name for the key management service within the project.')
+        }
         isRequired
       >
         <TextInput
@@ -250,7 +253,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 };
 
 type KMSConfigureProps = {
-  state: InternalClusterState | State | StorageClassState | WizardState['securityAndNetwork'];
+  state: InternalClusterState | State | WizardState['securityAndNetwork'];
   dispatch: EncryptionDispatch;
   mode?: string;
   className: string;
