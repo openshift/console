@@ -32,6 +32,7 @@ import { StatusCard as ExtStatusCard } from './persistent-external/status-card';
 import { default as ExtBreakdownCard } from './persistent-external/breakdown-card';
 import { default as ObjectStatusCard } from './object-service/status-card/status-card';
 import { default as ExtUtilizationCard } from './persistent-external/utilization-card';
+import { default as ExtDetailsCard } from './persistent-external/details-card';
 import { DetailsCard as ObjectDetailsCard } from './object-service/details-card/details-card';
 import StorageEfficiencyCard from './object-service/storage-efficiency-card/storage-efficiency-card';
 import { BucketsCard } from './object-service/buckets-card/buckets-card';
@@ -98,7 +99,7 @@ const PersistentInternalDashboard: React.FC = () => {
 
 const PersistentExternalDashboard: React.FC = () => {
   const mainCards: React.ComponentType[] = [ExtStatusCard, ExtBreakdownCard, ExtUtilizationCard];
-  const leftCards: React.ComponentType[] = [DetailsCard, InventoryCard];
+  const leftCards: React.ComponentType[] = [ExtDetailsCard, InventoryCard];
   const rightCards: React.ComponentType[] = [ActivityCard];
 
   return (
