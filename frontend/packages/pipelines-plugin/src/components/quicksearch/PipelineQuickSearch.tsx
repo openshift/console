@@ -6,13 +6,13 @@ import CatalogServiceProvider, {
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
 import { QuickSearchController, QuickSearchProviders } from '@console/shared';
 import { TektonTaskProviders } from '../pipelines/const';
-import { useMetadataCleanup } from '../pipelines/pipeline-builder/hooks';
+import { useMetadataCleanup, useMetadataFailureCleanup } from '../pipelines/pipeline-builder/hooks';
 import { TaskSearchCallback } from '../pipelines/pipeline-builder/types';
 import {
   createTask,
   findInstalledTask,
   getSelectedVersionUrl,
-  isInstalledNamespaceTask,
+  isTaskSearchable,
   updateTask,
 } from './pipeline-quicksearch-utils';
 import PipelineQuickSearchDetails from './PiplineQuickSearchDetails';
@@ -35,9 +35,13 @@ const Contents: React.FC<{
   setIsOpen,
   callback,
 }) => {
-  useMetadataCleanup();
   const { t } = useTranslation();
   const savedCallback = React.useRef(null);
+  const [failedTasks, setFailedTasks] = React.useState<string[]>([]);
+  useMetadataCleanup();
+  useMetadataFailureCleanup(failedTasks, (taskName) =>
+    setFailedTasks(failedTasks.filter((ft) => ft !== taskName)),
+  );
 
   React.useEffect(() => {
     savedCallback.current = callback;
@@ -65,11 +69,15 @@ const Contents: React.FC<{
               resolve(savedCallback.current(installedTask.data));
             } else {
               resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-              updateTask(selectedVersionUrl, installedTask, namespace, item.data.name);
+              updateTask(selectedVersionUrl, installedTask, namespace, item.data.name).catch(() =>
+                setFailedTasks([...failedTasks, item.data.name]),
+              );
             }
           } else {
             resolve(savedCallback.current({ metadata: { name: item.data.name } }));
-            createTask(selectedVersionUrl, namespace);
+            createTask(selectedVersionUrl, namespace).catch(() =>
+              setFailedTasks([...failedTasks, item.data.name]),
+            );
           }
         } else {
           resolve(savedCallback.current(item.data));
@@ -77,7 +85,7 @@ const Contents: React.FC<{
       });
     };
 
-    if (!isInstalledNamespaceTask(item)) {
+    if (isTaskSearchable(catalogService.items, item)) {
       acc.push(item);
     }
     return acc;

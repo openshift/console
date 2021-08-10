@@ -92,7 +92,7 @@ export type CatalogItem<T extends any = any> = {
   cta?: {
     label: string;
     href?: string;
-    callback?: (props?: { [key: string]: string }) => void;
+    callback?: (props?: any) => void;
   };
   icon?: {
     url?: string;

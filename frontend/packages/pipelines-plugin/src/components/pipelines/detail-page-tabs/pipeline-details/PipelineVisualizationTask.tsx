@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
+import i18next from 'i18next';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
@@ -190,15 +191,6 @@ const TaskComponent: React.FC<TaskProps> = ({
 
   let taskPill = (
     <g ref={hoverRef}>
-      {!!pipelineTask?.metadata?.installing && (
-        <g>
-          <InstallingNodeDecorator
-            x={0}
-            y={BUILDER_NODE_ADD_RADIUS / 4}
-            content={'pipelines-plugin~Installing'}
-          />
-        </g>
-      )}
       <SvgDropShadowFilter dy={1} id={FILTER_ID} />
       <rect
         filter={hover ? createSvgIdUrl(FILTER_ID) : ''}
@@ -210,6 +202,15 @@ const TaskComponent: React.FC<TaskProps> = ({
           'is-linked': enableLogLink,
         })}
       />
+      {pipelineTask?.metadata?.installing && (
+        <g>
+          <InstallingNodeDecorator
+            x={0}
+            y={BUILDER_NODE_ADD_RADIUS / 4}
+            content={i18next.t('pipelines-plugin~Installing')}
+          />
+        </g>
+      )}
       {visualName !== truncatedVisualName && disableVisualizationTooltip ? (
         <Tooltip content={visualName}>{renderVisualName}</Tooltip>
       ) : (

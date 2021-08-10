@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { QuickSearchDetailsProps } from './QuickSearchDetails';
+import { QuickSearchDetailsRendererProps } from './QuickSearchDetails';
 import QuickSearchModalBody from './QuickSearchModalBody';
 import { QuickSearchData } from './utils/quick-search-types';
 
@@ -15,7 +15,7 @@ interface QuickSearchModalProps {
   viewContainer?: HTMLElement;
   limitItemCount: number;
   icon?: React.ReactNode;
-  detailsRenderer?: (props: QuickSearchDetailsProps) => React.ReactNode;
+  detailsRenderer?: (props: QuickSearchDetailsRendererProps) => React.ReactNode;
 }
 
 const QuickSearchModal: React.FC<QuickSearchModalProps> = ({

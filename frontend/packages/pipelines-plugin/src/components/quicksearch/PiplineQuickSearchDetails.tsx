@@ -15,9 +15,9 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Dropdown } from '@console/internal/components/utils';
 import { handleCta } from '@console/shared';
+import { QuickSearchDetailsRendererProps } from '@console/shared/src/components/quick-search/QuickSearchDetails';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { CTALabel } from './const';
 import {
@@ -28,18 +28,14 @@ import {
 
 import './PipelineQuickSearchDetails.scss';
 
-interface PipelineQuickSearchDetailsProps {
-  selectedItem: CatalogItem;
-  closeModal: () => void;
-}
-
-const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
+const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   selectedItem,
   closeModal,
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
   const [selectedVersion, setSelectedVersion] = React.useState<string>();
+  const [ctaType, setCtaType] = React.useState<string>();
   const [buttonText, setButtonText] = React.useState<string>();
   const versions = selectedItem?.attributes?.versions ?? [];
   const versionItems = versions.reduce((acc, { version, id }) => {
@@ -49,7 +45,6 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
   }, {});
 
   const getTaskAlert = React.useMemo(() => {
-    const ctaType = getTaskCtaType(selectedItem, selectedVersion);
     switch (ctaType) {
       case CTALabel.Install:
         return (
@@ -71,10 +66,11 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
       default:
         return null;
     }
-  }, [selectedItem, selectedVersion, t]);
+  }, [ctaType, t]);
 
   React.useEffect(() => {
     setButtonText(getCtaButtonText(selectedItem, selectedVersion));
+    setCtaType(getTaskCtaType(selectedItem, selectedVersion));
   }, [selectedVersion, selectedItem]);
 
   React.useEffect(() => {
@@ -89,18 +85,18 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
     <>
       <Level hasGutter>
         <LevelItem>
-          <Title data-test={'item-name'} headingLevel="h4">
+          <Title data-test={'task-name'} headingLevel="h4">
             {selectedItem.name}
           </Title>
         </LevelItem>
         <LevelItem>
-          <Label data-test={'item-provider'}>{selectedItem.provider}</Label>
+          <Label data-test={'task-provider'}>{selectedItem.provider}</Label>
         </LevelItem>
       </Level>
       <Split hasGutter>
         <SplitItem>
           <Button
-            data-test={'item-cta'}
+            data-test={'task-cta'}
             variant={ButtonVariant.primary}
             className="opp-quick-search-details__form-button"
             onClick={async (e) => {
@@ -113,7 +109,7 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
         {
           <SplitItem>
             <Dropdown
-              data-test={'item-version'}
+              data-test={'task-version'}
               className="opp-quick-search-details__form-button"
               items={versionItems}
               selectedKey={selectedVersion}
@@ -127,7 +123,7 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
         }
       </Split>
       {getTaskAlert}
-      <TextContent className="opp-quick-search-details__description" data-test={'item-description'}>
+      <TextContent className="opp-quick-search-details__description" data-test={'task-description'}>
         {selectedItem.description}
       </TextContent>
       <Stack className="opp-quick-search-details__badges-section" hasGutter>
@@ -135,10 +131,10 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
           <StackItem>
             <LabelGroup
               categoryName={t('pipelines-plugin~Categories')}
-              data-test={'item-category-list'}
+              data-test={'task-category-list'}
             >
               {selectedItem?.attributes?.categories.map((category) => (
-                <Label color="blue" key={category} data-test={'item-category-list-item'}>
+                <Label color="blue" key={category} data-test={'task-category-list-item'}>
                   {category}
                 </Label>
               ))}
@@ -147,9 +143,9 @@ const PipelineQuickSearchDetails: React.FC<PipelineQuickSearchDetailsProps> = ({
         )}
         {selectedItem?.tags?.length > 0 && (
           <StackItem>
-            <LabelGroup categoryName={t('pipelines-plugin~Tags')} data-test={'item-tag-list'}>
+            <LabelGroup categoryName={t('pipelines-plugin~Tags')} data-test={'task-tag-list'}>
               {selectedItem.tags.map((tag) => (
-                <Label color="blue" key={tag} data-test={'item-tag-list-item'}>
+                <Label color="blue" key={tag} data-test={'task-tag-list-item'}>
                   {tag}
                 </Label>
               ))}

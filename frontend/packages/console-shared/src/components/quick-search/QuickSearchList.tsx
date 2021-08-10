@@ -96,7 +96,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                   className="odc-quick-search-list__item-content"
                   dataListCells={[
                     <DataListCell isIcon key={`${item.uid}-icon`}>
-                      {item?.icon?.node ? item.icon.node : getIcon(item)}
+                      {item?.icon?.node ?? getIcon(item)}
                     </DataListCell>,
                     <DataListCell
                       style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}
@@ -111,7 +111,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                         </SplitItem>
                         <SplitItem>
                           {item?.attributes?.categories?.length > 0 ? (
-                            <Label color="blue">{item?.attributes?.categories[0]}</Label>
+                            <Label color="blue">{item.attributes.categories[0]}</Label>
                           ) : (
                             <TextContent>
                               <Text component={TextVariants.small}>{item.provider}</Text>

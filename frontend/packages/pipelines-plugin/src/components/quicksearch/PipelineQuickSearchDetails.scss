@@ -5,7 +5,7 @@
   }
 
   &__provider {
-    color: var(--pf-global--Color--200)
+    color: var(--pf-global--Color--200);
   }
 
   &__description {
@@ -13,7 +13,7 @@
   }
 
   &__badges-section {
-    margin: var(--pf-global--spacer--md) 0px;
+    margin: var(--pf-global--spacer--md) 0;
     --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm) !important;
   }
 }

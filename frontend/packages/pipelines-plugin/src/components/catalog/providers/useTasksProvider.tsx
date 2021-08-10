@@ -16,7 +16,7 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
       const { description } = task.spec;
       const tags = annotations[TektonTaskAnnotation.tags]?.split(/\s*,\s*/) || [];
       const categories = annotations[TektonTaskAnnotation.categories]?.split(/\s*,\s*/) || [];
-      const provider = labels[TektonTaskLabel.providerType];
+      const provider = labels[TektonTaskLabel.providerType] || TektonTaskProviders.redhat;
       const versions = labels[TektonTaskLabel.version]
         ? [{ id: labels[TektonTaskLabel.version], version: labels[TektonTaskLabel.version] }]
         : [];

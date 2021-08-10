@@ -341,3 +341,23 @@ export const useMetadataCleanup = () => {
     });
   }, [setFieldValue, values]);
 };
+
+export const useMetadataFailureCleanup = (
+  failedTasks: string[],
+  onCleanup: (taskName: string) => void,
+) => {
+  const { values, setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
+
+  React.useEffect(() => {
+    const { tasks } = values.formData;
+    if (tasks.length > 0 && failedTasks.length > 0) {
+      tasks.map((task, index) => {
+        if (task.metadata?.installing && failedTasks.includes(task?.taskRef.name)) {
+          setFieldValue(`formData.tasks.${index}`, omit(values.formData.tasks[index], 'metadata'));
+          onCleanup(task?.taskRef.name);
+        }
+        return task;
+      });
+    }
+  }, [setFieldValue, values, failedTasks, onCleanup]);
+};

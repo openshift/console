@@ -263,7 +263,11 @@ const CatalogView: React.FC<CatalogViewProps> = ({
           onSearchKeywordChange={handleSearchKeywordChange}
         />
         {totalItems > 0 ? (
-          <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
+          <CatalogGrid
+            items={catalogItems as CatalogItem[] | { [key: string]: CatalogItem[] }}
+            renderTile={renderTile}
+            isGrouped={isGrouped}
+          />
         ) : (
           <CatalogEmptyState onClear={clearFilters} />
         )}

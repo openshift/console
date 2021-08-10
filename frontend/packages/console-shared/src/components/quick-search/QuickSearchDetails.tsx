@@ -6,10 +6,12 @@ import './QuickSearchDetails.scss';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { handleCta } from './utils/quick-search-utils';
 
-export interface QuickSearchDetailsProps {
+export type QuickSearchDetailsRendererProps = {
   selectedItem: CatalogItem;
   closeModal: () => void;
-  detailsRenderer?: (props: any) => React.ReactNode;
+};
+export interface QuickSearchDetailsProps extends QuickSearchDetailsRendererProps {
+  detailsRenderer: (props: QuickSearchDetailsRendererProps) => React.ReactNode;
 }
 
 const DefaultContent = ({ selectedItem, closeModal }) => {

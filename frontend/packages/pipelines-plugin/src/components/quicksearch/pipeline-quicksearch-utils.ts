@@ -4,21 +4,21 @@ import * as _ from 'lodash';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
-import { TaskModel } from '../../models';
+import { ClusterTaskModel, TaskModel } from '../../models';
 import { TektonTaskAnnotation } from '../pipelines/const';
 import { CTALabel, TEKTONHUB } from './const';
 
 export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: string): boolean => {
-  return item.attributes.installed === selectedVersion;
+  return item.attributes?.installed === selectedVersion;
 };
 
 export const isTaskVersionInstalled = (item: CatalogItem): boolean => {
-  return item.attributes.installed !== '';
+  return item.attributes?.installed !== '';
 };
 
 export const isOneVersionInstalled = (item: CatalogItem): boolean => {
   return !!item.attributes?.versions?.find(
-    (v) => v.id.toString() === item.attributes.installed.toString(),
+    (v) => v.id.toString() === item.attributes?.installed.toString(),
   );
 };
 export const isSelectedVersionUpgradable = (
@@ -40,11 +40,11 @@ export const getCtaButtonText = (item: CatalogItem, selectedVersion: string): st
   const ctaType = getTaskCtaType(item, selectedVersion);
   switch (ctaType) {
     case CTALabel.Add:
-      return i18n.t('Add');
+      return i18n.t('pipelines-plugin~Add');
     case CTALabel.Install:
-      return i18n.t('Install and Add');
+      return i18n.t('pipelines-plugin~Install and Add');
     case CTALabel.Update:
-      return i18n.t('Update and Add');
+      return i18n.t('pipelines-plugin~Update and Add');
     default:
       throw new Error(`Unknown button type, ${ctaType}`);
   }
@@ -57,6 +57,14 @@ export const isInstalledNamespaceTask = (item: CatalogItem) => {
   );
 };
 
+export const isExternalTask = (item: CatalogItem) => {
+  return !item.data.hasOwnProperty('apiVersion');
+};
+
+export const isTaskSearchable = (items: CatalogItem[], item: CatalogItem) => {
+  const hasExternalTasks = items.some(isExternalTask);
+  return !hasExternalTasks || !isInstalledNamespaceTask(item);
+};
 export const getInstalledFromAnnotation = () => {
   return { [TektonTaskAnnotation.installedFrom]: TEKTONHUB };
 };
@@ -73,6 +81,7 @@ export const findInstalledTask = (items: CatalogItem[], item: CatalogItem): Cata
     (i) =>
       i.uid !== item.uid &&
       i.name === item.name &&
+      item.data.kind !== ClusterTaskModel.kind &&
       i.data.kind === TaskModel.kind &&
       i.data?.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB,
   );
@@ -106,6 +115,7 @@ export const updateTask = async (
     .catch((err) => {
       // eslint-disable-next-line no-console
       console.warn('Error:', err);
+      throw err;
     });
 };
 
@@ -124,5 +134,6 @@ export const createTask = (url: string, namespace: string) => {
     .catch((err) => {
       // eslint-disable-next-line no-console
       console.warn('Error:', err);
+      throw err;
     });
 };

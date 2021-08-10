@@ -178,7 +178,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                     !_.isEmpty(status?.tasks) ||
                     !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
                     formData.tasks.length === 0 ||
-                    formData.tasks.filter((task) => task?.metadata?.installing).length > 0
+                    formData.tasks.filter((task) => task.metadata?.installing).length > 0
               }
               resetLabel={t('pipelines-plugin~Cancel')}
               sticky
