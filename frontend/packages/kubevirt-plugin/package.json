@@ -67,7 +67,8 @@
       "dashboardHealth": "src/components/dashboards-page/overview-dashboard/health.ts",
       "dashboardInventory": "src/components/dashboards-page/overview-dashboard/inventory.tsx",
       "dashboardActivity": "src/components/dashboards-page/overview-dashboard/activity.tsx",
-      "topology": "src/topology/topology-plugin.ts"
+      "topology": "src/topology/topology-plugin.ts",
+      "kubevirtFlags": "src/flags"
     }
   }
 }
