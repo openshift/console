@@ -124,24 +124,10 @@
     }
   },
   {
-    "type": "console.page/resource/list",
-    "properties": {
-      "model": {
-        "group": "ceph.rook.io",
-        "version": "v1",
-        "kind": "CephBlockPool"
-      },
-      "component": { "$codeRef": "blockPoolListPage.BlockPoolListPage" }
-    },
-    "flags": {
-      "required": ["OCS"]
-    }
-  },
-  {
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": ["/k8s/ns/:ns/ceph.rook.io~v1~CephBlockPool/~new"],
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName/ceph.rook.io~v1~CephBlockPool/create/~new",
       "component": {
         "$codeRef": "blockPoolCreatePage.default"
       }
@@ -151,14 +137,13 @@
     }
   },
   {
-    "type": "console.page/resource/details",
+    "type": "console.page/route",
     "properties": {
-      "model": {
-        "group": "ceph.rook.io",
-        "version": "v1",
-        "kind": "CephBlockPool"
-      },
-      "component": { "$codeRef": "blockPoolDetailsPage.default" }
+      "exact": false,
+      "path": "/odf/system/ocs.openshift.io~v1~StorageCluster/:systemName/ceph.rook.io~v1~CephBlockPool/:poolName",
+      "component": {
+        "$codeRef": "blockPoolDetailsPage.default"
+      }
     },
     "flags": {
       "required": ["OCS"]
