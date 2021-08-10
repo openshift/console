@@ -30,51 +30,93 @@ export const REGEXP_NESTED_ARRAY_PATH = /^.*\[\d+\]\.?.*\[\d+\]\.?.*$/;
 //    'this'  -> ['this']
 export const REGEXP_CAPTURE_GROUP_SUBGROUP = /^([^.]*)\.?(.*)$/;
 
-export const DEPRECATED_CAPABILITIES: (SpecCapability | StatusCapability)[] = [
+export const DEPRECATED_CAPABILITIES: SpecCapability[] = [
   SpecCapability.arrayFieldGroup,
   SpecCapability.fieldGroup,
-  SpecCapability.label,
   SpecCapability.namespaceSelector,
+  SpecCapability.label,
 ];
 
-export const OBJECT_COMPATIBLE_CAPABILITIES: (SpecCapability | StatusCapability)[] = [
+export const COMMON_COMPATIBLE_CAPABILITIES: SpecCapability[] = [
   SpecCapability.advanced,
   SpecCapability.fieldDependency,
   SpecCapability.hidden,
-  SpecCapability.namespaceSelector,
+  // TODO remove when deprecated descriptors are no longer supported
+  SpecCapability.arrayFieldGroup,
+  SpecCapability.fieldGroup,
+  // END TODO
+];
+
+export const OBJECT_COMPATIBLE_CAPABILITIES: (SpecCapability | StatusCapability)[] = [
+  StatusCapability.podStatuses,
+  SpecCapability.updateStrategy,
   SpecCapability.nodeAffinity,
   SpecCapability.podAffinity,
   SpecCapability.podAntiAffinity,
   SpecCapability.resourceRequirements,
   SpecCapability.selector,
-  SpecCapability.updateStrategy,
-  StatusCapability.podStatuses,
+  // TODO remove when deprecated descriptors are no longer supported
+  SpecCapability.label,
+  SpecCapability.namespaceSelector,
+  // END TODO
 ];
 
 export const ARRAY_COMPATIBLE_CAPABILITIES: (SpecCapability | StatusCapability)[] = [
-  SpecCapability.advanced,
   SpecCapability.endpointList,
-  SpecCapability.fieldDependency,
-  SpecCapability.hidden,
   StatusCapability.conditions,
 ];
 
 export const PRIMITIVE_COMPATIBLE_CAPABILITIES: (SpecCapability | StatusCapability)[] = [
-  SpecCapability.advanced,
-  SpecCapability.booleanSwitch,
-  SpecCapability.checkbox,
-  SpecCapability.fieldDependency,
-  SpecCapability.hidden,
-  SpecCapability.imagePullPolicy,
-  SpecCapability.k8sResourcePrefix,
-  SpecCapability.number,
-  SpecCapability.password,
-  SpecCapability.podCount,
-  SpecCapability.select,
-  SpecCapability.text,
-  StatusCapability.w3Link,
-  StatusCapability.text,
   StatusCapability.k8sPhase,
   StatusCapability.k8sPhaseReason,
-  StatusCapability.k8sResourcePrefix,
+  SpecCapability.k8sResourcePrefix,
+  SpecCapability.imagePullPolicy,
+  SpecCapability.podCount,
+  SpecCapability.select,
+  StatusCapability.w3Link,
+  SpecCapability.booleanSwitch,
+  SpecCapability.checkbox,
+  SpecCapability.password,
+  SpecCapability.text,
+  StatusCapability.text,
+  SpecCapability.number,
+  // TODO remove when deprecated descriptors are no longer supported
+  SpecCapability.label,
+  // END TODO
+];
+
+export const CAPABILITY_SORT_ORDER: (SpecCapability | StatusCapability)[] = [
+  // Supported in details view and has a widget
+  SpecCapability.hidden,
+  SpecCapability.endpointList,
+  StatusCapability.conditions,
+  SpecCapability.resourceRequirements,
+  SpecCapability.updateStrategy,
+  StatusCapability.podStatuses,
+  SpecCapability.selector,
+  SpecCapability.k8sResourcePrefix,
+  SpecCapability.podCount,
+  SpecCapability.password,
+  StatusCapability.k8sPhaseReason,
+  SpecCapability.booleanSwitch,
+  SpecCapability.checkbox,
+  StatusCapability.w3Link,
+
+  // Supported in details view with no widget
+  SpecCapability.select,
+  SpecCapability.imagePullPolicy,
+  StatusCapability.k8sPhase,
+  SpecCapability.text,
+  StatusCapability.text,
+  SpecCapability.number,
+
+  // Unsupported on details view
+  SpecCapability.podAntiAffinity,
+  SpecCapability.podAffinity,
+  SpecCapability.nodeAffinity,
+
+  // Always last
+  SpecCapability.advanced,
+  SpecCapability.fieldDependency,
+  ...DEPRECATED_CAPABILITIES,
 ];
