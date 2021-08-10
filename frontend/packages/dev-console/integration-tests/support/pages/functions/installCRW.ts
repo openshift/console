@@ -1,20 +1,13 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { operators, pageTitle } from '../../constants';
 import { operatorsPO } from '../../pageObjects';
-import { projectNameSpace } from '../app';
+import { app, projectNameSpace } from '../app';
 import { operatorsPage } from '../operators-page';
 
 export const installCRW = () => {
   operatorsPage.navigateToInstallOperatorsPage();
   projectNameSpace.selectProject('openshift-workspaces');
-  cy.get('body').then(($body) => {
-    if ($body.find(operatorsPO.installOperators.search)) {
-      cy.get(operatorsPO.installOperators.search)
-        .should('be.visible')
-        .clear()
-        .type(operators.RedHatCodereadyWorkspaces);
-    }
-  });
+  operatorsPage.searchOperatorInInstallPage(operators.RedHatCodereadyWorkspaces);
   cy.get(operatorsPO.installOperators.checlusterCRLink)
     .should('be.visible')
     .click();
@@ -23,11 +16,7 @@ export const installCRW = () => {
     pageTitle.RedHatCodeReadyWorkspaces,
   );
   // Make sure the page is properly loaded
-  cy.get('.loading-box__loaded')
-    .should('be.visible')
-    .within(() => {
-      cy.get('.loading-box__loaded').should('be.visible');
-    });
+  app.waitForLoad();
   cy.get('body').then(($body) => {
     if ($body.find('[role="grid"]').length) {
       cy.log(`${pageTitle.RedHatCodeReadyWorkspaces} already installed.`);

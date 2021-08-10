@@ -14,6 +14,6 @@ Feature: Basic Codeready Workspaces usage
 
     @smoke
     Scenario: CRW Dashboard is opened when user clicks on CRW in Applications menu in Masthead
-        Given user click on Application button in Masthead
-        When user click on Codeready Workspaces in Application menu in Masthead
+        When user click on Application button in Masthead
+        And user click on Codeready Workspaces in Application menu in Masthead
         Then user is redirected to Codeready Workspaces Dashboard
