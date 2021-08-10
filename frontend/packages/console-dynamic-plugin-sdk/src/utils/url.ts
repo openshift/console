@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 /**
  * Resolve URL string using `base` and `to` URLs.
  *
@@ -7,7 +9,11 @@
  * @param to Target resource URL.
  * @param options Resolution options.
  */
-export const resolveURL = (base: string, to: string) => {
-  const baseAbsoluteURL = base.indexOf('://') === -1 ? window.location.origin + base : base;
+export const resolveURL = (
+  base: string,
+  to: string,
+  getDocumentOrigin: () => string = _.constant(window.location.origin),
+) => {
+  const baseAbsoluteURL = base.indexOf('://') === -1 ? getDocumentOrigin() + base : base;
   return new URL(to, baseAbsoluteURL).toString();
 };

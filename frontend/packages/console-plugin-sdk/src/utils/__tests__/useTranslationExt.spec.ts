@@ -24,8 +24,7 @@ describe('useTranslationExt', () => {
   it('should parse as a translation key', () => {
     testHook(() => {
       const { t: translate } = useTranslationExt();
-      const key = '%test~key%';
-      expect(translate(key)).toBe(`translated: ${key.substr(1, key.length - 2)}`);
+      expect(translate('%test~key%')).toBe(`translated: test~key`);
     });
   });
 });
