@@ -10,3 +10,5 @@ export * from './utils';
 export * from './build-tab-section';
 export * from './network-tab-section';
 export * from './jobs-tab-section';
+export * from './PodSideBarDetails';
+export * from './resource-alert';

@@ -71,6 +71,14 @@
   {
     "type": "console.topology/details/tab-section",
     "properties": {
+      "id": "topology-tab-section-pod",
+      "tab": "topology-side-bar-tab-details",
+      "section": { "$codeRef": "workload.getPodSideBarDetails" }
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
       "id": "topology-tab-section-pods-overview",
       "tab": "topology-side-bar-tab-resource",
       "section": { "$codeRef": "workload.getPodsSideBarTabSection" }
@@ -144,6 +152,15 @@
     "properties": {
       "contextId": "topology-actions",
       "provider": { "$codeRef": "actions.useTopologyWorloadActionProvider" }
+    }
+  },
+  {
+    "type": "console.topology/details/resource-alert",
+    "properties": {
+      "id": "health-check-alert",
+      "contentProvider": {
+        "$codeRef": "workload.useHealthChecksAlert"
+      }
     }
   }
 ]

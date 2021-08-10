@@ -17,7 +17,7 @@ const TopologyActions: React.FC<TopologyActionsProps> = ({ element }) => {
     };
   }, [element]);
   return (
-    <ActionServiceProvider context={context}>
+    <ActionServiceProvider key={element.getId()} context={context}>
       {({ actions, options, loaded }) => {
         return (
           loaded && (

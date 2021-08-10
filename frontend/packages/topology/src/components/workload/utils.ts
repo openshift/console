@@ -16,6 +16,7 @@ import {
   StatefulSetModel,
   JobModel,
   CronJobModel,
+  PodModel,
 } from '@console/internal/models';
 import {
   BuildConfigData,
@@ -40,10 +41,10 @@ export const getDataFromAdapter = <T extends { resource: K8sResourceCommon }, E 
     : undefined;
 
 const usePodsAdapterForWorkloads = (resource: K8sResourceCommon): PodsAdapterDataType => {
-  const buildConfigsData = useBuildConfigsWatcher(resource);
+  const buildConfigData = useBuildConfigsWatcher(resource);
   const { podData, loaded, loadError } = usePodsWatcher(resource);
-  return React.useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigsData }), [
-    buildConfigsData,
+  return React.useMemo(() => ({ pods: podData?.pods, loaded, loadError, buildConfigData }), [
+    buildConfigData,
     loadError,
     loaded,
     podData,
@@ -62,6 +63,7 @@ export const podsAdapterForWorkloads = (
       DaemonSetModel.kind,
       StatefulSetModel.kind,
       JobModel.kind,
+      PodModel.kind,
     ].includes(resource.kind)
   )
     return undefined;
@@ -97,6 +99,7 @@ export const networkAdapterForWorkloads = (
       DeploymentModel.kind,
       DaemonSetModel.kind,
       StatefulSetModel.kind,
+      PodModel.kind,
     ].includes(resource.kind)
   )
     return undefined;

@@ -143,7 +143,7 @@ export type DetailsResourceAlertContent = {
    * State will be store in user settings, once dismissed alert won't show up again untill user settings state resets
    */
   dismissible?: boolean;
-  content: React.Component | undefined;
+  content: React.Component | undefined | JSX.Element;
   variant?: 'success' | 'danger' | 'warning' | 'info' | 'default';
   actionLinks?: React.ReactNode;
 };
@@ -157,7 +157,7 @@ export type PodsAdapterDataType<E = K8sResourceCommon> = {
   pods: E[];
   loaded: boolean;
   loadError: string;
-  buildConfigsData?: BuildConfigData;
+  buildConfigData?: BuildConfigData;
 };
 
 export type NetworkAdapterType = {

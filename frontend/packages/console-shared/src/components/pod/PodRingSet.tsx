@@ -36,7 +36,7 @@ const PodRingSet: React.FC<PodRingSetProps> = ({ obj, path }) => {
         <PodRing
           key={inProgressDeploymentData ? 'deploy' : 'notDeploy'}
           pods={completedDeploymentData}
-          rc={podData?.isRollingOut ? completedRC : undefined}
+          rc={podData?.isRollingOut ? completedRC : podData?.current?.obj}
           resourceKind={resourceKind}
           obj={obj}
           path={path}
