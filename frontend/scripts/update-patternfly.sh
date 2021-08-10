@@ -14,7 +14,6 @@ test -f package.json
 echo "Update PatternFly libraries to $TAG"
 
 yarn add -W \
-        "patternfly@latest" \
         "@patternfly/patternfly@$TAG" \
         "@patternfly/react-catalog-view-extension@$TAG" \
         "@patternfly/react-charts@$TAG" \
