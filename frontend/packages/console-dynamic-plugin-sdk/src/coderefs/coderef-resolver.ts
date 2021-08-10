@@ -93,9 +93,10 @@ export const resolveEncodedCodeRefs = (
 ): Extension[] =>
   _.cloneDeep(extensions).map((e) => {
     deepForOwn<EncodedCodeRef>(e.properties, isEncodedCodeRef, (ref, key, obj) => {
-      obj[key] = applyCodeRefSymbol(async () =>
+      const loader = applyCodeRefSymbol(async () =>
         loadReferencedObject(ref, entryModule, pluginID, errorCallback),
       );
+      obj[key] = Object.defineProperty(loader, 'name', { value: `${pluginID}-${ref.$codeRef}` });
     });
 
     return e;
