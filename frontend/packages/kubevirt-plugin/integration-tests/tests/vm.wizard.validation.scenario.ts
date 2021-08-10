@@ -1,5 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { VirtualMachineModel } from '../../src/models';
 import { click } from '../utils/shared-utils';
 import * as view from '../views/wizard.view';
 import { DiskDialog } from './dialogs/diskDialog';

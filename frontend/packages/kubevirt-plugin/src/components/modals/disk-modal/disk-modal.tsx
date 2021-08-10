@@ -29,7 +29,6 @@ import {
   PersistentVolumeClaimKind,
   StorageClassResourceKind,
 } from '@console/internal/module/k8s';
-import { DataVolumeModel } from '@console/kubevirt-plugin/src/models';
 import {
   AccessMode,
   DataVolumeSourceType,
@@ -47,6 +46,7 @@ import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { DataVolumeModel } from '../../../models';
 import { ValidationErrorType } from '../../../selectors';
 import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { getName } from '../../../selectors/selectors';

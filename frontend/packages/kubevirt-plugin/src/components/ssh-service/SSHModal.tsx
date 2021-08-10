@@ -6,8 +6,8 @@ import {
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
-import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import useSSHService from '../../hooks/use-ssh-service';
+import { VMIKind, VMKind } from '../../types';
 import { ModalFooter } from '../modals/modal/modal-footer';
 import SSHCreateService from './SSHCreateService/SSHCreateService';
 

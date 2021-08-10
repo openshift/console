@@ -6,7 +6,7 @@ import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { K8sKind } from '@console/internal/module/k8s';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { VirtualMachineModel } from '../../../src/models';
 import { confirmAction } from '../../utils/shared-actions.view';
 import { click } from '../../utils/shared-utils';
 import * as editDedicatedResourcesView from '../../views/dialogs/editDedicatedResourcesView';

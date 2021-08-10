@@ -1,4 +1,4 @@
-import { VMIKind } from '@console/kubevirt-plugin/src/types';
+import { VMIKind } from '../../../types';
 
 export const mockData: { [key: string]: [VMIKind, boolean] } = {
   testWithoutVMOwner: [
