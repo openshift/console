@@ -132,7 +132,7 @@ type GenericListPageProps = {
 const GenericListPage: React.FC<GenericListPageProps> = (props) => {
   const { resourceKind } = props;
   const createProps = {
-    to: `/odf/resource/${resourceKind}/~new`,
+    to: `/odf/resource/${resourceKind}/create/~new`,
   };
   return (
     <ListPage

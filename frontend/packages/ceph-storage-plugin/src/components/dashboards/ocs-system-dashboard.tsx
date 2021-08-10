@@ -47,12 +47,12 @@ const convertToCard = (Card: React.ComponentType): GridDashboardCard => ({ Card 
 const isPagePresent = (pages: Page[], page: Page): boolean =>
   pages.some((p) => page.href === p.href);
 
-const BLOCK_FILE = 'block-file';
+export const BLOCK_FILE = 'block-file';
 const OBJECT = 'object';
 
 const sortPages = (a: Page, b: Page): number => {
-  if (a.href === BLOCK_FILE) return -1;
-  if (b.href === OBJECT) return 1;
+  if (a.href === BLOCK_FILE || a.href === `overview/${BLOCK_FILE}`) return -1;
+  if (b.href === OBJECT || a.href === `overview/${OBJECT}`) return 1;
   return 0;
 };
 
@@ -145,19 +145,19 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   const showInternalDashboard = !isIndependent && isCephAvailable;
 
   const internalPage = {
-    href: BLOCK_FILE,
+    href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
     name: t('ceph-storage-plugin~Block and File'),
-    component: () => <PersistentInternalDashboard />,
+    component: PersistentInternalDashboard,
   };
   const externalPage = {
-    href: BLOCK_FILE,
+    href: !isOCS ? `overview/${BLOCK_FILE}` : BLOCK_FILE,
     name: t('ceph-storage-plugin~Block and File'),
-    component: () => <PersistentExternalDashboard />,
+    component: PersistentExternalDashboard,
   };
   const objectPage = {
-    href: OBJECT,
+    href: !isOCS ? `overview/${OBJECT}` : OBJECT,
     name: t('ceph-storage-plugin~Object'),
-    component: () => <ObjectServiceDashboard />,
+    component: ObjectServiceDashboard,
   };
 
   React.useEffect(() => {
@@ -184,12 +184,12 @@ const OCSSystemDashboard: React.FC<DashboardsPageProps> = ({
   React.useEffect(() => {
     if (!location.pathname.includes(BLOCK_FILE) && !location.pathname.includes(OBJECT)) {
       if (isCephAvailable === true) {
-        history.push(`${match.path}/${BLOCK_FILE}`);
+        history.push(`${match.url}/${BLOCK_FILE}`);
       } else if (isCephAvailable === false && isObjectServiceAvailable) {
-        history.push(`${match.path}/${OBJECT}`);
+        history.push(`${match.url}/${OBJECT}`);
       }
     }
-  }, [isCephAvailable, isObjectServiceAvailable, history, match.path, location.pathname]);
+  }, [isCephAvailable, isObjectServiceAvailable, history, match.url, location.pathname]);
 
   return kindsInFlight && k8sModels.size === 0 ? (
     <LoadingBox />
