@@ -7,15 +7,15 @@
     "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack --mode=development",
     "http-server": "./http-server.sh ./dist",
+    "i18n": "i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
-  },
-  "dependencies": {
-    "react": "17.0.1"
   },
   "devDependencies": {
     "@console/dynamic-plugin-sdk": "link:../packages/console-dynamic-plugin-sdk/dist",
     "@types/react": "16.8.13",
+    "copy-webpack-plugin": "^6.4.1",
     "http-server": "0.12.x",
+    "i18next-parser": "^3.3.0",
     "ts-loader": "6.2.2",
     "ts-node": "5.0.1",
     "typescript": "3.8.3",

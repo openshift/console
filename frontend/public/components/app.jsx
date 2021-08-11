@@ -41,7 +41,7 @@ import { useToast } from '@console/shared/src/components/toast';
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
-import '../i18n';
+import { init as initI18n } from '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 import '@patternfly/quickstarts/dist/quickstarts.min.css';
@@ -54,6 +54,8 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 import { graphQLReady } from '../graphql/client';
+
+initI18n();
 
 // Disable linkify 'fuzzy links' across the app.
 // Only linkify url strings beginning with a proper protocol scheme.

@@ -4,6 +4,8 @@ import * as webpack from 'webpack';
 import * as path from 'path';
 import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/webpack';
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 const config: webpack.Configuration = {
   mode: 'development',
   context: path.resolve(__dirname, 'src'),
@@ -31,7 +33,14 @@ const config: webpack.Configuration = {
       },
     ],
   },
-  plugins: [new ConsoleRemotePlugin()],
+  plugins: [
+    new ConsoleRemotePlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'locales'), to: 'locales' },
+      ],
+    }),
+  ],
   externals: {
     '@console/dynamic-plugin-sdk/api': 'api',
   },
