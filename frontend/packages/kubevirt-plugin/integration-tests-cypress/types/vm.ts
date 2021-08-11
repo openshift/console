@@ -14,6 +14,7 @@ export type Disk = {
   source?: DISK_SOURCE;
   bootable?: boolean;
   preallocation?: boolean;
+  autoDetach?: boolean;
 };
 
 export type Network = {
