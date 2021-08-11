@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import * as cx from 'classnames';
-import i18next from 'i18next';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import {
@@ -15,12 +14,7 @@ import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { TektonTaskSpec, PipelineTaskRef, TaskKind, WhenExpression } from '../../../../types';
 import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
-import { PipelineBuilderTaskMetadata } from '../../pipeline-builder/types';
-import {
-  BUILDER_NODE_ADD_RADIUS,
-  WHEN_EXPRESSSION_DIAMOND_SIZE,
-} from '../../pipeline-topology/const';
-import InstallingNodeDecorator from '../../pipeline-topology/InstallingNodeDecorator';
+import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
 import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
@@ -35,7 +29,6 @@ type PipelineVisualizationTask = {
   runAfter?: string[];
   when?: WhenExpression[];
   status?: TaskStatus;
-  metadata?: PipelineBuilderTaskMetadata;
 };
 interface TaskProps {
   pipelineRunName?: string;
@@ -202,15 +195,6 @@ const TaskComponent: React.FC<TaskProps> = ({
           'is-linked': enableLogLink,
         })}
       />
-      {pipelineTask?.metadata?.installing && (
-        <g>
-          <InstallingNodeDecorator
-            x={0}
-            y={BUILDER_NODE_ADD_RADIUS / 4}
-            content={i18next.t('pipelines-plugin~Installing')}
-          />
-        </g>
-      )}
       {visualName !== truncatedVisualName && disableVisualizationTooltip ? (
         <Tooltip content={visualName}>{renderVisualName}</Tooltip>
       ) : (

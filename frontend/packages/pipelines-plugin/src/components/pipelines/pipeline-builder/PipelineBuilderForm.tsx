@@ -84,12 +84,13 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   };
 
   const updateTasks = (changes: CleanupResults): void => {
-    const { tasks, listTasks, finallyTasks, finallyListTasks } = changes;
+    const { tasks, listTasks, finallyTasks, finallyListTasks, loadingTasks } = changes;
 
     setFieldValue('formData', {
       ...formData,
       tasks,
       listTasks,
+      loadingTasks,
       finallyTasks,
       finallyListTasks,
     });
@@ -102,9 +103,14 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const taskGroup: PipelineBuilderTaskGroup = {
     tasks: formData.tasks,
     listTasks: formData.listTasks,
+    loadingTasks: formData.loadingTasks,
     highlightedIds: selectedIds,
     finallyTasks: formData.finallyTasks,
     finallyListTasks: formData.finallyListTasks,
+  };
+
+  const onUpdateTasks = (updatedTaskGroup, op) => {
+    updateTasks(applyChange(updatedTaskGroup, op));
   };
 
   const closeSidebarAndHandleReset = React.useCallback(() => {
@@ -120,9 +126,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       taskResources={taskResources}
       onTaskSelection={onTaskSelection}
       onTaskSearch={onTaskSearch}
-      onUpdateTasks={(updatedTaskGroup, op) => {
-        updateTasks(applyChange(updatedTaskGroup, op));
-      }}
+      onUpdateTasks={onUpdateTasks}
     />
   );
 
@@ -146,6 +150,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 isOpen={menuOpen}
                 callback={savedCallback.current}
                 setIsOpen={(open) => setMenuOpen(open)}
+                onUpdateTasks={onUpdateTasks}
+                taskGroup={taskGroup}
               />
               <SyncedEditorField
                 name="editorType"
@@ -178,7 +184,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                     !_.isEmpty(status?.tasks) ||
                     !_.isEmpty(status?.[STATUS_KEY_NAME_ERROR]) ||
                     formData.tasks.length === 0 ||
-                    formData.tasks.filter((task) => task.metadata?.installing).length > 0
+                    formData.loadingTasks.length > 0
               }
               resetLabel={t('pipelines-plugin~Cancel')}
               sticky

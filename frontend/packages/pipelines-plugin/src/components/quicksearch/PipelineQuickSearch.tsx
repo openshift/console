@@ -6,8 +6,12 @@ import CatalogServiceProvider, {
 } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
 import { QuickSearchController, QuickSearchProviders } from '@console/shared';
 import { TektonTaskProviders } from '../pipelines/const';
-import { useMetadataCleanup, useMetadataFailureCleanup } from '../pipelines/pipeline-builder/hooks';
-import { TaskSearchCallback } from '../pipelines/pipeline-builder/types';
+import { useCleanupOnFailure, useLoadingTaskCleanup } from '../pipelines/pipeline-builder/hooks';
+import {
+  PipelineBuilderTaskGroup,
+  TaskSearchCallback,
+  UpdateTasksCallback,
+} from '../pipelines/pipeline-builder/types';
 import {
   createTask,
   findInstalledTask,
@@ -23,6 +27,8 @@ interface QuickSearchProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   callback: TaskSearchCallback;
+  onUpdateTasks: UpdateTasksCallback;
+  taskGroup: PipelineBuilderTaskGroup;
 }
 
 const Contents: React.FC<{
@@ -34,18 +40,16 @@ const Contents: React.FC<{
   isOpen,
   setIsOpen,
   callback,
+  onUpdateTasks,
+  taskGroup,
 }) => {
   const { t } = useTranslation();
   const savedCallback = React.useRef(null);
+  savedCallback.current = callback;
   const [failedTasks, setFailedTasks] = React.useState<string[]>([]);
-  useMetadataCleanup();
-  useMetadataFailureCleanup(failedTasks, (taskName) =>
-    setFailedTasks(failedTasks.filter((ft) => ft !== taskName)),
-  );
 
-  React.useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+  useLoadingTaskCleanup(onUpdateTasks, taskGroup);
+  useCleanupOnFailure(failedTasks, onUpdateTasks, taskGroup);
 
   const catalogServiceItems = catalogService.items.reduce((acc, item) => {
     const installedTask = findInstalledTask(catalogService.items, item);
@@ -56,7 +60,9 @@ const Contents: React.FC<{
         const installedVersion = item.attributes?.versions?.find(
           (v) => v.version === installedTask.attributes?.versions[0]?.version,
         );
-        item.attributes.installed = installedVersion.id.toString();
+        if (installedVersion) {
+          item.attributes.installed = installedVersion.id.toString();
+        }
       }
     }
 
@@ -125,6 +131,8 @@ const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
   isOpen,
   setIsOpen,
   callback,
+  onUpdateTasks,
+  taskGroup,
 }) => {
   return (
     <CatalogServiceProvider namespace={namespace} catalogId="pipelines-task-catalog">
@@ -137,6 +145,8 @@ const PipelineQuickSearch: React.FC<QuickSearchProps> = ({
             setIsOpen,
             catalogService,
             callback,
+            onUpdateTasks,
+            taskGroup,
           }}
         />
       )}

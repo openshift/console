@@ -42,7 +42,6 @@ export type PipelineResult = {
 };
 
 export type PipelineTask = {
-  metadata?: { installing?: boolean };
   name: string;
   params?: PipelineTaskParam[];
   resources?: TektonResourceGroup<PipelineTaskResource>;

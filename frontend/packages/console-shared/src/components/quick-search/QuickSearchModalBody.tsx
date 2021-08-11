@@ -10,7 +10,7 @@ import {
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
-import { QuickSearchDetailsRendererProps } from './QuickSearchDetails';
+import { DetailsRendererFunction } from './QuickSearchDetails';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
@@ -24,7 +24,7 @@ interface QuickSearchModalBodyProps {
   closeModal: () => void;
   limitItemCount: number;
   icon?: React.ReactNode;
-  detailsRenderer?: (props: QuickSearchDetailsRendererProps) => React.ReactNode;
+  detailsRenderer?: DetailsRendererFunction;
 }
 
 const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({

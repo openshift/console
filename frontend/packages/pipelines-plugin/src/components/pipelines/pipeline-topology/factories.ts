@@ -11,6 +11,7 @@ import BuilderNode from './BuilderNode';
 import { NodeType, PipelineLayout } from './const';
 import FinallyNode from './FinallyNode';
 import InvalidTaskListNode from './InvalidTaskListNode';
+import LoadingNode from './LoadingNode';
 import SpacerNode from './SpacerNode';
 import TaskEdge from './TaskEdge';
 import TaskListNode from './TaskListNode';
@@ -39,6 +40,8 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
           return FinallyNode;
         case NodeType.BUILDER_FINALLY_NODE:
           return BuilderFinallyNode;
+        case NodeType.LOADING_NODE:
+          return LoadingNode;
         default:
           return undefined;
       }

@@ -20,6 +20,7 @@ export const WHEN_EXPRESSION_SPACING = 25;
 export enum NodeType {
   TASK_NODE = 'task',
   SPACER_NODE = 'spacer',
+  LOADING_NODE = 'loading',
   TASK_LIST_NODE = 'task-list',
   BUILDER_NODE = 'builder',
   INVALID_TASK_LIST_NODE = 'invalid-task-list',

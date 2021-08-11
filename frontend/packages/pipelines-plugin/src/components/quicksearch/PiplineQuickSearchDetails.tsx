@@ -82,7 +82,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
   }, [selectedItem]);
 
   return (
-    <>
+    <div className="opp-quick-search-details">
       <Level hasGutter>
         <LevelItem>
           <Title data-test={'task-name'} headingLevel="h4">
@@ -99,8 +99,8 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             data-test={'task-cta'}
             variant={ButtonVariant.primary}
             className="opp-quick-search-details__form-button"
-            onClick={async (e) => {
-              await handleCta(e, selectedItem, closeModal, fireTelemetryEvent, { selectedVersion });
+            onClick={(e) => {
+              handleCta(e, selectedItem, closeModal, fireTelemetryEvent, { selectedVersion });
             }}
           >
             {buttonText}
@@ -153,7 +153,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
           </StackItem>
         )}
       </Stack>
-    </>
+    </div>
   );
 };
 

@@ -1,0 +1,11 @@
+.opp-pipeline-vis-loading-node {
+  fill: white;
+  stroke: var(--pf-global--BorderColor--light-100);
+  stroke-width: 1;
+
+  &__name {
+    dominant-baseline: middle;
+    text-anchor: middle;
+    cursor: pointer;
+  }
+}

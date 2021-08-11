@@ -77,6 +77,8 @@ export type CatalogItem<T extends any = any> = {
    * Rendered in catalog tile and side panel
    *  */
   title?: React.ReactNode;
+  // Used as the second label next to the provider label in the list result.
+  secondaryLabel?: React.ReactNode;
   provider?: string;
   // Used as the tile description. If provided as a string, the description is truncated to 3 lines.
   // If provided as a ReactNode, the contents will not be truncated.

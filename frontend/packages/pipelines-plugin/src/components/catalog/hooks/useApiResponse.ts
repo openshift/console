@@ -24,8 +24,10 @@ const useApiResponse: UseApiResponse = (url: string, hasPermission: boolean) => 
           }
         })
         .catch((err) => {
-          setLoaded(true);
-          if (mounted) setLoadedError(err?.message);
+          if (mounted) {
+            setLoaded(true);
+            setLoadedError(err?.message);
+          }
         });
     } else {
       setLoaded(true);

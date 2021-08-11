@@ -3,7 +3,7 @@ import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import cx from 'classnames';
 import { CatalogType } from '@console/dev-console/src/components/catalog/utils/types';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import QuickSearchDetails, { QuickSearchDetailsRendererProps } from './QuickSearchDetails';
+import QuickSearchDetails, { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';
 import './QuickSearchContent.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
@@ -21,7 +21,7 @@ interface QuickSearchContentProps {
   viewAll?: CatalogLinkData[];
   closeModal: () => void;
   limitItemCount: number;
-  detailsRenderer?: (props: QuickSearchDetailsRendererProps) => React.ReactNode;
+  detailsRenderer?: DetailsRendererFunction;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({

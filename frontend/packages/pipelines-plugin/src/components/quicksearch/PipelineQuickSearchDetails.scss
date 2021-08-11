@@ -1,4 +1,6 @@
 .opp-quick-search-details {
+  padding-top: var(--pf-global--spacer--md);
+
   &__form-button {
     margin: var(--pf-global--spacer--md) 0px !important;
     width: max-content;

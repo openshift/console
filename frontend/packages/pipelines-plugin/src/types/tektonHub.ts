@@ -8,6 +8,12 @@ export type TektonHubLatestVersion = {
   webURL: string;
   updatedAt: string;
 };
+
+export type TektonHubCategory = {
+  id: number;
+  name: string;
+};
+
 export type TektonHubTag = {
   id: number;
   name: string;
@@ -16,6 +22,7 @@ export type TektonHubTag = {
 export type TektonHubTask = {
   id: number;
   name: string;
+  categories: TektonHubCategory[];
   catalog: {
     id: number;
     name: string;
@@ -25,10 +32,4 @@ export type TektonHubTask = {
   latestVersion: TektonHubLatestVersion;
   tags: TektonHubTag[];
   rating: number;
-};
-
-export type TektonHubCategory = {
-  id: number;
-  name: string;
-  tags: TektonHubTag[];
 };
