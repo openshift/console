@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
@@ -18,7 +18,7 @@ import { tableColumnClasses } from './service-table';
 
 const serviceReference = referenceForModel(ServiceModel);
 
-const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
+const ServiceRow: React.FC<RowFunctionArgs<ServiceKind>> = ({ obj }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;
@@ -26,7 +26,7 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
   const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={serviceReference}
@@ -66,7 +66,7 @@ const ServiceRow: RowFunction<ServiceKind> = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[8]}>
         <ResourceKebab actions={menuActions} kind={serviceReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

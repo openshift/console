@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as UIActions from '@console/internal/actions/ui';
-import { TableRow, RowFunction } from '@console/internal/components/factory';
+import { RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { testPackageManifest, testCatalogSource } from '../../mocks';
 import { PackageManifestKind, CatalogSourceKind } from '../types';
@@ -33,9 +33,8 @@ describe(PackageManifestTableHeaderWithCatalogSource.displayName, () => {
 });
 
 describe('PackageManifestTableRow', () => {
-  let wrapper: ShallowWrapper<RowFunction<
-    PackageManifestKind,
-    { catalogSource: CatalogSourceKind }
+  let wrapper: ShallowWrapper<React.FC<
+    RowFunctionArgs<PackageManifestKind, { catalogSource: CatalogSourceKind }>
   >>;
 
   beforeEach(() => {
@@ -46,10 +45,6 @@ describe('PackageManifestTableRow', () => {
       <PackageManifestTableRow
         obj={testPackageManifest}
         customData={{ catalogSource: testCatalogSource }}
-        index={0}
-        key={'0'}
-        style={null}
-        isScrolling
         columns={columns}
       />,
     );
@@ -58,7 +53,6 @@ describe('PackageManifestTableRow', () => {
   it('renders column for package name and logo', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .dive()
         .find(ClusterServiceVersionLogo)
@@ -73,7 +67,6 @@ describe('PackageManifestTableRow', () => {
     } = testPackageManifest.status.channels[0];
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .dive()
         .text(),
@@ -84,7 +77,6 @@ describe('PackageManifestTableRow', () => {
     const pkgManifestCreationTimestamp = testPackageManifest.metadata.creationTimestamp;
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .dive()
         .find(Timestamp)
@@ -101,16 +93,11 @@ describe('PackageManifestTableRow', () => {
       <PackageManifestTableRow
         obj={testPackageManifest}
         customData={{ catalogSource: null }}
-        index={0}
-        key={'0'}
-        style={null}
-        isScrolling
         columns={columns}
       />,
     );
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .dive()
         .find(ResourceLink)

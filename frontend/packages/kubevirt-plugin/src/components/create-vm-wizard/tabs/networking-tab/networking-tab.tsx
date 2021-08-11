@@ -110,7 +110,7 @@ const NetworkingTabComponent: React.FC<NetworkingTabComponentProps> = ({
               removeNIC,
               wizardReduxID,
             }}
-            row={VMWizardNicRow}
+            Row={VMWizardNicRow}
           />
           {isBootNICRequired && (
             <NetworkBootSource

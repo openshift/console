@@ -8,9 +8,8 @@ import { useSelector } from 'react-redux';
 import {
   Table,
   TableProps,
-  TableRow,
   TableData,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { humanizeBinaryBytes, Kebab } from '@console/internal/components/utils';
@@ -92,16 +91,10 @@ export const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
-  obj,
-  index,
-  key,
-  style,
-  customData,
-}) => {
+const DiskRow: React.FC<RowFunctionArgs<DiskMetadata, OCSMetadata>> = ({ obj, customData }) => {
   const { ocsState, nodeName, dispatch } = customData;
   return (
-    <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
       <TableData className={tableColumnClasses[1]}>{obj.status.state}</TableData>
       <OCSStatus
@@ -121,9 +114,13 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
       </TableData>
       <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
       <OCSKebabOptions disk={obj} nodeName={nodeName} ocsState={ocsState} dispatch={dispatch} />
-    </TableRow>
+    </>
   );
 };
+
+const getRowProps = (obj) => ({
+  id: obj.deviceID,
+});
 
 const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
   const { t } = useTranslation();
@@ -289,10 +286,11 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
       {...props}
       aria-label={t('ceph-storage-plugin~Disks List')}
       Header={diskHeader}
-      Row={diskRow}
+      Row={DiskRow}
       customData={{ ocsState, dispatch, nodeName }}
       NoDataEmptyMsg={props.customData.EmptyMsg}
       virtualize
+      getRowProps={getRowProps}
     />
   );
 });

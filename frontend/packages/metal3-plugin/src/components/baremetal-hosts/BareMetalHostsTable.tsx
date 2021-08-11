@@ -2,13 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import {
-  TableRow,
-  TableData,
-  Table,
-  RowFunction,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getName, getUID, getNamespace, DASH } from '@console/shared';
@@ -79,9 +73,6 @@ const HostsTableHeader = (t: TFunction) => () => [
 
 const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   obj: { host, node, nodeMaintenance, machine, machineSet, status },
-  index,
-  key,
-  style,
 }) => {
   const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
@@ -94,7 +85,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   const { serialNumber } = getHostVendorInfo(host);
 
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={referenceForModel(BareMetalHostModel)}
@@ -133,7 +124,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
           id={`kebab-for-${uid}`}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -143,17 +134,13 @@ type BareMetalHostsTableProps = React.ComponentProps<typeof Table> & {
 
 const BareMetalHostsTable: React.FC<BareMetalHostsTableProps> = (props) => {
   const { t } = useTranslation();
-  const row = React.useCallback<RowFunction<BareMetalHostBundle>>(
-    (rowProps) => <HostsTableRow {...rowProps} />,
-    [],
-  );
   return (
     <Table
       {...props}
       defaultSortField="host.metadata.name"
       aria-label={t('metal3-plugin~Bare Metal Hosts')}
       Header={HostsTableHeader(t)}
-      Row={row}
+      Row={HostsTableRow}
       virtualize
     />
   );

@@ -2,7 +2,7 @@ import * as React from 'react';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +45,7 @@ import {
 } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunctionArgs } from './factory';
+import { DetailsPage, ListPage, RowFunctionArgs, Table, TableData } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -215,10 +215,6 @@ const podColumnInfo = Object.freeze({
 const kind = 'Pod';
 const columnManagementID = referenceForModel(PodModel);
 
-const podRowStateToProps = ({ UI }) => ({
-  metrics: UI.getIn(['metrics', 'pod']),
-});
-
 const getHeader = (showNodes) => {
   return () => {
     return [
@@ -330,122 +326,120 @@ const getSelectedColumns = (showNodes: boolean) => {
   );
 };
 
-const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
-  ({
-    obj: pod,
-    index,
-    rowKey,
-    style,
-    metrics,
-    showNodes,
-    showNamespaceOverride,
-    tableColumns,
-  }: PodTableRowProps & PodTableRowPropsFromState) => {
-    const { name, namespace, creationTimestamp, labels } = pod.metadata;
-    const { readyCount, totalContainers } = podReadiness(pod);
-    const phase = podPhase(pod);
-    const restarts = podRestarts(pod);
-    const bytes: number = _.get(metrics, ['memory', namespace, name]);
-    const cores: number = _.get(metrics, ['cpu', namespace, name]);
-    const columns: Set<string> =
-      tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns(showNodes);
-    const { t } = useTranslation();
-    const resourceKind = referenceFor(pod);
-    const context = { [resourceKind]: pod };
-    return (
-      <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
-        <TableData className={podColumnInfo.name.classes}>
-          <ResourceLink kind={kind} name={name} namespace={namespace} />
-        </TableData>
-        <TableData
-          className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
-          columns={columns}
-          columnID={podColumnInfo.namespace.id}
-          showNamespaceOverride={showNamespaceOverride}
-        >
-          <ResourceLink kind="Namespace" name={namespace} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.status.classes}
-          columns={columns}
-          columnID={podColumnInfo.status.id}
-        >
-          <PodStatus pod={pod} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.ready.classes}
-          columns={columns}
-          columnID={podColumnInfo.ready.id}
-        >
-          {readyCount}/{totalContainers}
-        </TableData>
-        <TableData
-          className={podColumnInfo.restarts.classes}
-          columns={columns}
-          columnID={podColumnInfo.restarts.id}
-        >
-          {restarts}
-        </TableData>
-        <TableData
-          className={podColumnInfo.owner.classes}
-          columns={columns}
-          columnID={podColumnInfo.owner.id}
-        >
-          {showNodes ? (
-            <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-          ) : (
-            <OwnerReferences resource={pod} />
-          )}
-        </TableData>
-        <TableData
-          className={podColumnInfo.memory.classes}
-          columns={columns}
-          columnID={podColumnInfo.memory.id}
-        >
-          {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-        </TableData>
-        <TableData
-          className={podColumnInfo.cpu.classes}
-          columns={columns}
-          columnID={podColumnInfo.cpu.id}
-        >
-          {cores ? t('public~{{numCores}} cores', { numCores: formatCores(cores) }) : '-'}
-        </TableData>
-        <TableData
-          className={podColumnInfo.created.classes}
-          columns={columns}
-          columnID={podColumnInfo.created.id}
-        >
-          <Timestamp timestamp={creationTimestamp} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.node.classes}
-          columns={columns}
-          columnID={podColumnInfo.node.id}
-        >
+const PodTableRow: React.FC<RowFunctionArgs<PodKind, RowCustomData>> = ({
+  obj: pod,
+  customData: { showNodes, showNamespaceOverride, tableColumns },
+}) => {
+  const { name, namespace, creationTimestamp, labels } = pod.metadata;
+  const bytes: number = useSelector(({ UI }) => {
+    const metrics = UI.getIn(['metrics', 'pod']);
+    return metrics?.memory?.[namespace]?.[name];
+  });
+  const cores: number = useSelector(({ UI }) => {
+    const metrics = UI.getIn(['metrics', 'pod']);
+    return metrics?.cpu?.[namespace]?.[name];
+  });
+  const { readyCount, totalContainers } = podReadiness(pod);
+  const phase = podPhase(pod);
+  const restarts = podRestarts(pod);
+  const columns: Set<string> =
+    tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns(showNodes);
+  const { t } = useTranslation();
+  const resourceKind = referenceFor(pod);
+  const context = { [resourceKind]: pod };
+  return (
+    <>
+      <TableData className={podColumnInfo.name.classes}>
+        <ResourceLink kind={kind} name={name} namespace={namespace} />
+      </TableData>
+      <TableData
+        className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+        columns={columns}
+        columnID={podColumnInfo.namespace.id}
+        showNamespaceOverride={showNamespaceOverride}
+      >
+        <ResourceLink kind="Namespace" name={namespace} />
+      </TableData>
+      <TableData
+        className={podColumnInfo.status.classes}
+        columns={columns}
+        columnID={podColumnInfo.status.id}
+      >
+        <PodStatus pod={pod} />
+      </TableData>
+      <TableData
+        className={podColumnInfo.ready.classes}
+        columns={columns}
+        columnID={podColumnInfo.ready.id}
+      >
+        {readyCount}/{totalContainers}
+      </TableData>
+      <TableData
+        className={podColumnInfo.restarts.classes}
+        columns={columns}
+        columnID={podColumnInfo.restarts.id}
+      >
+        {restarts}
+      </TableData>
+      <TableData
+        className={podColumnInfo.owner.classes}
+        columns={columns}
+        columnID={podColumnInfo.owner.id}
+      >
+        {showNodes ? (
           <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.labels.classes}
-          columns={columns}
-          columnID={podColumnInfo.labels.id}
-        >
-          <LabelList kind={kind} labels={labels} />
-        </TableData>
-        <TableData
-          className={podColumnInfo.ipaddress.classes}
-          columns={columns}
-          columnID={podColumnInfo.ipaddress.id}
-        >
-          {pod?.status?.podIP ?? '-'}
-        </TableData>
-        <TableData className={Kebab.columnClass}>
-          <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
-        </TableData>
-      </TableRow>
-    );
-  },
-);
+        ) : (
+          <OwnerReferences resource={pod} />
+        )}
+      </TableData>
+      <TableData
+        className={podColumnInfo.memory.classes}
+        columns={columns}
+        columnID={podColumnInfo.memory.id}
+      >
+        {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+      </TableData>
+      <TableData
+        className={podColumnInfo.cpu.classes}
+        columns={columns}
+        columnID={podColumnInfo.cpu.id}
+      >
+        {cores ? t('public~{{numCores}} cores', { numCores: formatCores(cores) }) : '-'}
+      </TableData>
+      <TableData
+        className={podColumnInfo.created.classes}
+        columns={columns}
+        columnID={podColumnInfo.created.id}
+      >
+        <Timestamp timestamp={creationTimestamp} />
+      </TableData>
+      <TableData
+        className={podColumnInfo.node.classes}
+        columns={columns}
+        columnID={podColumnInfo.node.id}
+      >
+        <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
+      </TableData>
+      <TableData
+        className={podColumnInfo.labels.classes}
+        columns={columns}
+        columnID={podColumnInfo.labels.id}
+      >
+        <LabelList kind={kind} labels={labels} />
+      </TableData>
+      <TableData
+        className={podColumnInfo.ipaddress.classes}
+        columns={columns}
+        columnID={podColumnInfo.ipaddress.id}
+      >
+        {pod?.status?.podIP ?? '-'}
+      </TableData>
+      <TableData className={Kebab.columnClass}>
+        <LazyActionMenu context={context} isDisabled={phase === 'Terminating'} />
+      </TableData>
+    </>
+  );
+};
 PodTableRow.displayName = 'PodTableRow';
 
 export const ContainerLink: React.FC<ContainerLinkProps> = ({ pod, name }) => (
@@ -837,20 +831,6 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
 };
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-const getRow = (showNodes, showNamespaceOverride) => {
-  return (rowArgs: RowFunctionArgs<PodKind>) => (
-    <PodTableRow
-      obj={rowArgs.obj}
-      index={rowArgs.index}
-      rowKey={rowArgs.key}
-      style={rowArgs.style}
-      showNodes={showNodes}
-      showNamespaceOverride={showNamespaceOverride}
-      tableColumns={rowArgs.customData?.tableColumns}
-    />
-  );
-};
-
 export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
   PodListProps & WithUserSettingsCompatibilityProps<TableColumnsType>,
   TableColumnsType
@@ -867,6 +847,11 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
     tableColumns?.[columnManagementID]?.length > 0
       ? new Set(tableColumns[columnManagementID])
       : null;
+
+  const customData = React.useMemo(
+    () => ({ tableColumns: tableColumns?.[columnManagementID], showNodes, showNamespaceOverride }),
+    [showNamespaceOverride, showNodes, tableColumns],
+  );
   return (
     <Table
       {...props}
@@ -875,8 +860,8 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
       showNamespaceOverride={showNamespaceOverride}
       aria-label={t('public~Pods')}
       Header={getHeader(showNodes)}
-      Row={getRow(showNodes, showNamespaceOverride)}
-      customData={{ tableColumns: tableColumns?.[columnManagementID] }}
+      Row={PodTableRow}
+      customData={customData}
       virtualize
     />
   );
@@ -1024,18 +1009,10 @@ type PodDetailsProps = {
   obj: PodKind;
 };
 
-type PodTableRowProps = {
-  obj: PodKind;
-  index: number;
-  rowKey: string;
-  style: object;
+type RowCustomData = {
   tableColumns: string[];
   showNodes?: boolean;
   showNamespaceOverride?: boolean;
-};
-
-type PodTableRowPropsFromState = {
-  metrics: UIActions.PodMetrics;
 };
 
 type PodListProps = {

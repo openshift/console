@@ -12,7 +12,7 @@ import {
 import { BanIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -252,14 +252,9 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
       },
     ];
   };
-  const CRDTableRow: RowFunction<CustomResourceDefinitionKind> = ({
-    obj: crd,
-    index,
-    key,
-    style,
-  }) => {
+  const CRDTableRow: React.FC<RowFunctionArgs<CustomResourceDefinitionKind>> = ({ obj: crd }) => {
     return (
-      <TableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
+      <>
         <TableData className={tableColumnClasses[0]}>
           <span className="co-resource-item">
             <ResourceLink
@@ -283,7 +278,7 @@ export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsLi
         <TableData className={tableColumnClasses[5]}>
           <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
         </TableData>
-      </TableRow>
+      </>
     );
   };
 

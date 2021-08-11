@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -7,7 +7,7 @@ import { EventChannelKind, ChannelConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicChannelModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) => {
+const ChannelRow: React.FC<RowFunctionArgs<EventChannelKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -18,7 +18,7 @@ const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) =
     ? getCondition(obj.status.conditions, ChannelConditionTypes.Ready)
     : null;
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData>
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -36,7 +36,7 @@ const ChannelRow: RowFunction<EventChannelKind> = ({ obj, index, key, style }) =
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import { EmptyState, EmptyStateVariant } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Table, RowFunction } from '@console/internal/components/factory';
+import { Table, RowFunctionArgs, TableProps } from '@console/internal/components/factory';
 import { FilterToolbar, RowFilter } from '@console/internal/components/filter-toolbar';
 import { getQueryArgument, LoadingBox } from '@console/internal/components/utils';
 
@@ -12,7 +12,7 @@ interface CustomResourceListProps {
   rowFilters?: RowFilter[];
   sortBy: string;
   sortOrder: SortByDirection;
-  resourceRow: RowFunction;
+  ResourceRow: React.FC<RowFunctionArgs>;
   resources?: { [key: string]: any }[];
   resourceHeader: () => { [key: string]: any }[];
   EmptyMsg?: React.ComponentType;
@@ -26,6 +26,8 @@ interface CustomResourceListProps {
     items: { [key: string]: any }[],
     filters: string,
   ) => { [key: string]: any }[];
+  customData?: any;
+  getRowProps?: TableProps['getRowProps'];
 }
 
 const CustomResourceList: React.FC<CustomResourceListProps> = ({
@@ -38,9 +40,11 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
   textFilter,
   textFilterReducer,
   resourceHeader,
-  resourceRow,
+  ResourceRow,
   sortBy,
   sortOrder,
+  customData,
+  getRowProps,
 }) => {
   const { t } = useTranslation();
   const applyFilters = React.useCallback(() => {
@@ -92,9 +96,11 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
         defaultSortOrder={sortOrder}
         aria-label="CustomResources"
         Header={resourceHeader}
-        Row={resourceRow}
+        Row={ResourceRow}
         loaded={loaded}
         virtualize
+        customData={customData}
+        getRowProps={getRowProps}
       />
     </div>
   );

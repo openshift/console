@@ -26,6 +26,10 @@ import HelmReleaseListRow from './HelmReleaseListRow';
 
 import './HelmReleaseList.scss';
 
+const getRowProps = (obj) => ({
+  id: obj.name,
+});
+
 interface HelmReleaseListProps {
   namespace: string;
 }
@@ -134,8 +138,9 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       sortOrder={SortByDirection.asc}
       rowFilterReducer={filterHelmReleasesByStatus}
       textFilterReducer={filterHelmReleasesByName}
-      resourceRow={HelmReleaseListRow}
+      ResourceRow={HelmReleaseListRow}
       resourceHeader={HelmReleaseListHeader(t)}
+      getRowProps={getRowProps}
     />
   );
 };

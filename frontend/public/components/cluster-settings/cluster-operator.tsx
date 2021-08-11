@@ -7,7 +7,7 @@ import { SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
 import { ClusterOperatorModel } from '../../models';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from '../factory';
 import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
@@ -66,11 +66,11 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ClusterOperatorTableRow: RowFunction<ClusterOperator> = ({ obj, index, key, style }) => {
+const ClusterOperatorTableRow: React.FC<RowFunctionArgs<ClusterOperator>> = ({ obj }) => {
   const { status, message } = getStatusAndMessage(obj);
   const operatorVersion = getClusterOperatorVersion(obj);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={clusterOperatorReference}
@@ -85,7 +85,7 @@ const ClusterOperatorTableRow: RowFunction<ClusterOperator> = ({ obj, index, key
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word', 'co-pre-line')}>
         {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

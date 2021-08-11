@@ -9,17 +9,23 @@ type BrokerTriggerTabProps = {
   obj: EventBrokerKind;
 };
 
-const BrokerTriggerTab: React.FC<BrokerTriggerTabProps> = ({ obj }) => (
-  <ListPage
-    canCreate={false}
-    showTitle={false}
-    kind={referenceForModel(EventingTriggerModel)}
-    ListComponent={TriggerList}
-    namespace={obj.metadata.namespace}
-    customData={{
+const BrokerTriggerTab: React.FC<BrokerTriggerTabProps> = ({ obj }) => {
+  const customData = React.useMemo(
+    () => ({
       broker: obj.metadata.name,
-    }}
-  />
-);
+    }),
+    [obj.metadata.name],
+  );
+  return (
+    <ListPage
+      canCreate={false}
+      showTitle={false}
+      kind={referenceForModel(EventingTriggerModel)}
+      ListComponent={TriggerList}
+      namespace={obj.metadata.namespace}
+      customData={customData}
+    />
+  );
+};
 
 export default BrokerTriggerTab;

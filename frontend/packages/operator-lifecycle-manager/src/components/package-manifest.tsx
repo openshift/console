@@ -7,11 +7,10 @@ import { Link, match } from 'react-router-dom';
 import {
   MultiListPage,
   Table,
-  TableRow,
   TableData,
-  RowFunction,
   Flatten,
   Filter,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   MsgBox,
@@ -62,16 +61,16 @@ export const PackageManifestTableHeaderWithCatalogSource = () => [
   },
 ];
 
-export const PackageManifestTableRow: RowFunction<
+export const PackageManifestTableRow: React.FC<RowFunctionArgs<
   PackageManifestKind,
   { catalogSource: CatalogSourceKind }
-> = ({ obj: packageManifest, index, key, style, customData }) => {
+>> = ({ obj: packageManifest, customData }) => {
   const channel = defaultChannelFor(packageManifest);
 
   const { displayName, version, provider } = channel?.currentCSVDesc;
 
   return (
-    <TableRow id={packageManifest.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <Link
           to={resourcePathFromModel(
@@ -102,7 +101,7 @@ export const PackageManifestTableRow: RowFunction<
           />
         </TableData>
       )}
-    </TableRow>
+    </>
   );
 };
 
@@ -153,10 +152,17 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
     </Trans>
   );
 
+  const customData = React.useMemo(
+    () => ({
+      catalogSource,
+    }),
+    [catalogSource],
+  );
+
   return (
     <MultiListPage
       {...props}
-      customData={{ catalogSource }}
+      customData={customData}
       namespace={namespace}
       showTitle={false}
       helpText={helpText}

@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Table, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table, TableData } from '@console/internal/components/factory';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
@@ -43,9 +43,9 @@ const UsersTableHeader = (t: TFunction) => () => {
 };
 UsersTableHeader.displayName = 'UsersTableHeader';
 
-const UsersTableRow = ({ obj: user, index, key, style }) => {
+const UsersTableRow: React.FC<RowFunctionArgs> = ({ obj: user }) => {
   return (
-    <TableRow id={user?.metadata?.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>{user?.metadata?.userName}</TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {user?.metadata?.domain}
@@ -54,7 +54,7 @@ const UsersTableRow = ({ obj: user, index, key, style }) => {
         <Timestamp timestamp={new Date(user?.metadata?.loginTime).toUTCString()} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>{fromNow(user?.metadata?.loginTime)}</TableData>
-    </TableRow>
+    </>
   );
 };
 

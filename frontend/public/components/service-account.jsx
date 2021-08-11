@@ -4,7 +4,7 @@ import { safeDump } from 'js-yaml';
 import { Base64 } from 'js-base64';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   SectionHeading,
@@ -117,13 +117,13 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ServiceAccountTableRow = ({ obj: serviceaccount, index, key, style }) => {
+const ServiceAccountTableRow = ({ obj: serviceaccount }) => {
   const {
     metadata: { name, namespace, uid, creationTimestamp },
     secrets,
   } = serviceaccount;
   return (
-    <TableRow id={serviceaccount.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -140,7 +140,7 @@ const ServiceAccountTableRow = ({ obj: serviceaccount, index, key, style }) => {
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

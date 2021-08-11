@@ -3,7 +3,7 @@ import { EmptyState } from '@patternfly/react-core';
 import { SortByDirection, sortable } from '@patternfly/react-table';
 import { shallow } from 'enzyme';
 import * as fuzzy from 'fuzzysearch';
-import { TableRow, TableData, Table, RowFunction } from '@console/internal/components/factory';
+import { TableData, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import { RowFilter, FilterToolbar } from '@console/internal/components/filter-toolbar';
 import { LoadingBox } from '@console/internal/components/utils';
 import CustomResourceList from '../CustomResourceList';
@@ -47,12 +47,12 @@ const MockTableHeader = () => {
   ];
 };
 
-const MockTableRow: RowFunction = ({ obj, index, key, style }) => (
-  <TableRow id={obj.name} index={index} trKey={key} style={style}>
+const MockTableRow: React.FC<RowFunctionArgs> = ({ obj }) => (
+  <>
     <TableData className={mockColumnClasses.name}>{obj.name}</TableData>
     <TableData className={mockColumnClasses.version}>{obj.version}</TableData>
     <TableData className={mockColumnClasses.status}>{obj.status}</TableData>
-  </TableRow>
+  </>
 );
 
 // Couldn't test scenarios that work around useEffect becuase it seems there is no way to trigger useEffect from within the tests.
@@ -110,7 +110,7 @@ describe('CustomeResourceList', () => {
     sortOrder: SortByDirection.desc,
     rowFilterReducer: getFilteredItemsByRow,
     textFilterReducer: getFilteredItemsByText,
-    resourceRow: MockTableRow,
+    ResourceRow: MockTableRow,
     resourceHeader: MockTableHeader,
   };
 

@@ -10,7 +10,7 @@ import { useActiveNamespace } from '@console/shared';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
-import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, Table, TableData } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import {
@@ -210,9 +210,9 @@ export const RoleLink = ({ binding }) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
+const RoleBindingsTableRow = ({ obj: binding }) => {
   return (
-    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={bindingKind(binding)}
@@ -240,7 +240,7 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
       <TableData className={tableColumnClasses[5]}>
         <BindingKebab binding={binding} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

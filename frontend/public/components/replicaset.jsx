@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   ContainerTable,
@@ -181,6 +181,46 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
+const ReplicaSetTableRow = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          title="pods"
+        >
+          {t('public~{{count1}} of {{count2}} pods', {
+            count1: obj.status.replicas || 0,
+            count2: obj.spec.replicas,
+          })}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <LabelList kind={kind} labels={obj.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <OwnerReferences resource={obj} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
+      </TableData>
+    </>
+  );
+};
+
 const ReplicaSetsList = (props) => {
   const { t } = useTranslation();
   const ReplicaSetTableHeader = () => [
@@ -226,45 +266,6 @@ const ReplicaSetsList = (props) => {
       props: { className: tableColumnClasses[6] },
     },
   ];
-
-  const ReplicaSetTableRow = ({ obj, index, key, style }) => {
-    return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-        </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          columnID="namespace"
-        >
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <Link
-            to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-            title="pods"
-          >
-            {t('public~{{count1}} of {{count2}} pods', {
-              count1: obj.status.replicas || 0,
-              count2: obj.spec.replicas,
-            })}
-          </Link>
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <LabelList kind={kind} labels={obj.metadata.labels} />
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          <OwnerReferences resource={obj} />
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
-          <Timestamp timestamp={obj.metadata.creationTimestamp} />
-        </TableData>
-        <TableData className={tableColumnClasses[6]}>
-          <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
-        </TableData>
-      </TableRow>
-    );
-  };
 
   return (
     <Table

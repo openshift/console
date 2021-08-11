@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   history,
   SectionHeading,
@@ -66,15 +66,12 @@ const ClusterServiceClassTableHeader = () => {
 };
 ClusterServiceClassTableHeader.displayName = 'ClusterServiceClassTableHeader';
 
-const ClusterServiceClassTableRow: RowFunction<K8sResourceKind> = ({
+const ClusterServiceClassTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
   obj: serviceClass,
-  index,
-  key,
-  style,
 }) => {
   const path = resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name);
   return (
-    <TableRow id={serviceClass.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ClusterServiceClassIcon serviceClass={serviceClass} />
         <Link className="co-cluster-service-class-link" to={path}>
@@ -88,7 +85,7 @@ const ClusterServiceClassTableRow: RowFunction<K8sResourceKind> = ({
           name={serviceClass.spec.clusterServiceBrokerName}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

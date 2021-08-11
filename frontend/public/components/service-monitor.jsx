@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
-import { ListPage, Table, TableRow, TableData } from './factory';
+import { ListPage, Table, TableData } from './factory';
 import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
 import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -43,10 +43,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ServiceMonitorTableRow = ({ obj: sm, index, key, style }) => {
+const ServiceMonitorTableRow = ({ obj: sm }) => {
   const { metadata } = sm;
   return (
-    <TableRow id={sm.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(ServiceMonitorModel)}
@@ -69,7 +69,7 @@ const ServiceMonitorTableRow = ({ obj: sm, index, key, style }) => {
           resource={sm}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

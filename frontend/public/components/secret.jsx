@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import {
   Kebab,
@@ -65,10 +65,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const SecretTableRow = ({ obj: secret, index, key, style }) => {
+const SecretTableRow = ({ obj: secret }) => {
   const data = _.size(secret.data);
   return (
-    <TableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind="Secret"
@@ -92,7 +92,7 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

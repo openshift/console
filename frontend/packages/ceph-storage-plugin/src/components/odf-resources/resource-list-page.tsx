@@ -10,12 +10,11 @@ import {
   FirehoseResourcesResult,
 } from '@console/internal/module/k8s';
 import {
-  RowFunction,
   TableData,
-  TableRow,
   Table,
   ListPage,
   Flatten,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { sortable } from '@patternfly/react-table';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -40,15 +39,12 @@ type CustomRowData = {
   resourceKind: string;
 };
 
-const Row: RowFunction<K8sResourceCommon, CustomRowData> = ({
+const Row: React.FC<RowFunctionArgs<K8sResourceCommon, CustomRowData>> = ({
   obj,
-  index,
-  style,
-  key,
   customData: { resourceKind },
 }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ODFResourceLink kind={resourceKind} name={obj?.metadata?.name} />
       </TableData>
@@ -70,7 +66,7 @@ const Row: RowFunction<K8sResourceCommon, CustomRowData> = ({
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -134,6 +130,12 @@ const GenericListPage: React.FC<GenericListPageProps> = (props) => {
   const createProps = {
     to: `/odf/resource/${resourceKind}/create/~new`,
   };
+  const customData = React.useMemo(
+    () => ({
+      resourceKind,
+    }),
+    [resourceKind],
+  );
   return (
     <ListPage
       {...props}
@@ -142,7 +144,7 @@ const GenericListPage: React.FC<GenericListPageProps> = (props) => {
       kind={resourceKind}
       canCreate
       createProps={createProps}
-      customData={{ resourceKind }}
+      customData={customData}
     />
   );
 };

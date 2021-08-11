@@ -19,7 +19,7 @@ import {
   referenceFor,
 } from '../module/k8s';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { configureJobParallelismModal } from './modals';
 import {
   ContainerTable,
@@ -70,12 +70,12 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
+const JobTableRow: React.FC<RowFunctionArgs<JobKind>> = ({ obj: job }) => {
   const { type, completions } = getJobTypeAndCompletions(job);
   const resourceKind = referenceFor(job);
   const context = { [resourceKind]: job };
   return (
-    <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} />
       </TableData>
@@ -97,7 +97,7 @@ const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu context={context} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -113,9 +113,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const BuildConfigsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={BuildConfigsReference}
@@ -138,7 +138,7 @@ const BuildConfigsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, s
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

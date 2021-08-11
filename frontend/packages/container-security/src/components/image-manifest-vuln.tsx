@@ -12,11 +12,10 @@ import { DefaultList } from '@console/internal/components/default-resource';
 import {
   MultiListPage,
   Table,
-  TableRow,
   TableData,
   DetailsPage,
   ListPage,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { ContainerLink } from '@console/internal/components/pod';
 import {
@@ -201,15 +200,12 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
 ];
 
-export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
+export const ImageManifestVulnTableRow: React.FC<RowFunctionArgs<ImageManifestVuln>> = ({
   obj,
-  index,
-  key,
-  style,
 }) => {
   const { name, namespace } = obj.metadata;
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(ImageManifestVulnModel)}
@@ -237,7 +233,7 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
       <TableData className={tableColumnClasses[6]}>
         <ExternalLink text={shortenHash(obj.spec.manifest)} href={quayURLFor(obj)} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

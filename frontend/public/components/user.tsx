@@ -9,7 +9,7 @@ import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/h
 import * as UIActions from '../actions/ui';
 import { OAuthModel, UserModel } from '../models';
 import { K8sKind, referenceForModel, UserKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { RoleBindingsPage } from './RBAC';
 import {
   Kebab,
@@ -49,9 +49,9 @@ const UserKebab = connect<{}, UserKebabDispatchProps, UserKebabProps>(null, {
   startImpersonate: UIActions.startImpersonate,
 })(UserKebab_);
 
-const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
+const UserTableRow: React.FC<RowFunctionArgs<UserKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(UserModel)} name={obj.metadata.name} />
       </TableData>
@@ -64,7 +64,7 @@ const UserTableRow: RowFunction<UserKind> = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[3]}>
         <UserKebab user={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

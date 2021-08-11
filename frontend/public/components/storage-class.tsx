@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -69,6 +69,30 @@ const StorageClassDetails: React.FC<StorageClassDetailsProps> = ({ obj }) => {
   );
 };
 
+const StorageClassTableRow: React.FC<RowFunctionArgs<StorageClassResourceKind>> = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
+          {isDefaultClass(obj) && (
+            <span className="small text-muted co-resource-item__help-text">
+              &ndash; {t('public~Default')}
+            </span>
+          )}
+        </ResourceLink>
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        {obj.provisioner}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
+      </TableData>
+    </>
+  );
+};
+
 export const StorageClassList: React.FC = (props) => {
   const { t } = useTranslation();
   const StorageClassTableHeader = () => {
@@ -96,33 +120,6 @@ export const StorageClassList: React.FC = (props) => {
         props: { className: tableColumnClasses[3] },
       },
     ];
-  };
-  const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
-    obj,
-    index,
-    key,
-    style,
-  }) => {
-    return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-          <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
-            {isDefaultClass(obj) && (
-              <span className="small text-muted co-resource-item__help-text">
-                &ndash; {t('public~Default')}
-              </span>
-            )}
-          </ResourceLink>
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-          {obj.provisioner}
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>{obj.reclaimPolicy || '-'}</TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
-        </TableData>
-      </TableRow>
-    );
   };
   return (
     <Table

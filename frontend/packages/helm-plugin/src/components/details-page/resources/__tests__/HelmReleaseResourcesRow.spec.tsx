@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import { RowFunctionArgs } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
@@ -27,15 +27,12 @@ describe('helmReleaseResourcesRow', () => {
           namespace: 'deb',
         },
       },
-      index: 1,
-      key: '1',
-      style: {},
     } as any;
   });
 
-  it('should render the TableRow component', () => {
-    const helmReleaseResourcesRow = shallow(HelmReleaseResourcesRow(rowArgs));
-    expect(helmReleaseResourcesRow.find('tr').exists()).toBe(true);
+  it('should render the TableData component', () => {
+    const helmReleaseResourcesRow = shallow(<HelmReleaseResourcesRow {...rowArgs} />);
+    expect(helmReleaseResourcesRow.find(TableData).exists()).toBe(true);
   });
 
   it('should render the number of pods deployed for resources that support it', () => {

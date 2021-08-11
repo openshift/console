@@ -17,10 +17,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   MultiListPage,
-  RowFunction,
+  RowFunctionArgs,
   Table,
   TableData,
-  TableRow,
 } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -123,11 +122,8 @@ const VMHeader = (t: TFunction) => () =>
     tableColumnClasses,
   );
 
-const VMRow: RowFunction<VMRowObjType, VmStatusResourcesValue> = ({
+const VMRow: React.FC<RowFunctionArgs<VMRowObjType, VmStatusResourcesValue>> = ({
   obj,
-  index,
-  key,
-  style,
   customData: vmStatusResources,
 }) => {
   const { vm, vmi } = obj;
@@ -146,7 +142,7 @@ const VMRow: RowFunction<VMRowObjType, VmStatusResourcesValue> = ({
   }
 
   return (
-    <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
       </TableData>
@@ -189,7 +185,7 @@ const VMRow: RowFunction<VMRowObjType, VmStatusResourcesValue> = ({
           vmStatusResources={vmStatusResources}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

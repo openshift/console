@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   Kebab,
   navFactory,
@@ -22,9 +22,9 @@ const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+export const LimitRangeTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={LimitRangeReference}
@@ -41,7 +41,7 @@ export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -5,13 +5,7 @@ import { RocketIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { QuickStartModel } from '@console/app/src/models';
-import {
-  ListPage,
-  Table,
-  TableData,
-  TableRow,
-  RowFunction,
-} from '@console/internal/components/factory';
+import { ListPage, Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NamespaceModel } from '@console/internal/models';
@@ -62,16 +56,13 @@ const NetworkAttachmentDefinitionsHeader = () =>
     tableColumnClasses,
   );
 
-const NetworkAttachmentDefinitionsRow: RowFunction<NetAttachDefBundle> = ({
-  obj: { name, namespace, type, metadata, netAttachDef },
-  index,
-  key,
-  style,
+const NetworkAttachmentDefinitionsRow: React.FC<RowFunctionArgs<NetAttachDefBundle>> = ({
+  obj: { name, namespace, type, netAttachDef },
 }) => {
   const dimensify = dimensifyRow(tableColumnClasses);
 
   return (
-    <TableRow id={metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ResourceLink
           kind={referenceForModel(NetworkAttachmentDefinitionModel)}
@@ -92,7 +83,7 @@ const NetworkAttachmentDefinitionsRow: RowFunction<NetAttachDefBundle> = ({
           resource={netAttachDef}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

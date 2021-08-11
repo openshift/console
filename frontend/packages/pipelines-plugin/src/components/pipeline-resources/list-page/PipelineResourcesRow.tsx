@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, Kebab, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineResourceModel } from '../../../models';
@@ -8,10 +8,10 @@ import { pipelineResourceFilterReducer } from '../../../utils/pipeline-filter-re
 import { PipelineResourceListFilterLabels } from '../../../utils/pipeline-utils';
 import { tableColumnClasses } from './pipeline-resources-table';
 
-const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, key, style }) => {
+const PipelineResourcesRow: React.FC<RowFunctionArgs<PipelineResourceKind>> = ({ obj }) => {
   const pipelineResourcesReference = referenceForModel(PipelineResourceModel);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineResourcesReference}
@@ -36,7 +36,7 @@ const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, k
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
