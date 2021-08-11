@@ -23,7 +23,9 @@
       "icons": "src/utils/icons.ts",
       "yamlTemplates": "src/templates/pipelines.ts",
       "catalog": "src/components/catalog",
-      "topology": "src/topology"
+      "topology": "src/topology",
+      "pipelineTabbedPage": "src/components/pipelines/PipelineTabbedPage.tsx",
+      "repositoryListComponent": "src/components/repository/list-page"
     }
   }
 }

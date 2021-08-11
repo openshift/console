@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "flag": "OPENSHIFT_PIPELINE_AS_CODE"
+    }
+  },
+  {
     "type": "dev-console.add/action-group",
     "properties": {
       "id": "pipelines",
@@ -30,18 +41,14 @@
     }
   },
   {
-    "type": "console.navigation/resource-ns",
+    "type": "console.navigation/href",
     "properties": {
       "id": "pipelines",
       "perspective": "dev",
       "section": "resources",
       "insertAfter": "builds",
       "name": "%pipelines-plugin~Pipelines%",
-      "model": {
-        "kind": "Pipeline",
-        "version": "v1beta1",
-        "group": "tekton.dev"
-      },
+      "href": "/dev-pipelines",
       "dataAttributes": {
         "data-quickstart-id": "qs-nav-pipelines",
         "data-test-id": "pipeline-header"
@@ -212,6 +219,33 @@
     },
     "flags": {
       "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/dev-pipelines/ns/:ns", "/dev-pipelines/all-namespaces"],
+      "exact": false,
+      "component": {
+        "$codeRef": "pipelineTabbedPage.default"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "group": "pipelinesascode.tekton.dev",
+        "version": "v1alpha1",
+        "kind": "Repository"
+      },
+      "component": { "$codeRef": "repositoryListComponent.RepositoriesList" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT_PIPELINE_AS_CODE"]
     }
   }
 ]

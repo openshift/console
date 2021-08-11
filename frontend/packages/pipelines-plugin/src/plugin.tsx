@@ -286,7 +286,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/pipelines', '/tasks', '/triggers'],
+      path: ['/pipelines', '/tasks', '/triggers', '/dev-pipelines'],
       component: NamespaceRedirect,
     },
   },
@@ -325,23 +325,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/triggers-lists/TriggersPage' /* webpackChunkName: "admin-triggers" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      perspective: 'dev',
-      exact: true,
-      path: [
-        `/k8s/all-namespaces/${referenceForModel(PipelineModel)}`,
-        `/k8s/ns/:ns/${referenceForModel(PipelineModel)}`,
-      ],
-      loader: async () =>
-        (
-          await import(
-            './components/pipelines/PipelinesPage' /* webpackChunkName: "pipeline-page" */
           )
         ).default,
     },

@@ -7,17 +7,20 @@ import NamespacedPage, {
 import { DefaultPage } from '@console/internal/components/default-resource';
 import { Page } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
+import { MenuAction, MenuActions, MultiTabListPage, useFlag } from '@console/shared';
+import { FLAG_OPENSHIFT_PIPELINE_AS_CODE } from '../../const';
 import {
   PipelineModel,
   PipelineResourceModel,
   ConditionModel,
   PipelineRunModel,
+  RepositoryModel,
 } from '../../models';
 import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
 import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
+import RepositoriesList from '../repository/list-page/RepositoriesList';
 
 interface PipelinesListPageProps {
   match: Rmatch<any>;
@@ -25,6 +28,7 @@ interface PipelinesListPageProps {
 
 const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const { t } = useTranslation();
+  const isRepositoryEnabled = useFlag(FLAG_OPENSHIFT_PIPELINE_AS_CODE);
   const {
     params: { ns: namespace },
   } = match;
@@ -38,6 +42,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
     pipelineRun: { model: PipelineRunModel },
     pipelineResource: { model: PipelineResourceModel },
     condition: { model: ConditionModel },
+    ...(isRepositoryEnabled ? { repository: { model: RepositoryModel } } : {}),
   };
   const pages: Page[] = [
     {
@@ -68,6 +73,16 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
         showTitle,
       },
     },
+    ...(isRepositoryEnabled
+      ? [
+          {
+            href: 'repositories',
+            name: t(RepositoryModel.labelPluralKey),
+            component: RepositoriesList,
+            pageData: { showTitle, hideBadge, canCreate },
+          },
+        ]
+      : []),
   ];
 
   return (
