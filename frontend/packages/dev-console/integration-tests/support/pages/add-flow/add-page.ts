@@ -124,8 +124,8 @@ export const verifyAddPage = {
       case 'Samples':
         cy.byTestID('card samples').should('be.visible');
         break;
-      case 'Serverless':
-        cy.byTestID('card serverless').should('be.visible');
+      case 'Eventing':
+        cy.byTestID('card eventing').should('be.visible');
         break;
       case 'Channel':
         cy.byTestID('item knative-eventing-channel').should('be.visible');
