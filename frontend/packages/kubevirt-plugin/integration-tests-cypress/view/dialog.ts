@@ -1,4 +1,5 @@
-import { DISK_SOURCE } from '../const';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { DISK_SOURCE, VM_ACTION_TIMEOUT } from '../const';
 import { Disk, Network } from '../types/vm';
 import { diskDialog, nicDialog, kebabBtn, deleteDiskBtn, disksTab } from './selector';
 import { modalConfirmBtn } from './snapshot';
@@ -91,14 +92,12 @@ export const addDisk = (disk: Disk) => {
 };
 
 export const delDisk = (name: string) => {
-  // let disk_row = cy.get(`[data-id="${name}"]`);
-  // disk_row.should('exist');
   cy.get(`[data-id="${name}"] ${kebabBtn}`).click();
   cy.get(deleteDiskBtn).click();
   cy.get(modalConfirmBtn).click();
 };
-//
-// export const waitForCurrentVMStatus = (status: string, timeout?: number) => {
-//   const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-//   cy.byTestActionID(disksTab.currVMStatus).should('exist');
-// };
+
+export const waitForCurrentVMStatus = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+  cy.contains(disksTab.currVMStatus, status, { timeout: timeOut }).should('exist');
+};
