@@ -143,7 +143,7 @@ export const registerYAMLHover = (languageID, monaco, m2p, p2m, yamlService) => 
 const findManagedMetadata = (model) => {
   const document = createDocument(model);
   const doc = yaml.safeLoad(document.getText());
-  const rootMappings = doc.mappings || [];
+  const rootMappings = doc?.mappings || [];
   for (const rootElement of rootMappings) {
     const rootKey = rootElement.key;
     const rootValue = rootElement.value;
