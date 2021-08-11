@@ -7,6 +7,7 @@ import { NodeKind } from '@console/internal/module/k8s';
 import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
 import { BackingStorageType, DeploymentType } from '../../constants/create-storage-system';
 import { EncryptionType, KMSConfig, NetworkType } from '../../types';
+import { KMSEmptyState } from '../../constants';
 
 export type WizardState = CreateStorageSystemState;
 export type WizardDispatch = React.Dispatch<CreateStorageSystemAction>;
@@ -60,42 +61,13 @@ export const initialState: CreateStorageSystemState = {
     chartNodes: new Set(),
   },
   securityAndNetwork: {
-    // Encryption state initialization
     encryption: {
       clusterWide: false,
       storageClass: false,
       advanced: false,
       hasHandled: true,
     },
-    // KMS object state
-    kms: {
-      name: {
-        value: '',
-        valid: true,
-      },
-      token: {
-        value: '',
-        valid: true,
-      },
-      address: {
-        value: '',
-        valid: true,
-      },
-      port: {
-        value: '',
-        valid: true,
-      },
-      backend: '',
-      caCert: null,
-      tls: '',
-      clientCert: null,
-      clientKey: null,
-      providerNamespace: '',
-      hasHandled: true,
-      caCertFile: '',
-      clientCertFile: '',
-      clientKeyFile: '',
-    },
+    kms: KMSEmptyState,
     publicNetwork: null,
     clusterNetwork: null,
     networkType: NetworkType.DEFAULT,

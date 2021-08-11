@@ -17,6 +17,7 @@ export enum Steps {
   CreateLocalVolumeSet = 'create-local-volume-set',
   CapacityAndNodes = 'capacity-and-nodes',
   SecurityAndNetwork = 'security-and-network',
+  Security = 'security',
   ConnectionDetails = 'connection-details',
   ReviewAndCreate = 'review-and-create',
 }
@@ -28,9 +29,8 @@ export const StepsName = (t: TFunction) => ({
   [Steps.CreateLocalVolumeSet]: t('ceph-storage-plugin~Create local volume set'),
   [Steps.ReviewAndCreate]: t('ceph-storage-plugin~Review and create'),
   [Steps.SecurityAndNetwork]: t('ceph-storage-plugin~Security and network'),
+  [Steps.Security]: t('ceph-storage-plugin~Security'),
   [Steps.ConnectionDetails]: t('ceph-storage-plugin~Connection details'),
 });
 
-export const StorageClusterIdentifier = 'storagecluster.ocs.openshift.io/v1';
-
-export const StorageClusterSystemName = 'odf-storage-system';
+export const STORAGE_CLUSTER_SYSTEM_KIND = 'storagecluster.ocs.openshift.io/v1';
