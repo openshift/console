@@ -10,6 +10,6 @@ export const masthead = {
         .should('have.text', text),
   },
   clickMastheadLink: (path: string) => {
-    return cy.byLegacyTestID(path).click();
+    return cy.byTestID(path).click();
   },
 };
