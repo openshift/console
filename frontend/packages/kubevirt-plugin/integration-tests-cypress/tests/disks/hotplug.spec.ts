@@ -1,26 +1,23 @@
-import { DISK_SOURCE, VM_ACTION } from '../../const';
-// import {ProvisionSource} from '../../enums/provisionSource';
-// import {testName} from '../../support';
-import { Disk } from '../../types/vm';
+import { DISK_SOURCE, TEMPLATE_NAME, VM_ACTION_TIMEOUT, VM_STATUS, VM_ACTION } from '../../const';
+import { ProvisionSource } from '../../enums/provisionSource';
+import { testName } from '../../support';
+import { Disk, VirtualMachineData } from '../../types/vm';
 import { confirmButton, detailViewAction } from '../../view/actions';
-import { addDisk, delDisk } from '../../view/dialog';
+import { addDisk, delDisk, waitForCurrentVMStatus } from '../../view/dialog';
 import * as tags from '../../view/selector';
 import { tab } from '../../view/tab';
 import { virtualization } from '../../view/virtualization';
-// import {action, vm, waitForStatus} from '../../view/vm';
-// import {actionButtons} from "../../view/selector";
+import { vm, waitForStatus } from '../../view/vm';
 
-// const vmData: VirtualMachineData = {
-//   name: `test-vm-hotplug-${testName.split('-')[1]}`,
-//   // name: `fedora-spare-gecko`,
-//   namespace: testName,
-//   // namespace: 'leon-manual-49',
-//   template: TEMPLATE_NAME,
-//   provisionSource: ProvisionSource.URL,
-//   pvcSize: '1',
-//   sshEnable: false,
-//   startOnCreation: true,
-// };
+const vmData: VirtualMachineData = {
+  name: `test-vm-hotplug-${testName.split('-')[1]}`,
+  namespace: testName,
+  template: TEMPLATE_NAME,
+  provisionSource: ProvisionSource.URL,
+  pvcSize: '1',
+  sshEnable: false,
+  startOnCreation: true,
+};
 
 const hotPlugDisk: Disk = {
   size: '2',
@@ -30,41 +27,36 @@ const FCB32_URL_IMG =
   'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/fedora-images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2';
 const FCB32_URL_REG = 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest';
 const PVC_NAME = 'hotplug-test-pvc';
-const TMP_VM = 'rhel6-eli-lusk';
 
 describe('Test UI for VM disk hot-plug', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
-    // cy.createProject(testName);
-
-    // vm.create(vmData);
-    // waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
-
+    cy.createProject(testName);
+    vm.create(vmData);
+    waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
     virtualization.vms.visit();
-
-    // cy.byLegacyTestID(vmData.name)
-    cy.byLegacyTestID(TMP_VM)
+    cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
     tab.navigateToDisk();
   });
 
-  // after(() => {
-  //   cy.deleteResource({
-  //     kind: 'VirtualMachine',
-  //     metadata: {
-  //       name: vmData.name,
-  //       namespace: vmData.namespace,
-  //     },
-  //   });
-  //   cy.deleteResource({
-  //     kind: 'Namespace',
-  //     metadata: {
-  //       name: testName,
-  //     },
-  //   });
-  // });
+  after(() => {
+    cy.deleteResource({
+      kind: 'VirtualMachine',
+      metadata: {
+        name: vmData.name,
+        namespace: vmData.namespace,
+      },
+    });
+    cy.deleteResource({
+      kind: 'Namespace',
+      metadata: {
+        name: testName,
+      },
+    });
+  });
 
   it('ID(CNV-6828) Attach Persistent hotplug disk with [Blank] as source to running VM', () => {
     hotPlugDisk.autoDetach = false;
@@ -109,14 +101,14 @@ describe('Test UI for VM disk hot-plug', () => {
 
     detailViewAction(VM_ACTION.Stop);
     cy.get(confirmButton).click();
-    // waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
 
     cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
 
     // cleanup
     delDisk(hotPlugDisk.name);
     detailViewAction(VM_ACTION.Start);
-    // waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 
   it('ID(CNV-6863) Attach Persistent hotplug disk with [Import via Registry] as source to running VM', () => {
@@ -141,8 +133,8 @@ describe('Test UI for VM disk hot-plug', () => {
 
     detailViewAction(VM_ACTION.Restart);
     cy.get(confirmButton).click();
-    // waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    // waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
     cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
   });
 
@@ -204,13 +196,13 @@ describe('Test UI for VM disk hot-plug', () => {
 
     detailViewAction(VM_ACTION.Stop);
     cy.get(confirmButton).click();
-    // waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
 
     cy.get(`[data-id="${hotPlugDisk.name}"]`).should('not.exist');
 
     detailViewAction(VM_ACTION.Start);
-    // waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    // waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 
   it('ID(CNV-6855) Attach AutoDetach hotplug disk with [Import via URL] as source selection to running VM', () => {
@@ -233,8 +225,8 @@ describe('Test UI for VM disk hot-plug', () => {
 
     detailViewAction(VM_ACTION.Restart);
     cy.get(confirmButton).click();
-    // waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    // waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
     cy.get(`[data-id="${hotPlugDisk.name}"]`).should('not.exist');
   });
 
