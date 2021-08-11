@@ -7,7 +7,7 @@ import { StorageProfile } from '../types';
 
 export const useStorageProfileSettings = (
   scName: string,
-): [AccessMode, VolumeMode, boolean, boolean] => {
+): [AccessMode, VolumeMode, boolean, boolean, boolean] => {
   const spWatchResource = React.useMemo(() => {
     return {
       kind: kubevirtReferenceForModel(StorageProfileModel),
@@ -19,16 +19,12 @@ export const useStorageProfileSettings = (
 
   const [sp, spLoaded, loadError] = useK8sWatchResource<StorageProfile>(spWatchResource);
 
-  if (loadError) {
-    return null;
-  }
-
   if (!sp?.status?.claimPropertySets && spLoaded) {
-    return [AccessMode.READ_WRITE_ONCE, VolumeMode.FILESYSTEM, spLoaded, false];
+    return [AccessMode.READ_WRITE_ONCE, VolumeMode.FILESYSTEM, spLoaded, false, loadError];
   }
 
   const accessMode = AccessMode.fromString(sp?.status?.claimPropertySets?.[0].accessModes?.[0]);
   const volumeMode = VolumeMode.fromString(sp?.status?.claimPropertySets?.[0].volumeMode);
 
-  return [accessMode, volumeMode, spLoaded, true];
+  return [accessMode, volumeMode, spLoaded, true, loadError];
 };
