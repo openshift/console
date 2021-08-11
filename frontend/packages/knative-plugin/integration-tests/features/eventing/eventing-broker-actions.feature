@@ -14,7 +14,7 @@ Feature: Perform actions on Broker
         @smoke @pre-condition @to-do @odc-5030
         Scenario: Create Broker using Form view: KE-05-TC01
             Given user is at Add page
-             When user selects on "Broker" from "Serverless" card
+             When user selects on "Broker" from "Eventing" card
               And user selects "Form view"
               And user enters broker name as "default-broker"
               And user clicks on Create button

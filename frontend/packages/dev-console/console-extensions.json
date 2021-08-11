@@ -21,7 +21,7 @@
     "properties": {
       "id": "container-images",
       "name": "%devconsole~Container images%",
-      "insertBefore": "serverless",
+      "insertBefore": "eventing",
       "insertAfter": "git-repository"
     }
   },
@@ -31,7 +31,7 @@
       "id": "local-machine",
       "name": "%devconsole~From Local Machine%",
       "insertBefore": "pipelines",
-      "insertAfter": "serverless"
+      "insertAfter": "eventing"
     }
   },
   {
