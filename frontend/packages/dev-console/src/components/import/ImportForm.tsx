@@ -123,6 +123,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error while submitting import form:', err);
         actions.setStatus({ submitError: err.message });
       });
   };

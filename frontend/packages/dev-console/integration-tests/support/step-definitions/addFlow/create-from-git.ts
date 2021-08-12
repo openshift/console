@@ -12,8 +12,8 @@ When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.verifyValidatedMessage(gitUrl);
 });
 
-Then('git url gets Validated', () => {
-  gitPage.verifyValidatedMessage();
+Then('git url {string} gets Validated', (gitUrl: string) => {
+  gitPage.verifyValidatedMessage(gitUrl);
 });
 
 Then('builder image is detected', () => {

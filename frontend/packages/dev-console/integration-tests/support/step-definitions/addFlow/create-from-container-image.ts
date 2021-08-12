@@ -12,8 +12,8 @@ When('user enters Image name from external registry as {string}', (imageName: st
   containerImagePage.enterExternalRegistryImageName(imageName);
 });
 
-Then('git url gets Validated', () => {
-  gitPage.verifyValidatedMessage();
+Then('git url {string} gets Validated', (gitUrl: string) => {
+  gitPage.verifyValidatedMessage(gitUrl);
 });
 
 Then('user can see the image name gets Validated', () => {
