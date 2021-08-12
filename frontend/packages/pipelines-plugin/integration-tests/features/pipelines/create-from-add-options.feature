@@ -146,7 +146,7 @@ Feature: Create Pipeline from Add Options
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
               And user selects "<builder_image>" builder image
-             Then git url gets Validated
+             Then git url "<git_url>" gets Validated
               And user is able to see info message "<message>" in Pipelines section
 
         Examples:

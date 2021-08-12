@@ -157,7 +157,7 @@ Feature: Create Application from git form
         Scenario Outline: Builder iamge detected for git url "<git_url>": A-06-TC12
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
-             Then git url gets Validated
+             Then git url "<git_url>" gets Validated
               And builder image is detected
               And builder image version drop down is displayed
               And Application name displays as "<app_name>"
@@ -182,7 +182,7 @@ Feature: Create Application from git form
               And user clicks on "Show advanced Git options" link
               And user clears Context dir field
               And user enters Context dir as "<dir_name>"
-             Then git url gets Validated
+             Then git url "<git_url>" gets Validated
               And user is able to see "Builder Image(s) detected" message in Builder section
               And .NET builder image card tile is highlighted with * mark
 
@@ -195,7 +195,7 @@ Feature: Create Application from git form
         Scenario Outline: "Unable to detect the builder image" warning message displays for server related git urls: A-06-TC14
             Given user is at Import from git page
              When user enters Git Repo url as "<git_url>"
-             Then git url gets Validated
+             Then git url "<git_url>" gets Validated
               And user is able to see warning message "Unable to detect the Builder Image" in Builder section
 
         Examples:

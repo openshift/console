@@ -302,7 +302,7 @@ export const addGitWorkload = (
   resourceType: string = 'Deployment',
 ) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(gitUrl);
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);
   createForm.clickCreate();

@@ -57,7 +57,7 @@ When('user enters External registry image name as {string}', (imageName: string)
 
 When('user enters Docker url as {string}', (dockerUrl: string) => {
   gitPage.enterGitUrl(dockerUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(dockerUrl);
 });
 
 When('user selects {string} radio button on Add page', (resourceType: string) => {

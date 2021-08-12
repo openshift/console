@@ -20,7 +20,7 @@ When('user selects {string} option from Add to Project context menu', (option: s
 
 When('user enters Git Repo url {string} in Devfile page', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  devFilePage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage(gitUrl);
 });
 
 Then('user is able to see workload {string} in topology page', (workloadName: string) => {
@@ -29,7 +29,7 @@ Then('user is able to see workload {string} in topology page', (workloadName: st
 
 When('user selects Try sample link', () => {
   devFilePage.clickTrySample();
-  devFilePage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage('https://github.com/redhat-developer/devfile-sample');
   gitPage.enterAppName('devfile-sample-app');
   gitPage.enterWorkloadName('devfile-sample');
   cy.get(gitPO.gitRepoUrl).should(
@@ -40,11 +40,6 @@ When('user selects Try sample link', () => {
 
 When('user clicks Create button on Devfile page', () => {
   gitPage.clickCreate();
-});
-
-When('user enters Git Repo url {string} in Devfile Page', (privateGitRepoUrl: string) => {
-  gitPage.enterGitUrl(privateGitRepoUrl);
-  devFilePage.verifyValidatedMessage();
 });
 
 When('user enters Name as {string} in DevFile page', (name: string) => {
