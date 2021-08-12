@@ -45,26 +45,26 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: `/k8s/ns/:ns/${referenceForModel(
         models.ClusterServiceVersionModel,
-      )}/:appName/:plural/~new`,
+      )}/:csvName/:plural/~new`,
       loader: async () =>
         (
           await import(
             './components/operand/create-operand' /* webpackChunkName: "create-operand" */
           )
-        ).CreateOperandPage,
+        ).default,
     },
   },
   {
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: `/k8s/ns/:ns/${models.ClusterServiceVersionModel.plural}/:appName/:plural/~new`,
+      path: `/k8s/ns/:ns/${models.ClusterServiceVersionModel.plural}/:csvName/:plural/~new`,
       loader: async () =>
         (
           await import(
             './components/operand/create-operand' /* webpackChunkName: "create-operand" */
           )
-        ).CreateOperandPage,
+        ).default,
     },
   },
   {

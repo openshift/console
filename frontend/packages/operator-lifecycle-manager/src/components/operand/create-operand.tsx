@@ -1,8 +1,19 @@
+import * as React from 'react';
 import { JSONSchema6 } from 'json-schema';
 import * as _ from 'lodash';
-import * as React from 'react';
+import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { match as RouterMatch } from 'react-router';
 import {
-  K8sKind,
+  PageHeading,
+  StatusBox,
+  BreadCrumbs,
+  resourcePathFromModel,
+  AsyncComponent,
+} from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { CustomResourceDefinitionModel } from '@console/internal/models';
+import {
   K8sResourceKind,
   K8sResourceKindReference,
   kindForReference,
@@ -11,58 +22,51 @@ import {
   CustomResourceDefinitionKind,
   definitionFor,
 } from '@console/internal/module/k8s';
-import { CustomResourceDefinitionModel } from '@console/internal/models';
-import {
-  PageHeading,
-  StatusBox,
-  FirehoseResult,
-  BreadCrumbs,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
-import { Firehose } from '@console/internal/components/utils/firehose';
-import { RootState } from '@console/internal/redux';
-import { SyncedEditor } from '@console/shared/src/components/synced-editor';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { getBadgeFromType } from '@console/shared/src/components/badges';
 import { useActivePerspective } from '@console/shared';
-import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
-import { match as RouterMatch } from 'react-router';
-import { ClusterServiceVersionModel } from '../../models';
-import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
-import { OperandForm } from './operand-form';
-import { OperandYAML } from './operand-yaml';
-import { exampleForModel, providedAPIForModel } from '..';
-import { DEFAULT_K8S_SCHEMA } from './const';
+import { getBadgeFromType } from '@console/shared/src/components/badges';
 import {
   getSchemaErrors,
   hasNoFields,
   prune,
 } from '@console/shared/src/components/dynamic-form/utils';
-
+import { SyncedEditor } from '@console/shared/src/components/synced-editor';
+import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { useCreateResourceExtension } from '@console/shared/src/hooks/create-resource-hook';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { exampleForModel, providedAPIForModel } from '..';
+import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionKind, ProvidedAPI } from '../../types';
+import { DEFAULT_K8S_SCHEMA } from './const';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
+import { OperandForm } from './operand-form';
+import { OperandYAML } from './operand-yaml';
 
 import './create-operand.scss';
-import { useTranslation } from 'react-i18next';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
-  clusterServiceVersion,
-  customResourceDefinition,
   initialEditorType,
+  match,
+  csv,
   loaded,
   loadError,
-  match,
-  model,
 }) => {
   const { t } = useTranslation();
+  const [model] = useK8sModel(match.params.plural);
+  const [crd] = useK8sWatchResource<CustomResourceDefinitionKind>(
+    model
+      ? {
+          kind: CustomResourceDefinitionModel.kind,
+          isList: false,
+          name: nameForModel(model),
+        }
+      : undefined,
+  );
 
   const formHelpText = t(
     'olm~Create by completing the form. Default values may be provided by the Operator authors.',
   );
 
-  const { data: csv } = clusterServiceVersion;
-  const { data: crd } = customResourceDefinition;
   const [activePerspective] = useActivePerspective();
   const [helpText, setHelpText] = React.useState(formHelpText);
   const next =
@@ -70,7 +74,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
       ? '/topology'
       : `${resourcePathFromModel(
           ClusterServiceVersionModel,
-          match.params.appName,
+          match.params.csvName,
           match.params.ns,
         )}/${match.params.plural}`;
 
@@ -122,110 +126,96 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   );
 
   return (
-    <StatusBox loaded={loaded} loadError={loadError} data={clusterServiceVersion}>
-      {loaded ? (
-        <>
-          <div className="co-create-operand__header">
-            <div className="co-create-operand__header-buttons">
-              <BreadCrumbs
-                breadcrumbs={[
-                  {
-                    name: csv.spec.displayName,
-                    path: resourcePathFromModel(
-                      ClusterServiceVersionModel,
-                      csv.metadata.name,
-                      csv.metadata.namespace,
-                    ),
-                  },
-                  {
-                    name: t('olm~Create {{item}}', { item: model.label }),
-                    path: window.location.pathname,
-                  },
-                ]}
-              />
-            </div>
-            <PageHeading
-              badge={getBadgeFromType(model.badge)}
-              className="olm-create-operand__page-heading"
-              title={t('olm~Create {{item}}', { item: model.label })}
-            >
-              <span className="help-block">{helpText}</span>
-            </PageHeading>
-          </div>
-          <SyncedEditor
-            context={{
-              formContext: { csv, match, model, next, schema, providedAPI },
-              yamlContext: { next, match },
-            }}
-            FormEditor={FormComponent}
-            initialData={sample}
-            initialType={initialEditorType}
-            onChangeEditorType={onChangeEditorType}
-            prune={pruneFunc}
-            YAMLEditor={OperandYAML}
-          />
-        </>
-      ) : null}
+    <StatusBox loaded={loaded} loadError={loadError} data={csv}>
+      <div className="co-create-operand__header">
+        <PageHeading
+          badge={getBadgeFromType(model.badge)}
+          className="olm-create-operand__page-heading"
+          title={t('olm~Create {{item}}', { item: model.label })}
+        >
+          <span className="help-block">{helpText}</span>
+        </PageHeading>
+      </div>
+      <SyncedEditor
+        context={{
+          formContext: { csv, match, model, next, schema, providedAPI },
+          yamlContext: { next, match },
+        }}
+        FormEditor={FormComponent}
+        initialData={sample}
+        initialType={initialEditorType}
+        onChangeEditorType={onChangeEditorType}
+        prune={pruneFunc}
+        YAMLEditor={OperandYAML}
+      />
     </StatusBox>
   );
 };
 
-const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'model'>) => ({
-  model: state.k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
-});
-
-export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => {
+const CreateOperandPage: React.FC<CreateOperandPageProps> = ({ match }) => {
   const { t } = useTranslation();
+  const createResourceExtension = useCreateResourceExtension(match.params.plural);
+  const [csv, loaded, loadError] = useK8sWatchResource<ClusterServiceVersionKind>({
+    kind: referenceForModel(ClusterServiceVersionModel),
+    name: match.params.csvName,
+    namespace: match.params.ns,
+    isList: false,
+  });
+  const [model] = useK8sModel(match.params.plural);
+
   return (
     <>
       <Helmet>
-        <title>
-          {t('olm~Create {{item}}', { item: kindForReference(props.match.params.plural) })}
-        </title>
+        <title>{t('olm~Create {{item}}', { item: kindForReference(match.params.plural) })}</title>
       </Helmet>
-      {props.model && (
-        <Firehose
-          resources={[
-            {
-              kind: referenceForModel(ClusterServiceVersionModel),
-              name: props.match.params.appName,
-              namespace: props.match.params.ns,
-              isList: false,
-              prop: 'clusterServiceVersion',
-            },
-            {
-              kind: CustomResourceDefinitionModel.kind,
-              isList: false,
-              name: nameForModel(props.model),
-              prop: 'customResourceDefinition',
-              optional: true,
-            },
-          ]}
-        >
-          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-          <CreateOperand
-            {...(props as any)}
-            model={props.model}
-            match={props.match}
-            initialEditorType={EditorType.Form}
+      {loaded && !_.isEmpty(csv) && model && (
+        <div className="co-create-operand__breadcrumbs">
+          <BreadCrumbs
+            breadcrumbs={[
+              {
+                name: csv.spec.displayName,
+                path: resourcePathFromModel(
+                  ClusterServiceVersionModel,
+                  csv.metadata.name,
+                  csv.metadata.namespace,
+                ),
+              },
+              {
+                name: t('olm~Create {{item}}', { item: model.label }),
+                path: window.location.pathname,
+              },
+            ]}
           />
-        </Firehose>
+        </div>
+      )}
+      {createResourceExtension ? (
+        <AsyncComponent
+          loader={createResourceExtension.properties.component}
+          namespace={match.params.ns}
+        />
+      ) : (
+        <CreateOperand
+          match={match}
+          initialEditorType={EditorType.Form}
+          csv={csv}
+          loaded={loaded}
+          loadError={loadError}
+        />
       )}
     </>
   );
-});
+};
+
+export default CreateOperandPage;
 
 export type CreateOperandProps = {
-  clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
-  customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
   initialEditorType: EditorType;
+  match: RouterMatch<{ csvName: string; ns: string; plural: K8sResourceKindReference }>;
+  csv: ClusterServiceVersionKind;
   loaded: boolean;
-  loadError?: any;
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
-  model: K8sKind;
+  loadError: any;
 };
 
 export type CreateOperandPageProps = {
-  match: RouterMatch<{ appName: string; ns: string; plural: K8sResourceKindReference }>;
-  model: K8sKind;
+  match: CreateOperandProps['match'];
 };
