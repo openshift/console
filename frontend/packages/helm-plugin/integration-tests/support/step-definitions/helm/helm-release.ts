@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   devNavigationMenu,
+  pageTitle,
   helmActions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
@@ -9,16 +10,17 @@ import {
   topologySidePane,
   app,
   navigateTo,
-  catalogPage,
+  createHelmChartFromAddPage,
 } from '@console/dev-console/integration-tests/support/pages';
+import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
-  catalogPage.createHelmChartFromAddPage(workloadName);
+  createHelmChartFromAddPage(workloadName);
 });
 
 Given('user has installed helm release {string}', (helmReleaseName: string) => {
-  catalogPage.createHelmChartFromAddPage(helmReleaseName);
+  createHelmChartFromAddPage(helmReleaseName);
 });
 
 When(
@@ -37,6 +39,12 @@ Then(
     cy.get(helmPO.helmActions.uninstallHelmRelease).should('be.visible');
   },
 );
+
+Then('user is able to see the context menu with actions Upgrade and Uninstall Helm Release', () => {
+  cy.get('ul[role="menu"]').should('be.visible');
+  cy.byTestActionID('Upgrade').should('be.visible');
+  cy.byTestActionID('Uninstall Helm Release').should('be.visible');
+});
 
 Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
   topologyPage.clickOnNode(helmReleaseName);
@@ -58,9 +66,25 @@ Then(
   },
 );
 
+Then(
+  'user is able to see the actions dropdown menu with actions Upgrade and Uninstall Helm Release',
+  () => {
+    const actions = ['Upgrade', 'Uninstall Helm Release'];
+    cy.byLegacyTestID('action-items')
+      .children()
+      .each(($ele) => {
+        expect(actions).toContain($ele.text());
+      });
+  },
+);
+
 Given('user is on the Helm page with helm release {string}', (helmRelease: string) => {
   navigateTo(devNavigationMenu.Helm);
   helmPage.search(helmRelease);
+});
+
+Then('user will be redirected to Helm Releases page', () => {
+  detailsPage.titleShouldContain(pageTitle.HelmReleases);
 });
 
 When('user clicks on the Kebab menu', () => {

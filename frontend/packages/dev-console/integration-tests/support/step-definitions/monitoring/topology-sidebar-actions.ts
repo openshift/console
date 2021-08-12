@@ -25,6 +25,14 @@ Given('user has installed helm release {string}', (helmReleaseName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(helmReleaseName);
 });
 
+Given(
+  'user has installed helm chart {string} with release name {string}',
+  (helmChartName: string, helmReleaseName: string) => {
+    createHelmChartFromAddPage(helmReleaseName, helmChartName);
+    topologyPage.verifyWorkloadInTopologyPage(helmReleaseName);
+  },
+);
+
 When('user clicks on Monitoring tab', () => {
   topologySidePane.selectTab(sideBarTabs.observe);
 });

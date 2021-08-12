@@ -182,8 +182,7 @@ export const projectNameSpace = {
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          .each(($ele, index, $list) => {
+          .each(($ele) => {
             if ($ele.text() === projectName) {
               cy.get(`[id="${projectName}-link"]`).click();
             }
@@ -207,6 +206,7 @@ export const projectNameSpace = {
     projectNameSpace.clickProjectDropdown();
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
     cy.get(`[id="${projectName}-link"]`).click();
+    cy.log(`User has selected namespace ${projectName}`);
   },
 
   verifyMessage: (message: string) => cy.get('h2').should('contain.text', message),

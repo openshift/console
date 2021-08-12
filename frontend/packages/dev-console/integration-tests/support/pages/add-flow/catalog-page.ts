@@ -1,10 +1,13 @@
 import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { devNavigationMenu } from '../../constants';
-import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
-import { pageTitle } from '../../constants/pageTitle';
-import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
-import { helmPO } from '../../pageObjects/helm-po';
+import {
+  addOptions,
+  catalogCards,
+  catalogTypes,
+  devNavigationMenu,
+  pageTitle,
+} from '../../constants';
+import { cardTitle, catalogPO, helmPO } from '../../pageObjects';
 import { app, navigateTo } from '../app';
 import { addPage } from './add-page';
 
@@ -87,7 +90,6 @@ export const catalogPage = {
       .get(cardTitle, { timeout: 40000 })
       .contains('Knative Serving')
       .click(),
-  //  Due to Bug ODC-6153, identified the card using index
   selectHelmChartCard: (cardName: string) =>
     cy
       .byTestID(`HelmChart-${cardName}`)
@@ -107,31 +109,45 @@ export const catalogPage = {
     cy.byLegacyTestID('perspective-switcher-toggle').click();
     switch (card) {
       case catalogCards.mariaDB || 'MariaDB': {
-        cy.get(catalogPO.cards.mariaDBTemplate).click();
+        cy.get(catalogPO.cards.mariaDBTemplate)
+          .first()
+          .click();
         break;
       }
       case catalogCards.cakePhp || 'CakePHP + MySQL': {
-        cy.get(catalogPO.cards.phpCakeTemplate).click();
+        cy.get(catalogPO.cards.phpCakeTemplate)
+          .first()
+          .click();
         break;
       }
       case catalogCards.nodeJs || 'Node.js': {
-        cy.get(catalogPO.cards.nodeJsBuilderImage).click();
+        cy.get(catalogPO.cards.nodeJsBuilderImage)
+          .first()
+          .click();
         break;
       }
       case catalogCards.nodeJsPostgreSQL: {
-        cy.get(catalogPO.cards.nodejsPostgreSQL).click();
+        cy.get(catalogPO.cards.nodejsPostgreSQL)
+          .first()
+          .click();
         break;
       }
       case catalogCards.apacheHTTPServer: {
-        cy.get(catalogPO.cards.apacheHTTPServer).click();
+        cy.get(catalogPO.cards.apacheHTTPServer)
+          .first()
+          .click();
         break;
       }
       case catalogCards.nginxHTTPServer: {
-        cy.get(catalogPO.cards.nginxHTTPServer).click();
+        cy.get(catalogPO.cards.nginxHTTPServer)
+          .first()
+          .click();
         break;
       }
       case catalogCards.knativeKafka: {
-        cy.get(catalogPO.cards.knativeKafka).click();
+        cy.get(catalogPO.cards.knativeKafka)
+          .first()
+          .click();
         break;
       }
       case catalogCards.jenkins: {
@@ -142,7 +158,9 @@ export const catalogPage = {
         break;
       }
       case 'Nodejs Ex K v0.2.1': {
-        cy.get(catalogPO.cards.helmNodejs).click();
+        cy.get(catalogPO.cards.helmNodejs)
+          .first()
+          .click();
         break;
       }
       default: {
@@ -180,14 +198,12 @@ export const catalogPage = {
     cy.get(catalogPO.aToz).should('be.visible');
     cy.get(catalogPO.zToA).should('be.visible');
   },
-  createHelmChartFromAddPage: (
-    releaseName: string = 'nodejs-ex-k',
-    helmChartName: string = 'Nodejs Ex K v0.2.1',
-  ) => {
+  createHelmChart: (releaseName: string, helmChartName: string) => {
     navigateTo(devNavigationMenu.Add);
     app.waitForDocumentLoad();
+    addPage.verifyCard('Helm Chart');
     addPage.selectCardFromOptions(addOptions.HelmChart);
-    catalogPage.verifyPageTitle(pageTitle.HelmCharts);
+    detailsPage.titleShouldContain(pageTitle.HelmCharts);
     catalogPage.isCardsDisplayed();
     catalogPage.search(helmChartName);
     catalogPage.selectHelmChartCard(helmChartName);
