@@ -9,6 +9,8 @@ export const originalDeployment = {
       'image.openshift.io/triggers':
         '[{"from":{"kind":"ImageStreamTag","name":"nationalparks-py:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"nationalparks-py\\")].image","pause":"false"}]',
       'openshift.io/generated-by': 'OpenShiftWebConsole',
+      'app.openshift.io/connects-to': 'database',
+      'deployment.kubernetes.io/revision': '4',
     },
     name: 'nationalparks-py',
     namespace: 'div',

@@ -72,6 +72,19 @@ export const getTriggerAnnotation = (
   ]),
 });
 
+export const getUserAnnotations = (allAnnotations: { [key: string]: string }) => {
+  const defaultAnnotations = [
+    'app.openshift.io/vcs-uri',
+    'app.openshift.io/vcs-ref',
+    'openshift.io/generated-by',
+    'image.openshift.io/triggers',
+    'alpha.image.policy.openshift.io/resolve-names',
+    'jarFileName',
+    'kubectl.kubernetes.io/last-applied-configuration',
+  ];
+  return _.omit(allAnnotations, defaultAnnotations);
+};
+
 export const getPodLabels = (name: string) => {
   return {
     app: name,
@@ -90,8 +103,10 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   };
   if (mergedData.metadata.annotations) {
     mergedData.metadata.annotations = {
+      ...(isDevfileResource
+        ? originalResource?.metadata?.annotations
+        : getUserAnnotations(originalResource?.metadata?.annotations)),
       ...newResource.metadata.annotations,
-      ...(isDevfileResource ? originalResource?.metadata?.annotations : {}),
     };
   }
   if (mergedData.spec?.template?.metadata?.labels) {
