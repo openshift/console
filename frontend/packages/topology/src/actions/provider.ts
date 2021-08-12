@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { GraphElement } from '@patternfly/react-topology';
+import { GraphElement, isNode } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import { TYPE_WORKLOAD } from '../const';
 import { getResource } from '../utils';
 import { getModifyApplicationAction } from './modify-application';
 
@@ -13,7 +12,7 @@ export const useTopologyWorloadActionProvider = (element: GraphElement) => {
   }, [element]);
 
   return useMemo(() => {
-    if (element.getType() !== TYPE_WORKLOAD) return [[], true, undefined];
+    if (!isNode(element)) return [[], true, undefined];
     return [actions, true, undefined];
   }, [actions, element]);
 };
