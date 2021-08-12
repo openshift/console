@@ -24,7 +24,8 @@
       "actions": "src/actions",
       "icons": "src/utils/icons.ts",
       "catalog": "src/catalog",
-      "yamlTemplates": "src/yaml-templates.ts"
+      "yamlTemplates": "src/yaml-templates.ts",
+      "topology": "src/topology/topology.ts"
     }
   }
 }

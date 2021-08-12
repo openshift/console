@@ -37,6 +37,7 @@
   "Search": "Search",
   "Project": "Project",
   "Builds": "Builds",
+  "Create Service Binding": "Create Service Binding",
   "Container Image": "Container Image",
   "From Catalog": "From Catalog",
   "Helm Charts": "Helm Charts",

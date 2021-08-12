@@ -457,5 +457,29 @@
       },
       "provider": { "$codeRef": "actions.useEditImportActionProvider" }
     }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.getDevConsoleComponentFactory"
+      }
+    }
+  },
+  {
+    "type": "console.topology/relationship/provider",
+    "properties": {
+      "provides": {
+        "$codeRef": "topology.providerProvidesServiceBinding"
+      },
+      "tooltip": "%devconsole~Create Service Binding%",
+      "create": {
+        "$codeRef": "topology.providerCreateServiceBinding"
+      },
+      "priority": 100
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
   }
 ]

@@ -61,7 +61,7 @@ type ResourceItem = {
 export type ResourceUtil = (obj: K8sResourceKind, props: any) => ResourceItem | undefined;
 
 export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
-  if (!resource.spec.paused) {
+  if (!resource?.spec?.paused) {
     return {};
   }
   return {

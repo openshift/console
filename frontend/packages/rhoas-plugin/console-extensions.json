@@ -1,5 +1,44 @@
 [
   {
+    "type": "console.resource-metadata",
+    "properties": {
+      "model": {
+        "group": "rhoas.redhat.com",
+        "version": "v1alpha1",
+        "kind": "CloudServicesRequest"
+      },
+      "label": "%rhoas-plugin~Cloud Services Request%",
+      "labelPlural": "%rhoas-plugin~Cloud Services Requests%",
+      "abbr": "CSCR"
+    }
+  },
+  {
+    "type": "console.resource-metadata",
+    "properties": {
+      "model": {
+        "group": "rhoas.redhat.com",
+        "version": "v1alpha1",
+        "kind": "KafkaConnection"
+      },
+      "label": "%rhoas-plugin~Kafka Connection%",
+      "labelPlural": "%rhoas-plugin~Kafka Connections%",
+      "abbr": "AKC"
+    }
+  },
+  {
+    "type": "console.resource-metadata",
+    "properties": {
+      "model": {
+        "group": "rhoas.redhat.com",
+        "version": "v1alpha1",
+        "kind": "CloudServiceAccountRequest"
+      },
+      "label": "%rhoas-plugin~Cloud service Account Request%",
+      "labelPlural": "%rhoas-plugin~Cloud Service Account Requests%",
+      "abbr": "CSCR"
+    }
+  },
+  {
     "type": "console.flag/model",
     "properties": {
       "flag": "RHOAS_FLAG",
@@ -8,6 +47,17 @@
         "version": "v1alpha1",
         "kind": "CloudServiceAccountRequest"
       }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": ["/rhoas/ns/:ns/:service"],
+      "component": { "$codeRef": "rhoasComponents.ServiceListPage" }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
     }
   },
   {
@@ -48,6 +98,60 @@
       "catalogId": "dev-catalog",
       "type": "managedservices",
       "provider": { "$codeRef": "catalog.rhoasProvider" }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/component/factory",
+    "properties": {
+      "getFactory": {
+        "$codeRef": "topology.getRhoasComponentFactory"
+      }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/data/factory",
+    "properties": {
+      "id": "rhoas-topology-model-factory",
+      "priority": 400,
+      "resources": {
+        "kafkaConnections": {
+          "model": {
+            "kind": "KafkaConnection",
+            "group": "rhoas.redhat.com",
+            "version": "v1alpha1"
+          },
+          "opts": {
+            "isList": true,
+            "optional": true
+          }
+        }
+      },
+      "workloadKeys": ["kafkaConnections"],
+      "getDataModel": {
+        "$codeRef": "topology.getRhoasTopologyDataModel"
+      }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.topology/relationship/provider",
+    "properties": {
+      "provides": {
+        "$codeRef": "topology.providerProvidesKafkaConnection"
+      },
+      "tooltip": "%rhoas-plugin~Create a Kafka connector%",
+      "create": {
+        "$codeRef": "topology.providerCreateKafkaConnection"
+      },
+      "priority": 300
     },
     "flags": {
       "required": ["RHOAS_FLAG"]

@@ -14,15 +14,14 @@ import {
 } from '@console/topology/src/components/graph-view';
 import BindableNode from '@console/topology/src/components/graph-view/components/nodes/trapezoidNode/BindableNode';
 import { withEditReviewAccess } from '@console/topology/src/utils';
-import { TYPE_MANAGED_KAFKA_CONNECTION } from './const';
+import { TYPE_BINDABLE_NODE } from '../const';
 
-export const getRhoasComponentFactory = (
+export const getDevConsoleComponentFactory = (
   kind,
   type,
 ): React.ComponentType<{ element: GraphElement }> | undefined => {
   switch (type) {
-    // Using resource kind as model kind for simplicity
-    case TYPE_MANAGED_KAFKA_CONNECTION:
+    case TYPE_BINDABLE_NODE:
       return withCreateConnector(
         createConnectorCallback(),
         CreateConnector,

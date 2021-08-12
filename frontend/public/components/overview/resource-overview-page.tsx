@@ -5,7 +5,7 @@ import {
   useBuildConfigsWatcher,
 } from '@console/shared';
 import { connectToModel } from '../../kinds';
-import { referenceForModel } from '../../module/k8s';
+import { modelFor, referenceFor, referenceForModel } from '../../module/k8s';
 import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';
 
 import { BuildOverview } from './build-overview';
@@ -39,31 +39,46 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
 };
 
 export const DefaultOverviewPage = connectToModel(
-  ({ kindObj: kindObject, item, customActions }) => (
-    <div className="overview__sidebar-pane resource-overview">
-      <ResourceOverviewHeading
-        actions={[
-          ...(customActions ? customActions : []),
-          ...Kebab.getExtensionsActionsForKind(kindObject),
-          ...common,
-        ]}
-        kindObj={kindObject}
-        resources={item}
-      />
-      <div className="overview__sidebar-pane-body resource-overview__body">
-        <div className="resource-overview__summary">
-          <ResourceSummary resource={item.obj} />
+  ({ kindObj: kindObject, item, customActions }) => {
+    if (!kindObject && !item?.obj) {
+      return null;
+    }
+    const resourceModel = kindObject || modelFor(referenceFor(item.obj));
+    return (
+      <div className="overview__sidebar-pane resource-overview">
+        <ResourceOverviewHeading
+          actions={[
+            ...(customActions ? customActions : []),
+            ...Kebab.getExtensionsActionsForKind(resourceModel),
+            ...common,
+          ]}
+          kindObj={resourceModel}
+          resources={item}
+        />
+        <div className="overview__sidebar-pane-body resource-overview__body">
+          <div className="resource-overview__summary">
+            <ResourceSummary resource={item.obj} />
+          </div>
         </div>
       </div>
-    </div>
-  ),
+    );
+  },
 );
 
 export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
-  const ref = referenceForModel(kindObj);
+  if (!kindObj && !item?.obj) {
+    return null;
+  }
+  const resourceModel = kindObj || modelFor(referenceFor(item.obj));
+  const ref = referenceForModel(resourceModel);
   const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultOverviewPage));
   return (
-    <AsyncComponent loader={loader} kindObj={kindObj} item={item} customActions={customActions} />
+    <AsyncComponent
+      loader={loader}
+      kindObj={resourceModel}
+      item={item}
+      customActions={customActions}
+    />
   );
 });
 

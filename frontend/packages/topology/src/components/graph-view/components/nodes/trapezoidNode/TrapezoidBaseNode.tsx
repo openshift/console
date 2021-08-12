@@ -17,19 +17,15 @@ import * as classNames from 'classnames';
 import { useAccessReview } from '@console/internal/components/utils';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import {
-  NodeShadows,
-  NODE_SHADOW_FILTER_ID_HOVER,
-  NODE_SHADOW_FILTER_ID,
-} from '@console/topology/src/components/graph-view';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
   getFilterById,
   useDisplayFilters,
   useSearchFilter,
   useAllowEdgeCreation,
   SHOW_LABELS_FILTER_ID,
-} from '@console/topology/src/filters';
-import { getTopologyResourceObject } from '@console/topology/src/utils/topology-utils';
+} from '../../../../../filters';
+import { getTopologyResourceObject } from '../../../../../utils/topology-utils';
+import SvgBoxedText from '../../../../svg/SvgBoxedText';
+import { NodeShadows, NODE_SHADOW_FILTER_ID_HOVER, NODE_SHADOW_FILTER_ID } from '../../NodeShadows';
 
 import './TrapezoidBaseNode.scss';
 
@@ -118,7 +114,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
       position="top"
     >
       <g
-        className={classNames('rhoas-trapezoid-base-node', className, {
+        className={classNames('trapezoid-base-node', className, {
           'is-hover': hover || contextMenuOpen,
           'is-highlight': canDrop,
           'is-dragging': dragging || edgeDragging,
@@ -142,7 +138,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
                 ? 'circle-hover'
                 : 'circle'
             }
-            className="rhoas-trapezoid-base-node__bg"
+            className="trapezoid-base-node__bg"
             ref={pathRefs}
             cx={cx}
             cy={cy}
@@ -163,7 +159,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
           )}
           {showLabels && (kind || element.getLabel()) && (
             <SvgBoxedText
-              className="rhoas-trapezoid-base-node__label"
+              className="trapezoid-base-node__label"
               x={cx}
               y={cy + outerRadius + 24}
               paddingX={8}

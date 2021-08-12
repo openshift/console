@@ -190,5 +190,21 @@
     "flags": {
       "required": ["KNATIVE_SERVING_SERVICE"]
     }
+  },
+  {
+    "type": "console.topology/relationship/provider",
+    "properties": {
+      "provides": {
+        "$codeRef": "topology.providerProvidesServiceBinding"
+      },
+      "tooltip": "%knative-plugin~Create Service Binding%",
+      "create": {
+        "$codeRef": "topology.providerCreateServiceBinding"
+      },
+      "priority": 200
+    },
+    "flags": {
+      "required": ["ALLOW_SERVICE_BINDING"]
+    }
   }
 ]
