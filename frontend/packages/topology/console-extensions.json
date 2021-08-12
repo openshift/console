@@ -183,5 +183,29 @@
     "flags": {
       "required": ["ALLOW_EXPORT_APP"]
     }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "topology.preferredView",
+      "label": "%topology~Topology%",
+      "groupId": "general",
+      "description": "%topology~If a topology view is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "topology.preferredView",
+        "defaultValue": "latest",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%topology~Last viewed%"
+          },
+          { "value": "graph", "label": "%topology~Graph%" },
+          { "value": "list", "label": "%topology~List%" }
+        ]
+      },
+      "insertBefore": "console.preferredCreateMethod",
+      "insertAfter": "console.preferredNamespace"
+    }
   }
 ]

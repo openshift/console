@@ -141,5 +141,53 @@
       },
       "provider": { "$codeRef": "actions.useCronJobActionsProvider" }
     }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "general",
+      "label": "%console-app~General%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "language",
+      "label": "%console-app~Language & region%"
+    }
+  },
+  {
+    "type": "console.user-preference/group",
+    "properties": {
+      "id": "notifications",
+      "label": "%console-app~Notifications%"
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.preferredPerspective",
+      "label": "%console-app~Perspective%",
+      "groupId": "general",
+      "description": "%console-app~If a perspective is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.PerspectiveDropdown" }
+      }
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.namespace.favorite",
+      "label": "%console-app~Project%",
+      "groupId": "general",
+      "description": "%console-app~If a project is not selected, the console defaults to the last viewed.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.NamespaceDropdown" }
+      },
+      "insertBefore": "topology.preferredView"
+    }
   }
 ]

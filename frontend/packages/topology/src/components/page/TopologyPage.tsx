@@ -20,6 +20,7 @@ import DataModelProvider from '../../data-transforms/DataModelProvider';
 import { TOPOLOGY_SEARCH_FILTER_KEY } from '../../filters';
 import { FilterProvider } from '../../filters/FilterProvider';
 import { TopologyViewType } from '../../topology-types';
+import { usePreferredTopologyView } from '../../user-preferences/usePreferredTopologyView';
 import TopologyDataRenderer from './TopologyDataRenderer';
 import TopologyPageToolbar from './TopologyPageToolbar';
 
@@ -69,15 +70,31 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
   defaultViewType = TopologyViewType.graph,
 }) => {
   const { t } = useTranslation();
+  const [preferredTopologyView, preferredTopologyViewLoaded] = usePreferredTopologyView();
   const [
-    topologyViewState,
-    setTopologyViewState,
-    isTopologyViewStateLoaded,
+    topologyLastView,
+    setTopologyLastView,
+    isTopologyLastViewLoaded,
   ] = useUserSettingsCompatibility<TopologyViewType>(
     TOPOLOGY_VIEW_CONFIG_STORAGE_KEY,
     activeViewStorageKey,
     defaultViewType,
   );
+
+  const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
+
+  const getTopologyViewState = (): TopologyViewType => {
+    if (!loaded) {
+      return null;
+    }
+
+    if (preferredTopologyView === 'latest') {
+      return topologyLastView;
+    }
+
+    return (preferredTopologyView || topologyLastView) as TopologyViewType;
+  };
+
   const namespace = match.params.name;
   const queryParams = useQueryParams();
   let viewType = queryParams.get('view') as TopologyViewType;
@@ -93,16 +110,16 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
           exact: true,
         })
       ? TopologyViewType.graph
-      : isTopologyViewStateLoaded && (topologyViewState || defaultViewType);
+      : loaded && (getTopologyViewState() || defaultViewType);
     viewType && setQueryArgument('view', viewType);
   }
 
   const onViewChange = React.useCallback(
     (newViewType: TopologyViewType) => {
       setQueryArgument('view', newViewType);
-      setTopologyViewState(newViewType);
+      setTopologyLastView(newViewType);
     },
-    [setTopologyViewState],
+    [setTopologyLastView],
   );
 
   const handleNamespaceChange = (ns: string) => {

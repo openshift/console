@@ -57,7 +57,7 @@ export type UserPreferenceGroup = ExtensionDeclaration<
 export type UserPreferenceItem = ExtensionDeclaration<
   'console.user-preference/item',
   {
-    /** ID used to identify the user preference item. The value for ID is generally the key for the user preference in config map */
+    /** ID used to identify the user preference item and referenced in insertAfter and insertBefore to define the item order. */
     id: string;
     /** IDs used to identify the user preference groups the item would belong to. */
     groupId?: string;
