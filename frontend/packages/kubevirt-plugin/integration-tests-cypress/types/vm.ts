@@ -38,6 +38,8 @@ export type VirtualMachineData = {
   description?: string;
   namespace?: string;
   template?: string;
+  templateProvider?: string;
+  templateSupport?: boolean;
   templateNamespace?: string;
   flavor?: Flavor;
   os?: string;
