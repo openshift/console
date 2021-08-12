@@ -12,7 +12,7 @@ Feature: Create Application from Docker file
         Scenario: Dockerfile details after entering git repo url: A-05-TC01
             Given user is on Import from Docker file page
              When user enters docker git url as "https://github.com/sclorg/nodejs-ex.git"
-             Then git url gets Validated
+             Then git url "https://github.com/sclorg/nodejs-ex.git" gets Validated
               And application name displays as "nodejs-ex-git-app"
               And name field auto populates with value "nodejs-ex-git" in Import from Docker file page
 

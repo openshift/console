@@ -8,7 +8,7 @@ Given('user is on Import from Docker file page', () => {
 
 When('user enters docker git url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  devFilePage.verifyValidatedMessage();
+  devFilePage.verifyValidatedMessage(gitUrl);
 });
 
 When('user selects {string} radio button in Resource type section', (resourceType: string) => {

@@ -34,7 +34,7 @@ Given('user is at the Topology page', () => {
 
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(gitUrl);
 });
 
 When('user creates the application with the selected builder image', () => {

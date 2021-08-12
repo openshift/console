@@ -32,9 +32,6 @@ export const gitPage = {
       if ($body.find('#form-input-application-name-field').length) {
         cy.get('#form-input-application-name-field')
           .scrollIntoView()
-          .invoke('val')
-          .should('not.be.empty');
-        cy.get('#form-input-application-name-field')
           .clear()
           .should('not.have.value');
         cy.get('#form-input-application-name-field')
@@ -231,16 +228,25 @@ export const gitPage = {
         );
     }
   },
-  verifyValidatedMessage: (gitUrl = 'https://github.com/sclorg/nodejs-ex.git') => {
+  verifyValidatedMessage: (gitUrl: string) => {
     cy.get(gitPO.gitSection.validatedMessage)
       .should('not.include.text', 'Validating...')
       .and('not.include.text', messages.addFlow.buildDeployMessage);
     cy.get('body').then(($body) => {
-      if (
-        $body.text().includes(messages.addFlow.rateLimitExceeded) ||
+      if ($body.text().includes(messages.addFlow.rateLimitExceeded)) {
+        // Remove .git suffix and remove all parts before the last path
+        const componentName = gitUrl.replace(/\.git$/, '').replace(/^.*[\\\\/]/, '');
+        cy.log(
+          `Git Rate limit exceeded for url ${gitUrl}, select builder image and fill component name "${componentName}" based on the URL to continue tests.`,
+        );
+        gitPage.selectBuilderImageForGitUrl(gitUrl);
+        cy.get(gitPO.nodeName).clear();
+        cy.get(gitPO.nodeName).type(componentName);
+      } else if (
         $body.find('[aria-label="Warning Alert"]').length ||
         $body.text().includes(messages.addFlow.privateGitRepoMessage)
       ) {
+        cy.log(`Issue with git url ${gitUrl}, maybe a private repo url. Please check it`);
         gitPage.selectBuilderImageForGitUrl(gitUrl);
       }
     });
