@@ -153,6 +153,8 @@ const FilterSelect: React.FC<FilterSelectProps> = ({
   );
 };
 
+const VariableOption = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
+
 const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   const { t } = useTranslation();
 
@@ -212,10 +214,12 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
 
   const onChange = React.useCallback(
     (v: string) => {
-      setQueryArgument(name, v);
-      dispatch(monitoringDashboardsPatchVariable(name, { value: v }));
+      if (v !== variable.value) {
+        setQueryArgument(name, v);
+        dispatch(monitoringDashboardsPatchVariable(name, { value: v }));
+      }
     },
-    [dispatch, name],
+    [dispatch, name, variable],
   );
 
   if (variable.isHidden || (!isError && _.isEmpty(variable.options))) {
@@ -228,8 +232,6 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   _.each(variable.options, (option) => {
     items[option] = option;
   });
-
-  const OptionComponent = ({ itemKey, value }) => <SelectOption key={itemKey} value={value} />;
 
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
@@ -250,7 +252,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
         <FilterSelect
           items={items}
           onChange={onChange}
-          OptionComponent={OptionComponent}
+          OptionComponent={VariableOption}
           selectedKey={variable.value}
         />
       )}
@@ -258,7 +260,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({ id, name }) => {
   );
 };
 
-const AllVariableDropdowns = () => {
+const AllVariableDropdowns: React.FC = () => {
   const variables = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'variables']),
   );
@@ -272,54 +274,57 @@ const AllVariableDropdowns = () => {
   );
 };
 
-const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ items, onChange, selectedKey }) => {
-  const { t } = useTranslation();
+type TagColor = 'red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange';
+const tagColors: TagColor[] = ['red', 'purple', 'blue', 'green', 'cyan', 'orange'];
 
-  const tagColors: ('red' | 'purple' | 'blue' | 'green' | 'cyan' | 'orange')[] = [
-    'red',
-    'purple',
-    'blue',
-    'green',
-    'cyan',
-    'orange',
-  ];
+const Tag: React.FC<{ color: TagColor; text: string }> = React.memo(({ color, text }) => (
+  <Label className="monitoring-dashboards__dashboard_dropdown_tag" color={color}>
+    {text}
+  </Label>
+));
 
-  const allTags = _.flatMap(items, 'tags');
-  const uniqueTags = _.uniq(allTags);
+const DashboardDropdown: React.FC<DashboardDropdownProps> = React.memo(
+  ({ items, onChange, selectedKey }) => {
+    const { t } = useTranslation();
 
-  const OptionComponent = ({ itemKey }) => (
-    <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
-      {items[itemKey]?.title}
-      {items[itemKey]?.tags.map((tag, i) => (
-        <Label
-          className="monitoring-dashboards__dashboard_dropdown_tag"
-          color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
-          key={i}
+    const allTags = _.flatMap(items, 'tags');
+    const uniqueTags = _.uniq(allTags);
+
+    const OptionComponent = ({ itemKey }) => (
+      <SelectOption className="monitoring-dashboards__dashboard_dropdown_item" value={itemKey}>
+        {items[itemKey]?.title}
+        {items[itemKey]?.tags.map((tag, i) => (
+          <Tag
+            color={tagColors[_.indexOf(uniqueTags, tag) % tagColors.length]}
+            key={i}
+            text={tag}
+          />
+        ))}
+      </SelectOption>
+    );
+
+    const selectItems = _.mapValues(items, 'title');
+
+    return (
+      <div className="form-group monitoring-dashboards__dropdown-wrap">
+        <label
+          className="monitoring-dashboards__dropdown-title"
+          htmlFor="monitoring-board-dropdown"
         >
-          {tag}
-        </Label>
-      ))}
-    </SelectOption>
-  );
+          {t('public~Dashboard')}
+        </label>
+        <FilterSelect
+          items={selectItems}
+          onChange={onChange}
+          OptionComponent={OptionComponent}
+          selectedKey={selectedKey}
+        />
+      </div>
+    );
+  },
+);
 
-  const selectItems = _.mapValues(items, 'title');
-
-  return (
-    <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label className="monitoring-dashboards__dropdown-title" htmlFor="monitoring-board-dropdown">
-        {t('public~Dashboard')}
-      </label>
-      <FilterSelect
-        items={selectItems}
-        onChange={onChange}
-        OptionComponent={OptionComponent}
-        selectedKey={selectedKey}
-      />
-    </div>
-  );
-};
-
-export const PollIntervalDropdown = () => {
+export const PollIntervalDropdown: React.FC = () => {
   const { t } = useTranslation();
   const refreshIntervalFromParams = getQueryArgument('refreshInterval');
   const interval = useSelector(({ UI }: RootState) =>
@@ -352,6 +357,22 @@ export const PollIntervalDropdown = () => {
     </div>
   );
 };
+
+const HeaderTop: React.FC = React.memo(() => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="monitoring-dashboards__header">
+      <h1 className="co-m-pane__heading">
+        <span>{t('public~Dashboards')}</span>
+      </h1>
+      <div className="monitoring-dashboards__options">
+        <TimespanDropdown />
+        <PollIntervalDropdown />
+      </div>
+    </div>
+  );
+});
 
 const QueryBrowserLink = ({ queries }) => {
   const { t } = useTranslation();
@@ -403,7 +424,7 @@ const getPanelClassModifier = (panel: Panel): string => {
 // Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
 const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
 
-const Card: React.FC<CardProps> = ({ panel }) => {
+const Card: React.FC<CardProps> = React.memo(({ panel }) => {
   const pollInterval = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'pollInterval']),
   );
@@ -509,7 +530,7 @@ const Card: React.FC<CardProps> = ({ panel }) => {
       </DashboardCard>
     </div>
   );
-};
+});
 
 const PanelsRow: React.FC<{ row: Row }> = ({ row }) => {
   const showButton = row.showTitle && !_.isEmpty(row.title);
@@ -693,27 +714,29 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
     }
   }, [board, boards, changeBoard, match.params.board]);
 
+  // If we don't find any rows, build the rows array based on what we have in `data.panels`
+  const rows = React.useMemo(() => {
+    const data = _.find(boards, { name: board })?.data;
+
+    return data?.rows?.length
+      ? data.rows
+      : data?.panels?.reduce((acc, panel) => {
+          if (panel.type === 'row' || acc.length === 0) {
+            acc.push(_.cloneDeep(panel));
+          } else {
+            const row = acc[acc.length - 1];
+            if (_.isNil(row.panels)) {
+              row.panels = [];
+            }
+            row.panels.push(panel);
+          }
+          return acc;
+        }, []);
+  }, [board, boards]);
+
   if (error) {
     return <ErrorAlert message={error} />;
   }
-
-  const data = _.find(boards, { name: board })?.data;
-
-  // If we don't find any rows, build the rows array based on what we have in `data.panels`
-  const rows = data?.rows?.length
-    ? data.rows
-    : data?.panels?.reduce((acc, panel) => {
-        if (panel.type === 'row' || acc.length === 0) {
-          acc.push(_.cloneDeep(panel));
-        } else {
-          const row = acc[acc.length - 1];
-          if (_.isNil(row.panels)) {
-            row.panels = [];
-          }
-          row.panels.push(panel);
-        }
-        return acc;
-      }, []);
 
   return (
     <>
@@ -721,15 +744,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         <title>{t('public~Metrics dashboards')}</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
-        <div className="monitoring-dashboards__header">
-          <h1 className="co-m-pane__heading">
-            <span>{t('public~Dashboards')}</span>
-          </h1>
-          <div className="monitoring-dashboards__options">
-            <TimespanDropdown />
-            <PollIntervalDropdown />
-          </div>
-        </div>
+        <HeaderTop />
         <div className="monitoring-dashboards__variables">
           {!_.isEmpty(boardItems) && (
             <DashboardDropdown items={boardItems} onChange={changeBoard} selectedKey={board} />
