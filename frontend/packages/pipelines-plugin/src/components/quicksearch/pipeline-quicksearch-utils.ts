@@ -12,9 +12,7 @@ export const isSelectedVersionInstalled = (item: CatalogItem, selectedVersion: s
   return item.attributes?.installed === selectedVersion;
 };
 
-export const isTaskVersionInstalled = (item: CatalogItem): boolean => {
-  return item.attributes?.installed !== '';
-};
+export const isTaskVersionInstalled = (item: CatalogItem): boolean => !!item.attributes?.installed;
 
 export const isOneVersionInstalled = (item: CatalogItem): boolean => {
   return !!item.attributes?.versions?.find(
@@ -53,7 +51,7 @@ export const getCtaButtonText = (item: CatalogItem, selectedVersion: string): st
 export const isInstalledNamespaceTask = (item: CatalogItem) => {
   return (
     item.data.kind === TaskModel.kind &&
-    item.data?.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB
+    item.data.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB
   );
 };
 
@@ -73,7 +71,7 @@ export const getSelectedVersionUrl = (item: CatalogItem, version: string): strin
   if (!item?.attributes?.versions) {
     return null;
   }
-  return item?.attributes?.versions.find((v) => v.id.toString() === version)?.rawURL;
+  return item.attributes.versions.find((v) => v.id.toString() === version)?.rawURL;
 };
 
 export const findInstalledTask = (items: CatalogItem[], item: CatalogItem): CatalogItem => {
@@ -83,7 +81,7 @@ export const findInstalledTask = (items: CatalogItem[], item: CatalogItem): Cata
       i.name === item.name &&
       item.data.kind !== ClusterTaskModel.kind &&
       i.data.kind === TaskModel.kind &&
-      i.data?.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB,
+      i.data.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB,
   );
 };
 

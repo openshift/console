@@ -404,7 +404,7 @@ export const useLoadingTaskCleanup = (
 
   React.useEffect(() => {
     const { loadingTasks } = values.formData;
-    loadingTasks.map((task) => {
+    loadingTasks.forEach((task) => {
       const installedTask = values.taskResources.namespacedTasks.find(
         (nt) => nt.metadata.name === task?.taskRef.name,
       );
@@ -422,7 +422,6 @@ export const useLoadingTaskCleanup = (
           data,
         });
       }
-      return task;
     });
   }, [values, onUpdateTasks, taskGroup]);
 };
@@ -435,7 +434,7 @@ export const useCleanupOnFailure = (
   const { values } = useFormikContext<PipelineBuilderFormikValues>();
   React.useEffect(() => {
     const { loadingTasks } = values.formData;
-    loadingTasks.map((task) => {
+    loadingTasks.forEach((task) => {
       if (failedTasks.includes(task?.taskRef.name)) {
         const data: UpdateOperationConvertToTaskData = {
           resource: task.resource,
@@ -450,7 +449,6 @@ export const useCleanupOnFailure = (
           data,
         });
       }
-      return task;
     });
   }, [values, onUpdateTasks, taskGroup, failedTasks]);
 };

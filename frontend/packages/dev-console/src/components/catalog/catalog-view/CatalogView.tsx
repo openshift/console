@@ -212,7 +212,9 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const catalogItems = React.useMemo(() => {
     if (!isGrouped) return filteredItems;
 
-    return _.groupBy(filteredItems, (item) => item.attributes?.[activeGrouping]);
+    return _.groupBy(filteredItems, (item) => item.attributes?.[activeGrouping]) as {
+      [key: string]: CatalogItem[];
+    };
   }, [activeGrouping, filteredItems, isGrouped]);
 
   React.useEffect(() => {
@@ -263,11 +265,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
           onSearchKeywordChange={handleSearchKeywordChange}
         />
         {totalItems > 0 ? (
-          <CatalogGrid
-            items={catalogItems as CatalogItem[] | { [key: string]: CatalogItem[] }}
-            renderTile={renderTile}
-            isGrouped={isGrouped}
-          />
+          <CatalogGrid items={catalogItems} renderTile={renderTile} isGrouped={isGrouped} />
         ) : (
           <CatalogEmptyState onClear={clearFilters} />
         )}

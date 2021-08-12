@@ -320,7 +320,7 @@ export const removeEmptyFormFields = (task: PipelineTask): PipelineTask => {
     const workspaces = task.workspaces?.filter((workspace) => workspace.workspace);
     trimmedTask = { ...trimmedTask, workspaces };
   }
-  return _.omit(trimmedTask, 'metadata');
+  return trimmedTask;
 };
 
 export const convertBuilderFormToPipeline = (
