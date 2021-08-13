@@ -8,11 +8,16 @@ import { wizard } from './wizard';
 
 export const waitForStatus = (status: string, vmData?: VirtualMachineData, timeout?: number) => {
   const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-  cy.contains(detailsTab.vmStatus, status, { timeout: timeOut }).should('exist');
   if (status === VM_STATUS.Running) {
     const { name, namespace } = vmData;
     cy.waitForLoginPrompt(name, namespace);
   }
+
+  if (status === VM_STATUS.Starting) {
+    const startingStatuses = [VM_STATUS.Starting, VM_STATUS.Provisioning];
+    const regex = new RegExp(`${startingStatuses.join('|')}`, 'g');
+    cy.contains(detailsTab.vmStatus, regex, { timeout: timeOut }).should('exist');
+  } else cy.contains(detailsTab.vmStatus, status, { timeout: timeOut }).should('exist');
 };
 
 export const action = (selector: string) => {
@@ -41,7 +46,7 @@ export const vm = {
       waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
       waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
     } else {
-      waitForStatus(VM_STATUS.Off, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+      waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
     }
   },
   customizeCreate: (vmData: VirtualMachineData) => {
@@ -59,11 +64,11 @@ export const vm = {
       waitForStatus(VM_STATUS.Starting, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
       waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
     } else {
-      waitForStatus(VM_STATUS.Off, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
+      waitForStatus(VM_STATUS.Stopped, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
     }
   },
   start: (vmData: VirtualMachineData) => {
-    waitForStatus(VM_STATUS.Off);
+    waitForStatus(VM_STATUS.Stopped);
     action(VM_ACTION.Start);
     waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
   },
@@ -76,7 +81,7 @@ export const vm = {
   stop: (vmData: VirtualMachineData) => {
     waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT_AND_BOOTUP);
     action(VM_ACTION.Stop);
-    waitForStatus(VM_STATUS.Off);
+    waitForStatus(VM_STATUS.Stopped);
   },
   delete: () => {
     cy.get('body').then(($body) => {

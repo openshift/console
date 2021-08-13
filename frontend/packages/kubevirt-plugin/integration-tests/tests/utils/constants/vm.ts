@@ -45,7 +45,8 @@ export enum VM_STATUS {
   Migrating = 'Migration',
   Stopping = 'Stopping',
   Running = 'Running',
-  Off = 'Off',
+  Provisioning = 'Provisioning',
+  Stopped = 'Stopped',
 }
 
 // Network

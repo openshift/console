@@ -143,7 +143,7 @@ describe('test dev console', () => {
 
     it('ID(CNV-5702) stop vm', () => {
       detailViewAction(VM_ACTION.Stop);
-      waitForStatus(VM_STATUS.Off, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Stopped, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
     });
 
     it('ID(CNV-5702) start vm', () => {
@@ -168,7 +168,7 @@ describe('test dev console', () => {
       cy.get(confirmCloneButton).click();
 
       // delete origin VM
-      waitForStatus(VM_STATUS.Off, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
+      waitForStatus(VM_STATUS.Stopped, vm, VM_ACTION_TIMEOUT.VM_BOOTUP);
       detailViewAction(VM_ACTION.Delete);
 
       cy.byLegacyTestID('base-node-handler').should('have.length', 1);

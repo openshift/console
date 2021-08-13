@@ -54,7 +54,7 @@ describe('Kubevirt VM details tab', () => {
   it('ID(CNV-763) Check VM details when VM is off', async () => {
     const expectation = {
       name: vmName,
-      status: VM_STATUS.Off,
+      status: VM_STATUS.Stopped,
       description: testName,
       os: OperatingSystem.RHEL7,
       profile: Workload.DESKTOP.toLowerCase(),

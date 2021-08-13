@@ -1,13 +1,13 @@
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
-import { Network, VirtualMachineData } from '../../types/vm';
+import { VirtualMachineData } from '../../types/vm';
 import { virtualization } from '../../view/virtualization';
 import { vm } from '../../view/vm';
 
-const nic0: Network = {
-  name: 'nic-0',
-  nad: 'bridge-network',
-};
+// const nic0: Network = {
+//   name: 'nic-0',
+//   nad: 'bridge-network',
+// };
 
 const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
@@ -43,15 +43,15 @@ const pvcVM: VirtualMachineData = {
   startOnCreation: true,
 };
 
-const pxeVM: VirtualMachineData = {
-  name: `pxe-vm-customize-wizard-${testName}`,
-  description: 'ID(CNV-771): create VM from PXE',
-  namespace: testName,
-  template: 'Fedora 32+ VM',
-  provisionSource: ProvisionSource.PXE,
-  sshEnable: false,
-  networkInterfaces: [nic0],
-};
+// const pxeVM: VirtualMachineData = {
+//   name: `pxe-vm-customize-wizard-${testName}`,
+//   description: 'ID(CNV-771): create VM from PXE',
+//   namespace: testName,
+//   template: 'Fedora 32+ VM',
+//   provisionSource: ProvisionSource.PXE,
+//   sshEnable: false,
+//   networkInterfaces: [nic0],
+// };
 
 describe('Test VM creation', () => {
   before(() => {
@@ -63,7 +63,7 @@ describe('Test VM creation', () => {
   });
 
   after(() => {
-    [urlVM, registryVM, pvcVM, pxeVM].forEach((vmData) => {
+    [urlVM, registryVM, pvcVM].forEach((vmData) => {
       cy.deleteResource({
         kind: 'VirtualMachine',
         metadata: {
@@ -87,7 +87,7 @@ describe('Test VM creation', () => {
     });
   });
 
-  [urlVM, registryVM, pvcVM, pxeVM].forEach((vmData) => {
+  [urlVM, registryVM, pvcVM].forEach((vmData) => {
     it(`Creates ${vmData.description}`, () => {
       virtualization.vms.visit();
       vm.customizeCreate(vmData);

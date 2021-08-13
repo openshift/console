@@ -209,7 +209,7 @@ export const getVMStatusIcon = (
     icon = PausedIcon;
   } else if (status === VMStatusEnum.RUNNING) {
     icon = SyncAltIcon;
-  } else if (status === VMStatusEnum.OFF) {
+  } else if (status === VMStatusEnum.STOPPED) {
     icon = OffIcon;
   } else if (status.isError()) {
     icon = RedExclamationCircleIcon;

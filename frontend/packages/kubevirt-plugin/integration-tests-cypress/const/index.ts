@@ -50,12 +50,13 @@ export enum VM_STATUS {
   Pending = 'Pending',
   Importing = 'Importing',
   Starting = 'Starting',
+  Provisioning = 'Provisioning',
   Paused = 'Paused',
   Migrating = 'Migration',
   Stopping = 'Stopping',
   Running = 'Running',
   Cloning = 'Cloning',
-  Off = 'Off',
+  Stopped = 'Stopped',
 }
 
 export enum VM_ACTION_TIMEOUT {

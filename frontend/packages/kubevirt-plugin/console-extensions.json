@@ -445,7 +445,7 @@
   {
     "type": "console.dashboards/overview/inventory/item/group",
     "properties": {
-      "id": "vm-off",
+      "id": "vm-stopped",
       "icon": { "$codeRef": "dashboardInventory.VMOffGroupIcon" }
     },
     "flags": {

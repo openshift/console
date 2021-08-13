@@ -18,7 +18,7 @@ describe('Test List View Filtering (VMI)', () => {
   const testVMI = getVMIManifest(ProvisionSource.CONTAINER, testName, `${testName}-vmi-test`);
 
   beforeAll(async () => {
-    await waitForVM(testVM, VM_STATUS.Off);
+    await waitForVM(testVM, VM_STATUS.Stopped);
     const vmi = await waitForVM(testVMI, VM_STATUS.Running);
     await vmi.navigateToListView();
   });
@@ -28,7 +28,7 @@ describe('Test List View Filtering (VMI)', () => {
   });
 
   it('ID(CNV-3701) Displays correct count of Off VMs', async () => {
-    const vmImportingCount = await filterCount(VM_STATUS.Off);
+    const vmImportingCount = await filterCount(VM_STATUS.Stopped);
     expect(vmImportingCount).toEqual(1);
   });
 

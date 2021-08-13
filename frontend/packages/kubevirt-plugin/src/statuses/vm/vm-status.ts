@@ -238,7 +238,7 @@ const isBeingStopped = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
 };
 
 const isOff = (vm: VMKind, vmi: VMIKind): VMStatusBundle => {
-  return vm && !isVMExpectedRunning(vm, vmi) ? { status: VMStatus.OFF } : null;
+  return vm && !isVMExpectedRunning(vm, vmi) ? { status: VMStatus.STOPPED } : null;
 };
 
 const isError = (vm: VMKind, vmi: VMIKind, launcherPod: PodKind): VMStatusBundle => {
@@ -340,5 +340,39 @@ export const getVMStatus = ({
     (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VMI_ERROR }) || {
       status: VMStatus.UNKNOWN,
     }
+  );
+};
+
+export const getVMConditionsStatus = ({
+  vm,
+  vmi,
+  pods,
+  migrations,
+  pvcs,
+  dataVolumes,
+}: {
+  vm?: VMKind;
+  vmi?: VMIKind;
+  pods?: PodKind[];
+  migrations?: K8sResourceKind[];
+  pvcs?: PersistentVolumeClaimKind[];
+  dataVolumes?: V1alpha1DataVolume[];
+}): VMStatusBundle => {
+  const launcherPod = findVMIPod(vmi, pods);
+
+  return (
+    isOff(vm, vmi) ||
+    isVMError(vm) ||
+    isError(vm, vmi, launcherPod) ||
+    isBeingImported(vm, pods, pvcs, dataVolumes) ||
+    isWaitingForVMI(vm, vmi) ||
+    (getStatusPhase(vmi) === VMIPhase.Pending && {
+      status: VMStatus.VMI_WAITING,
+      message: VMI_WAITING_MESSAGE,
+    }) ||
+    (getStatusPhase(vmi) === VMIPhase.Failed && { status: VMStatus.VMI_ERROR }) || {
+      status: VMStatus.UNKNOWN,
+    } ||
+    isBeingMigrated(vm, vmi, migrations)
   );
 };

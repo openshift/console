@@ -28,7 +28,7 @@ describe('Test VM Migration', () => {
 
   beforeAll(async () => {
     await vm.create();
-    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+    await vm.waitForStatus(VM_STATUS.Stopped, VM_IMPORT_TIMEOUT_SECS);
   });
 
   afterAll(async () => {
