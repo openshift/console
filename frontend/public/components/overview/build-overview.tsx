@@ -1,3 +1,6 @@
+/**
+ * @deprecated remove this file once knative-plugins start using console.topology/adapter/build for side panel
+ */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';

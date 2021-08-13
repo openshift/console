@@ -481,5 +481,34 @@
     "flags": {
       "required": ["ALLOW_SERVICE_BINDING"]
     }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-hpas",
+      "tab": "topology-side-bar-tab-resource",
+      "section": {
+        "$codeRef": "topology.getHpaTabSectionForTopologySideBar"
+      },
+      "insertAfter": "topology-tab-section-builds-overview"
+    }
+  },
+  {
+    "type": "console.topology/details/tab",
+    "properties": {
+      "id": "topology-side-bar-tab-observe",
+      "label": "%devconsole~Observe%",
+      "insertAfter": "topology-side-bar-tab-resource"
+    }
+  },
+  {
+    "type": "console.topology/details/tab-section",
+    "properties": {
+      "id": "topology-tab-section-observe",
+      "tab": "topology-side-bar-tab-observe",
+      "section": {
+        "$codeRef": "topology.getObserveSideBarTabSection"
+      }
+    }
   }
 ]

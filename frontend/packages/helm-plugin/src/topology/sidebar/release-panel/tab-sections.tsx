@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphElement, Node } from '@patternfly/react-topology';
+import { GraphElement } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { StatusBox } from '@console/internal/components/utils/status-box';
 import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
@@ -36,7 +36,7 @@ export const getHelmReleasePanelDetailsTabSection = (element: GraphElement) => {
 export const getHelmReleasePanelResourceTabSection = (element: GraphElement) => {
   if (element.getType() !== TYPE_HELM_RELEASE) return undefined;
   const { manifestResources } = element.getData().data;
-  const { namespace } = getResource(element as Node).metadata;
+  const { namespace } = getResource(element).metadata;
 
   return manifestResources ? (
     <div className="overview__sidebar-pane-body">

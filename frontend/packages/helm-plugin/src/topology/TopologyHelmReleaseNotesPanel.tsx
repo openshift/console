@@ -6,7 +6,7 @@ type TopologyHelmReleaseNotesPanelProps = {
   releaseNotes: string;
 };
 
-const TopologyHelmReleaseNotesPanel: React.SFC<TopologyHelmReleaseNotesPanelProps> = ({
+const TopologyHelmReleaseNotesPanel: React.FC<TopologyHelmReleaseNotesPanelProps> = ({
   releaseNotes,
 }) =>
   releaseNotes ? (

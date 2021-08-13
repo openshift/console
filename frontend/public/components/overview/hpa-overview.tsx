@@ -1,3 +1,6 @@
+/**
+ * @deprecated [TopologySideBar] This files has been moved to @console/topology and delete this once all the side panels uses dynamic extensions
+ */
 import * as React from 'react';
 import { HorizontalPodAutoscalerKind } from '../../module/k8s';
 import { ResourceLink, SidebarSectionHeading } from '../utils';

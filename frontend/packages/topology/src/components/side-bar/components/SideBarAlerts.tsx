@@ -17,7 +17,7 @@ const ResolveResourceAlerts: React.FC<{
   element: GraphElement;
 }> = ({ id, useResourceAlertsContent, element }) => {
   const [showAlert, setShowAlert, loaded] = useUserSettings(
-    `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}`,
+    `${USERSETTINGS_PREFIX}.${SIDEBAR_ALERTS}.${id}.${element.getId()}`,
     true,
   );
   const alertConfigs = useResourceAlertsContent(element);
@@ -50,14 +50,17 @@ const SideBarAlerts: React.FC<{ element: GraphElement }> = ({ element }) => {
   );
   return resolved ? (
     <>
-      {resourceAlertsExtension.map(({ uid, properties: { contentProvider, ...props } }) => (
-        <ResolveResourceAlerts
-          key={uid}
-          {...props}
-          useResourceAlertsContent={contentProvider}
-          element={element}
-        />
-      ))}
+      {resourceAlertsExtension.map(({ uid, properties: { contentProvider, ...props } }) => {
+        const key = `${uid}-${element.getId()}`;
+        return (
+          <ResolveResourceAlerts
+            key={key}
+            {...props}
+            useResourceAlertsContent={contentProvider}
+            element={element}
+          />
+        );
+      })}
     </>
   ) : null;
 };

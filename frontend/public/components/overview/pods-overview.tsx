@@ -1,3 +1,6 @@
+/**
+ * @deprecated remove this file once all the side panels starts using console.topology/adapter/pod
+ */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';

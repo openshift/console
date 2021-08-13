@@ -196,9 +196,9 @@
     }
   },
   {
-    "type": "topology.details/resource-link",
+    "type": "console.topology/details/resource-link",
     "properties": {
-      "priority": 1000,
+      "priority": 100,
       "link": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelResourceLink" }
     },
     "flags": {
@@ -206,40 +206,21 @@
     }
   },
   {
-    "type": "topology.details/tab",
-    "properties": {
-      "id": "helm-release-panel-tab-details",
-      "label": "%helm-plugin~Details%"
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    }
-  },
-  {
-    "type": "topology.details/tab",
-    "properties": {
-      "id": "helm-release-panel-tab-resource",
-      "label": "%helm-plugin~Resources%"
-    },
-    "flags": {
-      "required": ["OPENSHIFT_HELM"]
-    }
-  },
-  {
-    "type": "topology.details/tab",
+    "type": "console.topology/details/tab",
     "properties": {
       "id": "helm-release-panel-tab-releaseNotes",
-      "label": "%helm-plugin~Release notes%"
+      "label": "%helm-plugin~Release notes%",
+      "insertAfter": "topology-side-bar-tab-resource"
     },
     "flags": {
       "required": ["OPENSHIFT_HELM"]
     }
   },
   {
-    "type": "topology.details/tab-section",
+    "type": "console.topology/details/tab-section",
     "properties": {
       "id": "helm-release-panel-tab-section-details",
-      "tab": "helm-release-panel-tab-details",
+      "tab": "topology-side-bar-tab-details",
       "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelDetailsTabSection" }
     },
     "flags": {
@@ -247,10 +228,10 @@
     }
   },
   {
-    "type": "topology.details/tab-section",
+    "type": "console.topology/details/tab-section",
     "properties": {
       "id": "helm-release-panel-tab-section-resource",
-      "tab": "helm-release-panel-tab-resource",
+      "tab": "topology-side-bar-tab-resource",
       "section": { "$codeRef": "helmTopologySidebar.getHelmReleasePanelResourceTabSection" }
     },
     "flags": {
@@ -258,7 +239,7 @@
     }
   },
   {
-    "type": "topology.details/tab-section",
+    "type": "console.topology/details/tab-section",
     "properties": {
       "id": "helm-release-panel-tab-section-releaseNotes",
       "tab": "helm-release-panel-tab-releaseNotes",

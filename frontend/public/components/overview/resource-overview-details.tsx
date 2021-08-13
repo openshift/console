@@ -1,3 +1,6 @@
+/**
+ * @deprecated remove this file once knative resource side bar start using dynamic extensions
+ */
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';

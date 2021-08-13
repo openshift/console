@@ -1,3 +1,7 @@
+/**
+ * @deprecated This file will no longer be used in any scenario once all side bars uses dynamic extensions
+ * All components mentioned in this file will be moved to @console/topology
+ */
 import { Map as ImmutableMap } from 'immutable';
 
 import { GroupVersionKind, referenceForModel } from '../../module/k8s';
