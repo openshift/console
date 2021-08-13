@@ -14,6 +14,7 @@ import {
 } from '@console/plugin-sdk';
 import { FLAG_OPENSHIFT_PIPELINE } from './const';
 import * as models from './models';
+import { RepositoryModel } from './models';
 import {
   pipelinesTopologyPlugin,
   PipelineTopologyConsumedExtensions,
@@ -124,6 +125,18 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/taskruns/TaskRunDetailsPage' /* webpackChunkName: "taskrun-details" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: RepositoryModel,
+      loader: async () =>
+        (
+          await import(
+            './components/repository/RepositoryDetailsPage' /* webpackChunkName: "repository-details" */
           )
         ).default,
     },

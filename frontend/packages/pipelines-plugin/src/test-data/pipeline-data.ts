@@ -1,6 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { TektonResourceLabel, preferredNameAnnotation } from '../components/pipelines/const';
 import { TaskKindAlpha } from '../components/pipelines/resource-utils';
+import { RepositoryKind } from '../components/repository/types';
 import { PipelineKind, PipelineRunKind, TaskRunKind, PipelineSpec, TaskKind } from '../types';
 
 export enum DataState {
@@ -3142,6 +3143,9 @@ export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
     kind: 'PipelineRun',
     metadata: {
       name: 'pipeline-with-repo',
+      annotations: {
+        'pipelinesascode.tekton.dev/sha-url': 'https://www.github.com/dummy/commit/3212345',
+      },
       labels: {
         'pipelinesascode.tekton.dev/repository': 'repo1',
         'pipelinesascode.tekton.dev/sha': 'abcd123456abcd',
@@ -3163,6 +3167,44 @@ export const PipeLineRunWithRepoMetadata: Record<string, PipelineRunKind> = {
     spec: {},
   },
 };
+
+export const mockRepositories: RepositoryKind[] = [
+  {
+    apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
+    kind: 'Repository',
+    metadata: {
+      name: 'aa',
+      namespace: 'test',
+    },
+    spec: {
+      branch: 'main',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      event_type: 'pull_request',
+      namespace: 'karthik',
+      url: 'https://github.com/karthikjeeyar/demo-app',
+    },
+  },
+  {
+    apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
+    kind: 'Repository',
+    metadata: {
+      name: 'aa',
+      namespace: 'test',
+    },
+    spec: {
+      namespace: 'karthik',
+      url: 'https://github.com/karthikjeeyar/demo-app',
+    },
+  },
+  {
+    apiVersion: 'pipelinesascode.tekton.dev/v1alpha1',
+    kind: 'Repository',
+    metadata: {
+      name: 'aa',
+      namespace: 'test',
+    },
+  },
+];
 
 type TaskTestData = {
   v1alpha1: { buildah: TaskKindAlpha };

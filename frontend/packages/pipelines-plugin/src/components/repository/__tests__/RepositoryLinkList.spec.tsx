@@ -29,7 +29,7 @@ describe('RepositoryLinkList', () => {
     const repositoryWrapper = shallow(
       <RepositoryLinkList pipelineRun={PipeLineRunWithRepoMetadata.PipelineRunWithSHALabel} />,
     );
-    expect(repositoryWrapper.find('[data-test="pl-commit-id"]').exists()).toBe(true);
+    expect(repositoryWrapper.find('[data-test="pl-sha-url"]').exists()).toBe(true);
   });
 
   it('should render event type when repo & EventType label are present', () => {
