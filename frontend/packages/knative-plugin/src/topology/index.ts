@@ -1,29 +1,9 @@
-export const getKnativeTopologyDataModel = () =>
-  import('./data-transformer' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.getKnativeTopologyDataModel,
-  );
-
-export const getKnativeComponentFactory = () =>
-  import('./components/knativeComponentFactory' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.getKnativeComponentFactory,
-  );
-
-export const getIsKnativeResource = () =>
-  import('./isKnativeResource' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.isKnativeResource,
-  );
-
-export const getTopologyFilters = () =>
-  import('./knativeFilters' /* webpackChunkName: "knative-components" */).then(
-    (m) => m.getTopologyFilters,
-  );
-
-export const applyDisplayOptions = () =>
-  import('./knativeFilters' /* webpackChunkName: "knative-components" */).then((m) =>
-    m.applyDisplayOptions(),
-  );
-
-export const getCreateConnector = () =>
-  import('./create-connector-utils' /* webpackChunkName: "knative-create-connector" */).then(
-    (m) => m.getCreateConnector,
-  );
+export { getKnativeComponentFactory } from './components/knativeComponentFactory';
+export { getTopologyFilters, applyKnativeDisplayOptions } from './knativeFilters';
+export { getCreateConnector } from './create-connector-utils';
+export { getServiceRouteDecorator } from './components/decorators/getServiceRouteDecorator';
+export { getRevisionRouteDecorator } from './components/decorators/getRevisionRouteDecorator';
+export {
+  providerProvidesServiceBinding,
+  providerCreateServiceBinding,
+} from './relationship-provider';
