@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import i18next from 'i18next';
 
 import {
   ContainerLifecycle,
@@ -9,21 +10,6 @@ import {
   HTTPGetProbe,
   TCPSocketProbe,
 } from './';
-
-const HookAction = Object.freeze({
-  exec: {
-    id: 'exec',
-    label: 'Exec Command',
-  },
-  httpGet: {
-    id: 'httpGet',
-    label: 'HTTP Get',
-  },
-  tcpSocket: {
-    id: 'tcpSocket',
-    label: 'TCP Socket (Port)',
-  },
-});
 
 const parsers = {
   exec: function(str: string) {
@@ -114,6 +100,21 @@ const flatteners = {
 };
 
 function inferAction(obj: Handler) {
+  const HookAction = Object.freeze({
+    exec: {
+      id: 'exec',
+      label: i18next.t('public~Exec command'),
+    },
+    httpGet: {
+      id: 'httpGet',
+      label: i18next.t('public~HTTP GET'),
+    },
+    tcpSocket: {
+      id: 'tcpSocket',
+      label: i18next.t('public~TCP socket (port)'),
+    },
+  });
+
   if (_.isEmpty(obj)) {
     return;
   }

@@ -1,4 +1,5 @@
 import * as _ from 'lodash-es';
+import i18next from 'i18next';
 
 import { ContainerSpec, ContainerStatus, PodKind, Volume, VolumeMount } from './types';
 
@@ -9,25 +10,27 @@ const getRestartPolicy = (pod: PodKind) =>
         // A unique id to identify the type, used as the value when communicating with the API.
         id: 'Always',
         // What is shown in the UI.
-        label: 'Always Restart',
+        label: i18next.t('public~Always restart'),
         // Description in the UI.
-        description:
-          'If the container restarts for any reason, restart it. ' +
-          'Useful for stateless services that may fail from time to time.',
+        description: i18next.t(
+          'public~If the container restarts for any reason, restart it. Useful for stateless services that may fail from time to time.',
+        ),
         // Default selection for new pods.
         default: true,
       },
       OnFailure: {
         id: 'OnFailure',
-        label: 'Restart On Failure',
-        description: 'If the container exits with a non-zero status code, restart it.',
+        label: i18next.t('public~Restart on failure'),
+        description: i18next.t(
+          'public~If the container exits with a non-zero status code, restart it.',
+        ),
       },
       Never: {
         id: 'Never',
-        label: 'Never Restart',
-        description:
-          'Never restart the container. ' +
-          'Useful for containers that exit when they have completed a specific job, like a data import daemon.',
+        label: i18next.t('public~Never restart'),
+        description: i18next.t(
+          'public~Never restart the container. Useful for containers that exit when they have completed a specific job, like a data import daemon.',
+        ),
       },
     },
     { id: _.get<any, string>(pod, 'spec.restartPolicy') },
@@ -36,60 +39,62 @@ const getRestartPolicy = (pod: PodKind) =>
 export const VolumeSource = {
   emptyDir: {
     id: 'emptyDir',
-    label: 'Container Volume',
-    description: "Temporary directory that shares a pod's lifetime.",
+    label: i18next.t('public~Container volume'),
+    description: i18next.t("public~Temporary directory that shares a pod's lifetime."),
   },
   hostPath: {
     id: 'hostPath',
-    label: 'Host Directory',
-    description:
-      'Pre-existing host file or directory, ' +
-      'generally for privileged system daemons or other agents tied to the host.',
+    label: i18next.t('public~Host directory'),
+    description: i18next.t(
+      'public~Pre-existing host file or directory, generally for privileged system daemons or other agents tied to the host.',
+    ),
   },
   gitRepo: {
     id: 'gitRepo',
-    label: 'Git Repo',
-    description: 'Git repository at a particular revision.',
+    label: i18next.t('public~Git repo'),
+    description: i18next.t('public~Git repository at a particular revision.'),
   },
   nfs: {
     id: 'nfs',
-    label: 'NFS',
-    description: 'NFS volume that will be mounted in the host machine.',
+    label: i18next.t('public~NFS'),
+    description: i18next.t('public~NFS volume that will be mounted in the host machine.'),
   },
   secret: {
     id: 'secret',
-    label: 'Secret',
-    description: 'Secret to populate volume.',
+    label: i18next.t('public~Secret'),
+    description: i18next.t('public~Secret to populate volume.'),
   },
   gcePersistentDisk: {
     id: 'gcePersistentDisk',
-    label: 'GCE Persistent Disk',
-    description: 'GCE disk resource attached to the host machine on demand.',
+    label: i18next.t('public~GCE Persistent Disk'),
+    description: i18next.t('public~GCE disk resource attached to the host machine on demand.'),
   },
   awsElasticBlockStore: {
     id: 'awsElasticBlockStore',
-    label: 'AWS Elastic Block Store',
-    description: 'AWS disk resource attached to the host machine on demand.',
+    label: i18next.t('public~AWS Elastic Block Store'),
+    description: i18next.t('public~AWS disk resource attached to the host machine on demand.'),
   },
   glusterfs: {
     id: 'glusterfs',
-    label: 'Gluster FS',
-    description: 'GlusterFS volume that will be mounted on the host machine.',
+    label: i18next.t('public~Gluster FS'),
+    description: i18next.t('public~GlusterFS volume that will be mounted on the host machine.'),
   },
   iscsi: {
     id: 'iscsi',
-    label: 'iSCSI',
-    description: 'iSCSI disk attached to host machine on demand',
+    label: i18next.t('public~iSCSI'),
+    description: i18next.t('public~iSCSI disk attached to host machine on demand'),
   },
   configMap: {
     id: 'configMap',
-    label: 'ConfigMap',
-    description: 'ConfigMap to be consumed in volume.',
+    label: i18next.t('public~ConfigMap'),
+    description: i18next.t('public~ConfigMap to be consumed in volume.'),
   },
   projected: {
     id: 'projected',
-    label: 'Projected',
-    description: 'A projected volume maps several existing volume sources into the same directory.',
+    label: i18next.t('public~Projected'),
+    description: i18next.t(
+      'public~A projected volume maps several existing volume sources into the same directory.',
+    ),
   },
 };
 
