@@ -7,12 +7,18 @@ export const STATUS_KEY_NAME_ERROR = 'taskError';
 export enum UpdateOperationType {
   ADD_LIST_TASK,
   ADD_FINALLY_LIST_TASK,
+  ADD_LOADING_TASK,
+  ADD_FINALLY_LOADING_TASK,
+  CONVERT_LOADING_TASK_TO_TASK,
+  CONVERT_LOADING_TASK_TO_FINALLY_TASK,
   CONVERT_LIST_TO_TASK,
   CONVERT_LIST_TO_FINALLY_TASK,
   RENAME_TASK,
   REMOVE_TASK,
   DELETE_LIST_TASK,
+  DELETE_FINALLY_LIST_TASK,
   FIX_INVALID_LIST_TASK,
+  FIX_INVALID_FINALLY_LIST_TASK,
 }
 
 export enum TaskErrorType {
@@ -62,4 +68,5 @@ export const initialPipelineFormData: PipelineBuilderFormValues = {
   listTasks: [],
   finallyTasks: [],
   finallyListTasks: [],
+  loadingTasks: [],
 };

@@ -12,7 +12,7 @@ export const getFormData = (
   formData: PipelineBuilderFormValues,
   yamlPipeline: PipelineKind,
 ): PipelineBuilderFormValues => {
-  const { listTasks, finallyListTasks } = formData;
+  const { listTasks, finallyListTasks, loadingTasks } = formData;
   const sanitizedListTasks: PipelineBuilderTaskBase[] = listTasks.map((listTask) => {
     const { name, runAfter: listRunAfter } = listTask;
     return {
@@ -23,13 +23,18 @@ export const getFormData = (
     };
   });
   const { finally: finallyTasks, ...specProps } = yamlPipeline.spec;
-  const pipelineSpecProperties = _.omit(specProps, ['listTasks', 'finallyListTasks']);
+  const pipelineSpecProperties = _.omit(specProps, [
+    'listTasks',
+    'finallyListTasks',
+    'loadingTasks',
+  ]);
   return {
     ...pipelineSpecProperties, // support & keep unknown values as well as whatever they may have changed that we use
     name: yamlPipeline.metadata?.name,
     finallyTasks,
     listTasks: sanitizedListTasks,
     finallyListTasks,
+    loadingTasks,
   } as PipelineBuilderFormValues;
 };
 

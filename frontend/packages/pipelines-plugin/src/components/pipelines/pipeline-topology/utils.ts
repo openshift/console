@@ -37,6 +37,7 @@ import {
   FinallyNodeModel,
   PipelineFinallyNodeModel,
   DiamondStateType,
+  LoadingNodeModel,
 } from './types';
 
 const createGenericNode: NodeCreatorSetup = (type, width?, height?) => (name, data) => ({
@@ -70,6 +71,10 @@ export const createFinallyNode = (height): NodeCreator<FinallyNodeModel> =>
     height,
   );
 
+export const createLoadingNode: NodeCreator<LoadingNodeModel> = createGenericNode(
+  NodeType.LOADING_NODE,
+);
+
 export const createBuilderFinallyNode = (
   height: number,
   width: number,
@@ -84,6 +89,10 @@ export const getNodeCreator = (type: NodeType): NodeCreator<PipelineRunAfterNode
       return createBuilderNode;
     case NodeType.SPACER_NODE:
       return createSpacerNode;
+    case NodeType.LOADING_NODE:
+      return createLoadingNode;
+    case NodeType.INVALID_TASK_LIST_NODE:
+      return createInvalidTaskListNode;
     case NodeType.TASK_NODE:
     default:
       return createTaskNode;

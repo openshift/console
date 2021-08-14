@@ -10,6 +10,7 @@ import {
 import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 import QuickSearchBar from './QuickSearchBar';
 import QuickSearchContent from './QuickSearchContent';
+import { DetailsRendererFunction } from './QuickSearchDetails';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 
@@ -23,6 +24,7 @@ interface QuickSearchModalBodyProps {
   closeModal: () => void;
   limitItemCount: number;
   icon?: React.ReactNode;
+  detailsRenderer?: DetailsRendererFunction;
 }
 
 const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
@@ -33,6 +35,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   searchPlaceholder,
   allCatalogItemsLoaded,
   icon,
+  detailsRenderer,
 }) => {
   const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>(null);
   const [catalogTypes, setCatalogTypes] = React.useState<CatalogType[]>([]);
@@ -195,6 +198,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           selectedItem={selectedItem}
           namespace={namespace}
           limitItemCount={limitItemCount}
+          detailsRenderer={detailsRenderer}
           onSelect={(itemId) => {
             setSelectedItemId(itemId);
             setSelectedItem(catalogItems?.find((item) => item.uid === itemId));
