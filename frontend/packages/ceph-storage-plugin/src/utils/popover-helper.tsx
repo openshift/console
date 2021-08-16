@@ -12,11 +12,12 @@ export const PopoverHelper: React.FC<PopoverHelperProps> = ({
   kind,
   popoverHasAutoWidth,
   testId,
+  className,
 }) => {
   const { t } = useTranslation();
 
   const popOverBody = (
-    <List isPlain>
+    <List isPlain className={className}>
       {names.map((scName) => (
         <ListItem>
           <ResourceLink kind={referenceFor(kind)} name={scName} />
@@ -59,4 +60,5 @@ type PopoverHelperProps = {
   kind: K8sKind;
   popoverHasAutoWidth?: PopoverProps['hasAutoWidth'];
   testId?: string;
+  className?: string;
 };

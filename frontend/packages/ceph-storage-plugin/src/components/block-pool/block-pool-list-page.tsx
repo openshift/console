@@ -43,6 +43,8 @@ import { getPoolQuery, StorageDashboardQuery } from '../../queries/ceph-queries'
 import { COMPRESSION_ON } from '../../constants/storage-pool-const';
 import { cephClusterResource, scResource } from '../../resources';
 
+import './block-pool-list-page.scss';
+
 const getHeader = (t: TFunction) => () => {
   const blockPoolColumnInfo = BlockPoolColumnInfo(t);
 
@@ -158,7 +160,12 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style, 
         className={blockPoolColumnInfo.storageclasses.classes}
         columnID={blockPoolColumnInfo.storageclasses.id}
       >
-        <PopoverHelper names={poolScNames} text="StorageClasses" kind={StorageClassModel} />
+        <PopoverHelper
+          names={poolScNames}
+          text="StorageClasses"
+          kind={StorageClassModel}
+          className="odf-block-pool-list-page__popover"
+        />
       </TableData>
       <TableData
         className={blockPoolColumnInfo.replicas.classes}
