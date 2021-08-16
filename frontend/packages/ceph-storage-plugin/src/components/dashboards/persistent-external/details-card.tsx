@@ -14,6 +14,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { SecretModel } from '@console/internal/models';
 import { getOCSVersion } from '../../../selectors';
 import { OCSServiceModel } from '../../../models';
@@ -79,32 +80,34 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <DetailItem title={t('ceph-storage-plugin~Service Name')}>
-          OpenShift Container Storage
-        </DetailItem>
-        <DetailItem
-          title={t('ceph-storage-plugin~Cluster Name')}
-          error={!!ocsError}
-          isLoading={!ocsLoaded}
-          data-test-id="cluster-name"
-        >
-          {ocsName}
-        </DetailItem>
-        <DetailItem
-          title={t('ceph-storage-plugin~Provider')}
-          isLoading={!secretLoaded && !secretError}
-        >
-          {cephLink ? <ExternalLink href={cephLink} text={CEPH_BRAND_NAME} /> : CEPH_BRAND_NAME}
-        </DetailItem>
-        <DetailItem title={t('ceph-storage-plugin~Mode')}>External</DetailItem>
-        <DetailItem
-          title={t('ceph-storage-plugin~Version')}
-          isLoading={!subscriptionLoaded}
-          error={!!subscriptionError}
-          data-test-id="cluster-subscription"
-        >
-          {subscriptionVersion}
-        </DetailItem>
+        <DetailsBody>
+          <DetailItem title={t('ceph-storage-plugin~Service Name')}>
+            OpenShift Container Storage
+          </DetailItem>
+          <DetailItem
+            title={t('ceph-storage-plugin~Cluster Name')}
+            error={!!ocsError}
+            isLoading={!ocsLoaded}
+            data-test-id="cluster-name"
+          >
+            {ocsName}
+          </DetailItem>
+          <DetailItem
+            title={t('ceph-storage-plugin~Provider')}
+            isLoading={!secretLoaded && !secretError}
+          >
+            {cephLink ? <ExternalLink href={cephLink} text={CEPH_BRAND_NAME} /> : CEPH_BRAND_NAME}
+          </DetailItem>
+          <DetailItem title={t('ceph-storage-plugin~Mode')}>External</DetailItem>
+          <DetailItem
+            title={t('ceph-storage-plugin~Version')}
+            isLoading={!subscriptionLoaded}
+            error={!!subscriptionError}
+            data-test-id="cluster-subscription"
+          >
+            {subscriptionVersion}
+          </DetailItem>
+        </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>
   );
