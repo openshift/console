@@ -12,7 +12,7 @@ import {
   saveButton,
   setEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { VirtualMachineModel } from '../../src/models';
 import { click, createResource, deleteResource, withResource } from '../utils/shared-utils';
 import { activeTab } from '../views/uiResource.view';
 import { virtualizationTitle } from '../views/vms.list.view';

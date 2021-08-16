@@ -1,15 +1,14 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { browser, ExpectedConditions as until } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { MatchLabels } from 'public/module/k8s';
 import { cloneDeepWithEnum } from '../../../src/constants/object-enum';
+import { VirtualMachineModel } from '../../../src/models';
 import { click, waitForStringNotInElement } from '../../utils/shared-utils';
 import { detailViewAction, listViewAction } from '../../views/actions.view';
 import { saveButton } from '../../views/kubevirtUIResource.view';
 import { vmtLinkByName } from '../../views/template.view';
-import { resourceHorizontalTab } from '../../views/uiResource.view';
+import { modalOverlay, resourceHorizontalTab } from '../../views/uiResource.view';
 import * as vmView from '../../views/virtualMachine.view';
 import { CloneVirtualMachineDialog } from '../dialogs/cloneVirtualMachineDialog';
 import { AddDialog } from '../dialogs/schedulingDialog';

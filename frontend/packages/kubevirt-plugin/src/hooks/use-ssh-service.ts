@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceModel } from '@console/internal/models';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { useActiveNamespace } from '@console/shared';
 import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
 import {
@@ -13,6 +12,7 @@ import {
   TARGET_PORT,
 } from '../components/ssh-service/SSHForm/ssh-form-utils';
 import { getServicePort } from '../selectors/service/selectors';
+import { VMIKind, VMKind } from '../types';
 import useSSHSelectors from './use-ssh-selectors';
 
 export type useSSHServiceResult = {
