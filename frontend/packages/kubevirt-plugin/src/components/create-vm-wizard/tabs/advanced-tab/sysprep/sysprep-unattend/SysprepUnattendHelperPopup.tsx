@@ -11,7 +11,8 @@ const SysprepUnattendHelperPopup: React.FC = () => {
         <Trans t={t} ns="kubevirt-plugin">
           <Text component={TextVariants.h6}>Unattend.xml</Text>
           <Text component={TextVariants.p}>
-            The answer file can be used to modify Windows settings in your images during Setup
+            Unattend can be used to configure windows setup and can be picked up several times
+            during windows setup/configuration.
           </Text>
           <ExternalLink
             href="https://kubevirt.io/user-guide/virtual_machines/startup_scripts/#sysprep"
