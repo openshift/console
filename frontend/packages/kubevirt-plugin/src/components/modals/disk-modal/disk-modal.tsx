@@ -311,18 +311,35 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     },
   };
 
+  const bodyRequestAddVolumePVC: V1AddVolumeOptions = {
+    disk: resultDisk.asResource(true),
+    name,
+    volumeSource: {
+      persistentVolumeClaim: {
+        claimName: pvcName,
+      },
+    },
+  };
+
   const submit = (e) => {
     e.preventDefault();
 
     if (isValid) {
       if (isVMRunning) {
-        const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
         if (autoDetach) {
-          handlePromise(
-            dvRequest.then(() => addHotplugNonPersistent(vmi, bodyRequestAddVolume)),
-            close,
-          );
+          if (source.isAttachDisk()) {
+            handlePromise(addHotplugNonPersistent(vmi, bodyRequestAddVolumePVC), close);
+          } else {
+            const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
+            handlePromise(
+              dvRequest.then(() => addHotplugNonPersistent(vmi, bodyRequestAddVolume)),
+              close,
+            );
+          }
+        } else if (source.isAttachDisk()) {
+          handlePromise(addHotplugPersistent(vm, bodyRequestAddVolumePVC), close);
         } else {
+          const dvRequest = k8sCreate(DataVolumeModel, resultDataVolume.asResource(true));
           handlePromise(
             dvRequest.then(() => addHotplugPersistent(vm, bodyRequestAddVolume)),
             close,

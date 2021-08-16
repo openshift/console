@@ -51,13 +51,9 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
 
   const volumes = React.useMemo(() => [volume], [volume]);
 
-  const [ownedResources, isOwnedResourcesLoaded] = useOwnedVolumeReferencedResources(
-    vmLikeReference,
-    namespace,
-    volumes,
-  );
+  const [ownedResources] = useOwnedVolumeReferencedResources(vmLikeReference, namespace, volumes);
   const ownedResource = ownedResources?.length > 0 ? ownedResources[0] : null;
-  const isInProgress = inProgress || !isOwnedResourcesLoaded;
+  const isInProgress = inProgress;
 
   const diskName = disk?.name;
 
