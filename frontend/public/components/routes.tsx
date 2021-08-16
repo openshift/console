@@ -5,6 +5,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import i18next from 'i18next';
 
 import { Status } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
@@ -89,7 +90,7 @@ const getRouteLabel = (route: RouteKind): string => {
 
   let label = getRouteHost(route, false);
   if (!label) {
-    return '<unknown host>';
+    return i18next.t('public~<unknown host>');
   }
 
   if (_.get(route, 'spec.wildcardPolicy') === 'Subdomain') {
