@@ -192,7 +192,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           id={`bs-${BackingStorageType.LOCAL_DEVICES}`}
         />
         <Radio
-          label={t('ceph-storage-plugin~Connect a new external storage system')}
+          label={t('ceph-storage-plugin~Connect an external storage platform')}
           description={t(
             'ceph-storage-plugin~Can be used to connect an external storage platform to OpenShift Data Foundation.',
           )}
