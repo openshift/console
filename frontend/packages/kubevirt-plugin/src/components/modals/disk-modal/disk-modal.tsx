@@ -677,6 +677,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 <StorageClassDropdown
                   name={t('kubevirt-plugin~Storage Class')}
                   onChange={(scName) => onStorageClassNameChanged(scName)}
+                  selectedKey={storageClassName}
                   data-test="storage-class-dropdown"
                 />
               </StackItem>
