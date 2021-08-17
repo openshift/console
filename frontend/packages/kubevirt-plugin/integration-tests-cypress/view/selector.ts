@@ -34,6 +34,7 @@ export const startOnClone = 'input[id="clone-dialog-vm-start"]';
 
 // alert
 export const alertTitle = '.pf-c-alert__title';
+export const alertDescr = '.pf-c-alert__description';
 export const errorAlert = '.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable';
 
 // nic modal
@@ -48,11 +49,14 @@ export enum nicDialog {
 
 // disk modal
 export enum diskDialog {
-  addDisk = 'button[id="add-disk"]',
   source = 'button[id="disk-select-source"]',
+  sourceURL = 'input[id="disk-url"]',
+  container = 'input[id="disk-container"]',
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',
+  diskPVC = 'select[id="disk-pvc"]',
+  autoDetach = 'input[id="disk-auto-detach"]',
   storageClass = 'select[id="disk-storage-class"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
@@ -67,3 +71,11 @@ export enum storageClass {
 
 // yaml page
 export const createYAMLButton = 'button[data-test="save-changes"]';
+
+export const kebabBtn = 'button[data-test-id="kebab-button"]';
+export const deleteDiskBtn = 'button[data-test-action="Delete"]';
+
+export enum disksTab {
+  addDisk = 'button[id="add-disk"]',
+  currVMStatus = 'span[data-test="resource-status"]',
+}

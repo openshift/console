@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+import { DISK_SOURCE, VM_ACTION_TIMEOUT } from '../const';
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog } from './selector';
+import { diskDialog, nicDialog, kebabBtn, deleteDiskBtn, disksTab } from './selector';
+import { modalConfirmBtn } from './snapshot';
 
 export const addNIC = (nic: Network) => {
   cy.get(nicDialog.addNIC).click();
@@ -25,7 +28,7 @@ export const addNIC = (nic: Network) => {
 };
 
 export const addDisk = (disk: Disk) => {
-  cy.get(diskDialog.addDisk).click();
+  cy.get(disksTab.addDisk).click();
   if (disk.source) {
     cy.get(diskDialog.source).click();
     cy.get('.pf-c-select__menu-item-main')
@@ -52,5 +55,49 @@ export const addDisk = (disk: Disk) => {
       .select(Cypress.env('STORAGE_CLASS'))
       .should('have.value', Cypress.env('STORAGE_CLASS'));
   }
+  if (disk.source === DISK_SOURCE.Url) {
+    if (disk.url) {
+      cy.get(diskDialog.sourceURL).type(disk.url);
+    } else {
+      throw new Error('No value for `disk.url` provided!!!');
+    }
+  } else if (disk.source === DISK_SOURCE.Container) {
+    if (disk.url) {
+      cy.get(diskDialog.container).type(disk.url);
+    } else {
+      throw new Error('No value for `disk.url` provided!!!');
+    }
+  } else if (
+    disk.source === DISK_SOURCE.AttachDisk ||
+    disk.source === DISK_SOURCE.AttachClonedDisk
+  ) {
+    if (disk.pvc) {
+      cy.get(diskDialog.diskPVC)
+        .select(disk.pvc)
+        .should('have.value', disk.pvc);
+    } else {
+      throw new Error('No value for `disk.pvc` provided!!!');
+    }
+  }
+  if (disk.autoDetach === true) {
+    cy.get(diskDialog.autoDetach)
+      .check()
+      .should('be.checked');
+  } else if (disk.autoDetach === false) {
+    cy.get(diskDialog.autoDetach)
+      .uncheck()
+      .should('not.be.checked');
+  }
   cy.get(diskDialog.add).click();
+};
+
+export const delDisk = (name: string) => {
+  cy.get(`[data-id="${name}"] ${kebabBtn}`).click();
+  cy.get(deleteDiskBtn).click();
+  cy.get(modalConfirmBtn).click();
+};
+
+export const waitForCurrentVMStatus = (status: string, timeout?: number) => {
+  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
+  cy.contains(disksTab.currVMStatus, status, { timeout: timeOut }).should('exist');
 };
