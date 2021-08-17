@@ -106,7 +106,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
             {buttonText}
           </Button>
         </SplitItem>
-        {
+        {versions.length > 0 && (
           <SplitItem>
             <Dropdown
               data-test={'task-version'}
@@ -120,7 +120,7 @@ const PipelineQuickSearchDetails: React.FC<QuickSearchDetailsRendererProps> = ({
               }}
             />
           </SplitItem>
-        }
+        )}
       </Split>
       {getTaskAlert}
       <TextContent className="opp-quick-search-details__description" data-test={'task-description'}>
