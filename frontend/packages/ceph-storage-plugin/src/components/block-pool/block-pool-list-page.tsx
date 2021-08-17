@@ -19,14 +19,13 @@ import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers'
 import { StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
-import { menuActions } from './block-pool-menu-action';
+import { menuActions, disableMenuAction } from './block-pool-menu-action';
 import { healthStateMapping } from '../dashboards/block-pool/states';
 import { CephBlockPoolModel } from '../../models';
 import { StoragePoolKind, OcsStorageClassKind, CephClusterKind } from '../../types';
-import { CEPH_STORAGE_NAMESPACE, CEPH_EXTERNAL_CR_NAME } from '../../constants';
+import { CEPH_STORAGE_NAMESPACE } from '../../constants';
 import {
   BlockPoolColumnInfo,
-  isDefaultPool,
   getScNamesUsingPool,
   getPerPoolMetrics,
 } from '../../utils/block-pool';
@@ -203,11 +202,7 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, cu
           actions={menuActions}
           kind={referenceFor(obj)}
           resource={obj}
-          isDisabled={
-            obj?.metadata?.deletionTimestamp ||
-            props?.cephCluster?.metadata?.name === CEPH_EXTERNAL_CR_NAME ||
-            isDefaultPool(obj)
-          }
+          isDisabled={disableMenuAction(obj, props?.cephCluster)}
           customData={{ tFunction: t }}
         />
       </TableData>
