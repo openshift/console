@@ -204,8 +204,13 @@ ListDropdown.propTypes = {
   disabled: PropTypes.bool,
 };
 
+<<<<<<< HEAD
 export const useProjectOrNamespaceModel = () => {
   const canCreateNamespace = useAccessReview({
+=======
+const useProjectOrNamespaceModel = () => {
+  const [canCreateNamespace] = useAccessReview({
+>>>>>>> 5fcfb8fe62... Move rbac utilities to dynamic plugin SDK
     group: NamespaceModel.apiGroup,
     resource: NamespaceModel.plural,
     verb: 'create',

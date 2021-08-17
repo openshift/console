@@ -44,7 +44,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
   const { t } = useTranslation();
   const status = bareMetalNodeStatus({ node, nodeMaintenance, csr });
   const machine = getNodeMachineNameAndNamespace(node);
-  const canUpdate = useAccessReview({
+  const [canUpdate] = useAccessReview({
     group: NodeModel.apiGroup,
     resource: NodeModel.plural,
     verb: 'patch',

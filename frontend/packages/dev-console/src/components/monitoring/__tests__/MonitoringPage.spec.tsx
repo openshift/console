@@ -22,8 +22,18 @@ describe('Monitoring Page ', () => {
   });
 
   it('should render all Tabs of Monitoring page for selected project', () => {
+<<<<<<< HEAD
     spyUseAccessReview.mockReturnValue(true);
     const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Alerts', 'Events'];
+=======
+    spyUseAccessReview.mockReturnValue([true]);
+    const expectedTabs: string[] = [
+      `${I18N_NS}~Dashboard`,
+      `${I18N_NS}~Metrics`,
+      `${I18N_NS}~Alerts`,
+      `${I18N_NS}~Events`,
+    ];
+>>>>>>> 5fcfb8fe62... Move rbac utilities to dynamic plugin SDK
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',
@@ -47,8 +57,17 @@ describe('Monitoring Page ', () => {
   });
 
   it('should not render the Alerts tab if user has no access to get prometheousRule resource', () => {
+<<<<<<< HEAD
     spyUseAccessReview.mockReturnValue(false);
     const expectedTabs: string[] = ['Dashboard', 'Metrics', 'Events'];
+=======
+    spyUseAccessReview.mockReturnValue([false]);
+    const expectedTabs: string[] = [
+      `${I18N_NS}~Dashboard`,
+      `${I18N_NS}~Metrics`,
+      `${I18N_NS}~Events`,
+    ];
+>>>>>>> 5fcfb8fe62... Move rbac utilities to dynamic plugin SDK
     monPageProps = {
       match: {
         path: '/dev-monitoring/ns/:ns',

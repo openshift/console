@@ -1012,7 +1012,7 @@ export const NamespaceSummary = ({ ns }) => {
   const description = getDescription(ns);
   const requester = getRequester(ns);
   const serviceMeshEnabled = ns.metadata?.labels?.['maistra.io/member-of'];
-  const canListSecrets = useAccessReview({
+  const [canListSecrets] = useAccessReview({
     group: SecretModel.apiGroup,
     resource: SecretModel.plural,
     verb: 'patch',

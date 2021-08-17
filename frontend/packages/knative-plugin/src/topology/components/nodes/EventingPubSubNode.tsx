@@ -93,7 +93,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
     modelFor(referenceFor(resourceObj)) === EventingBrokerModel
       ? EventingTriggerModel
       : EventingSubscriptionModel;
-  const createAccess = useAccessReview({
+  const [createAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'create',
     resource: resourceModel.plural,

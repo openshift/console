@@ -49,7 +49,7 @@ export const ConnectedPipelineRunDecorator: React.FC<PipelineRunDecoratorProps &
     namespace: pipeline.metadata.namespace,
     verb: 'create',
   };
-  const canStartPipeline = useAccessReview(defaultAccessReview, impersonate);
+  const [canStartPipeline] = useAccessReview(defaultAccessReview, impersonate);
 
   let ariaLabel;
   let tooltipContent;

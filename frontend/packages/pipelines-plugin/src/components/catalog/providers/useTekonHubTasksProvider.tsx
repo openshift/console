@@ -67,14 +67,14 @@ const useTektonHubTasksProvider: ExtensionHook<CatalogItem[]> = ({
     CatalogItem<TektonHubTask>[]
   >([]);
 
-  const canCreateTask = useAccessReview({
+  const [canCreateTask] = useAccessReview({
     group: TaskModel.apiGroup,
     resource: TaskModel.plural,
     namespace,
     verb: 'create',
   });
 
-  const canUpdateTask = useAccessReview({
+  const [canUpdateTask] = useAccessReview({
     group: TaskModel.apiGroup,
     resource: TaskModel.plural,
     namespace,

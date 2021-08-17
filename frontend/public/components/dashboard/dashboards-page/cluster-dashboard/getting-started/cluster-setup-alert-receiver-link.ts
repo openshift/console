@@ -17,7 +17,7 @@ const useCanEditAlertManagerConfigSecret = () =>
     namespace: 'openshift-monitoring',
     name: 'alertmanager-main',
     verb: 'patch',
-  });
+  })[0];
 
 const useAlertManagerConfigSecret = (watch: boolean) =>
   useK8sWatchResource<SecretKind>(

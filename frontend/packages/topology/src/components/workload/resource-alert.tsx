@@ -31,7 +31,7 @@ export const useHealthChecksAlert = (element: GraphElement): DetailsResourceAler
   const resourceModel = modelFor(kindForCRDResource);
   const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
 
-  const canAddHealthChecks = useAccessReview({
+  const [canAddHealthChecks] = useAccessReview({
     group: resourceModel.apiGroup,
     resource: resourceModel.plural,
     namespace,

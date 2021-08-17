@@ -65,7 +65,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   const model = modelFor(reference);
   const tolerationsPath = getTolerationsPath(resource);
   const tolerations: Toleration[] = _.get(resource, tolerationsPath);
-  const canUpdateAccess = useAccessReview({
+  const [canUpdateAccess] = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
     verb: 'patch',

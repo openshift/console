@@ -10,7 +10,7 @@ import {
   ModalFooter,
   ModalTitle,
 } from '@console/internal/components/factory';
-import { LoadingBox, useAccessReview2 } from '@console/internal/components/utils';
+import { LoadingBox, useAccessReview } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
@@ -98,13 +98,13 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   const [error, setError, setErrorKey, resetError] = useErrorTranslation();
   const [state, dispatch] = React.useReducer(bootFormReducer, initBootFormState);
 
-  const [uploadAllowed, uploadAllowedLoading] = useAccessReview2({
+  const [uploadAllowed, uploadAllowedLoading] = useAccessReview({
     group: DataVolumeModel.apiGroup,
     resource: DataVolumeModel.plural,
     verb: 'create',
   });
 
-  const [scAllowed, scAllowedLoading] = useAccessReview2({
+  const [scAllowed, scAllowedLoading] = useAccessReview({
     group: StorageClassModel.apiGroup,
     resource: StorageClassModel.plural,
     verb: 'list',

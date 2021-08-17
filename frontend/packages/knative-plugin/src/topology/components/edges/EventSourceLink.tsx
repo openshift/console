@@ -27,7 +27,7 @@ const EventSourceLink: React.FC<EventSourceLinkProps> = ({
 }) => {
   const resourceObj = getResource(element.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'update',
     resource: resourceModel.plural,

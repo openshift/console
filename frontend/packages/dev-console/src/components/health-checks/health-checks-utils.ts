@@ -63,7 +63,7 @@ export const HealthCheckContext = createContext<HealthCheckContextType>({ viewOn
 
 export const useViewOnlyAccess = (resource: K8sResourceKind): boolean => {
   const model = modelFor(referenceFor(resource));
-  const hasEditAccess = useAccessReview({
+  const [hasEditAccess] = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
     name: resource.metadata.name,

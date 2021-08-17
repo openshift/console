@@ -25,17 +25,21 @@ const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewReso
 };
 
 export const useAddToProjectAccess = (activeNamespace: string): string[] => {
-  const buildConfigsAccess = useAccessReview(resourceAttributes(BuildConfigModel, activeNamespace));
-  const imageStreamAccess = useAccessReview(resourceAttributes(ImageStreamModel, activeNamespace));
-  const deploymentConfigAccess = useAccessReview(
+  const [buildConfigsAccess] = useAccessReview(
+    resourceAttributes(BuildConfigModel, activeNamespace),
+  );
+  const [imageStreamAccess] = useAccessReview(
+    resourceAttributes(ImageStreamModel, activeNamespace),
+  );
+  const [deploymentConfigAccess] = useAccessReview(
     resourceAttributes(DeploymentConfigModel, activeNamespace),
   );
-  const imageStreamImportAccess = useAccessReview(
+  const [imageStreamImportAccess] = useAccessReview(
     resourceAttributes(ImageStreamImportsModel, activeNamespace),
   );
-  const secretAccess = useAccessReview(resourceAttributes(SecretModel, activeNamespace));
-  const routeAccess = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
-  const serviceAccess = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
+  const [secretAccess] = useAccessReview(resourceAttributes(SecretModel, activeNamespace));
+  const [routeAccess] = useAccessReview(resourceAttributes(RouteModel, activeNamespace));
+  const [serviceAccess] = useAccessReview(resourceAttributes(ServiceModel, activeNamespace));
 
   const serviceBindingEnabled = useFlag(ALLOW_SERVICE_BINDING_FLAG);
 

@@ -49,7 +49,7 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
       resource: ClusterVersionModel.plural,
       verb: 'patch',
       name: 'version',
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+    })[0] && window.SERVER_FLAGS.branding !== 'dedicated';
   const { t } = useTranslation();
 
   switch (status) {

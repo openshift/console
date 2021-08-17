@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import {
   WatchK8sResource,
   useK8sWatchResource,
@@ -45,7 +45,7 @@ const useCloudShellWorkspace = (
     setNoNamespaceFound(false);
   }, [defaultNamespace, setNamespace, setNoNamespaceFound]);
 
-  const [canListWorkspaces, loadingAccessReview] = useAccessReview2({
+  const [canListWorkspaces, loadingAccessReview] = useAccessReview({
     group: workspaceModel.apiGroup,
     resource: workspaceModel.plural,
     verb: 'list',

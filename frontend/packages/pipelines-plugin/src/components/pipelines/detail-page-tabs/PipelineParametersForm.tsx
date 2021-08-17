@@ -20,7 +20,7 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
   errors,
   dirty,
 }) => {
-  const pipelineParameterAccess = useAccessReview({
+  const [pipelineParameterAccess] = useAccessReview({
     group: 'tekton.dev',
     resource: 'pipelines',
     namespace,

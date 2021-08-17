@@ -87,7 +87,7 @@ const ActionItem: React.FC<ActionMenuItemProps & { isAllowed: boolean }> = ({
 const AccessReviewActionItem = connect(impersonateStateToProps)(
   (props: ActionMenuItemProps & { impersonate: string }) => {
     const { action, impersonate } = props;
-    const isAllowed = useAccessReview(action.accessReview, impersonate);
+    const [isAllowed] = useAccessReview(action.accessReview, impersonate);
     return <ActionItem {...props} isAllowed={isAllowed} />;
   },
 );

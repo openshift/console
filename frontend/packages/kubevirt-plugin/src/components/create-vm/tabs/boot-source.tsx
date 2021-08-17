@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Grid, GridItem, Stack, StackItem, Title } from '@patternfly/react-core';
 import { Trans, useTranslation } from 'react-i18next';
-import { useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
@@ -28,7 +28,7 @@ export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatc
     TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   );
 
-  const [scAllowed, scAllowedLoading] = useAccessReview2({
+  const [scAllowed, scAllowedLoading] = useAccessReview({
     group: StorageClassModel.apiGroup,
     resource: StorageClassModel.plural,
     verb: 'list',

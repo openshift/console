@@ -109,7 +109,7 @@ describe('useAlertReceiverLink', () => {
   });
 
   it('should not watch resource if it can not edit it', () => {
-    useAccessReviewMock.mockReturnValue(false);
+    useAccessReviewMock.mockReturnValue([false]);
     useK8sWatchResourceMock.mockReturnValue([undefined, true, undefined]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -120,7 +120,7 @@ describe('useAlertReceiverLink', () => {
   });
 
   it('should watch resource if it can edit it, return null until it is loaded', () => {
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([undefined, false, undefined]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -137,7 +137,7 @@ describe('useAlertReceiverLink', () => {
   });
 
   it('should return no link if there is no secret found', () => {
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([null, true, null]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -147,7 +147,7 @@ describe('useAlertReceiverLink', () => {
 
   it('should return no link if there is no alert manager is defined', () => {
     const oauthSecret: SecretKind = {};
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -161,7 +161,7 @@ describe('useAlertReceiverLink', () => {
         'alertmanager.yaml': Base64.encode(defaultClusterAlertManagerConfigYAML),
       },
     };
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -179,7 +179,7 @@ describe('useAlertReceiverLink', () => {
         'alertmanager.yaml': Base64.encode(configuredClusterAlertManagerConfigYAML),
       },
     };
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([oauthSecret, true, null]);
 
     const { result } = testHook(() => useAlertReceiverLink());
@@ -188,7 +188,7 @@ describe('useAlertReceiverLink', () => {
   });
 
   it('should return no link if there is an error', () => {
-    useAccessReviewMock.mockReturnValue(true);
+    useAccessReviewMock.mockReturnValue([true]);
     useK8sWatchResourceMock.mockReturnValue([null, true, new Error('Any error')]);
 
     const { result } = testHook(() => useAlertReceiverLink());

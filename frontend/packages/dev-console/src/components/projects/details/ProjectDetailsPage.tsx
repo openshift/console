@@ -37,14 +37,14 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
   const { t } = useTranslation();
   const activeNamespace = match.params.ns;
 
-  const canListRoleBindings = useAccessReview({
+  const [canListRoleBindings] = useAccessReview({
     group: RoleBindingModel.apiGroup,
     resource: RoleBindingModel.plural,
     verb: 'list',
     namespace: activeNamespace,
   });
 
-  const canCreateRoleBindings = useAccessReview({
+  const [canCreateRoleBindings] = useAccessReview({
     group: RoleBindingModel.apiGroup,
     resource: RoleBindingModel.plural,
     verb: 'create',

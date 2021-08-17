@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
@@ -74,7 +74,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   const goToStorageStep = React.useCallback(() => goToStep(VMWizardTab.STORAGE), [goToStep]);
   const goToNetworkingStep = React.useCallback(() => goToStep(VMWizardTab.NETWORKING), [goToStep]);
 
-  const [scAllowed] = useAccessReview2({
+  const [scAllowed] = useAccessReview({
     group: StorageClassModel.apiGroup,
     resource: StorageClassModel.plural,
     verb: 'list',

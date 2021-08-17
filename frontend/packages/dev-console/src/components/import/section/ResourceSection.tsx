@@ -32,7 +32,7 @@ const ResourceSection: React.FC<ResourceSectionProps> = ({ flags }) => {
   const { t } = useTranslation();
   const [field] = useField<Resources[]>('resourceTypesNotValid');
   const invalidTypes = field.value || [];
-  const knativeServiceAccess = useAccessReview({
+  const [knativeServiceAccess] = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
     namespace: getActiveNamespace(),

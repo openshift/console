@@ -19,7 +19,7 @@ const MAX_REVISIONS: number = 3;
 
 const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions, service }) => {
   const { t } = useTranslation();
-  const canSetTrafficDistribution = useAccessReview({
+  const [canSetTrafficDistribution] = useAccessReview({
     group: ServiceModel.apiGroup,
     resource: ServiceModel.plural,
     namespace: service.metadata.namespace,

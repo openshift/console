@@ -684,7 +684,7 @@ const APIResourcePage_ = ({
   const namespace = kindObj?.namespaced ? match.params.ns : undefined;
   const { t } = useTranslation();
 
-  const canCreateResourceAccessReview = useAccessReview({
+  const [canCreateResourceAccessReview] = useAccessReview({
     group: namespace
       ? LocalResourceAccessReviewsModel.apiGroup
       : ResourceAccessReviewsModel.apiGroup,

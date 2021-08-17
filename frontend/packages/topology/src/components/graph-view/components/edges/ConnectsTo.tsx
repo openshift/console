@@ -25,7 +25,7 @@ const ConnectsTo: React.FC<ConnectsToProps> = ({ element, targetDragRef, childre
   const source = childEdges?.length > 0 ? (childEdges[0] as Edge).getSource() : element.getSource();
   const resourceObj = getResource(source);
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,

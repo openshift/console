@@ -7,8 +7,15 @@ import {
   ConsoleFetchText,
 } from './api-types';
 import { HorizontalNavProps } from './component-api-types';
+import {
+  CheckAccess,
+  UseAccessReview,
+  UseMultipleAccessReviews,
+  AsAccessReview,
+} from './internal/rbac';
 
 export * from './api-types';
+export * from './internal/rbac';
 
 const newMockImpl = <T extends (...args: any) => any>(): T => {
   return ((() => {
@@ -52,3 +59,9 @@ export const consoleFetchText: ConsoleFetchText = newMockImpl();
  * @param {object} match - match object provided by React Router
  */
 export const HorizontalNav: React.FC<HorizontalNavProps> = newMockImpl();
+
+// rbac
+export const checkAccess: CheckAccess = newMockImpl();
+export const useAccessReview: UseAccessReview = newMockImpl();
+export const useMultipleAccessReviews: UseMultipleAccessReviews = newMockImpl();
+export const asAccessReview: AsAccessReview = newMockImpl();

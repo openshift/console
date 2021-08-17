@@ -110,7 +110,7 @@ export const MachineCounts: React.FC<MachineCountsProps> = ({
   const readyReplicas = getReadyReplicas(resource);
   const availableReplicas = getAvailableReplicas(resource);
 
-  const canUpdate = useAccessReview({
+  const [canUpdate] = useAccessReview({
     group: resourceKind.apiGroup,
     resource: resourceKind.plural,
     verb: 'patch',

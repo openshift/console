@@ -10,7 +10,7 @@ describe('PipelineRunDecorator renders', () => {
   let spyUseAccessReview;
   beforeEach(() => {
     spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
+    spyUseAccessReview.mockReturnValue([true]);
   });
 
   it('expect a log link when it contains at least one PipelineRun', () => {
@@ -42,7 +42,7 @@ describe('PipelineRunDecorator renders', () => {
   });
 
   it('expect not to find an onClick functionality when there is a lack of permissions', () => {
-    spyUseAccessReview.mockReturnValue(false);
+    spyUseAccessReview.mockReturnValue([false]);
     const decoratorComp = shallow(
       <ConnectedPipelineRunDecorator
         pipeline={connectedPipelineOne.pipeline}

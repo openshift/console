@@ -13,7 +13,7 @@ export const withEditReviewAccess = (verb: K8sVerb) => (WrappedComponent: React.
   const Component: React.FC<ComponentProps> = (props) => {
     const resourceObj = getResource(props.element);
     const resourceModel = modelFor(referenceFor(resourceObj));
-    const editAccess = useAccessReview({
+    const [editAccess] = useAccessReview({
       group: resourceModel.apiGroup,
       verb,
       resource: resourceModel.plural,

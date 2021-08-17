@@ -52,7 +52,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
   const { resource } = props;
   const { name, namespace } = resource.metadata;
   const { triggers } = resource.spec;
-  const canGetSecret = useAccessReview({
+  const [canGetSecret] = useAccessReview({
     group: SecretModel.apiGroup,
     resource: SecretModel.plural,
     verb: 'get',

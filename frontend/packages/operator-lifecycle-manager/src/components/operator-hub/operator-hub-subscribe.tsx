@@ -136,7 +136,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     // eslint-disable-next-line no-console
     () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
   );
-  const canPatchConsoleOperatorConfig = useAccessReview({
+  const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',

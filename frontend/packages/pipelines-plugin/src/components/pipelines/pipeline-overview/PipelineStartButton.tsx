@@ -39,7 +39,7 @@ const PipelineStartButton: React.FC<PipelineStartButtonProps & StateProps> = ({
     namespace,
     verb: 'create',
   };
-  const isAllowed = useAccessReview(defaultAccessReview, impersonate);
+  const [isAllowed] = useAccessReview(defaultAccessReview, impersonate);
 
   return (
     isAllowed && (

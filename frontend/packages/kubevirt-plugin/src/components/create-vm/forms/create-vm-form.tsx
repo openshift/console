@@ -17,7 +17,7 @@ import {
   convertToBaseValue,
   humanizeBinaryBytes,
   LoadingBox,
-  useAccessReview2,
+  useAccessReview,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
@@ -86,7 +86,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
     isList: true,
   });
 
-  const [cloneAllowed, cloneAllowedLoading] = useAccessReview2({
+  const [cloneAllowed, cloneAllowedLoading] = useAccessReview({
     group: DataVolumeModel.apiGroup,
     resource: DataVolumeModel.plural,
     subresource: 'source',

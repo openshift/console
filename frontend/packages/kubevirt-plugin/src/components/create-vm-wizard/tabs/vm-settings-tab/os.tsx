@@ -118,7 +118,7 @@ export const OS: React.FC<OSProps> = React.memo(
     }
 
     const osSystemRecord = operatingSystems?.find((image) => image.id === os);
-    const canUploadGoldenImage = useAccessReview({
+    const [canUploadGoldenImage] = useAccessReview({
       group: PersistentVolumeClaimModel.apiGroup,
       resource: PersistentVolumeClaimModel.plural,
       namespace: osSystemRecord?.dataVolumeNamespace,

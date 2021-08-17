@@ -258,7 +258,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, trusted }) 
   };
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
   const { t } = useTranslation();
-  const canPatchConsoleOperatorConfig = useAccessReview({
+  const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',
@@ -313,7 +313,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
   };
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
   const { t } = useTranslation();
-  const canPatchConsoleOperatorConfig = useAccessReview({
+  const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',
@@ -883,7 +883,7 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
     isList: true,
   });
 
-  const canCreateCustomResource = useAccessReview({
+  const [canCreateCustomResource] = useAccessReview({
     group: initializationResourceGroup,
     resource: model?.plural,
     namespace: model?.namespaced
@@ -1206,7 +1206,7 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
     ];
   };
 
-  const canListSubscriptions = useAccessReview({
+  const [canListSubscriptions] = useAccessReview({
     group: SubscriptionModel.apiGroup,
     resource: SubscriptionModel.plural,
     verb: 'list',

@@ -63,6 +63,11 @@ export type AccessReviewResourceAttributes = {
   namespace?: string;
 };
 
+export type AccessReviewsResult = {
+  resourceAttributes: AccessReviewResourceAttributes;
+  allowed: boolean;
+};
+
 export type MatchExpression = {
   key: string;
   operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';

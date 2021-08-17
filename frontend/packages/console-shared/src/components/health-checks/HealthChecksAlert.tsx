@@ -56,7 +56,7 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
   const resourceModel = modelFor(kindForCRDResource);
   const resourceKind = resourceModel.crd ? kindForCRDResource : kind;
 
-  const canAddHealthChecks = useAccessReview({
+  const [canAddHealthChecks] = useAccessReview({
     group: resourceModel.apiGroup,
     resource: resourceModel.plural,
     namespace,

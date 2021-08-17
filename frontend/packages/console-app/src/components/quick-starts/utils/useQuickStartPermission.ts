@@ -1,5 +1,5 @@
 import { QuickStart } from '@patternfly/quickstarts';
-import { useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 
 const useQuickStartPermission = (quickStart: QuickStart): [boolean, boolean] => {
   const {
@@ -13,7 +13,7 @@ const useQuickStartPermission = (quickStart: QuickStart): [boolean, boolean] => 
     accessReviewResources.forEach((descriptor) => {
       // access review resources for a specific quick start is going to be static so the order will not change
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [review, loading] = useAccessReview2(descriptor);
+      const [review, loading] = useAccessReview(descriptor);
       accessReviews.push(review);
       accessReviewsLoading.push(loading);
     });

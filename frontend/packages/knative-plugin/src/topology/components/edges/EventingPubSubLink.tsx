@@ -35,7 +35,7 @@ const EventingPubSubLink: React.FC<EventingPubSubLinkProps> = ({
     resourceSourceObj.kind === EventingBrokerModel.kind &&
     Object.keys(edgeObj?.spec?.filter?.attributes ?? {}).length > 0;
   const resourceModel = modelFor(referenceFor(edgeObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'update',
     resource: resourceModel.plural,

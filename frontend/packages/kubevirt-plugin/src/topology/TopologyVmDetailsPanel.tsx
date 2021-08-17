@@ -20,10 +20,10 @@ export const TopologyVmDetailsPanel: React.FC<TopologyVmDetailsPanelProps> = obs
     const vmObj = vmData.resource as VMKind;
     const { podData: { pods = [] } = {} } = usePodsForVm(vmObj);
     const { vmi, vmStatusBundle } = vmData.data;
-    const canUpdate =
-      useAccessReview(
-        asAccessReview(getKubevirtAvailableModel(VirtualMachineModel), vmObj || {}, 'patch'),
-      ) && !!vmObj;
+    const [canEdit] = useAccessReview(
+      asAccessReview(getKubevirtAvailableModel(VirtualMachineModel), vmObj || {}, 'patch'),
+    );
+    const canUpdate = canEdit && !!vmObj;
     return (
       <div className="overview__sidebar-pane-body resource-overview__body">
         <Grid hasGutter>

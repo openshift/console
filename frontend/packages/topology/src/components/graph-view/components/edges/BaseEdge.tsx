@@ -37,7 +37,7 @@ const BaseEdge: React.FC<BaseEdgeProps> = ({
   const resourceObj = getResource(element.getSource());
   const resourceModel = resourceObj && modelFor(referenceFor(resourceObj));
 
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel?.apiGroup,
     verb: 'patch',
     resource: resourceModel?.plural,

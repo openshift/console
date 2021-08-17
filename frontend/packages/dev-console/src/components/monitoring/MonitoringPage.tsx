@@ -35,7 +35,7 @@ const handleNamespaceChange = (newNamespace: string): void => {
 export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
   const { t } = useTranslation();
   const activeNamespace = match.params.ns;
-  const prometheousRulesAccess = useAccessReview({
+  const [prometheousRulesAccess] = useAccessReview({
     group: 'monitoring.coreos.com',
     resource: 'prometheusrules',
     verb: 'get',

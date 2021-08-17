@@ -36,7 +36,7 @@ export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
   const { t } = useTranslation();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
-  const canPatchConsoleOperatorConfig = useAccessReview({
+  const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',

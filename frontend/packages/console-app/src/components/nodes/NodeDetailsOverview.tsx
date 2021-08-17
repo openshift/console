@@ -26,7 +26,7 @@ type NodeDetailsOverviewProps = {
 
 const NodeDetailsOverview: React.FC<NodeDetailsOverviewProps> = ({ node }) => {
   const machine = getNodeMachineNameAndNamespace(node);
-  const canUpdate = useAccessReview({
+  const [canUpdate] = useAccessReview({
     group: NodeModel.apiGroup,
     resource: NodeModel.plural,
     verb: 'patch',

@@ -26,7 +26,7 @@ const KafkaConnectionLink: React.FC<KafkaConnectionLinkProps> = ({
 }) => {
   const resourceObj = getResource(element.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'update',
     resource: resourceModel.plural,

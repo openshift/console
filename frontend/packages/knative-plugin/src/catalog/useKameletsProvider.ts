@@ -41,7 +41,7 @@ const useKameletsProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const canCreateKameletBinding = useAccessReview({
+  const [canCreateKameletBinding] = useAccessReview({
     group: CamelKameletBindingModel.apiGroup,
     resource: CamelKameletBindingModel.plural,
     verb: 'create',

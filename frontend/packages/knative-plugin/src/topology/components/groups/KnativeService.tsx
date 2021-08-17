@@ -29,7 +29,7 @@ export type KnativeServiceProps = {
 const KnativeService: React.FC<KnativeServiceProps> = (props) => {
   const resourceObj = getResource(props.element);
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,

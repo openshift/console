@@ -27,9 +27,8 @@ export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
   customData,
 }) => {
   const { t } = useTranslation();
-  const canUpdate =
-    useAccessReview(asAccessReview(TemplateModel, template, 'patch')) &&
-    !isCommonTemplate(template);
+  const [canEdit] = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
+  const canUpdate = canEdit && !isCommonTemplate(template);
 
   const provider = getTemplateProvider(t, template);
 

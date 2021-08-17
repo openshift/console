@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccessReview2 } from '@console/internal/components/utils';
+import { useAccessReview } from '@console/internal/components/utils';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { EventSourceMetaData } from '../components/add/import-types';
@@ -46,7 +46,7 @@ export const useEventSourceStatus = (
     eventSourceModels?.find((model: K8sKind) => model.kind === sourceKindProp);
   const sourceModel = isKameletSource ? CamelKameletBindingModel : eventSourceModel;
 
-  const [createSourceAccess, createSourceAccessLoading] = useAccessReview2({
+  const [createSourceAccess, createSourceAccessLoading] = useAccessReview({
     group: sourceModel?.apiGroup,
     resource: sourceModel?.plural,
     verb: 'create',

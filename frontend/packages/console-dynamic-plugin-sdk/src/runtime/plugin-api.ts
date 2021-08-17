@@ -12,6 +12,11 @@ export const exposePluginAPI = () => {
     consoleFetchJSON: require('@console/dynamic-plugin-sdk/src/utils/fetch').consoleFetchJSON,
     consoleFetchText: require('@console/dynamic-plugin-sdk/src/utils/fetch').consoleFetchText,
     HorizontalNav: require('@console/internal/components/utils/horizontal-nav').HorizontalNavFacade,
+    checkAccess: require('@console/dynamic-plugin-sdk/src/utils/rbac').checkAccess,
+    useAccessReview: require('@console/dynamic-plugin-sdk/src/utils/rbac').useAccessReview,
+    useMultipleAccessReviews: require('@console/dynamic-plugin-sdk/src/utils/rbac')
+      .useMultipleAccessReviews,
+    asAccessReview: require('@console/dynamic-plugin-sdk/src/utils/rbac').asAccessReview,
   };
   window.internalAPI = {
     ActivityItem: require('@console/shared/src/components/dashboard/activity-card/ActivityItem')

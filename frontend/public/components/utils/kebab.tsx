@@ -107,7 +107,7 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({
 };
 const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string }) => {
   const { option, impersonate } = props;
-  const isAllowed = useAccessReview(option.accessReview, impersonate);
+  const [isAllowed] = useAccessReview(option.accessReview, impersonate);
   return <KebabItem_ {...props} isAllowed={isAllowed} />;
 };
 

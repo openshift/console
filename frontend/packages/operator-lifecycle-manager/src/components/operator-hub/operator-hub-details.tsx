@@ -17,7 +17,7 @@ import { OperatorHubKind } from '.';
 const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();
 
-  const canEditDefaultSources = useAccessReview({
+  const [canEditDefaultSources] = useAccessReview({
     group: OperatorHubModel.apiGroup,
     resource: OperatorHubModel.plural,
     verb: 'patch',

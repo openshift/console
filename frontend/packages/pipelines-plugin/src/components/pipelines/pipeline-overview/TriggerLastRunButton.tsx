@@ -38,7 +38,7 @@ const TriggerLastRunButton: React.FC<TriggerLastRunButtonProps> = ({
     verb: 'create',
   };
   const accessReview = _.isEmpty(utilityAccessReview) ? defaultAccessReview : utilityAccessReview;
-  const isAllowed = useAccessReview(accessReview, impersonate);
+  const [isAllowed] = useAccessReview(accessReview, impersonate);
   return (
     isAllowed && (
       <Button

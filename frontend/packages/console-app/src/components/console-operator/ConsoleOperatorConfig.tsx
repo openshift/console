@@ -45,7 +45,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusType> = ({ enabled, plugi
     name: CONSOLE_OPERATOR_CONFIG_NAME,
   };
   const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>(console);
-  const canPatchConsoleOperatorConfig = useAccessReview({
+  const [canPatchConsoleOperatorConfig] = useAccessReview({
     group: ConsoleOperatorConfigModel.apiGroup,
     resource: ConsoleOperatorConfigModel.plural,
     verb: 'patch',

@@ -24,21 +24,21 @@ type PipelineSectionProps = {
 };
 
 const usePipelineAccessReview = (): boolean => {
-  const canListPipelines = useAccessReview({
+  const [canListPipelines] = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
     namespace: CLUSTER_PIPELINE_NS,
     verb: 'list',
   });
 
-  const canCreatePipelines = useAccessReview({
+  const [canCreatePipelines] = useAccessReview({
     group: PipelineModel.apiGroup,
     resource: PipelineModel.plural,
     namespace: getActiveNamespace(),
     verb: 'create',
   });
 
-  const canCreatePipelineResource = useAccessReview({
+  const [canCreatePipelineResource] = useAccessReview({
     group: PipelineResourceModel.apiGroup,
     resource: PipelineResourceModel.plural,
     namespace: getActiveNamespace(),

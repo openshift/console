@@ -23,7 +23,7 @@ type HelmReleaseProps = {
 const HelmRelease: React.FC<HelmReleaseProps> = (props) => {
   const secretObj = getResource(props.element);
   const resourceModel = secretObj ? modelFor(referenceFor(secretObj)) : null;
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel?.apiGroup,
     verb: 'patch',
     resource: resourceModel?.plural,

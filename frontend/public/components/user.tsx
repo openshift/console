@@ -81,7 +81,7 @@ const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 const NoDataEmptyMsgDetail = () => {
   const { t } = useTranslation();
-  const canEditIdentityProviders = useCanEditIdentityProviders();
+  const [canEditIdentityProviders] = useCanEditIdentityProviders();
   const [oauth, oauthLoaded] = useOAuthData(canEditIdentityProviders);
   return (
     <>

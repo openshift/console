@@ -29,7 +29,7 @@ import {
   RequestSizeInput,
   ResourceLink,
   resourcePath,
-  useAccessReview2,
+  useAccessReview,
   useMultipleAccessReviews,
 } from '@console/internal/components/utils';
 import {
@@ -589,7 +589,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(allowedTemplates);
   const { uploads, uploadData, uploadProxyURL } = React.useContext(CDIUploadContext);
   const [scConfigMap, cmLoaded] = useStorageClassConfigMap();
-  const [scAllowed, scAllowedLoading] = useAccessReview2({
+  const [scAllowed, scAllowedLoading] = useAccessReview({
     group: StorageClassModel.apiGroup,
     resource: StorageClassModel.plural,
     verb: 'list',

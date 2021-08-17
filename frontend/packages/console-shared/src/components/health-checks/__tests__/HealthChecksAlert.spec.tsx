@@ -12,18 +12,18 @@ jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
 describe('HealthChecksAlert', () => {
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
   it('should show alert when health check probes not present', () => {
-    spyUseAccessReview.mockReturnValue(true);
+    spyUseAccessReview.mockReturnValue([true]);
     const wrapper = shallow(<HealthChecksAlert resource={sampleDeployments.data[1]} />);
     expect(wrapper.find(Alert).exists()).toBe(true);
   });
 
   it('should not show alert when health check probes present', () => {
-    spyUseAccessReview.mockReturnValue(true);
+    spyUseAccessReview.mockReturnValue([true]);
     const wrapper = shallow(<HealthChecksAlert resource={sampleDeployments.data[2]} />);
     expect(wrapper.find(Alert).exists()).toBe(false);
   });
   it('should not show alert when user has only view access', () => {
-    spyUseAccessReview.mockReturnValue(false);
+    spyUseAccessReview.mockReturnValue([false]);
     const wrapper = shallow(<HealthChecksAlert resource={sampleDeployments.data[1]} />);
     expect(wrapper.find(Alert).exists()).toBe(false);
   });

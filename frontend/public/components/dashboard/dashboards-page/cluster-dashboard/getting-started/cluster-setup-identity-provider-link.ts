@@ -8,7 +8,7 @@ import { useCanEditIdentityProviders, useOAuthData } from '@console/shared/src/h
 
 export const useIdentityProviderLink = (): GettingStartedLink | null => {
   const { t } = useTranslation();
-  const canEdit = useCanEditIdentityProviders();
+  const [canEdit] = useCanEditIdentityProviders();
   const [oauthData, oauthLoaded, oauthLoadError] = useOAuthData(canEdit);
 
   if (!canEdit || !oauthData || !oauthLoaded || oauthLoadError) {

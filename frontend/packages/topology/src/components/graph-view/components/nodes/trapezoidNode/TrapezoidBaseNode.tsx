@@ -80,7 +80,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
   const resourceObj = getTopologyResourceObject(element.getData());
   const resourceModel = modelFor(referenceFor(resourceObj));
   const iconRadius = innerRadius * 0.9;
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,

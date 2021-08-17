@@ -21,7 +21,7 @@ describe('RoutesOverviewList', () => {
 
   it('should show info if no Routes present', () => {
     const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(true);
+    spyUseAccessReview.mockReturnValue([true]);
     wrapper = shallow(
       <RoutesOverviewList ksroutes={[]} resource={MockKnativeResources.revisions.data[0]} />,
     );

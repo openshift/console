@@ -30,7 +30,7 @@ describe('ProjectDetailsPage', () => {
 
   it('should not render the Project Access tab if user has no access to role bindings', () => {
     const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
-    spyUseAccessReview.mockReturnValue(false);
+    spyUseAccessReview.mockReturnValue([false]);
     const component = shallow(<PageContents match={testProjectMatch} />);
     const pages = component.find(DetailsPage).prop('pages');
     expect(_.find(pages, { name: 'Project Access' })).toBe(undefined);

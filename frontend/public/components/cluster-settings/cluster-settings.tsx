@@ -851,7 +851,7 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
       resource: ClusterVersionModel.plural,
       verb: 'patch',
       name: cv.metadata.name,
-    }) && window.SERVER_FLAGS.branding !== 'dedicated';
+    })[0] && window.SERVER_FLAGS.branding !== 'dedicated';
   const [machineConfigPools] = useK8sWatchResource<MachineConfigPoolKind[]>(
     MachineConfigPoolsResource,
   );

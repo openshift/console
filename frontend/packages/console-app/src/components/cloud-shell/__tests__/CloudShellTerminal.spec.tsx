@@ -13,7 +13,7 @@ jest.mock('../useCloudShellWorkspace', () => ({
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
-  useAccessReview2: () => [false, false],
+  useAccessReview: () => [false, false],
 }));
 
 jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {

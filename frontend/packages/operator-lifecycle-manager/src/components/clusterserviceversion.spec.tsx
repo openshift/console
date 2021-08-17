@@ -57,7 +57,7 @@ jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
 }));
 
 jest.mock('@console/internal/components/utils/rbac', () => ({
-  useAccessReview: () => true,
+  useAccessReview: () => [true],
 }));
 
 jest.mock('@console/shared/src/hooks/redux-selectors', () => {

@@ -42,7 +42,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
     setFieldValue,
   } = formikProps;
 
-  const canCreateBroker = useAccessReview({
+  const [canCreateBroker] = useAccessReview({
     group: EventingBrokerModel.apiGroup,
     resource: EventingBrokerModel.plural,
     namespace,

@@ -85,7 +85,8 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
-  const canUpdate = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch')) && !!vmiLike;
+  const [canEdit] = useAccessReview(asAccessReview(kindObj, vmiLike || {}, 'patch'));
+  const canUpdate = canEdit && !!vmiLike;
 
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);

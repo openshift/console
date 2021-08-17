@@ -122,7 +122,7 @@ const BuildOverviewList: React.FC<BuildOverviewListProps> = ({ buildConfig }) =>
   } = buildConfig;
   const { t } = useTranslation();
 
-  const canStartBuild = useAccessReview({
+  const [canStartBuild] = useAccessReview({
     group: BuildConfigModel.apiGroup,
     resource: BuildConfigModel.plural,
     subresource: 'instantiate',

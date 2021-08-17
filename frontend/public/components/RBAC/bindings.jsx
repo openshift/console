@@ -716,7 +716,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   const subjectKind = searchParams.get('subjectKind');
   const [namespace, setActiveNamespace] = useActiveNamespace();
   const metadata = { namespace };
-  const clusterAllowed = useAccessReview({
+  const [clusterAllowed] = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
     resource: ClusterRoleBindingModel.plural,
     verb: 'create',

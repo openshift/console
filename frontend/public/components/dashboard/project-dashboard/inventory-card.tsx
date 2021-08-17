@@ -134,7 +134,7 @@ export const InventoryCard = () => {
   );
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
-  const canListSecrets = useAccessReview({
+  const [canListSecrets] = useAccessReview({
     group: SecretModel.apiGroup,
     resource: SecretModel.plural,
     namespace: projectName,

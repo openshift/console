@@ -89,7 +89,7 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
   const tipContent = `Create a visual connector`;
   const resourceObj = getResource(element);
   const resourceModel = modelFor(referenceFor(resourceObj));
-  const editAccess = useAccessReview({
+  const [editAccess] = useAccessReview({
     group: resourceModel.apiGroup,
     verb: 'patch',
     resource: resourceModel.plural,
