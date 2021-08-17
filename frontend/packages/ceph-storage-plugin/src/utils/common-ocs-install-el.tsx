@@ -149,12 +149,15 @@ export const ActionAlert: React.FC<ActionAlertProps> = ({
         title={title}
         isInline
         actionLinks={
-          <AlertActionLink onClick={() => goToStepById(actionLinkStep)}>
-            {actionLinkText}
-          </AlertActionLink>
+          actionLinkStep &&
+          actionLinkText && (
+            <AlertActionLink onClick={() => goToStepById(actionLinkStep)}>
+              {actionLinkText}
+            </AlertActionLink>
+          )
         }
       >
-        <p>{text}</p>
+        {text && <p>{text}</p>}
       </Alert>
     )}
   </WizardContextConsumer>
