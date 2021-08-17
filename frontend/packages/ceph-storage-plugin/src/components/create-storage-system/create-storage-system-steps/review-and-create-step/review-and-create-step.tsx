@@ -37,7 +37,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
     backingStorage,
     nodes,
   } = state;
-  const { capacity } = capacityAndNodes;
+  const { capacity, arbiterLocation, enableArbiter } = capacityAndNodes;
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
@@ -110,6 +110,13 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
               count: zones.size,
             })}
           </ListItem>
+          {enableArbiter && (
+            <ListItem>
+              {t('ceph-storage-plugin~Arbiter zone: {{zone}}', {
+                zone: arbiterLocation,
+              })}
+            </ListItem>
+          )}
         </ReviewItem>
       )}
       {isMCG ? (

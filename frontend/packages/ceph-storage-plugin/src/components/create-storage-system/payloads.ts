@@ -100,7 +100,7 @@ export const createNoobaaResource = async (kms: WizardState['securityAndNetwork'
 
 export const createStorageCluster = async (state: WizardState) => {
   const { storageClass, capacityAndNodes, securityAndNetwork, nodes } = state;
-  const { capacity, enableArbiter, pvCount } = capacityAndNodes;
+  const { capacity, enableArbiter, arbiterLocation, pvCount } = capacityAndNodes;
   const { encryption, publicNetwork, clusterNetwork, kms } = securityAndNetwork;
 
   const storage = (storageClass?.provisioner === NO_PROVISIONER
@@ -122,8 +122,8 @@ export const createStorageCluster = async (state: WizardState) => {
     publicNetwork,
     clusterNetwork,
     kms.hasHandled && encryption.advanced,
-    null,
-    null,
+    arbiterLocation,
+    enableArbiter,
     pvCount,
   );
   return k8sCreate(OCSServiceModel, payload);

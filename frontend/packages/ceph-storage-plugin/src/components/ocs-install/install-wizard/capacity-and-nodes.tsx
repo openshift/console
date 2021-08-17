@@ -70,7 +70,7 @@ type SelectNodesDetailsProps = {
   memory: number;
 };
 
-const EnableArbiterLabel: React.FC = () => {
+export const EnableArbiterLabel: React.FC = () => {
   const { t } = useTranslation();
 
   return (

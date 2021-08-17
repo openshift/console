@@ -41,6 +41,7 @@ export const initialState: CreateStorageSystemState = {
   },
   capacityAndNodes: {
     enableArbiter: false,
+    arbiterLocation: '',
     capacity: null,
     pvCount: 0,
   },
@@ -88,6 +89,7 @@ type CreateStorageSystemState = {
   connectionDetails: ExternalState;
   capacityAndNodes: {
     enableArbiter: boolean;
+    arbiterLocation: string;
     // @TODO: Remove union types and use "number" as type.
     // Requires refactoring osd size dropdown.
     capacity: string | number;
@@ -172,6 +174,12 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'capacityAndNodes/pvCount':
       newState.capacityAndNodes.pvCount = action.payload;
       break;
+    case 'capacityAndNodes/arbiterLocation':
+      newState.capacityAndNodes.arbiterLocation = action.payload;
+      break;
+    case 'capacityAndNodes/enableArbiter':
+      newState.capacityAndNodes.enableArbiter = action.payload;
+      break;
     case 'securityAndNetwork/setKms':
       newState.securityAndNetwork.kms = action.payload;
       break;
@@ -235,6 +243,14 @@ export type CreateStorageSystemAction =
   | { type: 'wizard/nodes'; payload: WizardState['nodes'] }
   | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
   | { type: 'capacityAndNodes/pvCount'; payload: WizardState['capacityAndNodes']['pvCount'] }
+  | {
+      type: 'capacityAndNodes/arbiterLocation';
+      payload: WizardState['capacityAndNodes']['arbiterLocation'];
+    }
+  | {
+      type: 'capacityAndNodes/enableArbiter';
+      payload: WizardState['capacityAndNodes']['enableArbiter'];
+    }
   | {
       type: 'securityAndNetwork/setKms';
       payload: WizardState['securityAndNetwork']['kms'];

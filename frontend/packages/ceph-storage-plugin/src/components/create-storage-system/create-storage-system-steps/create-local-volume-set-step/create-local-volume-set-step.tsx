@@ -314,7 +314,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <>
       <span>
         {t(
-          "ceph-storage-plugin~After the LocalVolumeSet and StorageClass are created you won't be able to go back to this step.",
+          "ceph-storage-plugin~After the LocalVolumeSet is created you won't be able to go back to this step.",
         )}
       </span>
       {isArbiterSupported && (
@@ -327,7 +327,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   );
   return (
     <Modal
-      title={t('ceph-storage-plugin~Create StorageClass')}
+      title={t('ceph-storage-plugin~Create LocalVolumeSet')}
       isOpen={state.showConfirmModal}
       onClose={cancel}
       variant="small"
