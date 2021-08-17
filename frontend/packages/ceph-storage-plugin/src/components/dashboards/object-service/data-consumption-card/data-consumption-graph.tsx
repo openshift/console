@@ -84,6 +84,7 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
           {`${CHART_LABELS(metric, t)} ${suffixLabel}`}
         </div>
         <Chart
+          ariaTitle={t('ceph-storage-plugin~Data Consumption Graph')}
           containerComponent={
             <ChartVoronoiContainer
               labelComponent={<ChartTooltip style={{ fontSize: 8, paddingBottom: 0 }} />}
