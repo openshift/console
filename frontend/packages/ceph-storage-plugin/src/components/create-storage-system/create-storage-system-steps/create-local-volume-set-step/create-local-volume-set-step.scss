@@ -1,0 +1,21 @@
+.odf-create-lvs__alert--override {
+    .pf-c-alert__title {
+        margin-top: 0;
+    }
+}
+
+.odf-create-lvs__alert {
+    margin-top: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-global--spacer--md);
+}
+
+.odf-create-lvs__donut-chart {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: var(--pf-global--spacer--sm);
+  }
+  
+.odf-create-lvs__form {
+    margin-bottom: var(--pf-global--spacer--md);
+}

@@ -35,13 +35,16 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
     securityAndNetwork,
     createLocalVolumeSet,
     backingStorage,
+    nodes,
   } = state;
-  const { nodes, capacity } = capacityAndNodes;
+  const { capacity } = capacityAndNodes;
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
-  const formattedCapacity = !isNoProvisioner ? `${OSD_CAPACITY_SIZES[capacity]} TiB` : capacity;
+  const formattedCapacity = !isNoProvisioner
+    ? `${OSD_CAPACITY_SIZES[capacity]} TiB`
+    : humanizeBinaryBytes(capacity).string;
 
   const hasEncryption = encryption.clusterWide || encryption.storageClass;
 

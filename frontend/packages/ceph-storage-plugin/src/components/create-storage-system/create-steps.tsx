@@ -31,6 +31,8 @@ export const createSteps = (
     storageClass,
     capacityAndNodes,
     securityAndNetwork,
+    nodes,
+    createLocalVolumeSet,
   } = state;
   const { externalStorage, deployment } = backingStorage;
 
@@ -42,6 +44,8 @@ export const createSteps = (
           dispatch={dispatch}
           state={capacityAndNodes}
           storageClass={storageClass}
+          volumeSetName={createLocalVolumeSet.volumeSetName}
+          nodes={nodes}
         />
       ),
     },
@@ -131,6 +135,8 @@ export const createSteps = (
               state={state.createLocalVolumeSet}
               dispatch={dispatch}
               storageClass={storageClass}
+              nodes={nodes}
+              stepIdReached={stepIdReached}
             />
           ),
         },

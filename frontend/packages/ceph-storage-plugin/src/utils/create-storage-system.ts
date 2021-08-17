@@ -34,7 +34,7 @@ export const getAllZone = (nodes: WizardNodeState[]): Set<string> =>
     new Set<string>(),
   );
 
-export const createWizardNodeState = (nodes: NodeKind[]): WizardNodeState[] =>
+export const createWizardNodeState = (nodes: NodeKind[] = []): WizardNodeState[] =>
   nodes.map((node) => {
     const name = getName(node);
     const hostName = getLabel(node, 'kubernetes.io/hostname', '');

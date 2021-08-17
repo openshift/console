@@ -65,12 +65,13 @@ export const createNoobaaPayload = (): Payload => {
 
 export const createStorageClusterPayload = (state: WizardState): Payload => {
   const { apiGroup, apiVersion, kind, plural } = OCSServiceModel;
-  const { storageClass, capacityAndNodes, securityAndNetwork } = state;
-  const { nodes, capacity, enableArbiter, pvCount } = capacityAndNodes;
+  const { storageClass, capacityAndNodes, securityAndNetwork, nodes } = state;
+  const { capacity, enableArbiter, pvCount } = capacityAndNodes;
   const { encryption, publicNetwork, clusterNetwork, kms } = securityAndNetwork;
 
-  const storage =
-    storageClass?.provisioner === NO_PROVISIONER ? defaultRequestSize.BAREMETAL : capacity;
+  const storage = (storageClass?.provisioner === NO_PROVISIONER
+    ? defaultRequestSize.BAREMETAL
+    : capacity) as string;
 
   const validations = capacityAndNodesValidate(nodes, enableArbiter);
 

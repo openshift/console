@@ -60,9 +60,10 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     capacityAndNodes,
     createLocalVolumeSet,
     securityAndNetwork,
+    nodes,
   } = state;
   const { externalStorage } = backingStorage;
-  const { nodes, capacity } = capacityAndNodes;
+  const { capacity } = capacityAndNodes;
   const { chartNodes, volumeSetName, isValidDiskSize } = createLocalVolumeSet;
   const { encryption, kms, networkType, publicNetwork, clusterNetwork } = securityAndNetwork;
   const { canGoToNextStep } = getExternalStorage(externalStorage) || {};
@@ -82,7 +83,7 @@ const canJumpToNextStep = (name: string, state: WizardState, t: TFunction) => {
     case StepsName(t)[Steps.ConnectionDetails]:
       return canGoToNextStep && canGoToNextStep(createStorageClass, storageClass.name);
     case StepsName(t)[Steps.CreateLocalVolumeSet]:
-      return chartNodes.size < MINIMUM_NODES || !volumeSetName.trim().length || !isValidDiskSize;
+      return chartNodes.size >= MINIMUM_NODES && volumeSetName.trim().length && isValidDiskSize;
     case StepsName(t)[Steps.CapacityAndNodes]:
       return nodes.length >= MINIMUM_NODES && capacity;
     case StepsName(t)[Steps.SecurityAndNetwork]:
@@ -139,7 +140,7 @@ const getPayloads = (stepName: string, state: WizardState, hasOCS: boolean, t: T
 
       return !_.isEmpty(secondParam) && payloads;
     }
-    if (type === BackingStorageType.EXISTING) {
+    if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
       const { apiGroup, apiVersion, kind } = OCSServiceModel;
       const systemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
       return [
@@ -167,22 +168,30 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
 
   const stepId = activeStep.id as number;
   const stepName = activeStep.name as string;
+  const { nodes } = state;
 
   const jumpToNextStep = canJumpToNextStep(stepName, state, t);
 
+  const handleStepId = () =>
+    dispatch({
+      type: 'wizard/setStepIdReached',
+      payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
+    });
+
   const handleNext = async () => {
     const payloads = getPayloads(stepName, state, hasOCS, t);
-    if (payloads !== null) {
+    if (stepName === StepsName(t)[Steps.CreateLocalVolumeSet]) {
+      dispatch({
+        type: 'wizard/setCreateLocalVolumeSet',
+        payload: { field: 'showConfirmModal', value: true },
+      });
+    } else if (payloads !== null) {
       setRequestInProgress(true);
       try {
-        if (state.capacityAndNodes.nodes)
-          await Promise.all(labelNodes(state.capacityAndNodes.nodes));
+        if (nodes) await Promise.all(labelNodes(nodes));
         const requests = payloads.map(({ model, payload }) => k8sCreate(model as K8sKind, payload));
         await Promise.all([labelOCSNamespace(), ...requests]);
-        dispatch({
-          type: 'wizard/setStepIdReached',
-          payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
-        });
+        handleStepId();
         stepName === StepsName(t)[Steps.ReviewAndCreate]
           ? history.push(
               `/k8s/ns/${CEPH_STORAGE_NAMESPACE}/${referenceForModel(
@@ -197,10 +206,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         setRequestInProgress(false);
       }
     } else {
-      dispatch({
-        type: 'wizard/setStepIdReached',
-        payload: state.stepIdReached <= stepId ? stepId + 1 : state.stepIdReached,
-      });
+      handleStepId();
       onNext();
     }
   };
