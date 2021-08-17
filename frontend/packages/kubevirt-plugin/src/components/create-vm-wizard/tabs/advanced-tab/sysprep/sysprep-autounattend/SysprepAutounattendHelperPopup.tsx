@@ -11,7 +11,9 @@ const SysprepAutounattendHelperPopup: React.FC = () => {
         <Trans t={t} ns="kubevirt-plugin">
           <Text component={TextVariants.h6}>Autounattend.xml</Text>
           <Text component={TextVariants.p}>
-            The answer file can be provided in a ConfigMap or a Secret with the key autounattend.xml
+            Autounattend will be picked up automatically during windows installation. it can be used
+            with destructive actions such as disk formatting. Autounattend will only be used once
+            during installation.
           </Text>
           <ExternalLink
             href="https://kubevirt.io/user-guide/virtual_machines/startup_scripts/#sysprep"
