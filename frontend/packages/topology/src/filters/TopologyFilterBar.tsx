@@ -20,6 +20,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { useQueryParams } from '@console/shared';
+import ExportApplication from '../components/export-app/ExportApplication';
 import TopologyQuickSearchButton from '../components/quick-search/TopologyQuickSearchButton';
 import { TopologyViewType } from '../topology-types';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
@@ -143,11 +144,17 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
             </ToolbarItem>
           ) : null}
         </ToolbarGroup>
-        {kialiLink && (
-          <ToolbarItem className="odc-topology-filter-bar__kiali-link">
-            <ExternalLink href={kialiLink} text={t('topology~Kiali')} />
-          </ToolbarItem>
-        )}
+        <ToolbarGroup
+          variant={ToolbarGroupVariant['button-group']}
+          alignment={{ default: 'alignRight' }}
+        >
+          {kialiLink && (
+            <ToolbarItem className="odc-topology-filter-bar__kiali-link1">
+              <ExternalLink href={kialiLink} text={t('topology~Kiali')} />
+            </ToolbarItem>
+          )}
+          <ExportApplication namespace={namespace} isDisabled={isDisabled} />
+        </ToolbarGroup>
       </ToolbarContent>
     </Toolbar>
   );

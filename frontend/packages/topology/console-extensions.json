@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "primer.gitops.io",
+        "version": "v1alpha1",
+        "kind": "Export"
+      },
+      "flag": "ALLOW_EXPORT_APP"
+    }
+  },
+  {
     "type": "console.redux-reducer",
     "properties": {
       "scope": "devconsole",
@@ -161,6 +172,16 @@
       "contentProvider": {
         "$codeRef": "workload.useHealthChecksAlert"
       }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "exportAppContext.ExportAppContextProvider" },
+      "useValueHook": { "$codeRef": "exportAppContext.useExportAppFormToast" }
+    },
+    "flags": {
+      "required": ["ALLOW_EXPORT_APP"]
     }
   }
 ]
