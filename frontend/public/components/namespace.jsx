@@ -749,6 +749,14 @@ const ProjectList_ = connectToFlags(
         ? new Set(tableColumns[projectColumnManagementID])
         : null;
 
+    const customData = React.useMemo(
+      () => ({
+        showMetrics,
+        tableColumns: tableColumns?.[projectColumnManagementID],
+      }),
+      [showMetrics, tableColumns],
+    );
+
     // Don't render the table until we know whether we can get metrics. It's
     // not possible to change the table headers once the component is mounted.
     if (flagPending(canGetNS)) {
@@ -762,13 +770,7 @@ const ProjectList_ = connectToFlags(
       />
     );
     const ProjectNotFoundMessage = () => <MsgBox title={t('public~No projects found')} />;
-    const customData = React.useMemo(
-      () => ({
-        showMetrics,
-        tableColumns: tableColumns?.[projectColumnManagementID],
-      }),
-      [showMetrics, tableColumns],
-    );
+
     return (
       <Table
         {...tableProps}
