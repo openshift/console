@@ -1,16 +1,18 @@
-import { DISK_SOURCE, TEMPLATE_NAME, VM_ACTION_TIMEOUT, VM_STATUS, VM_ACTION } from '../../const';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { DISK_SOURCE, TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../const';
 import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
 import { confirmButton, detailViewAction } from '../../view/actions';
-import { addDisk, delDisk, waitForCurrentVMStatus } from '../../view/dialog';
+import { addDisk, delDisk, hotPlugPvcOpts } from '../../view/dialog';
+import { createPVC } from '../../view/pvc';
 import * as tags from '../../view/selector';
 import { tab } from '../../view/tab';
 import { virtualization } from '../../view/virtualization';
-import { vm, waitForStatus } from '../../view/vm';
+import { vm, waitForStatus, waitForVMStatusLabel } from '../../view/vm';
 
 const vmData: VirtualMachineData = {
-  name: `test-vm-hotplug-${testName.split('-')[1]}`,
+  name: `hotplug-${testName}`,
   namespace: testName,
   template: TEMPLATE_NAME,
   provisionSource: ProvisionSource.URL,
@@ -19,23 +21,178 @@ const vmData: VirtualMachineData = {
   startOnCreation: true,
 };
 
-const hotPlugDisk: Disk = {
+const autoHotplugDiskBlank: Disk = {
+  description: 'ID(CNV-6856) Attach AutoDetach hotplug disk with [Blank] as source to running VM',
+  name: 'disk-auto-blank',
   size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
 };
 
-const FCB32_URL_IMG =
-  'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/fedora-images/Fedora-Cloud-Base-32-1.6.x86_64.qcow2';
-const FCB32_URL_REG = 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest';
-const PVC_NAME = 'hotplug-test-pvc';
+const autoHotplugDiskUrl: Disk = {
+  description:
+    'ID(CNV-6855) Attach AutoDetach hotplug disk with [Import via URL] as source selection to running VM',
+  name: 'disk-auto-url',
+  provisionSource: ProvisionSource.URL,
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Url,
+};
+
+const autoHotplugDiskReg: Disk = {
+  description:
+    'ID(CNV-6859) Attach AutoDetach hotplug disk with [Import via Registry] to running VM',
+  name: 'disk-auto-reg',
+  provisionSource: ProvisionSource.REGISTRY,
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Container,
+};
+
+const autoHotplugDiskClone: Disk = {
+  description:
+    'ID(CNV-6858) Attach AutoDetach hotplug disk with [Clone existing PVC] to running VM',
+  name: 'disk-auto-clone',
+  provisionSource: ProvisionSource.CLONE_PVC,
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.AttachClonedDisk,
+};
+
+const autoHotplugDiskUse: Disk = {
+  description:
+    'ID(CNV-6857) Attach AutoDetach hotplug disk with [Use an existing PVC] as source selection to running VM',
+  name: 'disk-auto-use',
+  provisionSource: ProvisionSource.EXISTING,
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.AttachDisk,
+};
+
+const persHotplugDiskBlank: Disk = {
+  description: 'ID(CNV-6828) Attach Persistent hotplug disk with [Blank] as source to running VM',
+  name: 'disk-pers-blank',
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.Blank,
+};
+
+const persHotplugDiskUrl: Disk = {
+  description:
+    'ID(CNV-6860) Attach Persistent hotplug disk with [Import via URL] as source to running VM',
+  name: 'disk-pers-url',
+  provisionSource: ProvisionSource.URL,
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.Url,
+};
+
+const persHotplugDiskReg: Disk = {
+  description:
+    'ID(CNV-6863) Attach Persistent hotplug disk with [Import via Registry] as source to running VM',
+  name: 'disk-pers-reg',
+  provisionSource: ProvisionSource.REGISTRY,
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.Container,
+};
+
+const persHotplugDiskClone: Disk = {
+  description:
+    'ID(CNV-6862) Attach Persistent hotplug disk with [Clone existing PVC] as source to running VM',
+  name: 'disk-pers-clone',
+  provisionSource: ProvisionSource.CLONE_PVC,
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.AttachClonedDisk,
+};
+
+const persHotplugDiskUse: Disk = {
+  description:
+    'ID(CNV-6861) Attach Persistent hotplug disk with [Use an existing PVC] as source to running VM',
+  name: 'disk-pers-use',
+  provisionSource: ProvisionSource.EXISTING,
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.AttachDisk,
+};
+
+const autoHotplugDisk: Disk = {
+  description: '',
+  name: 'disk-auto-hotplug',
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
+};
+
+const autoHotplugDisk1: Disk = {
+  description: '',
+  name: 'disk-auto-hotplug1',
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
+};
+
+const autoHotplugDisk2: Disk = {
+  description: '',
+  name: 'disk-auto-hotplug2',
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
+};
+
+const autoHotplugDisk3: Disk = {
+  description: '',
+  name: 'disk-auto-hotplug3',
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
+};
+
+const autoHotplugDisk4: Disk = {
+  description: '',
+  name: 'disk-auto-hotplug4',
+  size: '2',
+  autoDetach: true,
+  source: DISK_SOURCE.Blank,
+};
+
+const persHotplugDisk: Disk = {
+  description: '',
+  name: 'disk-pers-hotplug',
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.Blank,
+};
+
+const persHotplugDisk1: Disk = {
+  description: '',
+  name: 'disk-pers-hotplug1',
+  size: '2',
+  autoDetach: false,
+  source: DISK_SOURCE.Blank,
+};
+
+export const verifyHotplugLabel = (name: string, tag: string) => {
+  cy.get(`[data-id="${name}"]`)
+    .should('exist')
+    .should('contain', tag);
+};
+
+export const verifyDiskAttached = (disk: Disk, tag: string) => {
+  addDisk(disk);
+  verifyHotplugLabel(disk.name, tag);
+};
 
 describe('Test UI for VM disk hot-plug', () => {
   before(() => {
     cy.Login();
     cy.visit('/');
     cy.createProject(testName);
+    createPVC(ProvisionSource.URL.getSource(), hotPlugPvcOpts.pvcName, '30');
+    virtualization.vms.visit();
     vm.create(vmData);
     waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);
-    virtualization.vms.visit();
     cy.byLegacyTestID(vmData.name)
       .should('exist')
       .click();
@@ -50,6 +207,7 @@ describe('Test UI for VM disk hot-plug', () => {
         namespace: vmData.namespace,
       },
     });
+    cy.exec('rm -fr /tmp/cirros.*');
     cy.deleteResource({
       kind: 'Namespace',
       metadata: {
@@ -58,214 +216,91 @@ describe('Test UI for VM disk hot-plug', () => {
     });
   });
 
-  it('ID(CNV-6828) Attach Persistent hotplug disk with [Blank] as source to running VM', () => {
-    hotPlugDisk.autoDetach = false;
-    hotPlugDisk.name = 'disk-6828';
-    hotPlugDisk.source = DISK_SOURCE.Blank;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
-  });
-
-  it('ID(CNV-6839) Detach hotplug disk from running VM', () => {
-    hotPlugDisk.name = 'disk-6828';
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
-
-    delDisk(hotPlugDisk.name);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('not.exist');
-  });
-
-  it('ID(CNV-6860) Attach Persistent hotplug disk with [Import via URL] as source to running VM', () => {
-    hotPlugDisk.autoDetach = false;
-    hotPlugDisk.name = 'disk-6860';
-    hotPlugDisk.source = DISK_SOURCE.Url;
-    hotPlugDisk.url = FCB32_URL_IMG;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
-  });
-
   it('ID(CNV-6833) Persistent hotplug disk is not detached on VM stop', () => {
-    hotPlugDisk.name = 'disk-6860';
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
-
+    verifyDiskAttached(persHotplugDisk1, 'PersistingHotplug');
     detailViewAction(VM_ACTION.Stop);
     cy.get(confirmButton).click();
-    waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
-
-    // cleanup
-    delDisk(hotPlugDisk.name);
+    waitForVMStatusLabel(VM_STATUS.Stopped, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    cy.get(`[data-id="${persHotplugDisk1.name}"]`).should('exist');
     detailViewAction(VM_ACTION.Start);
-    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
-  });
-
-  it('ID(CNV-6863) Attach Persistent hotplug disk with [Import via Registry] as source to running VM', () => {
-    hotPlugDisk.autoDetach = false;
-    hotPlugDisk.name = 'disk-6863';
-    hotPlugDisk.source = DISK_SOURCE.Container;
-    hotPlugDisk.url = FCB32_URL_REG;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
+    waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 
   it('ID(CNV-6749) Persistent hotplug disk is not detached on VM restart', () => {
-    hotPlugDisk.name = 'disk-6863';
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
-
+    verifyDiskAttached(persHotplugDisk, 'PersistingHotplug');
     detailViewAction(VM_ACTION.Restart);
     cy.get(confirmButton).click();
-    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
+    waitForVMStatusLabel(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    cy.get(`[data-id="${persHotplugDisk.name}"]`).should('exist');
   });
 
-  it('ID(CNV-6862) Attach Persistent hotplug disk with [Clone existing PVC] as source to running VM', () => {
-    hotPlugDisk.autoDetach = false;
-    hotPlugDisk.name = 'disk-6862';
-    hotPlugDisk.source = DISK_SOURCE.AttachClonedDisk;
-    hotPlugDisk.pvc = PVC_NAME;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'PersistingHotplug');
+  it('ID(CNV-6839) Detach hotplug disk from running VM', () => {
+    verifyDiskAttached(autoHotplugDisk1, 'AutoDetachHotplug');
+    delDisk(autoHotplugDisk1.name);
+    cy.get(`[data-id="${autoHotplugDisk1.name}"]`).should('not.exist');
   });
 
-  xit('ID(CNV-6861) Attach Persistent hotplug disk with [Use an existing PVC] as source to running VM', () => {
-    hotPlugDisk.autoDetach = false;
-    hotPlugDisk.name = 'disk-6861';
-    hotPlugDisk.source = DISK_SOURCE.AttachDisk;
-    hotPlugDisk.pvc = PVC_NAME;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
+  it('ID(CNV-6832) Notification about AutoDetach disks is displayed on VM restart', () => {
+    verifyDiskAttached(autoHotplugDisk2, 'AutoDetachHotplug');
+    detailViewAction(VM_ACTION.Restart);
+    cy.get(tags.alertDescr)
       .should('exist')
-      .should('contain', 'PersistingHotplug');
-  });
-
-  it('ID(CNV-6856) Attach AutoDetach hotplug disk with [Blank] as source to running VM', () => {
-    hotPlugDisk.autoDetach = true;
-    hotPlugDisk.name = 'disk-6856';
-    hotPlugDisk.source = DISK_SOURCE.Blank;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'AutoDetachHotplug');
+      .should('contain', autoHotplugDisk2.name);
+    cy.get(tags.modalCancel).click();
   });
 
   it('ID(CNV-6835) Notification about AutoDetach disks is displayed on VM stop', () => {
-    hotPlugDisk.name = 'disk-6856';
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
-
+    verifyDiskAttached(autoHotplugDisk3, 'AutoDetachHotplug');
     detailViewAction(VM_ACTION.Stop);
-
     cy.get(tags.alertDescr)
       .should('exist')
-      .should('contain', hotPlugDisk.name);
+      .should('contain', autoHotplugDisk3.name);
     cy.get(tags.modalCancel).click();
   });
 
   it('ID(CNV-6834) AutoDetach hotplug disk is detached on VM stop', () => {
-    hotPlugDisk.name = 'disk-6856';
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
-
+    verifyDiskAttached(autoHotplugDisk4, 'PersistingHotplug');
     detailViewAction(VM_ACTION.Stop);
     cy.get(confirmButton).click();
-    waitForCurrentVMStatus(VM_STATUS.Off, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForVMStatusLabel(VM_STATUS.Stopped, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    cy.get(`[data-id="${autoHotplugDisk4.name}"]`).should('not.exist');
 
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('not.exist');
-
+    // cleanup
     detailViewAction(VM_ACTION.Start);
-    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
-  });
-
-  it('ID(CNV-6855) Attach AutoDetach hotplug disk with [Import via URL] as source selection to running VM', () => {
-    hotPlugDisk.autoDetach = true;
-    hotPlugDisk.name = 'disk-6855';
-    hotPlugDisk.source = DISK_SOURCE.Url;
-    hotPlugDisk.url = FCB32_URL_IMG;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'AutoDetachHotplug');
+    waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
   });
 
   it('ID(CNV-6750) AutoDetach hotplug disk is detached on VM restart', () => {
-    hotPlugDisk.name = 'disk-6855';
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('exist');
-
+    verifyDiskAttached(autoHotplugDisk, 'PersistingHotplug');
     detailViewAction(VM_ACTION.Restart);
     cy.get(confirmButton).click();
-    waitForCurrentVMStatus(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    waitForCurrentVMStatus(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
-    cy.get(`[data-id="${hotPlugDisk.name}"]`).should('not.exist');
+    waitForVMStatusLabel(VM_STATUS.Starting, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    waitForVMStatusLabel(VM_STATUS.Running, VM_ACTION_TIMEOUT.VM_BOOTUP);
+    cy.get(`[data-id="${autoHotplugDisk.name}"]`).should('not.exist');
   });
 
-  it('ID(CNV-6859) Attach AutoDetach hotplug disk with [Import via Registry] to running VM', () => {
-    hotPlugDisk.autoDetach = true;
-    hotPlugDisk.name = 'disk-6859';
-    hotPlugDisk.source = DISK_SOURCE.Container;
-    hotPlugDisk.url = FCB32_URL_REG;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'AutoDetachHotplug');
+  [
+    persHotplugDiskBlank,
+    persHotplugDiskUrl,
+    persHotplugDiskReg,
+    persHotplugDiskClone,
+    // persHotplugDiskUse,
+  ].forEach((disk) => {
+    it(`${disk.description}`, () => {
+      verifyDiskAttached(disk, 'PersistingHotplug');
+    });
   });
 
-  it('ID(CNV-6858) Attach AutoDetach hotplug disk with [Clone existing PVC] to running VM', () => {
-    hotPlugDisk.autoDetach = true;
-    hotPlugDisk.name = 'disk-6858';
-    hotPlugDisk.source = DISK_SOURCE.AttachClonedDisk;
-    hotPlugDisk.pvc = PVC_NAME;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'AutoDetachHotplug');
-  });
-
-  xit('ID(CNV-6857) Attach AutoDetach hotplug disk with [Use an existing PVC] as source selection to running VM', () => {
-    hotPlugDisk.autoDetach = true;
-    hotPlugDisk.name = 'disk-6857';
-    hotPlugDisk.source = DISK_SOURCE.AttachDisk;
-    hotPlugDisk.pvc = PVC_NAME;
-
-    addDisk(hotPlugDisk);
-
-    cy.get(`[data-id="${hotPlugDisk.name}"]`)
-      .should('exist')
-      .should('contain', 'AutoDetachHotplug');
+  [
+    autoHotplugDiskBlank,
+    autoHotplugDiskUrl,
+    autoHotplugDiskReg,
+    autoHotplugDiskClone,
+    // autoHotplugDiskUse,
+  ].forEach((disk) => {
+    it(`${disk.description}`, () => {
+      verifyDiskAttached(disk, 'AutoDetachHotplug');
+    });
   });
 });

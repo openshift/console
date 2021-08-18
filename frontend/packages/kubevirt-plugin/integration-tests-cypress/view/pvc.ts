@@ -37,3 +37,11 @@ export const pvc = {
     },
   },
 };
+
+export const createPVC = (imgName: string, pvcName: string, pvcSize: string) => {
+  pvc.form.open();
+  pvc.form.fillPVCSize(pvcSize);
+  // pvc.form.fillImageName(imgName);
+  pvc.form.fillPVCName(pvcName);
+  pvc.form.create();
+};
