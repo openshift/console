@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Split, SplitItem, Label } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
+import { BreadCrumbs, ExternalLink } from '@console/internal/components/utils';
 import './GitOpsDetailsPageHeading.scss';
 
 interface GitOpsDetailsPageHeadingProps {
@@ -33,32 +32,16 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   return (
     <div className="odc-gitops-details-page-heading co-m-nav-title co-m-nav-title--breadcrumbs">
       <BreadCrumbs breadcrumbs={breadcrumbs} />
-      <h1 className="co-m-pane__heading">
+      <h1 className="co-m-pane__heading" style={{ marginRight: 'var(--pf-global--spacer--sm)' }}>
         <div className="co-m-pane__name co-resource-item">
-          <ResourceIcon kind="application" className="co-m-resource-icon--lg" />
           <span className="co-resource-item__resource-name">{appName}</span>
         </div>
         {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
-      <Split className="odc-gitops-details-page-heading__repo" hasGutter>
-        <SplitItem>{t('gitops-plugin~Manifest file repo')}:</SplitItem>
-        <SplitItem isFilled>
-          <Label
-            style={{ fontSize: '12px' }}
-            color="blue"
-            icon={routeDecoratorIcon(manifestURL, 12, t)}
-          >
-            <a
-              style={{ color: 'var(--pf-c-label__content--Color)' }}
-              href={manifestURL}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {manifestURL}
-            </a>
-          </Label>
-        </SplitItem>
-      </Split>
+      <ExternalLink href={manifestURL} additionalClassName={'co-break-all'}>
+        {routeDecoratorIcon(manifestURL, 12, t)}&nbsp;
+        {manifestURL}&nbsp;
+      </ExternalLink>
     </div>
   );
 };
