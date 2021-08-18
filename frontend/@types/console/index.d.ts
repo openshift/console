@@ -47,6 +47,7 @@ declare interface Window {
     quickStarts: string;
     clusters: string[];
     projectAccessClusterRoles: string;
+    serviceAccountToken: string;
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
