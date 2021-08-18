@@ -1,48 +1,105 @@
 import * as React from 'react';
-import { FocusTrap } from '@patternfly/react-core';
-import { Popper } from '../../popper';
-import { MenuOption } from '../types';
-import ActionMenuContent from './ActionMenuContent';
+import { Popper, MenuToggle } from '@patternfly/react-core';
+import { EllipsisVIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
+import { ActionMenuVariant } from '../types';
 
 type ActionMenuRendererProps = {
-  open: boolean;
-  options: MenuOption[];
-  toggleRef: () => Element;
-  onClick: () => void;
-  onRequestClose: (e?: MouseEvent) => void;
+  isOpen: boolean;
+  isDisabled: boolean;
+  menu: React.ReactElement;
+  menuRef: React.RefObject<HTMLElement>;
+  toggleVariant?: ActionMenuVariant;
+  toggleTitle?: string;
+  onToggleClick: (state: boolean) => void;
+  onToggleHover: () => void;
 };
 
 const ActionMenuRenderer: React.FC<ActionMenuRendererProps> = ({
-  open,
-  options,
-  toggleRef,
-  onClick,
-  onRequestClose,
+  isOpen,
+  isDisabled,
+  menu,
+  menuRef,
+  toggleVariant = ActionMenuVariant.KEBAB,
+  toggleTitle,
+  onToggleClick,
+  onToggleHover,
 }) => {
-  const menuRef = React.useRef<HTMLDivElement>();
-  const menuRefCb = React.useCallback(() => menuRef.current, []);
+  const { t } = useTranslation();
+  const toggleRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+  const isKebabVariant = toggleVariant === ActionMenuVariant.KEBAB;
+  const toggleLabel = toggleTitle || t('console-shared~Actions');
+
+  const handleMenuKeys = (event) => {
+    if (!isOpen) {
+      return;
+    }
+    if (menuRef.current) {
+      if (event.key === 'Escape') {
+        onToggleClick(false);
+        toggleRef.current.focus();
+      }
+      if (!menuRef.current?.contains(event.target) && event.key === 'Tab') {
+        onToggleClick(false);
+      }
+    }
+  };
+
+  const handleClickOutside = (event) => {
+    if (isOpen && !menuRef.current.contains(event.target)) {
+      onToggleClick(false);
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('keydown', handleMenuKeys);
+    window.addEventListener('click', handleClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleMenuKeys);
+      window.removeEventListener('click', handleClickOutside);
+    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // This needs to be run only on component mount/unmount
+
+  const handleToggleClick = (ev) => {
+    ev.stopPropagation(); // Stop handleClickOutside from handling
+    setTimeout(() => {
+      const firstElement = menuRef?.current?.querySelector<HTMLElement>(
+        'li > button:not(:disabled)',
+      );
+      firstElement?.focus();
+    }, 0);
+    onToggleClick(!isOpen);
+  };
+
+  const toggle = (
+    <MenuToggle
+      variant={toggleVariant}
+      innerRef={toggleRef}
+      isExpanded={isOpen}
+      isDisabled={isDisabled}
+      aria-expanded={isOpen}
+      aria-label={toggleLabel}
+      aria-haspopup="true"
+      data-test-id={isKebabVariant ? 'kebab-button' : 'actions-menu-button'}
+      onClick={handleToggleClick}
+      {...(isKebabVariant ? { onFocus: onToggleHover, onMouseEnter: onToggleHover } : {})}
+    >
+      {isKebabVariant ? <EllipsisVIcon /> : toggleLabel}
+    </MenuToggle>
+  );
 
   return (
-    <Popper
-      open={open}
-      placement="bottom-end"
-      onRequestClose={onRequestClose}
-      reference={toggleRef}
-      closeOnEsc
-      closeOnOutsideClick
-    >
-      <FocusTrap
-        focusTrapOptions={{
-          clickOutsideDeactivates: true,
-          returnFocusOnDeactivate: false,
-          fallbackFocus: menuRefCb,
-        }}
-      >
-        <div ref={menuRef} className="pf-c-menu pf-m-flyout">
-          <ActionMenuContent options={options} onClick={onClick} focusItem={options[0]} />
-        </div>
-      </FocusTrap>
-    </Popper>
+    <div ref={containerRef}>
+      <Popper
+        trigger={toggle}
+        popper={menu}
+        placement="bottom-end"
+        isVisible={isOpen}
+        appendTo={containerRef.current}
+        popperMatchesTriggerWidth={false}
+      />
+    </div>
   );
 };
 
