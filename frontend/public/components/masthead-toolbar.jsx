@@ -40,6 +40,21 @@ import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
 import { withTelemetry, withQuickStartContext } from '@console/shared/src/hoc';
 
+const defaultHelpLinks = [
+  {
+    // t('public~Learning Portal')
+    label: 'Learning Portal',
+    externalLink: true,
+    href: 'https://learn.openshift.com/?ref=webconsole',
+  },
+  {
+    // t('public~OpenShift Blog')
+    label: 'OpenShift Blog',
+    externalLink: true,
+    href: 'https://blog.openshift.com',
+  },
+];
+
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
   return !_.isEmpty(_.get(statuspageData, 'incidents')) ? (
@@ -377,6 +392,14 @@ class MastheadToolbarContents_ extends React.Component {
         },
       ],
     });
+
+    // Add default help links to start of additional links from operator
+    additionalHelpActions.actions = defaultHelpLinks
+      .map((helpLink) => ({
+        ...helpLink,
+        label: t(`public~${helpLink.label}`),
+      }))
+      .concat(additionalHelpActions.actions);
 
     if (!_.isEmpty(additionalHelpActions.actions)) {
       helpActions.push(additionalHelpActions);
