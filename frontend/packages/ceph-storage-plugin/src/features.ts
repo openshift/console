@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Dispatch } from 'react-redux';
-import { k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
+import { k8sGet, k8sList, StorageClassResourceKind, ListKind } from '@console/internal/module/k8s';
 import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
@@ -9,7 +9,7 @@ import { setFlag } from '@console/internal/actions/features';
 import { FeatureDetector } from '@console/plugin-sdk';
 import { getAnnotations, getName } from '@console/shared/src/selectors/common';
 import { fetchK8s } from '@console/internal/graphql/client';
-import { StorageClassModel } from '@console/internal/models';
+import { NamespaceModel, StorageClassModel } from '@console/internal/models';
 import { OCSServiceModel, CephClusterModel, NooBaaSystemModel } from './models';
 import {
   CEPH_STORAGE_NAMESPACE,
@@ -18,11 +18,14 @@ import {
   SECOND,
   OCS_OPERATOR,
   NOOBAA_PROVISIONER,
+  ODF_MANAGED_LABEL,
 } from './constants';
 import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
+
+export const ODF_MANAGED_FLAG = 'ODF_MANAGED';
 
 export const LSO_FLAG = 'LSO';
 
@@ -136,6 +139,18 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
     dispatch(setFlag(OCS_FLAG, false));
     dispatch(setFlag(OCS_CONVERGED_FLAG, false));
     dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+  }
+};
+
+export const detectManagedODF: FeatureDetector = async (dispatch) => {
+  try {
+    const ns = await k8sGet(NamespaceModel, CEPH_STORAGE_NAMESPACE);
+    if (ns) {
+      const isManagedCluster = ns?.metadata?.labels?.[ODF_MANAGED_LABEL];
+      dispatch(setFlag(ODF_MANAGED_FLAG, !!isManagedCluster));
+    }
+  } catch (error) {
+    dispatch(setFlag(ODF_MANAGED_FLAG, false));
   }
 };
 
