@@ -111,39 +111,12 @@ const getCSRFToken = () =>
     .map((c) => c.slice(cookiePrefix.length))
     .pop();
 
-const returnFetch = (url, fetchPromise, timeout) => {
-  if (timeout < 1) {
-    return fetchPromise;
-  }
-
-  const timeoutPromise = new Promise((unused, reject) =>
-    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
-  );
-
-  // Initiate both the fetch promise and a timeout promise
-  return Promise.race([fetchPromise, timeoutPromise]);
-};
-
 const coFetchInternal = (url, options, timeout, retry) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
   if (allOptions.method !== 'GET') {
     allOptions.headers['X-CSRFToken'] = getCSRFToken();
   }
 
-  if (url.includes('http://log-exploration-api-route-openshift-logging.apps')) {
-    const fetchPromise = fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        Authorization: allOptions.headers.Authorization,
-      },
-      referrerPolicy: 'no-referrer',
-    });
-
-    return returnFetch(url, fetchPromise, timeout);
-  }
   // If the URL being requested is absolute (and therefore, not a local request),
   // remove the authorization header to prevent credentials from leaking.
   if (url.indexOf('://') >= 0) {
@@ -155,7 +128,17 @@ const coFetchInternal = (url, options, timeout, retry) => {
     validateStatus(response, url, allOptions.method, retry),
   );
 
-  return returnFetch(url, fetchPromise, timeout);
+  // return fetch promise directly if timeout <= 0
+  if (timeout < 1) {
+    return fetchPromise;
+  }
+
+  const timeoutPromise = new Promise((unused, reject) =>
+    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
+  );
+
+  // Initiate both the fetch promise and a timeout promise
+  return Promise.race([fetchPromise, timeoutPromise]);
 };
 
 export const coFetch = async (url, options = {}, timeout = 60000) => {
@@ -175,6 +158,7 @@ export const coFetch = async (url, options = {}, timeout = 60000) => {
       }
     }
   }
+
   return response;
 };
 

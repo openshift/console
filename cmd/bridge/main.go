@@ -241,7 +241,6 @@ func main() {
 		QuickStarts:               *fQuickStarts,
 		AddPage:                   *fAddPage,
 		ProjectAccessClusterRoles: *fProjectAccessClusterRoles,
-		ServiceAccountToken: 	   *fK8sAuthBearerToken,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -562,7 +561,7 @@ func main() {
 		srv.ServiceAccountToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
 		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
-		srv.ServiceAccountToken = *fK8sAuthBearerToken
+		srv.ServiceAccountToken = k8sAuthServiceAccountBearerToken
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}

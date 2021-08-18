@@ -97,7 +97,6 @@ type jsGlobals struct {
 	ConsolePlugins            []string `json:"consolePlugins"`
 	QuickStarts               string   `json:"quickStarts"`
 	ProjectAccessClusterRoles string   `json:"projectAccessClusterRoles"`
-	ServiceAccountToken		  string   `json:"serviceAccountToken"`
 }
 
 type Server struct {
@@ -536,7 +535,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		QuickStarts:               s.QuickStarts,
 		AddPage:                   s.AddPage,
 		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
-		ServiceAccountToken: 	   s.ServiceAccountToken,	
 	}
 
 	if !s.authDisabled() {
