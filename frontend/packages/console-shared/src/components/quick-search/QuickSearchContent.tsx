@@ -8,8 +8,6 @@ import QuickSearchList from './QuickSearchList';
 import './QuickSearchContent.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
 
-const MAX_CATALOG_ITEMS_SHOWN = 5;
-
 interface QuickSearchContentProps {
   catalogItems: CatalogItem[];
   catalogItemTypes: CatalogType[];
@@ -17,11 +15,12 @@ interface QuickSearchContentProps {
   namespace: string;
   selectedItemId: string;
   selectedItem: CatalogItem;
+  limitItemCount?: number;
   onSelect: (itemId: string) => void;
   viewAll?: CatalogLinkData[];
   closeModal: () => void;
-  limitItemCount: number;
   detailsRenderer?: DetailsRendererFunction;
+  onListChange?: (items: number) => void;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
@@ -36,17 +35,18 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   closeModal,
   limitItemCount,
   detailsRenderer,
+  onListChange,
 }) => {
   return (
-    <Split className="odc-quick-search-content">
+    <Split className="ocs-quick-search-content">
       <SplitItem
-        className={cx('odc-quick-search-content__list', {
-          'odc-quick-search-content__list--overflow':
-            catalogItems.length >= MAX_CATALOG_ITEMS_SHOWN,
+        className={cx('ocs-quick-search-content__list', {
+          'ocs-quick-search-content__list--overflow': catalogItems.length >= limitItemCount,
         })}
       >
         <QuickSearchList
-          listItems={limitItemCount > 0 ? catalogItems.slice(0, limitItemCount) : catalogItems}
+          listItems={catalogItems}
+          limitItemCount={limitItemCount}
           catalogItemTypes={catalogItemTypes}
           viewAll={viewAll}
           selectedItemId={selectedItemId}
@@ -54,10 +54,11 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
           namespace={namespace}
           onSelectListItem={onSelect}
           closeModal={closeModal}
+          onListChange={onListChange}
         />
       </SplitItem>
       <Divider component="div" isVertical />
-      <SplitItem className="odc-quick-search-content__details">
+      <SplitItem className="ocs-quick-search-content__details">
         <QuickSearchDetails
           detailsRenderer={detailsRenderer}
           selectedItem={selectedItem}

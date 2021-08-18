@@ -32,7 +32,7 @@ const Contents: React.FC<{
 }) => {
   const { t } = useTranslation();
 
-  const LIMIT_ITEM_COUNT = 5;
+  const DEFAULT_LIMIT_ITEM_COUNT = 5;
   const quickStartItems = useTransformedQuickStarts(quickStarts);
   const quickSearchProviders: QuickSearchProviders = [
     {
@@ -71,7 +71,7 @@ const Contents: React.FC<{
       namespace={namespace}
       viewContainer={viewContainer}
       isOpen={isOpen}
-      limitItemCount={LIMIT_ITEM_COUNT}
+      limitItemCount={DEFAULT_LIMIT_ITEM_COUNT}
       setIsOpen={setIsOpen}
     />
   );

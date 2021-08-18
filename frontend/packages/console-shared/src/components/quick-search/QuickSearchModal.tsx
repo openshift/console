@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { useBoundingClientRect } from '../../hooks';
 import { DetailsRendererFunction } from './QuickSearchDetails';
 import QuickSearchModalBody from './QuickSearchModalBody';
 import { QuickSearchData } from './utils/quick-search-types';
+import './QuickSearchModal.scss';
 
 interface QuickSearchModalProps {
   isOpen: boolean;
@@ -13,7 +15,7 @@ interface QuickSearchModalProps {
   searchCatalog: (searchTerm: string) => QuickSearchData;
   searchPlaceholder: string;
   viewContainer?: HTMLElement;
-  limitItemCount: number;
+  limitItemCount?: number;
   icon?: React.ReactNode;
   detailsRenderer?: DetailsRendererFunction;
 }
@@ -31,9 +33,13 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   detailsRenderer,
 }) => {
   const { t } = useTranslation();
+  const clientRect = useBoundingClientRect(viewContainer);
+  const maxHeight = clientRect?.height;
+  const maxWidth = clientRect?.width;
 
   return viewContainer ? (
     <Modal
+      className="ocs-quick-search-modal"
       variant={ModalVariant.medium}
       aria-label={t('console-shared~Quick search')}
       isOpen={isOpen}
@@ -52,6 +58,8 @@ const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
         limitItemCount={limitItemCount}
         icon={icon}
         detailsRenderer={detailsRenderer}
+        maxDimension={{ maxHeight, maxWidth }}
+        viewContainer={viewContainer}
       />
     </Modal>
   ) : null;
