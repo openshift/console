@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { DISK_SOURCE, VM_ACTION_TIMEOUT } from '../const';
+import { testName } from '@console/cypress-integration-tests/support';
+import { DISK_SOURCE } from '../const';
 import { Disk, Network } from '../types/vm';
-import { diskDialog, nicDialog, kebabBtn, deleteDiskBtn, disksTab } from './selector';
+import { addSource, DiskSourceOpts } from './add-source';
+import { diskDialog, deleteDiskBtn, kebabBtn, nicDialog, disksTab } from './selector';
 import { modalConfirmBtn } from './snapshot';
 
 export const addNIC = (nic: Network) => {
@@ -27,13 +29,48 @@ export const addNIC = (nic: Network) => {
   cy.get(nicDialog.add).click();
 };
 
+export const hotPlugPvcOpts: DiskSourceOpts = {
+  pvcName: 'hotPlug-test-pvc',
+  pvcNamespace: testName,
+};
+
 export const addDisk = (disk: Disk) => {
-  cy.get(disksTab.addDisk).click();
+  cy.get(disksTab.addDiskBtn).click();
   if (disk.source) {
     cy.get(diskDialog.source).click();
     cy.get('.pf-c-select__menu-item-main')
       .contains(disk.source)
       .click();
+    const sourceUrl = disk.provisionSource ? disk.provisionSource.getValue() : '';
+    switch (disk.source) {
+      case DISK_SOURCE.Url:
+        if (sourceUrl) {
+          addSource.addDiskSource(disk.provisionSource, hotPlugPvcOpts);
+          cy.get(diskDialog.diskURL).type(sourceUrl);
+        } else {
+          throw new Error('No `disk.provisionSource` provided!!!');
+        }
+        break;
+      case DISK_SOURCE.Container:
+        if (sourceUrl) {
+          cy.get(diskDialog.diskContainer).type(sourceUrl);
+        } else {
+          throw new Error('No `disk.provisionSource` provided!!!');
+        }
+        break;
+      case DISK_SOURCE.AttachDisk:
+      case DISK_SOURCE.AttachClonedDisk:
+        if (sourceUrl) {
+          cy.get(diskDialog.diskPVC).select(sourceUrl);
+        } else {
+          throw new Error('No `disk.provisionSource` provided!!!');
+        }
+        break;
+      case DISK_SOURCE.EphemeralContainer:
+      case DISK_SOURCE.Blank:
+        break;
+      default:
+    }
   }
   cy.get(diskDialog.diskName)
     .clear()
@@ -57,30 +94,6 @@ export const addDisk = (disk: Disk) => {
   if (disk.preallocation) {
     cy.contains('Enable preallocation').click();
   }
-  if (disk.source === DISK_SOURCE.Url) {
-    if (disk.url) {
-      cy.get(diskDialog.sourceURL).type(disk.url);
-    } else {
-      throw new Error('No value for `disk.url` provided!!!');
-    }
-  } else if (disk.source === DISK_SOURCE.Container) {
-    if (disk.url) {
-      cy.get(diskDialog.container).type(disk.url);
-    } else {
-      throw new Error('No value for `disk.url` provided!!!');
-    }
-  } else if (
-    disk.source === DISK_SOURCE.AttachDisk ||
-    disk.source === DISK_SOURCE.AttachClonedDisk
-  ) {
-    if (disk.pvc) {
-      cy.get(diskDialog.diskPVC)
-        .select(disk.pvc)
-        .should('have.value', disk.pvc);
-    } else {
-      throw new Error('No value for `disk.pvc` provided!!!');
-    }
-  }
   if (disk.autoDetach === true) {
     cy.get(diskDialog.autoDetach)
       .check()
@@ -97,9 +110,4 @@ export const delDisk = (name: string) => {
   cy.get(`[data-id="${name}"] ${kebabBtn}`).click();
   cy.get(deleteDiskBtn).click();
   cy.get(modalConfirmBtn).click();
-};
-
-export const waitForCurrentVMStatus = (status: string, timeout?: number) => {
-  const timeOut = timeout || VM_ACTION_TIMEOUT.VM_IMPORT;
-  cy.contains(disksTab.currVMStatus, status, { timeout: timeOut }).should('exist');
 };

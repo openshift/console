@@ -51,8 +51,8 @@ export enum nicDialog {
 export enum diskDialog {
   addDisk = 'button[id="add-disk"]',
   source = 'button[id="disk-select-source"]',
-  sourceURL = 'input[id="disk-url"]',
-  container = 'input[id="disk-container"]',
+  diskURL = 'input[id="disk-url"]',
+  diskContainer = 'input[id="disk-container"]',
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',
@@ -80,6 +80,6 @@ export const kebabBtn = 'button[data-test-id="kebab-button"]';
 export const deleteDiskBtn = 'button[data-test-action="Delete"]';
 
 export enum disksTab {
-  addDisk = 'button[id="add-disk"]',
-  currVMStatus = 'span[data-test="resource-status"]',
+  addDiskBtn = 'button[id="add-disk"]',
+  currVMStatusLbl = 'span[data-test="resource-status"]',
 }
