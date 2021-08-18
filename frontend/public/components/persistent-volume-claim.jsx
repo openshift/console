@@ -24,7 +24,7 @@ import {
 } from '@console/shared';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   navFactory,
@@ -105,13 +105,13 @@ const mapStateToProps = ({ UI }, { obj }) => ({
   metrics: UI.getIn(['metrics', 'pvc'])?.usedCapacity?.[getNamespace(obj)]?.[getName(obj)],
 });
 
-const PVCTableRow = connect(mapStateToProps)(({ obj, index, key, style, metrics }) => {
+const PVCTableRow = connect(mapStateToProps)(({ obj, metrics }) => {
   const [name, namespace] = [getName(obj), getNamespace(obj)];
   const totalCapacityMetric = convertToBaseValue(obj?.status?.capacity?.storage);
   const totalCapcityHumanized = humanizeBinaryBytes(totalCapacityMetric);
   const usedCapacity = humanizeBinaryBytes(metrics);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={name} />
       </TableData>
@@ -153,7 +153,7 @@ const PVCTableRow = connect(mapStateToProps)(({ obj, index, key, style, metrics 
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 });
 
@@ -295,7 +295,6 @@ const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 const allPhases = ['Pending', 'Bound', 'Lost'];
 
 export const PersistentVolumeClaimsList = (props) => {
-  const Row = React.useCallback((rowProps) => <PVCTableRow {...rowProps} />, []);
   const { t } = useTranslation();
   const PVCTableHeader = () => {
     return [
@@ -353,7 +352,7 @@ export const PersistentVolumeClaimsList = (props) => {
       {...props}
       aria-label={t('public~PersistentVolumeClaims')}
       Header={PVCTableHeader}
-      Row={Row}
+      Row={PVCTableRow}
       virtualize
     />
   );

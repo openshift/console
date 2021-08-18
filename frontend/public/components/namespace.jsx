@@ -46,7 +46,7 @@ import { coFetchJSON } from '../co-fetch';
 import { k8sGet, referenceForModel } from '../module/k8s';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   DetailsItem,
   Dropdown,
@@ -283,7 +283,7 @@ const namespacesRowStateToProps = ({ UI }) => ({
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  withTranslation()(({ obj: ns, index, key, style, metrics, tableColumns, t }) => {
+  withTranslation()(({ obj: ns, metrics, customData: { tableColumns }, t }) => {
     const name = getName(ns);
     const requester = getRequester(ns);
     const bytes = metrics?.memory?.[name];
@@ -293,7 +293,7 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
     const columns =
       tableColumns?.length > 0 ? new Set(tableColumns) : getNamespacesSelectedColumns();
     return (
-      <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
+      <>
         <TableData className={namespaceColumnInfo.name.classes}>
           <ResourceLink kind="Namespace" name={ns.metadata.name} />
         </TableData>
@@ -362,19 +362,9 @@ const NamespacesTableRow = connect(namespacesRowStateToProps)(
         <TableData className={Kebab.columnClass}>
           <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
         </TableData>
-      </TableRow>
+      </>
     );
   }),
-);
-
-const NamespacesRow = (rowArgs) => (
-  <NamespacesTableRow
-    obj={rowArgs.obj}
-    index={rowArgs.index}
-    rowKey={rowArgs.key}
-    style={rowArgs.style}
-    tableColumns={rowArgs.customData?.tableColumns}
-  />
 );
 
 const mapDispatchToProps = (dispatch) => ({
@@ -403,6 +393,13 @@ export const NamespacesList = connect(
       tableColumns?.[NamespacesColumnManagementID]?.length > 0
         ? new Set(tableColumns[NamespacesColumnManagementID])
         : null;
+
+    const customData = React.useMemo(
+      () => ({
+        tableColumns: tableColumns?.[NamespacesColumnManagementID],
+      }),
+      [tableColumns],
+    );
     return (
       <Table
         {...props}
@@ -410,8 +407,8 @@ export const NamespacesList = connect(
         columnManagementID={NamespacesColumnManagementID}
         aria-label={t('public~Namespaces')}
         Header={NamespacesTableHeader}
-        Row={NamespacesRow}
-        customData={{ tableColumns: tableColumns?.[NamespacesColumnManagementID] }}
+        Row={NamespacesTableRow}
+        customData={customData}
         virtualize
       />
     );
@@ -588,7 +585,7 @@ const projectRowStateToProps = ({ UI }) => ({
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
-  withTranslation()(({ obj: project, index, rowKey, style, customData = {}, metrics, t }) => {
+  withTranslation()(({ obj: project, customData = {}, metrics, t }) => {
     const name = getName(project);
     const requester = getRequester(project);
     const {
@@ -609,7 +606,7 @@ const ProjectTableRow = connect(projectRowStateToProps)(
         : getProjectSelectedColumns({ showMetrics, showActions })
       : null;
     return (
-      <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
+      <>
         <TableData className={namespaceColumnInfo.name.classes}>
           {customData && ProjectLinkComponent ? (
             <ProjectLinkComponent project={project} />
@@ -694,35 +691,29 @@ const ProjectTableRow = connect(projectRowStateToProps)(
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
           </TableData>
         )}
-      </TableRow>
+      </>
     );
   }),
 );
 ProjectTableRow.displayName = 'ProjectTableRow';
 
-const ProjectRow = (rowArgs) => (
-  <ProjectTableRow
-    obj={rowArgs.obj}
-    index={rowArgs.index}
-    rowKey={rowArgs.key}
-    style={rowArgs.style}
-    customData={rowArgs.customData}
-  />
-);
-
 export const ProjectsTable = (props) => {
   const { t } = useTranslation();
+  const customData = React.useMemo(
+    () => ({
+      ProjectLinkComponent: ProjectLink,
+      actionsEnabled: false,
+      isColumnManagementEnabled: false,
+    }),
+    [],
+  );
   return (
     <Table
       {...props}
       aria-label={t('public~Projects')}
       Header={projectHeaderWithoutActions}
-      Row={ProjectRow}
-      customData={{
-        ProjectLinkComponent: ProjectLink,
-        actionsEnabled: false,
-        isColumnManagementEnabled: false,
-      }}
+      Row={ProjectTableRow}
+      customData={customData}
       virtualize
     />
   );
@@ -771,6 +762,13 @@ const ProjectList_ = connectToFlags(
       />
     );
     const ProjectNotFoundMessage = () => <MsgBox title={t('public~No projects found')} />;
+    const customData = React.useMemo(
+      () => ({
+        showMetrics,
+        tableColumns: tableColumns?.[projectColumnManagementID],
+      }),
+      [showMetrics, tableColumns],
+    );
     return (
       <Table
         {...tableProps}
@@ -779,9 +777,9 @@ const ProjectList_ = connectToFlags(
         aria-label={t('public~Projects')}
         data={data}
         Header={showMetrics ? headerWithMetrics : headerNoMetrics}
-        Row={ProjectRow}
+        Row={ProjectTableRow}
         EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
-        customData={{ showMetrics, tableColumns: tableColumns?.[projectColumnManagementID] }}
+        customData={customData}
         virtualize
       />
     );

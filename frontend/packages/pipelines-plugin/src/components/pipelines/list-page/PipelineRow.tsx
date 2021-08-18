@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel, PipelineRunModel } from '../../../models';
@@ -27,15 +27,9 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
   );
 };
 
-const PipelineRow: RowFunction<PipelineWithLatest> = ({ obj, index, key, style }) => {
+const PipelineRow: React.FC<RowFunctionArgs<PipelineWithLatest>> = ({ obj }) => {
   return (
-    <TableRow
-      id={obj.metadata.uid}
-      data-test-id={`${obj.metadata.namespace}-${obj.metadata.name}`}
-      index={index}
-      trKey={key}
-      style={style}
-    >
+    <React.Fragment data-test-id={`${obj.metadata.namespace}-${obj.metadata.name}`}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineReference}
@@ -72,7 +66,7 @@ const PipelineRow: RowFunction<PipelineWithLatest> = ({ obj, index, key, style }
       <TableData className={tableColumnClasses[6]}>
         <PipelineRowKebabActions pipeline={obj} />
       </TableData>
-    </TableRow>
+    </React.Fragment>
   );
 };
 

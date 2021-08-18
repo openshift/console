@@ -30,7 +30,7 @@ import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
-import { DetailsPage, ListPage, Table, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   ContainerTable,
@@ -324,20 +324,11 @@ DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
 const kind = 'DeploymentConfig';
 
-const DeploymentConfigTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const DeploymentConfigTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
   const customActionMenu = <LazyActionMenu context={context} />;
-  return (
-    <WorkloadTableRow
-      obj={obj}
-      index={index}
-      rowKey={key}
-      style={style}
-      customActionMenu={customActionMenu}
-      kind={kind}
-    />
-  );
+  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} />;
 };
 
 const DeploymentConfigTableHeader = () => {

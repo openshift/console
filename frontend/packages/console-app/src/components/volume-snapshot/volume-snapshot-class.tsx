@@ -2,13 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import {
-  TableRow,
-  TableData,
-  Table,
-  ListPage,
-  RowFunction,
-} from '@console/internal/components/factory';
+import { TableData, Table, ListPage, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { VolumeSnapshotClassModel } from '@console/internal/models';
 import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
@@ -26,11 +20,11 @@ export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassK
     defaultSnapshotClassAnnotation
   ] === 'true';
 
-const Row: RowFunction<VolumeSnapshotClassKind> = ({ obj, index, style, key }) => {
+const Row: React.FC<RowFunctionArgs<VolumeSnapshotClassKind>> = ({ obj }) => {
   const { name } = obj?.metadata || {};
   const { deletionPolicy, driver } = obj || {};
   return (
-    <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink name={name} kind={referenceForModel(VolumeSnapshotClassModel)}>
           {isDefaultSnapshotClass(obj) && (
@@ -47,7 +41,7 @@ const Row: RowFunction<VolumeSnapshotClassKind> = ({ obj, index, style, key }) =
           actions={Kebab.factory.common}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

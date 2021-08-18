@@ -7,7 +7,6 @@ import {
   MultiListPage,
   DetailsPage,
   RowFunctionArgs,
-  TableRow,
 } from '@console/internal/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -57,9 +56,6 @@ describe('SubscriptionTableRow', () => {
   const updateWrapper = () => {
     const rowArgs: RowFunctionArgs<SubscriptionKind> = {
       obj: subscription,
-      index: 0,
-      key: '0',
-      style: {},
     } as any;
 
     wrapper = shallow(<SubscriptionTableRow {...rowArgs} />);
@@ -77,7 +73,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for subscription name', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -85,7 +80,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.name);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -93,7 +87,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .shallow()
         .find(ResourceLink)
@@ -103,48 +96,29 @@ describe('SubscriptionTableRow', () => {
 
   it('renders actions kebab', () => {
     const menuArgs = [ClusterServiceVersionModel, subscription];
+    expect(wrapper.find(ResourceKebab).props().kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.find(ResourceKebab).props().resource).toEqual(subscription);
+    expect(wrapper.find(ResourceKebab).props().actions[0]).toEqual(Kebab.factory.Edit);
     expect(
       wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().kind,
-    ).toEqual(referenceForModel(SubscriptionModel));
-    expect(
-      wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().resource,
-    ).toEqual(subscription);
-    expect(
-      wrapper
-        .find(TableRow)
-        .find(ResourceKebab)
-        .props().actions[0],
-    ).toEqual(Kebab.factory.Edit);
-    expect(
-      wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).labelKey,
     ).toEqual('olm~Remove Subscription');
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[1](...menuArgs).callback,
     ).toBeDefined();
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).labelKey,
     ).toEqual('olm~View ClusterServiceVersion...');
     expect(
       wrapper
-        .find(TableRow)
         .find(ResourceKebab)
         .props()
         .actions[2](...menuArgs).href,
@@ -154,7 +128,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for namespace name', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -162,7 +135,6 @@ describe('SubscriptionTableRow', () => {
     ).toEqual(subscription.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .shallow()
         .find(ResourceLink)
@@ -176,7 +148,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -187,7 +158,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for subscription state when unknown state', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -201,7 +171,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -215,7 +184,6 @@ describe('SubscriptionTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .find(SubscriptionStatus)
         .shallow()
@@ -226,7 +194,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for current subscription channel', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .shallow()
         .text(),
@@ -236,7 +203,6 @@ describe('SubscriptionTableRow', () => {
   it('renders column for approval strategy', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(4)
         .shallow()
         .text(),

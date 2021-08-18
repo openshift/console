@@ -13,7 +13,7 @@ import {
   Rule,
 } from '@console/dynamic-plugin-sdk';
 
-import { RowFunction } from '../factory';
+import { RowFunctionArgs } from '../factory';
 import { RowFilter } from '../filter-toolbar';
 
 export {
@@ -95,7 +95,7 @@ export type ListPageProps = {
   loadError?: string;
   nameFilterID: string;
   reduxID: string;
-  Row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   rowFilters: RowFilter[];
   showTitle?: boolean;
 };

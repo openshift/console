@@ -16,7 +16,7 @@ import { MachineModel } from '../models';
 import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -47,13 +47,13 @@ const tableColumnClasses = [
 const getMachineProviderState = (obj: MachineKind): string =>
   obj?.status?.providerStatus?.instanceState;
 
-const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) => {
+const MachineTableRow: React.FC<RowFunctionArgs<MachineKind>> = ({ obj }) => {
   const nodeName = getMachineNodeName(obj);
   const region = getMachineRegion(obj);
   const zone = getMachineZone(obj);
   const providerState = getMachineProviderState(obj);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink
           kind={machineReference}
@@ -79,7 +79,7 @@ const MachineTableRow: RowFunction<MachineKind> = ({ obj, index, key, style }) =
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

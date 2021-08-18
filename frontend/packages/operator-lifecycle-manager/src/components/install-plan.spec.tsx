@@ -8,7 +8,6 @@ import {
   MultiListPage,
   DetailsPage,
   RowFunctionArgs,
-  TableRow,
   ComponentProps,
 } from '@console/internal/components/factory';
 import {
@@ -57,9 +56,6 @@ describe('InstallPlanTableRow', () => {
   const updateWrapper = () => {
     const rowArgs: RowFunctionArgs<k8s.K8sResourceKind> = {
       obj,
-      index: 0,
-      key: '0',
-      style: {},
     } as any;
 
     wrapper = shallow(<InstallPlanTableRow {...rowArgs} />);
@@ -78,21 +74,18 @@ describe('InstallPlanTableRow', () => {
   it('renders column for install plan name', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .find(ResourceLink)
         .props().kind,
     ).toEqual(k8s.referenceForModel(InstallPlanModel));
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .find(ResourceLink)
         .props().namespace,
     ).toEqual(testInstallPlan.metadata.namespace);
     expect(
       wrapper
-        .find(TableRow)
         .childAt(0)
         .find(ResourceLink)
         .props().name,
@@ -102,7 +95,6 @@ describe('InstallPlanTableRow', () => {
   it('renders column for install plan namespace', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(1)
         .find(ResourceLink)
         .props().kind,
@@ -112,7 +104,6 @@ describe('InstallPlanTableRow', () => {
   it('renders column for install plan status', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .render()
         .find('[data-test="status-text"]')
@@ -126,20 +117,13 @@ describe('InstallPlanTableRow', () => {
 
     expect(
       wrapper
-        .find(TableRow)
         .childAt(2)
         .render()
         .text(),
     ).toEqual('Unknown');
+    expect(wrapper.childAt(3).find(ResourceIcon).length).toEqual(1);
     expect(
       wrapper
-        .find(TableRow)
-        .childAt(3)
-        .find(ResourceIcon).length,
-    ).toEqual(1);
-    expect(
-      wrapper
-        .find(TableRow)
         .childAt(3)
         .find(ResourceIcon)
         .at(0)
@@ -150,21 +134,18 @@ describe('InstallPlanTableRow', () => {
   it('render column for install plan components list', () => {
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .find(ResourceLink)
         .props().kind,
     ).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .find(ResourceLink)
         .props().name,
     ).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
     expect(
       wrapper
-        .find(TableRow)
         .childAt(3)
         .find(ResourceLink)
         .props().namespace,
@@ -172,12 +153,7 @@ describe('InstallPlanTableRow', () => {
   });
 
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
-    expect(
-      wrapper
-        .find(TableRow)
-        .childAt(4)
-        .find(ResourceLink).length,
-    ).toEqual(1);
+    expect(wrapper.childAt(4).find(ResourceLink).length).toEqual(1);
   });
 });
 

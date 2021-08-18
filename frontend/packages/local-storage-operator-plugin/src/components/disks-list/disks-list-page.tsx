@@ -7,9 +7,8 @@ import { useTranslation } from 'react-i18next';
 import {
   Table,
   TableProps,
-  TableRow,
   TableData,
-  RowFunction,
+  RowFunctionArgs,
   MultiListPage,
 } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -40,8 +39,12 @@ export const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const diskRow: RowFunction<DiskMetadata> = ({ obj, index, key, style }) => (
-  <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
+const getRowProps = (obj) => ({
+  id: obj.deviceID,
+});
+
+const DiskRow: React.FC<RowFunctionArgs<DiskMetadata>> = ({ obj }) => (
+  <>
     <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.status.state}</TableData>
     <TableData className={tableColumnClasses[2]}>{obj.type || '-'}</TableData>
@@ -50,7 +53,7 @@ const diskRow: RowFunction<DiskMetadata> = ({ obj, index, key, style }) => (
       {humanizeBinaryBytes(obj.size).string || '-'}
     </TableData>
     <TableData className={tableColumnClasses[5]}>{obj.fstype || '-'}</TableData>
-  </TableRow>
+  </>
 );
 
 const DisksList: React.FC<TableProps> = (props) => {
@@ -103,9 +106,10 @@ const DisksList: React.FC<TableProps> = (props) => {
       label={t('lso-plugin~Disks')}
       aria-label={t('lso-plugin~Disks List')}
       Header={diskHeader}
-      Row={diskRow}
+      Row={DiskRow}
       NoDataEmptyMsg={props.customData.EmptyMsg} // when no unfilteredData
       virtualize
+      getRowProps={getRowProps}
     />
   );
 };

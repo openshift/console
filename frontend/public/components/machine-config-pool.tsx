@@ -16,7 +16,7 @@ import {
   MachineConfigPoolKind,
   referenceForModel,
 } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
   Kebab,
@@ -294,14 +294,9 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
     ];
   };
 
-  const MachineConfigPoolTableRow: RowFunction<MachineConfigPoolKind> = ({
-    obj,
-    index,
-    key,
-    style,
-  }) => {
+  const MachineConfigPoolTableRow: React.FC<RowFunctionArgs<MachineConfigPoolKind>> = ({ obj }) => {
     return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <>
         <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
           <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} />
         </TableData>
@@ -335,7 +330,7 @@ const MachineConfigPoolList: React.SFC<any> = (props) => {
             resource={obj}
           />
         </TableData>
-      </TableRow>
+      </>
     );
   };
 

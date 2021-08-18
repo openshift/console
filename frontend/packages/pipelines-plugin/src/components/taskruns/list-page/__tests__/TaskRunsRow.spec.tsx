@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { shallow } from 'enzyme';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
@@ -32,27 +33,17 @@ describe('TaskRunsRow', () => {
       customData: {
         showPipelineColumn: true,
       },
-      index: 0,
-      key: '0',
-      style: {
-        height: 'auto',
-        left: 0,
-        position: 'absolute',
-        top: 0,
-        width: '100%',
-      },
       columns: null,
-      isScrolling: true,
     };
   });
 
   it('should show the pipeline column', () => {
-    const wrapper = shallow(TaskRunsRow(taskRunsData));
+    const wrapper = shallow(<TaskRunsRow {...taskRunsData} />);
     expect(wrapper.find(TableData)).toHaveLength(8);
   });
 
   it('should render proper data', () => {
-    const wrapper = shallow(TaskRunsRow(taskRunsData));
+    const wrapper = shallow(<TaskRunsRow {...taskRunsData} />);
     let taskData = wrapper.find(TableData).at(0);
     expect(taskData.find(ResourceLink).props().name).toBe('task-run');
     taskData = wrapper.find(TableData).at(1);
@@ -69,7 +60,7 @@ describe('TaskRunsRow', () => {
 
   it('should not show the pipeline column', () => {
     taskRunsData.customData.showPipelineColumn = false;
-    const wrapper = shallow(TaskRunsRow(taskRunsData));
+    const wrapper = shallow(<TaskRunsRow {...taskRunsData} />);
     expect(wrapper.find(TableData)).toHaveLength(7);
   });
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { VirtualMachineSnapshotModel } from '../../models';
 import { kubevirtReferenceForModel } from '../../models/kubevirtReferenceForModel';
@@ -26,8 +26,6 @@ export type VMSnapshotSimpleRowProps = {
   isDisabled: boolean;
   columnClasses: string[];
   actionsComponent: React.ReactNode;
-  index: number;
-  style: object;
   isVMRunning: boolean;
 };
 
@@ -37,8 +35,6 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
   isDisabled,
   columnClasses,
   actionsComponent,
-  index,
-  style,
   isVMRunning,
 }) => {
   const { t } = useTranslation();
@@ -49,7 +45,7 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
   const indications = snapshot?.status?.indications;
 
   return (
-    <TableRow id={snapshot?.metadata?.uid} index={index} trKey={snapshotName} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ResourceLink
           kind={kubevirtReferenceForModel(VirtualMachineSnapshotModel)}
@@ -93,22 +89,18 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
         </Tooltip>
       </TableData>
       <TableData className={dimensify(true)}>{actionsComponent}</TableData>
-    </TableRow>
+    </>
   );
 };
 
-export const VMSnapshotRow: RowFunction<VMSnapshot, VMSnapshotRowCustomData> = ({
+export const VMSnapshotRow: React.FC<RowFunctionArgs<VMSnapshot, VMSnapshotRowCustomData>> = ({
   obj: snapshot,
   customData: { restores, columnClasses, isDisabled, isVMRunning },
-  index,
-  style,
 }) => (
   <VMSnapshotSimpleRow
     data={snapshot}
     restores={restores}
     columnClasses={columnClasses}
-    index={index}
-    style={style}
     isDisabled={isDisabled}
     isVMRunning={isVMRunning}
     actionsComponent={

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, Table } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { dimensifyHeader } from '../../utils';
 
 export type VMCDsTableProps = {
   data?: any[];
   customData?: object;
-  row: RowFunction;
+  row: React.FC<RowFunctionArgs>;
   columnClasses: string[];
 };
 

@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '../../module/k8s';
 import { history, Kebab, MsgBox, SectionHeading, StatusBox } from '../utils';
 import { confirmModal, createAlertRoutingModal } from '../modals';
-import { Table, TableData, TableRow, TextFilter, RowFunction } from '../factory';
+import { Table, TableData, TextFilter, RowFunctionArgs } from '../factory';
 import {
   getAlertmanagerConfig,
   patchAlertmanagerConfig,
@@ -235,6 +235,93 @@ const deleteReceiver = (
   });
 };
 
+const ReceiverTableRow: React.FC<RowFunctionArgs<
+  AlertmanagerReceiver,
+  {
+    routingLabelsByReceivers: RoutingLabelsByReceivers[];
+    defaultReceiverName: string;
+    config: any;
+    secret: any;
+  }
+>> = ({
+  obj: receiver,
+  customData: { routingLabelsByReceivers, defaultReceiverName, config, secret },
+}) => {
+  const { t } = useTranslation();
+  // filter to routing labels belonging to current Receiver
+  const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
+  const receiverIntegrationTypes = getIntegrationTypes(receiver);
+  const integrationTypesLabel = _.join(
+    _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
+    ', ',
+  );
+  const isDefaultReceiver = receiver.name === defaultReceiverName;
+  const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
+
+  // Receiver form can only handle simple configurations. Can edit via form if receiver
+  // has a simple route and receiver
+  const canUseEditForm =
+    receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
+
+  // Receivers can be deleted if it has a simple route and not the default receiver
+  const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
+
+  const receiverMenuItems = (receiverName: string) => [
+    {
+      label: t('public~Edit Receiver'),
+      callback: () => {
+        const targetUrl = canUseEditForm
+          ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
+          : `/monitoring/alertmanageryaml`;
+        return history.push(targetUrl);
+      },
+    },
+    {
+      label: t('public~Delete Receiver'),
+      isDisabled: !canDelete,
+      tooltip: !canDelete
+        ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
+        : '',
+      callback: () =>
+        confirmModal({
+          title: t('public~Delete Receiver'),
+          message: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+            receiverName,
+          }),
+          btnText: t('public~Delete Receiver'),
+          executeFn: () => deleteReceiver(secret, config, receiverName),
+        }),
+    },
+  ];
+
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
+      <TableData className={tableColumnClasses[1]}>
+        {(receiver.name === InitialReceivers.Critical ||
+          receiver.name === InitialReceivers.Default) &&
+        !integrationTypesLabel ? (
+          <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
+            <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
+            {t('public~Configure')}
+          </Link>
+        ) : (
+          integrationTypesLabel
+        )}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
+        {_.map(receiverRoutingLabels, (rte, i) => {
+          return !_.isEmpty(rte.labels) ? <RoutingLabel key={i} labels={rte.labels} /> : null;
+        })}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Kebab options={receiverMenuItems(receiver.name)} />
+      </TableData>
+    </>
+  );
+};
+
 interface ReceiversTableProps {
   secret: K8sResourceKind;
   config: AlertmanagerConfig;
@@ -274,91 +361,22 @@ const ReceiversTable: React.FC<ReceiversTableProps> = (props) => {
       },
     ];
   };
-  const ReceiverTableRow: RowFunction<
-    AlertmanagerReceiver,
-    {
-      routingLabelsByReceivers: RoutingLabelsByReceivers[];
-      defaultReceiverName: string;
-    }
-  > = ({ obj: receiver, index, key, style }) => {
-    // filter to routing labels belonging to current Receiver
-    const receiverRoutingLabels = _.filter(routingLabelsByReceivers, { receiver: receiver.name });
-    const receiverIntegrationTypes = getIntegrationTypes(receiver);
-    const integrationTypesLabel = _.join(
-      _.map(receiverIntegrationTypes, (type) => type.substr(0, type.indexOf('_configs'))),
-      ', ',
-    );
-    const isDefaultReceiver = receiver.name === defaultReceiverName;
-    const receiverHasSimpleRoute = hasSimpleRoute(config, receiver, receiverRoutingLabels);
 
-    // Receiver form can only handle simple configurations. Can edit via form if receiver
-    // has a simple route and receiver
-    const canUseEditForm =
-      receiverHasSimpleRoute && hasSimpleReceiver(config, receiver, receiverIntegrationTypes);
+  const customData = React.useMemo(
+    () => ({
+      routingLabelsByReceivers,
+      defaultReceiverName,
+      config,
+      secret,
+    }),
+    [config, defaultReceiverName, routingLabelsByReceivers, secret],
+  );
 
-    // Receivers can be deleted if it has a simple route and not the default receiver
-    const canDelete = !isDefaultReceiver && receiverHasSimpleRoute;
-
-    const receiverMenuItems = (receiverName: string) => [
-      {
-        label: t('public~Edit Receiver'),
-        callback: () => {
-          const targetUrl = canUseEditForm
-            ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
-            : `/monitoring/alertmanageryaml`;
-          return history.push(targetUrl);
-        },
-      },
-      {
-        label: t('public~Delete Receiver'),
-        isDisabled: !canDelete,
-        tooltip: !canDelete
-          ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
-          : '',
-        callback: () =>
-          confirmModal({
-            title: t('public~Delete Receiver'),
-            message: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
-              receiverName,
-            }),
-            btnText: t('public~Delete Receiver'),
-            executeFn: () => deleteReceiver(secret, config, receiverName),
-          }),
-      },
-    ];
-
-    return (
-      <TableRow id={index} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>{receiver.name}</TableData>
-        <TableData className={tableColumnClasses[1]}>
-          {(receiver.name === InitialReceivers.Critical ||
-            receiver.name === InitialReceivers.Default) &&
-          !integrationTypesLabel ? (
-            <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
-              <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
-              {t('public~Configure')}
-            </Link>
-          ) : (
-            integrationTypesLabel
-          )}
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          {isDefaultReceiver && <RoutingLabel labels={{ default: 'all' }} />}
-          {_.map(receiverRoutingLabels, (rte, i) => {
-            return !_.isEmpty(rte.labels) ? <RoutingLabel key={i} labels={rte.labels} /> : null;
-          })}
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <Kebab options={receiverMenuItems(receiver.name)} />
-        </TableData>
-      </TableRow>
-    );
-  };
   return (
     <Table
       {...props}
       aria-label={t('public~Receivers')}
-      customData={{ routingLabelsByReceivers, defaultReceiverName }}
+      customData={customData}
       EmptyMsg={EmptyMsg}
       Header={ReceiverTableHeader}
       Row={ReceiverTableRow}

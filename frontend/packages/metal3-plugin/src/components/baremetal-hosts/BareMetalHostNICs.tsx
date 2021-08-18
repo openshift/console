@@ -3,7 +3,7 @@ import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-i
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { getHostNICs } from '../../selectors';
 import { BareMetalHostNIC, BareMetalHostKind } from '../../types';
 
@@ -17,10 +17,14 @@ const NICsTableHeader = (t: TFunction) => () => [
   { title: t('metal3-plugin~VLAN ID'), sortField: 'vlanId', transforms: [sortable] },
 ];
 
-const NICsTableRow: RowFunction<BareMetalHostNIC> = ({ obj: nic, index, key, style }) => {
+const getRowProps = (obj) => ({
+  id: obj.ip,
+});
+
+const NICsTableRow: React.FC<RowFunctionArgs<BareMetalHostNIC>> = ({ obj: nic }) => {
   const { ip, mac, model, name, pxe, speedGbps, vlanId } = nic;
   return (
-    <TableRow id={ip} index={index} trKey={key} style={style}>
+    <>
       <TableData>{name}</TableData>
       <TableData>{model}</TableData>
       <TableData>{pxe ? <OutlinedCheckSquareIcon /> : <OutlinedSquareIcon />}</TableData>
@@ -28,7 +32,7 @@ const NICsTableRow: RowFunction<BareMetalHostNIC> = ({ obj: nic, index, key, sty
       <TableData>{speedGbps} Gbps</TableData>
       <TableData>{mac}</TableData>
       <TableData>{vlanId}</TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -50,6 +54,7 @@ const BareMetalHostNICs: React.FC<BareMetalHostNICsProps> = ({ obj: host, loadEr
           Row={NICsTableRow}
           loaded={!!host}
           loadError={loadError}
+          getRowProps={getRowProps}
         />
       </div>
     </div>

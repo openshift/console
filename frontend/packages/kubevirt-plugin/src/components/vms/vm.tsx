@@ -18,10 +18,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { QuickStartModel } from '@console/app/src/models';
 import {
   MultiListPage,
-  RowFunction,
+  RowFunctionArgs,
   Table,
   TableData,
-  TableRow,
 } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -130,7 +129,7 @@ const PendingChanges: React.FC = () => {
   return <div className="kv-vm-row_status-extra-label">{t('kubevirt-plugin~Pending changes')}</div>;
 };
 
-const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
+const VMRow: React.FC<RowFunctionArgs<VMRowObjType>> = ({ obj }) => {
   const { vm, vmi, vmImport } = obj;
   const { name, namespace, node, creationTimestamp, uid, vmStatusBundle } = obj.metadata;
   const dimensify = dimensifyRow(tableColumnClasses);
@@ -157,7 +156,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
   const arePendingChanges = hasPendingChanges(vm, vmi);
 
   return (
-    <TableRow key={`${key}${name}`} id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ResourceLink kind={kubevirtReferenceForModel(model)} name={name} namespace={namespace} />
       </TableData>
@@ -185,7 +184,7 @@ const VMRow: RowFunction<VMRowObjType> = ({ obj, index, key, style }) => {
       <TableData className={dimensify(true)}>
         <Kebab options={options} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

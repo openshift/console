@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Flex, FlexItem, Split, SplitItem } from '@patternfly/react-core';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { ExternalLink, Timestamp } from '@console/internal/components/utils';
-import i18n from '@console/internal/i18n';
 import {
   GreenCheckCircleIcon,
   YellowExclamationTriangleIcon,
@@ -32,8 +32,8 @@ const getMatchingEnvs = (envs: string[], desiredStatus: string) => (
     ? [...acc, envs[idx]] // 1:1 between a status and an env
     : acc;
 
-const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
-  const { obj: appGroup, index, key, style } = props;
+const GitOpsTableRow: React.FC<RowFunctionArgs<GitOpsAppGroupData>> = (props) => {
+  const { obj: appGroup } = props;
   const {
     name,
     sync_status: syncStatuses = [],
@@ -41,7 +41,7 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
     last_deployed: lastDeployed = [],
     repo_url: repoUrl,
   } = appGroup;
-  const t = (tKey) => i18n.t(tKey);
+  const { t } = useTranslation();
   const syncedEnvs: string[] = syncStatuses.reduce(getMatchingEnvs(envs, 'Synced'), []);
   const outOfSyncEnvs: string[] = syncStatuses.reduce(getMatchingEnvs(envs, 'OutOfSync'), []);
   const unknownEnvs: string[] = syncStatuses.reduce(getMatchingEnvs(envs, 'Unknown'), []);
@@ -54,7 +54,7 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
     ? envs[lastDeployed.indexOf(latestDeployedTime)]
     : '';
   return (
-    <TableRow id={index} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <Link to={`/environments/${appGroup.name}?url=${appGroup.repo_url}`} title={name}>
           {name}
@@ -129,7 +129,7 @@ const GitOpsTableRow: RowFunction<GitOpsAppGroupData> = (props) => {
           <span>-</span>
         )}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

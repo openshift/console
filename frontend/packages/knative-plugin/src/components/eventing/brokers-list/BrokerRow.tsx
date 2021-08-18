@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceFor } from '@console/internal/module/k8s';
@@ -7,7 +7,7 @@ import { EventingBrokerModel } from '../../../models';
 import { EventBrokerKind, BrokerConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 
-const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => {
+const BrokerRow: React.FC<RowFunctionArgs<EventBrokerKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -20,7 +20,7 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
     ? getCondition(obj.status.conditions, BrokerConditionTypes.Ready)
     : null;
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData>
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -37,7 +37,7 @@ const BrokerRow: RowFunction<EventBrokerKind> = ({ obj, index, key, style }) => 
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

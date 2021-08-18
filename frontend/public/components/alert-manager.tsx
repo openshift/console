@@ -6,7 +6,7 @@ import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ListPage, DetailsPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { ListPage, DetailsPage, Table, TableData, RowFunctionArgs } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
@@ -76,15 +76,12 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-lg pf-u-w-25-on-lg',
 ];
 
-const AlertManagerTableRow: RowFunction<K8sResourceKind> = ({
+const AlertManagerTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({
   obj: alertManager,
-  index,
-  key,
-  style,
 }) => {
   const { metadata, spec } = alertManager;
   return (
-    <TableRow id={alertManager.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(AlertmanagerModel)}
@@ -103,7 +100,7 @@ const AlertManagerTableRow: RowFunction<K8sResourceKind> = ({
       <TableData className={tableColumnClasses[4]}>
         <Selector selector={spec.nodeSelector} kind="Node" />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

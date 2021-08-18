@@ -19,6 +19,10 @@ interface HelmReleaseRollbackFormProps {
 
 type Props = FormikProps<FormikValues> & HelmReleaseRollbackFormProps;
 
+const getRowProps = (obj) => ({
+  id: obj.revision,
+});
+
 const HelmReleaseRollbackForm: React.FC<Props> = ({
   errors,
   handleSubmit,
@@ -58,6 +62,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
             Row={RevisionListRow}
             loaded={!!releaseHistory}
             virtualize
+            getRowProps={getRowProps}
           />
         </FormGroup>
       </FormBody>

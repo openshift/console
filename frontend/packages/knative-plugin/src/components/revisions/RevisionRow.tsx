@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, ResourceKebab, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClampedText } from '@console/shared';
@@ -14,13 +14,13 @@ import { tableColumnClasses } from './revision-table';
 const revisionReference = referenceForModel(RevisionModel);
 const serviceReference = referenceForModel(ServiceModel);
 
-const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
+const RevisionRow: React.FC<RowFunctionArgs<RevisionKind>> = ({ obj }) => {
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, ConditionTypes.Ready)
     : null;
   const service = _.get(obj.metadata, `labels["serving.knative.dev/service"]`);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={revisionReference}
@@ -59,7 +59,7 @@ const RevisionRow: RowFunction<RevisionKind> = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={getRevisionActions()} kind={revisionReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

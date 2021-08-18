@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import {
   DetailsPage,
   Table,
-  TableRow,
   TableProps,
   ComponentProps,
 } from '@console/internal/components/factory';
@@ -83,9 +82,6 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
-        index={0}
-        rowKey={'0'}
-        style={{}}
       />,
     )
       .childAt(0)
@@ -98,9 +94,6 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
-        index={0}
-        rowKey={'0'}
-        style={{}}
       />,
     );
 
@@ -108,7 +101,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders `ResourceKebab` with actions', () => {
-    const col = wrapper.find(TableRow);
+    const col = wrapper;
 
     expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
     expect(col.find(ResourceKebab).props().kind).toEqual(
@@ -118,7 +111,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders clickable column for app logo and name', () => {
-    const col = wrapper.find(TableRow).childAt(0);
+    const col = wrapper.childAt(0);
 
     expect(col.find(Link).props().to).toEqual(
       resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)),
@@ -132,18 +125,18 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders column for managedNamespace', () => {
-    const col = wrapper.find(TableRow).childAt(1);
+    const col = wrapper.childAt(1);
     const managedNamespace = col.childAt(0);
     expect(managedNamespace.exists()).toBeTruthy();
   });
 
   it('renders column for last updated', () => {
-    const col = wrapper.find(TableRow).childAt(3);
+    const col = wrapper.childAt(3);
     expect(col.find(Timestamp).props().timestamp).toEqual('2020-04-21T18:19:49Z');
   });
 
   it('renders column for app status', () => {
-    const col = wrapper.find(TableRow).childAt(2);
+    const col = wrapper.childAt(2);
     const statusComponent = col.childAt(0).find('ClusterServiceVersionStatus');
     expect(statusComponent.exists()).toBeTruthy();
     expect(statusComponent.render().text()).toContain(ClusterServiceVersionPhase.CSVPhaseSucceeded);
@@ -155,7 +148,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
         k === 'metadata' ? { ...v, deletionTimestamp: Date.now() } : undefined,
       ),
     });
-    const col = wrapper.find(TableRow).childAt(2);
+    const col = wrapper.childAt(2);
 
     expect(
       col
@@ -167,7 +160,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders column with each CRD provided by the Operator', () => {
-    const col = wrapper.find(TableRow).childAt(4);
+    const col = wrapper.childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(
         col

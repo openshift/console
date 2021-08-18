@@ -6,7 +6,7 @@ import { match as RMatch } from 'react-router-dom';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FLAGS } from '@console/shared';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel, ReportQueryModel } from '../models';
 import { LoadError, LoadingInline, MsgBox } from './utils/status-box';
@@ -105,9 +105,9 @@ const ReportsTableHeader = () => {
 };
 ReportsTableHeader.displayName = 'ReportsTableHeader';
 
-const ReportsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const ReportsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={ReportReference}
@@ -135,7 +135,7 @@ const ReportsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style 
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -488,14 +488,9 @@ const ReportGenerationQueriesTableHeader = () => {
 };
 ReportGenerationQueriesTableHeader.displayName = 'ReportGenerationQueriesTableHeader';
 
-const ReportGenerationQueriesTableRow: RowFunction<K8sResourceKind> = ({
-  obj,
-  index,
-  key,
-  style,
-}) => {
+const ReportGenerationQueriesTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={reportsGenerationColumnClasses[0]}>
         <ResourceLink
           kind={ReportGenerationQueryReference}
@@ -518,7 +513,7 @@ const ReportGenerationQueriesTableRow: RowFunction<K8sResourceKind> = ({
       <TableData className={reportsGenerationColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

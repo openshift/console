@@ -10,7 +10,7 @@ import {
 } from '@console/shared';
 import { K8sResourceKind, referenceForModel, referenceFor } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, RowFunctionArgs } from './factory';
 
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 
@@ -40,20 +40,11 @@ export const menuActions: KebabAction[] = [
 
 const kind = 'StatefulSet';
 
-const StatefulSetTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const StatefulSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   const resourceKind = referenceFor(obj);
   const context = { [resourceKind]: obj };
   const customActionMenu = <LazyActionMenu context={context} />;
-  return (
-    <WorkloadTableRow
-      obj={obj}
-      index={index}
-      rowKey={key}
-      style={style}
-      customActionMenu={customActionMenu}
-      kind={kind}
-    />
-  );
+  return <WorkloadTableRow obj={obj} customActionMenu={customActionMenu} kind={kind} />;
 };
 
 const StatefulSetTableHeader = () => {

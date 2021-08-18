@@ -14,9 +14,8 @@ import {
   DetailsPage,
   ListPage,
   Table,
-  TableRow,
   TableData,
-  RowFunction,
+  RowFunctionArgs,
   ListPageWrapper,
 } from './factory';
 import {
@@ -57,11 +56,11 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, style }) => {
+const CronJobTableRow: React.FC<RowFunctionArgs<CronJobKind>> = ({ obj: cronjob }) => {
   const resourceKind = referenceFor(cronjob);
   const context = { [resourceKind]: cronjob };
   return (
-    <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={kind}
@@ -85,7 +84,7 @@ const CronJobTableRow: RowFunction<CronJobKind> = ({ obj: cronjob, index, key, s
       <TableData className={tableColumnClasses[5]}>
         <LazyActionMenu context={context} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -47,6 +47,10 @@ import { AffinityCondition, AffinityRowData, AffinityType } from './types';
 
 import '../shared/scheduling-modals.scss';
 
+const getRowProps = (obj: AffinityRowData) => ({
+  id: obj.condition,
+});
+
 export const AffinityModal = withHandlePromise<AffinityModalProps>(
   ({
     vmLikeEntity,
@@ -241,7 +245,8 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                         onEdit: onAffinityClickEdit,
                         onDelete: onAffinityDelete,
                       }}
-                      row={AffinityRow}
+                      Row={AffinityRow}
+                      getRowProps={getRowProps}
                     />
                   </StackItem>
                   {(requiredNodeAffinities?.length > 0 || preferredNodeAffinities?.length > 0) && (

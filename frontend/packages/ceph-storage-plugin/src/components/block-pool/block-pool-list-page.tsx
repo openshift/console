@@ -5,15 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDeepCompareMemoize, StatusIconAndText, Status } from '@console/shared';
 import { sortable, wrappable } from '@patternfly/react-table';
 import { Tooltip } from '@patternfly/react-core';
-import { referenceForModel, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
-import {
-  ListPage,
-  Table,
-  RowFunction,
-  RowFunctionArgs,
-  TableRow,
-  TableData,
-} from '@console/internal/components/factory';
+import { referenceForModel, referenceFor } from '@console/internal/module/k8s';
+import { ListPage, Table, RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import {
   ResourceLink,
   ResourceKebab,
@@ -106,14 +99,12 @@ const getHeader = (t: TFunction) => () => {
   ];
 };
 
-const getRows: RowFunction<K8sResourceKind> = (props) => <BlockPoolTableRow {...props} />;
-
-const BlockPoolTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData }) => {
+const BlockPoolTableRow: React.FC<RowFunctionArgs<StoragePoolKind>> = ({ obj, customData }) => {
   const { t } = useTranslation();
   const blockPoolColumnInfo = BlockPoolColumnInfo(t);
   const props: BlockPoolListRowProps = customData;
   const { name, namespace } = obj.metadata;
-  const replica: string = obj.spec?.replicated?.size;
+  const replica = obj.spec?.replicated?.size;
   const mirroringStatus: boolean = obj.spec?.mirroring?.enabled;
   const mirroringImageHealth: string = mirroringStatus
     ? obj.status?.mirroringStatus?.summary?.image_health
@@ -141,7 +132,7 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style, 
     : '-';
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData
         className={blockPoolColumnInfo.name.classes}
         columnID={blockPoolColumnInfo.name.id}
@@ -214,7 +205,7 @@ const BlockPoolTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style, 
           customData={{ tFunction: t }}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -234,35 +225,49 @@ const BlockPoolList: React.FC<BlockPoolListProps> = (props) => {
     query: getPoolQuery(memoizedPoolNames, StorageDashboardQuery.POOL_RAW_CAPACITY_USED),
     namespace: CEPH_STORAGE_NAMESPACE,
   });
-  const poolRawCapacity: PoolMetrics = getPerPoolMetrics(
-    poolRawCapacityMetrics,
-    rawCapLoadError,
-    rawCapLoading,
-  );
+
   // compression queries
   const [compressionSavings, compressionLoadError, compressionLoading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     query: getPoolQuery(poolNames, StorageDashboardQuery.POOL_COMPRESSION_SAVINGS),
     namespace: CEPH_STORAGE_NAMESPACE,
   });
-  const poolCompressionSavings: PoolMetrics = getPerPoolMetrics(
-    compressionSavings,
+
+  const customData = React.useMemo(() => {
+    const poolRawCapacity: PoolMetrics = getPerPoolMetrics(
+      poolRawCapacityMetrics,
+      rawCapLoadError,
+      rawCapLoading,
+    );
+    const poolCompressionSavings: PoolMetrics = getPerPoolMetrics(
+      compressionSavings,
+      compressionLoadError,
+      compressionLoading,
+    );
+    return {
+      storageClasses: memoizedSC ?? [],
+      cephCluster: cephClusters?.[0],
+      poolRawCapacity,
+      poolCompressionSavings,
+    };
+  }, [
+    cephClusters,
     compressionLoadError,
     compressionLoading,
-  );
+    compressionSavings,
+    memoizedSC,
+    poolRawCapacityMetrics,
+    rawCapLoadError,
+    rawCapLoading,
+  ]);
 
   return (
     <Table
       {...props}
       aria-label={t('ceph-storage-plugin~BlockPool List')}
       Header={getHeader(t)}
-      Row={getRows}
-      customData={{
-        storageClasses: memoizedSC ?? [],
-        cephCluster: cephClusters?.[0],
-        poolRawCapacity,
-        poolCompressionSavings,
-      }}
+      Row={BlockPoolTableRow}
+      customData={customData}
       virtualize
     />
   );

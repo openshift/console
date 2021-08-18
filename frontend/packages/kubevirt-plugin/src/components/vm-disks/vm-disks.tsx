@@ -2,7 +2,12 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Flatten, MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
+import {
+  Flatten,
+  MultiListPage,
+  RowFunctionArgs,
+  Table,
+} from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { FieldLevelHelp, FirehoseResult } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -73,7 +78,7 @@ const getStoragesData = ({
 export type VMDisksTableProps = {
   data?: any[];
   customData?: object;
-  Row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   loaded: boolean;
 };
 
@@ -117,6 +122,10 @@ const getHeader = (t: TFunction, columnClasses: string[]) => () =>
     columnClasses,
   );
 
+const getRowProps = (obj) => ({
+  id: obj.name,
+});
+
 export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisksTableProps> = (
   props,
 ) => {
@@ -142,6 +151,7 @@ export const VMDisksTable: React.FC<React.ComponentProps<typeof Table> | VMDisks
         Header={getHeader(t, props?.customData?.columnClasses)}
         Row={props.Row || DiskRow}
         virtualize
+        getRowProps={getRowProps}
       />
     </div>
   );
