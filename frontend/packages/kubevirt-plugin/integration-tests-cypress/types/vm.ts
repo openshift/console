@@ -14,6 +14,8 @@ export type Disk = {
   source?: DISK_SOURCE;
   bootable?: boolean;
   autoDetach?: boolean;
+  provisionSource?: ProvisionSource;
+  description?: string;
   preallocation?: boolean;
 };
 
