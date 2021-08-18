@@ -13,7 +13,7 @@ type QuickSearchControllerProps = {
   allItemsLoaded: boolean;
   isOpen: boolean;
   icon?: React.ReactNode;
-  limitItemCount: number;
+  limitItemCount?: number;
   disableKeyboardOpen?: boolean;
   setIsOpen: (isOpen: boolean) => void;
   detailsRenderer?: DetailsRendererFunction;

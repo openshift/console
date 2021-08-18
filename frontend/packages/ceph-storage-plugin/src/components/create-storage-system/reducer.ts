@@ -34,7 +34,7 @@ export const initialState: CreateStorageSystemState = {
   backingStorage: {
     type: BackingStorageType.EXISTING,
     externalStorage: '',
-    deployment: DeploymentType.ALL,
+    deployment: DeploymentType.FULL,
     isAdvancedOpen: false,
   },
   capacityAndNodes: {

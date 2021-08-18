@@ -32,7 +32,9 @@ interface QuickSearchListProps {
   selectedItemId: string;
   searchTerm: string;
   namespace: string;
+  limitItemCount?: number;
   onSelectListItem: (itemId: string) => void;
+  onListChange?: (items: number) => void;
   closeModal: () => void;
 }
 
@@ -43,15 +45,19 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   selectedItemId,
   onSelectListItem,
   closeModal,
+  limitItemCount,
+  onListChange,
 }) => {
   const { t } = useTranslation();
   const fireTelemetryEvent = useTelemetry();
+  const [itemsCount, setItemsCount] = React.useState<number>(limitItemCount || listItems.length);
+  const listHeight = document.querySelector('.ocs-quick-search-list__list')?.clientHeight || 0;
 
   const getIcon = (item: CatalogItem) => {
     const { iconImg, iconClass } = getIconProps(item);
     return (
       <img
-        className="odc-quick-search-list__item-icon"
+        className="ocs-quick-search-list__item-icon"
         src={iconClass ? getImageForIconClass(iconClass) : iconImg}
         alt={`${item.name} icon`}
       />
@@ -66,16 +72,28 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
     }
   }, [selectedItemId]);
 
+  React.useEffect(() => {
+    if (listHeight > 0 && limitItemCount > 0) {
+      const rowHeight = document.querySelector('.ocs-quick-search-list__item')?.clientHeight || 0;
+      const count =
+        Math.floor(listHeight / rowHeight) < limitItemCount
+          ? limitItemCount
+          : Math.floor(listHeight / rowHeight);
+      setItemsCount(count);
+      onListChange?.(count);
+    }
+  }, [limitItemCount, listHeight, onListChange]);
+
   return (
-    <div className="odc-quick-search-list">
+    <div className="ocs-quick-search-list">
       <DataList
-        className="odc-quick-search-list__list"
+        className="ocs-quick-search-list__list"
         aria-label={t('console-shared~Quick search list')}
         selectedDataListItemId={selectedItemId}
         onSelectDataListItem={onSelectListItem}
         isCompact
       >
-        {listItems.map((item) => {
+        {listItems.slice(0, itemsCount).map((item) => {
           const itemType =
             catalogItemTypes.find((type) => type.value === item.type)?.label || item.type;
 
@@ -84,16 +102,16 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               id={item.uid}
               key={item.uid}
               tabIndex={-1}
-              className={cx('odc-quick-search-list__item', {
-                'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
+              className={cx('ocs-quick-search-list__item', {
+                'ocs-quick-search-list__item--highlight': item.uid === selectedItemId,
               })}
               onDoubleClick={(e: React.SyntheticEvent) => {
                 handleCta(e, item, closeModal, fireTelemetryEvent);
               }}
             >
-              <DataListItemRow className="odc-quick-search-list__item-row">
+              <DataListItemRow className="ocs-quick-search-list__item-row">
                 <DataListItemCells
-                  className="odc-quick-search-list__item-content"
+                  className="ocs-quick-search-list__item-content"
                   dataListCells={[
                     <DataListCell isIcon key={`${item.uid}-icon`}>
                       {item.icon?.node ?? getIcon(item)}
@@ -104,7 +122,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
                       wrapModifier="truncate"
                       key={`${item.uid}-name`}
                     >
-                      <span className="odc-quick-search-list__item-name">{item.name}</span>
+                      <span className="ocs-quick-search-list__item-name">{item.name}</span>
                       <Split style={{ alignItems: 'center' }} hasGutter>
                         <SplitItem>
                           <Label>{itemType}</Label>
@@ -127,7 +145,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
       </DataList>
 
       {viewAll?.length > 0 && (
-        <div className="odc-quick-search-list__all-items-link">
+        <div className="ocs-quick-search-list__all-items-link">
           {viewAll.map((catalogLink) => (
             <Link
               id={catalogLink.catalogType}

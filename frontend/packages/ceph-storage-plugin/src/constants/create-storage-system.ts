@@ -7,8 +7,8 @@ export enum BackingStorageType {
 }
 
 export enum DeploymentType {
-  ALL = 'all',
-  MCG = 'mcg',
+  FULL = 'Full deployment',
+  MCG = 'MultiCloud Object Gateway',
 }
 
 export enum Steps {

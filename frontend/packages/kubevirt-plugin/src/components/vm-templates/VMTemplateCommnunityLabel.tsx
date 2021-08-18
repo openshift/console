@@ -30,7 +30,7 @@ export const VMTemplateCommnunityLabel: React.FC<VMTemplateLabelProps> = ({
   const provider = getTemplateProvider(t, template);
   const templateOSName = getName(template).split('-')?.[0];
   const isCommunity = !(
-    ['red hat', 'redhat'].includes(provider.toLowerCase()) &&
+    ['red hat', 'redhat', 'kubevirt'].includes(provider.toLowerCase()) &&
     supportedTemplates.includes(templateOSName)
   );
 

@@ -26,12 +26,12 @@ const QuickSearchBar: React.FC<QuickSearchBarProps> = ({
   const { t } = useTranslation();
 
   return (
-    <InputGroup className="odc-quick-search-bar" data-test="quick-search-bar">
+    <InputGroup className="ocs-quick-search-bar" data-test="quick-search-bar">
       <InputGroupText>{icon || <QuickSearchIcon />}</InputGroupText>
       <TextInput
         type="search"
         aria-label={t('console-shared~Quick search bar')}
-        className="odc-quick-search-bar__input"
+        className="ocs-quick-search-bar__input"
         placeholder={searchPlaceholder}
         onChange={onSearch}
         autoFocus={autoFocus}
