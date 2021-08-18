@@ -150,6 +150,11 @@ const GitSection: React.FC<GitSectionProps> = ({
   );
 
   const handleBuilderImageRecommendation = React.useCallback(async () => {
+    if (gitUrlError) {
+      setFieldValue('image.recommended', '');
+      setFieldValue('image.couldNotRecommend', true);
+      return;
+    }
     const gitType = gitTypeTouched ? values.git.type : detectGitType(values.git.url);
     const gitService = getGitService(values.git.url, gitType, values.git.ref, values.git.dir);
     if (repoStatus === RepoStatus.Reachable && builderImages) {
@@ -173,6 +178,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [
     builderImages,
     gitTypeTouched,
+    gitUrlError,
     repoStatus,
     setFieldValue,
     values.git.ref,
@@ -221,11 +227,12 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
 
   React.useEffect(() => {
-    (!dirty || gitUrlTouched || gitTypeTouched || gitDirTouched) &&
+    (!dirty || !isSubmitting || gitUrlTouched || gitTypeTouched || gitDirTouched) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
     dirty,
+    isSubmitting,
     gitUrlTouched,
     gitTypeTouched,
     gitDirTouched,
@@ -235,7 +242,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.dir,
   ]);
 
-  const getHelpText = () => {
+  const helpText = React.useMemo(() => {
     if (values.git.isUrlValidating) {
       return `${t('devconsole~Validating')}...`;
     }
@@ -263,9 +270,9 @@ const GitSection: React.FC<GitSectionProps> = ({
       return t('devconsole~Repository URL to build and deploy your code from a Devfile.');
     }
     return '';
-  };
+  }, [t, values.git.isUrlValidating, validated, repoStatus, buildStrategy]);
 
-  const resetFields = () => {
+  const resetFields = React.useCallback(() => {
     if (!imageSelectorTouched) {
       setFieldValue('image.selected', '');
       setFieldValue('image.tag', '');
@@ -284,7 +291,17 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.selectedKey !== UNASSIGNED_KEY &&
       !applicationNameTouched &&
       setFieldValue('application.name', '');
-  };
+  }, [
+    setFieldValue,
+    values.formType,
+    values.image.recommended,
+    values.image.couldNotRecommend,
+    values.application.selectedKey,
+    values.application.isInContext,
+    applicationNameTouched,
+    imageSelectorTouched,
+    nameTouched,
+  ]);
 
   useFormikValidationFix(values.git.url);
 
@@ -299,12 +316,11 @@ const GitSection: React.FC<GitSectionProps> = ({
         type={TextInputTypes.text}
         name="git.url"
         label={t('devconsole~Git Repo URL')}
-        helpText={getHelpText()}
-        helpTextInvalid={getHelpText()}
+        helpText={helpText}
+        helpTextInvalid={helpText}
         validated={validated}
         onChange={(e: React.SyntheticEvent) => {
           resetFields();
-          setValidated(ValidatedOptions.default);
           debouncedHandleGitUrlChange(
             (e.target as HTMLInputElement).value,
             values.git.ref,
