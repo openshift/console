@@ -13,6 +13,7 @@ export type Disk = {
   };
   source?: DISK_SOURCE;
   bootable?: boolean;
+  preallocation?: boolean;
 };
 
 export type Network = {

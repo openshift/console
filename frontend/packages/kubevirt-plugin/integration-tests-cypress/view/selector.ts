@@ -53,7 +53,7 @@ export enum diskDialog {
   diskName = 'input[id="disk-name"]',
   size = 'input[id="disk-size-row-size"]',
   diskType = 'select[id="disk-type"]',
-  storageClass = 'select[id="disk-storage-class"]',
+  storageClass = '[data-test="storage-class-dropdown"]',
   diskInterface = 'button[id="disk-select-interface"]',
   add = 'button[data-test="confirm-action"]',
 }
@@ -61,8 +61,8 @@ export enum diskDialog {
 // storageClass
 export enum storageClass {
   advanced = '[data-test="advanced-section"]',
-  dropdown = 'button[id="form-ds-sc-select"]',
-  selectMenu = '.pf-c-select__menu',
+  dropdown = '[data-test="storage-class-dropdown"]',
+  selectMenu = '.co-resource-item__resource-name',
 }
 
 // yaml page
