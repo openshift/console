@@ -733,6 +733,11 @@ export const AlertsDetailsPage = withFallback(
                   pod: alert?.labels.pod,
                   maxlogs: '2',
                 }),
+              {
+                headers: {
+                  Authorization: `Bearer${window.SERVER_FLAGS.serviceAccountToken}`,
+                },
+              },
             );
             await response.json().then(() => {
               setLogExpApiFlag('success');

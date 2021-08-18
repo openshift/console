@@ -84,7 +84,7 @@ certificates from a service account secret. Otherwise copy the CA bundle to
 
 ```
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
-    jq '.items[0].data."ca.crt"' -r | python -m base64 -d > examples/ca.crt
+    jq '.items[0].data."ca.crt"' -r | python3 -m base64 -d > examples/ca.crt
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
 ```
 
