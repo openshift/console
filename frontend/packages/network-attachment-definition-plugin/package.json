@@ -20,7 +20,8 @@
       ]
     },
     "exposedModules": {
-      "yamlTemplates": "src/models/templates/index.ts"
+      "yamlTemplates": "src/models/templates/index.ts",
+      "nadFlags": "src/flags"
     }
   }
 }
