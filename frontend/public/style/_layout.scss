@@ -1,29 +1,15 @@
 html,
 body,
 #app,
-#content,
-#content-scrollable,
-.pf-c-page__main-section,
 .pf-c-drawer {
-  height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
+  height: 100%;
 }
 
 #app,
 #content {
   display: flex;
+  flex-basis: 100%;
   flex-direction: column;
-}
-
-#content-scrollable {
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto; // so catalog is scrollable at mobile
-  overflow-y: auto;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-  &:focus {
-    outline: 0;
-  }
 }
 
 .co-m-page__body {
