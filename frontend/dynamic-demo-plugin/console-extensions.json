@@ -45,5 +45,12 @@
       "path": "/test-utility-consumer",
       "component": { "$codeRef": "utilityConsumer.default" }
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/example/nav",
+      "component": { "$codeRef": "navPage" }
+    }
   }
 ]

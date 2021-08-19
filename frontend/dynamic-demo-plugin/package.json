@@ -31,7 +31,8 @@
       "barUtils": "./utils/bar",
       "telemetry": "./utils/telemetry",
       "extensionConsumer": "./components/ExtensionConsumer.tsx",
-      "utilityConsumer": "./components/UtilityConsumer.tsx"
+      "utilityConsumer": "./components/UtilityConsumer.tsx",
+      "navPage": "./components/Nav"
     },
     "dependencies": {
       "@console/pluginAPI": "*"
