@@ -1,5 +1,7 @@
 {
   "integrationFolder": "tests",
+  "viewportWidth": 1920,
+  "viewportHeight": 1080,
   "screenshotsFolder": "../../gui_test_screenshots/cypress/screenshots",
   "videosFolder": "../../gui_test_screenshots/cypress/videos",
   "video": true,

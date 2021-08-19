@@ -129,15 +129,6 @@ form.pf-c-form {
 }
 
 .pf-c-page {
-  display: block !important;
-  position: relative;
-
-  &__header {
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-  }
 
   &__header-brand-link {
     flex: 0 1 auto !important; // so link doesn't grow larger than logo
@@ -156,15 +147,15 @@ form.pf-c-form {
     }
   }
 
-  &__main {
-    // `z-index: auto` is required for fullscreen terminal
-    --pf-c-page__main--ZIndex: auto;
-    bottom: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--pf-c-page__header--MinHeight);
-    transition: left 100ms ease;
+  // Positions fullscreen terminal on top of mast header
+  &__main.default-overflow {
+    z-index: calc(var(--pf-c-page__header--ZIndex) + 50);
+  }
+
+  // Apply to primary content section to prevent yaml editor and topology sections from collapsing
+  .pf-page__main-section--flex {
+    display: flex;
+    flex-direction: column;
   }
 
   // `.pf-c-page` specificity required
@@ -173,24 +164,6 @@ form.pf-c-form {
     --pf-c-toolbar__content--PaddingLeft: 0;
     --pf-c-toolbar__content--PaddingRight: 0;
     --pf-c-toolbar--RowGap: var(--pf-global--spacer--md);
-  }
-
-  .pf-c-page__main-section {
-    overflow: hidden; // needed for Firefox to enable proper scrolling of content-scrollable
-    --pf-c-page__main-section--PaddingBottom: 0;
-    --pf-c-page__main-section--PaddingLeft: 0;
-    --pf-c-page__main-section--PaddingRight: 0;
-    --pf-c-page__main-section--PaddingTop: 0;
-  }
-
-  .pf-c-page__sidebar {
-    --pf-c-page__sidebar--Transition: all 100ms ease;
-  }
-}
-
-@media screen and (min-width: $grid-float-breakpoint) {
-  .pf-m-expanded + .pf-c-page__main {
-    left: var(--pf-c-page__sidebar--Width);
   }
 }
 
@@ -238,21 +211,8 @@ form.pf-c-form {
 }
 
 .pf-c-page__sidebar {
-  --pf-c-page__sidebar-body--PaddingTop: 0;
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  top: var(--pf-c-page__header--MinHeight);
-  width: 0 !important; // only set size when expanded (.pf-m-expanded is added)
-
   @media screen and (min-width: $grid-float-breakpoint) {
     --pf-c-page__sidebar--BoxShadow: none;
-  }
-
-  &.pf-m-expanded {
-    width: var(
-      --pf-c-page__sidebar--Width
-    ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   // Perspective switcher
