@@ -20,7 +20,7 @@ import {
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { AccessMode, ANNOTATION_SOURCE_PROVIDER, VolumeMode } from '../../../constants';
+import { ANNOTATION_SOURCE_PROVIDER } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useStorageProfileSettings } from '../../../hooks/use-storage-profile-settings';
 import { getDefaultStorageClass } from '../../../selectors/config-map/sc-defaults';
@@ -68,6 +68,8 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
+  const isSPDefaults = isSPSettingProvided && applySP && storageClassName;
+
   const provisioner = updatedStorageClass?.provisioner || '';
 
   const handleStorageClass = React.useCallback(
@@ -81,14 +83,14 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
   );
 
   const handleAccessAndVolumeModeChange = React.useCallback(
-    (accessMode = AccessMode.READ_WRITE_ONCE, volumeMode = VolumeMode.FILESYSTEM) => {
+    (accessMode, volumeMode) => {
       dispatch({
         type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
-        payload: accessMode.getValue(),
+        payload: accessMode?.getValue(),
       });
       dispatch({
         type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-        payload: volumeMode.getValue(),
+        payload: volumeMode?.getValue(),
       });
     },
     [dispatch],
@@ -103,9 +105,6 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
     if (storageClassesLoaded && !state.storageClass?.value) {
       if (defaultSCName) {
         handleStorageClass(defaultSCName);
-      } else {
-        const firstSc = storageClasses?.[0]?.metadata?.name;
-        firstSc && handleStorageClass(firstSc);
       }
     }
   }, [storageClassesLoaded, defaultSCName, state.storageClass, storageClasses, handleStorageClass]);
@@ -122,76 +121,93 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({
     spAccessMode,
     spVolumeMode,
     handleAccessAndVolumeModeChange,
+    storageClassName,
   ]);
 
-  return storageClassesLoaded && !scAllowedLoading ? (
-    <Form>
-      <FormRow fieldId="form-ds-sc" isRequired>
-        <StorageClassDropdown
-          name={t('kubevirt-plugin~Storage Class')}
-          onChange={(sc) => onStorageClassNameChanged(sc)}
-          data-test="storage-class-dropdown"
+  let spData = (
+    <div data-test="sp-no-default-settings">
+      <FormRow fieldId="form-ds-access-mode" isRequired>
+        <AccessModeSelector
+          onChange={(aMode) => {
+            dispatch({
+              type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
+              payload: aMode,
+            });
+          }}
+          provisioner={provisioner}
+          loaded
+          availableAccessModes={initialAccessModes}
+          initialAccessMode={
+            isSPSettingProvided && storageClassName ? spAccessMode?.getValue() : undefined
+          }
         />
       </FormRow>
-      <>
-        <FormRow fieldId="form-ds-apply-sp">
-          <Checkbox
-            id="apply-storage-provider"
-            description={t(
-              'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
-            )}
-            isChecked={applySP}
-            onChange={() => setApplySP(!applySP)}
-            isDisabled={!isSPSettingProvided}
-            label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
-            data-test="apply-storage-provider"
+      <FormRow fieldId="form-ds-volume-mode" isRequired>
+        <VolumeModeSelector
+          onChange={(vMode) => {
+            dispatch({
+              type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+              payload: vMode,
+            });
+          }}
+          provisioner={provisioner}
+          accessMode={state.accessMode?.value || spAccessMode?.getValue()} // Getting existing accessMode value otherwise
+          storageClass={storageClassName}
+          loaded
+          initialVolumeMode={
+            isSPSettingProvided && storageClassName ? spVolumeMode?.getValue() : undefined
+          }
+        />
+      </FormRow>
+    </div>
+  );
+
+  if (isSPDefaults) {
+    spData = (
+      <FormRow fieldId="form-ds-sp-settings" data-test="sp-default-settings">
+        {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
+          accessMode: spAccessMode?.getValue(),
+          volumeMode: spVolumeMode?.getValue(),
+        })}
+      </FormRow>
+    );
+  }
+
+  const spFormRow = !spLoaded ? <LoadingInline /> : <>{spData}</>;
+
+  let form = <LoadingInline />;
+
+  if (storageClassesLoaded && !scAllowedLoading) {
+    form = (
+      <Form>
+        <FormRow fieldId="form-ds-sc" isRequired>
+          <StorageClassDropdown
+            name={t('kubevirt-plugin~Storage Class')}
+            onChange={(sc) => onStorageClassNameChanged(sc)}
+            data-test="storage-class-dropdown"
           />
         </FormRow>
-        {!spLoaded ? (
-          <LoadingInline />
-        ) : isSPSettingProvided && applySP ? (
-          <FormRow fieldId="form-ds-sp-settings" data-test="sp-default-settings">
-            {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
-              accessMode: spAccessMode?.getValue(),
-              volumeMode: spVolumeMode?.getValue(),
-            })}
+        <>
+          <FormRow fieldId="form-ds-apply-sp">
+            <Checkbox
+              id="apply-storage-provider"
+              description={t(
+                'kubevirt-plugin~Use optimized access mode & volume mode settings from StorageProfile resource.',
+              )}
+              isChecked={applySP}
+              onChange={() => setApplySP(!applySP)}
+              isDisabled={!isSPSettingProvided || !storageClassName}
+              label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
+              data-test="apply-storage-provider"
+            />
           </FormRow>
-        ) : (
-          <div data-test="sp-no-default-settings">
-            <FormRow fieldId="form-ds-access-mode" isRequired>
-              <AccessModeSelector
-                onChange={(aMode) => {
-                  dispatch({
-                    type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
-                    payload: aMode,
-                  });
-                }}
-                provisioner={provisioner}
-                loaded
-                availableAccessModes={initialAccessModes}
-              />
-            </FormRow>
-            <FormRow fieldId="form-ds-volume-mode" isRequired>
-              <VolumeModeSelector
-                onChange={(vMode) => {
-                  dispatch({
-                    type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-                    payload: vMode,
-                  });
-                }}
-                provisioner={provisioner}
-                accessMode={state.accessMode?.value}
-                storageClass={storageClassName}
-                loaded
-              />
-            </FormRow>
-          </div>
-        )}
-      </>
-    </Form>
-  ) : (
-    <LoadingInline />
-  );
+          {spFormRow}
+        </>
+      </Form>
+    );
+  }
+
+  return form;
 };
 
 type BootSourceFormProps = AdvancedSectionProps & {

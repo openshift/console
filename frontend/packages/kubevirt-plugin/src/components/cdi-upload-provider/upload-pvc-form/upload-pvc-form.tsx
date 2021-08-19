@@ -153,13 +153,57 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const [spAccessMode, spVolumeMode, spLoaded, isSPSettingProvided] = useStorageProfileSettings(
     storageClassName || defaultSCName,
   );
+  const isSPDefaults = isSPSettingProvided && applySP && storageClassName;
+
+  let spData = (
+    <div data-test="sp-no-default-settings">
+      <div className="form-group">
+        <AccessModeSelector
+          onChange={(aMode) => setAccessMode(aMode)}
+          provisioner={provisioner}
+          loaded
+          availableAccessModes={initialAccessModes}
+          initialAccessMode={
+            isSPSettingProvided && storageClassName ? spAccessMode?.getValue() : undefined
+          }
+        />
+      </div>
+      <div className="form-group">
+        <VolumeModeSelector
+          onChange={(vMode) => setVolumeMode(vMode)}
+          provisioner={provisioner}
+          accessMode={accessMode || spAccessMode?.getValue()}
+          storageClass={storageClassName}
+          initialVolumeMode={
+            isSPSettingProvided && storageClassName ? spVolumeMode?.getValue() : undefined
+          }
+          loaded
+        />
+      </div>
+    </div>
+  );
+
+  if (isSPDefaults) {
+    spData = (
+      <div className="form-group" data-test="sp-default-settings">
+        {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
+          accessMode: spAccessMode?.getValue(),
+          volumeMode: spVolumeMode?.getValue(),
+        })}
+      </div>
+    );
+  }
+
+  let spFormRow = <LoadingInline />;
+
+  if (spLoaded) {
+    spFormRow = spData;
+  }
 
   React.useEffect(() => {
     if (!storageClassName) {
       if (defaultSCName) {
         setStorageClassName(defaultSCName);
-      } else {
-        setStorageClassName(storageClasses?.[0]?.metadata?.name);
       }
     }
   }, [defaultSCName, storageClassName, storageClasses]);
@@ -480,7 +524,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   )}
                   isChecked={applySP}
                   onChange={() => setApplySP(!applySP)}
-                  isDisabled={!isSPSettingProvided}
+                  isDisabled={!isSPSettingProvided || !storageClassName}
                   label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
                   data-test="apply-storage-provider"
                 />
@@ -509,36 +553,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </SplitItem>
         </Split>
       </div>
-      {!spLoaded ? (
-        <LoadingInline />
-      ) : applySP && isSPSettingProvided ? (
-        <div className="form-group" data-test="sp-default-settings">
-          {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
-            accessMode: spAccessMode?.getValue(),
-            volumeMode: spVolumeMode?.getValue(),
-          })}
-        </div>
-      ) : (
-        <div data-test="sp-no-default-settings">
-          <div className="form-group">
-            <AccessModeSelector
-              onChange={(aMode) => setAccessMode(aMode)}
-              provisioner={provisioner}
-              loaded
-              availableAccessModes={initialAccessModes}
-            />
-          </div>
-          <div className="form-group">
-            <VolumeModeSelector
-              onChange={(vMode) => setVolumeMode(vMode)}
-              provisioner={provisioner}
-              accessMode={accessMode}
-              storageClass={storageClassName}
-              loaded
-            />
-          </div>
-        </div>
-      )}
+      {spFormRow}
     </div>
   );
 };

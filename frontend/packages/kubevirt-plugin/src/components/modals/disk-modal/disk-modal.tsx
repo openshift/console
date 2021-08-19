@@ -138,6 +138,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
 
   const [applySP, setApplySP] = React.useState<boolean>(true);
 
+  const isSPDefaults = isSPSettingProvided && applySP && storageClassName;
+
   const inProgress = _inProgress && !spLoaded;
 
   const isDisabled = (fieldName: string, disabled?: boolean) =>
@@ -320,6 +322,52 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       },
     },
   };
+
+  let spData = (
+    <div data-test="sp-no-default-settings">
+      <StackItem>
+        <AccessModeSelector
+          onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
+          provisioner={storageProvisioner}
+          loaded
+          availableAccessModes={initialAccessModes}
+          description={accessModeHelp}
+          initialAccessMode={
+            isSPSettingProvided && storageClassName ? spAccessMode?.getValue() : undefined
+          }
+        />
+      </StackItem>
+      <StackItem>
+        <VolumeModeSelector
+          onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
+          provisioner={storageProvisioner}
+          accessMode={accessMode?.getValue() || spAccessMode?.getValue()}
+          storageClass={storageClassName}
+          loaded
+          initialVolumeMode={
+            isSPSettingProvided && storageClassName ? spVolumeMode?.getValue() : undefined
+          }
+        />
+      </StackItem>
+    </div>
+  );
+
+  if (isSPDefaults) {
+    spData = (
+      <StackItem data-test="sp-default-settings">
+        {t('kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}', {
+          accessMode: spAccessMode?.getValue(),
+          volumeMode: spVolumeMode?.getValue(),
+        })}
+      </StackItem>
+    );
+  }
+
+  let spRowForm = <LoadingInline />;
+
+  if (spLoaded) {
+    spRowForm = spData;
+  }
 
   const submit = (e) => {
     e.preventDefault();
@@ -691,45 +739,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                       )}
                       isChecked={applySP}
                       onChange={() => setApplySP(!applySP)}
-                      isDisabled={!isSPSettingProvided}
+                      isDisabled={!isSPSettingProvided || !storageClassName}
                       label={t('kubevirt-plugin~Apply optimized StorageProfile settings')}
                       data-test="apply-storage-provider"
                     />
                   </StackItem>
-                  {!spLoaded ? (
-                    <LoadingInline />
-                  ) : isSPSettingProvided && applySP ? (
-                    <StackItem data-test="sp-default-settings">
-                      {t(
-                        'kubevirt-plugin~Access mode: {{accessMode}} / Volume mode: {{volumeMode}}',
-                        {
-                          accessMode: spAccessMode?.getValue(),
-                          volumeMode: spVolumeMode?.getValue(),
-                        },
-                      )}
-                    </StackItem>
-                  ) : (
-                    <div data-test="sp-no-default-settings">
-                      <StackItem>
-                        <AccessModeSelector
-                          onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
-                          provisioner={storageProvisioner}
-                          loaded
-                          availableAccessModes={initialAccessModes}
-                          description={accessModeHelp}
-                        />
-                      </StackItem>
-                      <StackItem>
-                        <VolumeModeSelector
-                          onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
-                          provisioner={storageProvisioner}
-                          accessMode={accessMode?.getValue()}
-                          storageClass={storageClassName}
-                          loaded
-                        />
-                      </StackItem>
-                    </div>
-                  )}
+                  {spRowForm}
                 </>
               )}
               <StackItem>

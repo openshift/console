@@ -20,6 +20,7 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
     storageClass,
     availableVolumeMode,
     loaded,
+    initialVolumeMode,
   } = props;
 
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export const VolumeModeSelector: React.FC<VolumeModeSelectorProps> = (props) => 
     ? pvcResource?.spec?.volumeMode
     : availableVolumeMode ?? initialVolumeModes[0];
 
-  const [volumeMode, setVolumeMode] = React.useState<string>();
+  const [volumeMode, setVolumeMode] = React.useState<string>(initialVolumeMode);
   const allowedVolumeModes: string[] = React.useMemo(
     () => (loaded ? getVolumeModeForProvisioner(provisioner, accessMode) : []),
     [loaded, provisioner, accessMode],
@@ -98,4 +99,5 @@ type VolumeModeSelectorProps = {
   storageClass: string;
   availableVolumeMode?: string;
   loaded: boolean;
+  initialVolumeMode?: string;
 };

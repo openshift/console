@@ -33,6 +33,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     availableAccessModes = [],
     description,
     ignoreReadOnly,
+    initialAccessMode,
   } = props;
 
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   const volumeMode: string = pvcResource?.spec?.volumeMode;
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
-  const [accessMode, setAccessMode] = React.useState<string>();
+  const [accessMode, setAccessMode] = React.useState<string>(initialAccessMode);
 
   const changeAccessMode = React.useCallback(
     (mode: string) => {
@@ -122,4 +123,5 @@ type AccessModeSelectorProps = {
   provisioner: string;
   description?: string;
   ignoreReadOnly?: boolean;
+  initialAccessMode?: string;
 };
