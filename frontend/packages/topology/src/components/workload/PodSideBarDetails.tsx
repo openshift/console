@@ -4,7 +4,6 @@ import { PodDetailsList, PodResourceSummary } from '@console/internal/components
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type PodSideBarDetailsProps = {
@@ -28,7 +27,6 @@ const PodSideBarDetails: React.FC<PodSideBarDetailsProps> = ({ pod }) => {
 };
 
 export const getPodSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource<PodKind>(element);
   if (resource.kind !== PodModel.kind) return undefined;
   return <PodSideBarDetails pod={resource} />;
