@@ -10,7 +10,6 @@ import {
 import { DeploymentModel } from '@console/internal/models';
 import { DeploymentKind } from '@console/internal/module/k8s';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { TYPE_WORKLOAD } from '../../const';
 import { getResource } from '../../utils';
 
 type DeploymentSideBarDetailsProps = {
@@ -50,7 +49,6 @@ const DeploymentSideBarDetails: React.FC<DeploymentSideBarDetailsProps> = ({ dep
 };
 
 export const getDeploymentSideBarDetails = (element: GraphElement) => {
-  if (element.getType() !== TYPE_WORKLOAD) return undefined;
   const resource = getResource<DeploymentKind>(element);
   if (resource.kind !== DeploymentModel.kind) return undefined;
   return <DeploymentSideBarDetails deployment={resource} />;
