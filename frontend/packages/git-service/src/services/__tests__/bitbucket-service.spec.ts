@@ -140,6 +140,7 @@ describe('Bitbucket Service', () => {
   it('should detect Dockerfile', () => {
     const gitSource: GitSource = {
       url: 'https://bitbucket.org/akashshinde123/tutorial-react-docker',
+      dockerfilePath: 'Dockerfile',
     };
 
     const gitService = new BitbucketService(gitSource);
@@ -155,6 +156,7 @@ describe('Bitbucket Service', () => {
   it('should return exposed container port from dockerfile', () => {
     const gitSource: GitSource = {
       url: 'https://bitbucket.org/akashshinde123/tutorial-react-docker',
+      dockerfilePath: 'Dockerfile',
     };
 
     const gitService = new BitbucketService(gitSource);
@@ -170,7 +172,10 @@ describe('Bitbucket Service', () => {
   });
 
   it('should not detect Dockerfile', () => {
-    const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/akshinde/testgitsource',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new BitbucketService(gitSource);
 
@@ -183,7 +188,10 @@ describe('Bitbucket Service', () => {
   });
 
   it('should return null as dockerfile content', () => {
-    const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/akshinde/testgitsource',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new BitbucketService(gitSource);
 
@@ -198,6 +206,7 @@ describe('Bitbucket Service', () => {
   it('should detect Devfile', () => {
     const gitSource: GitSource = {
       url: 'https://bitbucket.org/reginapizza/che',
+      devfilePath: 'devfile.yaml',
     };
 
     const gitService = new BitbucketService(gitSource);
@@ -211,7 +220,10 @@ describe('Bitbucket Service', () => {
   });
 
   it('should not detect devfile', () => {
-    const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/akshinde/testgitsource',
+      devfilePath: 'devfile.yaml',
+    };
 
     const gitService = new BitbucketService(gitSource);
 

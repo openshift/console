@@ -1,31 +1,30 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { FormikValues, useFormikContext } from 'formik';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
-import { ImageData } from '../import-types';
 import FormSection from '../section/FormSection';
 import BuilderImageSelector from './BuilderImageSelector';
 import BuilderImageTagSelector from './BuilderImageTagSelector';
 
 export interface ImageSectionProps {
-  image: ImageData;
   builderImages: NormalizedBuilderImages;
   existingPipeline?: PipelineKind;
 }
 
-const BuilderSection: React.FC<ImageSectionProps> = ({
-  image,
-  builderImages,
-  existingPipeline,
-}) => {
-  const { t } = useTranslation();
+const BuilderSection: React.FC<ImageSectionProps> = ({ builderImages, existingPipeline }) => {
+  const {
+    values: {
+      image,
+      import: { showEditImportStrategy },
+    },
+  } = useFormikContext<FormikValues>();
   if (!builderImages) {
     return null;
   }
 
   return (
     <>
-      <FormSection title={t('devconsole~Builder')} fullWidth>
+      <FormSection fullWidth style={!showEditImportStrategy ? { display: 'none' } : {}}>
         <BuilderImageSelector
           loadingImageStream={!builderImages}
           builderImages={builderImages}

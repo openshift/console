@@ -176,7 +176,10 @@ describe('Github Service', () => {
   });
 
   it('should detect Dockerfile', () => {
-    const gitSource = { url: 'https://github.com/mikesparr/tutorial-react-docker' };
+    const gitSource = {
+      url: 'https://github.com/mikesparr/tutorial-react-docker',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new GithubService(gitSource);
 
@@ -189,7 +192,10 @@ describe('Github Service', () => {
   });
 
   it('should return exposed container port', () => {
-    const gitSource = { url: 'https://github.com/mikesparr/tutorial-react-docker' };
+    const gitSource = {
+      url: 'https://github.com/mikesparr/tutorial-react-docker',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new GithubService(gitSource);
 
@@ -204,7 +210,10 @@ describe('Github Service', () => {
   });
 
   it('should not detect Dockerfile', () => {
-    const gitSource: GitSource = { url: 'https://github.com/redhat-developer/devconsole-git' };
+    const gitSource: GitSource = {
+      url: 'https://github.com/redhat-developer/devconsole-git',
+      dockerfilePath: 'Dockerfile',
+    };
 
     const gitService = new GithubService(gitSource);
 
@@ -217,7 +226,7 @@ describe('Github Service', () => {
   });
 
   it('should detect Devfile', () => {
-    const gitSource = { url: 'https://github.com/reginapizza/che' };
+    const gitSource = { url: 'https://github.com/reginapizza/che', devfilePath: 'devfile.yaml' };
 
     const gitService = new GithubService(gitSource);
 
@@ -230,7 +239,10 @@ describe('Github Service', () => {
   });
 
   it('should not detect Devfile', () => {
-    const gitSource: GitSource = { url: 'https://github.com/redhat-developer/devconsole-git' };
+    const gitSource: GitSource = {
+      url: 'https://github.com/redhat-developer/devconsole-git',
+      devfilePath: 'devfile.yaml',
+    };
 
     const gitService = new GithubService(gitSource);
 

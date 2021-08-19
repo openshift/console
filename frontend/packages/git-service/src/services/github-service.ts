@@ -27,7 +27,7 @@ export class GithubService extends BaseService {
     switch (this.gitsource.secretType) {
       case SecretType.PERSONAL_ACCESS_TOKEN:
       case SecretType.BASIC_AUTH:
-        return { auth: this.gitsource.secretContent.password };
+        return { auth: this.gitsource.secretContent };
       default:
         return null;
     }
@@ -42,6 +42,8 @@ export class GithubService extends BaseService {
       host: source,
       defaultBranch: this.gitsource.ref,
       contextDir,
+      devfilePath: this.gitsource.devfilePath,
+      dockerfilePath: this.gitsource.dockerfilePath,
     };
   };
 
@@ -143,13 +145,17 @@ export class GithubService extends BaseService {
     }
   };
 
-  isDockerfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/Dockerfile`);
+  isDockerfilePresent = () =>
+    this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
-  getDockerfileContent = () => this.getFileContent(`${this.metadata.contextDir}/Dockerfile`);
+  getDockerfileContent = () =>
+    this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
-  isDevfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/devfile.yaml`);
+  isDevfilePresent = () =>
+    this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 
-  getDevfileContent = () => this.getFileContent(`${this.metadata.contextDir}/devfile.yaml`);
+  getDevfileContent = () =>
+    this.getFileContent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 
   getPackageJsonContent = () => this.getFileContent(`${this.metadata.contextDir}/package.json`);
 }

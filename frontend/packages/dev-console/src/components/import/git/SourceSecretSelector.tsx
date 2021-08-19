@@ -3,6 +3,8 @@ import { FormGroup } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SecretModel } from '@console/internal/models';
 import { getFieldId } from '@console/shared';
 import SourceSecretDropdown from '../../dropdown/SourceSecretDropdown';
 import { secretModalLauncher } from '../CreateSecretModal';
@@ -12,6 +14,13 @@ const CREATE_SOURCE_SECRET = 'create-source-secret';
 const SourceSecretSelector: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const [data, loaded, loadError] = useK8sWatchResource({
+    name: values.git.secret,
+    namespace: values.project.name,
+    kind: SecretModel.kind,
+    optional: true,
+    isList: false,
+  });
 
   const handleSave = (name: string) => {
     setFieldValue('git.secret', name);
@@ -29,6 +38,10 @@ const SourceSecretSelector: React.FC = () => {
       setFieldValue('git.secret', key);
     }
   };
+
+  React.useEffect(() => {
+    loaded && !loadError && data && setFieldValue('git.secretResource', data);
+  }, [data, loadError, loaded, setFieldValue]);
 
   return (
     <>

@@ -679,7 +679,7 @@ export const defaultDevfileFormData: GitImportFormData = {
   },
   devfile: {
     devfileHasError: false,
-    devfilePath: './devfile.yaml',
+    devfilePath: 'devfile.yaml',
   },
 };
 
@@ -743,7 +743,7 @@ export const sampleDevfileFormData: GitImportFormData = {
   },
   devfile: {
     devfileHasError: false,
-    devfilePath: './devfile.yaml',
+    devfilePath: 'devfile.yaml',
     devfileContent: 'SKIPPED',
     devfileSuggestedResources: {
       imageStream: {

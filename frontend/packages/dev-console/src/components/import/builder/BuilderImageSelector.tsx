@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { FormGroup, Alert } from '@patternfly/react-core';
-import { StarIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PIPELINE_RUNTIME_LABEL } from '@console/pipelines-plugin/src/const';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
@@ -81,17 +80,6 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
       {isRecommending && !recommended && (
         <>
           <LoadingInline /> {t('devconsole~Detecting recommended Builder Images...')}
-        </>
-      )}
-      {recommended && builderImages.hasOwnProperty(recommended) && (
-        <>
-          <Alert variant="success" title={t('devconsole~Builder Image(s) detected.')} isInline>
-            <Trans ns="devconsole" t={t}>
-              Recommended Builder Images are represented by{' '}
-              <StarIcon style={{ color: 'var(--pf-global--primary-color--100)' }} /> icon.
-            </Trans>
-          </Alert>
-          <br />
         </>
       )}
       {(couldNotRecommend || (recommended && !builderImages.hasOwnProperty(recommended))) && (
