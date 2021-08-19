@@ -2,23 +2,29 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
 import { navFactory, Kebab } from '@console/internal/components/utils';
-import { getInlineBadgeFromType } from '@console/shared';
-import { RepositoryModel } from '../../models';
+import { useActivePerspective, useTabbedTableBreadcrumbsFor } from '@console/shared';
+import { pipelinesTab } from '../../utils/pipeline-utils';
 import RepositoryDetails from './RepositoryDetails';
 import RepositoryPipelineRunListPage from './RepositoryPipelineRunListPage';
 
 const RepositoryDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
-  const title = (
-    <>
-      {props.name} {getInlineBadgeFromType(RepositoryModel.badge)}
-    </>
+  const { kindObj, match } = props;
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
+  const breadcrumbs = useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    isAdminPerspective ? 'pipelines' : 'dev-pipelines',
+    pipelinesTab(kindObj),
+    undefined,
+    true,
   );
 
   return (
     <DetailsPage
       {...props}
-      title={title}
+      breadcrumbsFor={() => breadcrumbs}
+      title={props.name}
       menuActions={Kebab.factory.common}
       pages={[
         navFactory.details(RepositoryDetails),

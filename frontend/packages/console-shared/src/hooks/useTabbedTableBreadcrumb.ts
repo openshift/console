@@ -20,6 +20,7 @@ export const useTabbedTableBreadcrumbsFor = (
   navOption: string,
   subTab: string = null,
   customBreadcrumbName?: string,
+  customBreadcrumbURLRequired?: boolean,
 ) => {
   const { t } = useTranslation();
   const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
@@ -34,9 +35,10 @@ export const useTabbedTableBreadcrumbsFor = (
         : [
             {
               name: customBreadcrumbName || (labelPluralKey ? t(labelPluralKey) : labelPlural),
-              path: isAdminPerspective
-                ? `/${navOption}/${nsURL}/${subTab}`
-                : getBreadcrumbPath(match),
+              path:
+                isAdminPerspective || customBreadcrumbURLRequired
+                  ? `/${navOption}/${nsURL}/${subTab}`
+                  : getBreadcrumbPath(match),
             },
             {
               name: t('console-shared~{{label}} details', {
@@ -48,6 +50,7 @@ export const useTabbedTableBreadcrumbsFor = (
     [
       subTab,
       customBreadcrumbName,
+      customBreadcrumbURLRequired,
       labelPluralKey,
       t,
       labelPlural,
