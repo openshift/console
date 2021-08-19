@@ -17,7 +17,7 @@ export const useDetailsResourceLink = (
       ? resurceLinkExtension
           .sort((a, b) => a.properties.priority - b.properties.priority)
           .find(({ properties: { link } }) => !!link(element))
-          .properties?.link?.(element)
+          ?.properties?.link?.(element)
       : null;
   }, [resurceLinkExtension, resolved, element]);
   return resourceLink;
