@@ -8,7 +8,6 @@ import { AdvancedSection } from './advanced-section';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
 import { getStorageSystemKind } from '../../../../utils/create-storage-system';
-import { filterSCWithoutNoProv } from '../../../../utils/install';
 import { WizardState, WizardDispatch } from '../../reducer';
 import {
   BackingStorageType,
@@ -78,7 +77,6 @@ const StorageClassSelection: React.FC<StorageClassSelectionProps> = ({ dispatch,
         noSelection
         onChange={onStorageClassSelect}
         selectedKey={selected.name}
-        filter={filterSCWithoutNoProv}
         data-test="storage-class-dropdown"
       />
     </div>
@@ -152,10 +150,15 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   const onRadioSelect = (_, event) => {
     dispatch({ type: 'backingStorage/setType', payload: event.target.value });
-    dispatch({
-      type: 'wizard/setStepIdReached',
-      payload: 1,
-    });
+    if (stepIdReached !== 1) {
+      // Reset the wizard when a new flow is selected
+      // Avoid resetting when user has not visited any step other than this
+      dispatch({ type: 'wizard/setInitialState' });
+      dispatch({
+        type: 'wizard/setStepIdReached',
+        payload: 1,
+      });
+    }
   };
 
   return (

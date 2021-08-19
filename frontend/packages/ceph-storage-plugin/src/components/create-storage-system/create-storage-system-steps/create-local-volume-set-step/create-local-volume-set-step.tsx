@@ -13,30 +13,38 @@ import {
 import { history } from '@console/internal/components/utils';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import {
-  LocalVolumeDiscovery,
+  LocalVolumeDiscoveryResult,
   LocalVolumeSetModel,
 } from '@console/local-storage-operator-plugin/src/models';
-import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
 import { useFlag } from '@console/shared/src';
-import { k8sCreate, k8sGet, k8sList, NodeKind } from '@console/internal/module/k8s';
-import { createLocalVolumeDiscovery } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/request';
+import {
+  k8sCreate,
+  ListKind,
+  NodeKind,
+  referenceForModel,
+  WatchK8sResource,
+} from '@console/internal/module/k8s';
+import {
+  createLocalVolumeDiscovery,
+  updateLocalVolumeDiscovery,
+} from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/request';
+import { LABEL_OPERATOR } from '@console/local-storage-operator-plugin/src/constants';
+import { LABEL_SELECTOR } from '@console/local-storage-operator-plugin/src/constants/disks-list';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { LocalVolumeDiscoveryResultKind } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { NodeModel } from '@console/internal/models';
-import { DISCOVERY_CR_NAME } from '@console/local-storage-operator-plugin/src/constants';
 import { LocalVolumeSetBody } from './body';
 import { SelectedCapacity } from './selected-capacity';
+import { createWizardNodeState } from '../../../../utils/create-storage-system';
 import { GUARDED_FEATURES } from '../../../../features';
-import {
-  arbiterText,
-  diskModeDropdownItems,
-  LSO_OPERATOR,
-  MINIMUM_NODES,
-  OCS_TOLERATION,
-} from '../../../../constants';
+import { arbiterText, LSO_OPERATOR, MINIMUM_NODES, OCS_TOLERATION } from '../../../../constants';
 import { ErrorHandler } from '../../error-handler';
-import { WizardDispatch, WizardState } from '../../reducer';
+import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { useFetchCsv } from '../../use-fetch-csv';
 import { RequestErrors } from '../../../ocs-install/install-wizard/review-and-create';
-import { hasOCSTaint } from '../../../../utils/install';
+import './create-local-volume-set-step.scss';
+import { nodesWithoutTaints } from '../../../../utils/install';
 
 const goToLSOInstallationPage = () =>
   history.push(
@@ -50,11 +58,11 @@ const makeLocalVolumeSetCall = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
   ns: string,
   onNext: () => void,
-  lvsNodes: NodeKind[],
+  lvsNodes: WizardState['nodes'],
 ) => {
   setInProgress(true);
 
-  const nodes = getNodesByHostNameLabel(lvsNodes);
+  const nodes = lvsNodes.map((node) => node.hostName);
 
   const requestData = getLocalVolumeSetRequestData(
     { ...state, storageClassName },
@@ -73,128 +81,180 @@ const makeLocalVolumeSetCall = (
     });
 };
 
+export const LSOInstallAlert = () => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      variant="info"
+      title={t('ceph-storage-plugin~Local Storage Operator not installed')}
+      className="odf-create-lvs__alert--override"
+      isInline
+    >
+      <Trans t={t} ns="ceph-storage-plugin">
+        Before we can create a StorageCluster, the Local Storage Operator needs to be installed.
+        When installation is finished come back to OpenShift Container Storage to create a
+        StorageCluster.
+        <div className="ceph-ocs-install__lso-alert__button">
+          <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
+            Install
+          </Button>
+        </div>
+      </Trans>
+    </Alert>
+  );
+};
+
+const initDiskDiscovery = async (
+  nodes: WizardNodeState[] = [],
+  namespace: string,
+  setError: (error: any) => void,
+  setInProgress: (inProgress: boolean) => void,
+) => {
+  setInProgress(true);
+  const nodeByHostNames: string[] = nodes.map((node) => node.hostName);
+  try {
+    await updateLocalVolumeDiscovery(nodeByHostNames, namespace, setError);
+  } catch (loadError) {
+    if (loadError?.response?.status === 404) {
+      try {
+        await createLocalVolumeDiscovery(nodeByHostNames, namespace, OCS_TOLERATION);
+      } catch (createError) {
+        setError(createError.message);
+      }
+    }
+  } finally {
+    setError(false);
+    setInProgress(false);
+  }
+};
+
+const getLvdrResource = (nodes: WizardNodeState[] = [], ns: string): WatchK8sResource => {
+  return {
+    kind: referenceForModel(LocalVolumeDiscoveryResult),
+    namespace: ns,
+    isList: true,
+    selector: {
+      matchExpressions: [
+        {
+          key: LABEL_SELECTOR,
+          operator: LABEL_OPERATOR,
+          values: nodes.map((node) => node.name),
+        },
+      ],
+    },
+  };
+};
+
 export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   state,
   storageClass,
   dispatch,
+  nodes,
+  stepIdReached,
 }) => {
-  const [csv, csvLoaded, csvLoadError] = useFetchCsv(LSO_OPERATOR);
   const { t } = useTranslation();
-  const [inProgress, setInProgress] = React.useState(false);
-  const [error, setError] = React.useState(null);
+  const allNodes = React.useRef([]);
+
+  const [csv, csvLoaded, csvLoadError] = useFetchCsv(LSO_OPERATOR);
+  const [rawNodes, rawNodesLoaded, rawNodesLoadError] = useK8sGet<ListKind<NodeKind>>(NodeModel);
+  const [lvdResults, lvdResultsLoaded] = useK8sWatchResource<LocalVolumeDiscoveryResultKind[]>(
+    getLvdrResource(allNodes.current, csv?.metadata?.namespace),
+  );
   const [lvdInProgress, setLvdInProgress] = React.useState(false);
   const [lvdError, setLvdError] = React.useState(null);
+  const [lvsetInProgress, setLvsetInProgress] = React.useState(false);
+  const [lvsetError, setLvsetError] = React.useState(null);
 
   React.useEffect(() => {
-    const createLvd = async () => {
-      try {
-        setLvdInProgress(true);
-        await k8sGet(LocalVolumeDiscovery, DISCOVERY_CR_NAME, csv?.metadata?.namespace);
-      } catch (e) {
-        if (e?.response?.status === 404) {
-          try {
-            const nodes = await k8sList(NodeModel);
-            const nodeByHostNames: string[] = getNodesByHostNameLabel(nodes.items);
-            await createLocalVolumeDiscovery(
-              nodeByHostNames,
-              csv?.metadata?.namespace,
-              OCS_TOLERATION,
-            );
-          } catch (createError) {
-            setLvdError(createError.message);
-          }
-        }
-      } finally {
-        setLvdInProgress(false);
-      }
-    };
-    if (!csvLoadError && csvLoaded) {
-      createLvd();
-    }
-  }, [csv, csvLoadError, csvLoaded]);
+    const nonTaintedNodes = nodesWithoutTaints(rawNodes?.items);
+    allNodes.current = createWizardNodeState(nonTaintedNodes);
+  }, [rawNodes]);
 
-  const allNodesSelectorTxt = t(
-    'ceph-storage-plugin~Uses the available disks that match the selected filters on all nodes selected in the previous step.',
-  );
-  const lvsNameSelectorTxt = t(
-    'ceph-storage-plugin~A LocalVolumeSet allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
-  );
-  const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
+  React.useEffect(() => {
+    if (!csvLoadError && csvLoaded && allNodes.current.length) {
+      initDiskDiscovery(allNodes.current, csv?.metadata.namespace, setLvdError, setLvdInProgress);
+    }
+  }, [csv, csvLoadError, csvLoaded, rawNodes]);
+
+  const discoveriesLoaded =
+    csvLoaded &&
+    !lvdInProgress &&
+    rawNodesLoaded &&
+    lvdResultsLoaded &&
+    allNodes.current?.length === lvdResults?.length;
+
+  const discoveriesLoadError = csvLoadError || rawNodesLoadError || lvdError;
   const ns = csv?.metadata?.namespace;
 
   return (
-    <ErrorHandler loaded={csvLoaded && !lvdInProgress} error={!csvLoadError ? lvdError : null}>
-      {csvLoadError || csv?.status?.phase !== 'Succeeded' ? (
-        <Alert
-          className="co-alert ceph-ocs-install__lso-install-alert"
-          variant="info"
-          title={t('ceph-storage-plugin~Local Storage Operator not installed')}
-          isInline
-        >
-          <Trans t={t} ns="ceph-storage-plugin">
-            Before we can create a StorageCluster, the Local Storage operator needs to be installed.
-            When installation is finished come back to OpenShift Container Storage to create a
-            StorageCluster.
-            <div className="ceph-ocs-install__lso-alert__button">
-              <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
-                Install
-              </Button>
-            </div>
-          </Trans>
-        </Alert>
-      ) : (
-        <>
-          <Grid className="ceph-ocs-install__form-wrapper">
-            <GridItem lg={10} md={12} sm={12}>
-              <Form noValidate={false}>
-                <LocalVolumeSetBody
-                  state={state}
-                  dispatch={dispatch}
-                  diskModeOptions={diskModeDropdownItems}
-                  allNodesHelpTxt={allNodesSelectorTxt}
-                  lvsNameHelpTxt={lvsNameSelectorTxt}
-                  taintsFilter={hasOCSTaint}
-                  storageClassName={storageClass.name}
-                />
-              </Form>
-            </GridItem>
-            <GridItem
-              lg={2}
-              lgOffset={10}
-              md={4}
-              mdOffset={4}
-              sm={4}
-              smOffset={4}
-              className="ceph-ocs-install__donut-chart"
-            >
-              <SelectedCapacity dispatch={dispatch} state={state} ns={ns} />
-            </GridItem>
-          </Grid>
-          <ConfirmationModal
-            ns={ns}
-            lvsNodes={lvsNodes}
-            state={state}
-            dispatch={dispatch}
-            setInProgress={setInProgress}
-            setErrorMessage={setError}
-            storageClassName={storageClass.name}
-          />
-          {state.chartNodes.size < MINIMUM_NODES && (
-            <Alert
-              className="co-alert ceph-ocs-install__wizard-alert"
-              variant="danger"
-              title={t('ceph-storage-plugin~Minimum Node Requirement')}
-              isInline
-            >
-              {t(
-                'ceph-storage-plugin~A minimum of 3 nodes are required for the initial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.',
-                { nodes: state.chartNodes.size },
-              )}
-            </Alert>
-          )}
-          <RequestErrors errorMessage={error?.message} inProgress={inProgress} />
-        </>
-      )}
+    <ErrorHandler
+      loaded={discoveriesLoaded}
+      loadingMessage={
+        !csvLoaded
+          ? t('ceph-storage-plugin~Checking Local Storage Operator installation')
+          : !discoveriesLoaded
+          ? t('ceph-storage-plugin~Discovering disks on all hosts. This may take a few minutes.')
+          : null
+      }
+      error={discoveriesLoadError}
+      errorMessage={csvLoadError || csv?.status?.phase !== 'Succeeded' ? <LSOInstallAlert /> : null}
+    >
+      <>
+        <Grid>
+          <GridItem lg={8} md={8} sm={8}>
+            <Form noValidate={false} className="odf-create-lvs__form">
+              <LocalVolumeSetBody
+                state={state}
+                dispatch={dispatch}
+                storageClassName={storageClass.name}
+                allNodes={allNodes.current}
+                nodes={nodes}
+              />
+            </Form>
+          </GridItem>
+          <GridItem
+            lg={3}
+            lgOffset={9}
+            md={3}
+            mdOffset={9}
+            sm={3}
+            smOffset={9}
+            className="odf-create-lvs__donut-chart"
+          >
+            <SelectedCapacity
+              dispatch={dispatch}
+              state={state}
+              ns={ns}
+              nodes={nodes}
+              lvdResults={lvdResults}
+            />
+          </GridItem>
+        </Grid>
+        <ConfirmationModal
+          ns={ns}
+          nodes={nodes}
+          state={state}
+          dispatch={dispatch}
+          setInProgress={setLvsetInProgress}
+          setErrorMessage={setLvsetError}
+          storageClassName={storageClass.name}
+          stepIdReached={stepIdReached}
+        />
+        {state.chartNodes.size < MINIMUM_NODES && (
+          <Alert
+            className="odf-create-lvs__alert"
+            variant="danger"
+            title={t('ceph-storage-plugin~Minimum Node Requirement')}
+            isInline
+          >
+            {t(
+              'ceph-storage-plugin~A minimum of 3 nodes are required for the initial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.',
+              { nodes: state.chartNodes.size },
+            )}
+          </Alert>
+        )}
+        <RequestErrors errorMessage={lvsetError} inProgress={lvsetInProgress} />
+      </>
     </ErrorHandler>
   );
 };
@@ -202,6 +262,8 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
 type CreateLocalVolumeSetProps = {
   state: WizardState['createLocalVolumeSet'];
   storageClass: WizardState['storageClass'];
+  nodes: WizardState['nodes'];
+  stepIdReached: WizardState['stepIdReached'];
   dispatch: WizardDispatch;
 };
 
@@ -211,18 +273,28 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   setInProgress,
   setErrorMessage,
   storageClassName,
+  stepIdReached,
   ns,
-  lvsNodes,
+  nodes,
 }) => {
   const { t } = useTranslation();
   const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
-  const { onNext } = React.useContext<WizardContextType>(WizardContext);
+  const { onNext, activeStep } = React.useContext<WizardContextType>(WizardContext);
 
   const cancel = () => {
     dispatch({
       type: 'wizard/setCreateLocalVolumeSet',
       payload: { field: 'showConfirmModal', value: false },
     });
+  };
+
+  const handleNext = () => {
+    const stepId = activeStep.id as number;
+    dispatch({
+      type: 'wizard/setStepIdReached',
+      payload: stepIdReached <= stepId ? stepId + 1 : stepIdReached,
+    });
+    onNext();
   };
 
   const makeLVSCall = () => {
@@ -233,8 +305,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       setInProgress,
       setErrorMessage,
       ns,
-      onNext,
-      lvsNodes,
+      handleNext,
+      nodes,
     );
   };
 
@@ -281,5 +353,6 @@ type ConfirmationModalProps = {
   ns: string;
   setInProgress: React.Dispatch<React.SetStateAction<boolean>>;
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
-  lvsNodes: NodeKind[];
+  nodes: WizardState['nodes'];
+  stepIdReached: WizardState['stepIdReached'];
 };

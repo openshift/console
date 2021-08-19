@@ -137,7 +137,7 @@ export const countNodesPerZone = (nodes: NodeKind[]) =>
     return acc;
   }, {});
 
-export const nodesWithoutTaints = (nodes: NodeKind[]) =>
+export const nodesWithoutTaints = (nodes: NodeKind[] = []) =>
   nodes.filter((node: NodeKind) => hasOCSTaint(node) || hasNoTaints(node));
 
 const getSelectedNodes = (

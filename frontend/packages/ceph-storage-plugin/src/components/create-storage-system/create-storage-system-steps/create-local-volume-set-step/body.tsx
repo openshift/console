@@ -10,54 +10,76 @@ import {
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
-import { ListPage } from '@console/internal/components/factory';
 import { Dropdown } from '@console/internal/components/utils';
-import { NodeModel } from '@console/internal/models';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName, MultiSelectDropdown } from '@console/shared';
+import { MultiSelectDropdown } from '@console/shared';
 import {
   deviceTypeDropdownItems,
+  diskModeDropdownItems,
   diskSizeUnitOptions,
   diskTypeDropdownItems,
 } from '@console/local-storage-operator-plugin/src/constants';
-import { NodesTable } from '@console/local-storage-operator-plugin/src/components/tables/nodes-table';
-import { diskModeDropdownItems, NO_PROVISIONER } from '../../../../constants';
 import { LocalVolumeSet, WizardDispatch, WizardState } from '../../reducer';
-
 import './body.scss';
+import { createWizardNodeState } from '../../../../utils/create-storage-system';
+import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
+import { NO_PROVISIONER } from '../../../../constants/common';
+
+export enum FilterDiskBy {
+  ALL_NODES = 'all-nodes',
+  SELECTED_NODES = 'selected-nodes',
+}
+
+const AllNodesLabel: React.FC<{ count: number }> = ({ count }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {t('ceph-storage-plugin~Disks on all nodes')}
+      {' ('}
+      {t('ceph-storage-plugin~{{nodes, number}} node', {
+        nodes: count,
+        count,
+      })}
+      {')'}
+    </>
+  );
+};
 
 export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   dispatch,
   state,
   storageClassName,
-  taintsFilter,
-  diskModeOptions = diskModeDropdownItems,
-  allNodesHelpTxt,
-  lvsNameHelpTxt,
-  deviceTypeOptions = deviceTypeDropdownItems,
+  nodes,
+  allNodes,
 }) => {
   const { t } = useTranslation();
+  const [radio, setRadio] = React.useState(FilterDiskBy.ALL_NODES);
+  const [activeMinDiskSize, setMinActiveState] = React.useState(false);
+  const [activeMaxDiskSize, setMaxActiveState] = React.useState(false);
+
+  React.useEffect(() => {
+    // Update the nodes with allNodes when the component is rendered
+    dispatch({ type: 'wizard/nodes', payload: allNodes });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const formHandler = React.useCallback(
     (field: keyof LocalVolumeSet, value: LocalVolumeSet[keyof LocalVolumeSet]) =>
       dispatch({ type: 'wizard/setCreateLocalVolumeSet', payload: { field, value } }),
     [dispatch],
   );
 
-  const diskDropdownOptions = diskTypeDropdownItems(t);
-
   const INTEGER_MAX_REGEX = /^\+?([1-9]\d*)$/;
   const INTEGER_MIN_REGEX = /^\+?([0-9]\d*)$/;
-  const [activeMinDiskSize, setMinActiveState] = React.useState(false);
-  const [activeMaxDiskSize, setMaxActiveState] = React.useState(false);
+
   const validMinDiskSize = INTEGER_MIN_REGEX.test(state.minDiskSize || '1');
   const validMaxDiskSize = INTEGER_MAX_REGEX.test(state.maxDiskSize || '1');
   const validMaxDiskLimit = INTEGER_MAX_REGEX.test(state.maxDiskLimit || '1');
+
   const invalidMinGreaterThanMax =
     state.minDiskSize !== '' &&
     state.maxDiskSize !== '' &&
     Number(state.minDiskSize) > Number(state.maxDiskSize);
-
-  const toggleShowNodesList = () => formHandler('lvsIsSelectNodes', !state.lvsIsSelectNodes);
 
   React.useEffect(() => {
     if (!validMinDiskSize || !validMaxDiskSize || !validMaxDiskLimit || invalidMinGreaterThanMax) {
@@ -66,13 +88,36 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
       formHandler('isValidDiskSize', true);
     }
   }, [
-    dispatch,
+    formHandler,
+    state.minDiskSize,
+    state.maxDiskSize,
+    state.maxDiskLimit,
     validMinDiskSize,
     validMaxDiskSize,
     validMaxDiskLimit,
     invalidMinGreaterThanMax,
-    formHandler,
   ]);
+
+  const diskSizeHelpText = t('ceph-storage-plugin~Please enter a positive Integer');
+  const diskDropdownOptions = diskTypeDropdownItems(t);
+
+  const onRowSelected = React.useCallback(
+    (selectedNodes: NodeKind[]) => {
+      const nodesData = createWizardNodeState(selectedNodes);
+      dispatch({ type: 'wizard/nodes', payload: nodesData });
+    },
+    [dispatch],
+  );
+
+  const RADIO_GROUP_NAME = 'filter-by-nodes-radio-group';
+
+  const onRadioSelect = (_, event) => {
+    const { value } = event.target || { value: '' };
+    value === FilterDiskBy.ALL_NODES
+      ? dispatch({ type: 'wizard/nodes', payload: allNodes })
+      : dispatch({ type: 'wizard/nodes', payload: [] });
+    setRadio(value);
+  };
 
   return (
     <>
@@ -80,6 +125,9 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         label={t('ceph-storage-plugin~LocalVolumeSet Name')}
         isRequired
         fieldId="create-lvs-volume-set-name"
+        helperText={t(
+          'ceph-storage-plugin~A LocalVolumeSet allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
+        )}
       >
         <TextInput
           type={TextInputTypes.text}
@@ -88,7 +136,6 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           onChange={(name: string) => formHandler('volumeSetName', name)}
           isRequired
         />
-        {lvsNameHelpTxt ? <p className="help-block">{lvsNameHelpTxt}</p> : null}
       </FormGroup>
       <FormGroup
         label={t('ceph-storage-plugin~StorageClass Name')}
@@ -110,57 +157,31 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
       <Text component={TextVariants.h3} className="odf-create-lvs__filter-volumes-text--margin">
         {t('ceph-storage-plugin~Filter Disks By')}
       </Text>
-      <FormGroup fieldId="create-lvs-radio-group-node-selector">
-        <div id="create-lvs-radio-group-node-selector">
-          <Radio
-            label={
-              <>
-                {t('ceph-storage-plugin~Disks on all nodes')}
-                {' ('}
-                {t('ceph-storage-plugin~{{nodes, number}} node', {
-                  nodes: state.lvsAllNodes.length,
-                  count: state.lvsAllNodes.length,
-                })}
-                {')'}
-              </>
-            }
-            name="nodes-selection"
-            id="create-lvs-radio-all-nodes"
-            className="odf-create-lvs__all-nodes-radio--padding"
-            value="allNodes"
-            onChange={toggleShowNodesList}
-            description={allNodesHelpTxt}
-            checked={!state.lvsIsSelectNodes}
-          />
-          <Radio
-            label={t('ceph-storage-plugin~Disks on selected nodes')}
-            name="nodes-selection"
-            id="create-lvs-radio-select-nodes"
-            value="selectedNodes"
-            onChange={toggleShowNodesList}
-            description={t(
-              'ceph-storage-plugin~Uses the available disks that match the selected filters only on selected nodes.',
-            )}
-            checked={state.lvsIsSelectNodes}
-          />
-        </div>
-      </FormGroup>
-      {state.lvsIsSelectNodes && (
-        <div className="odf-lvd-body__select-nodes">
-          <ListPage
-            showTitle={false}
-            kind={NodeModel.kind}
-            ListComponent={NodesTable}
-            customData={{
-              onRowSelected: (selectedNodes: NodeKind[]) =>
-                formHandler('lvsSelectNodes', selectedNodes),
-              filteredNodes: state.lvsAllNodes.map(getName),
-              preSelectedNodes: state.lvsSelectNodes.map(getName),
-              hasOnSelect: true,
-              taintsFilter,
-            }}
-          />
-        </div>
+      <Radio
+        label={<AllNodesLabel count={allNodes?.length} />}
+        description={t(
+          'ceph-storage-plugin~Uses the available disks that match the selected filters on all nodes.',
+        )}
+        name={RADIO_GROUP_NAME}
+        value={FilterDiskBy.ALL_NODES}
+        isChecked={radio === FilterDiskBy.ALL_NODES}
+        onChange={onRadioSelect}
+        id="create-lvs-radio-all-nodes"
+        className="odf-create-lvs__all-nodes-radio--padding"
+      />
+      <Radio
+        label={t('ceph-storage-plugin~Disks on selected nodes')}
+        description={t(
+          'ceph-storage-plugin~Uses the available disks that match the selected filters only on selected nodes.',
+        )}
+        name={RADIO_GROUP_NAME}
+        value={FilterDiskBy.SELECTED_NODES}
+        isChecked={radio === FilterDiskBy.SELECTED_NODES}
+        onChange={onRadioSelect}
+        id="create-lvs-radio-select-nodes"
+      />
+      {radio === FilterDiskBy.SELECTED_NODES && (
+        <SelectNodesTable nodes={nodes} onRowSelected={onRowSelected} />
       )}
       <FormGroup label={t('ceph-storage-plugin~Disk Type')} fieldId="create-lvs-disk-type-dropdown">
         <Dropdown
@@ -184,7 +205,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
           <Dropdown
             id="create-odf-disk-mode-dropdown"
             dropDownClassName="dropdown--full-width"
-            items={diskModeOptions}
+            items={diskModeDropdownItems}
             title={state.diskMode}
             selectedKey={state.diskMode}
             onChange={(mode: string) => formHandler('diskMode', mode)}
@@ -197,10 +218,10 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         >
           <MultiSelectDropdown
             id="create-odf-device-type-dropdown"
-            options={[deviceTypeOptions.DISK, deviceTypeOptions.PART]}
-            placeholder="Select disk types"
+            options={[deviceTypeDropdownItems.DISK, deviceTypeDropdownItems.PART]}
+            placeholder={t('ceph-storage-plugin~Select disk types')}
             onChange={(selectedValues: string[]) => formHandler('deviceType', selectedValues)}
-            defaultSelected={[deviceTypeOptions.DISK, deviceTypeOptions.PART]}
+            defaultSelected={[deviceTypeDropdownItems.DISK, deviceTypeDropdownItems.PART]}
           />
         </FormGroup>
         <FormGroup
@@ -217,8 +238,10 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               <Tooltip
                 content={
                   !validMinDiskSize
-                    ? 'Please enter a positive Integer'
-                    : 'Please enter a value less than or equal to max disk size'
+                    ? diskSizeHelpText
+                    : t(
+                        'ceph-storage-plugin~Please enter a value less than or equal to max disk size',
+                      )
                 }
                 isVisible={!validMinDiskSize || (invalidMinGreaterThanMax && activeMinDiskSize)}
                 trigger="manual"
@@ -248,8 +271,10 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               <Tooltip
                 content={
                   !validMaxDiskSize
-                    ? 'Please enter a positive Integer'
-                    : 'Please enter a value greater than or equal to min disk size'
+                    ? diskSizeHelpText
+                    : t(
+                        'ceph-storage-plugin~Please enter a value greater than or equal to min disk size',
+                      )
                 }
                 isVisible={!validMaxDiskSize || (invalidMinGreaterThanMax && activeMaxDiskSize)}
                 trigger="manual"
@@ -288,11 +313,7 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
               'ceph-storage-plugin~Disks limit will set the maximum number of PVs to create on a node. If the field is empty we will create PVs for all available disks on the matching nodes.',
             )}
           </p>
-          <Tooltip
-            content="Please enter a positive Integer"
-            isVisible={!validMaxDiskLimit}
-            trigger="manual"
-          >
+          <Tooltip content={diskSizeHelpText} isVisible={!validMaxDiskLimit} trigger="manual">
             <TextInput
               type={TextInputTypes.text}
               id="create-lvs-max-disk-limit"
@@ -313,9 +334,6 @@ type LocalVolumeSetBodyProps = {
   state: WizardState['createLocalVolumeSet'];
   dispatch: WizardDispatch;
   storageClassName: string;
-  diskModeOptions?: { [key: string]: string };
-  deviceTypeOptions?: { [key: string]: string };
-  allNodesHelpTxt?: string;
-  lvsNameHelpTxt?: string;
-  taintsFilter?: (node: NodeKind) => boolean;
+  nodes: WizardState['nodes'];
+  allNodes: WizardState['nodes'];
 };
