@@ -9,7 +9,6 @@ import {
   ICell,
 } from '@patternfly/react-table';
 import { AutoSizer, WindowScroller } from '@patternfly/react-virtualized-extension';
-import { ALL_NAMESPACES_KEY, useActiveNamespace } from '@console/shared';
 
 import VirtualizedTableBody from './VirtualizedTableBody';
 import { history, StatusBox, WithScrollContainer } from '../../utils';
@@ -26,21 +25,15 @@ const MAX_COL_MD = 4;
 const MAX_COL_LG = 6;
 const MAX_COL_XL = 8;
 
-const isColumnVisible = (
+const isColumnVisible = <D extends any>(
   widthInPixels: number,
-  columnID: string,
-  columns: Set<string> = new Set(),
-  showNamespaceOverride: boolean,
-  namespace: string,
-) => {
-  const showNamespace = columnID !== 'namespace' || !namespace || showNamespaceOverride;
-  if (_.isEmpty(columns) && showNamespace) {
+  column: TableColumn<D>,
+  columnIDs: string[],
+): boolean => {
+  if (column.title === '') {
     return true;
   }
-  if (!columns.has(columnID) || !showNamespace) {
-    return false;
-  }
-  const columnIndex = [...columns].indexOf(columnID);
+  const columnIndex = columnIDs.indexOf(column.id);
   if (widthInPixels < BREAKPOINT_SM) {
     return columnIndex < MAX_COL_XS;
   }
@@ -59,41 +52,6 @@ const isColumnVisible = (
   return true;
 };
 
-const getActiveColumns = <D extends any>(
-  windowWidth: number,
-  allColumns: TableColumn<D>[],
-  activeColumns: Set<string>,
-  columnManagementID: string,
-  showNamespaceOverride: boolean,
-  namespace: string,
-) => {
-  let columns = [...allColumns];
-  if (_.isEmpty(activeColumns)) {
-    activeColumns = new Set(
-      columns.map((col) => {
-        if (col.id && !col.additional) {
-          return col.id;
-        }
-      }),
-    );
-  }
-  if (columnManagementID) {
-    columns = columns?.filter(
-      (col) =>
-        isColumnVisible(windowWidth, col.id, activeColumns, showNamespaceOverride, namespace) ||
-        col.title === '',
-    );
-  } else {
-    columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
-  }
-
-  const showNamespace = !namespace || showNamespaceOverride;
-  if (!showNamespace) {
-    columns = columns.filter((column) => column.id !== 'namespace');
-  }
-  return columns;
-};
-
 export type TableColumn<D> = ICell & {
   title: string;
   id?: string;
@@ -104,6 +62,7 @@ export type TableColumn<D> = ICell & {
 export type RowProps<D, R extends any = {}> = {
   obj: D;
   rowData: R;
+  activeColumnIDs: Set<string>;
 };
 
 type VirtualizedTableProps<D, R extends any = {}> = {
@@ -120,9 +79,6 @@ type VirtualizedTableProps<D, R extends any = {}> = {
   label?: string;
   'aria-label'?: string;
   gridBreakPoint?: TableGridBreakpoint;
-  activeColumns?: Set<string>;
-  columnManagementID?: string;
-  showNamespaceOverride?: boolean;
   rowData?: R;
 };
 
@@ -139,9 +95,6 @@ const VirtualizedTable = <D, R extends any = {}>({
   gridBreakPoint = TableGridBreakpoint.none,
   onSelect,
   Row,
-  activeColumns,
-  columnManagementID,
-  showNamespaceOverride,
   rowData,
   unfilteredData,
 }: VirtualizedTableProps<D, R>) => {
@@ -152,20 +105,11 @@ const VirtualizedTable = <D, R extends any = {}>({
   }>({ index: columnShift, direction: SortByDirection.asc });
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-  const [namespace] = useActiveNamespace();
 
-  const columns = React.useMemo(
-    () =>
-      getActiveColumns(
-        windowWidth,
-        allColumns,
-        activeColumns,
-        columnManagementID,
-        showNamespaceOverride,
-        namespace === ALL_NAMESPACES_KEY ? undefined : namespace,
-      ),
-    [windowWidth, allColumns, activeColumns, columnManagementID, showNamespaceOverride, namespace],
-  );
+  const columns = React.useMemo(() => {
+    const colIDs = allColumns.map((c) => c.id);
+    return allColumns.filter((col) => isColumnVisible(windowWidth, col, colIDs));
+  }, [windowWidth, allColumns]);
 
   const applySort = React.useCallback(
     (index, direction) => {

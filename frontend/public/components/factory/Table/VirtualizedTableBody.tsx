@@ -45,9 +45,12 @@ const VirtualizedTableBody = <D extends any, R extends any = {}>({
     keyMapper: (rowIndex) => (data?.[rowIndex] as K8sResourceCommon)?.metadata?.uid || rowIndex, // TODO custom keyMapper ?
   });
 
+  const activeColumnIDs = React.useMemo(() => new Set(columns.map((c) => c.id)), [columns]);
+
   const rowRenderer = ({ index, isVisible, key, style, parent }) => {
     const rowArgs: RowProps<D, R> = {
       obj: data[index],
+      activeColumnIDs,
       rowData,
     };
 

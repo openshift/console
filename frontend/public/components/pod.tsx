@@ -101,6 +101,7 @@ import { useListPageFilter } from './factory/ListPage/filter-hook';
 import { RowFilter } from './filter-toolbar';
 import VirtualizedTable, { RowProps, TableColumn } from './factory/Table/VirtualizedTable';
 import { sortResourceByValue } from './factory/Table/sort';
+import { useActiveColumns } from './factory/Table/active-columns-hook';
 
 // Only request metrics if the device's screen width is larger than the
 // breakpoint where metrics are visible.
@@ -323,7 +324,7 @@ const getColumns = (showNodes: boolean, t: TFunction): TableColumn<PodKind>[] =>
   },
 ];
 
-const getSelectedColumns = (showNodes: boolean, t: TFunction) => {
+const getSelectedColumns = (showNodes: boolean, t: TFunction): Set<string> => {
   return new Set(
     getColumns(showNodes, t).reduce((acc, column) => {
       if (column.id && !column.additional) {
@@ -336,7 +337,8 @@ const getSelectedColumns = (showNodes: boolean, t: TFunction) => {
 
 const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   obj: pod,
-  rowData: { showNodes, showNamespaceOverride, tableColumns },
+  rowData: { showNodes },
+  activeColumnIDs,
 }) => {
   const { t } = useTranslation();
   const { name, namespace, creationTimestamp, labels } = pod.metadata;
@@ -351,8 +353,7 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
   const { readyCount, totalContainers } = podReadiness(pod);
   const phase = podPhase(pod);
   const restarts = podRestarts(pod);
-  const columns: Set<string> =
-    tableColumns?.length > 0 ? new Set(tableColumns) : getSelectedColumns(showNodes, t);
+  const columns = activeColumnIDs?.size > 0 ? activeColumnIDs : getSelectedColumns(showNodes, t);
   const resourceKind = referenceFor(pod);
   const context = { [resourceKind]: pod };
   return (
@@ -364,7 +365,6 @@ const PodTableRow: React.FC<RowProps<PodKind, PodRowData>> = ({
         className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
         columns={columns}
         columnID={podColumnInfo.namespace.id}
-        showNamespaceOverride={showNamespaceOverride}
       >
         <ResourceLink kind="Namespace" name={namespace} />
       </TableData>
@@ -841,30 +841,24 @@ PodsDetailsPage.displayName = 'PodsDetailsPage';
 
 export const PodList: React.FC<PodListProps> = ({ showNamespaceOverride, showNodes, ...props }) => {
   const { t } = useTranslation();
-  const [tableColumns, , userSettingsLoaded] = useUserSettingsCompatibility(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  );
-  const rowData = React.useMemo<PodRowData>(() => {
-    const selectedColumns: Set<string> =
-      tableColumns?.[columnManagementID]?.length > 0
-        ? new Set(tableColumns[columnManagementID])
-        : null;
-    return {
-      showNamespaceOverride,
-      showNodes,
-      tableColumns: selectedColumns ? [...selectedColumns] : null,
-    };
-  }, [tableColumns, showNamespaceOverride, showNodes]);
   const columns = React.useMemo(() => getColumns(showNodes, t), [showNodes, t]);
+  const [activeColumns, userSettingsLoaded] = useActiveColumns({
+    columns,
+    showNamespaceOverride,
+    columnManagementID,
+  });
+  const rowData = React.useMemo<PodRowData>(
+    () => ({
+      showNodes,
+    }),
+    [showNodes],
+  );
   return (
     userSettingsLoaded && (
       <VirtualizedTable<PodKind, PodRowData>
         {...props}
         aria-label={t('public~Pods')}
-        columns={columns}
+        columns={activeColumns}
         Row={PodTableRow}
         rowData={rowData}
       />
@@ -1040,9 +1034,7 @@ type PodDetailsProps = {
 };
 
 type PodRowData = {
-  tableColumns: string[];
   showNodes?: boolean;
-  showNamespaceOverride?: boolean;
 };
 
 type PodListProps = {
