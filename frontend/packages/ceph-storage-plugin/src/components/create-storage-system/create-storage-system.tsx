@@ -20,7 +20,7 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
     StorageSystemModel,
   );
 
-  const { url, params } = match;
+  const { url } = match;
 
   let wizardSteps: WizardStep[] = [];
   let hasOCS: boolean = false;
@@ -60,7 +60,6 @@ const CreateStorageSystem: React.FC<CreateStorageSystemProps> = ({ match }) => {
             hasOCS={hasOCS}
             dispatch={dispatch}
             disableNext={!ssLoaded || !!ssLoadError}
-            appName={params.appName}
           />
         }
         cancelButtonText={t('ceph-storage-plugin~Cancel')}
