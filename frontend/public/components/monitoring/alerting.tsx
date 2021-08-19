@@ -159,7 +159,9 @@ const alertStateIcons = {
   [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
 };
 
-const AlertStateIcon: React.FC<{ state: string }> = ({ state }) => alertStateIcons[state];
+const AlertStateIcon: React.FC<{ state: string }> = React.memo(
+  ({ state }) => alertStateIcons[state],
+);
 
 const getAlertStateKey = (state) => {
   switch (state) {
@@ -174,7 +176,7 @@ const getAlertStateKey = (state) => {
   }
 };
 
-export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
+export const AlertState: React.FC<AlertStateProps> = React.memo(({ state }) => {
   const icon = alertStateIcons[state];
 
   return icon ? (
@@ -182,7 +184,7 @@ export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
       {icon} {getAlertStateKey(state)}
     </>
   ) : null;
-};
+});
 
 const SilenceState = ({ silence }) => {
   const { t } = useTranslation();
@@ -235,7 +237,7 @@ const AlertStateDescription: React.FC<{ alert }> = ({ alert }) => {
   return null;
 };
 
-const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
+const SeverityIcon: React.FC<{ severity: string }> = React.memo(({ severity }) => {
   const Icon =
     {
       [AlertSeverity.Critical]: RedExclamationCircleIcon,
@@ -244,9 +246,9 @@ const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
       [AlertSeverity.Warning]: YellowExclamationTriangleIcon,
     }[severity] || YellowExclamationTriangleIcon;
   return <Icon />;
-};
+});
 
-export const Severity: React.FC<{ severity: string }> = ({ severity }) => {
+export const Severity: React.FC<{ severity: string }> = React.memo(({ severity }) => {
   const { t } = useTranslation();
 
   const getSeverityKey = (severityData: string) => {
@@ -271,14 +273,15 @@ export const Severity: React.FC<{ severity: string }> = ({ severity }) => {
       <SeverityIcon severity={severity} /> {getSeverityKey(severity)}
     </>
   );
-};
+});
 
-const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
+const SeverityBadge: React.FC<{ severity: string }> = React.memo(({ severity }) =>
   _.isNil(severity) || severity === 'none' ? null : (
     <ResourceStatus>
       <Severity severity={severity} />
     </ResourceStatus>
-  );
+  ),
+);
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
   if (_.isEmpty(alerts)) {
@@ -332,7 +335,7 @@ const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body
   </Popover>
 );
 
-const AlertStateHelp: React.FC = () => {
+const AlertStateHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -363,9 +366,9 @@ const AlertStateHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
-const SeverityHelp: React.FC = () => {
+const SeverityHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -398,9 +401,9 @@ const SeverityHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
-const SourceHelp: React.FC = () => {
+const SourceHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -422,7 +425,7 @@ const SourceHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
 const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
@@ -1570,7 +1573,7 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
 };
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
-const CreateButton: React.FC = () => {
+const CreateButton: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
   return (
@@ -1580,7 +1583,7 @@ const CreateButton: React.FC = () => {
       </Button>
     </Link>
   );
-};
+});
 
 const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation();
