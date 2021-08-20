@@ -8,7 +8,6 @@ import { getOCSRequestData } from '../ocs-install/ocs-request-data';
 import { capacityAndNodesValidate } from '../../utils/create-storage-system';
 import { ValidationType } from '../../utils/common-ocs-install-el';
 import { cephStorageLabel } from '../../selectors';
-import { StorageClusterSystemName } from '../../constants/create-storage-system';
 
 export const createSSPayload = (systemKind: string, systemName: string): Payload => {
   const { apiGroup, apiVersion, kind, plural } = StorageSystemModel;
@@ -91,7 +90,6 @@ export const createStorageClusterPayload = (state: WizardState): Payload => {
     null,
     null,
     pvCount,
-    StorageClusterSystemName,
   );
   return {
     model: {

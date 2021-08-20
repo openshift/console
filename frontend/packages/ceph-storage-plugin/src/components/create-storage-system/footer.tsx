@@ -10,9 +10,8 @@ import {
   Alert,
   AlertActionCloseButton,
 } from '@patternfly/react-core';
-import { k8sCreate, K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { k8sCreate, K8sKind } from '@console/internal/module/k8s';
 import { history } from '@console/internal/components/utils';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { WizardCommonProps, WizardState } from './reducer';
 import {
   createNoobaaPayload,
@@ -27,14 +26,14 @@ import {
   StepsName,
   StorageClusterSystemName,
 } from '../../constants/create-storage-system';
-import { OCSServiceModel, StorageSystemModel } from '../../models';
+import { OCSServiceModel } from '../../models';
 import './create-storage-system.scss';
 import {
   getExternalStorage,
   getStorageSystemKind,
   createExternalSSName,
 } from '../../utils/create-storage-system';
-import { CEPH_STORAGE_NAMESPACE, MINIMUM_NODES } from '../../constants';
+import { MINIMUM_NODES } from '../../constants';
 import { NetworkType } from '../../types';
 import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
 
@@ -141,12 +140,7 @@ const getPayloads = (stepName: string, state: WizardState, hasOCS: boolean, t: T
       return !_.isEmpty(secondParam) && payloads;
     }
     if (type === BackingStorageType.EXISTING || type === BackingStorageType.LOCAL_DEVICES) {
-      const { apiGroup, apiVersion, kind } = OCSServiceModel;
-      const systemKind = getStorageSystemKind({ apiGroup, apiVersion, kind });
-      return [
-        createStorageClusterPayload(state),
-        createSSPayload(systemKind, StorageClusterSystemName),
-      ];
+      return [createStorageClusterPayload(state)];
     }
   }
 
@@ -158,7 +152,6 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
   state,
   disableNext,
   hasOCS,
-  appName,
 }) => {
   const { t } = useTranslation();
   const { activeStep, onNext, onBack } = React.useContext<WizardContextType>(WizardContext);
@@ -192,13 +185,7 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
         const requests = payloads.map(({ model, payload }) => k8sCreate(model as K8sKind, payload));
         await Promise.all([labelOCSNamespace(), ...requests]);
         handleStepId();
-        stepName === StepsName(t)[Steps.ReviewAndCreate]
-          ? history.push(
-              `/k8s/ns/${CEPH_STORAGE_NAMESPACE}/${referenceForModel(
-                ClusterServiceVersionModel,
-              )}/${appName}/${referenceForModel(StorageSystemModel)}`,
-            )
-          : onNext();
+        stepName === StepsName(t)[Steps.ReviewAndCreate] ? history.push('/odf/systems') : onNext();
       } catch (err) {
         setRequestError(err.message);
         setShowErrorAlert(true);
@@ -255,5 +242,4 @@ export const CreateStorageSystemFooter: React.FC<CreateStorageSystemFooterProps>
 type CreateStorageSystemFooterProps = WizardCommonProps & {
   disableNext: boolean;
   hasOCS: boolean;
-  appName: string;
 };
