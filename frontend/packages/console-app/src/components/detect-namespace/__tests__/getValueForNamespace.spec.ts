@@ -8,8 +8,7 @@ jest.mock('../checkNamespaceExists', () => ({
 
 const checkNamespaceExistsMock = checkNamespaceExists as jest.Mock;
 
-const urlNamespace: string = 'url-ns';
-const activeNamespace = 'active-ns';
+const fallbackNamespace = 'fallback-ns';
 const preferredNamespace: string = 'preferred-ns';
 const lastNamespace: string = 'last-ns';
 
@@ -18,57 +17,35 @@ describe('getValueForNamespace', () => {
     jest.resetAllMocks();
   });
 
-  it('should return urlNamespace as value for namespace if it is defined and exists', async () => {
+  it('should return fallbackNamespace as value for namespace if it is defined and exists', async () => {
     checkNamespaceExistsMock.mockReturnValueOnce(Promise.resolve(true));
 
     const namespace = await getValueForNamespace(
       true,
-      urlNamespace,
-      activeNamespace,
+      fallbackNamespace,
       preferredNamespace,
       lastNamespace,
     );
 
-    expect(namespace).toEqual(urlNamespace);
+    expect(namespace).toEqual(fallbackNamespace);
   });
 
-  it('should return activeNamespace as value for namespace if it is defined and exists, and urlNamespace is not defined', async () => {
+  it(`should return preferredNamespace as value for namespace if it is defined and exists, and fallbackNamespace are not defined or do not exist`, async () => {
     checkNamespaceExistsMock.mockReturnValueOnce(Promise.resolve(true));
 
-    const namespace = await getValueForNamespace(
-      true,
-      null,
-      activeNamespace,
-      preferredNamespace,
-      lastNamespace,
-    );
+    const namespace = await getValueForNamespace(true, null, preferredNamespace, lastNamespace);
 
-    expect(namespace).toEqual(activeNamespace);
+    expect(namespace).toEqual(preferredNamespace);
   });
 
-  it('should return activeNamespace as value for namespace if it is defined and exists, and urlNamespace is defined but does not exist', async () => {
+  it('should return preferredNamespace as value for namespace if it is defined and exists, and fallbackNamespace is defined but does not exist', async () => {
     checkNamespaceExistsMock
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(true));
 
     const namespace = await getValueForNamespace(
       true,
-      urlNamespace,
-      activeNamespace,
-      preferredNamespace,
-      lastNamespace,
-    );
-
-    expect(namespace).toEqual(activeNamespace);
-  });
-
-  it(`should return preferredNamespace as value for namespace if it is defined and exists, and urlNamespace, activeNamespace are not defined or do not exist`, async () => {
-    checkNamespaceExistsMock.mockReturnValueOnce(Promise.resolve(true));
-
-    const namespace = await getValueForNamespace(
-      true,
-      null,
-      null,
+      fallbackNamespace,
       preferredNamespace,
       lastNamespace,
     );
@@ -76,19 +53,13 @@ describe('getValueForNamespace', () => {
     expect(namespace).toEqual(preferredNamespace);
   });
 
-  it(`should return lastNamespace as value for namespace if it is defined and exists, and urlNamespace, activeNamespace, 
+  it(`should return lastNamespace as value for namespace if it is defined and exists, and fallbackNamespace, 
     preferredNamespace are not defined or do not exist`, async () => {
     checkNamespaceExistsMock
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(true));
 
-    const namespace = await getValueForNamespace(
-      true,
-      null,
-      null,
-      preferredNamespace,
-      lastNamespace,
-    );
+    const namespace = await getValueForNamespace(true, null, preferredNamespace, lastNamespace);
 
     expect(namespace).toEqual(lastNamespace);
   });
@@ -98,13 +69,7 @@ describe('getValueForNamespace', () => {
       .mockReturnValueOnce(Promise.resolve(false))
       .mockReturnValueOnce(Promise.resolve(false));
 
-    const namespace = await getValueForNamespace(
-      true,
-      null,
-      null,
-      preferredNamespace,
-      lastNamespace,
-    );
+    const namespace = await getValueForNamespace(true, null, preferredNamespace, lastNamespace);
 
     expect(namespace).toEqual(ALL_NAMESPACES_KEY);
   });

@@ -45,7 +45,7 @@ const useLastNamespaceMock = useLastNamespace as jest.Mock;
 const usePreferredNamespaceMock = usePreferredNamespace as jest.Mock;
 const k8sGetMock = k8sGet as jest.Mock;
 
-const activeNamespace = 'active-ns';
+const fallbackNamespace = 'active-ns';
 const urlNamespace: string = 'url-ns';
 const getLocationData = (valid = true) => ({
   pathname: valid ? `home/ns/${urlNamespace}` : 'home/invalid',
@@ -79,11 +79,11 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeTruthy();
   });
 
-  it(`should return activeNamespace as value for namespace if it exists and urlNamespace does not exist`, async () => {
+  it(`should return fallbackNamespace as value for namespace if it exists and urlNamespace does not exist`, async () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
-    spyOn(React, 'useState').and.returnValue([activeNamespace, jest.fn()]);
+    spyOn(React, 'useState').and.returnValue([fallbackNamespace, jest.fn()]);
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), true]);
     useLastNamespaceMock.mockReturnValue([lastNamespace, jest.fn(), true]);
 
@@ -93,11 +93,11 @@ describe('useValuesForNamespaceContext', () => {
     });
     const { namespace, loaded } = result.current;
 
-    expect(namespace).toEqual(activeNamespace);
+    expect(namespace).toEqual(fallbackNamespace);
     expect(loaded).toBeTruthy();
   });
 
-  it(`should return preferredNamespace as value for namespace if it exists, and urlNamespace and activeNamespace do not exist`, async () => {
+  it(`should return preferredNamespace as value for namespace if it exists, and urlNamespace and fallbackNamespace do not exist`, async () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
@@ -114,7 +114,7 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeTruthy();
   });
 
-  it('should return lastNamespace as value for namespace if it exists and favoritedNamespace, preferredNamespace, urlNamespace, and activeNamespace do not exist', async () => {
+  it('should return lastNamespace as value for namespace if it exists and favoritedNamespace, preferredNamespace, urlNamespace, and fallbackNamespace do not exist', async () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
@@ -131,7 +131,7 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeTruthy();
   });
 
-  it('should return ALL_NAMESPACES_KEY as value for namespace if lastNamespace, favoritedNamespace, preferredNamespace, urlNamespace, and activeNamespace do not exist', async () => {
+  it('should return ALL_NAMESPACES_KEY as value for namespace if lastNamespace, favoritedNamespace, preferredNamespace, urlNamespace, and fallbackNamespace do not exist', async () => {
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
@@ -148,8 +148,8 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeTruthy();
   });
 
-  it('should return true for loaded if urlNamespace has loaded and flags are not pending, irrespective of loaded status for other resources', async () => {
-    useFlagMock.mockReturnValue(true);
+  it('should return true for loaded if urlNamespace has loaded irrespective of loaded status for other resources', async () => {
+    useFlagMock.mockReturnValue(undefined);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(true));
     usePreferredNamespaceMock.mockReturnValue([preferredNamespace, jest.fn(), false]);
@@ -183,7 +183,7 @@ describe('useValuesForNamespaceContext', () => {
   });
 
   it('should return false for loaded if no resources have loaded and urlNamespace is undefined', async () => {
-    spyOn(React, 'useState').and.returnValue([activeNamespace, jest.fn()]);
+    spyOn(React, 'useState').and.returnValue([fallbackNamespace, jest.fn()]);
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
@@ -196,11 +196,11 @@ describe('useValuesForNamespaceContext', () => {
     });
     const { namespace, loaded } = result.current;
 
-    expect(namespace).toEqual(activeNamespace);
+    expect(namespace).toEqual(fallbackNamespace);
     expect(loaded).toBeFalsy();
   });
 
-  it('should return false for loaded if flags are pending', async () => {
+  it('should return false for loaded if flags are pending and urlNamespace is undefined', async () => {
     useFlagMock.mockReturnValue(undefined);
     k8sGetMock.mockReturnValue(Promise.resolve({}));
     useLocationMock.mockReturnValue(getLocationData(false));
@@ -217,7 +217,7 @@ describe('useValuesForNamespaceContext', () => {
     expect(loaded).toBeFalsy();
   });
 
-  it('should return false for loaded if activeNamespace is not defined', async () => {
+  it('should return false for loaded if fallbackNamespace and urlNamespace is not defined', async () => {
     spyOn(React, 'useState').and.returnValue(['', jest.fn()]);
     useFlagMock.mockReturnValue(true);
     k8sGetMock.mockReturnValue(Promise.resolve({}));

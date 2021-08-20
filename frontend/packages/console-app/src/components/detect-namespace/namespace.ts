@@ -24,11 +24,11 @@ export const useValuesForNamespaceContext = () => {
   const urlNamespace = getNamespace(pathname);
   const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
   const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();
-  const [activeNamespace, setActiveNamespace] = React.useState<string>('');
+  const [fallbackNamespace, setFallbackNamespace] = React.useState<string>('');
   const dispatch = useDispatch();
   const setNamespace = React.useCallback(
     (namespace: string) => {
-      setActiveNamespace(namespace);
+      setFallbackNamespace(namespace);
       dispatch(setActiveNamespaceForStore(namespace));
       setLastNamespace(namespace);
     },
@@ -42,17 +42,14 @@ export const useValuesForNamespaceContext = () => {
   );
 
   React.useEffect(() => {
+    if (urlNamespace) {
+      return;
+    }
     if (resourcesLoaded) {
-      getValueForNamespace(
-        useProjects,
-        urlNamespace,
-        activeNamespace,
-        preferredNamespace,
-        lastNamespace,
-      )
+      getValueForNamespace(useProjects, fallbackNamespace, preferredNamespace, lastNamespace)
         .then((ns) => {
-          if (ns !== activeNamespace) {
-            setActiveNamespace(ns);
+          if (ns !== fallbackNamespace) {
+            setFallbackNamespace(ns);
             // sync with redux store
             dispatch(setActiveNamespaceForStore(ns));
           }
@@ -67,24 +64,15 @@ export const useValuesForNamespaceContext = () => {
   }, [resourcesLoaded, useProjects]);
 
   React.useEffect(() => {
-    if (activeNamespace && urlNamespace && urlNamespace !== activeNamespace) {
-      getValueForNamespace(useProjects, urlNamespace)
-        .then((ns) => {
-          setActiveNamespace(ns);
-          // sync with redux store
-          dispatch(setActiveNamespaceForStore(ns));
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.warn('Error fetching namespace', e);
-        });
+    if (urlNamespace) {
+      dispatch(setActiveNamespaceForStore(urlNamespace));
     }
-  }, [activeNamespace, dispatch, urlNamespace, useProjects]);
+  }, [dispatch, urlNamespace]);
 
-  const loaded: boolean = resourcesLoaded && !!activeNamespace;
+  const loaded: boolean = !!urlNamespace || (resourcesLoaded && !!fallbackNamespace);
 
   return {
-    namespace: activeNamespace,
+    namespace: urlNamespace || fallbackNamespace,
     setNamespace,
     loaded,
   };
