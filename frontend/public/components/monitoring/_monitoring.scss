@@ -141,6 +141,14 @@ $tooltip-background-color: var(--pf-global--BackgroundColor--dark-100);
   }
 }
 
+.monitoring-dashboards__dropdowns {
+  display: flex;
+}
+
+.monitoring-dashboards__variable-dropdowns {
+  margin-top: -20px;
+}
+
 .monitoring-dashboards__options {
   display: flex;
   float: right;
@@ -224,6 +232,7 @@ $screen-phone-landscape-min-width: 567px;
 .monitoring-dashboards__variables {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 $monitoring-line-height: 18px;

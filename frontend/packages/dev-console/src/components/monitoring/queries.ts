@@ -7,7 +7,6 @@ import {
   humanizeDecimalBytesPerSec,
 } from '@console/internal/components/utils';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { GraphTypes } from './dashboard/MonitoringDashboardGraph';
 
 export interface MonitoringQuery {
   query: _.TemplateExecutor;
@@ -16,6 +15,11 @@ export interface MonitoringQuery {
   humanize: Humanize;
   byteDataType: ByteDataTypes;
   id?: string;
+}
+
+export enum GraphTypes {
+  area = 'Area',
+  line = 'Line',
 }
 
 export const metricsQuery = (t: TFunction) => ({

@@ -69,8 +69,8 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   const dispatch = useDispatch();
   const onZoom = React.useCallback(
     (from, to) => {
-      dispatch(monitoringDashboardsSetEndTime(to));
-      dispatch(monitoringDashboardsSetTimespan(to - from));
+      dispatch(monitoringDashboardsSetEndTime(to, 'dev'));
+      dispatch(monitoringDashboardsSetTimespan(to - from, 'dev'));
     },
     [dispatch],
   );
