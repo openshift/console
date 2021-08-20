@@ -143,8 +143,3 @@ export const managedResourceSaveModal = (props) =>
   import(
     './managed-resource-save-modal' /* webpackChunkName: "managed-resource-save-modal" */
   ).then((m) => m.managedResourceSaveModal(props));
-
-export const languagePreferencesModal = (props) =>
-  import(
-    './language-preferences-modal' /* webpackChunkName: "language-preferences-modal" */
-  ).then((m) => m.languagePreferencesModal(props));
