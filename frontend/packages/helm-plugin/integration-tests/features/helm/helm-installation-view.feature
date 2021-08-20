@@ -11,7 +11,7 @@ Feature: Helm Chart Installation View
         Scenario: Grouping of Helm multiple chart versions together in developer catalog: HR-04-TC01
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the chart versions dropdown menu
              Then user will see the information of all the chart versions
@@ -31,7 +31,7 @@ Feature: Helm Chart Installation View
         Scenario: Data doesn't change while switching Form to YAML view: HR-04-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user enters Release Name as "nodejs-ex-k-1"
               And user enters Replica count as "3"

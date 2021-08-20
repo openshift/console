@@ -2,6 +2,8 @@
 export const CHART_NAME_ANNOTATION = 'charts.openshift.io/name';
 // Annotation for chart category, e.g. redhat, partner, community
 export const PROVIDER_TYPE_ANNOTATION = 'charts.openshift.io/providerType';
+// Annotation for provider name, e.g. Fortanix, HashiCorp, etc
+export const PROVIDER_NAME_ANNOTATION = 'charts.openshift.io/provider';
 
 export enum PROVIDER_TYPE {
   redhat = 'redhat',

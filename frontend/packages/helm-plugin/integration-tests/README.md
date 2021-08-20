@@ -4,7 +4,7 @@
 
 ## Directory Structure
 
-Folder structure of cypress cucumber framework for Pipelines-plugin
+Folder structure of cypress cucumber framework for Helm-plugin
 
 ```
 frontend/packages/helm-plugin/integration-tests/
