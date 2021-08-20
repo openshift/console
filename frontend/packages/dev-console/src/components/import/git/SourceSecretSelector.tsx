@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormGroup } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, useField } from 'formik';
+import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { SecretTypeAbstraction } from '@console/internal/components/secrets/create-secret';
 import { getFieldId } from '@console/shared';
@@ -11,7 +11,6 @@ const CREATE_SOURCE_SECRET = 'create-source-secret';
 
 const SourceSecretSelector: React.FC = () => {
   const { t } = useTranslation();
-  const [secret] = useField('git.secret');
   const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   const handleSave = (name: string) => {
@@ -20,7 +19,7 @@ const SourceSecretSelector: React.FC = () => {
 
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_SOURCE_SECRET) {
-      setFieldValue('git.secret', secret.value);
+      setFieldValue('git.secret', values.git.secret);
       secretModalLauncher({
         namespace: values.project.name,
         save: handleSave,
@@ -48,8 +47,8 @@ const SourceSecretSelector: React.FC = () => {
               actionKey: CREATE_SOURCE_SECRET,
             },
           ]}
-          selectedKey={secret.value}
-          title={secret.value}
+          selectedKey={values.git.secret}
+          title={values.git.secret}
           onChange={handleDropdownChange}
         />
       </FormGroup>
