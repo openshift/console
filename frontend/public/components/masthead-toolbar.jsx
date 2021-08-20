@@ -502,6 +502,9 @@ class MastheadToolbarContents_ extends React.Component {
     const actions = [];
     const userActions = [
       {
+        component: <Link to="/user-preferences">{t('public~User Preferences')}</Link>,
+      },
+      {
         label: t('public~Language preference'),
         callback: () => languagePreferencesModal({ quickStartContext }),
         component: 'button',

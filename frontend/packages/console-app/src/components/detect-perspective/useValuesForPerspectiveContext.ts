@@ -1,24 +1,32 @@
 import * as React from 'react';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
-import { useUserSettingsCompatibility } from '@console/shared';
+import { usePreferredPerspective } from '../user-preferences';
 import { PerspectiveType } from './perspective-context';
-
-const LAST_PERSPECTIVE_LOCAL_STORAGE_KEY = `bridge/last-perspective`;
-
-const LAST_PERSPECTIVE_USER_SETTINGS_KEY = 'console.lastPerspective';
+import { useLastPerspective } from './useLastPerspective';
 
 export const useValuesForPerspectiveContext = (): [
   PerspectiveType,
-  React.Dispatch<React.SetStateAction<PerspectiveType>>,
+  (newPerspective: string) => void,
   boolean,
 ] => {
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-  const [perspective, setPerspective, loaded] = useUserSettingsCompatibility<PerspectiveType>(
-    LAST_PERSPECTIVE_USER_SETTINGS_KEY,
-    LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
-    '',
-  );
+  const [lastPerspective, setLastPerspective, lastPerspectiveLoaded] = useLastPerspective();
+  const [preferredPerspective, , preferredPerspectiveLoaded] = usePreferredPerspective();
+  const [activePerspective, setActivePerspective] = React.useState<string>('');
+
+  const loaded = lastPerspectiveLoaded && preferredPerspectiveLoaded;
+
+  const latestPerspective = loaded && (preferredPerspective || lastPerspective);
+
+  const perspective = activePerspective || latestPerspective;
+
   const isValidPerspective =
     loaded && perspectiveExtensions.some((p) => p.properties.id === perspective);
+
+  const setPerspective = (newPerspective: string) => {
+    setLastPerspective(newPerspective);
+    setActivePerspective(newPerspective);
+  };
+
   return [isValidPerspective ? perspective : undefined, setPerspective, loaded];
 };

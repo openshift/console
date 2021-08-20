@@ -204,7 +204,7 @@ ListDropdown.propTypes = {
   disabled: PropTypes.bool,
 };
 
-const useProjectOrNamespaceModel = () => {
+export const useProjectOrNamespaceModel = () => {
   const canCreateNamespace = useAccessReview({
     group: NamespaceModel.apiGroup,
     resource: NamespaceModel.plural,

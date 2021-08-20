@@ -3,90 +3,89 @@ import * as React from 'react';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { setActiveNamespace } from '@console/internal/actions/ui';
+import { setActiveNamespace as setActiveNamespaceForStore } from '@console/internal/actions/ui';
 import { getNamespace } from '@console/internal/components/utils/link';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
-import { k8sGet, K8sKind } from '@console/internal/module/k8s';
 import { flagPending } from '@console/internal/reducers/features';
 import { FLAGS } from '@console/shared';
-import {
-  ALL_NAMESPACES_KEY,
-  NAMESPACE_USERSETTINGS_PREFIX,
-  NAMESPACE_LOCAL_STORAGE_KEY,
-  LAST_NAMESPACE_NAME_USER_SETTINGS_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
 import { useFlag } from '@console/shared/src/hooks/flag';
-import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserSettingsCompatibility';
+import { usePreferredNamespace } from '../user-preferences/namespace';
+import { getValueForNamespace } from './getValueForNamespace';
+import { useLastNamespace } from './useLastNamespace';
 
 type NamespaceContextType = {
   namespace?: string;
   setNamespace?: (ns: string) => void;
 };
 
-const FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY = `${NAMESPACE_USERSETTINGS_PREFIX}.favorite`;
-const FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY = NAMESPACE_LOCAL_STORAGE_KEY;
-
 export const NamespaceContext = React.createContext<NamespaceContextType>({});
-
-const namespaceExists = async (model: K8sKind, namespace: string) => {
-  await k8sGet(model, namespace);
-};
 
 export const useValuesForNamespaceContext = () => {
   const { pathname } = useLocation();
   const urlNamespace = getNamespace(pathname);
-
-  const [favoritedNamespace, , favoriteLoaded] = useUserSettingsCompatibility<string>(
-    FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY,
-    FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  );
-  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserSettingsCompatibility<
-    string
-  >(LAST_NAMESPACE_NAME_USER_SETTINGS_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
-
+  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
+  const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();
+  const [activeNamespace, setActiveNamespace] = React.useState<string>('');
   const dispatch = useDispatch();
   const setNamespace = React.useCallback(
     (namespace: string) => {
-      dispatch(setActiveNamespace(namespace));
+      setActiveNamespace(namespace);
+      dispatch(setActiveNamespaceForStore(namespace));
       setLastNamespace(namespace);
     },
     [dispatch, setLastNamespace],
   );
-  const useProjects = useFlag(FLAGS.OPENSHIFT);
+  const useProjects: boolean = useFlag(FLAGS.OPENSHIFT);
 
-  // Keep namespace in sync with redux.
+  const resourcesLoaded: boolean = !!(
+    !flagPending(useProjects) &&
+    (urlNamespace || (preferredNamespaceLoaded && lastNamespaceLoaded))
+  );
+
   React.useEffect(() => {
-    // Url namespace overrides everything. We don't need to wait for loaded
-    if (urlNamespace) {
-      dispatch(setActiveNamespace(urlNamespace));
+    if (resourcesLoaded) {
+      getValueForNamespace(
+        useProjects,
+        urlNamespace,
+        activeNamespace,
+        preferredNamespace,
+        lastNamespace,
+      )
+        .then((ns) => {
+          if (ns !== activeNamespace) {
+            setActiveNamespace(ns);
+            // sync with redux store
+            dispatch(setActiveNamespaceForStore(ns));
+          }
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching namespace', e);
+        });
     }
-    // Automatically sets favorited or latest namespace as soon as
-    // both informations are loaded from user settings.
-    if (!urlNamespace && favoriteLoaded && lastNamespaceLoaded && !flagPending(useProjects)) {
-      const setActiveIfExists = (ns: string) => {
-        if (!ns) {
-          return Promise.reject();
-        }
-        return namespaceExists(useProjects ? ProjectModel : NamespaceModel, ns)
-          .then(() => dispatch(setActiveNamespace(ns)))
-          .catch((res) => {
-            // eslint-disable-next-line no-console
-            console.warn('Error fetching namespace', ns);
-            throw res;
-          });
-      };
-      setActiveIfExists(favoritedNamespace)
-        .catch(() => setActiveIfExists(lastNamespace))
-        .catch(() => {});
-    }
-    // Only run this hook after favorite and last namespace are loaded.
+    // Only run this hook after all resources have loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [favoriteLoaded, lastNamespaceLoaded, useProjects]);
+  }, [resourcesLoaded, useProjects]);
+
+  React.useEffect(() => {
+    if (activeNamespace && urlNamespace && urlNamespace !== activeNamespace) {
+      getValueForNamespace(useProjects, urlNamespace)
+        .then((ns) => {
+          setActiveNamespace(ns);
+          // sync with redux store
+          dispatch(setActiveNamespaceForStore(ns));
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching namespace', e);
+        });
+    }
+  }, [activeNamespace, dispatch, urlNamespace, useProjects]);
+
+  const loaded: boolean = resourcesLoaded && !!activeNamespace;
 
   return {
-    namespace: urlNamespace || favoritedNamespace || lastNamespace || ALL_NAMESPACES_KEY,
+    namespace: activeNamespace,
     setNamespace,
-    loaded: favoriteLoaded && lastNamespaceLoaded,
+    loaded,
   };
 };
