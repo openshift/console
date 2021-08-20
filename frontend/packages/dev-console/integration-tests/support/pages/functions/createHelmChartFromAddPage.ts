@@ -4,7 +4,7 @@ import { catalogPage, addPage } from '../add-flow';
 
 export const createHelmChartFromAddPage = (
   releaseName: string = 'nodejs-ex-k',
-  helmChartName: string = 'Nodejs Ex K v0.2.1',
+  helmChartName: string = 'Nodejs Ex K',
 ) => {
   addPage.verifyCard('Helm Chart');
   addPage.selectCardFromOptions(addOptions.HelmChart);

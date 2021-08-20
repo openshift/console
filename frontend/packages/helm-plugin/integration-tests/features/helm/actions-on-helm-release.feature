@@ -10,7 +10,7 @@ Feature: Perform Actions on Helm Releases
         Scenario: Install Helm Chart from +Add Page using Form View: HR-06-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user enters Release Name as "nodejs-ex-k"
               And user clicks on the Install button

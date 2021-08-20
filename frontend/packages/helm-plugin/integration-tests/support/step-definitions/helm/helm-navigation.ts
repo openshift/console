@@ -46,8 +46,8 @@ Then('release name displays as {string}', (name: string) => {
 Given('user is at Install Helm Chart page', () => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
-  catalogPage.search('Nodejs Ex K v0.2.1');
-  catalogPage.selectHelmChartCard('Nodejs Ex K v0.2.1');
+  catalogPage.search('Nodejs Ex K');
+  catalogPage.selectHelmChartCard('Nodejs Ex K');
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 

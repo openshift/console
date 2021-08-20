@@ -28,7 +28,7 @@ Feature: Install the Helm Release
         Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-06-TC03
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Quarkus v0.0.3" card from catalog page
+              And user searches and selects "Quarkus" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user selects YAML view
               And user selects the Chart Version "0.0.2 (Provided by Red Hat Helm Charts)"
@@ -41,7 +41,7 @@ Feature: Install the Helm Release
         Scenario: Chart versions drop down menu: HR-06-TC05
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Quarkus v0.0.3" card from catalog page
+              And user searches and selects "Quarkus" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the chart versions dropdown menu
              Then user will see the information of all the chart versions
