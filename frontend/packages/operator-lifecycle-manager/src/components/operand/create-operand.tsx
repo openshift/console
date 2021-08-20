@@ -126,6 +126,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
     [formHelpText, t],
   );
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'console.createOperandForm.editor.lastView';
+
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={csv}>
       <div className="co-create-operand__header">
@@ -148,6 +150,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
         onChangeEditorType={onChangeEditorType}
         prune={pruneFunc}
         YAMLEditor={OperandYAML}
+        lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
       />
     </StatusBox>
   );

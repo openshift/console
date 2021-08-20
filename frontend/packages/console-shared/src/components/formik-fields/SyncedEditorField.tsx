@@ -4,8 +4,10 @@ import cx from 'classnames';
 import { useField, useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { LoadingBox } from '@console/internal/components/utils';
 import { safeYAMLToJS, safeJSToYAML } from '../../utils/yaml';
 import { EditorType } from '../synced-editor/editor-toggle';
+import { useEditorType } from '../synced-editor/useEditorType';
 import RadioGroupField from './RadioGroupField';
 
 import './SyncedEditorField.scss';
@@ -29,6 +31,7 @@ type SyncedEditorFieldProps = {
   name: string;
   formContext: EditorContext<SanitizeToForm>;
   yamlContext: EditorContext<SanitizeToYAML>;
+  lastViewUserSettingKey: string;
   noMargin?: boolean;
 };
 
@@ -37,10 +40,12 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   formContext,
   yamlContext,
   noMargin = false,
+  lastViewUserSettingKey,
 }) => {
-  const [field] = useField(name);
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
+  const [field] = useField(name);
+
+  const { values, setFieldValue } = useFormikContext<FormikValues>();
 
   const formData = _.get(values, formContext.name);
   const yamlData: string = _.get(values, yamlContext.name);
@@ -49,7 +54,19 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   const [sanitizeToCallback, setSanitizeToCallback] = React.useState<FormErrorCallback>(undefined);
   const [disabledFormAlert, setDisabledFormAlert] = React.useState<boolean>(formContext.isDisabled);
 
-  const changeEditorType = (newType: EditorType): void => {
+  const isEditorTypeEnabled = (type: EditorType): boolean =>
+    !(type === EditorType.Form ? formContext?.isDisabled : yamlContext?.isDisabled);
+
+  const [editorType, setEditorType, resourceLoaded] = useEditorType(
+    lastViewUserSettingKey,
+    field.value as EditorType,
+    isEditorTypeEnabled,
+  );
+
+  const loaded = resourceLoaded && field.value === editorType;
+
+  const changeEditorType = (newType: EditorType) => {
+    setEditorType(newType);
     setFieldValue(name, newType);
   };
 
@@ -118,9 +135,12 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
 
   React.useEffect(() => {
     setDisabledFormAlert(formContext.isDisabled);
-  }, [formContext.isDisabled]);
+    if (field.value !== editorType) {
+      setFieldValue(name, editorType);
+    }
+  }, [editorType, field.value, formContext.isDisabled, name, setFieldValue]);
 
-  return (
+  return loaded ? (
     <>
       <div
         className={cx('ocs-synced-editor-field__editor-toggle', { margin: !noMargin })}
@@ -172,8 +192,12 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
           isInline
         />
       )}
-      {field.value === EditorType.Form ? formContext.editor : yamlContext.editor}
+      {editorType === EditorType.Form && !disabledFormAlert
+        ? formContext.editor
+        : yamlContext.editor}
     </>
+  ) : (
+    <LoadingBox />
   );
 };
 
