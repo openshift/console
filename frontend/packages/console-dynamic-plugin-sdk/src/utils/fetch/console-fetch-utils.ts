@@ -103,7 +103,16 @@ type ImpersonateHeaders = {
   'Impersonate-User': string;
 };
 export const getImpersonateHeaders = (): ImpersonateHeaders => {
-  const { kind, name } = InternalReduxStore.getState().UI.get('impersonate', {});
+  let kind: string;
+  let name: string;
+  try {
+    const imp = InternalReduxStore.getState().UI.get('impersonate', {});
+    kind = imp.kind;
+    name = imp.name;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Failed to get ImpersonateHeaders', error);
+  }
   if ((kind === 'User' || kind === 'Group') && name) {
     // Even if we are impersonating a group, we still need to set Impersonate-User to something or k8s will complain
     const headers = {
