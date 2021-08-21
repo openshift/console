@@ -8,16 +8,18 @@ import {
   usePluginsOverviewTabSection,
   useBuildConfigsWatcher,
 } from '@console/shared';
+import { K8sKind } from '@console/dynamic-plugin-sdk';
 import { connectToModel } from '../../kinds';
 import { modelFor, referenceFor, referenceForModel } from '../../module/k8s';
-import { AsyncComponent, Kebab, ResourceOverviewHeading, ResourceSummary } from '../utils';
-
+import { AsyncComponent, Kebab, KebabAction, ResourceSummary } from '../utils';
 import { BuildOverview } from './build-overview';
 import { HPAOverview } from './hpa-overview';
 import { NetworkingOverview } from './networking-overview';
 import { PodsOverview } from './pods-overview';
 import { resourceOverviewPages } from './resource-overview-pages';
 import { ManagedByOperatorLink } from '../utils/managed-by';
+import { useTranslation } from 'react-i18next';
+import { ResourceOverviewDetails } from './resource-overview-details';
 
 const { common } = Kebab.factory;
 
@@ -42,32 +44,40 @@ export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabP
   );
 };
 
-export const DefaultOverviewPage = connectToModel(
-  ({ kindObj: kindObject, item, customActions }) => {
-    if (!kindObject && !item?.obj) {
-      return null;
-    }
-    const resourceModel = kindObject || modelFor(referenceFor(item.obj));
-    return (
-      <div className="overview__sidebar-pane resource-overview">
-        <ResourceOverviewHeading
-          actions={[
-            ...(customActions ? customActions : []),
-            ...Kebab.getExtensionsActionsForKind(resourceModel),
-            ...common,
-          ]}
-          kindObj={resourceModel}
-          resources={item}
-        />
-        <div className="overview__sidebar-pane-body resource-overview__body">
-          <div className="resource-overview__summary">
-            <ResourceSummary resource={item.obj} />
-          </div>
+export const DefaultOverviewPage: React.FC<{ item: OverviewItem }> = ({ item }) => {
+  return (
+    <div className="overview__sidebar-pane resource-overview">
+      <div className="overview__sidebar-pane-body resource-overview__body">
+        <div className="resource-overview__summary">
+          <ResourceSummary resource={item.obj} />
         </div>
       </div>
-    );
-  },
-);
+    </div>
+  );
+};
+
+const DefaultSideBar: React.FC<{
+  kindObj: K8sKind;
+  item: OverviewItem;
+  customActions?: KebabAction[];
+}> = ({ kindObj, item, customActions }) => {
+  const { t } = useTranslation();
+
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: DefaultOverviewPage,
+    },
+  ];
+  const menuActions = [
+    ...(customActions ? customActions : []),
+    ...Kebab.getExtensionsActionsForKind(kindObj),
+    ...common,
+  ];
+  return (
+    <ResourceOverviewDetails item={item} kindObj={kindObj} menuActions={menuActions} tabs={tabs} />
+  );
+};
 
 export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActions }) => {
   if (!kindObj && !item?.obj) {
@@ -75,7 +85,7 @@ export const ResourceOverviewPage = connectToModel(({ kindObj, item, customActio
   }
   const resourceModel = kindObj || modelFor(referenceFor(item.obj));
   const ref = referenceForModel(resourceModel);
-  const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultOverviewPage));
+  const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultSideBar));
   return (
     <AsyncComponent
       loader={loader}
