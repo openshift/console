@@ -1,5 +1,5 @@
 {
-  "Operator Backed": "Operator Backed",
+  "Operator Backed": "Operator 지원",
   "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "클러스터 관리자가 설치한 다양한 관리 서비스를 검색해 보십시오. 클러스터 관리자는 카탈로그에서 사용 가능한 콘텐츠를 사용자 지정할 수 있습니다.",
   "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Operator 지원**에는 Kubernetes 컨트롤러에서 관리하는 다양한 서비스가 포함됩니다.",
   "OperatorHub": "OperatorHub",
