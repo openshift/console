@@ -21,6 +21,7 @@ import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import * as models from './models';
+import * as mockModels from './mock-models';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboards/persistent-internal/activity-card/cluster-expand-activity';
 import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
@@ -453,7 +454,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'HorizontalNavTab',
     properties: {
-      model: models.StorageSystemModel,
+      model: mockModels.StorageSystemMockModel,
       page: {
         name: '%ceph-storage-plugin~Storage Systems%',
         href: 'systems',
@@ -471,7 +472,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'HorizontalNavTab',
     properties: {
-      model: models.StorageSystemModel,
+      model: mockModels.StorageSystemMockModel,
       page: {
         // t('ceph-storage-plugin~Backing Store')
         name: '%ceph-storage-plugin~Backing Store%',
@@ -490,7 +491,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'HorizontalNavTab',
     properties: {
-      model: models.StorageSystemModel,
+      model: mockModels.StorageSystemMockModel,
       page: {
         // t('ceph-storage-plugin~Bucket Class')
         name: '%ceph-storage-plugin~Bucket Class%',
@@ -509,7 +510,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'HorizontalNavTab',
     properties: {
-      model: models.StorageSystemModel,
+      model: mockModels.StorageSystemMockModel,
       page: {
         // t('ceph-storage-plugin~Namespace Store')
         name: '%ceph-storage-plugin~Namespace Store%',
