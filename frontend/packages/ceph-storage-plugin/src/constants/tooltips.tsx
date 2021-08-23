@@ -18,10 +18,6 @@ export const arbiterText = (t: TFunction) =>
   t(
     'ceph-storage-plugin~If you wish to use the Arbiter stretch cluster, a minimum of 4 nodes (2 different zones, 2 nodes per zone) and 1 additional zone with 1 node is required. All nodes must be pre-labeled with zones in order to be validated on cluster creation.',
   );
-export const encryptionTooltip =
-  'The StorageCluster encryption level can be set to include all components under the cluster (including StorageClass and PVs) or to include only StorageClass encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.';
-export const vaultNamespaceTooltip =
-  'Vault enterprise namespaces are isolated environments that functionally exist as "Vaults within a Vault". They have separate login paths and support creating and managing data isolated to their namespace.';
 export const attachDevices = (t: TFunction, scName: string) => {
   return (
     <Trans t={t} ns="ceph-storage-plugin">
