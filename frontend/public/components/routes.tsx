@@ -90,7 +90,7 @@ const getRouteLabel = (route: RouteKind): string => {
 
   let label = getRouteHost(route, false);
   if (!label) {
-    return i18next.t('public~<unknown host>');
+    return i18next.t('public~unknown host');
   }
 
   if (_.get(route, 'spec.wildcardPolicy') === 'Subdomain') {

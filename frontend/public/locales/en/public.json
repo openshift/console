@@ -1293,7 +1293,7 @@
   "Cluster-wide {{resource}}": "Cluster-wide {{resource}}",
   "Namespace {{resource}}": "Namespace {{resource}}",
   "Create ResourceQuota": "Create ResourceQuota",
-  "<unknown host>": "<unknown host>",
+  "unknown host": "unknown host",
   "TLS is not enabled": "TLS is not enabled",
   "Termination type": "Termination type",
   "Insecure traffic": "Insecure traffic",
