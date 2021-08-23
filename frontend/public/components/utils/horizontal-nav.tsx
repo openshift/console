@@ -281,10 +281,10 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
       return (
         <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
           <p.component
+            {...params}
             {...componentProps}
             {...extraResources}
             {...p.pageData}
-            {...params}
             customData={props.customData}
           />
         </ErrorBoundary>
