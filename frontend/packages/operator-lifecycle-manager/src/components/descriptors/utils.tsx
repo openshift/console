@@ -125,10 +125,8 @@ const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapabi
       return [...COMMON_COMPATIBLE_CAPABILITIES, ...OBJECT_COMPATIBLE_CAPABILITIES];
     case 'array':
       return [...COMMON_COMPATIBLE_CAPABILITIES, ...ARRAY_COMPATIBLE_CAPABILITIES];
-    case 'primitive':
-      return [...COMMON_COMPATIBLE_CAPABILITIES, ...PRIMITIVE_COMPATIBLE_CAPABILITIES];
     default:
-      return [];
+      return [...COMMON_COMPATIBLE_CAPABILITIES, ...PRIMITIVE_COMPATIBLE_CAPABILITIES];
   }
 };
 
