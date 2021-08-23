@@ -15,25 +15,23 @@ const KSRoutesOverviewListItem: React.FC<KSRoutesOverviewListItemProps> = ({ ksr
     status,
   } = ksroute;
   return (
-    status && (
-      <li className="list-group-item">
-        <div className="row">
-          <div className="col-xs-10">
-            <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
-            {status.url?.length > 0 && (
-              <>
-                <span className="text-muted">{t('knative-plugin~Location:')} </span>
-                <ExternalLink
-                  href={status.url}
-                  additionalClassName="co-external-link--block"
-                  text={status.url}
-                />
-              </>
-            )}
-          </div>
+    <li className="list-group-item">
+      <div className="row">
+        <div className="col-xs-10">
+          <ResourceLink kind={referenceForModel(RouteModel)} name={name} namespace={namespace} />
+          {status?.url?.length > 0 && (
+            <>
+              <span className="text-muted">{t('knative-plugin~Location:')} </span>
+              <ExternalLink
+                href={status.url}
+                additionalClassName="co-external-link--block"
+                text={status.url}
+              />
+            </>
+          )}
         </div>
-      </li>
-    )
+      </div>
+    </li>
   );
 };
 
