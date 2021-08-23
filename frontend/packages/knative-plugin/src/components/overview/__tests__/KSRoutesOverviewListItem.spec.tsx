@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import * as _ from 'lodash';
 import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { RouteModel } from '../../../models';
@@ -58,5 +59,18 @@ describe('KSRoutesOverviewListItem', () => {
     wrapper.setProps({ ksroute });
     expect(wrapper.find(ResourceLink)).toHaveLength(1);
     expect(wrapper.find(ExternalLink)).toHaveLength(0);
+  });
+
+  it('should have ResourceLink with proper kind and not external link if status is not preset on route', () => {
+    const ksroute = _.omit(MockKnativeResources.ksroutes.data[0], 'status');
+    wrapper.setProps({ ksroute });
+    expect(wrapper.find(ResourceLink).exists()).toBe(true);
+    expect(
+      wrapper
+        .find(ResourceLink)
+        .at(0)
+        .props().kind,
+    ).toEqual(referenceForModel(RouteModel));
+    expect(wrapper.find(ExternalLink).exists()).toBe(false);
   });
 });
