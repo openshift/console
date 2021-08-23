@@ -93,7 +93,11 @@ export const useCDIUploadHook = (): CDIUploadContextProps => {
               uploadStatus: UPLOAD_STATUS.CANCELED,
             });
           } else {
-            updateUpload({ ...newUpload, uploadStatus: UPLOAD_STATUS.ERROR, uploadError: err });
+            updateUpload({
+              ...newUpload,
+              uploadStatus: UPLOAD_STATUS.ERROR,
+              uploadError: { message: `${err.message}: ${err.response?.data}` },
+            });
           }
         });
     }
