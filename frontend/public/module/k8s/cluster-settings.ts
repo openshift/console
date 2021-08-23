@@ -250,7 +250,7 @@ export const getOCMLink = (clusterID: string): string =>
   `https://console.redhat.com/openshift/details/${clusterID}`;
 
 export const getConditionUpgradeableFalse = (resource) =>
-  resource.status?.conditions.find(
+  resource.status?.conditions?.find(
     (c) => c.type === 'Upgradeable' && c.status === K8sResourceConditionStatus.False,
   );
 

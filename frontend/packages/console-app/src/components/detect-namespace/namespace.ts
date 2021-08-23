@@ -19,43 +19,26 @@ type NamespaceContextType = {
 
 export const NamespaceContext = React.createContext<NamespaceContextType>({});
 
+const useUrlNamespace = () => getNamespace(useLocation().pathname);
+
 export const useValuesForNamespaceContext = () => {
-  const { pathname } = useLocation();
-  const urlNamespace = getNamespace(pathname);
-  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
+  const urlNamespace = useUrlNamespace();
+  const [activeNamespace, setActiveNamespace] = React.useState<string>(urlNamespace);
   const [preferredNamespace, , preferredNamespaceLoaded] = usePreferredNamespace();
-  const [activeNamespace, setActiveNamespace] = React.useState<string>('');
-  const dispatch = useDispatch();
-  const setNamespace = React.useCallback(
-    (namespace: string) => {
-      setActiveNamespace(namespace);
-      dispatch(setActiveNamespaceForStore(namespace));
-      setLastNamespace(namespace);
-    },
-    [dispatch, setLastNamespace],
-  );
+  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useLastNamespace();
   const useProjects: boolean = useFlag(FLAGS.OPENSHIFT);
+  const dispatch = useDispatch();
 
-  const resourcesLoaded: boolean = !!(
-    !flagPending(useProjects) &&
-    (urlNamespace || (preferredNamespaceLoaded && lastNamespaceLoaded))
-  );
-
+  // Set namespace when all pending namespace infos are loaded.
+  // Automatically check if preferred and last namespace still exist.
+  const resourcesLoaded: boolean =
+    !flagPending(useProjects) && preferredNamespaceLoaded && lastNamespaceLoaded;
   React.useEffect(() => {
-    if (resourcesLoaded) {
-      getValueForNamespace(
-        useProjects,
-        urlNamespace,
-        activeNamespace,
-        preferredNamespace,
-        lastNamespace,
-      )
-        .then((ns) => {
-          if (ns !== activeNamespace) {
-            setActiveNamespace(ns);
-            // sync with redux store
-            dispatch(setActiveNamespaceForStore(ns));
-          }
+    if (!urlNamespace && resourcesLoaded) {
+      getValueForNamespace(preferredNamespace, lastNamespace, useProjects)
+        .then((ns: string) => {
+          ns !== activeNamespace && setActiveNamespace(ns);
+          dispatch(setActiveNamespaceForStore(ns));
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -64,28 +47,31 @@ export const useValuesForNamespaceContext = () => {
     }
     // Only run this hook after all resources have loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourcesLoaded, useProjects]);
+  }, [resourcesLoaded]);
 
+  // Updates active namespace (in context and redux state) when the url changes.
+  // This updates the redux state also after the initial rendering.
   React.useEffect(() => {
-    if (activeNamespace && urlNamespace && urlNamespace !== activeNamespace) {
-      getValueForNamespace(useProjects, urlNamespace)
-        .then((ns) => {
-          setActiveNamespace(ns);
-          // sync with redux store
-          dispatch(setActiveNamespaceForStore(ns));
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.warn('Error fetching namespace', e);
-        });
+    if (urlNamespace) {
+      urlNamespace !== activeNamespace && setActiveNamespace(urlNamespace);
+      dispatch(setActiveNamespaceForStore(urlNamespace));
     }
-  }, [activeNamespace, dispatch, urlNamespace, useProjects]);
+  }, [urlNamespace, activeNamespace, dispatch]);
 
-  const loaded: boolean = resourcesLoaded && !!activeNamespace;
+  // Change active namespace (in context and redux state) as well as last used namespace
+  // when a component calls setNamespace, for example via useActiveNamespace()
+  const setNamespace = React.useCallback(
+    (ns: string) => {
+      ns !== activeNamespace && setActiveNamespace(ns);
+      ns !== lastNamespace && setLastNamespace(ns);
+      dispatch(setActiveNamespaceForStore(ns));
+    },
+    [dispatch, activeNamespace, setActiveNamespace, lastNamespace, setLastNamespace],
+  );
 
   return {
     namespace: activeNamespace,
     setNamespace,
-    loaded,
+    loaded: !!activeNamespace,
   };
 };
