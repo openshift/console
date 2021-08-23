@@ -118,9 +118,10 @@ class LogWindowWithTranslation extends React.PureComponent {
     const { bufferFull, lines, linesBehind, status, t, wrapLines } = this.props;
     const { content, height } = this.state;
     // TODO maybe move these variables into state so they are only updated on changes
+    const count = lines[lines.length - 1] || lines.length === 0 ? lines.length : lines.length - 1;
     const headerText = bufferFull
-      ? t('public~last {{count}} line', { count: lines.length })
-      : t('public~{{count}} line', { count: lines.length });
+      ? t('public~last {{count}} line', { count })
+      : t('public~{{count}} line', { count });
     const resumeText =
       linesBehind > 0
         ? t('public~Resume stream and show {{count}} new line', { count: linesBehind })
