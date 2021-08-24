@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { TaskKind } from '../../../types';
+import { getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
 import { TektonTaskAnnotation, TektonTaskLabel, TektonTaskProviders } from '../../pipelines/const';
 import { PipelineBuilderFormikValues } from '../../pipelines/pipeline-builder/types';
 
@@ -29,7 +30,7 @@ const normalizeTektonTasks = (tektonTasks: TaskKind[]): CatalogItem<TaskKind>[] 
         tags,
         creationTimestamp,
         icon: {
-          node: <ResourceIcon kind={task.kind} />,
+          node: <ResourceIcon kind={getModelReferenceFromTaskKind(task.kind)} />,
         },
         attributes: { installed: labels[TektonTaskLabel.version], versions, categories },
         cta: {

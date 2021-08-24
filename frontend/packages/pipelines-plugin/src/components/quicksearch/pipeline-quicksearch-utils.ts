@@ -40,9 +40,9 @@ export const getCtaButtonText = (item: CatalogItem, selectedVersion: string): st
     case CTALabel.Add:
       return i18n.t('pipelines-plugin~Add');
     case CTALabel.Install:
-      return i18n.t('pipelines-plugin~Install and Add');
+      return i18n.t('pipelines-plugin~Install and add');
     case CTALabel.Update:
-      return i18n.t('pipelines-plugin~Update and Add');
+      return i18n.t('pipelines-plugin~Update and add');
     default:
       throw new Error(`Unknown button type, ${ctaType}`);
   }
