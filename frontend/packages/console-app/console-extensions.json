@@ -189,5 +189,18 @@
       },
       "insertBefore": "topology.preferredView"
     }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
+      "id": "console.preferredLanguage",
+      "label": "%console-app~Language%",
+      "groupId": "language",
+      "description": "%console-app~Select the language you want to use for the console.%",
+      "field": {
+        "type": "custom",
+        "component": { "$codeRef": "userPreferences.LanguageDropdown" }
+      }
+    }
   }
 ]
