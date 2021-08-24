@@ -106,7 +106,7 @@
     },
     "flags": {
       "required": ["OCS"],
-      "disallowed": ["ODF_MANAGED"]
+      "disallowed": ["ODF_MANAGED", "ODF_MODEL"]
     }
   },
   {
@@ -120,7 +120,7 @@
     },
     "flags": {
       "required": ["MCG"],
-      "disallowed": ["OCS"]
+      "disallowed": ["OCS", "ODF_MODEL"]
     }
   },
   {
