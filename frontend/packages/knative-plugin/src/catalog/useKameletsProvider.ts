@@ -18,17 +18,15 @@ const normalizeKamelets = (
     const {
       kind,
       metadata: { uid, name, creationTimestamp, annotations },
-      spec: {
-        definition: { title, description },
-      },
+      spec,
     } = k;
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, k);
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${CamelKameletBindingModel.kind}&name=${name}`;
     return {
       uid,
-      name: title,
-      description,
+      name: spec?.definition?.title || name,
+      description: spec?.definition?.description || '',
       provider,
       creationTimestamp,
       cta: { label: t('knative-plugin~Create Event Source'), href },
