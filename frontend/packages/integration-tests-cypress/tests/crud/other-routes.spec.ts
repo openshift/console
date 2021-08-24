@@ -92,17 +92,6 @@ describe('Visiting other routes', () => {
             waitFor: () => listPage.rows.shouldBeLoaded(),
           },
           {
-            path: '/k8s/all-namespaces/monitoring.coreos.com~v1~Alertmanager',
-            waitFor: () => listPage.rows.shouldBeLoaded(),
-          },
-          {
-            path: '/k8s/ns/openshift-monitoring/monitoring.coreos.com~v1~Alertmanager/main',
-            waitFor: () => {
-              detailsPage.isLoaded();
-              cy.byTestID('label-list').should('be.visible');
-            },
-          },
-          {
             path: '/settings/cluster',
             waitFor: () => cy.byLegacyTestID('cluster-version').should('exist'),
           },

@@ -12,9 +12,7 @@ import {
   isModelFeatureFlag as isDynamicModelFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions';
 import {
-  ChargebackReportModel,
   ClusterAutoscalerModel,
-  ClusterServiceClassModel,
   ConsoleCLIDownloadModel,
   ConsoleExternalLogLinkModel,
   ConsoleLinkModel,
@@ -24,7 +22,6 @@ import {
   MachineConfigModel,
   MachineHealthCheckModel,
   MachineModel,
-  PrometheusModel,
 } from '../models';
 import { referenceForModel, referenceForGroupVersionKind } from '../module/k8s';
 import { RootState } from '../redux';
@@ -37,9 +34,7 @@ export const defaults = _.mapValues(FLAGS, (flag) =>
 );
 
 export const baseCRDs = {
-  [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterAutoscalerModel)]: FLAGS.CLUSTER_AUTOSCALER,
-  [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ConsoleLinkModel)]: FLAGS.CONSOLE_LINK,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
   [referenceForModel(ConsoleExternalLogLinkModel)]: FLAGS.CONSOLE_EXTERNAL_LOG_LINK,
@@ -49,7 +44,6 @@ export const baseCRDs = {
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
   [referenceForModel(MachineHealthCheckModel)]: FLAGS.MACHINE_HEALTH_CHECK,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
-  [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
 };
 
 const CRDs = { ...baseCRDs };

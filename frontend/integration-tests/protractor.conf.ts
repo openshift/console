@@ -63,7 +63,6 @@ const testSuites = {
     'tests/environment.scenario.ts',
     'tests/deploy-image.scenario.ts',
     'tests/monitoring.scenario.ts',
-    'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
     'tests/dashboards/cluster-dashboard.scenario.ts',
@@ -85,7 +84,6 @@ const testSuites = {
     'tests/secrets.scenario.ts',
     'tests/deploy-image.scenario.ts',
     'tests/monitoring.scenario.ts',
-    'tests/alertmanager.scenario.ts',
     'tests/crd-extensions.scenario.ts',
     'tests/oauth.scenario.ts',
     'tests/dashboards/cluster-dashboard.scenario.ts',
@@ -94,7 +92,6 @@ const testSuites = {
     'tests/cluster-settings.scenario.ts',
   ]),
   clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
-  alertmanager: suite(['tests/alertmanager.scenario.ts']),
   login: ['tests/login.scenario.ts'],
   dashboards: suite([
     'tests/dashboards/cluster-dashboard.scenario.ts',
@@ -192,14 +189,6 @@ export const config = {
     testSuites,
     reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
   ),
-  params: {
-    // Set to 'true' to enable OpenShift resources in the crud scenario.
-    // Use a string rather than boolean so it can be specified on the command line:
-    // $ yarn test-protractor --params.openshift true
-    openshift: 'false',
-    // Set to 'true' to enable Service Catalog resources in the crud scenario.
-    servicecatalog: 'false',
-  },
 };
 
 export const checkLogs = async () => {

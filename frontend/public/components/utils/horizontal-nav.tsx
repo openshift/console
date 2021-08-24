@@ -131,12 +131,6 @@ export const navFactory: NavFactory = {
     nameKey: 'public~Environment',
     component,
   }),
-  clusterServiceClasses: (component) => ({
-    href: 'serviceclasses',
-    // t('public~ServiceClasses')
-    nameKey: 'public~ServiceClasses',
-    component,
-  }),
   clusterServicePlans: (component) => ({
     href: 'serviceplans',
     // t('public~ServicePlans')

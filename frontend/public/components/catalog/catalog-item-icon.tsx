@@ -247,43 +247,6 @@ export const getTemplateIcon = (template: TemplateKind | PartialObjectMetadata):
   return _.get(template, 'metadata.annotations.iconClass');
 };
 
-export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = ({
-  serviceClass,
-  iconSize,
-}) => {
-  const { t } = useTranslation();
-  const iconClass = getServiceClassIcon(serviceClass);
-  const imageUrl = getServiceClassImage(serviceClass);
-  return (
-    <span className="co-catalog-item-icon" aria-hidden>
-      {imageUrl ? (
-        <img
-          className={classNames(
-            'co-catalog-item-icon__img',
-            iconSize && `co-catalog-item-icon__img--${iconSize}`,
-          )}
-          src={imageUrl}
-          alt={t('public~Icon')}
-        />
-      ) : (
-        <span
-          className={classNames(
-            'co-catalog-item-icon__icon',
-            iconSize && `co-catalog-item-icon__icon--${iconSize}`,
-            normalizeIconClass(iconClass),
-          )}
-        />
-      )}
-    </span>
-  );
-};
-ClusterServiceClassIcon.displayName = 'ClusterServiceClassIcon';
-
-export type ClusterServiceClassIconProps = {
-  serviceClass: K8sResourceKind;
-  iconSize?: string;
-};
-
 export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({ tag, iconSize }) => {
   const { t } = useTranslation();
   const iconClass = getImageStreamIcon(tag);

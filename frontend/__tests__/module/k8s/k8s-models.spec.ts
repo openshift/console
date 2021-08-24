@@ -24,12 +24,7 @@ import {
   testForUnservedVersionsCRD,
 } from '../../../__mocks__/crds';
 import { testNamespace, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import {
-  PodModel,
-  DeploymentModel,
-  ClusterResourceQuotaModel,
-  PrometheusModel,
-} from '../../../public/models';
+import { PodModel, DeploymentModel, ClusterResourceQuotaModel } from '../../../public/models';
 
 describe('referenceFor', () => {
   it('returns a reference for objects without an API group', () => {
@@ -93,9 +88,8 @@ describe('modelsToMap', () => {
   });
 
   it('returns a map with keys based on referenceForModel for models with crd:true', () => {
-    expect(modelsToMap([ClusterResourceQuotaModel, PrometheusModel]).toObject()).toEqual({
+    expect(modelsToMap([ClusterResourceQuotaModel]).toObject()).toEqual({
       [referenceForModel(ClusterResourceQuotaModel)]: ClusterResourceQuotaModel,
-      [referenceForModel(PrometheusModel)]: PrometheusModel,
     });
   });
 });

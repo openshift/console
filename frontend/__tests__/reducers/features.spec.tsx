@@ -54,9 +54,6 @@ describe('featureReducer', () => {
 
     expect(newState).toEqual(
       initialState.merge({
-        [FLAGS.PROMETHEUS]: false,
-        [FLAGS.CHARGEBACK]: false,
-        [FLAGS.SERVICE_CATALOG]: false,
         [FLAGS.CLUSTER_API]: false,
         [FLAGS.MACHINE_CONFIG]: false,
         [FLAGS.MACHINE_AUTOSCALER]: false,

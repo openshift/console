@@ -4,16 +4,12 @@ import {
   ResourceDetailsPage as DynamicResourceDetailsPage,
   ResourceListPage as DynamicResourceListPage,
 } from '@console/dynamic-plugin-sdk';
-import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind, referenceForExtensionModel } from '../module/k8s';
 import {
-  AlertmanagerModel,
   BuildConfigModel,
   BuildModel,
   ClusterOperatorModel,
   ClusterRoleModel,
-  ClusterServiceBrokerModel,
-  ClusterServiceClassModel,
   ClusterServicePlanModel,
   ClusterVersionModel,
   ConfigMapModel,
@@ -45,7 +41,6 @@ import {
   PersistentVolumeModel,
   PodModel,
   ProjectModel,
-  PrometheusModel,
   ReplicaSetModel,
   ReplicationControllerModel,
   ResourceQuotaModel,
@@ -54,8 +49,6 @@ import {
   RouteModel,
   SecretModel,
   ServiceAccountModel,
-  ServiceBindingModel,
-  ServiceInstanceModel,
   ServiceModel,
   ServiceMonitorModel,
   StatefulSetModel,
@@ -94,16 +87,6 @@ type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 type DynamicResourcePage = DynamicResourceListPage | DynamicResourceDetailsPage;
 
 export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .set(referenceForModel(ClusterServiceClassModel), () =>
-    import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(
-      (m) => m.ClusterServiceClassDetailsPage,
-    ),
-  )
-  .set(referenceForModel(ClusterServiceBrokerModel), () =>
-    import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(
-      (m) => m.ClusterServiceBrokerDetailsPage,
-    ),
-  )
   .set(referenceForModel(ClusterServicePlanModel), () =>
     import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(
       (m) => m.ClusterServicePlanDetailsPage,
@@ -219,16 +202,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ServiceAccountsDetailsPage,
     ),
   )
-  .set(referenceForModel(ServiceInstanceModel), () =>
-    import('./service-instance' /* webpackChunkName: "service-instance" */).then(
-      (m) => m.ServiceInstanceDetailsPage,
-    ),
-  )
-  .set(referenceForModel(ServiceBindingModel), () =>
-    import('./service-binding' /* webpackChunkName: "service-binding" */).then(
-      (m) => m.ServiceBindingDetailsPage,
-    ),
-  )
   .set(referenceForModel(ServiceModel), () =>
     import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesDetailsPage),
   )
@@ -254,11 +227,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(GroupModel), () =>
     import('./group' /* webpackChunkName: "group" */).then((m) => m.GroupDetailsPage),
-  )
-  .set(referenceForModel(AlertmanagerModel), () =>
-    import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(
-      (m) => m.AlertManagersDetailsPage,
-    ),
   )
   .set(referenceForModel(StatefulSetModel), () =>
     import('./stateful-set' /* webpackChunkName: "stateful-set" */).then(
@@ -293,14 +261,6 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(PersistentVolumeClaimModel), () =>
     import('./persistent-volume-claim' /* webpackChunkName: "persistent-volume-claim" */).then(
       (m) => m.PersistentVolumeClaimsDetailsPage,
-    ),
-  )
-  .set(ReportReference, () =>
-    import('./chargeback' /* webpackChunkName: "chargeback" */).then((m) => m.ReportsDetailsPage),
-  )
-  .set(ReportGenerationQueryReference, () =>
-    import('./chargeback' /* webpackChunkName: "chargeback" */).then(
-      (m) => m.ReportGenerationQueriesDetailsPage,
     ),
   )
   .set(referenceForModel(StorageClassModel), () =>
@@ -360,16 +320,6 @@ export const getResourceDetailsPages = (
     });
 
 export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .set(referenceForModel(ClusterServiceClassModel), () =>
-    import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(
-      (m) => m.ClusterServiceClassPage,
-    ),
-  )
-  .set(referenceForModel(ClusterServiceBrokerModel), () =>
-    import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(
-      (m) => m.ClusterServiceBrokerPage,
-    ),
-  )
   .set(referenceForModel(ClusterServicePlanModel), () =>
     import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(
       (m) => m.ClusterServicePlanPage,
@@ -465,16 +415,6 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
       (m) => m.ServiceAccountsPage,
     ),
   )
-  .set(referenceForModel(ServiceInstanceModel), () =>
-    import('./service-instance' /* webpackChunkName: "service-instance" */).then(
-      (m) => m.ServiceInstancesPage,
-    ),
-  )
-  .set(referenceForModel(ServiceBindingModel), () =>
-    import('./service-binding' /* webpackChunkName: "service-binding" */).then(
-      (m) => m.ServiceBindingsPage,
-    ),
-  )
   .set(referenceForModel(ServiceModel), () =>
     import('./service' /* webpackChunkName: "service" */).then((m) => m.ServicesPage),
   )
@@ -496,19 +436,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(GroupModel), () =>
     import('./group' /* webpackChunkName: "group" */).then((m) => m.GroupPage),
   )
-  .set(referenceForModel(PrometheusModel), () =>
-    import('./prometheus' /* webpackChunkName: "prometheus" */).then(
-      (m) => m.PrometheusInstancesPage,
-    ),
-  )
   .set(referenceForModel(ServiceMonitorModel), () =>
     import('./service-monitor' /* webpackChunkName: "service-monitor" */).then(
       (m) => m.ServiceMonitorsPage,
-    ),
-  )
-  .set(referenceForModel(AlertmanagerModel), () =>
-    import('./alert-manager' /* webpackChunkName: "alert-manager" */).then(
-      (m) => m.AlertManagersPage,
     ),
   )
   .set(referenceForModel(StatefulSetModel), () =>
@@ -533,14 +463,6 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(PersistentVolumeClaimModel), () =>
     import('./persistent-volume-claim' /* webpackChunkName: "persistent-volume-claim" */).then(
       (m) => m.PersistentVolumeClaimsPage,
-    ),
-  )
-  .set(ReportReference, () =>
-    import('./chargeback' /* webpackChunkName: "chargeback" */).then((m) => m.ReportsPage),
-  )
-  .set(ReportGenerationQueryReference, () =>
-    import('./chargeback' /* webpackChunkName: "chargeback" */).then(
-      (m) => m.ReportGenerationQueriesPage,
     ),
   )
   .set(referenceForModel(StorageClassModel), () =>

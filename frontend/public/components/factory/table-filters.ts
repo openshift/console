@@ -31,9 +31,6 @@ import { requesterFilter } from '@console/shared/src/components/namespace';
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
-const clusterServiceVersionDisplayName = (csv: K8sResourceKind): string =>
-  csv?.spec?.displayName || csv?.metadata?.name;
-
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: FilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter.selected?.[0], obj.metadata.name),
@@ -136,13 +133,6 @@ export const tableFilters: FilterMap = {
     }
     const role = getNodeRole(node);
     return roles.selected.includes(role);
-  },
-
-  'clusterserviceversion-resource-kind': (filters, resource) => {
-    if (!filters || !filters.selected || !filters.selected.length) {
-      return true;
-    }
-    return filters.selected.includes(resource.kind);
   },
 
   'packagemanifest-name': (filter, pkg) =>
@@ -263,14 +253,6 @@ export const tableFilters: FilterMap = {
   'node-disk-name': (name, disks) => fuzzyCaseInsensitive(name.selected?.[0], disks?.path),
   'image-name': (str, imageManifestVuln) =>
     fuzzyCaseInsensitive(str.selected?.[0], imageManifestVuln.spec.image),
-  vulnerability: (str, imageVulnerability) =>
-    fuzzyCaseInsensitive(str.selected?.[0], imageVulnerability.vulnerability.name),
-
-  // Filter cluster service version by displayName or name text match
-  'cluster-service-version': (str, csv) => {
-    const value = clusterServiceVersionDisplayName(csv);
-    return fuzzyCaseInsensitive(str.selected?.[0], value);
-  },
 };
 
 const rowFiltersToFilterFuncs = (rowFilters: RowFilter[]): FilterMap => {

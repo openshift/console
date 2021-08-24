@@ -666,54 +666,6 @@ const prometheusPackageManifest = {
   },
 };
 
-const svcatPackageManifest = {
-  apiVersion: 'packages.operators.coreos.com/v1' as PackageManifestKind['apiVersion'],
-  kind: 'PackageManifest' as PackageManifestKind['kind'],
-  metadata: {
-    name: 'svcat',
-    namespace: 'openshift-operator-lifecycle-manager',
-    creationTimestamp: '2018-10-23T12:50:22Z',
-    labels: {
-      catalog: 'rh-operators',
-      'catalog-namespace': 'openshift-operator-lifecycle-manager',
-      provider: 'Red Hat',
-      'provider-url': '',
-    },
-  },
-  spec: {},
-  status: {
-    catalogSource: 'rh-operators',
-    catalogSourceDisplayName: 'Red Hat Operators',
-    catalogSourcePublisher: 'Red Hat',
-    catalogSourceNamespace: 'openshift-operator-lifecycle-manager',
-    provider: {
-      name: 'Red Hat',
-    },
-    packageName: 'svcat',
-    channels: [
-      {
-        name: 'alpha',
-        currentCSV: 'svcat.v0.1.34',
-        currentCSVDesc: {
-          icon: [],
-          displayName: 'Service Catalog',
-          version: '0.1.34',
-          provider: {
-            name: 'Red Hat',
-          },
-          installModes: [],
-          annotations: {
-            description:
-              'Service Catalog lets you provision cloud services directly from the comfort of native Kubernetes tooling.',
-            categories: 'catalog',
-          },
-        },
-      },
-    ],
-    defaultChannel: '',
-  },
-};
-
 export const dummyPackageManifest = {
   apiVersion: 'packages.operators.coreos.com/v1' as PackageManifestKind['apiVersion'],
   kind: 'PackageManifest' as PackageManifestKind['kind'],
@@ -773,7 +725,6 @@ export const operatorHubListPageProps = {
       etcdPackageManifest,
       federationv2PackageManifest,
       prometheusPackageManifest,
-      svcatPackageManifest,
     ] as PackageManifestKind[],
   },
   clusterServiceVersions: null,
@@ -884,33 +835,6 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: ['monitoring', 'alerting'],
-      catalogSource: 'testing',
-      catalogSourceNamespace: 'openshift-marketplace',
-      validSubscription: undefined,
-      infraFeatures: undefined,
-    },
-    {
-      obj: svcatPackageManifest,
-      installState: 'Not Installed',
-      installed: false,
-      kind: 'PackageManifest',
-      name: 'svcat',
-      uid: 'svcat/openshift-operator-lifecycle-manager',
-      imgUrl:
-        '/api/kubernetes/apis/packages.operators.coreos.com/v1/packagemanifests/svcat/icon?resourceVersion=svcat.alpha.svcat.v0.1.34',
-      iconClass: null,
-      description: undefined,
-      provider: 'Red Hat',
-      tags: undefined,
-      version: '0.1.34',
-      certifiedLevel: undefined,
-      healthIndex: undefined,
-      repository: undefined,
-      containerImage: undefined,
-      createdAt: undefined,
-      support: undefined,
-      longDescription: undefined,
-      categories: ['catalog'],
       catalogSource: 'testing',
       catalogSourceNamespace: 'openshift-marketplace',
       validSubscription: undefined,

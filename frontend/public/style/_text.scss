@@ -24,7 +24,6 @@ $kinds: (
   serviceaccount: $color-serviceaccount-dark,
   servicemonitor: $color-service-dark,
   silence: $color-alert-dark,
-  alertmanager: $color-alertmanager-dark,
 );
 
 @each $kind, $color in $kinds {

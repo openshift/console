@@ -250,7 +250,6 @@ export type NavSectionTitle =
   | 'Observe'
   | 'Networking'
   | 'Operators'
-  | 'Service Catalog'
   | 'Storage'
   | 'Workloads';
 

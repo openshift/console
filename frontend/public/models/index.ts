@@ -1,22 +1,5 @@
 import { K8sKind } from '../module/k8s';
 
-export const PrometheusModel: K8sKind = {
-  kind: 'Prometheus',
-  label: 'Prometheus',
-  // t('public~Prometheus')
-  labelKey: 'public~Prometheus',
-  labelPlural: 'Prometheuses',
-  // t('public~Prometheuses')
-  labelPluralKey: 'public~Prometheuses',
-  apiGroup: 'monitoring.coreos.com',
-  apiVersion: 'v1',
-  abbr: 'PI',
-  namespaced: true,
-  crd: true,
-  plural: 'prometheuses',
-  propagationPolicy: 'Foreground',
-};
-
 export const ServiceMonitorModel: K8sKind = {
   kind: 'ServiceMonitor',
   label: 'ServiceMonitor',
@@ -32,39 +15,6 @@ export const ServiceMonitorModel: K8sKind = {
   crd: true,
   plural: 'servicemonitors',
   propagationPolicy: 'Foreground',
-};
-
-export const AlertmanagerModel: K8sKind = {
-  kind: 'Alertmanager',
-  label: 'Alertmanager',
-  // t('public~Alertmanager')
-  labelKey: 'public~Alertmanager',
-  labelPlural: 'Alertmanagers',
-  // t('public~Alertmanagers')
-  labelPluralKey: 'public~Alertmanagers',
-  apiGroup: 'monitoring.coreos.com',
-  apiVersion: 'v1',
-  abbr: 'AM',
-  namespaced: true,
-  crd: true,
-  plural: 'alertmanagers',
-  propagationPolicy: 'Foreground',
-};
-
-export const ChargebackReportModel: K8sKind = {
-  kind: 'Report',
-  label: 'Report',
-  // t('public~Report')
-  labelKey: 'public~Report',
-  labelPlural: 'Reports',
-  // t('public~Reports')
-  labelPluralKey: 'public~Reports',
-  apiGroup: 'metering.openshift.io',
-  apiVersion: 'v1',
-  crd: true,
-  plural: 'reports',
-  abbr: 'R',
-  namespaced: true,
 };
 
 export const ReportQueryModel: K8sKind = {
@@ -789,40 +739,6 @@ export const StorageClassModel: K8sKind = {
   id: 'storageclass',
 };
 
-export const ClusterServiceBrokerModel: K8sKind = {
-  label: 'ClusterServiceBroker',
-  // t('public~ClusterServiceBroker')
-  labelKey: 'public~ClusterServiceBroker',
-  labelPlural: 'ClusterServiceBrokers',
-  // t('public~ClusterServiceBrokers')
-  labelPluralKey: 'public~ClusterServiceBrokers',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'clusterservicebrokers',
-  abbr: 'CSB',
-  namespaced: false,
-  kind: 'ClusterServiceBroker',
-  id: 'clusterservicebroker',
-  crd: true,
-};
-
-export const ClusterServiceClassModel: K8sKind = {
-  label: 'ClusterServiceClass',
-  // t('public~ClusterServiceClass')
-  labelKey: 'public~ClusterServiceClass',
-  labelPlural: 'ClusterServiceClasses',
-  // t('public~ClusterServiceClasses')
-  labelPluralKey: 'public~ClusterServiceClasses',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'clusterserviceclasses',
-  abbr: 'CSC',
-  namespaced: false,
-  kind: 'ClusterServiceClass',
-  id: 'clusterserviceclass',
-  crd: true,
-};
-
 export const ClusterServicePlanModel: K8sKind = {
   label: 'ClusterServicePlan',
   // t('public~ClusterServicePlan')
@@ -837,40 +753,6 @@ export const ClusterServicePlanModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServicePlan',
   id: 'clusterserviceplan',
-  crd: true,
-};
-
-export const ServiceInstanceModel: K8sKind = {
-  label: 'ServiceInstance',
-  // t('public~ServiceInstance')
-  labelKey: 'public~ServiceInstance',
-  labelPlural: 'ServiceInstances',
-  // t('public~ServiceInstances')
-  labelPluralKey: 'public~ServiceInstances',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'serviceinstances',
-  abbr: 'SI',
-  namespaced: true,
-  kind: 'ServiceInstance',
-  id: 'serviceinstance',
-  crd: true,
-};
-
-export const ServiceBindingModel: K8sKind = {
-  label: 'ServiceBinding',
-  // t('public~ServiceBinding')
-  labelKey: 'public~ServiceBinding',
-  labelPlural: 'ServiceBindings',
-  // t('public~ServiceBindings')
-  labelPluralKey: 'public~ServiceBindings',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'servicebindings',
-  abbr: 'SB',
-  namespaced: true,
-  kind: 'ServiceBinding',
-  id: 'servicebinding',
   crd: true,
 };
 

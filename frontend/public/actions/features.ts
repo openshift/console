@@ -140,15 +140,6 @@ const ssarChecks = [
       verb: 'list',
     },
   },
-  {
-    flag: FLAGS.CAN_LIST_CHARGEBACK_REPORTS,
-    resourceAttributes: {
-      group: 'metering.openshift.io',
-      resource: 'reports',
-      namespace: 'openshift-metering',
-      verb: 'list',
-    },
-  },
   // TODO: Move into Core Plugin
   {
     flag: FLAGS.CAN_LIST_VSC,

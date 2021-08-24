@@ -19,8 +19,7 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { AlertmanagerModel, VolumeSnapshotModel } from '../models';
-import { referenceForModel } from '../module/k8s';
+import { VolumeSnapshotModel } from '../models';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 
 //PF4 Imports
@@ -286,32 +285,6 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <Route path="/operatorhub" exact component={NamespaceRedirect} />
-            <LazyRoute
-              path="/provisionedservices/all-namespaces"
-              loader={() =>
-                import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(
-                  (m) => m.ProvisionedServicesPage,
-                )
-              }
-            />
-            <LazyRoute
-              path="/provisionedservices/ns/:ns"
-              loader={() =>
-                import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(
-                  (m) => m.ProvisionedServicesPage,
-                )
-              }
-            />
-            <Route path="/provisionedservices" component={NamespaceRedirect} />
-
-            <LazyRoute
-              path="/brokermanagement"
-              loader={() =>
-                import('./broker-management' /* webpackChunkName: "brokermanagment" */).then(
-                  (m) => m.BrokerManagementPage,
-                )
-              }
-            />
 
             <LazyRoute
               path="/catalog/instantiate-template"
@@ -321,18 +294,6 @@ const AppContents: React.FC<{}> = () => {
                   './instantiate-template' /* webpackChunkName: "instantiate-template" */
                 ).then((m) => m.InstantiateTemplatePage)
               }
-            />
-
-            <Route
-              path="/k8s/ns/:ns/alertmanagers/:name"
-              exact
-              render={({ match }) => (
-                <Redirect
-                  to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${
-                    match.params.name
-                  }`}
-                />
-              )}
             />
 
             <LazyRoute
@@ -550,42 +511,6 @@ const AppContents: React.FC<{}> = () => {
                 import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
                   (m) => m.MonitoringUI,
                 )
-              }
-            />
-            <LazyRoute
-              path="/monitoring/alertmanageryaml"
-              exact
-              loader={() =>
-                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-                  (m) => m.MonitoringUI,
-                )
-              }
-            />
-            <LazyRoute
-              path="/monitoring/alertmanagerconfig"
-              exact
-              loader={() =>
-                import('./monitoring/alerting' /* webpackChunkName: "alerting" */).then(
-                  (m) => m.MonitoringUI,
-                )
-              }
-            />
-            <LazyRoute
-              path="/monitoring/alertmanagerconfig/receivers/~new"
-              exact
-              loader={() =>
-                import(
-                  './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-                ).then((m) => m.CreateReceiver)
-              }
-            />
-            <LazyRoute
-              path="/monitoring/alertmanagerconfig/receivers/:name/edit"
-              exact
-              loader={() =>
-                import(
-                  './monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */
-                ).then((m) => m.EditReceiver)
               }
             />
             <LazyRoute
