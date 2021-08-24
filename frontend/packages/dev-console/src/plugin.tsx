@@ -92,14 +92,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: [
-        '/topology/all-namespaces',
-        '/topology/ns/:name',
-        '/topology/all-namespaces/graph',
-        '/topology/ns/:name/graph',
-        '/topology/all-namespaces/list',
-        '/topology/ns/:name/list',
-      ],
+      path: ['/topology/all-namespaces', '/topology/ns/:name'],
       loader: async () =>
         (
           await import(

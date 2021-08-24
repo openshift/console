@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
-import { matchPath, match as RMatch } from 'react-router-dom';
+import { match as RMatch } from 'react-router-dom';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -83,7 +83,7 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
 
   const loaded: boolean = preferredTopologyViewLoaded && isTopologyLastViewLoaded;
 
-  const getTopologyViewState = (): TopologyViewType => {
+  const topologyViewState = React.useMemo((): TopologyViewType => {
     if (!loaded) {
       return null;
     }
@@ -93,26 +93,18 @@ export const TopologyPage: React.FC<TopologyPageProps> = ({
     }
 
     return (preferredTopologyView || topologyLastView) as TopologyViewType;
-  };
+  }, [loaded, preferredTopologyView, topologyLastView]);
 
   const namespace = match.params.name;
   const queryParams = useQueryParams();
-  let viewType = queryParams.get('view') as TopologyViewType;
-  if (!viewType) {
-    // Backwards Compatibility, check path. Otherwise use any stored preference
-    viewType = matchPath(match.path, {
-      path: '*/list',
-      exact: true,
-    })
-      ? TopologyViewType.list
-      : matchPath(match.path, {
-          path: '*/graph',
-          exact: true,
-        })
-      ? TopologyViewType.graph
-      : loaded && (getTopologyViewState() || defaultViewType);
-    viewType && setQueryArgument('view', viewType);
-  }
+  const viewType =
+    (queryParams.get('view') as TopologyViewType) || topologyViewState || defaultViewType;
+
+  React.useEffect(() => {
+    if (!queryParams.get('view')) {
+      setQueryArgument('view', topologyViewState || defaultViewType);
+    }
+  }, [defaultViewType, topologyViewState, queryParams]);
 
   const onViewChange = React.useCallback(
     (newViewType: TopologyViewType) => {

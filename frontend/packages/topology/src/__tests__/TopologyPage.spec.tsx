@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import NamespacedPage from '@console/dev-console/src/components/NamespacedPage';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { useUserSettingsCompatibility } from '@console/shared/src';
+import { useQueryParams, useUserSettingsCompatibility } from '@console/shared/src';
 import { TopologyPage } from '../components/page/TopologyPage';
 import { TopologyViewType } from '../topology-types';
 import { usePreferredTopologyView } from '../user-preferences/usePreferredTopologyView';
@@ -34,7 +34,7 @@ jest.mock('@console/shared', () => {
   const ActualShared = require.requireActual('@console/shared');
   return {
     ...ActualShared,
-    useQueryParams: () => new Map().set('view', mockViewParam),
+    useQueryParams: jest.fn(),
     useUserSettingsCompatibility: jest.fn(),
   };
 });
@@ -51,6 +51,7 @@ describe('Topology page tests', () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       projects: { data: [], loaded: true, loadError: '' },
     });
+    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', mockViewParam));
   });
 
   it('should render topology page', () => {
@@ -79,10 +80,11 @@ describe('Topology page tests', () => {
   it('should render view from URL view path and ignore userSettings if it is available', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['list', true]);
+    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'graph'));
     const viewMatch = {
-      params: { name: 'default' },
+      params: { name: 'default', view: 'graph' },
       isExact: true,
-      path: '/topology/graph',
+      path: '/topology',
       url: '',
     };
     const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
@@ -128,10 +130,11 @@ describe('Topology page tests', () => {
   it('should continue to support URL view path for graph', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
+    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'graph'));
     const viewMatch = {
       params: { name: 'default' },
       isExact: true,
-      path: '/topology/graph',
+      path: '/topology',
       url: '',
     };
     const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
@@ -141,10 +144,11 @@ describe('Topology page tests', () => {
   it('should continue to support URL view path for list', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}]);
     (usePreferredTopologyView as jest.Mock).mockReturnValue(['', true]);
+    (useQueryParams as jest.Mock).mockReturnValue(new Map().set('view', 'list'));
     const viewMatch = {
       params: { name: 'default' },
       isExact: true,
-      path: '/topology/list',
+      path: '/topology',
       url: '',
     };
     const wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
