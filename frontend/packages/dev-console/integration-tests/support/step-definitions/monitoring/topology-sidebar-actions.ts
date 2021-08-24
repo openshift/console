@@ -41,9 +41,9 @@ When('user selects {string} from Context Menu', (menuOption: string) => {
   topologyPage.selectContextMenuAction(menuOption);
 });
 
-When('user clicks on View Monitoring dashboard link', () => {
+When('user clicks on View dashboard link', () => {
   cy.get('a')
-    .contains('View monitoring dashboard')
+    .contains('View dashboard')
     .click({ force: true });
 });
 
@@ -141,7 +141,7 @@ Then('user wont see Monitoring tab', () => {
     .should('not.be.visible');
 });
 
-Then('user will see View Monitoring dashborad link', () => {
+Then('user will see View dashboard link', () => {
   cy.get(topologyPO.sidePane.monitoringTab.viewMonitoringDashBoardLink).should('be.visible');
 });
 
