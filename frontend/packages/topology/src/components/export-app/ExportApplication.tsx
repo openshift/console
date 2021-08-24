@@ -85,24 +85,25 @@ const ExportApplication: React.FC<ExportApplicationProps> = ({ namespace, isDisa
   };
 
   const exportAppClickHandle = async () => {
+    if (isCreating) {
+      exportApplicationModal({ namespace });
+      return;
+    }
     try {
       setIsCreating(true);
       const exportRes = await k8sGet(ExportModel, EXPORT_CR_NAME, namespace);
       if (exportRes && exportRes.status?.completed !== true) {
         const startTime = dateTimeFormatter.format(new Date(exportRes.metadata.creationTimestamp));
         exportApplicationModal({ namespace, startTime });
+        setIsCreating(false);
       } else if (exportRes && exportRes.status?.completed) {
         await k8sKill(ExportModel, exportRes);
         const exportAppToastConfig = _.omit(exportAppToast, `${namespace}-${EXPORT_CR_NAME}`);
         setExportAppToast(exportAppToastConfig);
-        createExportCR();
+        await createExportCR();
       }
     } catch {
-      if (isCreating) {
-        exportApplicationModal({ namespace });
-        return;
-      }
-      createExportCR();
+      await createExportCR();
     }
   };
 
