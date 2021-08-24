@@ -76,7 +76,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
   };
 
   const sanitizeToYaml = () =>
-    safeJSToYAML(convertFormToBrokerYaml(values), 'yamlData', {
+    safeJSToYAML(convertFormToBrokerYaml(values.formData), 'yamlData', {
       skipInvalid: true,
     });
 

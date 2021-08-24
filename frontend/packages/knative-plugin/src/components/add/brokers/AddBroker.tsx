@@ -35,7 +35,7 @@ const AddBroker: React.FC<AddBrokerProps> = ({ namespace, selectedApplication })
   ): Promise<K8sResourceKind> => {
     let broker: K8sResourceKind;
     if (formValues.editorType === EditorType.Form) {
-      broker = convertFormToBrokerYaml(formValues);
+      broker = convertFormToBrokerYaml(formValues.formData);
     } else {
       try {
         broker = safeLoad(formValues.yamlData);
