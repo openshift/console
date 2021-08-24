@@ -1,7 +1,14 @@
 {
+  "Cloud Services Request": "云服务请求",
+  "Cloud Services Requests": "云服务请求",
+  "Kafka Connection": "Kafka 连接",
+  "Kafka Connections": "Kafka 连接",
+  "Cloud service Account Request": "云服务帐户请求",
+  "Cloud Service Account Requests": "云服务帐户请求",
   "Managed Services": "受管服务",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "发现受管服务以简化部署并减少操作开销和复杂性",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "浏览管理的服务将应用程序和微服务连接到支持服务，以创建一个完整的解决方案。",
+  "Create a Kafka connector": "创建一个 Kafka 连接器",
   "Unlock with token": "使用令牌解锁",
   "Unlocked": "未锁定",
   "Red Hat OpenShift Application Services include services like Red Hat OpenShift Streams for Apache Kafka": "Red Hat OpenShift Application Services 包括类似 Red Hat OpenShift Streams for Apache Kafka 的服务",
@@ -48,11 +55,10 @@
   "URL": "URL",
   "Secret": "Secret",
   "No Secret": "没有 Secret",
-  "Create a Kafka connector": "创建一个 Kafka 连接器",
-  "Create a binding connector": "创建一个绑定连接器",
   "No data": "没有数据",
   "Cloud Service": "云服务",
   "This resource represents service that exist outside your cluster": "此资源代表集群外存在的服务",
   "Details": "详情",
-  "Resources": "资源"
+  "Resources": "资源",
+  "Error moving event source kafka connector": "移动事件源 kafka 连接器时出错"
 }
