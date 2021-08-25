@@ -83,3 +83,22 @@ Following commands should be executed in Console repository root.
    ```
 
 Update and apply `oc-manifest.yaml` to use a custom plugin image.
+
+## i18n
+
+The demo plugin demonstrates how you can translate messages in a dynamic plugin
+with [react-i18next](https://react.i18next.com/). The i18n namespace must match
+the name of the `ConsolePlugin` resource with the `plugin__` prefix to avoid
+naming conflicts. For example, the demo plugin uses the
+`plugin__console-demo-plugin` namespace. You can use the `useTranslation` hook
+with this namespace as follows:
+
+```tsx
+conster Header: React.FC = () => {
+  const { t } = useTranslation('plugin__console-demo-plugin');
+  return <h1>{t('Hello, World!')}</h1>;
+};
+```
+
+Running `yarn i18n` updates the JSON files in the `locales` folder of the
+dynamic plugin when adding or changing messages.

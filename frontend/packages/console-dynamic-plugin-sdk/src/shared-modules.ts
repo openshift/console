@@ -5,7 +5,13 @@ import { RemoteEntryModule } from './types';
 /**
  * Vendor modules shared between Console application and its dynamic plugins.
  */
-export const sharedVendorModules = ['react', 'react-router', 'react-router-dom', 'react-helmet'];
+export const sharedVendorModules = [
+  'react',
+  'react-helmet',
+  'react-i18next',
+  'react-router',
+  'react-router-dom',
+];
 
 /**
  * At runtime, Console will override (i.e. enforce Console-bundled implementation of) shared
@@ -16,8 +22,9 @@ export const sharedVendorModules = ['react', 'react-router', 'react-router-dom',
 export const overrideSharedModules = (entryModule: RemoteEntryModule) => {
   entryModule.override({
     react: async () => () => require('react'),
+    'react-helmet': async () => () => require('react-helmet'),
+    'react-i18next': async () => () => require('react-i18next'),
     'react-router': async () => () => require('react-router'),
     'react-router-dom': async () => () => require('react-router-dom'),
-    'react-helmet': async () => () => require('react-helmet'),
   });
 };
