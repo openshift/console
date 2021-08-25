@@ -38,7 +38,7 @@ const TimespanDropdown: React.FC = () => {
   const onChange = React.useCallback(
     (v: string) => {
       if (v === CUSTOM_TIME_RANGE_KEY) {
-        customTimeRangeModal({});
+        customTimeRangeModal({ activePerspective });
       } else {
         setQueryArgument('timeRange', parsePrometheusDuration(v).toString());
         removeQueryArgument('endTime');
