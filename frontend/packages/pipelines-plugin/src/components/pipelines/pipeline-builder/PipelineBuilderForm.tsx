@@ -137,7 +137,10 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
 
   return (
     <>
-      <div ref={contentRef} className="odc-pipeline-builder-form">
+      <div
+        ref={contentRef}
+        className="odc-pipeline-builder-form ocs-quick-search-modal__no-backdrop"
+      >
         <Stack>
           <StackItem>
             <PipelineBuilderHeader namespace={namespace} />
