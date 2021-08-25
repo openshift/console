@@ -38,16 +38,16 @@ const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [
       return 'user';
     },
     items: templateProviders(t),
-    filter: (types, obj: VirtualMachineTemplateBundle) => {
+    filter: (types, obj) => {
       let providerFilter = true;
-      if (types.selected.size > 0) {
-        if (templateProviders(t).length === types.selected.size) {
+      if (types.selected?.length > 0) {
+        if (templateProviders(t).length === types.selected.length) {
           providerFilter = true;
         } else if (obj.template) {
           const type = getTemplateProviderType(obj.template);
-          providerFilter = types.selected.has(type);
+          providerFilter = types.selected.includes(type);
         } else {
-          providerFilter = types.selected.has('user');
+          providerFilter = types.selected.includes('user');
         }
       }
       return providerFilter;

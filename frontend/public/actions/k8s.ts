@@ -12,6 +12,7 @@ import { makeReduxID } from '../components/utils/k8s-watcher';
 import { APIServiceModel } from '../models';
 import { coFetchJSON } from '../co-fetch';
 import { referenceForModel, K8sResourceKind, K8sKind, fetchSwagger } from '../module/k8s';
+import { FilterValue } from '../components/factory/table-filters';
 
 export enum ActionType {
   ReceivedResources = 'resources',
@@ -71,7 +72,7 @@ export const getResources = () => (dispatch: Dispatch) => {
     });
 };
 
-export const filterList = (id: string, name: string, value: string) =>
+export const filterList = (id: string, name: string, value: FilterValue) =>
   action(ActionType.FilterList, { id, name, value });
 
 export const startWatchK8sObject = (id: string) => action(ActionType.StartWatchK8sObject, { id });

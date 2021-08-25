@@ -180,9 +180,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
   );
 };
 
-const JobPods: React.FC<JobPodsProps> = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
-);
+const JobPods: React.FC<JobPodsProps> = (props) => <PodsComponent {...props} showNodes />;
 
 const { details, pods, editYaml, events } = navFactory;
 const JobsDetailsPage: React.FC<JobsDetailsPageProps> = (props) => {

@@ -34,7 +34,7 @@ const NodeDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (pro
         <PodsPage
           showTitle={false}
           fieldSelector={`spec.nodeName=${obj.metadata.name}`}
-          customData={{ showNamespaceOverride: true }}
+          showNamespaceOverride
         />
       )),
       logs(NodeLogs),

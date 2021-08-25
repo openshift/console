@@ -106,7 +106,7 @@ class CheckBoxes_ extends React.Component {
     if (!_.isEmpty(recognized)) {
       this.props.onFilterChange?.(recognized);
       this.props.reduxIDs.forEach((id) =>
-        this.props.filterList(id, this.props.type, { selected: new Set(recognized), all }),
+        this.props.filterList(id, this.props.type, { selected: [...new Set(recognized)], all }),
       );
     }
   }

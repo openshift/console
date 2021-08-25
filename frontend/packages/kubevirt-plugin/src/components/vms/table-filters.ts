@@ -17,8 +17,8 @@ export const vmStatusFilter: RowFilter = {
     const status = ((obj?.metadata as any)
       ?.vmStatusBundle as VMStatusBundle)?.status.getSimpleLabel();
     return (
-      statuses.selected.size === 0 ||
-      statuses.selected.has(status) ||
+      statuses.selected?.length === 0 ||
+      statuses.selected?.includes(status) ||
       !_.includes(statuses.all, status)
     );
   },
@@ -35,9 +35,9 @@ export const vmStatusFilterNew: RowFilter = {
   filter: (statuses, obj) => {
     const status = obj?.metadata?.status;
     return (
-      statuses.selected.size === 0 ||
-      statuses.selected.has(status) ||
-      !_.includes(statuses.all, status)
+      statuses.selected?.length === 0 ||
+      statuses.selected?.includes(status) ||
+      !_.includes(statuses?.all, status)
     );
   },
 };

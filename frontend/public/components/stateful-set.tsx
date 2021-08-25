@@ -112,7 +112,7 @@ export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = (props) => (
 );
 
 const StatefulSetPods: React.FC<StatefulSetPodsProps> = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
+  <PodsComponent {...props} showNodes />
 );
 
 const pages = [
