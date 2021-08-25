@@ -28,10 +28,7 @@ import { POOL_STATE } from '../../constants/storage-pool-const';
 import './create-block-pool.scss';
 
 const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
-  const {
-    params: { appName },
-    url,
-  } = match;
+  const { params, url } = match;
   const { t } = useTranslation();
 
   const [state, dispatch] = React.useReducer(blockPoolReducer, blockPoolInitialState);
@@ -41,8 +38,10 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 
   const cephCluster: CephClusterKind = useDeepCompareMemoize(cephClusters[0], true);
 
-  const blockPoolPageUrl = url.replace('/~new', '');
-  const pathName = appName || 'BlockPools';
+  // OCS create pool page url ends with ~new, ODF create pool page ends with /create/~new
+  const blockPoolPageUrl = params?.appName
+    ? url.replace('/~new', '')
+    : url.replace('/create/~new', '');
 
   const onClose = () => {
     history.goBack();
@@ -102,8 +101,8 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
         <BreadCrumbs
           breadcrumbs={[
             {
-              name: pathName.startsWith('ocs-operator') ? 'Openshift Container Storage' : pathName,
-              path: url.replace('/~new', ''),
+              name: params?.appName ? 'Openshift Container Storage' : 'Openshift Data Foundation',
+              path: blockPoolPageUrl,
             },
             {
               name: t('ceph-storage-plugin~Create BlockPool'),
@@ -146,7 +145,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
 };
 
 type CreateBlockPoolProps = {
-  match: RouteMatch<{ ns: string; appName: string }>;
+  match: RouteMatch<{ appName: string; systemName: string }>;
 };
 
 export default CreateBlockPool;
