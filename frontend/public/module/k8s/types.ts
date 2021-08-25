@@ -431,6 +431,9 @@ export type NodeKind = {
       sizeBytes?: number;
     }[];
     phase?: string;
+    nodeInfo?: {
+      operatingSystem: string;
+    };
   };
 } & K8sResourceCommon;
 
