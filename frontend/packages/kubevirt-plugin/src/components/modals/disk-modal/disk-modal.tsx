@@ -453,8 +453,8 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   let modalTitle;
   if (isVMRunning) {
     modalTitle = isEditing
-      ? t('kubevirt-plugin~Edit disk (Hot plugged)')
-      : t('kubevirt-plugin~Add disk (Hot plugged)');
+      ? t('kubevirt-plugin~Edit {{type}} (hot plugged)', { type })
+      : t('kubevirt-plugin~Add {{type}} (hot plugged)', { type });
   } else {
     modalTitle = isEditing ? t('kubevirt-plugin~Edit disk') : t('kubevirt-plugin~Add disk');
   }
