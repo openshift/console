@@ -126,7 +126,13 @@ const NameValueEditor_ = withDragDropContext(
         <>
           <div className="row pairs-list__heading">
             {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header" />}
-            <div className="col-xs-5">{nameString}</div>
+            <div className="col-xs-5">
+              <span> {nameString} </span>
+              <span style={{ color: 'red' }} aria-hidden="true">
+                {' '}
+                *
+              </span>
+            </div>
             <div className="col-xs-5">{valueString}</div>
             <div className="col-xs-1 co-empty__header" />
           </div>
@@ -518,6 +524,7 @@ const PairElement_ = DragSource(
                   value={pair[NameValueEditorPair.Name]}
                   onChange={this._onChangeName}
                   disabled={readOnly}
+                  required={true}
                 />
               </div>
               {_.isPlainObject(pair[NameValueEditorPair.Value]) ? (
