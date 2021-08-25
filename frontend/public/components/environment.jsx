@@ -646,7 +646,7 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
               {!readOnly && (
                 <ActionGroup>
                   <Button
-                    isDisabled={inProgress && !this.state.hasEmptyName}
+                    isDisabled={inProgress || this.state.hasEmptyName}
                     type="submit"
                     variant="primary"
                     onClick={this.saveChanges}

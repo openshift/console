@@ -72,7 +72,6 @@ const NameValueEditor_ = withDragDropContext(
         nameValuePairs,
         (pair) => pair[NameValueEditorPair.Name] === '' && pair[NameValueEditorPair.Value].length,
       );
-      // console.log('============\n\n\n',emptyNamesWithValue, nameValuePairs,'\n\n\n\n=========');
       setHasEmptyName(emptyNamesWithValue.length > 0);
       updateParentData({ nameValuePairs }, nameValueId);
     }
