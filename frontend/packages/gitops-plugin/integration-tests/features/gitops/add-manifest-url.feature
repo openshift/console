@@ -35,7 +35,6 @@ Feature: Applications managed by GitOps
               And user can see all workloads that are deployed in the environment
               And user can see status of the workloads deployed in the environment
               And user can see "Last deployed" date for workloads that are deployed in the environment
-              And user can see list of "Resources" for each workload that are deployed in the environment
               And user can see all "Resources" types and status for each workload that are deployed in the environment
 
 # scenario is commented, as we don't need to add Manifest URLs manually now
