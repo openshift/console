@@ -15,6 +15,7 @@ import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SelectedNodesTable } from './selected-nodes-table';
+import { StretchCluster } from './stretch-cluster';
 import { calcPVsCapacity, getSCAvailablePVs } from '../../../../selectors';
 import {
   NO_PROVISIONER,
@@ -27,6 +28,10 @@ import { getAssociatedNodes } from '../../../../utils/install';
 import {
   createWizardNodeState,
   capacityAndNodesValidate,
+  isValidStretchClusterTopology,
+  getPVAssociatedNodesPerZone,
+  NodesPerZoneMap,
+  getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
@@ -110,6 +115,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   capacity,
   storageClassName,
   enableArbiter,
+  arbiterLocation,
   dispatch,
   nodes,
 }) => {
@@ -118,6 +124,8 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   const memoizedPv = useDeepCompareMemoize(pv, true);
   const [allNodes, allNodeLoaded, allNodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
   const memoizedAllNodes = useDeepCompareMemoize(allNodes, true);
+  const [hasStrechClusterEnabled, setHasStrechClusterEnabled] = React.useState(false);
+  const [zones, setZones] = React.useState([]);
 
   const pvBySc = React.useMemo(() => getSCAvailablePVs(memoizedPv, storageClassName), [
     memoizedPv,
@@ -125,6 +133,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   ]);
 
   React.useEffect(() => {
+    // Updates selected capacity
     if (pvLoaded && !pvLoadError) {
       const pvCapacity = calcPVsCapacity(pvBySc);
       dispatch({
@@ -136,6 +145,7 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   }, [dispatch, pvBySc, pvLoadError, pvLoaded]);
 
   React.useEffect(() => {
+    // Updates selected nodes
     if (allNodeLoaded && !allNodeLoadError && memoizedAllNodes.length && pvBySc.length) {
       const pvNodes = getAssociatedNodes(pvBySc);
       const filteredNodes = memoizedAllNodes.filter((node) => pvNodes.includes(node.metadata.name));
@@ -143,6 +153,30 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       dispatch({ type: 'wizard/nodes', payload: nodesData });
     }
   }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedAllNodes, pvBySc]);
+
+  React.useEffect(() => {
+    // Validates stretch cluster topology
+    if (memoizedAllNodes.length && nodes.length) {
+      const allZones = getZonesFromNodesKind(memoizedAllNodes);
+      const nodesPerZoneMap: NodesPerZoneMap = getPVAssociatedNodesPerZone(nodes);
+      const isValidStretchCluster = isValidStretchClusterTopology(nodesPerZoneMap, allZones);
+
+      setHasStrechClusterEnabled(isValidStretchCluster);
+      setZones(allZones);
+    }
+  }, [memoizedAllNodes, nodes]);
+
+  const onArbiterChecked = React.useCallback(
+    (isChecked: boolean) =>
+      dispatch({ type: 'capacityAndNodes/enableArbiter', payload: isChecked }),
+    [dispatch],
+  );
+
+  const onZonesSelect = React.useCallback(
+    (_event, selection: string) =>
+      dispatch({ type: 'capacityAndNodes/arbiterLocation', payload: selection }),
+    [dispatch],
+  );
 
   return (
     <>
@@ -174,6 +208,15 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
           <GridItem span={7} />
         </Grid>
       </FormGroup>
+      {hasStrechClusterEnabled && (
+        <StretchCluster
+          enableArbiter={enableArbiter}
+          arbiterLocation={arbiterLocation}
+          zones={zones}
+          onChecked={onArbiterChecked}
+          onSelect={onZonesSelect}
+        />
+      )}
       <TextContent>
         <Text id="selected-nodes" component={TextVariants.h3}>
           {t('ceph-storage-plugin~Selected Nodes')}
@@ -201,6 +244,7 @@ type SelectedCapacityAndNodesProps = {
   capacity: WizardState['capacityAndNodes']['capacity'];
   enableArbiter: WizardState['capacityAndNodes']['enableArbiter'];
   storageClassName: string;
+  arbiterLocation: WizardState['capacityAndNodes']['arbiterLocation'];
   dispatch: WizardDispatch;
   nodes: WizardNodeState[];
 };
@@ -212,7 +256,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
   volumeSetName,
   nodes,
 }) => {
-  const { capacity, enableArbiter } = state;
+  const { capacity, enableArbiter, arbiterLocation } = state;
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
 
@@ -224,6 +268,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
         <SelectedCapacityAndNodes
           storageClassName={storageClass.name || volumeSetName}
           enableArbiter={enableArbiter}
+          arbiterLocation={arbiterLocation}
           dispatch={dispatch}
           nodes={nodes}
           capacity={capacity}

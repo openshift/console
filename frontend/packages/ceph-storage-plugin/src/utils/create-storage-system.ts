@@ -73,8 +73,37 @@ export const capacityAndNodesValidate = (
   if (shouldDeployAsMinimal(totalCpu, totalMemory, nodes.length)) {
     validations.push(ValidationType.MINIMAL);
   }
-  if (!enableStretchCluster && nodes.length < MINIMUM_NODES) {
+  if (!enableStretchCluster && nodes.length && nodes.length < MINIMUM_NODES) {
     validations.push(ValidationType.MINIMUMNODES);
   }
   return validations;
 };
+
+export const getPVAssociatedNodesPerZone = (nodes: WizardNodeState[]): NodesPerZoneMap =>
+  nodes.reduce((data, { zone }) => {
+    if (data[zone]) data[zone] += 1;
+    else if (zone) data[zone] = 1;
+    return data;
+  }, {});
+
+export type NodesPerZoneMap = {
+  [zones: string]: number;
+};
+
+export const isValidStretchClusterTopology = (
+  nodesPerZoneMap: NodesPerZoneMap,
+  allZones: string[],
+): boolean => {
+  if (allZones.length >= 3) {
+    const validNodesWithPVPerZone = allZones.filter((zone) => nodesPerZoneMap[zone] >= 2);
+    return validNodesWithPVPerZone.length >= 2;
+  }
+  return false;
+};
+
+export const getZonesFromNodesKind = (nodes: NodeKind[]) =>
+  nodes.reduce((data, node) => {
+    const zone = getZone(node);
+    if (!data.includes(zone)) data.push(zone);
+    return data;
+  }, []);
