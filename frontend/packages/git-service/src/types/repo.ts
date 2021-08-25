@@ -5,6 +5,8 @@ export interface RepoMetadata {
   defaultBranch?: string;
   fullName?: string;
   contextDir?: string;
+  devfilePath?: string;
+  dockerfilePath?: string;
 }
 
 export interface BranchList {

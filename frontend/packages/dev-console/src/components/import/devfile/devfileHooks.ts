@@ -9,8 +9,8 @@ import { DevfileSuggestedResources } from '../import-types';
 import { createComponentName, detectGitType } from '../import-validation-utils';
 import { DevfileSample } from './devfile-types';
 
-const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
-const prefixDotSlash = (val) => (val.startsWith('/') ? `.${val}` : val);
+export const suffixSlash = (val: string) => (val.endsWith('/') ? val : `${val}/`);
+export const prefixDotSlash = (val) => (val.startsWith('/') ? `.${val}` : val);
 
 export const useDevfileServer = (
   values: FormikValues,
@@ -25,6 +25,8 @@ export const useDevfileServer = (
     git: { url, ref, dir },
     devfile,
   } = values;
+  const smartSlashDir = prefixDotSlash(suffixSlash(dir));
+
   const { devfileContent, devfilePath } = devfile || {};
 
   const devfileData = React.useMemo(() => {
@@ -35,9 +37,9 @@ export const useDevfileServer = (
     return {
       name,
       git: { URL: url, ref, dir: prefixDotSlash(dir) },
-      devfile: { devfileContent, devfilePath },
+      devfile: { devfileContent, devfilePath: `${smartSlashDir}${devfilePath}` },
     };
-  }, [name, url, ref, dir, devfileContent, devfilePath]);
+  }, [name, url, devfileContent, ref, dir, smartSlashDir, devfilePath]);
 
   React.useEffect(() => {
     const setError = (msg) => {
@@ -93,24 +95,6 @@ export const useDevfileServer = (
   }, [devfileData, setFieldValue, t]);
 
   return [parsingDevfile, devfileParseError];
-};
-
-/**
- * Devfile [Dev Preview] work around for not having a Dockerfile (and Devfile) path in the form
- */
-export const useDevfileDirectoryWatcher = (
-  values: FormikValues,
-  setFieldValue: (name: string, value: any) => void,
-) => {
-  const {
-    git: { dir },
-  } = values;
-  React.useEffect(() => {
-    const smartSlashDir = prefixDotSlash(suffixSlash(dir));
-
-    setFieldValue('devfile.devfilePath', `${smartSlashDir}devfile.yaml`);
-    setFieldValue('docker.dockerfilePath', `${smartSlashDir}Dockerfile`);
-  }, [dir, setFieldValue]);
 };
 
 export const useDevfileSource = () => {

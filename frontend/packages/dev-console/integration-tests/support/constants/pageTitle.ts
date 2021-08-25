@@ -1,10 +1,8 @@
 export const pageTitle = {
   Git: 'Import from Git',
   ContainerImage: 'Deploy Image',
-  DockerFile: 'Import from Dockerfile',
   YAML: 'Import YAML',
   DeveloperCatalog: 'Developer Catalog',
-  DevFile: 'Import from Devfile',
   Pipelines: 'Pipelines',
   PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',

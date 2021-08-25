@@ -1,4 +1,5 @@
 import { ValidatedOptions } from '@patternfly/react-core';
+import { DetectedStrategy } from '@console/git-service/src/utils/import-strategy-detector';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
@@ -90,6 +91,7 @@ export interface DeployImageFormData {
   limits: LimitsData;
   healthChecks: HealthChecksFormData;
   fileUpload?: FileUploadData;
+  import?: ImportStrategyData;
 }
 
 export type FileUploadData = {
@@ -117,6 +119,7 @@ export interface BaseFormData {
 }
 export interface UploadJarFormData extends BaseFormData {
   fileUpload: FileUploadData;
+  import?: ImportStrategyData;
 }
 
 export interface GitImportFormData extends BaseFormData {
@@ -125,6 +128,7 @@ export interface GitImportFormData extends BaseFormData {
   git: GitData;
   docker: DockerData;
   devfile?: DevfileData;
+  import?: ImportStrategyData;
 }
 
 export interface ApplicationData {
@@ -166,10 +170,13 @@ export interface GitData {
   showGitType: boolean;
   secret: string;
   isUrlValidating: boolean;
+  validated?: ValidatedOptions;
+  secretResource?: K8sResourceKind;
 }
 
 export interface DockerData {
   dockerfilePath?: string;
+  dockerfileHasError?: boolean;
 }
 
 type DevfileData = {
@@ -218,6 +225,20 @@ export interface BuildData {
   env: (NameValuePair | NameValueFromPair)[];
   strategy: string;
   source?: { type: string };
+}
+
+export interface DetectedStrategyFormData extends DetectedStrategy {
+  title?: string;
+  iconUrl?: string;
+}
+
+export interface ImportStrategyData {
+  loaded?: boolean;
+  loadError?: string;
+  strategies?: DetectedStrategy[];
+  recommendedStrategy?: DetectedStrategyFormData;
+  selectedStrategy?: DetectedStrategyFormData;
+  showEditImportStrategy?: boolean;
 }
 
 export interface DeploymentData {

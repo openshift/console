@@ -68,6 +68,8 @@ export class GitlabService extends BaseService {
       defaultBranch: this.gitsource.ref,
       fullName,
       contextDir,
+      devfilePath: this.gitsource.devfilePath,
+      dockerfilePath: this.gitsource.dockerfilePath,
     };
   }
 
@@ -143,7 +145,8 @@ export class GitlabService extends BaseService {
   isFilePresent = async (path: string): Promise<boolean> => {
     try {
       const projectID = await this.getProjectId();
-      await this.client.RepositoryFiles.showRaw(projectID, path, this.metadata.defaultBranch);
+      const ref = this.metadata.defaultBranch || (this.repo as any)?.default_branch;
+      await this.client.RepositoryFiles.showRaw(projectID, path, ref);
       return true;
     } catch (e) {
       return false;
@@ -153,11 +156,8 @@ export class GitlabService extends BaseService {
   getFileContent = async (path: string): Promise<string | null> => {
     try {
       const projectID = await this.getProjectId();
-      return await this.client.RepositoryFiles.showRaw(
-        projectID,
-        path,
-        this.metadata.defaultBranch,
-      );
+      const ref = this.metadata.defaultBranch || (this.repo as any)?.default_branch;
+      return await this.client.RepositoryFiles.showRaw(projectID, path, ref);
     } catch (e) {
       return null;
     }
@@ -167,13 +167,14 @@ export class GitlabService extends BaseService {
     return this.metadata.contextDir ? `${this.metadata.contextDir}/${file}` : file;
   };
 
-  isDockerfilePresent = () => this.isFilePresent(this.filePath('Dockerfile'));
+  isDockerfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.dockerfilePath}`));
 
-  getDockerfileContent = () => this.getFileContent(this.filePath('Dockerfile'));
+  getDockerfileContent = () =>
+    this.getFileContent(this.filePath(`${this.metadata.dockerfilePath}`));
 
-  isDevfilePresent = () => this.isFilePresent(this.filePath('devfile.yaml'));
+  isDevfilePresent = () => this.isFilePresent(this.filePath(`${this.metadata.devfilePath}`));
 
-  getDevfileContent = () => this.getFileContent(this.filePath('devfile.yaml'));
+  getDevfileContent = () => this.getFileContent(this.filePath(`${this.metadata.devfilePath}`));
 
   getPackageJsonContent = () => this.getFileContent(this.filePath('package.json'));
 }

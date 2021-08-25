@@ -97,6 +97,9 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
         config: true,
       },
     },
+    import: {
+      showEditImportStrategy: true,
+    },
   };
 
   const handleSubmit = (values, actions) => {

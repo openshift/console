@@ -560,6 +560,9 @@ export const gitImportInitialValues: GitImportFormData = {
     strategy: 'Source',
   },
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const externalImageValues: DeployImageFormData = {
@@ -630,6 +633,9 @@ export const externalImageValues: DeployImageFormData = {
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const internalImageValues: DeployImageFormData = {
@@ -700,6 +706,9 @@ export const internalImageValues: DeployImageFormData = {
   build: { env: [], triggers: {}, strategy: '' },
   isSearchingForImage: false,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const knAppResources: AppResources = {
@@ -781,9 +790,15 @@ export const knExternalImageValues: DeployImageFormData = {
   allowInsecureRegistry: false,
   serverless: serverlessInitialValues,
   healthChecks: healthChecksProbeInitialData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };
 
 export const gitImportInitialValuesWithHealthChecksEnabled: GitImportFormData = {
   ...gitImportInitialValues,
   healthChecks: healthChecksData,
+  import: {
+    showEditImportStrategy: true,
+  },
 };

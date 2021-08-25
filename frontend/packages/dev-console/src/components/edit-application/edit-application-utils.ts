@@ -372,6 +372,9 @@ export const getCommonInitialValues = (
     labels: getUserLabels(editAppResource),
     limits: getLimitsDataFromResource(editAppResource),
     healthChecks: getHealthChecksData(editAppResource),
+    import: {
+      showEditImportStrategy: true,
+    },
   };
   return commonInitialValues;
 };

@@ -88,7 +88,7 @@ Then('Knative Service option is displayed under Resources section', () => {
     .should('be.visible');
 });
 
-Given('user is on Import from Docker file page', () => {
+Given('user is on Import from Git form', () => {
   addPage.selectCardFromOptions(addOptions.DockerFile);
 });
 

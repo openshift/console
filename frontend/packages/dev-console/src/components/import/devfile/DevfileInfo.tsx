@@ -1,29 +1,38 @@
 import * as React from 'react';
+import { LayerGroupIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { ExternalLink } from '@console/internal/components/utils';
 import { DevfileSample } from './devfile-types';
 
-export type DevfileSampleInfoProps = {
+export type DevfileInfoProps = {
   devfileSample: DevfileSample;
 };
 
-const DevfileSampleInfo: React.FC<DevfileSampleInfoProps> = ({ devfileSample }) => {
+const DevfileInfo: React.FC<DevfileInfoProps> = ({ devfileSample }) => {
   const { t } = useTranslation();
-  const { icon, displayName, description, git, tags } = devfileSample;
-  const iconUrl = icon ? `data:image/png;base64,${icon}` : '';
-  const sampleRepo = Object.values(git.remotes)[0];
+  const { icon, iconClass, displayName, description, git, tags } = devfileSample;
+  const iconUrl = iconClass
+    ? getImageForIconClass(iconClass)
+    : icon
+    ? `data:image/png;base64,${icon}`
+    : '';
+  const sampleRepo = git?.remotes ? Object.values(git.remotes)[0] : '';
 
   return (
     <div>
       <div className="co-catalog-item-details">
-        {iconUrl && (
+        {iconUrl ? (
           <img
             className="co-catalog-item-icon__img co-catalog-item-icon__img--large"
             src={iconUrl}
             alt={displayName}
             aria-hidden
           />
+        ) : (
+          <LayerGroupIcon size="xl" />
         )}
+        &nbsp;
         <div>
           <h2 className="co-section-heading co-catalog-item-details__name">{displayName}</h2>
           {tags && (
@@ -37,12 +46,14 @@ const DevfileSampleInfo: React.FC<DevfileSampleInfoProps> = ({ devfileSample }) 
           )}
         </div>
       </div>
-      <p className="co-catalog-item-details__description">{description}</p>
-      <p>
-        {t('devconsole~Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
-      </p>
+      {description && <p className="co-catalog-item-details__description">{description}</p>}
+      {sampleRepo && (
+        <p>
+          {t('devconsole~Sample repository:')} <ExternalLink href={sampleRepo} text={sampleRepo} />
+        </p>
+      )}
     </div>
   );
 };
 
-export default DevfileSampleInfo;
+export default DevfileInfo;

@@ -11,6 +11,7 @@ export interface FormSectionProps {
   flexLayout?: boolean;
   extraMargin?: boolean;
   dataTest?: string;
+  style?: React.CSSProperties;
 }
 
 const flexStyle: React.CSSProperties = {
@@ -28,13 +29,14 @@ const FormSection: React.FC<FormSectionProps> = ({
   flexLayout,
   extraMargin,
   dataTest,
+  style,
 }) => (
   <div
     className={cx('pf-c-form', {
       'co-m-pane__form': !fullWidth,
       'odc-form-section--extra-margin': extraMargin,
     })}
-    style={flexLayout ? flexStyle : {}}
+    style={{ ...(flexLayout ? flexStyle : {}), ...(style || {}) }}
     data-test={dataTest}
   >
     {title && <h2 className="odc-form-section__heading">{title}</h2>}
