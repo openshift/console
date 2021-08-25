@@ -149,7 +149,7 @@ Feature: Create event sources
 
         @regression @manual
         Scenario: Create CamelSource event source: KE-02-TC13
-            Given user has installed Knative Apache Camelk Integration Operator
+            Given user has installed Red Hat Integration - Camel K Operator
               And user has created or selected namespace "aut-knative"
               And user has created knative service "kn-event"
               And user is at Event Sources page

@@ -3,7 +3,7 @@ Feature: Kafka event Sources actions
               As a user, I should be able to visit the Event Sources page
 
         Background:
-            Given user has installed Knative Apache Camelk Integration Operator
+            Given user has installed Red Hat Integration - Camel K Operator
               And user has installed Serverless Operator
               And user has created Knative Kafka instance in knative-eventing namespace
               And user is at developer perspective
