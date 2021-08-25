@@ -76,9 +76,8 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
         });
         handleRedirect(namespace, perspective, perspectiveExtensions);
       })
-      .catch((e) => {
-        const err = e.message;
-        actions.setStatus({ submitSuccess: '', submitError: t('devconsole~{{err}}', { err }) });
+      .catch((err) => {
+        actions.setStatus({ submitSuccess: '', submitError: err.message });
       });
   };
 

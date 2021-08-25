@@ -4,8 +4,8 @@ import { Helmet } from 'react-helmet';
 import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
 import { BuildConfigsPage } from '@console/internal/components/build-config';
-import { withStartGuide } from '../../../../public/components/start-guide';
-import CreateProjectListPage from './projects/CreateProjectListPage';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import CreateProjectListPage from '../projects/CreateProjectListPage';
 
 export interface BuildConfigPageProps {
   match: RMatch<{

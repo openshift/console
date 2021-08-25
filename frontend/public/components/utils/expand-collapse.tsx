@@ -5,12 +5,14 @@ interface ExpandCollapseProps {
   textExpanded: string;
   textCollapsed: string;
   onToggle?: (isExpanded: boolean) => void;
+  dataTest?: string;
 }
 
 export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
   textCollapsed,
   textExpanded,
   onToggle,
+  dataTest,
   children,
 }) => {
   const [isExpanded, toggleExpandCollapse] = React.useState(false);
@@ -22,6 +24,7 @@ export const ExpandCollapse: React.FC<ExpandCollapseProps> = ({
         onToggle?.(!isExpanded);
         toggleExpandCollapse(!isExpanded);
       }}
+      data-test={dataTest}
     >
       {children}
     </ExpandableSection>

@@ -1,5 +1,5 @@
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
-import { GitImportFormData, Resources } from '../import-types';
+import { GitImportFormData, GitTypes, Resources } from '../import-types';
 import { serverlessInitialValues } from './serverless-mock';
 
 export const mockFormData: GitImportFormData = {
@@ -16,7 +16,7 @@ export const mockFormData: GitImportFormData = {
   },
   git: {
     url: 'https://github.com/test/repo',
-    type: 'github',
+    type: GitTypes.github,
     ref: '',
     dir: '',
     showGitType: false,

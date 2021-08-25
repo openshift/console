@@ -73,6 +73,7 @@ export interface TriggersAndImageStreamFormData {
   fromImageStreamTag: boolean;
   isSearchingForImage: boolean;
   imageStream?: { namespace: string; image: string; tag: string };
+  project: { name: string };
   isi?: ImageStreamImageData;
   image?: ImageStreamImageData;
 }
