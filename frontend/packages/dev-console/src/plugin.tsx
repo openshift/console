@@ -223,13 +223,25 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
       loader: async () =>
         (
           await import(
-            './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+            './components/buildconfig/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfig" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/k8s/ns/:ns/buildconfigs/~new/form', '/k8s/ns/:ns/buildconfigs/:name/form'],
+      loader: async () =>
+        (
+          await import(
+            './components/buildconfig/BuildConfigFormPage' /* webpackChunkName: "dev-console-buildconfig-form" */
           )
         ).default,
     },

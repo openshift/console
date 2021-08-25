@@ -95,7 +95,7 @@ describe('ValidationUtils', () => {
     it('should throw an error if url is valid but git type is not valid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://something.com/test/repo';
-      mockData.git.type = '';
+      mockData.git.type = GitTypes.invalid;
       await validationSchema(t)
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));

@@ -164,7 +164,8 @@ export interface ProjectData {
 
 export interface GitData {
   url: string;
-  type: string;
+  detectedType?: GitTypes;
+  type: GitTypes;
   ref: string;
   dir: string;
   showGitType: boolean;

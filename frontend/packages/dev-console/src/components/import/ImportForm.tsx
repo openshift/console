@@ -21,6 +21,7 @@ import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import {
   GitImportFormData,
+  GitTypes,
   FirehoseList,
   ImportData,
   Resources,
@@ -74,7 +75,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     git: {
       url: '',
-      type: '',
+      type: GitTypes.invalid,
       ref: '',
       dir: '/',
       showGitType: false,

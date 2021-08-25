@@ -50,7 +50,6 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
         label={t('devconsole~Environment variables (build and runtime)')}
         obj={buildConfigObj}
         envs={envs}
-        envPath={['spec', 'strategy']}
       />
     </FormSection>
   );

@@ -107,7 +107,8 @@ export const useDevfileSource = () => {
   React.useEffect(() => {
     if (devfileSourceUrl) {
       const gitType = detectGitType(devfileSourceUrl);
-      const gitService = getGitService(devfileSourceUrl, gitType as GitProvider);
+      // TODO: ODC-6250 - GitTypes is not compatibily to git service type GitProvider
+      const gitService = getGitService(devfileSourceUrl, (gitType as any) as GitProvider);
       setFieldValue('devfile.devfileSourceUrl', devfileSourceUrl);
       gitService
         .getDevfileContent()

@@ -80,8 +80,7 @@ export type FormSelectFieldProps = FieldProps & {
 };
 
 export interface EnvironmentFieldProps extends FieldProps {
-  obj?: K8sResourceKind;
-  envPath: string[];
+  obj: K8sResourceKind;
   envs?: (NameValuePair | NameValueFromPair)[];
 }
 
@@ -117,7 +116,7 @@ export interface NameValuePair {
 
 export interface NameValueFromPair {
   name: string;
-  valueForm: ConfigMapKeyRef | SecretKeyRef;
+  valueFrom: ConfigMapKeyRef | SecretKeyRef;
 }
 
 export interface ConfigMapKeyRef {

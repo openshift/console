@@ -16,6 +16,7 @@ import {
 } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
 import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
+import '@console/shared/src/components/editor/theme';
 import { fold } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { downloadYaml } from '@console/shared/src/components/editor/yaml-download-utils';
 import { isYAMLTemplate } from '@console/dynamic-plugin-sdk';
