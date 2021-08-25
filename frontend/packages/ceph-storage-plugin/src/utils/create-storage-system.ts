@@ -17,7 +17,8 @@ import { MINIMUM_NODES } from '../constants';
 export const getStorageSystemKind = ({ kind, apiVersion, apiGroup }) =>
   `${kind.toLowerCase()}.${apiGroup}/${apiVersion}`;
 
-export const createExternalSSName = (id: string = '') => id.toLowerCase().replace(/\s/g, '-');
+export const getExternalSubSystemName = (name: string = '') =>
+  name.toLowerCase().replace(/\s/g, '-');
 
 export const getExternalStorage = (id: WizardState['backingStorage']['externalStorage'] = '') =>
   SUPPORTED_EXTERNAL_STORAGE.find((p) => p.model.kind === id);

@@ -3,7 +3,9 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, FormSelect, FormSelectOption, FormSelectProps, Radio } from '@patternfly/react-core';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { ListKind, StorageClassResourceKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '@console/internal/models';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { AdvancedSection } from './advanced-section';
 import { SUPPORTED_EXTERNAL_STORAGE } from '../../external-storage';
 import { StorageSystemKind } from '../../../../types';
@@ -12,7 +14,7 @@ import { WizardState, WizardDispatch } from '../../reducer';
 import {
   BackingStorageType,
   DeploymentType,
-  StorageClusterIdentifier,
+  STORAGE_CLUSTER_SYSTEM_KIND,
 } from '../../../../constants/create-storage-system';
 import { ErrorHandler } from '../../error-handler';
 import { ExternalStorage } from '../../external-storage/types';
@@ -106,10 +108,13 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   stepIdReached,
 }) => {
   const { t } = useTranslation();
+  const [sc, scLoaded, scLoadError] = useK8sGet<ListKind<StorageClassResourceKind>>(
+    StorageClassModel,
+  );
 
   const formattedSS: StorageSystemSet = formatStorageSystemList(storageSystems);
 
-  const hasOCS: boolean = formattedSS.has(StorageClusterIdentifier);
+  const hasOCS: boolean = formattedSS.has(STORAGE_CLUSTER_SYSTEM_KIND);
 
   const allowedExternalStorage: ExternalStorage[] = SUPPORTED_EXTERNAL_STORAGE.filter(
     ({ model }) => {
@@ -122,9 +127,9 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   React.useEffect(() => {
     /*
-     Allow pre selecting the "external connection" option instead of the "existing" option 
-     if an OCS Storage System is already created and no external system is created.
-    */
+     * Allow pre selecting the "external connection" option instead of the "existing" option
+     * if an OCS Storage System is already created and no external system is created.
+     */
     if (hasOCS && allowedExternalStorage.length) {
       dispatch({ type: 'backingStorage/setType', payload: BackingStorageType.EXTERNAL });
     }
@@ -132,8 +137,16 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
 
   React.useEffect(() => {
     /*
-     Update storage class state when no storage class is used.
-    */
+     * Allow pre selecting the "create new storage class" option instead of the "existing" option
+     * if no storage classes present. This is true for a baremetal platform.
+     */
+    if (sc?.items?.length === 0 && deployment === DeploymentType.FULL) {
+      dispatch({ type: 'backingStorage/setType', payload: BackingStorageType.LOCAL_DEVICES });
+    }
+  }, [deployment, dispatch, sc]);
+
+  React.useEffect(() => {
+    /* Update storage class state when existing storage class is not selected. */
     if (type === BackingStorageType.LOCAL_DEVICES || type === BackingStorageType.EXTERNAL) {
       dispatch({
         type: 'wizard/setStorageClass',
@@ -151,18 +164,16 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
   const onRadioSelect = (_, event) => {
     dispatch({ type: 'backingStorage/setType', payload: event.target.value });
     if (stepIdReached !== 1) {
-      // Reset the wizard when a new flow is selected
-      // Avoid resetting when user has not visited any step other than this
+      /*
+       * Reset the wizard when user has selected a new deployment flow
+       * and has not visited any step other than first step.
+       */
       dispatch({ type: 'wizard/setInitialState' });
-      dispatch({
-        type: 'wizard/setStepIdReached',
-        payload: 1,
-      });
     }
   };
 
   return (
-    <ErrorHandler error={error} loaded={loaded}>
+    <ErrorHandler error={error || scLoadError} loaded={loaded && scLoaded}>
       <Form>
         <Radio
           label={t('ceph-storage-plugin~Use an existing storage class')}
@@ -173,7 +184,7 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           value={BackingStorageType.EXISTING}
           isChecked={type === BackingStorageType.EXISTING}
           onChange={onRadioSelect}
-          isDisabled={hasOCS || deployment === DeploymentType.MCG}
+          isDisabled={hasOCS || deployment === DeploymentType.MCG || sc?.items?.length === 0}
           body={
             showStorageClassSelection &&
             deployment !== DeploymentType.MCG && (
@@ -221,6 +232,8 @@ export const BackingStorage: React.FC<BackingStorageProps> = ({
           dispatch={dispatch}
           deployment={deployment}
           isAdvancedOpen={isAdvancedOpen}
+          hasOCS={hasOCS}
+          currentStep={stepIdReached}
         />
       </Form>
     </ErrorHandler>
