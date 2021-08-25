@@ -1,4 +1,6 @@
 {
+  "Helm Chart Repository": "Helm 차트 저장소",
+  "Helm Chart Repositories": "Helm 차트 저장소",
   "Helm Chart": "Helm 차트",
   "Browse the catalog to discover and install Helm Charts": "카타로그를 참조하여 Helm 차트를 검색하고 설치합니다.",
   "Helm Charts": "Helm 차트",
@@ -52,7 +54,6 @@
   "All data entered for version <1>{{currentVersion}}</1> will be reset": "버전 <1>{{currentVersion}}</1>에 대해 입력된 모든 데이터가 재설정됩니다.",
   "Proceed": "계속 진행",
   "Cancel": "취소",
-  "Select the chart version.": "차트 버전을 선택합니다.",
   "Select the version to upgrade to.": "업그레이드할 버전을 선택합니다.",
   "No versions available": "사용 가능한 버전 없음",
   "For more information on the chart, refer to this <2>README</2>": "차트에 대한 자세한 내용은 <2>README</2>를 참조하십시오.",
