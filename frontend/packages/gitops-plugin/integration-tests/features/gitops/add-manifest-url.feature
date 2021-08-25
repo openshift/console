@@ -30,25 +30,13 @@ Feature: Applications managed by GitOps
         Scenario: Application Details page for Applications: GO-01-TC04
             Given user is on the Environments page
               And user can see the Applications on the page
-             Then user can see various environments for that application
-              And user can see "overview" and "Deployment history" tab for that application
-              And user can see "dev", "stage" and "prod" workloads that are deployed in the environment
+             Then user can click application name and see the application Details page
+              And user can see various environments for that application
+              And user can see all workloads that are deployed in the environment
               And user can see status of the workloads deployed in the environment
               And user can see "Last deployed" date for workloads that are deployed in the environment
-              And user can see a clickable "Delpoyment history" for each workload that are deployed in the environment
-              And user can see "Deployment success ratio" statistics over a duration of time for each workload that are deployed in the environment
-              And user can see percentage of "pass" or "fail" in "Deployment success ratio" statistics over a duration of time for each workload that are deployed in the environment
               And user can see list of "Resources" for each workload that are deployed in the environment
-              And user can see "Resources" type "Deployments", "Secrets" and "Services" and status reported against it for each workload that are deployed in the environment
-        
-        @regression @manual
-        Scenario: Application Details page tab for Applications: GO-01-TC05
-            Given user is on the Environments page
-              And user can see the Applications on the page
-             When user access "Deployment history" through the tab
-              Then all environments should be shown
-             When user clicks the Deployment history link in a specific environment
-              Then user should be taken to the tab with the filter applied to only see that environment
+              And user can see all "Resources" types and status for each workload that are deployed in the environment
 
 # scenario is commented, as we don't need to add Manifest URLs manually now
         # @regression @manual
