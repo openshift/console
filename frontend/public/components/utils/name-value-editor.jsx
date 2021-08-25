@@ -62,17 +62,12 @@ const NameValueEditor_ = withDragDropContext(
     }
 
     _change(e, i, type) {
-      const { updateParentData, nameValueId, setHasEmptyName } = this.props;
+      const { updateParentData, nameValueId } = this.props;
       const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
 
       nameValuePairs[i][
         type === NameValueEditorPair.Name ? NameValueEditorPair.Name : NameValueEditorPair.Value
       ] = e.target.value;
-      const emptyNamesWithValue = _.filter(
-        nameValuePairs,
-        (pair) => pair[NameValueEditorPair.Name] === '' && pair[NameValueEditorPair.Value].length,
-      );
-      setHasEmptyName(emptyNamesWithValue.length > 0);
       updateParentData({ nameValuePairs }, nameValueId);
     }
 
@@ -203,7 +198,6 @@ NameValueEditor.propTypes = {
   addConfigMapSecret: PropTypes.bool,
   toolTip: PropTypes.string,
   onLastItemRemoved: PropTypes.func,
-  setHasEmptyName: PropTypes.func,
 };
 NameValueEditor.defaultProps = {
   allowSorting: false,

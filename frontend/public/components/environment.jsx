@@ -305,7 +305,6 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     this.saveChanges = this._saveChanges.bind(this);
     this.updateEnvVars = this._updateEnvVars.bind(this);
     this.selectContainer = this._selectContainer.bind(this);
-    this.setHasEmptyName = this._setHasEmptyName.bind(this);
     const currentEnvVars = new CurrentEnvVars(this.props.rawEnvData);
     this.state = {
       currentEnvVars,
@@ -407,16 +406,20 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     const { currentEnvVars, containerType } = this.state;
     const currentEnv = _.cloneDeep(currentEnvVars);
     currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
+
+    const emptyNamesWithValue = _.filter(
+      env.nameValuePairs,
+      (pair) => pair[NameValueEditorPair.Name] === '' && pair[NameValueEditorPair.Value].length,
+    );
+    const _hasEmptyName = emptyNamesWithValue.length > 0;
+
     this.setState({
       currentEnvVars: currentEnv,
       dirty: true,
       success: null,
+      hasEmptyName: _hasEmptyName,
     });
     _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
-  }
-
-  _setHasEmptyName(isEmpty) {
-    this.setState({ ...this.state, hasEmptyName: isEmpty });
   }
 
   /**
@@ -580,7 +583,6 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
             configMaps={configMaps}
             secrets={secrets}
             addConfigMapSecret={addConfigMapSecret}
-            setHasEmptyName={this.setHasEmptyName}
           />
         </div>
         {currentEnvVars.isContainerArray && (
