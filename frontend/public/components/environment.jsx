@@ -407,17 +407,16 @@ export class UnconnectedEnvironmentPage extends PromiseComponent {
     const currentEnv = _.cloneDeep(currentEnvVars);
     currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
 
-    const emptyNamesWithValue = _.filter(
+    const hasEmptyName = _.some(
       env.nameValuePairs,
-      (pair) => pair[NameValueEditorPair.Name] === '' && pair[NameValueEditorPair.Value].length,
+      (pair) => pair[NameValueEditorPair.Name] === '' && pair[NameValueEditorPair.Value] !== '',
     );
-    const _hasEmptyName = emptyNamesWithValue.length > 0;
 
     this.setState({
       currentEnvVars: currentEnv,
       dirty: true,
       success: null,
-      hasEmptyName: _hasEmptyName,
+      hasEmptyName,
     });
     _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
   }
