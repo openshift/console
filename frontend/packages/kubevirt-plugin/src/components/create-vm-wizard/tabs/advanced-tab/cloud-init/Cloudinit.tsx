@@ -71,16 +71,12 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
   }, [data]);
 
   React.useEffect(() => {
-    const formValues = yamlAsJS?.ssh_authorized_keys;
-    formValues && !isEqual(formValues, authKeys) && setAuthKeys(formValues);
     validationSchema(yamlAsJS);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yamlAsJS]);
 
   React.useEffect(() => {
-    !isEmpty(yamlAsJS) &&
-      !isEmpty(yaml) &&
-      isEqual(authKeysData, authKeys) &&
+    if (!isEmpty(yamlAsJS) && !isEmpty(yaml) && !isEqual(yamlAsJS?.ssh_authorized_keys, authKeys)) {
       setYaml(
         yamlParser.dump({
           ...yamlParser.load(yaml),
@@ -89,8 +85,9 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
           ssh_authorized_keys: authKeys,
         }),
       );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authKeys, yaml, yamlAsJS]);
+  }, [authKeys]);
 
   React.useEffect(() => {
     yaml &&
@@ -102,10 +99,18 @@ const Cloudinit: React.FC<CloudinitProps> = ({ wizardReduxID }) => {
 
   const onChange = React.useCallback(
     (yamlData, yamlAsJSData) => {
-      setYaml(yamlData);
-      setYamlAsJS(yamlAsJSData);
+      yamlAsJSData && setYamlAsJS(yamlAsJSData);
+      yamlData &&
+        setYaml(
+          yamlParser.dump({
+            ...yamlParser.load(yamlData),
+            /* eslint-disable-next-line @typescript-eslint/camelcase */
+            ssh_authorized_keys: yamlAsJSData?.ssh_authorized_keys || authKeys,
+          }),
+        );
+      setAuthKeys(yamlAsJSData?.ssh_authorized_keys);
     },
-    [setYaml, setYamlAsJS],
+    [setYaml, setYamlAsJS, authKeys],
   );
 
   return (
