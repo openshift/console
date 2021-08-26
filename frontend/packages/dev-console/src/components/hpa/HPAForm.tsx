@@ -32,6 +32,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   values,
 }) => {
   const { t } = useTranslation();
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.hpaForm.editor.lastView';
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
@@ -61,6 +62,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
               sanitizeHPAToForm(newFormData, targetResource),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
         />
       </FormBody>
       <FormFooter

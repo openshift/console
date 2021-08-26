@@ -46,6 +46,8 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
 
   const isStale = resource.metadata.resourceVersion !== formData.resourceVersion;
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.editDeploymentForm.editor.lastView';
+
   const formEditor = (
     <EditDeploymentFormEditor resourceType={resourceType} resourceObj={resource} />
   );
@@ -94,6 +96,7 @@ const EditDeploymentForm: React.FC<FormikProps<FormikValues> & {
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
+          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
           noMargin
         />
       </FormBody>

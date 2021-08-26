@@ -118,6 +118,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     handleReset();
   }, [handleReset]);
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'pipeline.pipelineBuilderForm.editor.lastView';
+
   const formEditor = (
     <PipelineBuilderFormEditor
       hasExistingPipeline={!!existingPipeline}
@@ -165,6 +167,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   editor: yamlEditor,
                   sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
                 }}
+                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
               />
             </FormBody>
             <FormFooter

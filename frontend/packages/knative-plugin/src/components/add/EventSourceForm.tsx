@@ -40,6 +40,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   kameletSource,
 }) => {
   const { t } = useTranslation();
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.eventSourceForm.editor.lastView';
   const yamlEditor = <YAMLEditorField name="yamlData" onSave={handleSubmit} />;
 
   const sanitizeToYaml = () =>
@@ -84,6 +85,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
               sanitizeSourceToForm(newFormData, values.formData, kameletSource),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
         />
       </FormBody>
       <FormFooter
