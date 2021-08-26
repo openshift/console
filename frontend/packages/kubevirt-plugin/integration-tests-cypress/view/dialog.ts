@@ -2,7 +2,7 @@
 import { testName } from '@console/cypress-integration-tests/support';
 import { DISK_SOURCE } from '../const';
 import { Disk, Network } from '../types/vm';
-import { addSource, DiskSourceOpts } from './add-source';
+import { DiskSourceOpts } from './add-source';
 import { diskDialog, deleteDiskBtn, kebabBtn, nicDialog, disksTab } from './selector';
 import { modalConfirmBtn } from './snapshot';
 
@@ -29,8 +29,8 @@ export const addNIC = (nic: Network) => {
   cy.get(nicDialog.add).click();
 };
 
-export const hotPlugPvcOpts: DiskSourceOpts = {
-  pvcName: 'hotPlug-test-pvc',
+export const testPvc: DiskSourceOpts = {
+  pvcName: 'test-pvc',
   pvcNamespace: testName,
 };
 
@@ -45,7 +45,6 @@ export const addDisk = (disk: Disk) => {
     switch (disk.source) {
       case DISK_SOURCE.Url:
         if (sourceUrl) {
-          addSource.addDiskSource(disk.provisionSource, hotPlugPvcOpts);
           cy.get(diskDialog.diskURL).type(sourceUrl);
         } else {
           throw new Error('No `disk.provisionSource` provided!!!');
@@ -60,11 +59,7 @@ export const addDisk = (disk: Disk) => {
         break;
       case DISK_SOURCE.AttachDisk:
       case DISK_SOURCE.AttachClonedDisk:
-        if (sourceUrl) {
-          cy.get(diskDialog.diskPVC).select(sourceUrl);
-        } else {
-          throw new Error('No `disk.provisionSource` provided!!!');
-        }
+        cy.get(diskDialog.diskPVC).select(testPvc.pvcName);
         break;
       case DISK_SOURCE.EphemeralContainer:
       case DISK_SOURCE.Blank:
@@ -75,7 +70,9 @@ export const addDisk = (disk: Disk) => {
   cy.get(diskDialog.diskName)
     .clear()
     .type(disk.name);
-  cy.get(diskDialog.size).type(disk.size);
+  if (disk.size) {
+    cy.get(diskDialog.size).type(disk.size);
+  }
   if (disk.drive) {
     cy.get(diskDialog.diskType)
       .select(disk.drive)
