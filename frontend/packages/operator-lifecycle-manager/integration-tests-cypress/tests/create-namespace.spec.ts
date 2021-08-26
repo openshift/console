@@ -29,11 +29,11 @@ describe('Create namespace from install operators', () => {
     cy.byTestID(operatorSelector).click();
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
 
-    // configure operator install
+    // configure operator install ("^=Create_"" will match "Create_Namespace" and "Create_Project")
     cy.byTestID('Select a Namespace-radio-input').check();
     cy.byTestID('dropdown-selectbox')
       .click()
-      .get('[data-test-dropdown-menu="Create_Namespace"]')
+      .get('[data-test-dropdown-menu^="Create_"]')
       .click();
 
     // verify namespace modal is opened
