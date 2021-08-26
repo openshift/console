@@ -8,6 +8,7 @@ import { K8sResourceKind, k8sUpdate } from '@console/internal/module/k8s';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { useActivePerspective } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { getResourcesType } from '../edit-application/edit-application-utils';
 import { handleRedirect } from '../import/import-submit-utils';
 import { Resources } from '../import/import-types';
@@ -33,7 +34,9 @@ const EditDeployment: React.FC<EditDeploymentProps> = ({ heading, resource, name
 
   const initialValues = React.useRef({
     editorType: EditorType.Form,
-    yamlData: '',
+    yamlData: safeJSToYAML(resource, 'yamlData', {
+      skipInvalid: true,
+    }),
     formData: convertDeploymentToEditForm(resource),
   });
 
