@@ -52,38 +52,4 @@ export const addSource = {
     cy.get('#confirm-action').should('not.be.disabled');
     cy.get('#confirm-action').click();
   },
-  addDiskSource: (provisionSource: ProvisionSource, opts?: DiskSourceOpts) => {
-    let pvcName: string;
-    let pvcNamespace: string;
-    cy.get('#disk-select-source').click();
-    cy.get('.pf-c-select__menu')
-      .contains(provisionSource.getDescription())
-      .click();
-    const sourceInput = provisionSourceInputs[provisionSource.getValue()];
-    if (sourceInput) {
-      cy.get(sourceInput).type(provisionSource.getSource());
-    }
-    switch (provisionSource) {
-      case ProvisionSource.EXISTING:
-      case ProvisionSource.CLONE_PVC:
-        ({ pvcName, pvcNamespace } = opts as DiskSourceOpts);
-        cy.get('button[id="pvc-ns-dropdown"]').click();
-        cy.get(`a[id="${pvcNamespace}-Project-link"]`).click();
-        cy.get('button[id="pvc-name-dropdown"]').click();
-        cy.get(`a[id="${pvcName}-PersistentVolumeClaim-link"]`).click();
-        break;
-      case ProvisionSource.UPLOAD:
-        cy.dropFile(Cypress.env('UPLOAD_IMG'), 'cirros', '.pf-c-file-upload');
-        break;
-      default:
-    }
-    if (provisionSource !== ProvisionSource.CLONE_PVC) {
-      cy.get('#request-size-input')
-        .clear()
-        .type('5');
-    }
-
-    cy.get('#confirm-action').should('not.be.disabled');
-    cy.get('#confirm-action').click();
-  },
 };
