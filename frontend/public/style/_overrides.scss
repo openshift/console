@@ -237,6 +237,10 @@ form.pf-c-form {
   }
 }
 
+.pf-c-dropdown__menu {
+  --pf-c-dropdown__menu--ZIndex: var(--pf-global--ZIndex--md);
+}
+
 .pf-c-page__sidebar {
   --pf-c-page__sidebar-body--PaddingTop: 0;
   bottom: 0;
