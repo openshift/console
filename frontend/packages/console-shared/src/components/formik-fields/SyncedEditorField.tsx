@@ -32,6 +32,7 @@ type SyncedEditorFieldProps = {
   formContext: EditorContext<SanitizeToForm>;
   yamlContext: EditorContext<SanitizeToYAML>;
   lastViewUserSettingKey: string;
+  prune?: (data: any) => any;
   noMargin?: boolean;
 };
 
@@ -39,6 +40,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   name,
   formContext,
   yamlContext,
+  prune,
   noMargin = false,
   lastViewUserSettingKey,
 }) => {
@@ -100,7 +102,7 @@ const SyncedEditorField: React.FC<SyncedEditorFieldProps> = ({
   };
 
   const handleToggleToYAML = () => {
-    const newYAML = safeJSToYAML(formData, yamlData, { skipInvalid: true });
+    const newYAML = safeJSToYAML(prune?.(formData) ?? formData, yamlData, { skipInvalid: true });
     setFieldValue(
       yamlContext.name,
       yamlContext.sanitizeTo ? yamlContext.sanitizeTo(newYAML) : newYAML,

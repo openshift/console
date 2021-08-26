@@ -14,7 +14,7 @@ import {
   FormHeader,
   FlexForm,
 } from '@console/shared';
-import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
+import { getJSONSchemaOrder, prune } from '@console/shared/src/components/dynamic-form/utils';
 import { HelmActionType, HelmChart, HelmActionConfigType } from '../../../types/helm-types';
 import { helmActionString } from '../../../utils/helm-utils';
 import HelmChartVersionDropdown from './HelmChartVersionDropdown';
@@ -143,6 +143,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
             yamlContext={{ name: 'yamlData', editor: yamlEditor }}
             lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
+            prune={prune}
           />
         )}
       </FormBody>
