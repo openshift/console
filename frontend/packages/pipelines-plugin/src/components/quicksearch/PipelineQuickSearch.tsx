@@ -19,7 +19,7 @@ import {
   isTaskSearchable,
   updateTask,
 } from './pipeline-quicksearch-utils';
-import PipelineQuickSearchDetails from './PiplineQuickSearchDetails';
+import PipelineQuickSearchDetails from './PipelineQuickSearchDetails';
 
 interface QuickSearchProps {
   namespace: string;
