@@ -77,7 +77,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
             deployment,
           })}
         </ListItem>
-        {type === BackingStorageType.EXTERNAL && (
+        {!isMCG && type === BackingStorageType.EXTERNAL && (
           <ListItem>
             {t('ceph-storage-plugin~External storage platform: {{storagePlatform}}', {
               storagePlatform,
