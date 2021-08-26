@@ -24,8 +24,10 @@ import {
   alertState,
   silenceState,
 } from '../monitoring/utils';
+
 import { Alert, AlertStates, Rule, Silence } from '../monitoring/types';
 import { RowFilter } from '../filter-toolbar';
+import { requesterFilter } from '@console/shared/src/components/namespace';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -38,6 +40,7 @@ export const tableFilters: FilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter.selected?.[0], obj.metadata.name),
 
   'catalog-source-name': (filter, obj) => fuzzyCaseInsensitive(filter.selected?.[0], obj.name),
+  requester: requesterFilter,
 
   'resource-list-text': (filter, resource: Rule | Alert) => {
     if (
