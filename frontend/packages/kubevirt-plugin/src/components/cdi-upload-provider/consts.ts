@@ -17,4 +17,4 @@ export const CDI_PVC_PHASE_RUNNING = 'Running';
 export const CDI_UPLOAD_OS_URL_PARAM = 'os';
 
 export const CDI_UPLOAD_SUPPORTED_TYPES_URL =
-  'https://docs.openshift.com/container-platform/4.5/virt/virtual_machines/importing_vms/virt-importing-virtual-machine-images-datavolumes.html#virt-cdi-supported-operations-matrix_virt-importing-virtual-machine-images-datavolumes';
+  'https://docs.openshift.com/container-platform/4.8/virt/virtual_machines/importing_vms/virt-importing-virtual-machine-images-datavolumes.html#virt-cdi-supported-operations-matrix_virt-importing-virtual-machine-images-datavolumes';
