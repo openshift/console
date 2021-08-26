@@ -1,14 +1,10 @@
 import { TEST_PROVIDER } from '../const';
 import { ProvisionSource } from '../enums/provisionSource';
+import { DiskSourceOpts } from '../types/vm';
 
 export const provisionSourceInputs = {
   [ProvisionSource.URL.getValue()]: '#provision-source-url',
   [ProvisionSource.REGISTRY.getValue()]: '#provision-source-container',
-};
-
-export type DiskSourceOpts = {
-  pvcName: string;
-  pvcNamespace: string;
 };
 
 export const addSource = {
