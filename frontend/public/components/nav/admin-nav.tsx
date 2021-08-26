@@ -7,6 +7,12 @@ import { FLAGS, useActiveNamespace } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { featureReducerName } from '../../reducers/features';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
+import {
+  NavItem as PluginNavItem,
+  NavSection as PluginNavSection,
+  Separator as PluginNavSeparator,
+} from '@console/dynamic-plugin-sdk/src';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 import {
   ChargebackReportModel,
@@ -23,7 +29,8 @@ import {
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
-import { HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
+
+import { HrefLink, PluginNavItems, ResourceNSLink, ResourceClusterLink } from './items';
 import { NavSection } from './section';
 
 type SeparatorProps = {
@@ -89,7 +96,11 @@ const MonitoringNavSection_ = ({ canAccess }) => {
 };
 const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
-const AdminNav = () => {
+export type AdminNavProps = {
+  pluginNavItems: LoadedExtension<PluginNavSection | PluginNavItem | PluginNavSeparator>[];
+};
+
+const AdminNav: React.FC<AdminNavProps> = ({ pluginNavItems }) => {
   const lastNamespace = useActiveNamespace()[0];
   // In OpenShift, machines are created in the openshift-machine-api namespace.
   // Switch to that namespace so the list isn't empty.
@@ -408,6 +419,7 @@ const AdminNav = () => {
           required={FLAGS.CAN_LIST_CRD}
         />
       </NavSection>
+      <PluginNavItems items={pluginNavItems} />
     </NavList>
   );
 };
