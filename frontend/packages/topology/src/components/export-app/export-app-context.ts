@@ -59,6 +59,7 @@ export const useExportAppFormToast = () => {
             callback: () => {
               window.open(routeUrl, '_blank');
             },
+            component: 'a',
           },
         ],
       });

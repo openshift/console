@@ -77,6 +77,7 @@ const ToastProvider: React.FC = ({ children }) => {
                           }
                           action.callback();
                         }}
+                        component={action.component}
                       >
                         {action.label}
                       </AlertActionLink>
