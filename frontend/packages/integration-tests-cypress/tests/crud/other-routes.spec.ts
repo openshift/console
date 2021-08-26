@@ -1,11 +1,48 @@
-import { checkErrors } from '../../support';
+import { safeLoad, safeDump } from 'js-yaml';
+import * as _ from 'lodash';
+import { plural } from 'pluralize';
+import { checkErrors, deleteKind, testName } from '../../support';
 import { detailsPage } from '../../views/details-page';
+import { errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
+import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
+import * as yamlEditor from '../../views/yaml-editor';
+
+const createExampleResource = (kind: string) => {
+  cy.visit('/');
+  nav.sidenav.clickNavLink(['Compute', `${plural(kind)}`]);
+  listPage.clickCreateYAMLbutton();
+  yamlEditor.isLoaded();
+  yamlEditor.getEditorContent().then((content) => {
+    const newContent = _.defaultsDeep(
+      {},
+      { metadata: { name: testName, namespace: 'openshift-machine-api' } },
+      safeLoad(content),
+    );
+    yamlEditor.setEditorContent(safeDump(newContent, { sortKeys: true })).then(() => {
+      yamlEditor.clickSaveCreateButton();
+      cy.get(errorMessage).should('not.exist');
+    });
+  });
+};
+
+const deleteExampleResource = (kind: string) => {
+  cy.visit('/');
+  nav.sidenav.clickNavLink(['Compute', `${plural(kind)}`]);
+  listPage.filter.byName(testName);
+  listPage.rows.clickKebabAction(testName, deleteKind(kind, false));
+  modal.shouldBeOpened();
+  modal.submit();
+  modal.shouldBeClosed();
+  cy.get(errorMessage).should('not.exist');
+};
 
 describe('Visiting other routes', () => {
   before(() => {
     cy.login();
+    createExampleResource('Machine');
+    createExampleResource('MachineSet');
   });
 
   afterEach(() => {
@@ -13,6 +50,8 @@ describe('Visiting other routes', () => {
   });
 
   after(() => {
+    deleteExampleResource('Machine');
+    deleteExampleResource('MachineSet');
     cy.logout();
   });
 
