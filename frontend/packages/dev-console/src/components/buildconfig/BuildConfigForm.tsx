@@ -49,6 +49,8 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
     <YAMLEditorField name="yamlData" model={BuildConfigModel} onSave={handleSubmit} />
   );
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.buildConfigForm.editor.lastView';
+
   const sanitizeToForm = (yamlbuildConfig: BuildConfig) =>
     convertBuildConfigToFormData(yamlbuildConfig, values).formData;
 
@@ -84,6 +86,7 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
             editor: yamlEditor,
             sanitizeTo: sanitizeToYaml,
           }}
+          lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
           noMargin
         />
       </FormBody>
