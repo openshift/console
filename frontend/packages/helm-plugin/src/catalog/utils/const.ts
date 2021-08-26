@@ -4,6 +4,8 @@ export const CHART_NAME_ANNOTATION = 'charts.openshift.io/name';
 export const PROVIDER_TYPE_ANNOTATION = 'charts.openshift.io/providerType';
 // Annotation for provider name, e.g. Fortanix, HashiCorp, etc
 export const PROVIDER_NAME_ANNOTATION = 'charts.openshift.io/provider';
+// Annotation for support URL by the provider
+export const SUPPORT_URL_ANNOTATION = 'charts.openshift.io/supportURL';
 
 export enum PROVIDER_TYPE {
   redhat = 'redhat',
