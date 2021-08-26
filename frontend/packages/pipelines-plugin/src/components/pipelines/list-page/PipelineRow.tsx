@@ -29,7 +29,7 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
 
 const PipelineRow: React.FC<RowFunctionArgs<PipelineWithLatest>> = ({ obj }) => {
   return (
-    <React.Fragment data-test-id={`${obj.metadata.namespace}-${obj.metadata.name}`}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineReference}
@@ -66,7 +66,7 @@ const PipelineRow: React.FC<RowFunctionArgs<PipelineWithLatest>> = ({ obj }) => 
       <TableData className={tableColumnClasses[6]}>
         <PipelineRowKebabActions pipeline={obj} />
       </TableData>
-    </React.Fragment>
+    </>
   );
 };
 
