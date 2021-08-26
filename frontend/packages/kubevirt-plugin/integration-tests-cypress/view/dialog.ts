@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-import { testName } from '@console/cypress-integration-tests/support';
 import { DISK_SOURCE } from '../const';
 import { Disk, Network } from '../types/vm';
-import { DiskSourceOpts } from './add-source';
 import { diskDialog, deleteDiskBtn, kebabBtn, nicDialog, disksTab } from './selector';
 import { modalConfirmBtn } from './snapshot';
 
@@ -27,11 +24,6 @@ export const addNIC = (nic: Network) => {
       .click();
   }
   cy.get(nicDialog.add).click();
-};
-
-export const testPvc: DiskSourceOpts = {
-  pvcName: 'test-pvc',
-  pvcNamespace: testName,
 };
 
 export const addDisk = (disk: Disk) => {
@@ -59,7 +51,7 @@ export const addDisk = (disk: Disk) => {
         break;
       case DISK_SOURCE.AttachDisk:
       case DISK_SOURCE.AttachClonedDisk:
-        cy.get(diskDialog.diskPVC).select(testPvc.pvcName);
+        cy.get(diskDialog.diskPVC).select(disk.pvcName);
         break;
       case DISK_SOURCE.EphemeralContainer:
       case DISK_SOURCE.Blank:

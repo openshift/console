@@ -4,11 +4,13 @@ import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
 import { detailViewAction } from '../../view/actions';
-import { addDisk, delDisk, testPvc } from '../../view/dialog';
+import { addDisk, delDisk } from '../../view/dialog';
 import * as tags from '../../view/selector';
 import { tab } from '../../view/tab';
 import { virtualization } from '../../view/virtualization';
 import { vm, waitForStatus, waitForVMStatusLabel } from '../../view/vm';
+
+const pvcName = 'hotplug-test-pvc';
 
 const vmData: VirtualMachineData = {
   name: `hotplug-${testName}`,
@@ -54,7 +56,8 @@ const autoHotplugDiskClone: Disk = {
     'ID(CNV-6858) Attach AutoDetach hotplug disk with [Clone existing PVC] to running VM',
   name: 'disk-auto-clone',
   provisionSource: ProvisionSource.CLONE_PVC,
-  // size: '2',
+  pvcName,
+  pvcNS: testName,
   autoDetach: true,
   source: DISK_SOURCE.AttachClonedDisk,
 };
@@ -64,7 +67,8 @@ const autoHotplugDiskUse: Disk = {
     'ID(CNV-6857) Attach AutoDetach hotplug disk with [Use an existing PVC] as source selection to running VM',
   name: 'disk-auto-use',
   provisionSource: ProvisionSource.EXISTING,
-  // size: '2',
+  pvcName,
+  pvcNS: testName,
   autoDetach: true,
   source: DISK_SOURCE.AttachDisk,
 };
@@ -103,6 +107,8 @@ const persHotplugDiskClone: Disk = {
     'ID(CNV-6862) Attach Persistent hotplug disk with [Clone existing PVC] as source to running VM',
   name: 'disk-pers-clone',
   provisionSource: ProvisionSource.CLONE_PVC,
+  pvcName,
+  pvcNS: testName,
   autoDetach: false,
   source: DISK_SOURCE.AttachClonedDisk,
 };
@@ -112,6 +118,8 @@ const persHotplugDiskUse: Disk = {
     'ID(CNV-6861) Attach Persistent hotplug disk with [Use an existing PVC] as source to running VM',
   name: 'disk-pers-use',
   provisionSource: ProvisionSource.EXISTING,
+  pvcName,
+  pvcNS: testName,
   autoDetach: false,
   source: DISK_SOURCE.AttachDisk,
 };
@@ -187,7 +195,7 @@ describe('Test UI for VM disk hot-plug', () => {
   before(() => {
     cy.Login();
     cy.createProject(testName);
-    cy.createDataVolume(testPvc.pvcName, testPvc.pvcNamespace);
+    cy.createDataVolume(pvcName, testName);
     virtualization.vms.visit();
     vm.create(vmData);
     waitForStatus(VM_STATUS.Running, vmData, VM_ACTION_TIMEOUT.VM_IMPORT);

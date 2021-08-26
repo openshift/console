@@ -1,6 +1,11 @@
 import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../const/index';
 import { ProvisionSource } from '../enums/provisionSource';
 
+export type DiskSourceOpts = {
+  pvcName: string;
+  pvcNamespace: string;
+};
+
 export type Disk = {
   name?: string;
   size?: string;
@@ -17,6 +22,8 @@ export type Disk = {
   provisionSource?: ProvisionSource;
   description?: string;
   preallocation?: boolean;
+  pvcName?: string;
+  pvcNS?: string;
 };
 
 export type Network = {
