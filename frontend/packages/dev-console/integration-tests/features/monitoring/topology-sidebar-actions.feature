@@ -15,7 +15,7 @@ Feature: Observe tab on the topology Sidebar
               And user is at Topology page
              When user clicks on the workload "<workload>" to open the sidebar
               And user clicks on Observe tab
-              And user clicks on View monitoring dashboard link
+              And user clicks on View dashboard link
              Then page redirected to the Dashboard tab of Observe page
               And user will see the "Kubernetes / Compute Resources / Workload" selected in the Dashboard dropdown
               And user user will see "<workload>" option selected in the Workload dropdown
@@ -32,7 +32,7 @@ Feature: Observe tab on the topology Sidebar
             Given helm release "nodejs-ex-k" is present in topology page
              When user clicks on the workload "node-js-ex" to open the sidebar
               And user clicks on Observe tab
-              And user clicks on View monitoring dashboard link
+              And user clicks on View dashboard link
              Then page redirected to the Observe page
 
 
