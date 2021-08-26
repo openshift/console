@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { QuickStartContext, QuickStartContextValues } from '@patternfly/quickstarts';
-import { Skeleton, SelectOption, Select, SelectVariant } from '@patternfly/react-core';
+import { Skeleton, SelectOption, Select, SelectVariant, Checkbox } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { getProcessedResourceBundle } from '../../quick-starts/utils/quick-start-context';
 import { supportedLocales } from './const';
+import { useLanguage } from './useLanguage';
 import { usePreferredLanguage } from './usePreferredLanguage';
 
+import './LanguageDropdown.scss';
+
 const LanguageDropdown: React.FC = () => {
-  const { i18n, t } = useTranslation();
-  const { setResourceBundle } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const { t } = useTranslation();
   const [preferredLanguage, setPreferredLanguage, preferredLanguageLoaded] = usePreferredLanguage();
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-
   const selectOptions: JSX.Element[] = React.useMemo(
     () =>
       Object.keys(supportedLocales).map((lang) => (
@@ -22,54 +21,76 @@ const LanguageDropdown: React.FC = () => {
     [],
   );
 
-  const selectedLanguage =
-    preferredLanguage ||
-    // handles languages we support, languages we don't support, and subsets of languages we support (such as en-us, zh-cn, etc.)
-    i18n.languages.find((lang) => supportedLocales[lang]);
+  const [isUsingDefault, setIsUsingDefault] = React.useState<boolean>(!preferredLanguage);
+  const checkboxLabel: string = t('console-app~Use the default browser language setting.');
 
   const onToggle = (isOpen: boolean) => setDropdownOpen(isOpen);
   const onSelect = (_, selection: string) => {
     if (selection !== preferredLanguage) {
-      i18n.changeLanguage(selection);
       setPreferredLanguage(selection);
     }
     setDropdownOpen(false);
   };
 
-  React.useEffect(() => {
-    const onLanguageChange = (lng: string) => {
-      // Update language resource of quick starts components
-      const resourceBundle = i18n.getResourceBundle(lng, 'console-app');
-      const processedBundle = getProcessedResourceBundle(resourceBundle, lng);
-      setResourceBundle(processedBundle, lng);
-    };
-    i18n.on('languageChanged', onLanguageChange);
+  const onUsingDefault = (checked: boolean) => {
+    setIsUsingDefault(checked);
+    if (checked) {
+      setPreferredLanguage(null);
+    }
+  };
 
-    return () => {
-      i18n.off('languageChanged', onLanguageChange);
-    };
-  });
+  useLanguage(preferredLanguage, preferredLanguageLoaded); // sync the preferred language with local storage and set the console language
+
+  React.useEffect(() => {
+    if (preferredLanguageLoaded) {
+      setIsUsingDefault(!preferredLanguage);
+    }
+    // run this hook only after resources have loaded
+    // to set the using default language checkbox when the form loads
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preferredLanguageLoaded]);
 
   return preferredLanguageLoaded ? (
-    <Select
-      variant={SelectVariant.single}
-      isOpen={dropdownOpen}
-      selections={selectedLanguage}
-      toggleId={'console.preferredLanguage'}
-      onToggle={onToggle}
-      onSelect={onSelect}
-      placeholderText={t('console-app~Select a language')}
-      data-test={'dropdown console.preferredLanguage'}
-      maxHeight={300}
-    >
-      {selectOptions}
-    </Select>
+    <>
+      <Checkbox
+        id="default-language-checkbox"
+        label={checkboxLabel}
+        isChecked={isUsingDefault}
+        onChange={onUsingDefault}
+        aria-label={checkboxLabel}
+        data-test="checkbox console.preferredLanguage"
+        className="co-language-dropdown__system-default-checkbox"
+      />
+      <Select
+        variant={SelectVariant.single}
+        isOpen={dropdownOpen}
+        selections={preferredLanguage}
+        toggleId={'console.preferredLanguage'}
+        onToggle={onToggle}
+        onSelect={onSelect}
+        placeholderText={t('console-app~Select a language')}
+        aria-label={t('console-app~Select a language')}
+        data-test="dropdown console.preferredLanguage"
+        maxHeight={300}
+        isDisabled={isUsingDefault}
+      >
+        {selectOptions}
+      </Select>
+    </>
   ) : (
-    <Skeleton
-      height="30px"
-      width="100%"
-      data-test={'dropdown skeleton console.preferredLanguage'}
-    />
+    <>
+      <Skeleton
+        height="15px"
+        width="100%"
+        data-test="checkbox skeleton console.preferredLanguage"
+        className="co-language-dropdown__system-default-checkbox"
+      />
+      <Skeleton
+        height="30px"
+        width="100%"
+        data-test="dropdown skeleton console.preferredLanguage"
+      />
+    </>
   );
 };
 
