@@ -11,14 +11,6 @@ import ResourceSection from '../section/ResourceSection';
 
 let deployImageFormProps: React.ComponentProps<typeof DeployImageForm>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('DeployImageForm', () => {
   beforeEach(() => {
     deployImageFormProps = {

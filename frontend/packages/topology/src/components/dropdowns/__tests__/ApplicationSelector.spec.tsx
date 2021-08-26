@@ -10,14 +10,6 @@ type ApplicationSelectorProps = React.ComponentProps<typeof ApplicationSelector>
 
 let applicationSelectorProps: ApplicationSelectorProps;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ApplicationSelector', () => {
   let wrapper: ShallowWrapper<ApplicationSelectorProps>;
   const spyUseFormikContext = jest.spyOn(formik, 'useFormikContext');

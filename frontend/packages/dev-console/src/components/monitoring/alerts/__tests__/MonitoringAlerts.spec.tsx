@@ -8,14 +8,6 @@ import * as prometheusHook from '@console/internal/components/graphs/prometheus-
 import { EmptyBox } from '@console/internal/components/utils';
 import { MonitoringAlerts } from '../MonitoringAlerts';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('MonitoringAlerts', () => {
   const monitoringAlertsProps: React.ComponentProps<typeof MonitoringAlerts> = {
     match: {

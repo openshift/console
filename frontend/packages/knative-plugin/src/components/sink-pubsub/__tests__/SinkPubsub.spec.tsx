@@ -9,16 +9,6 @@ import SinkPubsub from '../SinkPubsub';
 
 type SinkPubsubProps = React.ComponentProps<typeof SinkPubsub>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
-const i18nNS = 'knative-plugin';
-
 describe('SinkPubsub', () => {
   let pubsubForm: ShallowWrapper<SinkPubsubProps>;
   const formProps: SinkPubsubProps = {
@@ -41,7 +31,7 @@ describe('SinkPubsub', () => {
   it('should render Formik child with label move Subscription for Subscription', () => {
     const formikFormRender = pubsubForm.find(Formik).get(0).props;
     expect(formikFormRender.children).toHaveLength(1);
-    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{kind}}`);
+    expect(formikFormRender.children().props.labelTitle).toBe('Move Subscription');
   });
 
   it('should render Formik child with label move Trigger for Trigger', () => {
@@ -49,6 +39,6 @@ describe('SinkPubsub', () => {
     pubsubForm = shallow(<SinkPubsub {...formPropsData} />);
     const formikFormRender = pubsubForm.find(Formik).get(0).props;
     expect(formikFormRender.children).toHaveLength(1);
-    expect(formikFormRender.children().props.labelTitle).toBe(`${i18nNS}~Move {{kind}}`);
+    expect(formikFormRender.children().props.labelTitle).toBe('Move Trigger');
   });
 });

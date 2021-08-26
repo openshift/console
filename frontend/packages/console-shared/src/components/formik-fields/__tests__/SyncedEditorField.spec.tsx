@@ -8,14 +8,6 @@ import RadioGroupField from '../RadioGroupField';
 import SyncedEditorField from '../SyncedEditorField';
 import YAMLEditorField from '../YAMLEditorField';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{ value: 'form' }, {}]),
   useFormikContext: jest.fn(() => ({
@@ -23,8 +15,6 @@ jest.mock('formik', () => ({
     setFieldValue: jest.fn(),
   })),
 }));
-
-const i18nNS = 'console-shared';
 
 const mockEditors = {
   form: <DynamicFormField name="formData" schema={{}} />,
@@ -89,6 +79,6 @@ describe('DropdownField', () => {
         .find(Alert)
         .first()
         .props().title,
-    ).toBe(`${i18nNS}~Form view is disabled for this chart because the schema is not available`);
+    ).toBe('Form view is disabled for this chart because the schema is not available');
   });
 });

@@ -1,9 +1,7 @@
-import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
+import { t } from '../../../../../../__mocks__/i18next';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
 import { fileNameRegex, getAppName, validationSchema } from '../upload-jar-validation-utils';
-
-const t = (key): TFunction => key;
 
 describe('Validation Schema: upload jar validation utils', () => {
   it('should validate uploadJar form', async () => {
@@ -22,7 +20,7 @@ describe('Validation Schema: upload jar validation utils', () => {
     await validationSchema(t)
       .validate(mockData)
       .catch((err) => {
-        expect(err.message).toBe('devconsole~Must be a JAR file.');
+        expect(err.message).toBe('Must be a JAR file.');
       });
   });
 

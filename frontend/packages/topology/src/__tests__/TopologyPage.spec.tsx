@@ -43,14 +43,6 @@ jest.mock('../user-preferences/usePreferredTopologyView', () => ({
   usePreferredTopologyView: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 const match = { params: { name: 'default' }, isExact: true, path: '', url: '' };
 
 describe('Topology page tests', () => {

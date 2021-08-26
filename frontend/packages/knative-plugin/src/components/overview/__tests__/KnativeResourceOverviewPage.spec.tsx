@@ -12,14 +12,6 @@ import { URI_KIND } from '../../../topology/const';
 import { KnativeResourceOverviewPage } from '../KnativeResourceOverviewPage';
 import SinkUriResourcesTab from '../SinkUriResourcesTab';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-  };
-});
-
 describe('KnativeResourceOverviewPage', () => {
   let item: OverviewItem;
   beforeEach(() => {

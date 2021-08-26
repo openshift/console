@@ -4,14 +4,6 @@ import useCloudShellAvailable from '@console/app/src/components/cloud-shell/useC
 import MarkdownExecuteSnippet, { ExecuteSnippet } from '../MarkdownExecuteSnippet';
 import { htmlDocumentForExecuteButton } from './test-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/app/src/components/cloud-shell/useCloudShellAvailable', () => ({
   default: jest.fn(),
 }));

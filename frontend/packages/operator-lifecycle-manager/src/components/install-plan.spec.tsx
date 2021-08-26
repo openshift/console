@@ -39,14 +39,6 @@ import * as modal from './modals/installplan-preview-modal';
 import { referenceForStepResource } from '.';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const i18nNS = 'public';
 
 describe('InstallPlanTableRow', () => {
@@ -171,11 +163,11 @@ describe('InstallPlansList', () => {
       .Header({} as ComponentProps)
       .map((header) => header.title);
     expect(headerTitles).toEqual([
-      'olm~Name',
-      'olm~Namespace',
-      'olm~Status',
-      'olm~Components',
-      'olm~Subscriptions',
+      'Name',
+      'Namespace',
+      'Status',
+      'Components',
+      'Subscriptions',
       '',
     ]);
   });
@@ -183,9 +175,9 @@ describe('InstallPlansList', () => {
   it('passes custom empty message for table', () => {
     const MsgComponent = wrapper.find<any>(Table).props().EmptyMsg;
     const msgWrapper = shallow(<MsgComponent />);
-    expect(msgWrapper.find(MsgBox).props().title).toEqual('olm~No InstallPlans found');
+    expect(msgWrapper.find(MsgBox).props().title).toEqual('No InstallPlans found');
     expect(msgWrapper.find(MsgBox).props().detail).toEqual(
-      'olm~InstallPlans are created automatically by subscriptions or manually using the CLI.',
+      'InstallPlans are created automatically by subscriptions or manually using the CLI.',
     );
   });
 });
@@ -203,7 +195,7 @@ describe('InstallPlansPage', () => {
   });
 
   it('renders a `MultiListPage` with the correct props', () => {
-    expect(wrapper.find(MultiListPage).props().title).toEqual('olm~InstallPlans');
+    expect(wrapper.find(MultiListPage).props().title).toEqual('InstallPlans');
     expect(wrapper.find(MultiListPage).props().showTitle).toBe(false);
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
@@ -293,7 +285,7 @@ describe('InstallPlanPreview', () => {
         .at(0)
         .render()
         .text(),
-    ).toEqual('olm~Approve');
+    ).toEqual('Approve');
   });
 
   it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
@@ -346,7 +338,7 @@ describe('InstallPlanPreview', () => {
         .at(1)
         .render()
         .text(),
-    ).toEqual('olm~Deny');
+    ).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {

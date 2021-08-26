@@ -3,14 +3,6 @@ import { Alert } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import EventSourceAlert from '../EventSourceAlert';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EventSourceAlert', () => {
   it('should not alert if eventSources are there', () => {
     const wrapper = shallow(

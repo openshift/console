@@ -5,14 +5,6 @@ import { UserPreferenceFieldType } from '@console/dynamic-plugin-sdk/src/extensi
 import { useUserSettings } from '@console/shared';
 import UserPreferenceDropdownField from '../UserPreferenceDropdownField';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
   useUserSettings: jest.fn(),
 }));

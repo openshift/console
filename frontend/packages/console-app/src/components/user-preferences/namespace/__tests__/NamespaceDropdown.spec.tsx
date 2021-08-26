@@ -8,14 +8,6 @@ import NamespaceDropdown from '../NamespaceDropdown';
 import { usePreferredNamespace } from '../usePreferredNamespace';
 import { mockNamespaces } from './namespace.data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/list-dropdown', () => ({
   useProjectOrNamespaceModel: jest.fn(),
 }));
@@ -31,7 +23,6 @@ jest.mock('../usePreferredNamespace', () => ({
 const mockProjectOrNamespaceModel = useProjectOrNamespaceModel as jest.Mock;
 const mockK8sWatchResource = useK8sWatchResource as jest.Mock;
 const mockUsePreferredNamespace = usePreferredNamespace as jest.Mock;
-const i18nPrefix = 'console-app~';
 
 describe('NamespaceDropdown', () => {
   let wrapper: ShallowWrapper;
@@ -66,6 +57,6 @@ describe('NamespaceDropdown', () => {
     mockUsePreferredNamespace.mockReturnValue([undefined, jest.fn(), true]);
     wrapper = shallow(<NamespaceDropdown />);
     expect(wrapper.find('[data-test="dropdown console.preferredNamespace"]').exists()).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toEqual(`${i18nPrefix}Last viewed`);
+    expect(wrapper.find(Select).props().selections).toEqual('Last viewed');
   });
 });

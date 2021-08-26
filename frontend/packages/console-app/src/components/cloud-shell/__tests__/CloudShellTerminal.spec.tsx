@@ -12,14 +12,6 @@ jest.mock('../useCloudShellWorkspace', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview2: () => [false, false],
 }));

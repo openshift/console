@@ -11,29 +11,19 @@ import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 import { BreakdownCardBody } from '../components/dashboards/common/capacity-breakdown/breakdown-body';
 import { getSelectOptions } from '../components/dashboards/common/capacity-breakdown/breakdown-dropdown';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
-const i18ns = 'ceph-storage-plugin';
-
 describe('BreakdownCard', () => {
   let wrapper: ShallowWrapper<DashboardItemProps>;
   const dropdownOptions = [
     {
-      name: `${i18ns}~${PROJECTS}`,
+      name: PROJECTS,
       id: PROJECTS,
     },
     {
-      name: `${i18ns}~${STORAGE_CLASSES}`,
+      name: STORAGE_CLASSES,
       id: STORAGE_CLASSES,
     },
     {
-      name: `${i18ns}~${PODS}`,
+      name: PODS,
       id: PODS,
     },
   ];

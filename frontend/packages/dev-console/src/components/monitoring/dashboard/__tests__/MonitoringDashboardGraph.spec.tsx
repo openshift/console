@@ -1,20 +1,10 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { TFunction } from 'i18next';
 import * as redux from 'react-redux';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
+import { t } from '../../../../../../../__mocks__/i18next';
 import { monitoringDashboardQueries } from '../../queries';
 import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGraph';
-
-const t = (key: TFunction) => key;
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
 
 describe('Monitoring Dashboard graph', () => {
   // FIXME upgrading redux types is causing many errors at this time

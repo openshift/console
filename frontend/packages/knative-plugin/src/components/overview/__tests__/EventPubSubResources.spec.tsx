@@ -17,15 +17,6 @@ type EventPubSubResourcesProps = React.ComponentProps<typeof EventPubSubResource
 type PubSubResourceOverviewListProps = React.ComponentProps<typeof PubSubResourceOverviewList>;
 let sampleItemData: EventPubSubResourcesProps;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-const i18nNS = 'knative-plugin';
-
 const sampleSubscribers: Subscriber[] = [
   {
     name: 'subscriber',
@@ -56,9 +47,9 @@ describe('EventPubSubResources', () => {
     wrapper = shallow(<EventPubSubResources item={sampleItemData.item} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual(`${i18nNS}~Event Sources`);
-    expect(findPubSubList.at(1).props().title).toEqual(`${i18nNS}~Channel`);
-    expect(findPubSubList.at(2).props().title).toEqual(`${i18nNS}~Subscriber`);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(1).props().title).toEqual('Channel');
+    expect(findPubSubList.at(2).props().title).toEqual('Subscriber');
   });
 
   it('should render related resources for channel without subscribers', () => {
@@ -71,7 +62,7 @@ describe('EventPubSubResources', () => {
     wrapper = shallow(<EventPubSubResources item={channelItemData} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     expect(findPubSubList).toHaveLength(1);
-    expect(findPubSubList.at(0).props().title).toEqual(`${i18nNS}~Event Sources`);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
   });
 
   it('should render related resources for channel with subscribers', () => {
@@ -86,7 +77,7 @@ describe('EventPubSubResources', () => {
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     const findPubSubSubscriberList = wrapper.find(PubSubSubscribers);
     expect(findPubSubList).toHaveLength(1);
-    expect(findPubSubList.at(0).props().title).toEqual(`${i18nNS}~Event Sources`);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
     expect(findPubSubSubscriberList).toHaveLength(1);
     expect(
       findPubSubSubscriberList
@@ -106,9 +97,9 @@ describe('EventPubSubResources', () => {
     wrapper = shallow(<EventPubSubResources item={brokerItemData} />);
     const findPubSubList = wrapper.find(PubSubResourceOverviewList);
     expect(findPubSubList).toHaveLength(3);
-    expect(findPubSubList.at(0).props().title).toEqual(`${i18nNS}~Event Sources`);
-    expect(findPubSubList.at(1).props().title).toEqual(`${i18nNS}~Pods`);
-    expect(findPubSubList.at(2).props().title).toEqual(`${i18nNS}~Deployments`);
+    expect(findPubSubList.at(0).props().title).toEqual('Event Sources');
+    expect(findPubSubList.at(1).props().title).toEqual('Pods');
+    expect(findPubSubList.at(2).props().title).toEqual('Deployments');
   });
 
   it('should render broker section with Subscribers if the kind is Broker and subscribers available ', () => {

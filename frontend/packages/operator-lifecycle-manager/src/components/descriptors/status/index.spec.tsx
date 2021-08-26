@@ -8,14 +8,6 @@ import { DescriptorDetailsItem, DescriptorDetailsItemProps } from '..';
 import { testModel, testResourceInstance } from '../../../../mocks';
 import { Descriptor, StatusCapability, SpecCapability, DescriptorType } from '../types';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const OBJ = {
   ...testResourceInstance,
   status: {
@@ -23,14 +15,6 @@ const OBJ = {
     service: 'someservice',
   },
 };
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
 
 describe('Status descriptor details items', () => {
   let wrapper: ReactWrapper<DescriptorDetailsItemProps>;
@@ -63,7 +47,7 @@ describe('Status descriptor details items', () => {
 
   it('renders status value as text if no matching capability component', () => {
     expect(wrapper.find('dt').text()).toEqual(descriptor.displayName);
-    expect(wrapper.find('dd .text-muted').text()).toEqual('public~None');
+    expect(wrapper.find('dd .text-muted').text()).toEqual('None');
   });
 
   it('renders a link status', () => {

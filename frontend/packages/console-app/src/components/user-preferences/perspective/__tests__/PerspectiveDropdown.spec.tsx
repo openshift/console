@@ -6,14 +6,6 @@ import PerspectiveDropdown from '../PerspectiveDropdown';
 import { usePreferredPerspective } from '../usePreferredPerspective';
 import { mockPerspectiveExtensions } from './perspective.data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 jest.mock('@console/plugin-sdk/src/api/useExtensions', () => ({
   useExtensions: jest.fn(),
 }));
@@ -24,7 +16,6 @@ jest.mock('../usePreferredPerspective', () => ({
 
 const useExtensionsMock = useExtensions as jest.Mock;
 const usePreferredPerspectiveMock = usePreferredPerspective as jest.Mock;
-const i18nPrefix = 'console-app~';
 
 describe('PerspectiveDropdown', () => {
   let wrapper: ShallowWrapper;
@@ -63,6 +54,6 @@ describe('PerspectiveDropdown', () => {
     expect(
       wrapper.find('[data-test="dropdown console.preferredPerspective"]').exists(),
     ).toBeTruthy();
-    expect(wrapper.find(Select).props().selections).toEqual(`${i18nPrefix}Last viewed`);
+    expect(wrapper.find(Select).props().selections).toEqual('Last viewed');
   });
 });

@@ -14,14 +14,6 @@ import ServerlessScalingSection from '../ServerlessScalingSection';
 
 let advanceSectionProps: React.ComponentProps<typeof AdvancedSection>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('AdvancedSection', () => {
   beforeEach(() => {
     advanceSectionProps = {

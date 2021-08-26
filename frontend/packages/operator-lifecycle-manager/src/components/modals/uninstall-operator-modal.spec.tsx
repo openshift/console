@@ -9,14 +9,6 @@ import { SubscriptionKind } from '../../types';
 import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall-operator-modal';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
@@ -63,7 +55,7 @@ describe(UninstallOperatorModal.name, () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('olm~Uninstall');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Uninstall');
   });
 
   it('calls `props.k8sKill` to delete the subscription when form is submitted', (done) => {

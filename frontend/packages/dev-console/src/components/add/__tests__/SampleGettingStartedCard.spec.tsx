@@ -6,11 +6,6 @@ import CatalogServiceProvider from '../../catalog/service/CatalogServiceProvider
 import { SampleGettingStartedCard } from '../SampleGettingStartedCard';
 import { loadingCatalogService, loadedCatalogService } from './SampleGettingStartedCard.data';
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));

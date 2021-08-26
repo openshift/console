@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
+import { t } from '../../__mocks__/i18next';
 import { EnvironmentPage, UnconnectedEnvironmentPage } from '../../public/components/environment';
 // eslint-disable-next-line import/no-duplicates
 import { FieldLevelHelp } from '../../public/components/utils';
@@ -8,8 +9,6 @@ import { FieldLevelHelp } from '../../public/components/utils';
 import * as utils from '../../public/components/utils';
 import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
-
-const i18nNS = 'public';
 
 describe(EnvironmentPage.name, () => {
   const configMaps = {},
@@ -28,7 +27,7 @@ describe(EnvironmentPage.name, () => {
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
-          t={(key) => key}
+          t={t}
         />
       );
       wrapperRO = shallow(environmentPageRO);
@@ -56,7 +55,7 @@ describe(EnvironmentPage.name, () => {
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={false}
-          t={(key) => key}
+          t={t}
         />
       );
       wrapperRO = shallow(environmentPageRO);
@@ -84,7 +83,7 @@ describe(EnvironmentPage.name, () => {
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={false}
-          t={(key) => key}
+          t={t}
         />
       );
       wrapper = shallow(environmentPage);
@@ -101,13 +100,13 @@ describe(EnvironmentPage.name, () => {
           .find({ type: 'submit', variant: 'primary' })
           .childAt(0)
           .text(),
-      ).toEqual(`${i18nNS}~Save`);
+      ).toEqual('Save');
       expect(
         wrapper
           .find({ type: 'button', variant: 'secondary' })
           .childAt(0)
           .text(),
-      ).toEqual(`${i18nNS}~Reload`);
+      ).toEqual('Reload');
     });
   });
 
@@ -120,7 +119,7 @@ describe(EnvironmentPage.name, () => {
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
-          t={(key) => key}
+          t={t}
         />
       );
       wrapper = shallow(environmentPage);
@@ -152,7 +151,7 @@ describe(EnvironmentPage.name, () => {
           rawEnvData={[{ env: [{ name: 'test', value: ':0', ID: 0 }] }]}
           envPath={[]}
           readOnly={true}
-          t={(key) => key}
+          t={t}
         />
       );
       wrapper = shallow(environmentPage);

@@ -11,11 +11,6 @@ jest.mock('react', () => ({
   useLayoutEffect: require.requireActual('react').useEffect,
 }));
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 jest.mock('../cluster-setup-identity-provider-link', () => ({
   useIdentityProviderLink: jest.fn(),
 }));
