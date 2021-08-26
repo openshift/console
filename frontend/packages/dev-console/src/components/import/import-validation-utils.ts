@@ -78,6 +78,9 @@ export const detectGitRepoName = (url: string): string | undefined => {
   if (!gitUrlRegex.test(url)) {
     return undefined;
   }
-  const name = url.split('/').pop();
+  const name = url
+    .replace(/\/$/, '')
+    .split('/')
+    .pop();
   return createComponentName(name);
 };
