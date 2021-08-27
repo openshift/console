@@ -1,8 +1,8 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const rhelData: VirtualMachineData = {
   name: `smoke-test-vm-rhel-${testName}`,

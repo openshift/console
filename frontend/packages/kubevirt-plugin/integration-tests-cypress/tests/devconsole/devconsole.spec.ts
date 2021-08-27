@@ -1,3 +1,5 @@
+import { testName } from '../../support';
+import { VirtualMachineData } from '../../types/vm';
 import {
   DEFAULTS_VALUES,
   OS_IMAGES_NS,
@@ -6,24 +8,22 @@ import {
   VM_ACTION,
   VM_ACTION_TIMEOUT,
   VM_STATUS,
-} from '../../const/index';
-import { testName } from '../../support';
-import { VirtualMachineData } from '../../types/vm';
+} from '../../utils/const/index';
 import {
   detailViewAction,
   detailViewDropdown,
   modalTitle,
   selectActionFromDropdown,
-} from '../../view/actions';
-import { alertTitle, confirmCloneButton } from '../../view/clone';
+} from '../../views/actions';
+import { alertTitle, confirmCloneButton } from '../../views/clone';
 import {
   addHeader,
   Perspective,
   switchPerspective,
   topologyHeader,
-} from '../../view/dev-perspective';
-import { detailsTab } from '../../view/selector';
-import { waitForStatus } from '../../view/vm';
+} from '../../views/dev-perspective';
+import { detailsTab } from '../../views/selector';
+import { waitForStatus } from '../../views/vm';
 
 const vm: VirtualMachineData = {
   name: `smoke-test-vm-${testName}`,

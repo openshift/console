@@ -1,6 +1,6 @@
 // Not in ssh.spec until this is fixed: https://github.com/cypress-io/eslint-plugin-cypress/issues/43
-import { VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
-import { detailsTab } from '../../view/selector';
+import { VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { detailsTab } from '../../views/selector';
 
 const AFTER_CREATE_WAIT_TIME = 3000;
 

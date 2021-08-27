@@ -1,9 +1,9 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import * as wizardView from '../../view/selector-wizard';
-import { virtualization } from '../../view/virtualization';
-import { wizard } from '../../view/wizard';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import * as wizardView from '../../views/selector-wizard';
+import { virtualization } from '../../views/virtualization';
+import { wizard } from '../../views/wizard';
 
 const vmData: VirtualMachineData = {
   name: `validate-nad-for-pxe-${testName}`,

@@ -1,6 +1,6 @@
 import vmiFixture from '../../fixtures/vmi-ephemeral';
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
+import { virtualization } from '../../views/virtualization';
 
 const vmiName = 'vmi-ephemeral';
 

@@ -1,11 +1,11 @@
-import { TEMPLATE_NAME } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
-import { addDisk } from '../../view/dialog';
-import { tab } from '../../view/tab';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { TEMPLATE_NAME } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { addDisk } from '../../views/dialog';
+import { tab } from '../../views/tab';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const disk1: Disk = {
   name: 'preallocation-disk-1',

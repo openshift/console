@@ -1,9 +1,9 @@
-import { OS } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Network, VirtualMachineData } from '../../types/vm';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { OS } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const nic0: Network = {
   name: 'nic-1',

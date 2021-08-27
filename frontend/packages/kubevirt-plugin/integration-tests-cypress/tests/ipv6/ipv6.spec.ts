@@ -1,11 +1,11 @@
-import { VM_ACTION } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { listViewAction } from '../../view/actions';
-import { ipPopOverContent } from '../../view/selector';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { VM_ACTION } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { listViewAction } from '../../views/actions';
+import { ipPopOverContent } from '../../views/selector';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `testvm-for-ipv6-${testName}`,
