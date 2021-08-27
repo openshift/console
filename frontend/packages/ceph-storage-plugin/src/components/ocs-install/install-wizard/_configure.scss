@@ -14,3 +14,7 @@
 .ceph__multus-dropdown-button {
   min-width: 18em;
 }
+
+.ceph__multus-tech-preview-badge--margin {
+  margin: calc(var(--pf-global--spacer--xs) * -1) 0 0 calc(var(--pf-global--spacer--sm) * -2);
+}
