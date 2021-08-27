@@ -22,6 +22,8 @@ const menuActions = Kebab.factory.common;
 export const ingressValidHosts = (ingress) =>
   _.map(_.get(ingress, 'spec.rules', []), 'host').filter(_.isString);
 
+const getPort = (service) => service?.port?.number || service?.port?.name;
+
 const getHosts = (ingress) => {
   const hosts = ingressValidHosts(ingress);
 
@@ -103,10 +105,11 @@ const RulesHeader = () => {
   const { t } = useTranslation();
   return (
     <div className="row co-m-table-grid__head">
-      <div className="col-xs-3">{t('public~Host')}</div>
-      <div className="col-xs-3">{t('public~Path')}</div>
-      <div className="col-xs-3">{t('public~Service')}</div>
-      <div className="col-xs-2">{t('public~Service port')}</div>
+      <div className="col-xs-6 col-sm-4 col-md-2">{t('public~Host')}</div>
+      <div className="col-xs-6 col-sm-4 col-md-2">{t('public~Path')}</div>
+      <div className="col-md-3 hidden-sm hidden-xs">{t('public~Path type')}</div>
+      <div className="col-sm-4 col-md-2 hidden-xs">{t('public~Service')}</div>
+      <div className="col-md-2 hidden-sm hidden-xs">{t('public~Service port')}</div>
     </div>
   );
 };
@@ -114,20 +117,23 @@ const RulesHeader = () => {
 const RulesRow = ({ rule, namespace }) => {
   return (
     <div className="row co-resource-list__item">
-      <div className="col-xs-3 co-break-word">
+      <div className="col-xs-6 col-sm-4 col-md-2 co-break-word">
         <div>{rule.host}</div>
       </div>
-      <div className="col-xs-3 co-break-word">
+      <div className="col-xs-6 col-sm-4 col-md-2 co-break-word">
         <div>{rule.path}</div>
       </div>
-      <div className="col-xs-3">
+      <div className="col-md-3 hidden-sm hidden-xs co-break-word">
+        <div>{rule.pathType}</div>
+      </div>
+      <div className="col-sm-4 col-md-2 hidden-xs">
         {rule.serviceName ? (
           <ResourceLink kind="Service" name={rule.serviceName} namespace={namespace} />
         ) : (
           '-'
         )}
       </div>
-      <div className="col-xs-2">
+      <div className="col-xs-2 hidden-sm hidden-xs">
         <div>{rule.servicePort || '-'}</div>
       </div>
     </div>
@@ -144,16 +150,17 @@ const RulesRows = (props) => {
         rules.push({
           host: rule.host || '*',
           path: '*',
-          serviceName: _.get(props.spec, 'backend.serviceName'),
-          servicePort: _.get(props.spec, 'backend.servicePort'),
+          serviceName: props.spec?.defaultBackend?.service?.name,
+          servicePort: getPort(props.spec?.defaultBackend?.service),
         });
       } else {
         _.forEach(paths, (path) => {
           rules.push({
             host: rule.host || '*',
             path: path.path || '*',
-            serviceName: path.backend.serviceName,
-            servicePort: path.backend.servicePort,
+            pathType: path.pathType,
+            serviceName: path.backend.service?.name,
+            servicePort: getPort(path.backend.service),
           });
         });
       }
@@ -175,16 +182,12 @@ const Details = ({ obj: ingress }) => {
     <>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Ingress details')} />
-        <div className="row">
-          <div className="col-md-6">
-            <ResourceSummary resource={ingress}>
-              <dt>{t('public~TLS certificate')}</dt>
-              <dd>
-                <TLSCert ingress={ingress} />
-              </dd>
-            </ResourceSummary>
-          </div>
-        </div>
+        <ResourceSummary resource={ingress}>
+          <dt>{t('public~TLS certificate')}</dt>
+          <dd>
+            <TLSCert ingress={ingress} />
+          </dd>
+        </ResourceSummary>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text={t('public~Ingress rules')} />
