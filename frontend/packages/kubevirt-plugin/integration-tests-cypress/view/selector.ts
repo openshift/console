@@ -67,3 +67,6 @@ export enum storageClass {
 
 // yaml page
 export const createYAMLButton = 'button[data-test="save-changes"]';
+
+// multiple IP pop-up
+export const ipPopOverContent = '.pf-c-popover__content';
