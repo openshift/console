@@ -88,8 +88,8 @@ export const isSecretKeyRefPresent = (dataObj: {
   secretKeyRef: { name: string; key: string };
 }): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
 
-export const getKafkaSourceResource = (sourceFormData: any): K8sResourceKind => {
-  const baseResource = getEventSourcesDepResource(sourceFormData.formData);
+export const getKafkaSourceResource = (formData: any): K8sResourceKind => {
+  const baseResource = getEventSourcesDepResource(formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
     ...net,
@@ -125,18 +125,23 @@ export const loadYamlData = (formData: EventSourceSyncFormData) => {
   return yamlDataObj;
 };
 
+export const getEventSourceResource = (formData: EventSourceFormData) => {
+  switch (formData.type) {
+    case EventSources.KafkaSource:
+      return getKafkaSourceResource(formData);
+    default:
+      return getEventSourcesDepResource(formData);
+  }
+};
+
 export const getCatalogEventSourceResource = (
   sourceFormData: EventSourceSyncFormData,
 ): K8sResourceKind => {
   if (sourceFormData.editorType === EditorType.YAML) {
     return loadYamlData(sourceFormData);
   }
-  switch (sourceFormData.formData.type) {
-    case EventSources.KafkaSource:
-      return getKafkaSourceResource(sourceFormData);
-    default:
-      return getEventSourcesDepResource(sourceFormData.formData);
-  }
+  const { formData } = sourceFormData;
+  return getEventSourceResource(formData);
 };
 
 export const getEventSourceData = (source: string) => {

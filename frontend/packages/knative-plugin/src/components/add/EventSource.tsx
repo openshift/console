@@ -16,6 +16,7 @@ import { RootState } from '@console/internal/redux';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
 import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
+import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { KNATIVE_EVENT_SOURCE_APIGROUP } from '../../const';
 import { CamelKameletBindingModel } from '../../models';
@@ -25,13 +26,19 @@ import {
   getEventSourceData,
   handleRedirect,
   getKameletSourceData,
+  getEventSourceResource,
 } from '../../utils/create-eventsources-utils';
 import { getEventSourceModels } from '../../utils/fetch-dynamic-eventsources-utils';
 import { EVENT_SOURCES_APP } from './const';
 import { eventSourceValidationSchema } from './eventSource-validation-utils';
 import EventSourceForm from './EventSourceForm';
 import EventSourceMetaDescription from './EventSourceMetadataDescription';
-import { EventSourceSyncFormData, SinkType, EventSourceMetaData } from './import-types';
+import {
+  EventSourceSyncFormData,
+  SinkType,
+  EventSourceMetaData,
+  EventSourceFormData,
+} from './import-types';
 
 interface EventSourceProps {
   namespace: string;
@@ -87,34 +94,46 @@ export const EventSource: React.FC<Props> = ({
   const eventSourceMetaDescription = (
     <EventSourceMetaDescription normalizedSource={normalizedSource} />
   );
+
+  const initialFormData: EventSourceFormData = {
+    project: {
+      name: namespace || '',
+      displayName: '',
+      description: '',
+    },
+    application: {
+      initial: sanitizeApplicationValue(activeApplication),
+      name: sanitizeApplicationValue(activeApplication) || EVENT_SOURCES_APP,
+      selectedKey: activeApplication,
+    },
+    name: selSourceName,
+    apiVersion: selApiVersion,
+    sinkType: SinkType.Resource,
+    sink: {
+      apiVersion: sinkApiVersion,
+      kind: sinkKind,
+      name: sinkName,
+      key: sinkKey,
+      uri: '',
+    },
+    type: sourceKind,
+    data: sourceData,
+  };
+
+  const initialYamlData: string = safeJSToYAML(
+    getEventSourceResource(initialFormData),
+    'yamlData',
+    {
+      skipInvalid: true,
+      noRefs: true,
+    },
+  );
+
   const catalogInitialValues: EventSourceSyncFormData = {
     editorType: EditorType.Form,
     showCanUseYAMLMessage: true,
-    formData: {
-      project: {
-        name: namespace || '',
-        displayName: '',
-        description: '',
-      },
-      application: {
-        initial: sanitizeApplicationValue(activeApplication),
-        name: sanitizeApplicationValue(activeApplication) || EVENT_SOURCES_APP,
-        selectedKey: activeApplication,
-      },
-      name: selSourceName,
-      apiVersion: selApiVersion,
-      sinkType: SinkType.Resource,
-      sink: {
-        apiVersion: sinkApiVersion,
-        kind: sinkKind,
-        name: sinkName,
-        key: sinkKey,
-        uri: '',
-      },
-      type: sourceKind,
-      data: sourceData,
-    },
-    yamlData: '',
+    formData: initialFormData,
+    yamlData: initialYamlData,
   };
 
   const createResources = (rawFormData: any): Promise<K8sResourceKind> => {
