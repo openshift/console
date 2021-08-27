@@ -309,6 +309,8 @@ export const MachineSetList: React.FC = (props) => {
       },
       {
         title: t('public~Instance type'),
+        sortFunc: 'instanceType',
+        transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
