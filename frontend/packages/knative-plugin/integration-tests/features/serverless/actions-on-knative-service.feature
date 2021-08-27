@@ -243,6 +243,3 @@ Feature: Perform actions on knative service
               And Add more link is enabled
               And save, cancel buttons are displayed
 
-        @regression @to-do
-        Scenario: Deploy knative service and wait for auto scaling
-
