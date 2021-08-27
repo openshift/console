@@ -49,6 +49,8 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
     verb: 'create',
   });
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'knative.addBrokerForm.editor.lastView';
+
   const convertYamlToForm = (yamlBroker: K8sResourceKind) => {
     const appGroupName = yamlBroker.metadata?.labels?.[LABEL_PART_OF];
     const newFormData = {
@@ -76,7 +78,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
   };
 
   const sanitizeToYaml = () =>
-    safeJSToYAML(convertFormToBrokerYaml(values), 'yamlData', {
+    safeJSToYAML(convertFormToBrokerYaml(values.formData), 'yamlData', {
       skipInvalid: true,
     });
 
@@ -128,6 +130,7 @@ const AddBrokerForm: React.FC<FormikProps<AddBrokerFormYamlValues> & AddBrokerFo
               editor: yamlEditor,
               sanitizeTo: sanitizeToYaml,
             }}
+            lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
           />
         ) : (
           <Alert variant="default" title={t('knative-plugin~Broker cannot be created')} isInline>

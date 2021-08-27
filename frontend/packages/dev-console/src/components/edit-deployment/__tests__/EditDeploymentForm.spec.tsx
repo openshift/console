@@ -36,6 +36,17 @@ jest.mock('../ContainerField', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(() => [undefined, jest.fn(), true]),
+}));
+
+jest.mock(
+  '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod',
+  () => ({
+    usePreferredCreateEditMethod: jest.fn(() => [undefined, true]),
+  }),
+);
+
 const mockedContainerField = ContainerField as jest.Mock<React.FC>;
 
 const handleSubmit = jest.fn();

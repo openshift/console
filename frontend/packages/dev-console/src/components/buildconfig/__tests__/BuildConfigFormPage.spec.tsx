@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { configure, render } from '@testing-library/react';
+import { configure, render, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
+import { usePreferredCreateEditMethod } from '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import store from '@console/internal/redux';
+import { useUserSettings } from '@console/shared/src';
 import BuildConfigFormPage, { BuildConfigFormPageProps } from '../BuildConfigFormPage';
 import { BuildConfig } from '../types';
 
@@ -23,14 +25,33 @@ jest.mock('../sections/EditorField', () =>
   require.requireActual('@console/shared/src/components/formik-fields/TextAreaField'),
 );
 
+jest.mock('@console/shared/src/hooks/useUserSettings', () => ({
+  useUserSettings: jest.fn(),
+}));
+
+jest.mock(
+  '@console/app/src/components/user-preferences/synced-editor/usePreferredCreateEditMethod',
+  () => ({
+    usePreferredCreateEditMethod: jest.fn(),
+  }),
+);
+
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
+const useUserSettingsMock = useUserSettings as jest.Mock;
+const usePreferredCreateEditMethodMock = usePreferredCreateEditMethod as jest.Mock;
 
 const Wrapper: React.FC<{}> = ({ children }) => <Provider store={store}>{children}</Provider>;
 
 configure({ testIdAttribute: 'data-test' });
 
 beforeEach(() => {
+  useUserSettingsMock.mockReturnValue([undefined, jest.fn(), true]);
+  usePreferredCreateEditMethodMock.mockReturnValue([[undefined, true]]);
+});
+
+afterEach(() => {
   jest.resetAllMocks();
+  cleanup();
 });
 
 describe('BuildConfigFormPage', () => {

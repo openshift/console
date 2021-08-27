@@ -193,6 +193,29 @@
   {
     "type": "console.user-preference/item",
     "properties": {
+      "id": "console.preferredCreateEditMethod",
+      "label": "%console-app~Create/Edit resource method%",
+      "groupId": "general",
+      "description": "%console-app~If both form and YAML are available, the console defaults to your selection.%",
+      "field": {
+        "type": "dropdown",
+        "userSettingsKey": "console.preferredCreateEditMethod",
+        "defaultValue": "latest",
+        "options": [
+          {
+            "value": "latest",
+            "label": "%console-app~Last viewed%"
+          },
+          { "value": "form", "label": "%console-app~Form%" },
+          { "value": "yaml", "label": "%console-app~YAML%" }
+        ]
+      },
+      "insertAfter": "topology.preferredView"
+    }
+  },
+  {
+    "type": "console.user-preference/item",
+    "properties": {
       "id": "console.preferredLanguage",
       "label": "%console-app~Language%",
       "groupId": "language",

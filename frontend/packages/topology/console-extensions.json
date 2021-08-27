@@ -204,7 +204,7 @@
           { "value": "list", "label": "%topology~List%" }
         ]
       },
-      "insertBefore": "console.preferredCreateMethod",
+      "insertBefore": "console.preferredCreateEditMethod",
       "insertAfter": "console.preferredNamespace"
     }
   }
