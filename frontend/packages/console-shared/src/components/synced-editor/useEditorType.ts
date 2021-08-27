@@ -15,7 +15,7 @@ export const useEditorType = (
     lastViewedEditorType,
     setLastViewedEditorType,
     lastViewedEditorTypeLoaded,
-  ] = useUserSettings<EditorType>(lastViewUserSettingKey);
+  ] = useUserSettings<EditorType>(lastViewUserSettingKey, defaultValue);
   const [preferredEditorType, preferredEditorTypeLoaded] = usePreferredCreateEditMethod();
   const isEditorTypeEnabled = (type: EditorType): boolean =>
     checkEditorTypeEnabled ? checkEditorTypeEnabled(type) : true;
@@ -36,7 +36,7 @@ export const useEditorType = (
     return defaultValue;
   };
 
-  const [activeEditorType, setActiveEditorType] = React.useState<EditorType>(null);
+  const [activeEditorType, setActiveEditorType] = React.useState<EditorType>(defaultValue);
   const setEditorType = (type: EditorType) => {
     setActiveEditorType(type);
     setLastViewedEditorType(type);

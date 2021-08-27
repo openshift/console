@@ -83,21 +83,21 @@ describe('useEditorType', () => {
     expect(loaded).toBe(true);
   });
 
-  it('should return false for loaded and null for editor type if preferred editor type has not loaded', () => {
+  it('should return false for loaded and defaultValue for editor type if preferred editor type has not loaded', () => {
     mockUserSettings.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     mockUsePreferredCreateEditMethod.mockReturnValue([undefined, false]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
     const [editorType, , loaded] = result.current;
-    expect(editorType).toEqual(null);
+    expect(editorType).toEqual(defaultValue);
     expect(loaded).toBe(false);
   });
 
-  it('should return false for loaded and null for editor type if last viewed editor type has not loaded', () => {
+  it('should return false for loaded and defalut value for editor type if last viewed editor type has not loaded', () => {
     mockUserSettings.mockReturnValue([undefined, jest.fn(), false]);
     mockUsePreferredCreateEditMethod.mockReturnValue([EditorType.YAML, true]);
     const { result } = testHook(() => useEditorType(lastViewUserSettingKey, defaultValue));
     const [editorType, , loaded] = result.current;
-    expect(editorType).toEqual(null);
+    expect(editorType).toEqual(defaultValue);
     expect(loaded).toBe(false);
   });
 });

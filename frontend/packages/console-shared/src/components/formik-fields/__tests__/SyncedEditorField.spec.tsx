@@ -3,13 +3,13 @@ import { Alert } from '@patternfly/react-core';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { useField } from 'formik';
 import * as _ from 'lodash';
+import { LoadingBox } from '@console/internal/components/utils';
+import { EditorType } from '../../synced-editor/editor-toggle';
+import { useEditorType } from '../../synced-editor/useEditorType';
 import DynamicFormField from '../DynamicFormField';
 import RadioGroupField from '../RadioGroupField';
 import SyncedEditorField from '../SyncedEditorField';
 import YAMLEditorField from '../YAMLEditorField';
-import { LoadingBox } from '@console/internal/components/utils';
-import { EditorType } from '../../synced-editor/editor-toggle';
-import { useEditorType } from '../../synced-editor/useEditorType';
 
 jest.mock('formik', () => ({
   useField: jest.fn(() => [{ value: 'form' }, {}]),
@@ -100,7 +100,7 @@ describe('SyncedEditorField', () => {
     mockUseEditorType.mockReturnValue([EditorType.YAML, jest.fn(), true]);
     const newProps = _.cloneDeep(props);
     newProps.formContext.isDisabled = true;
-    wrapper = shallow(<SyncedEditorField {...newProps} />
+    wrapper = shallow(<SyncedEditorField {...newProps} />);
     expect(wrapper.find(Alert).exists()).toBe(true);
     expect(
       wrapper
