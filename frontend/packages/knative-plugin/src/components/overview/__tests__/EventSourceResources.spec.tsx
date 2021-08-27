@@ -21,14 +21,6 @@ import { getEventSourceResponse } from '../../../topology/__tests__/topology-kna
 import EventSourceOwnedList from '../EventSourceOwnedList';
 import EventSourceResources from '../EventSourceResources';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const current = {
   obj: {
     metadata: {
@@ -124,8 +116,6 @@ jest.mock('@console/shared', () => {
   };
 });
 
-const i18nNS = 'knative-plugin';
-
 describe('EventSinkServicesOverviewList', () => {
   let podData;
   beforeEach(() => {
@@ -141,7 +131,7 @@ describe('EventSinkServicesOverviewList', () => {
       'status',
     ]);
     const wrapper = shallow(<EventSourceResources obj={mockData} />);
-    expect(wrapper.find('span').text()).toBe(`${i18nNS}~No sink found for this resource.`);
+    expect(wrapper.find('span').text()).toBe('No sink found for this resource.');
   });
 
   it('should have ResourceLink with proper kind for sink to knSvc', () => {
@@ -211,7 +201,7 @@ describe('EventSinkServicesOverviewList', () => {
     expect(findSidebarSectionHeading).toHaveLength(2);
     expect(findResourceLink).toHaveLength(2);
     expect(findResourceLink.at(1).props().kind).toEqual('Deployment');
-    expect(findSidebarSectionHeading.at(1).props().text).toEqual('knative-plugin~Deployment');
+    expect(findSidebarSectionHeading.at(1).props().text).toEqual('Deployment');
   });
 
   it('should show pods if present', () => {

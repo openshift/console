@@ -10,14 +10,6 @@ import TrafficSplittingModal from '../TrafficSplittingModal';
 
 type TrafficSplittingModalProps = React.ComponentProps<typeof TrafficSplittingModal>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('TrafficSplittingModal', () => {
   let wrapper: ShallowWrapper<TrafficSplittingModalProps>;
   let formProps: TrafficSplittingModalProps;

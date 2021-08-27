@@ -7,14 +7,6 @@ import EventSourceForm from '../EventSourceForm';
 
 let eventSourceFormProps: React.ComponentProps<typeof EventSourceForm>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EventSourceForm', () => {
   beforeEach(() => {
     eventSourceFormProps = {

@@ -12,14 +12,6 @@ import {
 
 const MOCK_DATA = [{ x: 1, y: 100 }];
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('<BarChart />', () => {
   it('should render a bar chart', () => {
     const wrapper = shallow(<BarChart title="Test Bar" data={MOCK_DATA} />);

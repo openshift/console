@@ -16,7 +16,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.minpods = 3.2;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Min Pods must be an integer.');
+        expect(err.message).toBe('Min Pods must be an integer.');
       });
     });
 
@@ -25,7 +25,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.minpods = -3;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Min Pods must be greater than or equal to 0.');
+        expect(err.message).toBe('Min Pods must be greater than or equal to 0.');
       });
     });
 
@@ -35,7 +35,7 @@ export const serverlessCommonTests = (
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
         expect(err.message).toBe(
-          `devconsole~Min Pods must be lesser than or equal to {{maxSafeInteger}}.`,
+          `Min Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
         );
       });
     });
@@ -45,7 +45,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.maxpods = 3.2;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Max Pods must be an integer.');
+        expect(err.message).toBe('Max Pods must be an integer.');
       });
     });
 
@@ -54,7 +54,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.maxpods = 0;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Max Pods must be greater than or equal to 1.');
+        expect(err.message).toBe('Max Pods must be greater than or equal to 1.');
       });
     });
 
@@ -64,7 +64,7 @@ export const serverlessCommonTests = (
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
         expect(err.message).toBe(
-          `devconsole~Max Pods must be lesser than or equal to {{maxSafeInteger}}.`,
+          `Max Pods must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
         );
       });
     });
@@ -75,7 +75,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.maxpods = 5;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(`devconsole~Max Pods must be greater than or equal to Min Pods.`);
+        expect(err.message).toBe(`Max Pods must be greater than or equal to Min Pods.`);
       });
     });
 
@@ -84,7 +84,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencytarget = 3.2;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Concurrency target must be an integer.');
+        expect(err.message).toBe('Concurrency target must be an integer.');
       });
     });
 
@@ -93,9 +93,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencytarget = -3;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(
-          'devconsole~Concurrency target must be greater than or equal to 0.',
-        );
+        expect(err.message).toBe('Concurrency target must be greater than or equal to 0.');
       });
     });
 
@@ -105,7 +103,7 @@ export const serverlessCommonTests = (
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
         expect(err.message).toBe(
-          `devconsole~Concurrency target must be lesser than or equal to {{maxSafeInteger}}.`,
+          `Concurrency target must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
         );
       });
     });
@@ -115,7 +113,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencylimit = 3.2;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe('devconsole~Concurrency limit must be an integer.');
+        expect(err.message).toBe('Concurrency limit must be an integer.');
       });
     });
 
@@ -124,9 +122,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencylimit = -3;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(
-          'devconsole~Concurrency limit must be greater than or equal to 0.',
-        );
+        expect(err.message).toBe('Concurrency limit must be greater than or equal to 0.');
       });
     });
 
@@ -136,7 +132,7 @@ export const serverlessCommonTests = (
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
         expect(err.message).toBe(
-          `devconsole~Concurrency limit must be lesser than or equal to {{maxSafeInteger}}.`,
+          `Concurrency limit must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
         );
       });
     });
@@ -146,7 +142,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.autoscale.autoscalewindowUnit = 's';
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(`devconsole~Autoscale window must be between 6s and 1h.`);
+        expect(err.message).toBe(`Autoscale window must be between 6s and 1h.`);
       });
     });
     it('should throw and error if serverless scaling autoscalewindow is greater than 1h', async () => {
@@ -155,7 +151,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.autoscale.autoscalewindowUnit = 'h';
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(`devconsole~Autoscale window must be between 6s and 1h.`);
+        expect(err.message).toBe(`Autoscale window must be between 6s and 1h.`);
       });
     });
     it('should throw and error if serverless scaling concurrencyutilization is greater than 100', async () => {
@@ -163,7 +159,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencyutilization = 101;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(`devconsole~Concurrency utilization must be between 0 and 100.`);
+        expect(err.message).toBe(`Concurrency utilization must be between 0 and 100.`);
       });
     });
     it('should throw and error if serverless scaling concurrencyutilization is less than 0', async () => {
@@ -171,7 +167,7 @@ export const serverlessCommonTests = (
       mockData.serverless.scaling.concurrencyutilization = -1;
       await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
       await validationSchema.validate(mockData).catch((err) => {
-        expect(err.message).toBe(`devconsole~Concurrency utilization must be between 0 and 100.`);
+        expect(err.message).toBe(`Concurrency utilization must be between 0 and 100.`);
       });
     });
   });

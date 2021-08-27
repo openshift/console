@@ -11,20 +11,7 @@ import {
   DroppableFileInput as BasicDroppableInput,
 } from '../../../public/components/cluster-settings/basicauth-idp-form';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
-export const controlButtonTest = (wrapper: ShallowWrapper, i18nNamespace) => {
+export const controlButtonTest = (wrapper: ShallowWrapper) => {
   expect(wrapper.find(ButtonBar).exists()).toBe(true);
   expect(
     wrapper
@@ -32,21 +19,21 @@ export const controlButtonTest = (wrapper: ShallowWrapper, i18nNamespace) => {
       .at(0)
       .childAt(0)
       .text(),
-  ).toEqual(`${i18nNamespace}~Add`);
+  ).toEqual('Add');
   expect(
     wrapper
       .find(Button)
       .at(1)
       .childAt(0)
       .text(),
-  ).toEqual(`${i18nNamespace}~Cancel`);
+  ).toEqual('Cancel');
 };
 
 describe('Add Identity Provider: BasicAuthentication', () => {
   let wrapper: ShallowWrapper<{}, AddBasicAuthPageState>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddBasicAuthPage />);
+    wrapper = shallow(<AddBasicAuthPage />).dive();
   });
 
   it('should render AddBasicAuthPage component', () => {
@@ -54,7 +41,7 @@ describe('Add Identity Provider: BasicAuthentication', () => {
   });
 
   it('should render correct Basic Authentication IDP page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: Basic Authentication`)).toBeTruthy();
+    expect(wrapper.contains('Add Identity Provider: Basic Authentication')).toBeTruthy();
   });
 
   it('should render the form elements of AddBasicAuthPage component', () => {
@@ -65,7 +52,7 @@ describe('Add Identity Provider: BasicAuthentication', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper, 'public');
+    controlButtonTest(wrapper);
   });
 
   it('should prefill basic-auth in name field by default', () => {

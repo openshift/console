@@ -47,14 +47,6 @@ jest.mock('formik', () => {
   };
 });
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));

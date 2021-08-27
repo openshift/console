@@ -5,20 +5,6 @@ import { ButtonBar } from '@console/internal/components/utils';
 import { NetworkPolicyForm } from '../../components/network-policies/network-policy-form';
 import { NetworkPolicy } from '../../components/network-policies/network-policy-model';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
 describe('NetworkPolicyForm', () => {
   let wrapper: ShallowWrapper<{}, { networkPolicy: NetworkPolicy }>;
 
@@ -44,13 +30,13 @@ describe('NetworkPolicyForm', () => {
         .at(0)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Create`);
+    ).toEqual('Create');
     expect(
       buttonBar
         .find(Button)
         .at(1)
         .childAt(0)
         .text(),
-    ).toEqual(`${i18nNS}~Cancel`);
+    ).toEqual('Cancel');
   });
 });

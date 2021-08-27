@@ -8,14 +8,6 @@ import { ExportModel } from '../../../models';
 import ExportApplication from '../ExportApplication';
 import { mockExportData } from './export-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ExportApplication', () => {
   const spyUseAccessReview = jest.spyOn(utils, 'useAccessReview');
   const spyUseFlag = jest.spyOn(shared, 'useFlag');

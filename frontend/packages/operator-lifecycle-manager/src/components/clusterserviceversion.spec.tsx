@@ -60,14 +60,6 @@ jest.mock('@console/internal/components/utils/rbac', () => ({
   useAccessReview: () => true,
 }));
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/shared/src/hooks/redux-selectors', () => {
   return {
     useActiveNamespace: jest.fn(),
@@ -228,11 +220,11 @@ describe(ClusterServiceVersionList.displayName, () => {
     const header = wrapper.find<TableProps>(Table).props().Header;
     expect(header.name).toEqual('SingleProjectTableHeader');
     const headerColumns = header({} as ComponentProps);
-    expect(headerColumns[0].title).toEqual('olm~Name');
-    expect(headerColumns[1].title).toEqual('olm~Managed Namespaces');
-    expect(headerColumns[2].title).toEqual('olm~Status');
-    expect(headerColumns[3].title).toEqual('olm~Last updated');
-    expect(headerColumns[4].title).toEqual('olm~Provided APIs');
+    expect(headerColumns[0].title).toEqual('Name');
+    expect(headerColumns[1].title).toEqual('Managed Namespaces');
+    expect(headerColumns[2].title).toEqual('Status');
+    expect(headerColumns[3].title).toEqual('Last updated');
+    expect(headerColumns[4].title).toEqual('Provided APIs');
     expect(headerColumns[5].title).toEqual('');
   });
   it('renders `List` with AllProjectTableHeader for all-namespaces scoped CSV', () => {
@@ -248,12 +240,12 @@ describe(ClusterServiceVersionList.displayName, () => {
     const header = wrapper.find<TableProps>(Table).props().Header;
     expect(header.name).toEqual('AllProjectsTableHeader');
     const headerColumns = header({} as ComponentProps);
-    expect(headerColumns[0].title).toEqual('olm~Name');
-    expect(headerColumns[1].title).toEqual('olm~Namespace');
-    expect(headerColumns[2].title).toEqual('olm~Managed Namespaces');
-    expect(headerColumns[3].title).toEqual('olm~Status');
-    expect(headerColumns[4].title).toEqual('olm~Last updated');
-    expect(headerColumns[5].title).toEqual('olm~Provided APIs');
+    expect(headerColumns[0].title).toEqual('Name');
+    expect(headerColumns[1].title).toEqual('Namespace');
+    expect(headerColumns[2].title).toEqual('Managed Namespaces');
+    expect(headerColumns[3].title).toEqual('Status');
+    expect(headerColumns[4].title).toEqual('Last updated');
+    expect(headerColumns[5].title).toEqual('Provided APIs');
     expect(headerColumns[6].title).toEqual('');
   });
 });
@@ -329,7 +321,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .find(SectionHeading)
         .at(1)
         .props().text,
-    ).toEqual('olm~Description');
+    ).toEqual('Description');
   });
 
   it('renders creation date from ClusterServiceVersion', () => {
@@ -340,7 +332,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders list of maintainers from ClusterServiceVersion', () => {
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Maintainers</dt>))
+      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
       .parents()
       .at(0)
       .find('dd');
@@ -366,7 +358,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders important links from ClusterServiceVersion', () => {
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Links</dt>))
+      .findWhere((node) => node.equals(<dt>Links</dt>))
       .parents()
       .at(0)
       .find('dd');
@@ -385,25 +377,25 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper.setProps({ obj: emptyClusterServiceVersion });
 
     const provider = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Provider</dt>))
+      .findWhere((node) => node.equals(<dt>Provider</dt>))
       .parents()
       .at(0)
       .find('dd')
       .at(0);
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Links</dt>))
+      .findWhere((node) => node.equals(<dt>Links</dt>))
       .parents()
       .at(0)
       .find('dd');
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>olm~Maintainers</dt>))
+      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
       .parents()
       .at(0)
       .find('dd');
 
-    expect(provider.text()).toEqual('olm~Not available');
-    expect(links.text()).toEqual('olm~Not available');
-    expect(maintainers.text()).toEqual('olm~Not available');
+    expect(provider.text()).toEqual('Not available');
+    expect(links.text()).toEqual('Not available');
+    expect(maintainers.text()).toEqual('Not available');
   });
 
   it('renders info section for ClusterServiceVersion', () => {
@@ -413,7 +405,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .at(1)
         .find(SectionHeading)
         .props().text,
-    ).toEqual('olm~ClusterServiceVersion details');
+    ).toEqual('ClusterServiceVersion details');
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
@@ -423,7 +415,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .at(2)
         .find(SectionHeading)
         .props().text,
-    ).toEqual('olm~Conditions');
+    ).toEqual('Conditions');
   });
 
   it('does not render service accounts section if empty', () => {
@@ -438,7 +430,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     expect(emptyTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(0);
     expect(
       wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'olm~Operator ServiceAccounts',
+        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
       ).length,
     ).toEqual(0);
   });
@@ -456,7 +448,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     expect(duplicateTestClusterServiceVersion.spec.install.spec.permissions.length).toEqual(2);
     expect(
       wrapper.findWhere(
-        (node) => node.type() === 'dt' && node.text() === 'olm~Operator ServiceAccounts',
+        (node) => node.type() === 'dt' && node.text() === 'Operator ServiceAccounts',
       ).length,
     ).toEqual(1);
     expect(

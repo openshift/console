@@ -13,14 +13,6 @@ import IconSection from '../../import/section/IconSection';
 import { ApplicationFlowType } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EditApplicationForm', () => {
   const componentProps = {
     ...formikFormProps,

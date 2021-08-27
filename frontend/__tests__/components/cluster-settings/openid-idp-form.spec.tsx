@@ -10,24 +10,11 @@ import {
 } from '../../../public/components/cluster-settings/openid-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
 describe('Add Identity Provider: OpenID Connect', () => {
   let wrapper: ShallowWrapper<{}, AddOpenIDIDPPageState>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddOpenIDIDPPage />);
+    wrapper = shallow(<AddOpenIDIDPPage />).dive();
   });
 
   it('should render AddOpenIDIDPPage component', () => {
@@ -35,7 +22,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render correct OpenID Connect IDP page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: OpenID Connect`)).toBeTruthy();
+    expect(wrapper.contains('Add Identity Provider: OpenID Connect')).toBeTruthy();
   });
 
   it('should render the form elements of AddOpenIDIDPPage component', () => {
@@ -48,7 +35,7 @@ describe('Add Identity Provider: OpenID Connect', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper, 'public');
+    controlButtonTest(wrapper);
   });
 
   it('should prefill openid in name field by default', () => {

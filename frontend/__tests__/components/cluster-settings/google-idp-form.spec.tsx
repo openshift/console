@@ -8,24 +8,11 @@ import {
 } from '../../../public/components/cluster-settings/google-idp-form';
 import { controlButtonTest } from './basicauth-idp-form.spec';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    withTranslation: () => (Component) => {
-      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
-      return Component;
-    },
-  };
-});
-
-const i18nNS = 'public';
-
 describe('Add Identity Provider: Google', () => {
   let wrapper: ShallowWrapper<{}, AddGooglePageState>;
 
   beforeEach(() => {
-    wrapper = shallow(<AddGooglePage />);
+    wrapper = shallow(<AddGooglePage />).dive();
   });
 
   it('should render AddGooglePage component', () => {
@@ -33,7 +20,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render correct Google IDP page title', () => {
-    expect(wrapper.contains(`${i18nNS}~Add Identity Provider: Google`)).toBeTruthy();
+    expect(wrapper.contains('Add Identity Provider: Google')).toBeTruthy();
   });
 
   it('should render the form elements of AddGooglePage component', () => {
@@ -44,7 +31,7 @@ describe('Add Identity Provider: Google', () => {
   });
 
   it('should render control buttons in a button bar', () => {
-    controlButtonTest(wrapper, 'public');
+    controlButtonTest(wrapper);
   });
 
   it('should prefill google in name field by default', () => {

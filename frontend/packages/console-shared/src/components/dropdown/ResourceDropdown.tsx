@@ -50,7 +50,7 @@ export interface ResourceDropdownItems {
   [key: string]: string | React.ReactElement;
 }
 
-interface ResourceDropdownProps {
+export interface ResourceDropdownProps {
   id?: string;
   ariaLabel?: string;
   className?: string;

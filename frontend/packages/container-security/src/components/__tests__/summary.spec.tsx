@@ -5,14 +5,6 @@ import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import { SecurityBreakdownPopup, securityHealthHandler } from '../summary';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 const highVuln = fakeVulnFor(Priority.High);
 
 describe('securityHealthHandler', () => {
@@ -52,7 +44,6 @@ describe('securityHealthHandler', () => {
 describe('SecurityBreakdownPopup', () => {
   type SecurityBreakdownPopupProps = React.ComponentProps<typeof SecurityBreakdownPopup>;
   let wrapper: ShallowWrapper<SecurityBreakdownPopupProps>;
-  const i18nNS = 'container-security~';
   const imageManifestVuln = {
     loaded: true,
     loadError: null,
@@ -66,7 +57,7 @@ describe('SecurityBreakdownPopup', () => {
     wrapper = shallow(
       <SecurityBreakdownPopup imageManifestVuln={{ loaded: true, loadError: null, data: [] }} />,
     );
-    expect(wrapper.contains(`${i18nNS}No vulnerabilities detected.`)).toBe(true);
+    expect(wrapper.contains('No vulnerabilities detected.')).toBe(true);
   });
 
   it('should not display section for list of vulnerabilities if there are no fixable vulnerabilities', () => {
@@ -81,23 +72,21 @@ describe('SecurityBreakdownPopup', () => {
     );
     expect(
       wrapper.contains(
-        <span className="co-status-popup__text--bold">{`${i18nNS}Fixable Container Images`}</span>,
+        <span className="co-status-popup__text--bold">Fixable Container Images</span>,
       ),
     ).toBe(false);
   });
 
   it('should display list of impact and vulnerabilities when not in context of a namespace', () => {
-    expect(
-      wrapper.contains(<span className="co-status-popup__text--bold">{`${i18nNS}Impact`}</span>),
-    ).toBe(true);
+    expect(wrapper.contains(<span className="co-status-popup__text--bold">Impact</span>)).toBe(
+      true,
+    );
   });
 
   it('should display list of images and vulnerabilities when in context of a namespace', () => {
     wrapper = shallow(
       <SecurityBreakdownPopup imageManifestVuln={imageManifestVuln} namespace="default" />,
     );
-    expect(
-      wrapper.contains(<span className="co-status-popup__text--bold">{`${i18nNS}Image`}</span>),
-    ).toBe(true);
+    expect(wrapper.contains(<span className="co-status-popup__text--bold">Image</span>)).toBe(true);
   });
 });

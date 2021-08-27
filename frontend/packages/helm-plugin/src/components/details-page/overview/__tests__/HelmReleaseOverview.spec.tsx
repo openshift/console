@@ -5,14 +5,6 @@ import { mockHelmReleases } from '../../../__tests__/helm-release-mock-data';
 import HelmChartSummary from '../HelmChartSummary';
 import HelmReleaseOverview from '../HelmReleaseOverview';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const helmReleaseOverviewProps: React.ComponentProps<typeof HelmReleaseOverview> = {
   obj: {
     metadata: {
@@ -37,7 +29,7 @@ describe('HelmReleaseOverview', () => {
         .find(SectionHeading)
         .at(0)
         .props().text,
-    ).toEqual('helm-plugin~Helm Release details');
+    ).toEqual('Helm Release details');
   });
   it('should render the ResourceSummary component', () => {
     const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);

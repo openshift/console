@@ -12,14 +12,6 @@ import SinkSourceModal from '../SinkSourceModal';
 
 type SinkSourceModalProps = React.ComponentProps<typeof SinkSourceModal>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;
   let sinkSourceModalWrapper: ShallowWrapper<SinkSourceModalProps>;

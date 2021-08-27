@@ -6,14 +6,6 @@ import { DEFAULT_TOPOLOGY_FILTERS, SHOW_GROUPS_FILTER_ID } from '../const';
 import { getFilterById } from '../filter-utils';
 import KindFilterDropdown from '../KindFilterDropdown';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe(KindFilterDropdown.displayName, () => {
   let dropdownFilter: DisplayFilters;
   let onChange: () => void;

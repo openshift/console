@@ -5,14 +5,6 @@ import * as utils from '@console/internal/components/utils';
 import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-resource-data';
 import HealthChecksAlert from '../HealthChecksAlert';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => ({
   useUserSettingsCompatibility: () => [[], jest.fn(), true],
 }));

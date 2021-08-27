@@ -4,14 +4,6 @@ import { sampleKnativeConfigurations } from '../../../topology/__tests__/topolog
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ConfigurationsOverviewList', () => {
   it('should render error Message when configurations array is empty', () => {
     const wrapper = shallow(<ConfigurationsOverviewList configurations={[]} />);

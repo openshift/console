@@ -3,14 +3,6 @@ import { shallow } from 'enzyme';
 import MarkdownCopyClipboard, { CopyClipboard } from '../MarkdownCopyClipboard';
 import { htmlDocumentForCopyClipboard } from './test-data';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('MarkdownCopyClipboard', () => {
   beforeAll(() => {
     document.body.innerHTML = htmlDocumentForCopyClipboard;

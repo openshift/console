@@ -9,14 +9,6 @@ import KSRoutesOverviewListItem from '../KSRoutesOverviewListItem';
 
 type KSRoutesOverviewListItemProps = React.ComponentProps<typeof KSRoutesOverviewListItem>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('KSRoutesOverviewListItem', () => {
   let wrapper: ShallowWrapper<KSRoutesOverviewListItemProps>;
   beforeEach(() => {

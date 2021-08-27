@@ -9,14 +9,6 @@ jest.mock('react', () => ({
   useLayoutEffect: require.requireActual('react').useEffect,
 }));
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({
-    t: (key: string, params?: Record<string, string>) =>
-      key.split('~')[1].replace('{{version}}', params?.version),
-  }),
-}));
-
 jest.mock('@console/shared/src', () => ({
   ...require.requireActual('@console/shared/src'),
   useOpenShiftVersion: () => '4.8.0',

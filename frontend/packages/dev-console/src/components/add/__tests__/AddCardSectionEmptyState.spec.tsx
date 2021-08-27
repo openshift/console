@@ -4,16 +4,6 @@ import { ExclamationCircleIcon, LockIcon } from '@patternfly/react-icons';
 import { shallow, ShallowWrapper } from 'enzyme';
 import AddCardSectionEmptyState from '../AddCardSectionEmptyState';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
-const i18nNS = 'devconsole~';
-
 describe('AddCardSectionEmptyState', () => {
   type AddCardSectionEmptyStateProps = React.ComponentProps<typeof AddCardSectionEmptyState>;
   let wrapper: ShallowWrapper<AddCardSectionEmptyStateProps>;
@@ -25,7 +15,7 @@ describe('AddCardSectionEmptyState', () => {
         .find(Title)
         .children()
         .text(),
-    ).toEqual(`${i18nNS}Access permissions needed`);
+    ).toEqual('Access permissions needed');
 
     expect(
       wrapper
@@ -43,7 +33,7 @@ describe('AddCardSectionEmptyState', () => {
         .find(Title)
         .children()
         .text(),
-    ).toEqual(`${i18nNS}Unable to load`);
+    ).toEqual('Unable to load');
 
     expect(
       wrapper

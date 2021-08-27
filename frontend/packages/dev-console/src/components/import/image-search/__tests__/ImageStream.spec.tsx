@@ -20,14 +20,6 @@ const spyUseField = jest.spyOn(formik, 'useField');
 const spyGetImageStreamTags = jest.spyOn(imgUtils, 'getImageStreamTags');
 const spyUseState = jest.spyOn(React, 'useState');
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 const mockReducerState = {
   loading: false,
   accessLoading: false,
@@ -87,7 +79,7 @@ describe('Imagestream', () => {
     const alert = wrapper.find(Alert);
     expect(alert).toHaveLength(1);
     expect(alert.props().title).toEqual(
-      `devconsole~Service account default will need pull authority to deploy Images from {{namespace}}`,
+      'Service account default will need pull authority to deploy Images from div',
     );
   });
 

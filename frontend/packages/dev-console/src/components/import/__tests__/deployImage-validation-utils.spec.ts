@@ -1,11 +1,9 @@
-import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
+import { t } from '../../../../../../__mocks__/i18next';
 import { mockDeployImageFormData } from '../__mocks__/deployImage-validation-mock';
 import { deployValidationSchema } from '../deployImage-validation-utils';
 import { serverlessCommonTests } from './serverless-common-tests';
-
-const t = (key): TFunction => key;
 
 describe('Deploy Image ValidationUtils', () => {
   describe('Validation Schema', () => {
@@ -25,7 +23,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('console-shared~Required');
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });
@@ -40,7 +38,7 @@ describe('Deploy Image ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'console-shared~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
           );
         });
     });
@@ -86,7 +84,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Path must start with /.');
+          expect(err.message).toBe('Path must start with /.');
         });
     });
 
@@ -100,7 +98,7 @@ describe('Deploy Image ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'devconsole~Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+            'Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
           );
         });
     });
@@ -117,9 +115,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(
-            'devconsole~CPU limit must be greater than or equal to request.',
-          );
+          expect(err.message).toBe('CPU limit must be greater than or equal to request.');
         });
     });
 
@@ -135,9 +131,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(
-            'devconsole~Memory limit must be greater than or equal to request.',
-          );
+          expect(err.message).toBe('Memory limit must be greater than or equal to request.');
         });
     });
 
@@ -164,7 +158,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Replicas must be an integer.');
+          expect(err.message).toBe('Replicas must be an integer.');
         });
     });
 
@@ -177,7 +171,7 @@ describe('Deploy Image ValidationUtils', () => {
       await deployValidationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Replicas must be greater than or equal to 0.');
+          expect(err.message).toBe('Replicas must be greater than or equal to 0.');
         });
     });
 
@@ -191,7 +185,7 @@ describe('Deploy Image ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            `devconsole~Replicas must be lesser than or equal to {{maxSafeInteger}}.`,
+            `Replicas must be lesser than or equal to ${Number.MAX_SAFE_INTEGER}.`,
           );
         });
     });
