@@ -1,5 +1,5 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
+import { ProvisionSource } from '../../utils/const/provisionSource';
 
 const vmName = `${testName}-vm-advanced-wizard`;
 

@@ -1,5 +1,5 @@
-import { ADD_SOURCE, COMMUNITY } from '../const/index';
 import { VirtualMachineData } from '../types/vm';
+import { ADD_SOURCE, COMMUNITY } from '../utils/const/index';
 import { wizard } from './wizard';
 
 export const getRow = (templateName: string, within: VoidFunction) =>

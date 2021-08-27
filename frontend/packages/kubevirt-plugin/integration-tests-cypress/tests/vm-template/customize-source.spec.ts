@@ -1,3 +1,4 @@
+import { testName } from '../../support';
 import {
   IMPORTING,
   OS_IMAGES_NS,
@@ -7,12 +8,11 @@ import {
   TEMPLATE_METADATA_NAME,
   TEMPLATE_NAME,
   TEST_PROVIDER,
-} from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
-import { testName } from '../../support';
-import { addSource } from '../../view/add-source';
-import { customizeSource, PROVIDER } from '../../view/customize-source';
-import { virtualization } from '../../view/virtualization';
+} from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { addSource } from '../../views/add-source';
+import { customizeSource, PROVIDER } from '../../views/customize-source';
+import { virtualization } from '../../views/virtualization';
 
 describe('test vm template source image', () => {
   before(() => {

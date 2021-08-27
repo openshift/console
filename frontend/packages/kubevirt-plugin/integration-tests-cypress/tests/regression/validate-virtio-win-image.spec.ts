@@ -1,8 +1,8 @@
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `validate-windows-virtio-${testName}`,

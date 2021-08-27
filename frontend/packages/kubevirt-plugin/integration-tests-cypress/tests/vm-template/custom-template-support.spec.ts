@@ -7,11 +7,11 @@ import {
   TEMPLATE_NAME,
   TEST_PROVIDER,
   VM_ACTION_TIMEOUT,
-} from '../../const';
-import { ProvisionSource } from '../../enums/provisionSource';
-import { addSource } from '../../view/add-source';
-import { virtualization } from '../../view/virtualization';
-import * as templateSupportModal from '../../view/vm-template/template-support-modal';
+} from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { addSource } from '../../views/add-source';
+import * as templateSupportModal from '../../views/template-support-modal';
+import { virtualization } from '../../views/virtualization';
 
 const TEMPLATE = TEMPLATE_NAME;
 const TEMPLATE_PROVIDER = 'bar';

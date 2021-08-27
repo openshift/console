@@ -1,5 +1,5 @@
 import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
+import { virtualization } from '../../views/virtualization';
 
 describe('ID(CNV-5654) test vm empty state', () => {
   before(() => {

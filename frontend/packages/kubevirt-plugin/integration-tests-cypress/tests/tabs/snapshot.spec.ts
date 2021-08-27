@@ -1,11 +1,11 @@
-import { YAML_VM_NAME, STATUS_READY, TEMPLATE_NAME } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import * as snapshotView from '../../view/snapshot';
-import { tab } from '../../view/tab';
-import { virtualization } from '../../view/virtualization';
-import { vm } from '../../view/vm';
+import { YAML_VM_NAME, STATUS_READY, TEMPLATE_NAME } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import * as snapshotView from '../../views/snapshot';
+import { tab } from '../../views/tab';
+import { virtualization } from '../../views/virtualization';
+import { vm } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `test-vm-snapshot-${testName}`,

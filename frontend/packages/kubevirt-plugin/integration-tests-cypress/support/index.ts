@@ -1,13 +1,13 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { projectDropdown } from '../../../integration-tests-cypress/views/common';
 import { V1alpha1DataVolume } from '../../src/types/api';
+import nadFixture from '../fixtures/nad';
+import { VirtualMachineData } from '../types/vm';
 import {
   EXPECT_LOGIN_SCRIPT_PATH,
   KUBEVIRT_PROJECT_NAME,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
-} from '../const';
-import nadFixture from '../fixtures/nad';
-import { VirtualMachineData } from '../types/vm';
+} from '../utils/const/index';
 
 export * from '../../../integration-tests-cypress/support';
 

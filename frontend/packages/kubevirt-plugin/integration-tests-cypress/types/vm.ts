@@ -1,5 +1,5 @@
-import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../const/index';
-import { ProvisionSource } from '../enums/provisionSource';
+import { DISK_DRIVE, DISK_SOURCE, Flavor } from '../utils/const/index';
+import { ProvisionSource } from '../utils/const/provisionSource';
 
 export type Disk = {
   name?: string;

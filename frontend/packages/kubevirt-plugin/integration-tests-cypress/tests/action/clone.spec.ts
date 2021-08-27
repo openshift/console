@@ -1,14 +1,14 @@
-import { TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../const/index';
-import { ProvisionSource } from '../../enums/provisionSource';
 import { testName } from '../../support';
 import { Disk, Network, VirtualMachineData } from '../../types/vm';
-import { selectActionFromDropdown } from '../../view/actions';
-import * as cloneView from '../../view/clone';
-import { addDisk, addNIC } from '../../view/dialog';
-import { actionButtons } from '../../view/selector';
-import { tab } from '../../view/tab';
-import { virtualization } from '../../view/virtualization';
-import { vm, waitForStatus } from '../../view/vm';
+import { TEMPLATE_NAME, VM_ACTION, VM_ACTION_TIMEOUT, VM_STATUS } from '../../utils/const/index';
+import { ProvisionSource } from '../../utils/const/provisionSource';
+import { selectActionFromDropdown } from '../../views/actions';
+import * as cloneView from '../../views/clone';
+import { addDisk, addNIC } from '../../views/dialog';
+import { actionButtons } from '../../views/selector';
+import { tab } from '../../views/tab';
+import { virtualization } from '../../views/virtualization';
+import { vm, waitForStatus } from '../../views/vm';
 
 const vmData: VirtualMachineData = {
   name: `test-vm-clone-${testName}`,
