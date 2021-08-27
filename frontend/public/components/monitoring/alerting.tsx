@@ -40,7 +40,7 @@ import {
 } from '../../models';
 import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
-import { RowFunction, Table, TableData, TableRow } from '../factory';
+import { RowFunctionArgs, Table, TableData, TableProps } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import { confirmModal } from '../modals';
 import { PrometheusLabels } from '../graphs';
@@ -159,7 +159,9 @@ const alertStateIcons = {
   [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
 };
 
-const AlertStateIcon: React.FC<{ state: string }> = ({ state }) => alertStateIcons[state];
+const AlertStateIcon: React.FC<{ state: string }> = React.memo(
+  ({ state }) => alertStateIcons[state],
+);
 
 const getAlertStateKey = (state) => {
   switch (state) {
@@ -174,7 +176,7 @@ const getAlertStateKey = (state) => {
   }
 };
 
-export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
+export const AlertState: React.FC<AlertStateProps> = React.memo(({ state }) => {
   const icon = alertStateIcons[state];
 
   return icon ? (
@@ -182,7 +184,7 @@ export const AlertState: React.FC<AlertStateProps> = ({ state }) => {
       {icon} {getAlertStateKey(state)}
     </>
   ) : null;
-};
+});
 
 const SilenceState = ({ silence }) => {
   const { t } = useTranslation();
@@ -235,7 +237,7 @@ const AlertStateDescription: React.FC<{ alert }> = ({ alert }) => {
   return null;
 };
 
-const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
+const SeverityIcon: React.FC<{ severity: string }> = React.memo(({ severity }) => {
   const Icon =
     {
       [AlertSeverity.Critical]: RedExclamationCircleIcon,
@@ -244,9 +246,9 @@ const SeverityIcon: React.FC<{ severity: string }> = ({ severity }) => {
       [AlertSeverity.Warning]: YellowExclamationTriangleIcon,
     }[severity] || YellowExclamationTriangleIcon;
   return <Icon />;
-};
+});
 
-export const Severity: React.FC<{ severity: string }> = ({ severity }) => {
+export const Severity: React.FC<{ severity: string }> = React.memo(({ severity }) => {
   const { t } = useTranslation();
 
   const getSeverityKey = (severityData: string) => {
@@ -271,14 +273,15 @@ export const Severity: React.FC<{ severity: string }> = ({ severity }) => {
       <SeverityIcon severity={severity} /> {getSeverityKey(severity)}
     </>
   );
-};
+});
 
-const SeverityBadge: React.FC<{ severity: string }> = ({ severity }) =>
+const SeverityBadge: React.FC<{ severity: string }> = React.memo(({ severity }) =>
   _.isNil(severity) || severity === 'none' ? null : (
     <ResourceStatus>
       <Severity severity={severity} />
     </ResourceStatus>
-  );
+  ),
+);
 
 const SeverityCounts: React.FC<{ alerts: Alert[] }> = ({ alerts }) => {
   if (_.isEmpty(alerts)) {
@@ -332,7 +335,7 @@ const PopoverField: React.FC<{ body: React.ReactNode; label: string }> = ({ body
   </Popover>
 );
 
-const AlertStateHelp: React.FC = () => {
+const AlertStateHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -363,9 +366,9 @@ const AlertStateHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
-const SeverityHelp: React.FC = () => {
+const SeverityHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -398,9 +401,9 @@ const SeverityHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
-const SourceHelp: React.FC = () => {
+const SourceHelp: React.FC = React.memo(() => {
   const { t } = useTranslation();
   return (
     <dl className="co-inline">
@@ -422,7 +425,7 @@ const SourceHelp: React.FC = () => {
       </dd>
     </dl>
   );
-};
+});
 
 const Annotation = ({ children, title }) =>
   _.isNil(children) ? null : (
@@ -493,12 +496,12 @@ const SilenceMatchersList = ({ silence }) => (
   </div>
 );
 
-const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
+const SilenceTableRow: React.FC<RowFunctionArgs<Silence>> = ({ obj }) => {
   const { createdBy, endsAt, firingAlerts, id, name, startsAt } = obj;
   const state = silenceState(obj);
 
   return (
-    <TableRow id={id} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableSilenceClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
@@ -534,7 +537,7 @@ const SilenceTableRow: RowFunction<Silence> = ({ index, key, obj, style }) => {
       <TableData className={tableSilenceClasses[4]}>
         <SilenceKebab silence={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -667,6 +670,10 @@ const getSourceKey = (source) => {
       return source;
   }
 };
+
+const getSilenceProps = (obj) => ({
+  id: obj.id,
+});
 
 export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
@@ -834,6 +841,7 @@ export const AlertsDetailsPage = withFallback(
                       Header={silencesTableHeader}
                       loaded={true}
                       Row={SilenceTableRow}
+                      getRowProps={getSilenceProps}
                     />
                   </div>
                 </div>
@@ -1225,13 +1233,13 @@ const tableAlertClasses = [
   Kebab.columnClass,
 ];
 
-const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
+const AlertTableRow: React.FC<RowFunctionArgs<Alert>> = ({ obj }) => {
   const { annotations = {}, labels } = obj;
   const description = annotations.description || annotations.message;
   const state = alertState(obj);
 
   return (
-    <TableRow id={obj.rule.id} index={index} title={description} trKey={key} style={style}>
+    <>
       <TableData className={tableAlertClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={AlertResource} />
@@ -1266,7 +1274,7 @@ const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
           }
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -1307,7 +1315,9 @@ const alertsRowFilters = (): RowFilter[] => [
   },
 ];
 
-const MonitoringListPage: React.FC<ListPageProps> = ({
+const MonitoringListPage: React.FC<ListPageProps & {
+  getRowProps?: TableProps['getRowProps'];
+}> = ({
   CreateButton,
   data,
   defaultSortField,
@@ -1322,6 +1332,7 @@ const MonitoringListPage: React.FC<ListPageProps> = ({
   reduxID,
   Row,
   rowFilters,
+  getRowProps,
 }) => {
   const { t } = useTranslation();
 
@@ -1377,6 +1388,7 @@ const MonitoringListPage: React.FC<ListPageProps> = ({
               Row={Row}
               rowFilters={rowFilters}
               virtualize
+              getRowProps={getRowProps}
             />
           </div>
         </div>
@@ -1384,6 +1396,11 @@ const MonitoringListPage: React.FC<ListPageProps> = ({
     </>
   );
 };
+
+const getRowProps = (obj: Alert | Rule) => ({
+  id: (obj as Alert).rule?.id,
+  title: obj.annotations?.description || obj.annotations?.message,
+});
 
 const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation();
@@ -1433,6 +1450,7 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
       reduxID="monitoringAlerts"
       Row={AlertTableRow}
       rowFilters={alertsRowFilters()}
+      getRowProps={getRowProps}
     />
   );
 };
@@ -1442,8 +1460,8 @@ const ruleHasAlertState = (rule: Rule, state: AlertStates): boolean =>
   state === AlertStates.NotFiring ? _.isEmpty(rule.alerts) : _.some(rule.alerts, { state });
 
 const ruleAlertStateFilter = (filter, rule: Rule) =>
-  (filter.selected.has(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
-  _.some(rule.alerts, (a) => filter.selected.has(a.state)) ||
+  (filter.selected?.includes(AlertStates.NotFiring) && _.isEmpty(rule.alerts)) ||
+  _.some(rule.alerts, (a) => filter.selected?.includes(a.state)) ||
   _.isEmpty(filter.selected);
 
 export const alertStateFilter = (): RowFilter => ({
@@ -1466,14 +1484,8 @@ const tableRuleClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
-  <TableRow
-    id={obj.id}
-    index={index}
-    style={style}
-    title={obj.annotations?.description || obj.annotations?.message}
-    trKey={key}
-  >
+const RuleTableRow: React.FC<RowFunctionArgs<Rule>> = ({ obj }) => (
+  <>
     <TableData className={tableRuleClasses[0]}>
       <div className="co-resource-item">
         <MonitoringResourceIcon resource={RuleResource} />
@@ -1493,7 +1505,7 @@ const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
         ? i18next.t('public~User')
         : i18next.t('public~Platform')}
     </TableData>
-  </TableRow>
+  </>
 );
 
 const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
@@ -1555,12 +1567,13 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
       reduxID="monitoringRules"
       Row={RuleTableRow}
       rowFilters={rulesRowFilters}
+      getRowProps={getRowProps}
     />
   );
 };
 const RulesPage = withFallback(connect(rulesToProps)(RulesPage_));
 
-const CreateButton: React.FC = () => {
+const CreateButton: React.FC = React.memo(() => {
   const { t } = useTranslation();
 
   return (
@@ -1570,7 +1583,7 @@ const CreateButton: React.FC = () => {
       </Button>
     </Link>
   );
-};
+});
 
 const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation();

@@ -19,7 +19,7 @@ import {
   resourcesValidationSchema,
 } from './detail-page-tabs';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
-import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
+import { useDevPipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
 import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
 import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeline-operator';
@@ -29,7 +29,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
-  const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
+  const breadcrumbsFor = useDevPipelinesBreadcrumbsFor(kindObj, match);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const pipelineOperator = usePipelineOperatorVersion(namespace);

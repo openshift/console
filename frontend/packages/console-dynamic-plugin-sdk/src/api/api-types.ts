@@ -33,7 +33,7 @@ export type WatchK8sResources<R extends ResourcesObject> = {
 };
 
 export type UseK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
-  initResource: WatchK8sResource,
+  initResource: WatchK8sResource | null,
 ) => WatchK8sResult<R>;
 
 export type UseK8sWatchResources = <R extends ResourcesObject>(

@@ -13,7 +13,6 @@ import {
   ListPage,
   DetailsPage,
   Table,
-  TableRow,
   TableData,
   RowFunctionArgs,
   Flatten,
@@ -208,7 +207,9 @@ const getOperandStatusText = (operand: K8sResourceKind): string => {
   return status ? `${status.type}: ${status.value}` : '';
 };
 
-export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, rowKey, style }) => {
+export type OperandTableRowProps = RowFunctionArgs<K8sResourceKind>;
+
+export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj }) => {
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
     isClusterServiceVersionAction,
   );
@@ -218,7 +219,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
     actionExtensions,
   ]);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <OperandLink obj={obj} />
       </TableData>
@@ -240,7 +241,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -284,17 +285,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       },
     ];
   };
-  const Row = React.useCallback(
-    (rowArgs: RowFunctionArgs<K8sResourceKind>) => (
-      <OperandTableRow
-        obj={rowArgs.obj}
-        index={rowArgs.index}
-        rowKey={rowArgs.key}
-        style={rowArgs.style}
-      />
-    ),
-    [],
-  );
+
   const data = React.useMemo(
     () =>
       props.data?.map?.((obj) => {
@@ -329,7 +320,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
       Header={Header}
-      Row={Row}
+      Row={OperandTableRow}
       virtualize
     />
   );
@@ -731,13 +722,6 @@ export type OperandesourceDetailsProps = {
   name: string;
   namespace: string;
   match: match<{ appName: string }>;
-};
-
-export type OperandTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  rowKey: string;
-  style: object;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically

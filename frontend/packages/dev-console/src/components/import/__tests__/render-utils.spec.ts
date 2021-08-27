@@ -1,9 +1,7 @@
 import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
+import { t } from '../../../../../../__mocks__/i18next';
 import CheIcon from '../CheIcon';
 import { routeDecoratorIcon } from '../render-utils';
-
-const t = (key): TFunction => key;
 
 describe('Ensure render utils works', () => {
   describe('Ensure we do not get route decorator icons for invalid urls', () => {

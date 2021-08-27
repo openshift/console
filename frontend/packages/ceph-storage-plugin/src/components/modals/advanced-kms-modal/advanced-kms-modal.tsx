@@ -254,7 +254,10 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 });
 
 export type AdvancedKMSModalProps = {
-  state: InternalClusterState | State | WizardState['securityAndNetwork'];
+  state:
+    | InternalClusterState
+    | State
+    | Pick<WizardState['securityAndNetwork'], 'encryption' | 'kms'>;
   dispatch: EncryptionDispatch;
   mode?: string;
 } & HandlePromiseProps &

@@ -2,14 +2,11 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
 import { useAccessReview } from '@console/internal/components/utils/rbac';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { CAMEL_K_PROVIDER_ANNOTATION, CAMEL_K_TYPE_LABEL } from '../const';
-import { CamelKameletBindingModel, CamelKameletModel } from '../models';
+import { useKameletsData } from '../hooks/useKameletsData';
+import { CamelKameletBindingModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 
 const normalizeKamelets = (
@@ -21,17 +18,15 @@ const normalizeKamelets = (
     const {
       kind,
       metadata: { uid, name, creationTimestamp, annotations },
-      spec: {
-        definition: { title, description },
-      },
+      spec,
     } = k;
     const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, k);
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${CamelKameletBindingModel.kind}&name=${name}`;
     return {
       uid,
-      name: title,
-      description,
+      name: spec?.definition?.title || name,
+      description: spec?.definition?.description || '',
       provider,
       creationTimestamp,
       cta: { label: t('knative-plugin~Create Event Source'), href },
@@ -52,13 +47,8 @@ const useKameletsProvider: ExtensionHook<CatalogItem[]> = ({
     verb: 'create',
     namespace,
   });
-  const resource: WatchK8sResource = React.useMemo(
-    () => ({ kind: referenceForModel(CamelKameletModel), isList: true, namespace, optional: true }),
-    [namespace],
-  );
-  const [kamelets, kameletsLoaded, kameletsLoadError] = useK8sWatchResource<K8sResourceKind[]>(
-    resource,
-  );
+  const [kamelets, kameletsLoaded, kameletsLoadError] = useKameletsData(namespace);
+
   const normalizedSource = React.useMemo(() => {
     if (!kameletsLoaded || !canCreateKameletBinding) return [];
     const kameletSource = kamelets.filter(

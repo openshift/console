@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
@@ -29,15 +29,10 @@ export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps>
   );
 };
 
-const HelmReleaseResourcesRow: RowFunction<K8sResourceKind> = ({
-  obj: resource,
-  index,
-  key,
-  style,
-}) => {
+const HelmReleaseResourcesRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: resource }) => {
   const kind = referenceFor(resource);
   return (
-    <TableRow id={resource.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses.name}>
         <ResourceLink
           kind={kind}
@@ -52,7 +47,7 @@ const HelmReleaseResourcesRow: RowFunction<K8sResourceKind> = ({
       <TableData className={tableColumnClasses.created}>
         <Timestamp timestamp={resource.metadata.creationTimestamp} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

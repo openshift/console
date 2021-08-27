@@ -12,14 +12,6 @@ import DeploymentOverviewList from '../DeploymentOverviewList';
 import KnativeRevisionResources from '../KnativeRevisionResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('../../../utils/usePodsForRevisions', () => ({
   usePodsForRevisions: jest.fn(),
 }));

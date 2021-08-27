@@ -7,14 +7,6 @@ import ProjectAccessForm from '../ProjectAccessForm';
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-  };
-});
-
 describe('Project Access Form', () => {
   const projectAccessForm = shallow(
     <ProjectAccessForm {...formProps} roles={defaultAccessRoles} />,

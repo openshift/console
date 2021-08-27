@@ -3,7 +3,7 @@ import { Button } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel, TemplateModel } from '@console/internal/models';
 import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
@@ -22,12 +22,9 @@ import { tableColumnClasses } from './utils';
 
 import './vm-template-table.scss';
 
-const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
+const VMTemplateRow: React.FC<RowFunctionArgs<TemplateItem, VMTemplateRowProps>> = ({
   obj,
   customData: { dataVolumes, pvcs, pods, namespace, loaded, togglePin, isPinned, sourceLoadError },
-  index,
-  key,
-  style,
 }) => {
   const { t } = useTranslation();
   const [template] = obj.variants;
@@ -38,13 +35,7 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
   const withSupportModal = useSupportModal();
   const withCustomizeModal = useCustomizeSourceModal();
   return (
-    <TableRow
-      className="kv-vm-template__row"
-      id={template.metadata.uid}
-      index={index}
-      trKey={key}
-      style={style}
-    >
+    <>
       <TableData className={dimensify()}>
         <Button
           className={pinned ? 'kv-pin-remove-btn' : 'kv-pin-btn'}
@@ -103,7 +94,7 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
           id={`kebab-for-${template.metadata.uid}`}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

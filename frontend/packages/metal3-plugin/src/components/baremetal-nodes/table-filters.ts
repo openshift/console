@@ -37,10 +37,12 @@ export const bareMetalNodeStatusFilter = (t: TFunction): RowFilter<BareMetalNode
   type: 'bare-metal-node-status',
   reducer: getBareMetalNodeFilterStatus,
   items: _.map(statesToFilterMap, ({ titleKey }, id) => ({ id, title: t(titleKey) })),
-  filter: (groups, bundle: BareMetalNodeListBundle) => {
+  filter: (groups, bundle) => {
     const status = isCSRBundle(bundle) ? 'approval' : getBareMetalNodeFilterStatus(bundle);
     return (
-      groups.selected.has(status) || !_.includes(groups.all, status) || _.isEmpty(groups.selected)
+      groups.selected?.includes(status) ||
+      !_.includes(groups.all, status) ||
+      _.isEmpty(groups.selected)
     );
   },
 });

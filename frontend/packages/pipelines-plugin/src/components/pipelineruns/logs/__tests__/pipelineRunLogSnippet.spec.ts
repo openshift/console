@@ -28,7 +28,7 @@ describe('PipelineRunLogSnippet test', () => {
     const { title, containerName, podName } = getPLRLogSnippet(
       pipelineRunMockFailed,
     ) as ErrorDetailsWithLogName;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual('Failure on task x-compile - check logs for details.');
     expect(containerName).toEqual('step-build');
     expect(podName).toEqual('broken-app-pipeline-j2nxzm-x-compile-8mq2h-pod-b9gsg');
   });

@@ -20,10 +20,16 @@ const TaskRunsListPage: React.FC<Omit<
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
   const badge = usePipelineTechPreviewBadge(namespace);
+  const customData = React.useMemo(
+    () => ({
+      showPipelineColumn,
+    }),
+    [showPipelineColumn],
+  );
   return (
     <ListPage
       {...props}
-      customData={{ showPipelineColumn }}
+      customData={customData}
       canCreate={kind?.includes(referenceForModel(TaskRunModel)) ?? false}
       kind={referenceForModel(TaskRunModel)}
       ListComponent={TaskRunsList}

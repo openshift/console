@@ -32,7 +32,12 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import { DeploymentConfigModel, DeploymentModel, VolumeSnapshotModel } from '../../models';
+import {
+  BuildConfigModel,
+  DeploymentConfigModel,
+  DeploymentModel,
+  VolumeSnapshotModel,
+} from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -273,17 +278,29 @@ const kebabFactory: KebabFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
-  Edit: (kind, obj) => ({
-    // t('public~Edit {{kind}}', {kind: kind.label})
-    labelKey: 'public~Edit {{kind}}',
-    labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
-    dataTest: `Edit ${kind.label}`,
-    href: [DeploymentModel.kind, DeploymentConfigModel.kind].includes(kind.kind)
-      ? `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`
-      : `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
-    // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-    accessReview: asAccessReview(kind, obj, 'update'),
-  }),
+  Edit: (kind, obj) => {
+    let href: string;
+    switch (kind.kind) {
+      case BuildConfigModel.kind:
+        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/form`;
+        break;
+      case DeploymentModel.kind:
+      case DeploymentConfigModel.kind:
+        href = `/edit-deployment/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind.kind}`;
+        break;
+      default:
+        href = `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`;
+    }
+    return {
+      // t('public~Edit {{kind}}', {kind: kind.label})
+      labelKey: 'public~Edit {{kind}}',
+      labelKind: { kind: kind.labelKey ? i18next.t(kind.labelKey) : kind.label },
+      dataTest: `Edit ${kind.label}`,
+      href,
+      // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
+      accessReview: asAccessReview(kind, obj, 'update'),
+    };
+  },
   ModifyLabels: (kind, obj) => ({
     // t('public~Edit labels')
     labelKey: 'public~Edit labels',

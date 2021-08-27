@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import {
   ContainerTable,
@@ -82,9 +82,7 @@ const environmentComponent = (props) => (
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
 
-const ReplicationControllerPods = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
-);
+const ReplicationControllerPods = (props) => <PodsComponent {...props} showNodes />;
 
 export const ReplicationControllersDetailsPage = (props) => {
   const { t } = useTranslation();
@@ -176,48 +174,50 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
+const ReplicationControllerTableRow = ({ obj }) => {
+  const { t } = useTranslation();
+  const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
+
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link
+          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
+          title="pods"
+        >
+          {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
+            statusReplicas: obj.status.replicas || 0,
+            specReplicas: obj.spec.replicas,
+          })}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Status status={phase} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <OwnerReferences resource={obj} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+      </TableData>
+    </>
+  );
+};
+
 export const ReplicationControllersList = (props) => {
   const { t } = useTranslation();
-  const ReplicationControllerTableRow = ({ obj, index, key, style }) => {
-    const phase = obj?.metadata?.annotations?.['openshift.io/deployment.phase'];
-
-    return (
-      <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-        </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          columnID="namespace"
-        >
-          <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <Link
-            to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-            title="pods"
-          >
-            {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
-              statusReplicas: obj.status.replicas || 0,
-              specReplicas: obj.spec.replicas,
-            })}
-          </Link>
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <Status status={phase} />
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          <OwnerReferences resource={obj} />
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
-          <Timestamp timestamp={obj.metadata.creationTimestamp} />
-        </TableData>
-        <TableData className={tableColumnClasses[6]}>
-          <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-        </TableData>
-      </TableRow>
-    );
-  };
 
   const ReplicationControllerTableHeader = () => [
     {

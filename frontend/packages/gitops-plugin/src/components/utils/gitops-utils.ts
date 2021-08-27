@@ -62,11 +62,15 @@ export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[],
   return [allAppGroups, emptyMsg];
 };
 
-export const getEnvData = async (envURI: string, env: string, appURI: string) => {
+export const getEnvData = async (v2EnvURI: string, envURI: string, env: string, appURI: string) => {
   let data;
   try {
-    data = await coFetchJSON(`${envURI}/${env}${appURI}`);
-  } catch {} // eslint-disable-line no-empty
+    data = await coFetchJSON(`${v2EnvURI}/${env}${appURI}`);
+  } catch {
+    try {
+      data = await coFetchJSON(`${envURI}/${env}${appURI}`);
+    } catch {} // eslint-disable-line no-empty
+  }
   return data;
 };
 
@@ -89,6 +93,6 @@ export const getApplicationsBaseURI = (
   manifestURL: string,
 ) => {
   return secretNS && secretName
-    ? `/application/${appName}?secretNS=${secretNS}&secretName=${secretName}&url=${manifestURL}`
+    ? `/application/${appName}?secretNS=${secretNS}&secretName=${secretName}&url=${manifestURL}&app=${appName}`
     : undefined;
 };

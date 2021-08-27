@@ -1,11 +1,10 @@
+import { t } from '../../../../../../../../__mocks__/i18next';
 import { Resources } from '../../../../import/import-types';
 import {
   getDeploymentStrategyItems,
   getDeploymentStrategyHelpText,
 } from '../deployment-strategy-utils';
 import { DeploymentStrategyType } from '../types';
-
-const t = (key: string) => key.split('~')[1];
 
 describe('getDeploymentStrategyItems', () => {
   it('returns items for kubernetes resources', () => {

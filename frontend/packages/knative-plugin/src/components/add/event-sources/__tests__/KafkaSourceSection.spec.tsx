@@ -7,14 +7,6 @@ import KafkaSourceSection from '../KafkaSourceSection';
 
 type KafkaSourceSectionProps = React.ComponentProps<typeof KafkaSourceSection>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));

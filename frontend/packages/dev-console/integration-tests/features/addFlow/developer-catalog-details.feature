@@ -4,8 +4,9 @@ Feature: Developer Catalog Page
 
 
         Background:
-            Given user has installed OpenShift Serverless Operator
-              And user is at developer perspective
+            # commented below line as serverless operator is not available in operatorhub
+            # Given user has installed OpenShift Serverless Operator
+            Given user is at developer perspective
               And user is at Add page
               And user has created or selected namespace "aut-addflow-pagedetails"
 

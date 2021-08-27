@@ -7,14 +7,6 @@ import BuildConfigSection from '../BuildConfigSection';
 let BuildConfigSectionProps: React.ComponentProps<typeof BuildConfigSection>;
 const useFormikContextMock = useFormikContext as jest.Mock;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {

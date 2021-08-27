@@ -8,8 +8,7 @@ import {
   ListPage,
   Table,
   TableData,
-  TableRow,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -38,9 +37,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const OBTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
@@ -53,7 +52,7 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

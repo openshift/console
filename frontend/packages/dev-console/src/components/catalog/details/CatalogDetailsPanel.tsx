@@ -20,6 +20,8 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
   const notAvailable = (
     <span className="properties-side-panel-pf-property-label">{t('devconsole~N/A')}</span>
   );
+  const providerLabel = t('devconsole~Provider');
+  const customProvider = details?.properties?.some((property) => property.label === providerLabel);
 
   return (
     <div className="modal-body modal-body-border">
@@ -34,7 +36,10 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
                   value={property.value || notAvailable}
                 />
               ))}
-              <PropertyItem label={t('devconsole~Provider')} value={provider || notAvailable} />
+              {!customProvider && (
+                <PropertyItem label={providerLabel} value={provider || notAvailable} />
+              )}
+              <PropertyItem label={t('devconsole~Created at')} value={created || notAvailable} />
               <PropertyItem
                 label={t('devconsole~Support')}
                 value={
@@ -58,7 +63,6 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
                   )
                 }
               />
-              <PropertyItem label={t('devconsole~Created at')} value={created || notAvailable} />
             </PropertiesSidePanel>
             {(details?.descriptions?.length || description) && (
               <div className="co-catalog-page__overlay-description">

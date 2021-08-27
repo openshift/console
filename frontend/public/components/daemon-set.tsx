@@ -13,7 +13,7 @@ import {
   ActionMenuVariant,
 } from '@console/shared';
 import { K8sResourceKind, referenceFor, referenceForModel } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   AsyncComponent,
   DetailsItem,
@@ -130,6 +130,50 @@ const EnvironmentTab: React.FC<EnvironmentTabProps> = (props) => (
     readOnly={false}
   />
 );
+
+const DaemonSetTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj: daemonset }) => {
+  const { t } = useTranslation();
+  const resourceKind = referenceFor(daemonset);
+  const context = { [resourceKind]: daemonset };
+  return (
+    <>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink
+          kind={kind}
+          name={daemonset.metadata.name}
+          namespace={daemonset.metadata.namespace}
+        />
+      </TableData>
+      <TableData
+        className={classNames(tableColumnClasses[1], 'co-break-word')}
+        columnID="namespace"
+      >
+        <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link
+          to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
+          title="pods"
+        >
+          {t('public~{{currentNumber}} of {{desiredNumber}} pods', {
+            currentNumber: daemonset.status.currentNumberScheduled,
+            desiredNumber: daemonset.status.desiredNumberScheduled,
+          })}
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <LabelList kind={kind} labels={daemonset.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <LazyActionMenu context={context} />
+      </TableData>
+    </>
+  );
+};
+
 const { details, pods, editYaml, envEditor, events, metrics } = navFactory;
 export const DaemonSets: React.FC = (props) => {
   const { t } = useTranslation();
@@ -171,53 +215,6 @@ export const DaemonSets: React.FC = (props) => {
     },
   ];
 
-  const DaemonSetTableRow: RowFunction<K8sResourceKind> = ({
-    obj: daemonset,
-    index,
-    key,
-    style,
-  }) => {
-    const resourceKind = referenceFor(daemonset);
-    const context = { [resourceKind]: daemonset };
-    return (
-      <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink
-            kind={kind}
-            name={daemonset.metadata.name}
-            namespace={daemonset.metadata.namespace}
-          />
-        </TableData>
-        <TableData
-          className={classNames(tableColumnClasses[1], 'co-break-word')}
-          columnID="namespace"
-        >
-          <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          <Link
-            to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
-            title="pods"
-          >
-            {t('public~{{currentNumber}} of {{desiredNumber}} pods', {
-              currentNumber: daemonset.status.currentNumberScheduled,
-              desiredNumber: daemonset.status.desiredNumberScheduled,
-            })}
-          </Link>
-        </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          <LabelList kind={kind} labels={daemonset.metadata.labels} />
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
-          <LazyActionMenu context={context} />
-        </TableData>
-      </TableRow>
-    );
-  };
-
   return (
     <Table
       {...props}
@@ -234,7 +231,7 @@ export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = (props) => (
 );
 
 const DaemonSetPods: React.FC<DaemonSetPodsProps> = (props) => (
-  <PodsComponent {...props} customData={{ showNodes: true }} />
+  <PodsComponent {...props} showNodes />
 );
 
 export const DaemonSetsDetailsPage: React.FC<DaemonSetsDetailsPageProps> = (props) => {

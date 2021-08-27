@@ -6,14 +6,6 @@ import SinkUri from '../SinkUri';
 
 type SinkUriProps = React.ComponentProps<typeof SinkUri>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('SinkUri', () => {
   const sinkUriObj = {
     metadata: { uid: 'http%3A%2F%2Fsvc.cluster.com', namespace: 'jai-test' },

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as cx from 'classnames';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
@@ -17,8 +17,8 @@ import { tableColumnClasses } from './route-table';
 const routeReference = referenceForModel(RouteModel);
 const revisionReference = referenceForModel(RevisionModel);
 
-const RouteRow: RowFunction<RouteKind> = ({ obj, index, key, style }) => (
-  <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+const RouteRow: React.FC<RowFunctionArgs<RouteKind>> = ({ obj }) => (
+  <>
     <TableData className={tableColumnClasses[0]}>
       <ResourceLink
         kind={routeReference}
@@ -65,7 +65,7 @@ const RouteRow: RowFunction<RouteKind> = ({ obj, index, key, style }) => (
     <TableData className={tableColumnClasses[6]}>
       <ResourceKebab actions={Kebab.factory.common} kind={routeReference} resource={obj} />
     </TableData>
-  </TableRow>
+  </>
 );
 
 export default RouteRow;

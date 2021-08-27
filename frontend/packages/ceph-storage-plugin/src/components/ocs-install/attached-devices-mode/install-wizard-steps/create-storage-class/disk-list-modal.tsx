@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as cx from 'classnames';
-import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { Table, TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { sortable, SortByDirection } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { Modal } from '@console/shared';
@@ -17,9 +17,9 @@ const tableColumnClasses = [
   cx('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
-const DiskRow: RowFunction<DiscoveredDisk> = ({ obj, index, key, style }) => {
+const DiskRow: React.FC<RowFunctionArgs<DiscoveredDisk>> = ({ obj }) => {
   return (
-    <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
       <TableData className={tableColumnClasses[1]}>{obj.node}</TableData>
       <TableData className={tableColumnClasses[2]}>{obj.type || '-'}</TableData>
@@ -29,7 +29,7 @@ const DiskRow: RowFunction<DiscoveredDisk> = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[4]}>
         {humanizeBinaryBytes(obj.size).string || '-'}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

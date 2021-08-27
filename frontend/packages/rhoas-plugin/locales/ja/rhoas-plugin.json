@@ -1,7 +1,14 @@
 {
+  "Cloud Services Request": "クラウドサービスの要求",
+  "Cloud Services Requests": "クラウドサービスの要求",
+  "Kafka Connection": "Kafka 接続",
+  "Kafka Connections": "Kafka 接続",
+  "Cloud service Account Request": "クラウドサービスアカウントの要求",
+  "Cloud Service Account Requests": "クラウドサービスアカウントの要求",
   "Managed Services": "マネージドサービス",
   "Discover managed services to simplify deployments and reduce operational overhead & complexities": "デプロイメントを単純化し、運用のオーバーヘッドや複雑性を軽減するためのマネージドサービスの検出",
   "Browse managed services to connect applications and microservices to support services to create a full solution.": "マネージドサービスを参照して、アプリケーションとマイクロサービスをサポートサービスに接続し、完全なソリューションを作成します。",
+  "Create a Kafka connector": "Kafka コネクターの作成",
   "Unlock with token": "トークンを使用したロック解除",
   "Unlocked": "ロック解除",
   "Red Hat OpenShift Application Services include services like Red Hat OpenShift Streams for Apache Kafka": "Red Hat OpenShift Application Services には、Red Hat OpenShift Streams for Apache Kafka などのサービスが含まれます。",
@@ -48,11 +55,10 @@
   "URL": "URL",
   "Secret": "シークレット",
   "No Secret": "シークレットなし",
-  "Create a Kafka connector": "Kafka コネクターの作成",
-  "Create a binding connector": "バインディングコネクターの作成",
   "No data": "データなし",
   "Cloud Service": "クラウドサービス",
   "This resource represents service that exist outside your cluster": "このリソースは、クラスター外にあるサービスを表します。",
   "Details": "詳細",
-  "Resources": "リソース"
+  "Resources": "リソース",
+  "Error moving event source kafka connector": "イベントソースの kafka コネクターの移動に関するエラー"
 }

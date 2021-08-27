@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Firehose } from '@console/internal/components/utils';
+import { Firehose } from '@console/internal/components/utils/firehose';
 import { SecretModel } from '@console/internal/models';
 import { ResourceDropdown } from '@console/shared';
 

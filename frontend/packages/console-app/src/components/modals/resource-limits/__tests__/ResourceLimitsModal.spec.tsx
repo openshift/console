@@ -7,14 +7,6 @@ import ResourceLimitsModal from '../ResourceLimitsModal';
 
 type ResourceLimitsModalProps = React.ComponentProps<typeof ResourceLimitsModal>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ResourceLimitsModal Form', () => {
   let formProps: ResourceLimitsModalProps;
   let ResourceLimitsModalWrapper: ShallowWrapper<ResourceLimitsModalProps>;

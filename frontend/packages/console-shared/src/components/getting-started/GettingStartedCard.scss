@@ -1,9 +1,4 @@
 .ocs-getting-started-card {
-  .pf-c-simple-list__item-link {
-    --pf-c-simple-list__item-link--focus--FontWeight: normal;
-    --pf-c-simple-list__item-link--active--FontWeight: normal;
-    --pf-c-simple-list__item-link--hover--FontWeight: normal;
-  }
 
   &__title-icon {
     margin-right: var(--pf-global--spacer--sm);
@@ -28,20 +23,6 @@
             var(--pf-c-simple-list__item-link--PaddingRight)
             var(--pf-c-simple-list__item-link--PaddingBottom)
             var(--pf-c-simple-list__item-link--PaddingLeft);
-        }
-
-        a {
-          text-decoration: none;
-        }
-
-        // Override default style for button and a:hover, focus from scaffolding.scss
-        a.pf-c-simple-list__item-link:hover,
-        a.pf-c-simple-list__item-link:focus,
-        a.pf-c-simple-list__item-link:active,
-        button.pf-c-simple-list__item-link:hover,
-        button.pf-c-simple-list__item-link:focus,
-        button.pf-c-simple-list__item-link:active {
-          color: var(--pf-global--Color--100);
         }
       }
     }

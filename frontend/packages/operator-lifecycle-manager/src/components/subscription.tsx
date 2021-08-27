@@ -11,7 +11,6 @@ import {
   DetailsPage,
   MultiListPage,
   Table,
-  TableRow,
   TableData,
   RowFunctionArgs,
 } from '@console/internal/components/factory';
@@ -205,10 +204,10 @@ const menuActions = [
   },
 ];
 
-export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style }) => {
+export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj }) => {
   const { t } = useTranslation();
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(SubscriptionModel)}
@@ -235,7 +234,7 @@ export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, ke
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -278,7 +277,7 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
       {...props}
       aria-label={t('olm~Operator Subscriptions')}
       Header={SubscriptionTableHeader}
-      Row={(rowArgs) => <SubscriptionTableRow {...rowArgs} />}
+      Row={SubscriptionTableRow}
       EmptyMsg={() => (
         <MsgBox
           title={t('olm~No Subscriptions found')}

@@ -3,7 +3,8 @@ import { Label } from '@patternfly/react-core';
 import i18next from 'i18next';
 import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { coFetch } from '@console/internal/co-fetch';
-import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
+import { ResourceIcon, useAccessReview } from '@console/internal/components/utils';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel } from '../../../models/pipelines';
 import { TektonHubTask } from '../../../types/tektonHub';
 import { TektonTaskProviders } from '../../pipelines/const';
@@ -14,6 +15,9 @@ const normalizeTektonHubTasks = async (
   tektonHubTasks: TektonHubTask[],
 ): Promise<CatalogItem<TektonHubTask>[]> => {
   const tasks = tektonHubTasks.reduce((acc, task) => {
+    if (task.kind !== TaskModel.kind) {
+      return acc;
+    }
     const { id, name } = task;
     const { description } = task.latestVersion;
     const provider = TektonTaskProviders.community;
@@ -34,7 +38,7 @@ const normalizeTektonHubTasks = async (
             tags,
             secondaryLabel: secondaryLabelName && <Label color="blue">{secondaryLabelName}</Label>,
             icon: {
-              node: <ResourceLink kind={TaskModel.kind} />,
+              node: <ResourceIcon kind={referenceForModel(TaskModel)} />,
             },
             attributes: { installed: '', versions, categories },
             cta: {

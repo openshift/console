@@ -5,14 +5,6 @@ import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority } from '../../const';
 import ImageVulnerabilitiesList from '../ImageVulnerabilitiesList';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ImageVulnerabilitiesList', () => {
   type ImageVulnerabilitiesListProps = React.ComponentProps<typeof ImageVulnerabilitiesList>;
   const vuln = fakeVulnFor(Priority.Critical);
@@ -33,6 +25,6 @@ describe('ImageVulnerabilitiesList', () => {
   });
   it('should have Type and Severity row filter', () => {
     const { rowFilters } = wrapper.find(MultiListPage).props();
-    expect(rowFilters[0].filterGroupName).toBe('container-security~Severity');
+    expect(rowFilters[0].filterGroupName).toBe('Severity');
   });
 });

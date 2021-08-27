@@ -64,7 +64,6 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   useExplicitPipelineTaskTouch();
 
   const statusRef = React.useRef(status);
-  const containerRef = React.useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
   const savedCallback = React.useRef(() => {});
 
@@ -119,6 +118,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     handleReset();
   }, [handleReset]);
 
+  const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'pipeline.pipelineBuilderForm.editor.lastView';
+
   const formEditor = (
     <PipelineBuilderFormEditor
       hasExistingPipeline={!!existingPipeline}
@@ -143,10 +144,9 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
           </StackItem>
           <FlexForm onSubmit={handleSubmit}>
             <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
-              <div ref={containerRef} />
               <PipelineQuickSearch
                 namespace={namespace}
-                viewContainer={containerRef.current}
+                viewContainer={contentRef.current}
                 isOpen={menuOpen}
                 callback={savedCallback.current}
                 setIsOpen={(open) => setMenuOpen(open)}
@@ -167,6 +167,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   editor: yamlEditor,
                   sanitizeTo: () => sanitizeToYaml(formData, namespace, existingPipeline),
                 }}
+                lastViewUserSettingKey={LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY}
               />
             </FormBody>
             <FormFooter

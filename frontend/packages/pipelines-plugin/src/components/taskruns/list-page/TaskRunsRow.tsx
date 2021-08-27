@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunModel, PipelineModel } from '../../../models';
@@ -14,8 +14,8 @@ import { tableColumnClasses } from './taskruns-table';
 const taskRunsReference = referenceForModel(TaskRunModel);
 const pipelineReference = referenceForModel(PipelineModel);
 
-const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...props }) => (
-  <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+const TaskRunsRow: React.FC<RowFunctionArgs<TaskRunKind>> = ({ obj, customData }) => (
+  <>
     <TableData className={tableColumnClasses[0]}>
       <ResourceLink
         kind={taskRunsReference}
@@ -27,7 +27,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
     <TableData className={tableColumnClasses[1]} columnID="namespace">
       <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
     </TableData>
-    {props.customData?.showPipelineColumn && (
+    {customData?.showPipelineColumn && (
       <TableData className={tableColumnClasses[2]}>
         {obj.metadata.labels[TektonResourceLabel.pipeline] ? (
           <ResourceLink
@@ -68,7 +68,7 @@ const TaskRunsRow: RowFunction<TaskRunKind> = ({ obj, index, key, style, ...prop
     <TableData className={tableColumnClasses[7]}>
       <ResourceKebab actions={getTaskRunKebabActions()} kind={taskRunsReference} resource={obj} />
     </TableData>
-  </TableRow>
+  </>
 );
 
 export default TaskRunsRow;

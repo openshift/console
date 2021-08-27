@@ -8,6 +8,10 @@
   }
 }
 
+.co-alert--margin-bottom-sm {
+  margin-bottom: var(--pf-global--spacer--sm);
+}
+
 .co-alert--margin-top {
   margin-bottom: 0;
   margin-top: $grid-gutter-width / 2;

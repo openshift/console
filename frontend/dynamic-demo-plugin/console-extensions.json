@@ -33,6 +33,48 @@
     }
   },
   {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "admin-demo-section",
+      "perspective": "admin",
+      "name": "Demo Plugin"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-consumer",
+      "perspective": "admin",
+      "section": "admin-demo-section",
+      "name": "Test Consumer",
+      "href": "/test-consumer"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "dev-demo-section",
+      "perspective": "dev",
+      "name": "Demo Plugin"
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "test-consumer",
+      "perspective": "dev",
+      "section": "dev-demo-section",
+      "name": "Test Consumer",
+      "href": "/test-consumer"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
     "type": "console.page/route",
     "properties": {
       "path": "/test-consumer",
@@ -44,6 +86,13 @@
     "properties": {
       "path": "/test-utility-consumer",
       "component": { "$codeRef": "utilityConsumer.default" }
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/example/nav",
+      "component": { "$codeRef": "navPage" }
     }
   }
 ]

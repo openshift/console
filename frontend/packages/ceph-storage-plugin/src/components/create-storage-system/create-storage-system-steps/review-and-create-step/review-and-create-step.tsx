@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants, List, ListItem } from '@patternfly/react-core';
 import { useFlag } from '@console/shared/src';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { BackingStorageType } from '../../../../constants/create-storage-system';
+import { BackingStorageType, DeploymentType } from '../../../../constants/create-storage-system';
 import { NetworkTypeLabels, NO_PROVISIONER } from '../../../../constants';
 import {
   getAllZone,
@@ -35,13 +35,18 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
     securityAndNetwork,
     createLocalVolumeSet,
     backingStorage,
+    nodes,
   } = state;
-  const { nodes, capacity } = capacityAndNodes;
+  const { capacity, arbiterLocation, enableArbiter } = capacityAndNodes;
   const { encryption, kms, networkType } = securityAndNetwork;
   const { deployment, externalStorage, type } = backingStorage;
 
+  const isMCG = deployment === DeploymentType.MCG;
+
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
-  const formattedCapacity = !isNoProvisioner ? `${OSD_CAPACITY_SIZES[capacity]} TiB` : capacity;
+  const formattedCapacity = !isNoProvisioner
+    ? `${OSD_CAPACITY_SIZES[capacity]} TiB`
+    : humanizeBinaryBytes(capacity).string;
 
   const hasEncryption = encryption.clusterWide || encryption.storageClass;
 
@@ -51,6 +56,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
     ? t('ceph-storage-plugin~Enabled')
     : t('ceph-storage-plugin~Disabled');
 
+  const kmsStatus = encryption.advanced ? kms.name.value : t('ceph-storage-plugin~Not connected');
+
   const totalCpu = getTotalCpu(nodes);
   const totalMemory = getTotalMemory(nodes);
   const zones = getAllZone(nodes);
@@ -58,17 +65,19 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
   return (
     <>
       <ReviewItem title={t('ceph-storage-plugin~Backing storage')}>
-        <ListItem>
-          {t('ceph-storage-plugin~StorageClass: {{name}}', {
-            name: storageClass.name || createLocalVolumeSet.volumeSetName,
-          })}
-        </ListItem>
+        {!isMCG && (
+          <ListItem>
+            {t('ceph-storage-plugin~StorageClass: {{name}}', {
+              name: storageClass.name || createLocalVolumeSet.volumeSetName,
+            })}
+          </ListItem>
+        )}
         <ListItem>
           {t('ceph-storage-plugin~Deployment type: {{deployment}}', {
             deployment,
           })}
         </ListItem>
-        {type === BackingStorageType.EXTERNAL && (
+        {!isMCG && type === BackingStorageType.EXTERNAL && (
           <ListItem>
             {t('ceph-storage-plugin~External storage platform: {{storagePlatform}}', {
               storagePlatform,
@@ -76,50 +85,70 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({ state }) => {
           </ListItem>
         )}
       </ReviewItem>
-      <ReviewItem title={t('ceph-storage-plugin~Capacity and nodes')}>
-        <ListItem>
-          {t('ceph-storage-plugin~Cluster capacity: {{capacity}}', {
-            capacity: formattedCapacity,
-          })}
-        </ListItem>
-        <ListItem>
-          {t('ceph-storage-plugin~Selected nodes: {{nodeCount, number}} node', {
-            nodeCount: nodes.length,
-            count: nodes.length,
-          })}
-        </ListItem>
-        <ListItem>
-          {t('ceph-storage-plugin~CPU and memory: {{cpu, number}} CPU and {{memory}} memory', {
-            cpu: totalCpu,
-            memory: humanizeBinaryBytes(totalMemory).string,
-          })}
-        </ListItem>
-        <ListItem>
-          {t('ceph-storage-plugin~Zone: {{zoneCount, number}} zone', {
-            zoneCount: zones.size,
-            count: zones.size,
-          })}
-        </ListItem>
-      </ReviewItem>
-      <ReviewItem title={t('ceph-storage-plugin~Security and network')}>
-        <ListItem>
-          {t('ceph-storage-plugin~Encryption: {{encryptionStatus}}', { encryptionStatus })}
-        </ListItem>
-        {hasEncryption && (
+      {!isMCG && (
+        <ReviewItem title={t('ceph-storage-plugin~Capacity and nodes')}>
           <ListItem>
-            {t('ceph-storage-plugin~External key management service: {{name}}', {
-              name: encryption.advanced ? kms.name.value : t('ceph-storage-plugin~Disabled'),
+            {t('ceph-storage-plugin~Cluster capacity: {{capacity}}', {
+              capacity: formattedCapacity,
             })}
           </ListItem>
-        )}
-        {isMultusSupported && (
           <ListItem>
-            {t('ceph-storage-plugin~Network: {{networkType}}', {
-              networkType: NetworkTypeLabels[networkType],
+            {t('ceph-storage-plugin~Selected nodes: {{nodeCount, number}} node', {
+              nodeCount: nodes.length,
+              count: nodes.length,
             })}
           </ListItem>
-        )}
-      </ReviewItem>
+          <ListItem>
+            {t('ceph-storage-plugin~CPU and memory: {{cpu, number}} CPU and {{memory}} memory', {
+              cpu: totalCpu,
+              memory: humanizeBinaryBytes(totalMemory).string,
+            })}
+          </ListItem>
+          <ListItem>
+            {t('ceph-storage-plugin~Zone: {{zoneCount, number}} zone', {
+              zoneCount: zones.size,
+              count: zones.size,
+            })}
+          </ListItem>
+          {enableArbiter && (
+            <ListItem>
+              {t('ceph-storage-plugin~Arbiter zone: {{zone}}', {
+                zone: arbiterLocation,
+              })}
+            </ListItem>
+          )}
+        </ReviewItem>
+      )}
+      {isMCG ? (
+        <ReviewItem title={t('ceph-storage-plugin~Security')}>
+          <ListItem>{t('ceph-storage-plugin~Encryption: Enabled')}</ListItem>
+          <ListItem>
+            {t('ceph-storage-plugin~External key management service: {{kmsStatus}}', {
+              kmsStatus,
+            })}
+          </ListItem>
+        </ReviewItem>
+      ) : (
+        <ReviewItem title={t('ceph-storage-plugin~Security and network')}>
+          <ListItem>
+            {t('ceph-storage-plugin~Encryption: {{encryptionStatus}}', { encryptionStatus })}
+          </ListItem>
+          {hasEncryption && (
+            <ListItem>
+              {t('ceph-storage-plugin~External key management service: {{kmsStatus}}', {
+                kmsStatus,
+              })}
+            </ListItem>
+          )}
+          {isMultusSupported && (
+            <ListItem>
+              {t('ceph-storage-plugin~Network: {{networkType}}', {
+                networkType: NetworkTypeLabels[networkType],
+              })}
+            </ListItem>
+          )}
+        </ReviewItem>
+      )}
     </>
   );
 };

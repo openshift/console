@@ -62,7 +62,7 @@ objects:
             - cloudInitNoCloud:
                 userData: |-
                   #cloud-config
-                  password: fedora
+                  password: '\${CLOUD_USER_PASSWORD}'
                   chpasswd: { expire: False }
               name: cloudinitdisk
           hostname: '\${NAME}'
@@ -70,6 +70,10 @@ parameters:
   - name: NAME
     description: Name for the new VM
     required: true
+  - password: CLOUD_USER_PASSWORD
+    description: Randomized password for the cloud-init user
+    generate: expression
+    from: '[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}'
 `,
 );
 

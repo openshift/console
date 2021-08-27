@@ -44,7 +44,9 @@ describe('TaskRunLogSnippet test', () => {
     const { title, containerName, podName } = getTRLogSnippet(
       taskRunWithContainer,
     ) as ErrorDetailsWithLogName;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual(
+      'Failure on task fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj - check logs for details.',
+    );
     expect(containerName).toEqual('step-build');
     expect(podName).toEqual('broken-app-pipeline-j2nxzm-x-compile-8mq2h-pod-b9gsg');
   });
@@ -55,7 +57,9 @@ describe('TaskRunLogSnippet test', () => {
       status: { ...getFailedTaskRunStatus(plrWithTaskRunTimeoutError) },
     };
     const { title, staticMessage } = getTRLogSnippet(timeOutTaskRun) as ErrorDetailsWithStaticLog;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual(
+      'Failure on task fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj - check logs for details.',
+    );
     expect(staticMessage).toEqual(
       'TaskRun "fetch-and-print-recipe-test-fetch-the-recipe-5pb9p" failed to finish within "5s"',
     );
@@ -79,7 +83,9 @@ describe('TaskRunLogSnippet test', () => {
         ],
       },
     }) as ErrorDetailsWithStaticLog;
-    expect(title).toEqual('Failure on task {{taskName}} - check logs for details.');
+    expect(title).toEqual(
+      'Failure on task fetch-and-print-recipe-sn3peo-print-the-recipe-cbwbj - check logs for details.',
+    );
     expect(staticMessage).toEqual('Unknown failure condition');
   });
 });

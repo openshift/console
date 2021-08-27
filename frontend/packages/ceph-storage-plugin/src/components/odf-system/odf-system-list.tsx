@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { TFunction } from 'i18next';
 import { Kebab, ResourceKebab } from '@console/internal/components/utils';
 import {
-  RowFunction,
   TableData,
-  TableRow,
   Table,
   ListPage,
   Flatten,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   referenceForGroupVersionKind,
@@ -44,27 +42,24 @@ const tableColumnClasses = [
 
 type CustomData = {
   normalizedMetrics: ReturnType<typeof normalizeMetrics>;
-  t: TFunction;
 };
 
-const SystemTableRow: RowFunction<StorageSystemKind, CustomData> = ({
+const SystemTableRow: React.FC<RowFunctionArgs<StorageSystemKind, CustomData>> = ({
   obj,
-  index,
-  key,
-  style,
   customData,
 }) => {
-  const { apiGroup, apiVersion, kind } = getGVK(obj?.spec?.kind);
+  const { t } = useTranslation();
+  const { apiGroup, apiVersion, kind } = getGVK(obj.spec.kind);
   const systemKind = referenceForGroupVersionKind(apiGroup)(apiVersion)(kind);
   const providerName = obj?.spec?.name;
   const systemName = obj?.metadata?.name;
-  const { normalizedMetrics, t } = customData;
+  const { normalizedMetrics } = customData;
 
   const { rawCapacity, usedCapacity, iops, throughput, latency } =
     normalizedMetrics?.[systemName] || {};
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ODFSystemLink kind={systemKind} systemName={systemName} providerName={providerName} />
       </TableData>
@@ -84,7 +79,7 @@ const SystemTableRow: RowFunction<StorageSystemKind, CustomData> = ({
           customData={{ tFunction: t }}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 
@@ -156,19 +151,24 @@ const StorageSystemList: React.FC<StorageSystemListProps> = (props) => {
     query: ODF_QUERIES[ODFQueries.USED_CAPACITY],
   });
 
-  const normalizedMetrics = normalizeMetrics(
-    props.data,
-    latency,
-    throughput,
-    rawCapacity,
-    usedCapacity,
-    iops,
+  const normalizedMetrics = React.useMemo(
+    () => ({
+      normalizedMetrics: normalizeMetrics(
+        props.data,
+        latency,
+        throughput,
+        rawCapacity,
+        usedCapacity,
+        iops,
+      ),
+    }),
+    [props.data, iops, latency, rawCapacity, throughput, usedCapacity],
   );
 
   return (
     <Table
       {...props}
-      customData={{ normalizedMetrics, t }}
+      customData={normalizedMetrics}
       aria-label={t('ceph-storage-plugin~Storage Systems')}
       Header={Header}
       Row={SystemTableRow}

@@ -3,7 +3,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { Table } from '@console/internal/components/factory';
 import { MsgBox } from '@console/internal/components/utils';
-import { Feature } from '../types';
+import { Feature, Vulnerability } from '../types';
 import ImageVulnerabilityRow, {
   imageVulnerabilitiesTableColumnClasses,
 } from './ImageVulnerabilityRow';
@@ -11,6 +11,10 @@ import ImageVulnerabilityRow, {
 type ImageVulnerabilitiesTableProps = {
   features: Feature[];
 };
+
+const getRowProps = (vulnerability: Vulnerability) => ({
+  id: vulnerability.name,
+});
 
 const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation();
@@ -57,6 +61,7 @@ const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (pro
       Row={ImageVulnerabilityRow}
       EmptyMsg={EmptyMsg}
       virtualize
+      getRowProps={getRowProps}
     />
   );
 };

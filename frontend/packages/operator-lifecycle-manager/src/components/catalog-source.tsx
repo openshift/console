@@ -9,11 +9,10 @@ import { CreateYAML } from '@console/internal/components/create-yaml';
 import {
   DetailsPage,
   Table,
-  TableRow,
   TableData,
   TableProps,
   MultiListPage,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import { ListPageProps } from '@console/internal/components/monitoring/types';
 import {
@@ -338,7 +337,11 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
+const getRowProps = (obj) => ({
+  className: obj?.disabled ? 'catalog-source__table-row--disabled' : undefined,
+});
+
+const CatalogSourceTableRow: React.FC<RowFunctionArgs<CatalogSourceTableRowObj>> = ({
   obj: {
     availability = '-',
     disabled = false,
@@ -352,17 +355,8 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
     status = '',
     source,
   },
-  index,
-  key,
-  style,
 }) => (
-  <TableRow
-    className={disabled && 'catalog-source__table-row--disabled'}
-    id={source ? source.metadata.uid : index}
-    index={index}
-    style={style}
-    trKey={key}
-  >
+  <>
     <TableData className={tableColumnClasses[0]}>
       {source ? (
         <ResourceLink
@@ -404,7 +398,7 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
         />
       )}
     </TableData>
-  </TableRow>
+  </>
 );
 
 const CatalogSourceList: React.FC<TableProps> = (props) => {
@@ -465,6 +459,7 @@ const CatalogSourceList: React.FC<TableProps> = (props) => {
       aria-label={`${CatalogSourceModel.labelPlural}`}
       Header={CatalogSourceHeader}
       Row={CatalogSourceTableRow}
+      getRowProps={getRowProps}
     />
   );
 };

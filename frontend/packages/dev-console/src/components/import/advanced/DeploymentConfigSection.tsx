@@ -46,7 +46,6 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
         label={t('devconsole~Environment variables (runtime only)')}
         envs={env}
         obj={deploymentConfigObj}
-        envPath={['spec', 'template', 'spec', 'containers']}
       />
     </FormSection>
   );

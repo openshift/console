@@ -12,8 +12,8 @@ import {
 } from '@patternfly/react-icons';
 
 import { StoragePoolKind, OcsStorageClassKind } from '../types';
-import { CephBlockPoolModel } from '../models';
-import { CEPH_STORAGE_NAMESPACE, OCS_INTERNAL_CR_NAME } from '../constants/index';
+import { CephBlockPoolModel, OCSServiceModel } from '../models';
+import { CEPH_STORAGE_NAMESPACE } from '../constants/index';
 import { COMPRESSION_ON, ROOK_MODEL, POOL_PROGRESS } from '../constants/storage-pool-const';
 
 export const LoadingComponent: React.FC = () => {
@@ -208,7 +208,7 @@ export const FooterPrimaryActions = (t: TFunction) => ({
 
 export const isDefaultPool = (blockPoolConfig: StoragePoolKind): boolean =>
   !!blockPoolConfig?.metadata.ownerReferences?.find(
-    (ownerReference) => ownerReference.name === OCS_INTERNAL_CR_NAME,
+    (ownerReference) => ownerReference.kind === OCSServiceModel.kind,
   );
 
 export const BlockPoolColumnInfo = (t: TFunction) => ({

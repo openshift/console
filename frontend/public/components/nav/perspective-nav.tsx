@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
+import { NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { useExtensions } from '@console/plugin-sdk';
 import {
   Separator,
   NavItem,
-  isSeparator,
   isNavSection,
   NavSection as PluginNavSection,
   isNavItem,
@@ -15,11 +14,10 @@ import { useActivePerspective, usePinnedResources } from '@console/shared';
 import { K8sKind, modelFor, referenceForModel } from '../../module/k8s';
 import { getSortedNavItems } from './navSortUtils';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
-import { NavSection } from './section';
 import AdminNav from './admin-nav';
 import {
-  createLink,
   NavLinkComponent,
+  PluginNavItems,
   ResourceClusterLink,
   ResourceNSLink,
   RootNavLink,
@@ -45,9 +43,10 @@ const PerspectiveNav: React.FC<{}> = () => {
     confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
   };
 
-  // Until admin perspective is contributed through extensions, simply render static `AdminNav`
+  // Until admin perspective is contributed through extensions, render static
+  // `AdminNav` and any additional plugin nav items.
   if (perspective === 'admin') {
-    return <AdminNav />;
+    return <AdminNav pluginNavItems={orderedNavItems} />;
   }
 
   const getLabelForResource = (resource: string): string => {
@@ -108,16 +107,7 @@ const PerspectiveNav: React.FC<{}> = () => {
 
   return (
     <div className="oc-perspective-nav">
-      {orderedNavItems.map((item, index) => {
-        if (isNavSection(item)) {
-          const { id, name } = item.properties;
-          return <NavSection id={id} title={name} key={id} isGrouped={!name} />;
-        }
-        if (isSeparator(item)) {
-          return <NavItemSeparator key={`separator-${index}`} />;
-        }
-        return <li key={item.uid}>{createLink(item, true)}</li>;
-      })}
+      <PluginNavItems items={orderedNavItems} />
       {pinnedResourcesLoaded && pinnedResources?.length ? (
         <NavGroup title="">{getPinnedItems()}</NavGroup>
       ) : null}

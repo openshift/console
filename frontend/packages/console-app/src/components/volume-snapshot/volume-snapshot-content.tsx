@@ -2,13 +2,7 @@ import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import {
-  TableRow,
-  TableData,
-  ListPage,
-  Table,
-  RowFunction,
-} from '@console/internal/components/factory';
+import { TableData, ListPage, Table, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
   ResourceKebab,
@@ -35,13 +29,13 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const Row: RowFunction<VolumeSnapshotContentKind> = ({ key, obj, style, index }) => {
+const Row: React.FC<RowFunctionArgs<VolumeSnapshotContentKind>> = ({ obj }) => {
   const { name, creationTimestamp } = obj?.metadata || {};
   const { name: snapshotName, namespace: snapshotNamespace } = obj?.spec?.volumeSnapshotRef || {};
   const size = obj.status?.restoreSize;
   const sizeMetrics = size ? humanizeBinaryBytes(size).string : '-';
   return (
-    <TableRow id={obj?.metadata?.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(VolumeSnapshotContentModel)} name={name} />
       </TableData>
@@ -72,7 +66,7 @@ const Row: RowFunction<VolumeSnapshotContentKind> = ({ key, obj, style, index })
           actions={Kebab.factory.common}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -8,14 +8,6 @@ let UploadJarPageProps: React.ComponentProps<typeof UploadJarPage>;
 
 const useK8sWatchResourcesMock = useK8sWatchResources as jest.Mock;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResources: jest.fn(),
 }));

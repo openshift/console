@@ -19,11 +19,20 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
   deployment,
   isAdvancedOpen,
   dispatch,
+  hasOCS,
+  currentStep,
 }) => {
   const { t } = useTranslation();
   const [isSelectOpen, setIsSelectOpen] = React.useState(false);
 
   const handleSelection: SelectProps['onSelect'] = (_, value) => {
+    if (currentStep !== 1) {
+      /*
+       * Reset the wizard when user has selected a new deployment flow
+       * and has not visited any step other than first step.
+       */
+      dispatch({ type: 'wizard/setInitialState' });
+    }
     dispatch({
       type: 'backingStorage/setDeployment',
       // 'value' on SelectProps['onSelect'] is string hence not matching with payload which is of "DeploymentType"
@@ -54,6 +63,7 @@ export const AdvancedSection: React.FC<AdvancedSelectionProps> = ({
           onSelect={handleSelection}
           selections={deployment}
           isOpen={isSelectOpen}
+          isDisabled={hasOCS}
         >
           {selectOptions}
         </Select>
@@ -66,4 +76,6 @@ type AdvancedSelectionProps = {
   dispatch: WizardDispatch;
   deployment: WizardState['backingStorage']['deployment'];
   isAdvancedOpen: WizardState['backingStorage']['isAdvancedOpen'];
+  hasOCS: boolean;
+  currentStep: number;
 };

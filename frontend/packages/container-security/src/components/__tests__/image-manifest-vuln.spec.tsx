@@ -11,14 +11,6 @@ import {
   highestSeverityIndex,
 } from '../image-manifest-vuln';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('totalCount', () => {
   it('should return 0 if vuln status not present', () => {
     const vuln = fakeVulnFor(Priority.Critical);
@@ -60,7 +52,7 @@ describe(ImageManifestVulnDetails.displayName, () => {
       expect(vulnPriority.has(d.x)).toBe(true);
       expect(d.y).toEqual(totalFor(d.x)(vuln));
     });
-    expect(chart.props().title).toEqual('container-security~{{total, number}} total');
+    expect(chart.props().title).toEqual('{{total, number}} total');
     expect(chart.props().colorScale).toEqual(
       vulnPriority.map((priority) => priority.color.value).toArray(),
     );

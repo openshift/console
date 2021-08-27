@@ -20,7 +20,7 @@ import {
   OutlinedWindowRestoreIcon,
 } from '@patternfly/react-icons';
 import * as classNames from 'classnames';
-import { FLAGS, USERSETTINGS_PREFIX } from '@console/shared/src/constants';
+import { FLAGS, LOG_WRAP_LINES_USERSETTINGS_KEY } from '@console/shared/src/constants';
 import { useUserSettings } from '@console/shared';
 import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import { modelFor, resourceURL } from '../../module/k8s';
@@ -308,7 +308,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
   const linkURL = getResourceLogURL(resource, containerName);
   const watchURL = getResourceLogURL(resource, containerName, bufferSize, true, logType);
   const [wrapLines, setWrapLines] = useUserSettings<boolean>(
-    `${USERSETTINGS_PREFIX}.log.wrapLines`,
+    LOG_WRAP_LINES_USERSETTINGS_KEY,
     false,
     true,
   );
@@ -454,50 +454,6 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
 
   return (
     <>
-      {error && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="danger"
-          title={t('public~An error occurred while retrieving the requested logs.')}
-          actionLinks={
-            <AlertActionLink onClick={() => setError(false)}>{t('public~Retry')}</AlertActionLink>
-          }
-        />
-      )}
-      {hasTruncated && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="warning"
-          title={t('public~Some lines have been abridged because they are exceptionally long.')}
-        >
-          <Trans ns="public" t={t}>
-            To view unabridged log content, you can either{' '}
-            <a href={linkURL} target="_blank" rel="noopener noreferrer">
-              open the raw file in another window
-            </a>{' '}
-            or{' '}
-            <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
-              download it
-            </a>
-            .
-          </Trans>
-        </Alert>
-      )}
-      {stale && (
-        <Alert
-          isInline
-          className="co-alert"
-          variant="info"
-          title={t('public~The logs for this {{resourceKind}} may be stale.', {
-            resourceKind: resource.kind,
-          })}
-          actionLinks={
-            <AlertActionLink onClick={() => setStale(false)}>{t('public~Refresh')}</AlertActionLink>
-          }
-        />
-      )}
       <div
         ref={resourceLogRef}
         className={classNames('resource-log', { 'resource-log--fullscreen': isFullscreen })}
@@ -520,6 +476,49 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
           logType={logType}
           showLogTypeSelect={resource.kind === 'Pod'}
         />
+        {error && (
+          <Alert
+            isInline
+            className="co-alert co-alert--margin-bottom-sm"
+            variant="danger"
+            title={t('public~An error occurred while retrieving the requested logs.')}
+            actionLinks={
+              <AlertActionLink onClick={() => setError(false)}>{t('public~Retry')}</AlertActionLink>
+            }
+          />
+        )}
+        {stale && (
+          <Alert
+            isInline
+            className="co-alert co-alert--margin-bottom-sm"
+            variant="info"
+            title={t('public~The logs for this {{resourceKind}} may be stale.', {
+              resourceKind: resource.kind,
+            })}
+            actionLinks={
+              <AlertActionLink onClick={() => setStale(false)}>
+                {t('public~Refresh')}
+              </AlertActionLink>
+            }
+          />
+        )}
+        {hasTruncated && (
+          <Alert
+            isInline
+            className="co-alert co-alert--margin-bottom-sm"
+            variant="warning"
+            title={t('public~Some lines have been abridged because they are exceptionally long.')}
+          >
+            <Trans ns="public" t={t}>
+              To view unabridged log content, you can either{' '}
+              <ExternalLink href={linkURL}>open the raw file in another window</ExternalLink> or{' '}
+              <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
+                download it
+              </a>
+              .
+            </Trans>
+          </Alert>
+        )}
         <LogWindow
           bufferFull={bufferFull}
           isFullscreen={isFullscreen}

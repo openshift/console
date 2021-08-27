@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData } from './factory';
 import {
   Kebab,
   SectionHeading,
@@ -69,9 +69,9 @@ const tableColumnClasses = [
 
 const kind = 'Ingress';
 
-const IngressTableRow = ({ obj: ingress, index, key, style }) => {
+const IngressTableRow = ({ obj: ingress }) => {
   return (
-    <TableRow id={ingress.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={kind}
@@ -92,7 +92,7 @@ const IngressTableRow = ({ obj: ingress, index, key, style }) => {
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={ingress} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { NodeKind } from '@console/internal/module/k8s';
 import { ExternalState, ExternalStateKeys, ExternalStateValues } from './external-storage/types';
 import { BackingStorageType, DeploymentType } from '../../constants/create-storage-system';
 import { EncryptionType, KMSConfig, NetworkType } from '../../types';
+import { KMSEmptyState } from '../../constants';
 
 export type WizardState = CreateStorageSystemState;
 export type WizardDispatch = React.Dispatch<CreateStorageSystemAction>;
@@ -31,6 +32,7 @@ export type WizardNodeState = {
 export const initialState: CreateStorageSystemState = {
   stepIdReached: 1,
   storageClass: { name: '', provisioner: '' },
+  nodes: [],
   backingStorage: {
     type: BackingStorageType.EXISTING,
     externalStorage: '',
@@ -38,17 +40,14 @@ export const initialState: CreateStorageSystemState = {
     isAdvancedOpen: false,
   },
   capacityAndNodes: {
-    nodes: [],
-    capacity: '2Ti',
     enableArbiter: false,
+    arbiterLocation: '',
+    capacity: null,
     pvCount: 0,
   },
   createStorageClass: {},
   connectionDetails: {},
   createLocalVolumeSet: {
-    lvsIsSelectNodes: false,
-    lvsAllNodes: [],
-    lvsSelectNodes: [],
     volumeSetName: '',
     isValidDiskSize: true,
     diskType: 'All',
@@ -63,42 +62,13 @@ export const initialState: CreateStorageSystemState = {
     chartNodes: new Set(),
   },
   securityAndNetwork: {
-    // Encryption state initialization
     encryption: {
       clusterWide: false,
       storageClass: false,
       advanced: false,
       hasHandled: true,
     },
-    // KMS object state
-    kms: {
-      name: {
-        value: '',
-        valid: true,
-      },
-      token: {
-        value: '',
-        valid: true,
-      },
-      address: {
-        value: '',
-        valid: true,
-      },
-      port: {
-        value: '',
-        valid: true,
-      },
-      backend: '',
-      caCert: null,
-      tls: '',
-      clientCert: null,
-      clientKey: null,
-      providerNamespace: '',
-      hasHandled: true,
-      caCertFile: '',
-      clientCertFile: '',
-      clientKeyFile: '',
-    },
+    kms: KMSEmptyState,
     publicNetwork: null,
     clusterNetwork: null,
     networkType: NetworkType.DEFAULT,
@@ -108,6 +78,7 @@ export const initialState: CreateStorageSystemState = {
 type CreateStorageSystemState = {
   stepIdReached: number;
   storageClass: { name: string; provisioner?: string };
+  nodes: WizardNodeState[];
   backingStorage: {
     type: BackingStorageType;
     externalStorage: string;
@@ -117,9 +88,11 @@ type CreateStorageSystemState = {
   createStorageClass: ExternalState;
   connectionDetails: ExternalState;
   capacityAndNodes: {
-    nodes: WizardNodeState[];
-    capacity: string;
     enableArbiter: boolean;
+    arbiterLocation: string;
+    // @TODO: Remove union types and use "number" as type.
+    // Requires refactoring osd size dropdown.
+    capacity: string | number;
     pvCount: number;
   };
   securityAndNetwork: {
@@ -133,9 +106,6 @@ type CreateStorageSystemState = {
 };
 
 export type LocalVolumeSet = {
-  lvsIsSelectNodes: boolean;
-  lvsAllNodes: NodeKind[];
-  lvsSelectNodes: NodeKind[];
   volumeSetName: string;
   isValidDiskSize: boolean;
   diskType: string;
@@ -154,6 +124,8 @@ export type LocalVolumeSet = {
 export const reducer: WizardReducer = (prevState, action) => {
   const newState = _.cloneDeep(prevState);
   switch (action.type) {
+    case 'wizard/setInitialState':
+      return initialState;
     case 'wizard/setStepIdReached':
       newState.stepIdReached = action.payload;
       break;
@@ -162,6 +134,9 @@ export const reducer: WizardReducer = (prevState, action) => {
         name: action.payload.name,
         provisioner: action.payload?.provisioner,
       };
+      break;
+    case 'wizard/nodes':
+      newState.nodes = action.payload;
       break;
     case 'wizard/setCreateStorageClass':
       newState.createStorageClass = {
@@ -193,14 +168,17 @@ export const reducer: WizardReducer = (prevState, action) => {
     case 'backingStorage/setIsAdvancedOpen':
       newState.backingStorage.isAdvancedOpen = action.payload;
       break;
-    case 'capacityAndNodes/nodes':
-      newState.capacityAndNodes.nodes = action.payload;
-      break;
     case 'capacityAndNodes/capacity':
       newState.capacityAndNodes.capacity = action.payload;
       break;
     case 'capacityAndNodes/pvCount':
       newState.capacityAndNodes.pvCount = action.payload;
+      break;
+    case 'capacityAndNodes/arbiterLocation':
+      newState.capacityAndNodes.arbiterLocation = action.payload;
+      break;
+    case 'capacityAndNodes/enableArbiter':
+      newState.capacityAndNodes.enableArbiter = action.payload;
       break;
     case 'securityAndNetwork/setKms':
       newState.securityAndNetwork.kms = action.payload;
@@ -231,6 +209,7 @@ export type WizardReducer = (
 
 /* Actions of CreateStorageSystem */
 export type CreateStorageSystemAction =
+  | { type: 'wizard/setInitialState' }
   | { type: 'wizard/setStepIdReached'; payload: number }
   | {
       type: 'wizard/setStorageClass';
@@ -261,9 +240,17 @@ export type CreateStorageSystemAction =
       type: 'backingStorage/setExternalStorage';
       payload: WizardState['backingStorage']['externalStorage'];
     }
-  | { type: 'capacityAndNodes/nodes'; payload: WizardState['capacityAndNodes']['nodes'] }
+  | { type: 'wizard/nodes'; payload: WizardState['nodes'] }
   | { type: 'capacityAndNodes/capacity'; payload: WizardState['capacityAndNodes']['capacity'] }
   | { type: 'capacityAndNodes/pvCount'; payload: WizardState['capacityAndNodes']['pvCount'] }
+  | {
+      type: 'capacityAndNodes/arbiterLocation';
+      payload: WizardState['capacityAndNodes']['arbiterLocation'];
+    }
+  | {
+      type: 'capacityAndNodes/enableArbiter';
+      payload: WizardState['capacityAndNodes']['enableArbiter'];
+    }
   | {
       type: 'securityAndNetwork/setKms';
       payload: WizardState['securityAndNetwork']['kms'];

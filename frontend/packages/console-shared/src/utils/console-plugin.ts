@@ -28,5 +28,13 @@ export const getPluginPatch = (
       };
 };
 
+export const getPatchForRemovingPlugins = (console: K8sResourceKind, plugins: string[]): Patch => {
+  return {
+    path: '/spec/plugins',
+    value: console.spec?.plugins?.filter((p: string) => !plugins.includes(p)),
+    op: 'replace',
+  };
+};
+
 export const isPluginEnabled = (console: K8sResourceKind, plugin: string): boolean =>
   !!console?.spec?.plugins?.includes(plugin);

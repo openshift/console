@@ -6,14 +6,6 @@ import { ConfigurationModel } from '../../../models';
 import { sampleKnativeConfigurations } from '../../../topology/__tests__/topology-knative-test-data';
 import ConfigurationsOverviewListItem from '../ConfigurationsOverviewListItem';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ConfigurationsOverviewListItem', () => {
   it('should list the Configuration', () => {
     const wrapper = shallow(

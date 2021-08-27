@@ -164,13 +164,10 @@ Feature: Topology chart area
               And user hovers on Add to Project
               And user clicks on Samples
               And user selects go sample and clicks Create
-              And user hovers on Add to Project and clicks on From Git
+              And user hovers on Add to Project and clicks on Import from Git
               And user fills the form and clicks Create
               And user hovers on Add to Project and clicks on Container Image
               And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on From Dockerfile
-              And user fills the form and clicks Create
-              And user hovers on Add to Project and clicks on From Devfile
               And user fills the form and clicks Create
               And user hovers on Add to Project and clicks on From Catalog
               And user selects Python Builder Image and clicks Create Application
@@ -182,14 +179,14 @@ Feature: Topology chart area
               And user selects Postgres and clicks on Create
               And user fills the form and clicks Create
               And user hovers on Add to Project and clicks on Helm Charts
-              And user selects Nodejs Ex K v0.2.1 and clicks on Install Helm Charts
+              And user selects Nodejs Ex K and clicks on Install Helm Charts
               And user clicks on Install
               And user hovers on Add to Project and clicks on From Event Source
               And user selects Api Server Source and clicks on Create Event Source
               And user fills the form and clicks Create
               And user hovers on Add to Project and clicks on From Channel
               And user clicks on Create
-             Then user is able to see different applications created from Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
+             Then user is able to see different applications created from Samples, Import from Git, Container Image, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
 
 
         @regression @manual

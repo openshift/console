@@ -1,6 +1,6 @@
-import { TFunction } from 'i18next';
 import { cloneDeep } from 'lodash';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
+import { t } from '../../../../../../__mocks__/i18next';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
 import {
@@ -10,8 +10,6 @@ import {
   createComponentName,
 } from '../import-validation-utils';
 import { serverlessCommonTests } from './serverless-common-tests';
-
-const t = (key: TFunction) => key;
 
 describe('ValidationUtils', () => {
   describe('Detect Git Type', () => {
@@ -89,13 +87,13 @@ describe('ValidationUtils', () => {
         .then((valid) => expect(valid).toEqual(false));
       await validationSchema(t)
         .validate(mockData)
-        .catch((err) => expect(err.message).toBe('devconsole~Invalid Git URL.'));
+        .catch((err) => expect(err.message).toBe('Invalid Git URL.'));
     });
 
     it('should throw an error if url is valid but git type is not valid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.git.url = 'https://something.com/test/repo';
-      mockData.git.type = '';
+      mockData.git.type = GitTypes.invalid;
       await validationSchema(t)
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(true));
@@ -103,9 +101,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(
-            'devconsole~We failed to detect the Git type. Please choose a Git type.',
-          );
+          expect(err.message).toBe('We failed to detect the Git type. Please choose a Git type.');
         });
     });
 
@@ -133,7 +129,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('console-shared~Required');
+          expect(err.message).toBe('Required');
           expect(err.type).toBe('required');
         });
     });
@@ -163,6 +159,12 @@ describe('ValidationUtils', () => {
       ).toEqual('wild-west-frontend-123');
     });
 
+    it('should detect repository name when url contains a trailing slash', () => {
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/wildWestFrontend/'),
+      ).toEqual('wild-west-frontend');
+    });
+
     it('should throw an error if name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = 'app_name';
@@ -173,7 +175,7 @@ describe('ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'console-shared~Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
+            'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
           );
         });
     });
@@ -219,7 +221,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Path must start with /.');
+          expect(err.message).toBe('Path must start with /.');
         });
     });
 
@@ -233,7 +235,7 @@ describe('ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'devconsole~Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
+            'Hostname must consist of lower-case letters, numbers, periods, and hyphens. It must start and end with a letter or number.',
           );
         });
     });
@@ -250,9 +252,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(
-            'devconsole~CPU limit must be greater than or equal to request.',
-          );
+          expect(err.message).toBe('CPU limit must be greater than or equal to request.');
         });
     });
 
@@ -268,9 +268,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe(
-            'devconsole~Memory limit must be greater than or equal to request.',
-          );
+          expect(err.message).toBe('Memory limit must be greater than or equal to request.');
         });
     });
 
@@ -298,7 +296,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Port must be an integer.');
+          expect(err.message).toBe('Port must be an integer.');
         });
     });
 

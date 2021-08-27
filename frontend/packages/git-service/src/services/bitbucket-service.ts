@@ -55,6 +55,8 @@ export class BitbucketService extends BaseService {
       host,
       defaultBranch: this.gitsource.ref || 'HEAD',
       contextDir,
+      devfilePath: this.gitsource.devfilePath,
+      dockerfilePath: this.gitsource.dockerfilePath,
     };
   };
 
@@ -125,13 +127,17 @@ export class BitbucketService extends BaseService {
     }
   };
 
-  isDockerfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/Dockerfile`);
+  isDockerfilePresent = () =>
+    this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
-  getDockerfileContent = () => this.getFileContent(`${this.metadata.contextDir}/Dockerfile`);
+  getDockerfileContent = () =>
+    this.getFileContent(`${this.metadata.contextDir}/${this.metadata.dockerfilePath}`);
 
-  isDevfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/devfile.yaml`);
+  isDevfilePresent = () =>
+    this.isFilePresent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 
-  getDevfileContent = () => this.getFileContent(`${this.metadata.contextDir}/devfile.yaml`);
+  getDevfileContent = () =>
+    this.getFileContent(`${this.metadata.contextDir}/${this.metadata.devfilePath}`);
 
   getPackageJsonContent = () => this.getFileContent(`${this.metadata.contextDir}/package.json`);
 }

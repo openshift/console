@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '../module/k8s';
-import { TableRow, TableData } from './factory';
+import { TableData } from './factory';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import {
@@ -27,9 +27,6 @@ const tableColumnClasses = [
 
 export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
   obj,
-  index,
-  rowKey,
-  style,
   kind,
   menuActions,
   customActionMenu,
@@ -37,7 +34,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
@@ -69,15 +66,12 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
           <ResourceKebab actions={menuActions} kind={kind} resource={obj} customData={customData} />
         )}
       </TableData>
-    </TableRow>
+    </>
   );
 };
 WorkloadTableRow.displayName = 'WorkloadTableRow';
 type WorkloadTableRowProps = {
   obj: K8sResourceKind;
-  index: number;
-  rowKey: string;
-  style: object;
   kind: string;
   menuActions?: KebabAction[];
   customActionMenu?: React.ReactNode; // Renders a custom action menu.

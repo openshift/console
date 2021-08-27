@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from '@patternfly/react-core';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import {
   ResourceLink,
   Timestamp,
@@ -40,12 +40,12 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   );
 };
 
-const RepositoryPipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, key, style }) => {
+const RepositoryPipelineRunRow: React.FC<RowFunctionArgs<PipelineRunKind>> = ({ obj }) => {
   const plrLabels = obj.metadata.labels;
   const plrAnnotations = obj.metadata.annotations;
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelinerunReference}
@@ -97,7 +97,7 @@ const RepositoryPipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, ke
           resource={obj}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

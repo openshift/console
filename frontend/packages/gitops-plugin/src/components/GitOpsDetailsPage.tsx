@@ -3,26 +3,20 @@ import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
-import { LoadingBox } from '@console/internal/components/utils';
 import { DevPreviewBadge } from '@console/shared';
-import GitOpsDetailsController from './details/GitOpsDetailsController';
+import GitOpsDetails from './details/GitOpsDetails';
 import GitOpsDetailsPageHeading from './details/GitOpsDetailsPageHeading';
-import { GitOpsAppGroupData, GitOpsEnvironment } from './utils/gitops-types';
-import {
-  fetchAppGroups,
-  getEnvData,
-  getPipelinesBaseURI,
-  getApplicationsBaseURI,
-} from './utils/gitops-utils';
+import GitOpsEmptyState from './GitOpsEmptyState';
+import { GitOpsEnvironment } from './utils/gitops-types';
+import { getEnvData, getPipelinesBaseURI, getApplicationsBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
+import useEnvDetails from './utils/useEnvDetails';
 
 type GitOpsDetailsPageProps = RouteComponentProps<{ appName?: string }>;
 
 const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }) => {
   const { t } = useTranslation();
-  const [envs, setEnvs] = React.useState<string[]>(null);
   const [envsData, setEnvsData] = React.useState<GitOpsEnvironment[]>(null);
-  const [emptyStateMsg, setEmptyStateMsg] = React.useState(null);
   const [secretNS, secretName] = useDefaultSecret();
   const { appName } = match.params;
   const searchParams = new URLSearchParams(location.search);
@@ -30,34 +24,8 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
   const pipelinesBaseURI = getPipelinesBaseURI(secretNS, secretName);
   const applicationBaseURI = getApplicationsBaseURI(appName, secretNS, secretName, manifestURL);
   const environmentBaseURI = `/api/gitops/environments`;
-
-  React.useEffect(() => {
-    let ignore = false;
-
-    const getEnvs = async () => {
-      if (!pipelinesBaseURI) return;
-      let appGroups: GitOpsAppGroupData[];
-      let emptyMsg = null;
-      try {
-        appGroups = await fetchAppGroups(pipelinesBaseURI, manifestURL);
-      } catch {} // eslint-disable-line no-empty
-      if (ignore) return;
-      const app = _.find(appGroups, (appObj) => appName === appObj?.name);
-      if (!app?.environments) {
-        emptyMsg = t(
-          'gitops-plugin~Environment details were not found. Try reloading the page or contacting an administrator.',
-        );
-      }
-      setEmptyStateMsg(emptyMsg);
-      setEnvs(app?.environments);
-    };
-
-    getEnvs();
-
-    return () => {
-      ignore = true;
-    };
-  }, [appName, manifestURL, pipelinesBaseURI, t]);
+  const environmentBaseURIV2 = `/api/gitops/environment`;
+  const [envs, emptyStateMsg] = useEnvDetails(appName, manifestURL, pipelinesBaseURI);
 
   React.useEffect(() => {
     const getEnvsData = async () => {
@@ -65,7 +33,9 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
         let data;
         try {
           data = await Promise.all(
-            _.map(envs, (env) => getEnvData(environmentBaseURI, env, applicationBaseURI)),
+            _.map(envs, (env) =>
+              getEnvData(environmentBaseURIV2, environmentBaseURI, env, applicationBaseURI),
+            ),
           );
         } catch {} // eslint-disable-line no-empty
         setEnvsData(data);
@@ -73,7 +43,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
     };
 
     getEnvsData();
-  }, [applicationBaseURI, environmentBaseURI, envs, manifestURL]);
+  }, [applicationBaseURI, environmentBaseURIV2, environmentBaseURI, envs, manifestURL]);
 
   return (
     <>
@@ -86,14 +56,10 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
         manifestURL={manifestURL}
         badge={<DevPreviewBadge />}
       />
-      {!envsData && !emptyStateMsg ? (
-        <LoadingBox />
+      {!emptyStateMsg ? (
+        <GitOpsDetails envs={envsData} appName={appName} />
       ) : (
-        <GitOpsDetailsController
-          envsData={envsData}
-          emptyStateMsg={emptyStateMsg}
-          appName={appName}
-        />
+        <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />
       )}
     </>
   );

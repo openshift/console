@@ -62,3 +62,32 @@ export type Panel = {
   valueMaps?: ValueMap[];
   yaxes: YAxis[];
 };
+
+export type TemplateVariable = {
+  hide: number;
+  includeAll: boolean;
+  name: string;
+  options: { selected: boolean; value: string }[];
+  query: string;
+  type: string;
+};
+
+export type Row = {
+  collapse?: boolean;
+  panels: Panel[];
+  showTitle?: boolean;
+  title?: string;
+};
+
+export type Board = {
+  data: {
+    panels: Panel[];
+    rows: Row[];
+    templating: {
+      list: TemplateVariable[];
+    };
+    tags: string[];
+    title: string;
+  };
+  name: string;
+};

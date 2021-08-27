@@ -11,14 +11,6 @@ import DeploymentOverviewList from '../DeploymentOverviewList';
 type DeploymentOverviewListProps = React.ComponentProps<typeof DeploymentOverviewList>;
 let current: PodControllerOverviewItem;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('DeploymentOverviewList', () => {
   let wrapper: ShallowWrapper<DeploymentOverviewListProps>;
   beforeEach(() => {

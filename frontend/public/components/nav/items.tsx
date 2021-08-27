@@ -2,16 +2,21 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import { NavItem } from '@patternfly/react-core';
+import { NavItem, NavItemSeparator } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import {
-  NavItem as GenericNavItem,
   isNavItem,
   isHrefNavItem,
+  isNavSection,
   isResourceNSNavItem,
   isResourceClusterNavItem,
+  isSeparator,
+  NavItem as PluginNavItem,
+  NavSection as PluginNavSection,
+  Separator as PluginNavSeparator,
 } from '@console/dynamic-plugin-sdk';
 import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
+import { NavSection } from './section';
 import {
   formatNamespacedRouteForResource,
   formatNamespacedRouteForHref,
@@ -223,7 +228,7 @@ export type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.Comp
 };
 
 export const createLink = (
-  item: LoadedExtension<GenericNavItem>,
+  item: LoadedExtension<PluginNavItem>,
   rootNavLink = false,
 ): React.ReactElement => {
   if (isNavItem(item)) {
@@ -286,3 +291,24 @@ const rootNavLinkMapStateToProps = (
 });
 
 export const RootNavLink = connect(rootNavLinkMapStateToProps)(RootNavLink_);
+
+export type PluginNavItemsProps = {
+  items: LoadedExtension<PluginNavSection | PluginNavItem | PluginNavSeparator>[];
+};
+
+export const PluginNavItems: React.FC<PluginNavItemsProps> = ({ items }) => {
+  return (
+    <>
+      {items.map((item, index) => {
+        if (isNavSection(item)) {
+          const { id, name } = item.properties;
+          return <NavSection id={id} title={name} key={id} isGrouped={!name} />;
+        }
+        if (isSeparator(item)) {
+          return <NavItemSeparator key={`separator-${index}`} />;
+        }
+        return <li key={item.uid}>{createLink(item, true)}</li>;
+      })}
+    </>
+  );
+};

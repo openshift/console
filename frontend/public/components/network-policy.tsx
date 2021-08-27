@@ -7,7 +7,7 @@ import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/connectToFlags';
 import { FlagsObject } from '../reducers/features';
 import { BlueInfoCircleIcon, FLAGS } from '@console/shared';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   Kebab,
   navFactory,
@@ -35,21 +35,9 @@ const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.colu
 
 const kind = 'NetworkPolicy';
 
-type NetworkPolicyTableRowProps = {
-  obj: NetworkPolicyKind;
-  index: number;
-  key: string;
-  style: object;
-};
-
-const NetworkPolicyTableRow: React.FunctionComponent<NetworkPolicyTableRowProps> = ({
-  obj: np,
-  index,
-  key,
-  style,
-}) => {
+const NetworkPolicyTableRow: React.FC<RowFunctionArgs<NetworkPolicyKind>> = ({ obj: np }) => {
   return (
-    <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} />
       </TableData>
@@ -71,7 +59,7 @@ const NetworkPolicyTableRow: React.FunctionComponent<NetworkPolicyTableRowProps>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={np} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

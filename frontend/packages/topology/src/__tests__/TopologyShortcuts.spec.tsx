@@ -3,14 +3,6 @@ import { Shortcut } from '@console/shared';
 import { getTopologyShortcuts } from '../components/graph-view/TopologyShortcuts';
 import { TopologyViewType } from '../topology-types';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
-
 describe('TopologyShortcuts tests', () => {
   it('should show reduced list in view shortcuts popover on topology toolbar when there are no workloads', () => {
     const wrapper = mount(

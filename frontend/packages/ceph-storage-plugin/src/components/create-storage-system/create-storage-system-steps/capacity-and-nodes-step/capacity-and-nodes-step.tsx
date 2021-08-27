@@ -12,11 +12,10 @@ import {
 } from '@patternfly/react-core';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { K8sResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { ListPage } from '@console/internal/components/factory';
-import { NodeModel } from '@console/internal/models';
 import { useDeepCompareMemoize } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SelectedNodesTable } from './selected-nodes-table';
+import { StretchCluster } from './stretch-cluster';
 import { calcPVsCapacity, getSCAvailablePVs } from '../../../../selectors';
 import {
   NO_PROVISIONER,
@@ -27,51 +26,18 @@ import {
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import { getAssociatedNodes } from '../../../../utils/install';
 import {
-  getAllZone,
-  getTotalMemory,
-  getTotalCpu,
   createWizardNodeState,
   capacityAndNodesValidate,
+  isValidStretchClusterTopology,
+  getPVAssociatedNodesPerZone,
+  NodesPerZoneMap,
+  getZonesFromNodesKind,
 } from '../../../../utils/create-storage-system';
-
 import { WizardDispatch, WizardNodeState, WizardState } from '../../reducer';
-import InternalNodeTable from '../../../ocs-install/node-list';
 import { SelectNodesText } from '../../../ocs-install/install-wizard/capacity-and-nodes';
 import { pvResource, nodeResource } from '../../../../resources';
-import './capacity-and-nodes.scss';
 import { ValidationMessage } from '../../../../utils/common-ocs-install-el';
-
-const NodesDetails: React.FC<NodesDetailsProps> = React.memo(({ nodes }) => {
-  const { t } = useTranslation();
-
-  const totalCpu = getTotalCpu(nodes);
-  const totalMemory = getTotalMemory(nodes);
-  const zones = getAllZone(nodes);
-
-  return (
-    <TextContent>
-      <Text data-test-id="nodes-selected">
-        {t('ceph-storage-plugin~{{nodeCount, number}} node', {
-          nodeCount: nodes.length,
-          count: nodes.length,
-        })}{' '}
-        {t('ceph-storage-plugin~selected ({{cpu}} CPU and {{memory}} on ', {
-          cpu: totalCpu,
-          memory: humanizeBinaryBytes(totalMemory).string,
-        })}
-        {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
-          zoneCount: zones.size,
-          count: zones.size,
-        })}
-        {')'}
-      </Text>
-    </TextContent>
-  );
-});
-
-type NodesDetailsProps = {
-  nodes: WizardNodeState[];
-};
+import { SelectNodesTable } from '../../select-nodes-table/select-nodes-table';
 
 const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
@@ -80,10 +46,15 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  React.useEffect(() => {
+    if (!capacity) dispatch({ type: 'capacityAndNodes/capacity', payload: '2Ti' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onRowSelected = React.useCallback(
     (selectedNodes: NodeKind[]) => {
       const nodesData = createWizardNodeState(selectedNodes);
-      dispatch({ type: 'capacityAndNodes/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/nodes', payload: nodesData });
     },
     [dispatch],
   );
@@ -102,14 +73,14 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           <GridItem span={5}>
             <OSDSizeDropdown
               id="requested-capacity-dropdown"
-              selectedKey={capacity}
+              selectedKey={capacity as string}
               onChange={(selectedCapacity: string) =>
                 dispatch({ type: 'capacityAndNodes/capacity', payload: selectedCapacity })
               }
             />
           </GridItem>
           <GridItem span={7}>
-            <TotalCapacityText capacity={capacity} />
+            <TotalCapacityText capacity={capacity as string} />
           </GridItem>
         </Grid>
       </FormGroup>
@@ -126,19 +97,8 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
             )}
           />
         </GridItem>
-        <GridItem span={10} className="odf-capacity-and-nodes__select-nodes">
-          <ListPage
-            kind={NodeModel.kind}
-            showTitle={false}
-            ListComponent={InternalNodeTable}
-            nameFilterPlaceholder={t('ceph-storage-plugin~Search by node name...')}
-            labelFilterPlaceholder={t('ceph-storage-plugin~Search by node label...')}
-            customData={{
-              onRowSelected,
-              nodes: new Set(nodes.map(({ uid }) => uid)),
-            }}
-          />
-          {!!nodes.length && <NodesDetails nodes={nodes} />}
+        <GridItem span={10}>
+          <SelectNodesTable nodes={nodes} onRowSelected={onRowSelected} />
         </GridItem>
       </Grid>
     </>
@@ -148,46 +108,80 @@ const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
 type SelectCapacityAndNodesProps = {
   dispatch: WizardDispatch;
   capacity: WizardState['capacityAndNodes']['capacity'];
-  nodes: WizardState['capacityAndNodes']['nodes'];
+  nodes: WizardState['nodes'];
 };
 
 const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
   capacity,
   storageClassName,
   enableArbiter,
+  arbiterLocation,
   dispatch,
   nodes,
 }) => {
   const { t } = useTranslation();
   const [pv, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
-  const memoizedPv = useDeepCompareMemoize(pv);
+  const memoizedPv = useDeepCompareMemoize(pv, true);
   const [allNodes, allNodeLoaded, allNodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
-  const memoizedNodes = useDeepCompareMemoize(allNodes);
+  const memoizedAllNodes = useDeepCompareMemoize(allNodes, true);
+  const [hasStrechClusterEnabled, setHasStrechClusterEnabled] = React.useState(false);
+  const [zones, setZones] = React.useState([]);
+
+  const pvBySc = React.useMemo(() => getSCAvailablePVs(memoizedPv, storageClassName), [
+    memoizedPv,
+    storageClassName,
+  ]);
 
   React.useEffect(() => {
-    if (pvLoaded && !pvLoadError && memoizedPv.length) {
-      const pvBySc = getSCAvailablePVs(memoizedPv, storageClassName);
+    // Updates selected capacity
+    if (pvLoaded && !pvLoadError) {
       const pvCapacity = calcPVsCapacity(pvBySc);
-      const humanizedCapacity = humanizeBinaryBytes(pvCapacity).string;
-      dispatch({ type: 'capacityAndNodes/capacity', payload: humanizedCapacity });
-      dispatch({ type: 'capacityAndNodes/pvCount', payload: memoizedPv.length });
+      dispatch({
+        type: 'capacityAndNodes/capacity',
+        payload: pvCapacity,
+      });
+      dispatch({ type: 'capacityAndNodes/pvCount', payload: pvBySc.length });
     }
-  }, [dispatch, memoizedPv, pvLoadError, pvLoaded, storageClassName]);
+  }, [dispatch, pvBySc, pvLoadError, pvLoaded]);
 
   React.useEffect(() => {
-    if (memoizedNodes && !allNodeLoadError && memoizedNodes.length && memoizedPv.length) {
-      const pvBySc = getSCAvailablePVs(memoizedPv, storageClassName);
+    // Updates selected nodes
+    if (allNodeLoaded && !allNodeLoadError && memoizedAllNodes.length && pvBySc.length) {
       const pvNodes = getAssociatedNodes(pvBySc);
-      const filteredNodes = memoizedNodes.filter((node) => pvNodes.includes(node.metadata.name));
+      const filteredNodes = memoizedAllNodes.filter((node) => pvNodes.includes(node.metadata.name));
       const nodesData = createWizardNodeState(filteredNodes);
-      dispatch({ type: 'capacityAndNodes/nodes', payload: nodesData });
+      dispatch({ type: 'wizard/nodes', payload: nodesData });
     }
-  }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedNodes, memoizedPv, storageClassName]);
+  }, [dispatch, allNodeLoadError, allNodeLoaded, memoizedAllNodes, pvBySc]);
+
+  React.useEffect(() => {
+    // Validates stretch cluster topology
+    if (memoizedAllNodes.length && nodes.length) {
+      const allZones = getZonesFromNodesKind(memoizedAllNodes);
+      const nodesPerZoneMap: NodesPerZoneMap = getPVAssociatedNodesPerZone(nodes);
+      const isValidStretchCluster = isValidStretchClusterTopology(nodesPerZoneMap, allZones);
+
+      setHasStrechClusterEnabled(isValidStretchCluster);
+      setZones(allZones);
+    }
+  }, [memoizedAllNodes, nodes]);
+
+  const onArbiterChecked = React.useCallback(
+    (isChecked: boolean) =>
+      dispatch({ type: 'capacityAndNodes/enableArbiter', payload: isChecked }),
+    [dispatch],
+  );
+
+  const onZonesSelect = React.useCallback(
+    (_event, selection: string) =>
+      dispatch({ type: 'capacityAndNodes/arbiterLocation', payload: selection }),
+    [dispatch],
+  );
 
   return (
     <>
       <TextContent>
-        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Select Capacity')}</Text>
+        <Text component={TextVariants.h3}>{t('ceph-storage-plugin~Selected Capacity')}</Text>
       </TextContent>
       <FormGroup
         fieldId="available-raw-capacity"
@@ -195,11 +189,15 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
       >
         <Grid hasGutter>
           <GridItem span={5}>
-            <TextInput isReadOnly value={capacity} id="available-raw-capacity" />
+            <TextInput
+              isReadOnly
+              value={humanizeBinaryBytes(capacity).string}
+              id="available-raw-capacity"
+            />
             <TextContent>
               <Text component={TextVariants.small}>
                 <Trans ns="ceph-storage-plugin">
-                  The available capacity is based on all attached disks associated with the selected
+                  The available capacity is based on all attached disks associated with the selected{' '}
                   {/* eslint-disable-next-line react/no-unescaped-entities */}
                   StorageClass <em>"{{ storageClassName }}"</em>
                 </Trans>
@@ -210,6 +208,15 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
           <GridItem span={7} />
         </Grid>
       </FormGroup>
+      {hasStrechClusterEnabled && (
+        <StretchCluster
+          enableArbiter={enableArbiter}
+          arbiterLocation={arbiterLocation}
+          zones={zones}
+          onChecked={onArbiterChecked}
+          onSelect={onZonesSelect}
+        />
+      )}
       <TextContent>
         <Text id="selected-nodes" component={TextVariants.h3}>
           {t('ceph-storage-plugin~Selected Nodes')}
@@ -225,9 +232,8 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
             }
           />
         </GridItem>
-        <GridItem span={10} className="odf-capacity-and-nodes__select-nodes">
+        <GridItem span={10}>
           <SelectedNodesTable data={nodes} />
-          {!!nodes.length && <NodesDetails nodes={nodes} />}
         </GridItem>
       </Grid>
     </>
@@ -236,8 +242,9 @@ const SelectedCapacityAndNodes: React.FC<SelectedCapacityAndNodesProps> = ({
 
 type SelectedCapacityAndNodesProps = {
   capacity: WizardState['capacityAndNodes']['capacity'];
-  storageClassName: string;
   enableArbiter: WizardState['capacityAndNodes']['enableArbiter'];
+  storageClassName: string;
+  arbiterLocation: WizardState['capacityAndNodes']['arbiterLocation'];
   dispatch: WizardDispatch;
   nodes: WizardNodeState[];
 };
@@ -246,8 +253,10 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
   state,
   dispatch,
   storageClass,
+  volumeSetName,
+  nodes,
 }) => {
-  const { nodes, capacity, enableArbiter } = state;
+  const { capacity, enableArbiter, arbiterLocation } = state;
 
   const isNoProvisioner = storageClass.provisioner === NO_PROVISIONER;
 
@@ -257,8 +266,9 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
     <Form>
       {isNoProvisioner ? (
         <SelectedCapacityAndNodes
-          storageClassName={storageClass.name}
+          storageClassName={storageClass.name || volumeSetName}
           enableArbiter={enableArbiter}
+          arbiterLocation={arbiterLocation}
           dispatch={dispatch}
           nodes={nodes}
           capacity={capacity}
@@ -277,5 +287,7 @@ export const CapacityAndNodes: React.FC<CapacityAndNodesProps> = ({
 type CapacityAndNodesProps = {
   state: WizardState['capacityAndNodes'];
   storageClass: WizardState['storageClass'];
+  nodes: WizardState['nodes'];
+  volumeSetName: WizardState['createLocalVolumeSet']['volumeSetName'];
   dispatch: WizardDispatch;
 };

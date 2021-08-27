@@ -17,6 +17,9 @@ dl.co-inline {
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
+  &--full-height{
+    height: 100%;
+  }
   &--no-top-margin {
     margin-top: 0;
   }

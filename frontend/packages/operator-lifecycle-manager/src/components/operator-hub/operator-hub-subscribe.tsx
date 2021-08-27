@@ -246,9 +246,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     return t('olm~This mode is not supported by this Operator');
   };
   const subscriptionExists = (ns: string) =>
-    installedFor(props.subscription.data)(props.operatorGroup.data)(
-      props.packageManifest.data[0].status.packageName,
-    )(ns);
+    installedFor(props.subscription.data)(props.operatorGroup.data)(props.packageManifest.data[0])(
+      ns,
+    );
   const namespaceSupports = (ns: string) => (mode: InstallModeType) => {
     const operatorGroup = props.operatorGroup.data.find((og) => og.metadata.namespace === ns);
     if (!operatorGroup || !ns) {

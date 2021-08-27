@@ -22,7 +22,7 @@ Feature: Knative Eventing Broker Support
         @regression @to-do @odc-5030
         Scenario: Create Broker using YAML view: KE-10-TC02
             Given user is at Add page
-             When user selects on "Broker" from "Serverless" card
+             When user selects on "Broker" from "Eventing" card
               And user selects "YAML view"
               And user clicks on Create button
              Then user will be redirected to Topology page

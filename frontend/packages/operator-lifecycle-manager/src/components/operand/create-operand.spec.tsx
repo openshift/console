@@ -27,14 +27,6 @@ import { OperandForm, OperandFormProps } from './operand-form';
 import { OperandYAML, OperandYAMLProps } from './operand-yaml';
 import Spy = jasmine.Spy;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-  };
-});
-
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({ useK8sModel: jest.fn() }));
 
 (useK8sModel as jest.Mock).mockImplementation(() => [testModel, false]);
@@ -126,7 +118,7 @@ describe('CreateOperandPage', () => {
           testClusterServiceVersion.metadata.namespace,
         ),
       },
-      { name: 'Create {{item}}', path: window.location.pathname },
+      { name: 'Create Test Resource', path: window.location.pathname },
     ]);
   });
 });

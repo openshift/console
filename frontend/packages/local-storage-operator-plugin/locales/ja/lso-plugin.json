@@ -24,7 +24,7 @@
   "Node Selector": "ノードセレクター",
   "Local Volume Discovery": "ローカルボリューム検出",
   "Allows you to discover the available disks on all available nodes": "利用可能なすべてのノードで利用可能なディスクを検出できます。",
-  "Local Volume Set Name": "ローカルボリュームセット名",
+  "LocalVolumeSet Name": "LocalVolumeSet 名 ",
   "StorageClass Name": "ストレージクラス名",
   "Filter Disks By": "ディスクのフィルター",
   "Uses the available disks that match the selected filters only on selected nodes.": "選択されたノードのみの選択されたフィルターに一致する利用可能なディスクを使用します。",

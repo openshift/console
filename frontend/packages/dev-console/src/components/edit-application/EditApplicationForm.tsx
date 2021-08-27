@@ -2,7 +2,6 @@ import * as React from 'react';
 import { FormikProps, FormikValues } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { BuildStrategyType } from '@console/internal/components/build';
 import { PageHeading } from '@console/internal/components/utils';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import { FormFooter, FlexForm, FormBody } from '@console/shared';
@@ -44,22 +43,17 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       <PageHeading title={t(getFlowTypePageTitle(flowType))} />
       <FlexForm onSubmit={handleSubmit}>
         <FormBody flexLayout>
-          {flowType === ApplicationFlowType.Git && (
-            <GitSection buildStrategy={BuildStrategyType.Source} builderImages={builderImages} />
-          )}
+          {flowType === ApplicationFlowType.Git && <GitSection builderImages={builderImages} />}
           {flowType === ApplicationFlowType.Dockerfile && (
-            <GitSection buildStrategy={BuildStrategyType.Docker} builderImages={builderImages} />
+            <GitSection builderImages={builderImages} />
           )}
           {flowType === ApplicationFlowType.Git && (
             <BuilderSection
-              image={values.image}
               builderImages={builderImages}
               existingPipeline={appResources?.pipeline?.data}
             />
           )}
-          {flowType === ApplicationFlowType.Dockerfile && (
-            <DockerSection buildStrategy={values.build.strategy} />
-          )}
+          {flowType === ApplicationFlowType.Dockerfile && <DockerSection />}
           {flowType === ApplicationFlowType.JarUpload && <JarSection />}
           {flowType === ApplicationFlowType.Container && <ImageSearchSection />}
           {(flowType === ApplicationFlowType.Container ||

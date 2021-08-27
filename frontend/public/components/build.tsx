@@ -16,7 +16,7 @@ import {
   K8sKind,
 } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import { errorModal, confirmModal } from './modals';
 import {
   AsyncComponent,
@@ -403,9 +403,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const BuildsTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={BuildsReference}
@@ -428,7 +428,7 @@ const BuildsTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }
       <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

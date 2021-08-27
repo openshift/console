@@ -5,14 +5,6 @@ import DeploymentConfigSection from '../DeploymentConfigSection';
 
 let deploymentConfigSectionProps: React.ComponentProps<typeof DeploymentConfigSection>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 jest.mock('formik', () => ({
   useFormikContext: jest.fn(() => ({
     values: {

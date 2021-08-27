@@ -48,7 +48,6 @@ describe('addResourceMenuUtils: ', () => {
     );
 
     expect(url.pathname).toBe('/import/ns/testproject1');
-    expect(url.searchParams.get('importType')).toBe('git');
     expect(url.searchParams.get('application')).toBe('application-1');
     expect(url.searchParams.get('action')).toBe(
       JSON.stringify({
@@ -56,7 +55,7 @@ describe('addResourceMenuUtils: ', () => {
         payload: 'apps~v1~DeploymentConfig/nodejs',
       }),
     );
-    expect(Array.from(url.searchParams.entries())).toHaveLength(3);
+    expect(Array.from(url.searchParams.entries())).toHaveLength(2);
   });
 
   it('should return the page url with no-application value param in the url', async () => {
@@ -108,18 +107,6 @@ describe('addResourceMenuUtils: ', () => {
     expect(url.pathname).toBe('/catalog/ns/testproject1');
     expect(url.searchParams.get('application')).toBe('application-1');
     expect(Array.from(url.searchParams.entries())).toHaveLength(1);
-  });
-
-  it('should return the page url with proper queryparams for dockerfile flow', async () => {
-    const resource = await getTopologyData(MockResources, 'analytics-deployment');
-    const url = new URL(
-      getAddPageUrl(resource, '', ImportOptions.DOCKERFILE, true),
-      'https://mock.test.com',
-    );
-    expect(url.pathname).toBe('/import/ns/testproject1');
-    expect(url.searchParams.get('importType')).toBe('docker');
-    expect(url.searchParams.get('application')).toBe('application-1');
-    expect(Array.from(url.searchParams.entries())).toHaveLength(2);
   });
 
   it('should return the page url with proper queryparams for database flow', async () => {

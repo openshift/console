@@ -6,11 +6,6 @@ import { GettingStartedCard } from '@console/shared/src/components/getting-start
 import { QuickStartGettingStartedCard } from '../QuickStartGettingStartedCard';
 import { loadingQuickStarts, loadedQuickStarts } from './QuickStartGettingStartedCard.data';
 
-jest.mock('react-i18next', () => ({
-  ...require.requireActual('react-i18next'),
-  useTranslation: () => ({ t: (key) => key.split('~')[1] }),
-}));
-
 jest.mock('@console/shared/src/hooks/useActiveNamespace', () => ({
   useActiveNamespace: jest.fn(),
 }));

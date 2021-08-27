@@ -35,7 +35,6 @@ const CustomStrategy: React.FC<StrategyFieldProps> = ({ resourceObj }) => {
         label={t('devconsole~Environment variables (runtime only)')}
         envs={customParams.environment ?? []}
         obj={resourceObj}
-        envPath={['spec', 'strategy', 'customParams']}
       />
     </div>
   );

@@ -40,9 +40,9 @@ export const getCtaButtonText = (item: CatalogItem, selectedVersion: string): st
     case CTALabel.Add:
       return i18n.t('pipelines-plugin~Add');
     case CTALabel.Install:
-      return i18n.t('pipelines-plugin~Install and Add');
+      return i18n.t('pipelines-plugin~Install and add');
     case CTALabel.Update:
-      return i18n.t('pipelines-plugin~Update and Add');
+      return i18n.t('pipelines-plugin~Update and add');
     default:
       throw new Error(`Unknown button type, ${ctaType}`);
   }
@@ -51,7 +51,7 @@ export const getCtaButtonText = (item: CatalogItem, selectedVersion: string): st
 export const isInstalledNamespaceTask = (item: CatalogItem) => {
   return (
     item.data.kind === TaskModel.kind &&
-    item.data.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB
+    item.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] === TEKTONHUB
   );
 };
 
@@ -81,7 +81,7 @@ export const findInstalledTask = (items: CatalogItem[], item: CatalogItem): Cata
       i.name === item.name &&
       item.data.kind !== ClusterTaskModel.kind &&
       i.data.kind === TaskModel.kind &&
-      i.data.metadata?.annotations[TektonTaskAnnotation.installedFrom] === TEKTONHUB,
+      i.data.metadata?.annotations?.[TektonTaskAnnotation.installedFrom] === TEKTONHUB,
   );
 };
 

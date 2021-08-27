@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
-import { RowFunction, Table } from '@console/internal/components/factory';
+import { RowFunctionArgs, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
@@ -50,14 +50,18 @@ const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => 
 export type VMNicsTableProps = {
   data?: any[];
   customData?: object;
-  row: RowFunction;
+  Row: React.FC<RowFunctionArgs>;
   columnClasses: string[];
 };
+
+const getRowProps = (obj) => ({
+  id: obj.name,
+});
 
 export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   data,
   customData,
-  row: Row,
+  Row,
   columnClasses,
 }) => {
   const { t } = useTranslation();
@@ -105,6 +109,7 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
       customData={{ ...customData, columnClasses }}
       virtualize
       loaded
+      getRowProps={getRowProps}
     />
   );
 };
@@ -158,7 +163,7 @@ export const VMNics: React.FC<VMTabProps> = ({
             isDisabled: isLocked || isCommonTemplate,
             pendingChangesNICs,
           }}
-          row={NicRow}
+          Row={NicRow}
           columnClasses={nicTableColumnClasses}
         />
       </div>

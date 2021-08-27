@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
@@ -7,7 +7,7 @@ import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
 import { getCondition, getConditionString } from '../../../utils/condition-utils';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 
-const EventSourceRow: RowFunction<EventSourceKind> = ({ obj, index, key, style }) => {
+const EventSourceRow: React.FC<RowFunctionArgs<EventSourceKind>> = ({ obj }) => {
   const {
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
@@ -18,7 +18,7 @@ const EventSourceRow: RowFunction<EventSourceKind> = ({ obj, index, key, style }
     ? getCondition(obj.status.conditions, EventSourceConditionTypes.Ready)
     : null;
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
+    <>
       <TableData>
         <ResourceLink kind={objReference} name={name} namespace={namespace} title={uid} />
       </TableData>
@@ -36,7 +36,7 @@ const EventSourceRow: RowFunction<EventSourceKind> = ({ obj, index, key, style }
       <TableData className={Kebab.columnClass}>
         <ResourceKebab actions={menuActions} kind={objReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

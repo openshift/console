@@ -7,14 +7,6 @@ import EditDeployment from '../EditDeployment';
 type EditDeploymentProps = React.ComponentProps<typeof EditDeployment>;
 type FormProps = React.ComponentProps<typeof Formik>;
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('EditDeployment Form', () => {
   let formProps: EditDeploymentProps;
   let EditDeploymentWrapper: ShallowWrapper<EditDeploymentProps>;

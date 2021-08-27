@@ -9,14 +9,6 @@ import { ProjectDetailsPage, PageContents } from '../ProjectDetailsPage';
 const testProjectMatch = { url: '', params: { ns: 'test-project' }, isExact: true, path: '' };
 const allNamespaceMatch = { url: '', params: {}, isExact: true, path: '' };
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
-
 describe('ProjectDetailsPage', () => {
   it('expect ProjectDetailsPage to render the project list page when in the all-projects namespace', () => {
     const component = shallow(<PageContents match={allNamespaceMatch} />);

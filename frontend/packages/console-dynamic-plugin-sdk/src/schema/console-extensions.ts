@@ -46,6 +46,7 @@ import {
   TopologyRelationshipProvider,
 } from '../extensions/topology';
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import { UserPreferenceGroup, UserPreferenceItem } from '../extensions/user-preferences';
 import { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
@@ -94,7 +95,10 @@ export type SupportedExtension =
   | TopologyDisplayFilters
   | TopologyDecoratorProvider
   | TopologyRelationshipProvider
-  | CreateResource;
+  | CreateResource
+  | CreateResource
+  | UserPreferenceGroup
+  | UserPreferenceItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

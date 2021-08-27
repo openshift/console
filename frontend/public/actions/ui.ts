@@ -124,6 +124,7 @@ export const getNamespacedResources = () => {
 };
 
 export const getActiveNamespace = (): string => store.getState().UI.get('activeNamespace');
+export const getActiveUserName = (): string => store.getState().UI.get('user')?.metadata?.name;
 
 export const getNamespaceMetric = (ns: K8sResourceKind, metric: string): number => {
   const metrics = store.getState().UI.getIn(['metrics', 'namespace']);
@@ -300,18 +301,21 @@ export const updateOverviewFilterValue = (value: string) =>
   action(ActionType.UpdateOverviewFilterValue, { value });
 export const monitoringDashboardsClearVariables = () =>
   action(ActionType.MonitoringDashboardsClearVariables);
-export const monitoringDashboardsPatchVariable = (key: string, patch: any) =>
-  action(ActionType.MonitoringDashboardsPatchVariable, { key, patch });
-export const monitoringDashboardsPatchAllVariables = (variables: any) =>
-  action(ActionType.MonitoringDashboardsPatchAllVariables, { variables });
-export const monitoringDashboardsSetEndTime = (endTime: number) =>
-  action(ActionType.MonitoringDashboardsSetEndTime, { endTime });
-export const monitoringDashboardsSetPollInterval = (pollInterval: number) =>
-  action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval });
-export const monitoringDashboardsSetTimespan = (timespan: number) =>
-  action(ActionType.MonitoringDashboardsSetTimespan, { timespan });
-export const monitoringDashboardsVariableOptionsLoaded = (key: string, newOptions: string[]) =>
-  action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions });
+export const monitoringDashboardsPatchVariable = (key: string, patch: any, perspective: string) =>
+  action(ActionType.MonitoringDashboardsPatchVariable, { key, patch, perspective });
+export const monitoringDashboardsPatchAllVariables = (variables: any, perspective: string) =>
+  action(ActionType.MonitoringDashboardsPatchAllVariables, { variables, perspective });
+export const monitoringDashboardsSetEndTime = (endTime: number, perspective: string) =>
+  action(ActionType.MonitoringDashboardsSetEndTime, { endTime, perspective });
+export const monitoringDashboardsSetPollInterval = (pollInterval: number, perspective: string) =>
+  action(ActionType.MonitoringDashboardsSetPollInterval, { pollInterval, perspective });
+export const monitoringDashboardsSetTimespan = (timespan: number, perspective: string) =>
+  action(ActionType.MonitoringDashboardsSetTimespan, { timespan, perspective });
+export const monitoringDashboardsVariableOptionsLoaded = (
+  key: string,
+  newOptions: string[],
+  perspective: string,
+) => action(ActionType.MonitoringDashboardsVariableOptionsLoaded, { key, newOptions, perspective });
 export const monitoringLoading = (
   key: 'alerts' | 'silences' | 'notificationAlerts',
   perspective = 'admin',

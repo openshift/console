@@ -1,20 +1,12 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
-import { RowFunctionArgs } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
 import HelmReleaseResourcesRow, { HelmReleaseResourceStatus } from '../HelmReleaseResourcesRow';
 
 let rowArgs: RowFunctionArgs<K8sResourceKind>;
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key: string) => key }),
-  };
-});
 
 describe('helmReleaseResourcesRow', () => {
   beforeEach(() => {
@@ -27,15 +19,12 @@ describe('helmReleaseResourcesRow', () => {
           namespace: 'deb',
         },
       },
-      index: 1,
-      key: '1',
-      style: {},
     } as any;
   });
 
-  it('should render the TableRow component', () => {
-    const helmReleaseResourcesRow = shallow(HelmReleaseResourcesRow(rowArgs));
-    expect(helmReleaseResourcesRow.find('tr').exists()).toBe(true);
+  it('should render the TableData component', () => {
+    const helmReleaseResourcesRow = shallow(<HelmReleaseResourcesRow {...rowArgs} />);
+    expect(helmReleaseResourcesRow.find(TableData).exists()).toBe(true);
   });
 
   it('should render the number of pods deployed for resources that support it', () => {
@@ -51,6 +40,6 @@ describe('helmReleaseResourcesRow', () => {
       <HelmReleaseResourceStatus resource={rowArgs.obj} />,
     );
     expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('helm-plugin~Pods');
+    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('Pods');
   });
 });

@@ -1,0 +1,46 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/docker/labs'
+    openshift.io/generated-by: OpenShiftWebConsole
+  labels:
+    app: flask-app
+    app.kubernetes.io/component: flask-app
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/name: flask-app
+  name: flask-app-12
+  namespace: aut-form-edit-build-config
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'flask-app:latest'
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    contextDir: /beginner/flask-app
+    git:
+      uri: 'https://github.com/docker/labs'
+    type: Git
+  strategy:
+    dockerStrategy:
+      dockerfilePath: Dockerfile
+    type: Docker
+  successfulBuildsHistoryLimit: 5
+  triggers:
+    - generic:
+        secretReference:
+          name: flask-app-generic-webhook-secret
+      type: Generic
+    - github:
+        secretReference:
+          name: flask-app-github-webhook-secret
+      type: GitHub
+    - type: ConfigChange
+status:
+  lastVersion: 1

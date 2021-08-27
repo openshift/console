@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import { Kebab, KebabOption, pluralize } from '@console/internal/components/utils';
 import { isVMI } from '../../../../../../selectors/check-type';
 import { VMLikeEntityKind } from '../../../../../../types/vmLike';
@@ -41,12 +41,12 @@ const getActions = (
   return actions;
 };
 
-export const AffinityRow: RowFunction<AffinityRowData, AffinityRowCustomData> = (props) => {
+export const AffinityRow: React.FC<RowFunctionArgs<AffinityRowData, AffinityRowCustomData>> = (
+  props,
+) => {
   const {
     obj,
     customData: { isDisabled, columnClasses, vmLikeEntity, onEdit, onDelete },
-    index,
-    style,
   } = props;
   const { type, condition, weight, expressions, fields } = obj;
   const dimensify = dimensifyRow(columnClasses);
@@ -54,7 +54,7 @@ export const AffinityRow: RowFunction<AffinityRowData, AffinityRowCustomData> = 
   const fieldsLabel = fields?.length > 0 && pluralize(fields.length, 'Node Field');
 
   return (
-    <TableRow id="affinity-row" index={index} trKey={condition} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ValidationCell>{AFFINITY_TYPE_LABLES[type]}</ValidationCell>
       </TableData>
@@ -75,6 +75,6 @@ export const AffinityRow: RowFunction<AffinityRowData, AffinityRowCustomData> = 
           isDisabled={isDisabled || isVMI(vmLikeEntity)}
         />
       </TableData>
-    </TableRow>
+    </>
   );
 };

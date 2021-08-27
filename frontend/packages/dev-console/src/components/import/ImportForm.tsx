@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { ValidatedOptions } from '@patternfly/react-core';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { history, AsyncComponent } from '@console/internal/components/utils';
+import { ImportStrategy } from '@console/git-service/src';
+import { history, AsyncComponent, StatusBox } from '@console/internal/components/utils';
 import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
@@ -19,6 +21,7 @@ import { getBaseInitialValues } from './form-initial-values';
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import {
   GitImportFormData,
+  GitTypes,
   FirehoseList,
   ImportData,
   Resources,
@@ -72,15 +75,22 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     git: {
       url: '',
-      type: '',
+      type: GitTypes.invalid,
       ref: '',
       dir: '/',
       showGitType: false,
       secret: '',
       isUrlValidating: false,
+      validated: ValidatedOptions.default,
+      secretResource: {},
     },
     docker: {
       dockerfilePath: 'Dockerfile',
+      dockerfileHasError: false,
+    },
+    devfile: {
+      devfilePath: 'devfile.yaml',
+      devfileHasError: false,
     },
     build: {
       ...initialBaseValues.build,
@@ -89,7 +99,20 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         image: true,
         config: true,
       },
-      strategy: importData.buildStrategy || 'Source',
+      strategy: importData.buildStrategy || 'Devfile',
+    },
+    import: {
+      loaded: false,
+      loadError: null,
+      strategies: [],
+      selectedStrategy: {
+        name: 'Devfile',
+        type: ImportStrategy.DEVFILE,
+        priority: 2,
+        detectedFiles: [],
+      },
+      recommendedStrategy: null,
+      showEditImportStrategy: false,
     },
   };
 
@@ -98,7 +121,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
 
   const handleSubmit = (values, actions) => {
-    const imageStream = builderImages && builderImages[values.image.selected].obj;
+    const imageStream = builderImages && builderImages[values.image.selected]?.obj;
     const createNewProject = projects.loaded && _.isEmpty(projects.data);
     const {
       project: { name: projectName },
@@ -141,14 +164,20 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   };
 
   return (
-    <Formik
-      initialValues={initialVals}
-      onSubmit={handleSubmit}
-      onReset={history.goBack}
-      validationSchema={validationSchema(t)}
+    <StatusBox
+      data={imageStreams?.data}
+      loaded={imageStreams?.loaded}
+      loadError={imageStreams?.loadError}
     >
-      {renderForm}
-    </Formik>
+      <Formik
+        initialValues={initialVals}
+        onSubmit={handleSubmit}
+        onReset={history.goBack}
+        validationSchema={validationSchema(t)}
+      >
+        {renderForm}
+      </Formik>
+    </StatusBox>
   );
 };
 

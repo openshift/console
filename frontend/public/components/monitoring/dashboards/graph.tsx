@@ -1,3 +1,4 @@
+import { useActivePerspective } from '@console/shared';
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -30,18 +31,21 @@ const Graph: React.FC<Props> = ({
   onZoomHandle,
 }) => {
   const dispatch = useDispatch();
-  const endTime = useSelector(({ UI }: RootState) => UI.getIn(['monitoringDashboards', 'endTime']));
+  const [activePerspective] = useActivePerspective();
+  const endTime = useSelector(({ UI }: RootState) =>
+    UI.getIn(['monitoringDashboards', activePerspective, 'endTime']),
+  );
   const timespan = useSelector(({ UI }: RootState) =>
-    UI.getIn(['monitoringDashboards', 'timespan']),
+    UI.getIn(['monitoringDashboards', activePerspective, 'timespan']),
   );
 
   const onZoom = React.useCallback(
     (from, to) => {
-      dispatch(monitoringDashboardsSetEndTime(to));
-      dispatch(monitoringDashboardsSetTimespan(to - from));
+      dispatch(monitoringDashboardsSetEndTime(to, activePerspective));
+      dispatch(monitoringDashboardsSetTimespan(to - from, activePerspective));
       onZoomHandle?.(to - from, to);
     },
-    [dispatch, onZoomHandle],
+    [activePerspective, dispatch, onZoomHandle],
   );
 
   return (

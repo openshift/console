@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
-import { useFormikContext, FormikValues, FormikTouched, FormikErrors } from 'formik';
+import { useFormikContext, FormikErrors, FormikTouched } from 'formik';
 import { isEmpty } from 'lodash';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { getGitService, BuildType, RepoStatus } from '@console/git-service';
+import { RepoStatus, ImportStrategy, getGitService, BaseService } from '@console/git-service';
+import { DetectedBuildType } from '@console/git-service/src/utils/build-tool-type-detector';
+import { detectImportStrategies } from '@console/git-service/src/utils/import-strategy-detector';
 import { BuildStrategyType } from '@console/internal/components/build';
 import {
   InputField,
@@ -19,35 +22,98 @@ import {
   NormalizedBuilderImages,
 } from '../../../utils/imagestream-utils';
 import { GitData, GitReadableTypes, GitTypes } from '../import-types';
-import { detectGitType, detectGitRepoName } from '../import-validation-utils';
+import { detectGitRepoName, detectGitType } from '../import-validation-utils';
 import FormSection from '../section/FormSection';
 import AdvancedGitOptions from './AdvancedGitOptions';
 import SampleRepo from './SampleRepo';
 
+export type GitSectionFormData = {
+  formType: string;
+  name: string;
+  application: {
+    selected: string;
+    selectedKey: string;
+    name: string;
+    isInContext: any;
+  };
+  image: {
+    selected: any;
+    selectedKey: string;
+    tagObj: string;
+    recommended: string;
+    couldNotRecommend: boolean;
+  };
+  git: GitData;
+  devfile?: {
+    devfilePath: string;
+    devfileSourceUrl: string;
+  };
+  docker?: {
+    dockerfilePath: string;
+  };
+  build: {
+    strategy: BuildStrategyType;
+  };
+  project: {
+    name: string;
+  };
+};
+
 export interface GitSectionProps {
-  buildStrategy: BuildStrategyType;
-  builderImages: NormalizedBuilderImages;
+  title?: React.ReactNode;
+  formContextField?: string;
+  builderImages?: NormalizedBuilderImages;
   defaultSample?: { url: string; ref?: string; dir?: string };
   showSample?: boolean;
+  formType?: string;
 }
 
 const GitSection: React.FC<GitSectionProps> = ({
-  buildStrategy,
+  title,
+  formContextField,
   builderImages,
   defaultSample,
   showSample = !!defaultSample,
+  formType,
 }) => {
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>();
+
   const {
-    values,
-    errors,
-    setFieldValue,
-    setFieldTouched,
-    touched,
     dirty,
     isSubmitting,
-  } = useFormikContext<FormikValues>();
+    values: formikValues,
+    touched: formikTouched,
+    errors: formikErrors,
+    status,
+    setFieldValue: formikSetFieldValue,
+    setFieldTouched: formikSetFieldTouched,
+  } = useFormikContext<GitSectionFormData>();
+
+  const fieldPrefix = formContextField ? `${formContextField}.` : '';
+  const setFieldValue = React.useCallback(
+    (key: string, value: string | boolean | object, shouldValidate?: boolean) => {
+      formikSetFieldValue(`${fieldPrefix}${key}` as any, value, shouldValidate);
+    },
+    [fieldPrefix, formikSetFieldValue],
+  );
+  const setFieldTouched = React.useCallback(
+    (key: string, touched: boolean, shouldValidate?: boolean) => {
+      formikSetFieldTouched(`${fieldPrefix}${key}` as any, touched, shouldValidate);
+    },
+    [fieldPrefix, formikSetFieldTouched],
+  );
+
+  const values: GitSectionFormData = formContextField
+    ? _.get(formikValues, formContextField)
+    : formikValues;
+  const touched: FormikTouched<GitSectionFormData> = formContextField
+    ? _.get(formikTouched, formContextField, {})
+    : formikTouched;
+  const errors: FormikErrors<GitSectionFormData> = formContextField
+    ? _.get(formikErrors, formContextField, {})
+    : formikErrors;
+
   const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
     defaultSample || {};
   const defaultSampleTagObj = React.useMemo(
@@ -65,45 +131,127 @@ const GitSection: React.FC<GitSectionProps> = ({
   );
   const tag = isEmpty(values.image.tagObj) ? defaultSampleTagObj : values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
-  const { application = {}, name: nameTouched, git = {}, image = {} } = touched;
-  const { url: gitUrlTouched } = git as FormikTouched<{ url: boolean }>;
-  const { type: gitTypeTouched } = git as FormikTouched<{ type: boolean }>;
-  const { dir: gitDirTouched } = git as FormikTouched<{ dir: boolean }>;
-  const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
-  const { selected: imageSelectorTouched } = image as FormikTouched<{ selected: boolean }>;
+  const {
+    name: nameTouched,
+    application: { name: applicationNameTouched } = {},
+    image: { selected: imageSelectorTouched } = {},
+    git: { dir: gitDirTouched } = {},
+  } = touched;
+  const { git: { url: gitUrlError } = {} } = errors;
+
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const [repoStatus, setRepoStatus] = React.useState<RepoStatus>();
 
-  const { git: gitErrors = {} } = errors;
-  const { url: gitUrlError } = gitErrors as FormikErrors<GitData>;
+  const handleBuilderImageRecommendation = React.useCallback(
+    async (detectedBuildTypes: DetectedBuildType[]) => {
+      setFieldValue('image.isRecommending', false);
+      if (gitUrlError) {
+        setFieldValue('image.recommended', '');
+        setFieldValue('image.couldNotRecommend', true);
+        return;
+      }
+      const recommendedBuildType =
+        builderImages &&
+        detectedBuildTypes?.find(
+          ({ type: recommended }) => recommended && builderImages.hasOwnProperty(recommended),
+        );
+      if (recommendedBuildType && recommendedBuildType.type) {
+        setFieldValue('image.couldNotRecommend', false);
+        setFieldValue('image.recommended', recommendedBuildType.type);
+      } else {
+        setFieldValue('image.couldNotRecommend', true);
+        setFieldValue('image.recommended', '');
+      }
+    },
+    [builderImages, gitUrlError, setFieldValue],
+  );
+
+  const handleDevfileStrategyDetection = React.useCallback(
+    async (gitService: BaseService) => {
+      if (!values.devfile?.devfileSourceUrl) {
+        // No need to check the existence of the file, waste of a call to the gitService for this need
+        const devfileContents = gitService && (await gitService.getDevfileContent());
+        if (!devfileContents) {
+          setFieldValue('devfile.devfileContent', null);
+          setFieldValue('devfile.devfileHasError', true);
+        } else {
+          setFieldValue('devfile.devfileContent', devfileContents);
+          setFieldValue('devfile.devfileHasError', false);
+        }
+      }
+    },
+    [setFieldValue, values.devfile],
+  );
 
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string, dir: string) => {
+      if (isSubmitting || status?.submitError) return;
+      setValidated(ValidatedOptions.default);
+      setFieldValue('git.validated', ValidatedOptions.default);
       if (gitUrlError) {
         // Reset git type field when url is not valid or empty so that when new url valid is added, we run git type detection again.
         // Don't do anything else if URL is not valid.
+        setFieldValue('git.showGitType', false);
         setFieldTouched('git.type', false);
         return;
       }
 
       setFieldValue('git.isUrlValidating', true);
-      setValidated(ValidatedOptions.default);
 
-      const gitType = gitTypeTouched ? values.git.type : detectGitType(url);
+      const detectedGitType = detectGitType(url);
+      const gitType = values.git.showGitType ? values.git.type : detectedGitType;
       const gitRepoName = detectGitRepoName(url);
-      const showGitType = gitType === GitTypes.unsure || (gitTypeTouched && !isSubmitting);
 
-      setFieldValue('git.type', gitType);
-      setFieldValue('git.showGitType', showGitType);
+      // Updated detectedType only
+      if (detectedGitType !== values.git.detectedType) {
+        setFieldValue('git.detectedType', gitType);
+      }
+      if (detectedGitType === GitTypes.unsure && !values.git.showGitType) {
+        setFieldValue('git.showGitType', true);
+      }
+      if (gitType !== values.git.type) {
+        setFieldValue('git.type', gitType);
+      }
 
-      const gitService = getGitService(url, gitType, ref, dir);
-      const repositoryStatus = gitService && (await gitService.isRepoReachable());
+      const gitService = getGitService(
+        url,
+        // TODO: ODC-6250 - GitTypes is not compatibily to git service type GitProvider
+        gitType as any,
+        ref,
+        dir,
+        values.git.secretResource,
+        values.devfile?.devfilePath,
+        values.docker?.dockerfilePath,
+      );
+
+      const importStrategyData = await detectImportStrategies(url, gitService);
+
+      const {
+        loaded,
+        loadError,
+        repositoryStatus,
+        strategies: importStrategies,
+      } = importStrategyData;
 
       setRepoStatus(repositoryStatus);
 
       if (repositoryStatus !== RepoStatus.Reachable) {
         setValidated(ValidatedOptions.warning);
+        setFieldValue('git.validated', ValidatedOptions.warning);
         setFieldValue('git.isUrlValidating', false);
+        setFieldValue('import', {
+          loaded: false,
+          loadError: null,
+          strategies: [],
+          selectedStrategy: {
+            name: 'Devfile',
+            type: ImportStrategy.DEVFILE,
+            priority: 2,
+            detectedFiles: [],
+          },
+          recommendedStrategy: null,
+          showEditImportStrategy: true,
+        });
         return;
       }
 
@@ -114,94 +262,76 @@ const GitSection: React.FC<GitSectionProps> = ({
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
 
-      if (buildStrategy === BuildStrategyType.Devfile && !values.devfile?.devfileSourceUrl) {
-        // No need to check the existence of the file, waste of a call to the gitService for this need
-        const devfileContents = gitService && (await gitService.getDevfileContent());
-        if (!devfileContents) {
-          setFieldValue('devfile.devfileContent', null);
-          setFieldValue('devfile.devfileHasError', true);
-          setValidated(ValidatedOptions.error);
-        } else {
-          setFieldValue('devfile.devfileContent', devfileContents);
-          setFieldValue('devfile.devfileHasError', false);
-          setValidated(ValidatedOptions.success);
-        }
+      setFieldValue('import.loaded', loaded);
+      setFieldValue('import.loadError', loadError);
+      setFieldValue('import.strategies', importStrategies);
+      if (importStrategies.length > 0) {
+        values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', false);
+        setFieldValue('import.selectedStrategy', importStrategies[0]);
+        setFieldValue('import.recommendedStrategy', importStrategies[0]);
       } else {
-        setValidated(ValidatedOptions.success);
+        setFieldValue('import.selectedStrategy', {
+          name: 'Devfile',
+          type: ImportStrategy.DEVFILE,
+          priority: 2,
+          detectedFiles: [],
+        });
+        setFieldValue('import.recommendedStrategy', null);
+        values.formType !== 'edit' && setFieldValue('import.showEditImportStrategy', true);
       }
 
+      if (importStrategies.length > 0) {
+        switch (importStrategies[0].type) {
+          case ImportStrategy.S2I: {
+            setFieldValue('build.strategy', BuildStrategyType.Source);
+            if (builderImages) {
+              setFieldValue('image.isRecommending', true);
+              handleBuilderImageRecommendation(importStrategies[0].detectedCustomData);
+            }
+            break;
+          }
+          case ImportStrategy.DEVFILE: {
+            setFieldValue('build.strategy', BuildStrategyType.Devfile);
+            handleDevfileStrategyDetection(gitService);
+            break;
+          }
+          case ImportStrategy.DOCKERFILE: {
+            setFieldValue('build.strategy', BuildStrategyType.Docker);
+            setFieldValue('docker.dockerfilePath', importStrategies[0].detectedFiles[0]);
+            break;
+          }
+          default:
+        }
+      }
+
+      setValidated(ValidatedOptions.success);
+      setFieldValue('git.validated', ValidatedOptions.success);
       setFieldValue('git.isUrlValidating', false);
     },
     [
-      setFieldValue,
-      setFieldTouched,
-      gitTypeTouched,
-      buildStrategy,
-      gitUrlError,
-      nameTouched,
       isSubmitting,
+      status,
+      setFieldValue,
+      gitUrlError,
+      values.git.showGitType,
+      values.git.type,
+      values.git.detectedType,
+      values.git.secretResource,
+      values.devfile,
+      values.docker,
+      values.name,
+      values.formType,
       values.application.name,
       values.application.selectedKey,
-      values.formType,
-      values.git.type,
-      values.name,
-      values.devfile,
+      nameTouched,
+      setFieldTouched,
+      builderImages,
+      handleBuilderImageRecommendation,
+      handleDevfileStrategyDetection,
     ],
   );
 
-  const handleBuilderImageRecommendation = React.useCallback(async () => {
-    const gitType = gitTypeTouched ? values.git.type : detectGitType(values.git.url);
-    const gitService = getGitService(values.git.url, gitType, values.git.ref, values.git.dir);
-    if (repoStatus === RepoStatus.Reachable && builderImages) {
-      setFieldValue('image.isRecommending', true);
-      const buildTools: BuildType[] = gitService && (await gitService.detectBuildTypes());
-      setFieldValue('image.isRecommending', false);
-      const buildTool = buildTools?.find(
-        ({ buildType: recommended }) => recommended && builderImages.hasOwnProperty(recommended),
-      );
-      if (buildTool && buildTool.buildType) {
-        setFieldValue('image.couldNotRecommend', false);
-        setFieldValue('image.recommended', buildTool.buildType);
-      } else {
-        setFieldValue('image.couldNotRecommend', true);
-        setFieldValue('image.recommended', '');
-      }
-    } else {
-      setFieldValue('image.recommended', '');
-      setFieldValue('image.couldNotRecommend', false);
-    }
-  }, [
-    builderImages,
-    gitTypeTouched,
-    repoStatus,
-    setFieldValue,
-    values.git.ref,
-    values.git.type,
-    values.git.url,
-    values.git.dir,
-  ]);
-
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange);
-
-  const handleGitUrlBlur = React.useCallback(() => {
-    const { url } = values.git;
-    const gitRepoName = detectGitRepoName(url);
-    values.formType !== 'edit' && gitRepoName && !nameTouched && setFieldValue('name', gitRepoName);
-    gitRepoName &&
-      values.formType !== 'edit' &&
-      !values.application.name &&
-      values.application.selectedKey !== UNASSIGNED_KEY &&
-      setFieldValue('application.name', `${gitRepoName}-app`);
-    setFieldTouched('git.url', true);
-  }, [
-    values.git,
-    values.formType,
-    values.application.name,
-    values.application.selectedKey,
-    nameTouched,
-    setFieldValue,
-    setFieldTouched,
-  ]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
     const url = sampleRepo;
@@ -215,19 +345,12 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
-    values.build.strategy === BuildStrategyType.Source &&
-      values.git.url &&
-      handleBuilderImageRecommendation();
-  }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
-
-  React.useEffect(() => {
-    (!dirty || gitUrlTouched || gitTypeTouched || gitDirTouched) &&
+    (!dirty || gitDirTouched) &&
       values.git.url &&
       debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
   }, [
     dirty,
-    gitUrlTouched,
-    gitTypeTouched,
+    isSubmitting,
     gitDirTouched,
     debouncedHandleGitUrlChange,
     values.git.url,
@@ -235,7 +358,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.dir,
   ]);
 
-  const getHelpText = () => {
+  const helpText = React.useMemo(() => {
     if (values.git.isUrlValidating) {
       return `${t('devconsole~Validating')}...`;
     }
@@ -250,22 +373,10 @@ const GitSection: React.FC<GitSectionProps> = ({
         'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
     }
-    if (validated === ValidatedOptions.error && buildStrategy === BuildStrategyType.Devfile) {
-      return t('devconsole~No Devfile present, unable to continue.');
-    }
-    if (buildStrategy === BuildStrategyType.Source) {
-      return t('devconsole~Repository URL to build and deploy your code from source.');
-    }
-    if (buildStrategy === BuildStrategyType.Docker) {
-      return t('devconsole~Repository URL to build and deploy your code from a Dockerfile.');
-    }
-    if (buildStrategy === BuildStrategyType.Devfile) {
-      return t('devconsole~Repository URL to build and deploy your code from a Devfile.');
-    }
     return '';
-  };
+  }, [t, values.git.isUrlValidating, validated, repoStatus]);
 
-  const resetFields = () => {
+  const resetFields = React.useCallback(() => {
     if (!imageSelectorTouched) {
       setFieldValue('image.selected', '');
       setFieldValue('image.tag', '');
@@ -284,56 +395,67 @@ const GitSection: React.FC<GitSectionProps> = ({
       values.application.selectedKey !== UNASSIGNED_KEY &&
       !applicationNameTouched &&
       setFieldValue('application.name', '');
-  };
+  }, [
+    setFieldValue,
+    values.formType,
+    values.image.recommended,
+    values.image.couldNotRecommend,
+    values.application.selectedKey,
+    values.application.isInContext,
+    applicationNameTouched,
+    imageSelectorTouched,
+    nameTouched,
+  ]);
 
   useFormikValidationFix(values.git.url);
 
   React.useEffect(() => {
     inputRef.current?.focus();
+    sampleRepo && fillSample(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <FormSection title={t('devconsole~Git')}>
+    <FormSection title={title ?? t('devconsole~Git')}>
       <InputField
         ref={inputRef}
         type={TextInputTypes.text}
-        name="git.url"
+        name={`${fieldPrefix}git.url`}
         label={t('devconsole~Git Repo URL')}
-        helpText={getHelpText()}
-        helpTextInvalid={getHelpText()}
+        helpText={helpText}
+        helpTextInvalid={helpText}
         validated={validated}
         onChange={(e: React.SyntheticEvent) => {
           resetFields();
-          setValidated(ValidatedOptions.default);
           debouncedHandleGitUrlChange(
             (e.target as HTMLInputElement).value,
             values.git.ref,
             values.git.dir,
           );
         }}
-        onBlur={handleGitUrlBlur}
         data-test-id="git-form-input-url"
         required
+        isDisabled={formType === 'sample' && sampleRepo}
       />
-      {sampleRepo && <SampleRepo onClick={fillSample} />}
+      {formType !== 'sample' && sampleRepo && <SampleRepo onClick={fillSample} />}
       {values.git.showGitType && (
         <>
           <DropdownField
-            name="git.type"
+            name={`${fieldPrefix}git.type`}
             label={t('devconsole~Git type')}
             items={GitReadableTypes}
             title={GitReadableTypes[values.git.type]}
             fullWidth
             required
           />
-          {!gitTypeTouched && values.git.type === GitTypes.unsure && (
+          {values.git.detectedType === GitTypes.unsure && (
             <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
               {t('devconsole~We failed to detect the Git type.')}
             </Alert>
           )}
         </>
       )}
-      <AdvancedGitOptions />
+      <AdvancedGitOptions formContextField={formContextField} />
     </FormSection>
   );
 };

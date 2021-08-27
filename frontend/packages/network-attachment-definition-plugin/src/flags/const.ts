@@ -1,0 +1,1 @@
+export const FLAG_CAN_VIEW_NADS = 'CAN_VIEW_NADS';

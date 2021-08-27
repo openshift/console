@@ -32,7 +32,7 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
     },
   } = props;
 
-  const imageVulnerabilitiesRowFilters: RowFilter[] = [
+  const imageVulnerabilitiesRowFilters: RowFilter<ImageVuln>[] = [
     {
       filterGroupName: t('container-security~Severity'),
       items: [
@@ -47,7 +47,7 @@ const ImageVulnerabilitiesList: React.FC<ImageVulnerabilitiesListProps> = (props
       type: 'vulnerability-severity',
       reducer: (v) => v.vulnerability.severity,
       filter: (filter, vuln) =>
-        filter.selected.has(vuln.vulnerability.severity) || _.isEmpty(filter.selected),
+        filter.selected?.includes(vuln.vulnerability.severity) || _.isEmpty(filter.selected),
     },
   ];
 

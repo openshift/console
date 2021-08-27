@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { RowFunctionArgs, TableData } from '@console/internal/components/factory';
 import {
   asAccessReview,
   Kebab,
@@ -110,8 +110,6 @@ export type VMDiskSimpleRowProps = {
   validation?: StorageSimpleDataValidation;
   columnClasses: string[];
   actionsComponent: React.ReactNode;
-  index: number;
-  style: object;
   isHotplug?: boolean;
   isAutoRemovedHotplug?: boolean;
   isVmi?: boolean;
@@ -122,8 +120,6 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
   validation = {},
   columnClasses,
   actionsComponent,
-  index,
-  style,
   isHotplug,
   isAutoRemovedHotplug,
   isVmi,
@@ -143,7 +139,7 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
     />
   );
   return (
-    <TableRow id={name} index={index} trKey={name} style={style}>
+    <>
       <TableData className={dimensify()}>
         <ValidationCell validation={validation.name}>
           {name}{' '}
@@ -178,15 +174,13 @@ export const DiskSimpleRow: React.FC<VMDiskSimpleRowProps> = ({
         )}
       </TableData>
       <TableData className={dimensify(true)}>{actionsComponent}</TableData>
-    </TableRow>
+    </>
   );
 };
 
-export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
+export const DiskRow: React.FC<RowFunctionArgs<StorageBundle, VMStorageRowCustomData>> = ({
   obj: { disk, ...restData },
   customData: { isDisabled, withProgress, vmLikeEntity, vmi, columnClasses, templateValidations },
-  index,
-  style,
 }) => {
   const diskValidations = validateDisk(
     disk.diskWrapper,
@@ -222,8 +216,6 @@ export const DiskRow: RowFunction<StorageBundle, VMStorageRowCustomData> = ({
         }
       }
       columnClasses={columnClasses}
-      index={index}
-      style={style}
       isHotplug={isHotplug}
       isAutoRemovedHotplug={isAutoRemovedHotplug}
       isVmi={isVmi}

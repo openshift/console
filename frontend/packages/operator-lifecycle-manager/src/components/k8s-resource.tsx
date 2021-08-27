@@ -6,10 +6,9 @@ import { match } from 'react-router';
 import {
   MultiListPage,
   Table,
-  TableRow,
   TableData,
-  RowFunction,
   Flatten,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   ResourceLink,
@@ -56,14 +55,14 @@ const tableColumnClasses = [
   'pf-m-hidden pf-m-visible-on-sm',
 ];
 
-export const ResourceTableRow: RowFunction<
+export const ResourceTableRow: React.FC<RowFunctionArgs<
   K8sResourceKind,
   {
     linkFor: (obj: K8sResourceKind, providedAPI: ProvidedAPI) => JSX.Element;
     providedAPI: ProvidedAPI;
   }
-> = ({ obj, index, style, customData: { linkFor, providedAPI } }) => (
-  <TableRow id={obj.metadata.uid} index={index} trKey={obj.metadata.uid} style={style}>
+>> = ({ obj, customData: { linkFor, providedAPI } }) => (
+  <>
     <TableData className={tableColumnClasses[0]}>{linkFor(obj, providedAPI)}</TableData>
     <TableData className={tableColumnClasses[1]}>{obj.kind}</TableData>
     <TableData className={tableColumnClasses[2]}>
@@ -72,7 +71,7 @@ export const ResourceTableRow: RowFunction<
     <TableData className={tableColumnClasses[3]}>
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </TableData>
-  </TableRow>
+  </>
 );
 
 export const ResourceTable: React.FC<ResourceTableProps> = (props) => {
@@ -171,6 +170,14 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
     },
   );
 
+  const customData = React.useMemo(
+    () => ({
+      linkFor: linkForCsvResource,
+      providedAPI,
+    }),
+    [providedAPI],
+  );
+
   return (
     <MultiListPage
       filterLabel={t('olm~Resources by name')}
@@ -189,7 +196,7 @@ export const Resources: React.FC<ResourcesProps> = (props) => {
       flatten={flattenCsvResources(props.obj)}
       namespace={props.obj.metadata.namespace}
       ListComponent={ResourceTable}
-      customData={{ linkFor: linkForCsvResource, providedAPI }}
+      customData={customData}
     />
   );
 };

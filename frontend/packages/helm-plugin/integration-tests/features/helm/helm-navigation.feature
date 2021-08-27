@@ -18,7 +18,7 @@ Feature: Navigations on Helm Chart
         Scenario: Install Helm Chart page details: HR-05-TC02
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
              Then Install Helm Chart page is displayed
               And release name displays as "nodejs-ex-k"
@@ -38,7 +38,7 @@ Feature: Navigations on Helm Chart
         Scenario: Install Helm Chart: HR-05-TC04
             Given user is at Add page
              When user selects "Helm Chart" card from add page
-              And user searches and selects "Nodejs Ex K v0.2.1" card from catalog page
+              And user searches and selects "Nodejs Ex K" card from catalog page
               And user clicks on the Install Helm Chart button on side bar
               And user clicks on the Install button
              Then user will be redirected to Topology page
@@ -107,7 +107,7 @@ Feature: Navigations on Helm Chart
         @smoke
         Scenario: Search for the not available Helm Chart: HR-05-TC12
             Given user is at the Helm page
-             When user searches for a helm chart "Nodejs Ex K v0.10.0"
+             When user searches for a helm chart "Nodejs Ex K"
              Then user is able to see message on the Helm page as "Not found"
 
 

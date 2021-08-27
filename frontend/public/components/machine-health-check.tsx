@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { MachineHealthCheckModel, MachineModel } from '../models';
 import { K8sResourceKind, MachineHealthCheckKind } from '../module/k8s/types';
 import { referenceForModel } from '../module/k8s/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { DetailsPage, ListPage, Table, TableData, RowFunctionArgs } from './factory';
 import {
   DetailsItem,
   EmptyBox,
@@ -27,9 +27,9 @@ const machineHealthCheckReference = referenceForModel(MachineHealthCheckModel);
 
 const tableColumnClasses = ['', '', 'pf-m-hidden pf-m-visible-on-md', Kebab.columnClass];
 
-const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
+const MachineHealthCheckTableRow: React.FC<RowFunctionArgs<K8sResourceKind>> = ({ obj }) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={machineHealthCheckReference}
@@ -49,7 +49,7 @@ const MachineHealthCheckTableRow: RowFunction<K8sResourceKind> = ({ obj, index, 
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={machineHealthCheckReference} resource={obj} />
       </TableData>
-    </TableRow>
+    </>
   );
 };
 

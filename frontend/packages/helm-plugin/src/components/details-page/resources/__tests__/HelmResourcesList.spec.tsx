@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { TFunction } from 'i18next';
 import { Table, ComponentProps } from '@console/internal/components/factory';
+import { t } from '../../../../../../../__mocks__/i18next';
 import HelmReleaseResourcesHeader from '../HelmReleaseResourcesHeader';
 import HelmResourcesList from '../HelmReleaseResourcesList';
 import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
@@ -9,15 +9,6 @@ import HelmReleaseResourcesRow from '../HelmReleaseResourcesRow';
 type Component = typeof HelmResourcesList;
 type Props = React.ComponentProps<Component>;
 let helmResourcesList: ShallowWrapper<Props>;
-const t = (key: TFunction) => key;
-
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
 
 describe('HelmResourcesList', () => {
   beforeEach(() => {
@@ -35,12 +26,7 @@ describe('HelmResourcesList', () => {
   });
 
   it('should render the proper Headers in the Resources tab', () => {
-    const expectedHelmResourcesHeader: string[] = [
-      'helm-plugin~Name',
-      'helm-plugin~Type',
-      'helm-plugin~Status',
-      'helm-plugin~Created',
-    ];
+    const expectedHelmResourcesHeader: string[] = ['Name', 'Type', 'Status', 'Created'];
 
     const headers = helmResourcesList
       .find(Table)

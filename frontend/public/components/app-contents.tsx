@@ -28,12 +28,11 @@ import {
   isPerspective,
   isRoutePage,
   useExtensions,
+  LoadedExtension,
 } from '@console/plugin-sdk';
 import {
   RoutePage as DynamicRoutePage,
   isRoutePage as isDynamicRoutePage,
-  useResolvedExtensions,
-  ResolvedExtension,
 } from '@console/dynamic-plugin-sdk';
 import CreateResource from './create-resource';
 
@@ -113,11 +112,26 @@ const LazyRoute = (props) => (
   />
 );
 
+const LazyDynamicRoute: React.FC<Omit<React.ComponentProps<typeof Route>, 'component'> & {
+  component: LoadedExtension<DynamicRoutePage>['properties']['component'];
+}> = ({ component, ...props }) => {
+  const LazyComponent = React.useMemo(
+    () =>
+      React.lazy(async () => {
+        const Component = await component();
+        // TODO do not wrap as `default` when we support module code refs
+        return { default: Component };
+      }),
+    [component],
+  );
+  return <Route {...props} component={LazyComponent} />;
+};
+
 const getPluginPageRoutes = (
   activePerspective: string,
   setActivePerspective: (perspective: string) => void,
   routePages: RoutePage[],
-  dynamicRoutePages: ResolvedExtension<DynamicRoutePage>[],
+  dynamicRoutePages: LoadedExtension<DynamicRoutePage>[],
 ) => {
   const activeRoutes = [
     ...routePages
@@ -128,7 +142,14 @@ const getPluginPageRoutes = (
       }),
     ...dynamicRoutePages
       .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
-      .map((r) => <Route {...r.properties} key={Array.from(r.properties.path).join(',')} />),
+      .map((r) => (
+        <LazyDynamicRoute
+          exact={r.properties.exact}
+          path={r.properties.path}
+          component={r.properties.component}
+          key={r.uid}
+        />
+      )),
   ];
 
   const inactiveRoutes = [...routePages, ...dynamicRoutePages]
@@ -156,7 +177,7 @@ const getPluginPageRoutes = (
 const AppContents: React.FC<{}> = () => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
-  const [dynamicRoutePages] = useResolvedExtensions<DynamicRoutePage>(isDynamicRoutePage);
+  const dynamicRoutePages = useExtensions<DynamicRoutePage>(isDynamicRoutePage);
   const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
     () =>
       getPluginPageRoutes(
