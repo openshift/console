@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button, Split, SplitItem, Bullseye } from '@patternfly/react-core';
 import { AngleUpIcon, AngleDownIcon } from '@patternfly/react-icons';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sPatch, K8sKind } from '@console/internal/module/k8s';
+import { useDebounceCallback } from '@console/shared';
 import { useRelatedHPA } from '../../hooks/hpa-hooks';
 import { ExtPodKind } from '../../types';
 import { usePodRingLabel, usePodScalingAccessStatus } from '../../utils';
@@ -19,6 +19,21 @@ interface PodRingProps {
   impersonate?: string;
   enableScaling?: boolean;
 }
+
+const handleScalingCallback = (
+  operation: number,
+  resourceKind: K8sKind,
+  obj: K8sResourceKind,
+  path: string,
+) => {
+  const patch = [{ op: 'replace', path, value: operation }];
+  const opts = { path: 'scale' };
+  const promise: Promise<K8sResourceKind> = k8sPatch(resourceKind, obj, patch, opts);
+  promise.catch((error) => {
+    throw error;
+  });
+  // @TODO maybe delete useEffect & `setClickCount(obj.spec.replicas);` here ?
+};
 
 const PodRing: React.FC<PodRingProps> = ({
   pods,
@@ -51,15 +66,8 @@ const PodRing: React.FC<PodRingProps> = ({
     [obj.spec.replicas],
   );
 
-  const handleScaling = _.debounce(
-    (operation: number) => {
-      const patch = [{ op: 'replace', path, value: operation }];
-      const opts = { path: 'scale' };
-      const promise: Promise<K8sResourceKind> = k8sPatch(resourceKind, obj, patch, opts);
-      promise.catch((error) => {
-        throw error;
-      });
-    },
+  const handleScaling = useDebounceCallback(
+    (operation: number) => handleScalingCallback(operation, resourceKind, obj, path),
     1000,
     {
       leading: true,
