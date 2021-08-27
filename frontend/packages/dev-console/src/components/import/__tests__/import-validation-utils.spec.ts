@@ -159,6 +159,12 @@ describe('ValidationUtils', () => {
       ).toEqual('wild-west-frontend-123');
     });
 
+    it('should detect repository name when url contains a trailing slash', () => {
+      expect(
+        detectGitRepoName('https://github.com/openshift-evangelists/wildWestFrontend/'),
+      ).toEqual('wild-west-frontend');
+    });
+
     it('should throw an error if name is invalid', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.name = 'app_name';
