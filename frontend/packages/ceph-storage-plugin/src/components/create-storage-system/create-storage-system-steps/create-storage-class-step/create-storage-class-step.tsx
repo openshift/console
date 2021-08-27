@@ -21,7 +21,10 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const { Component, displayName } = getExternalStorage(externalStorage) || {};
+  const { Component, displayName } = getExternalStorage(externalStorage) || {
+    Component: null,
+    displayName: '',
+  };
 
   const setForm = React.useCallback(
     (field: ExternalStateKeys, value: ExternalStateValues) =>
