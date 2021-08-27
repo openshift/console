@@ -1,6 +1,6 @@
 import { testName } from '../../support';
 import { Disk, VirtualMachineData } from '../../types/vm';
-import { TEMPLATE_NAME } from '../../utils/const/index';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { addDisk } from '../../views/dialog';
 import { tab } from '../../views/tab';
@@ -16,7 +16,7 @@ const disk1: Disk = {
 const vmData: VirtualMachineData = {
   name: `validate-disk-preallocation-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,

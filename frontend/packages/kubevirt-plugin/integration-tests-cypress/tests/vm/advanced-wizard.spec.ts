@@ -1,5 +1,6 @@
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
@@ -13,7 +14,7 @@ const urlVM: VirtualMachineData = {
   name: `url-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-869): create VM from URL',
   namespace: testName,
-  template: 'Red Hat Enterprise Linux 8.0+ VM',
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.URL,
   pvcSize: '1',
   sshEnable: false,
@@ -24,7 +25,7 @@ const registryVM: VirtualMachineData = {
   name: `registry-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-870): create VM from container image',
   namespace: testName,
-  template: 'Microsoft Windows 10 VM',
+  template: TEMPLATE.WIN10.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
@@ -35,7 +36,7 @@ const pvcVM: VirtualMachineData = {
   name: `pvc-vm-customize-wizard-${testName}`,
   description: 'ID(CNV-2446): create VM from existing PVC',
   namespace: testName,
-  template: 'Fedora 32+ VM',
+  template: TEMPLATE.FEDORA.name,
   provisionSource: ProvisionSource.CLONE_PVC,
   pvcName: 'clone-pvc-fedora',
   pvcNS: testName,

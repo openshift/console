@@ -1,7 +1,7 @@
 import { listPage } from '@console/cypress-integration-tests/views/list-page';
 import { testName } from '../../support';
 import { VirtualMachineData } from '../../types/vm';
-import { TEMPLATE_NAME } from '../../utils/const/index';
+import { TEMPLATE } from '../../utils/const/index';
 import { ProvisionSource } from '../../utils/const/provisionSource';
 import { virtualization } from '../../views/virtualization';
 import { vm } from '../../views/vm';
@@ -9,7 +9,7 @@ import { vm } from '../../views/vm';
 const vmData: VirtualMachineData = {
   name: `validate-storage-profile-${testName}`,
   namespace: testName,
-  template: TEMPLATE_NAME,
+  template: TEMPLATE.RHEL8.name,
   provisionSource: ProvisionSource.REGISTRY,
   pvcSize: '1',
   sshEnable: false,
