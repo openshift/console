@@ -297,6 +297,7 @@ const GitSection: React.FC<GitSectionProps> = ({
           }
           case ImportStrategy.DOCKERFILE: {
             setFieldValue('build.strategy', BuildStrategyType.Docker);
+            setFieldValue('docker.dockerfilePath', importStrategies[0].detectedFiles[0]);
             break;
           }
           default:
