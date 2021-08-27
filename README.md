@@ -345,6 +345,10 @@ If you don't want to run the entire e2e tests, you can use a different suite fro
 $ ./test-protractor.sh <suite>
 ```
 
+### Internationalization
+
+See [INTERNATIONALIZATION](INTERNATIONALIZATION.md) for information on our internationalization tools and guidelines.
+
 ### Deploying a Custom Image to an OpenShift Cluster
 
 Once you have made changes locally, these instructions will allow you to push
