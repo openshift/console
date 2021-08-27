@@ -17,6 +17,7 @@ import {
   PROVIDER_TYPE_ANNOTATION,
   PROVIDER_TYPE_KEYS,
   PROVIDER_NAME_ANNOTATION,
+  SUPPORT_URL_ANNOTATION,
 } from './const';
 
 export const normalizeHelmCharts = (
@@ -37,6 +38,7 @@ export const normalizeHelmCharts = (
         const annotatedName = annotations?.[CHART_NAME_ANNOTATION] ?? '';
         const providerType = annotations?.[PROVIDER_TYPE_ANNOTATION] ?? '';
         const providerName = annotations?.[PROVIDER_NAME_ANNOTATION] ?? '';
+        const supportUrl = annotations?.[SUPPORT_URL_ANNOTATION] ?? '';
         const displayName = annotatedName || `${toTitleCase(name)}`;
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
         const chartURL = chart.urls[0];
@@ -88,7 +90,7 @@ export const normalizeHelmCharts = (
             value: appVersion,
           },
           {
-            label: t('helm-plugin~Provider type'),
+            label: t('helm-plugin~Source'),
             value: translatedProviderType,
           },
           {
@@ -145,6 +147,7 @@ export const normalizeHelmCharts = (
             properties: detailsProperties,
             descriptions: detailsDescriptions,
           },
+          supportUrl,
         };
 
         // group Helm chart with same name and different version together
