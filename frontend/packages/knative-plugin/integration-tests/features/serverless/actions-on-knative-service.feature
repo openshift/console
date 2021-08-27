@@ -4,7 +4,7 @@ Feature: Perform actions on knative service
 
         Background:
             Given user has created or selected namespace "aut-knative"
-              And user has created knative service "kn-service"
+              And user has created knative service "kn-service" from image "gcr.io/knative-samples/helloworld-go"
 
 
         @smoke
@@ -12,6 +12,22 @@ Feature: Perform actions on knative service
             Given user is at the Topology page
              When user right clicks on the knative service "kn-service"
              Then user is able to see the options like Edit Application Grouping, Set Traffic Distribution, Edit Health Checks, Edit Labels, Edit Annotations, Edit Service, Delete Service, Edit "kn-service"
+
+
+        @regression @to-do
+        Scenario: knative service automatically scales
+            Given user is at the Topology page
+              And the knative service "kn-service" got non public address in side bar details
+             When knative service "kn-service" primary URL is called 1 time(s) and is responing "200 OK" with body of "Hello Knative!"
+             Then knative service "kn-service" displays "Running" in side bar details
+              And knative service "kn-service" shows 1 as number of pods running
+             When waited "60sec" for knative service to scale down
+             Then knative service "kn-service" displays "All Revisions are autoscaled to 0" in side bar details
+              And knative service "kn-service" shows 0 as number of pods running
+              And the knative service "kn-service" got non public address in side bar details
+             When knative service "kn-service" primary URL is called 1 time(s) and is responing "200 OK" with body of "Hello Knative!"
+             Then knative service "kn-service" displays "Running" in side bar details
+              And knative service "kn-service" shows 1 as number of pods running
 
 
         @regression
@@ -28,19 +44,29 @@ Feature: Perform actions on knative service
             Given user is at the Topology page
              When user right clicks on the knative service "kn-service"
               And user selects "Edit labels" from context menu
-              And user adds the label "app=label" to existing labels list in Edit Labels modal
+              And user adds the label "<cluster_local_label>" to existing labels list in Edit Labels modal
               And user clicks on Save button
-             Then user will see the label "app=label" in "kn-service" service side bar details
+             Then user will see the label "<cluster_local_label>" in "kn-service" service side bar details
+              And the knative service "kn-service" got non public address in side bar details
+
+        Examples:
+                  | cluster_local_label                             |
+                  | networking.knative.dev/visibility=cluster-local |
 
 
         @regression
         Scenario: Remove label from existing labels list: KN-02-TC04
             Given user is at the Topology page
-              And label "app=label" is added to the knative service "kn-service"
+              And label "<cluster_local_label>" is added to the knative service "kn-service"
              When user selects "Edit labels" context menu option of knative service "kn-service"
-              And user removes the label "app=label" from existing labels list in "Edit labels" modal
+              And user removes the label "<cluster_local_label>" from existing labels list in "Edit labels" modal
               And user clicks the save button on the "Edit labels" modal
-             Then user will not see the label "app=label" in "kn-service" service side bar details
+             Then user will not see the label "<cluster_local_label>" in "kn-service" service side bar details
+              And the knative service "kn-service" got public address in side bar details
+
+        Examples:
+                  | cluster_local_label                             |
+                  | networking.knative.dev/visibility=cluster-local |
 
 
         @regression @to-do
@@ -159,12 +185,15 @@ Feature: Perform actions on knative service
             Given user created another revision "kn-service-1" for knative Service "kn-service"
               And user is at the Topology page
              When user selects "Set traffic distribution" context menu option of knative service "kn-service"
-              And user enters "50" into the Split text box of new revision
+              And user enters "51" into the Split text box of new revision
               And user clicks on Add Revision button present in Set Traffic Distribution modal
-              And user enters "50" into the Split text box of new revision
+              And user enters "49" into the Split text box of new revision
               And user selects another revision from Revision drop down
               And user clicks the save button on the "Set traffic distribution" modal
              Then number of routes should get increased in side bar - resources tab - routes section
+             When knative service "kn-service" primary URL is called 10 time(s) and is responing "200 OK" with body of "Hello Knative!"
+             Then knative service "kn-service" displays "Running" in side bar details
+              And knative service "kn-service" shows 1 as number of pods running
 
 
         @regression
@@ -213,3 +242,7 @@ Feature: Perform actions on knative service
               And key, value columns are displayed with respecitve text fields
               And Add more link is enabled
               And save, cancel buttons are displayed
+
+        @regression @to-do
+        Scenario: Deploy knative service and wait for auto scaling
+

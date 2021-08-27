@@ -47,18 +47,40 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario Outline: Create knative workload using Container image with extrenal registry on Add page: KN-05-TC05
+        Scenario Outline: Create knative workload using Container image and custom environment variables: KN-05-TC05
             Given user is at Deploy Image page
              When user enters Image name from external registry as "<image_name>"
               And user enters workload name as "<workload_name>"
               And user selects resource type as "Knative Service"
+              And user clicks "Deployment" link
+              And user enters environmental variable name as "TARGET"
+              And user enters environmental variable value as "Knative"
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "<workload_name>" in topology page
+              And the knative service "<workload_name>" got public address in side bar details
+              And knative service "kn-service" primary URL is called 1 time(s) and is responing "200 OK" with body of "Hello Knative!"
 
         Examples:
-                  | image_name                | workload_name       |
-                  | openshift/hello-openshift | knative-ex-registry |
+                  | image_name                           | workload_name       |
+                  | gcr.io/knative-samples/helloworld-go | knative-ex-registry |
+
+
+        @regression
+        Scenario: Create a knative workload with cluster-local network address
+            Given user is at Deploy Image page
+             When user enters Image name from external registry as "<image_name>"
+              And user enters workload name as "<workload_name>"
+              And user selects resource type as "Knative Service"
+              And user unchecks "Create a route to the Application" option
+              And user clicks Create button on Add page
+             Then user will be redirected to Topology page
+              And user is able to see workload "<workload_name>" in topology page
+              And the knative service "<workload_name>" got non public address in side bar details
+
+        Examples:
+                  | image_name                           | workload_name       |
+                  | gcr.io/knative-samples/helloworld-go | knative-ex-registry |
 
 
         @regression

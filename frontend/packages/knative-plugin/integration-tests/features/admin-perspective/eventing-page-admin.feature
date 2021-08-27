@@ -5,6 +5,8 @@ Feature: Eventing page at Administrator perspective
 
         Background:
             Given user is at administrator perspective
+              And user has installed OpenShift Serverless Operator
+              And user has deployed Knative Eventing component
               And user has created or selected namespace "aut-eventing-page"
 
 
@@ -33,12 +35,26 @@ Feature: Eventing page at Administrator perspective
              Then user will be redirected to Project Details page
               And user will see channel created
 
+        @regression @to-do
+        Scenario: Adding new Trigger
+            Given user is at eventing page
+              And user has created knative service "hello-openshift"
+              And user has created Broker "example"
+             When user clicks on kebab button on "example" broker
+              And user selects Add Trigger
+              And user enters "example-hello" in Name field
+              And user selects knative service "hello-openshift" as a subscriber for trigger
+              And user clicks on Add button
+              And user choose Triggers tab
+             Then user will see trigger created
+              And trigger named "example-hello" will be ready
 
         @manual
         Scenario: Broker Details page: KA-01-TC03
             Given user is at eventing page
+              And user has created knative service "hello-openshift"
               And user has created Broker "example"
-              And user has created trigger subscribing to knative service newly created "hello-openshift"
+              And user has created trigger subscribing to knative service "hello-openshift"
               And user click on broker "example" in broker tab
              Then user will shown with Broker Details page
               And user will see Details tab with Broker Details
@@ -49,8 +65,9 @@ Feature: Eventing page at Administrator perspective
         @manual
         Scenario: Trigger Details page: KA-01-TC04
             Given user is at eventing page
+              And user has created knative service "hello-openshift"
               And user has created Broker "example"
-              And user has created trigger subscribing to knative service newly created "hello-openshift"
+              And user has created trigger subscribing to knative service "hello-openshift"
               And user is at Trigger Details page
              Then user will see Details tab with Trigger Details
               And user will see YAML generated for Trigger under YAML tab
@@ -59,8 +76,9 @@ Feature: Eventing page at Administrator perspective
         @manual
         Scenario: Channel Details page: KA-01-TC05
             Given user is at eventing page
+              And user has created knative service "hello-openshift"
               And user has created channel "example"
-              And user has created trigger subscribing to knative service newly created "hello-openshift"
+              And user has created trigger subscribing to knative service "hello-openshift"
               And user is at Channel Details page
              Then user will see Details tab with Channel Details
               And user will see YAML generated for Channel under YAML tab
@@ -70,8 +88,9 @@ Feature: Eventing page at Administrator perspective
         @manual
         Scenario: Subscription Details page: KA-01-TC06
             Given user is at eventing page
+              And user has created knative service "hello-openshift"
               And user has created channel "example"
-              And user has created trigger subscribing to knative service newly created "hello-openshift"
+              And user has created trigger subscribing to knative service "hello-openshift"
               And user is at Subscription Details page
              Then user will see Details tab with Subscription Details
               And user will see YAML generated for Subscription under YAML tab

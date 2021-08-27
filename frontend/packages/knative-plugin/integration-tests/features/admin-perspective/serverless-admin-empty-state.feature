@@ -5,6 +5,8 @@ Feature: Serving and Eventing pages at Administrator perspective
 
         Background:
             Given user is at administrator perspective
+              And user has installed OpenShift Serverless Operator
+              And user has deployed Knative Serving component
               And user has created or selected namespace "aut-eventing-empty"
 
 

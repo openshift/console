@@ -5,6 +5,9 @@ Feature: Filters on Serving and Eventing page
 
         Background:
             Given user is at administrator perspective
+              And user has installed OpenShift Serverless Operator
+              And user has deployed Knative Serving component
+              And user has deployed Knative Eventing component
               And user has created or selected namespace "aut-serving-eventing"
 
 
@@ -75,8 +78,8 @@ Feature: Filters on Serving and Eventing page
         @manual
         Scenario: Filter the Event sources after Camel source creation: KA-02-TC06
             Given user has created knative service "hello-openshift"
-              And user has created Camel source
-              And user has created Ping Binding
+              And user has created Camel Source
+              And user has created Ping Source
               And user is at Event Sources tab
              When user clicks on Filter dropdown
              Then user will see digit "1" in front of Camel Source, Ping Sources checkboxes
