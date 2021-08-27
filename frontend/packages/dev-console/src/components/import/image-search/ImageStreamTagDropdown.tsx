@@ -69,8 +69,8 @@ const ImageStreamTagDropdown: React.FC<{ disabled?: boolean; formContextField?: 
           setFieldValue(`${fieldPrefix}isi.tag`, selectedTag);
           setFieldValue(`${fieldPrefix}isi.ports`, ports);
           setFieldValue(`${fieldPrefix}image.ports`, ports);
-          !resourceName &&
-            formType !== 'edit' &&
+          formType !== 'edit' &&
+            resourceName !== name &&
             setFieldValue(`${fieldPrefix}name`, getSuggestedName(name));
           application &&
             application.selectedKey !== UNASSIGNED_KEY &&
