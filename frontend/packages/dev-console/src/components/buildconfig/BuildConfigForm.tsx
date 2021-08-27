@@ -46,7 +46,12 @@ const BuildConfigForm: React.FC<FormikProps<BuildConfigFormikValues> & {
 
   const formEditor = <BuildConfigFormEditor namespace={namespace} />;
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" model={BuildConfigModel} onSave={handleSubmit} />
+    <YAMLEditorField
+      name="yamlData"
+      model={BuildConfigModel}
+      showSamples={!watchedBuildConfig}
+      onSave={handleSubmit}
+    />
   );
 
   const LAST_VIEWED_EDITOR_TYPE_USERSETTING_KEY = 'devconsole.buildConfigForm.editor.lastView';

@@ -70,6 +70,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
       name="yamlData"
       label={t('helm-plugin~Helm Chart')}
       schema={formSchema}
+      showSamples={false}
       onSave={handleSubmit}
     />
   );
