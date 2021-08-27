@@ -600,7 +600,7 @@
   "Please resolve the boot source before creating a virtual machine from this template.": "このテンプレートで仮想マシンを作成する前に、ブートソースを解決してください。",
   "Template source not ready": "テンプレートソースの準備ができていません",
   "The boot source for the chosen template is still being prepared": "選択されたテンプレートのブートソースは準備中です。",
-  "Please wait until it is complete before creating from it": "これが完了してから、作成してください。",
+  "Please wait until it is completed before creating from it": "これが完了してから、作成してください。",
   "Cloning": "クローン作成",
   "Missing authorized key": "認証されたキーがありません",
   "An authorized key is not detected. SSH access is enabled with the password.": "承認されたキーが検出されません。SSH アクセスはパスワードで有効にされています。",

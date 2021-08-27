@@ -600,7 +600,7 @@
   "Please resolve the boot source before creating a virtual machine from this template.": "请在使用此模板创建虚拟机前解析引导源。",
   "Template source not ready": "模板源未就绪",
   "The boot source for the chosen template is still being prepared": "所选模板的引导源仍在准备中",
-  "Please wait until it is complete before creating from it": "请等待完成后再从中创建",
+  "Please wait until it is completed before creating from it": "请等待完成后再从中创建",
   "Cloning": "克隆",
   "Missing authorized key": "缺少授权的密钥",
   "An authorized key is not detected. SSH access is enabled with the password.": "未检测到授权的密钥。使用密码启用 SSH 访问。",

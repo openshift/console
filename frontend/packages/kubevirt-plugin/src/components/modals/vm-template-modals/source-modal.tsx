@@ -60,7 +60,7 @@ export const SourceNotReadyModal: React.FC<ModalComponentProps> = ({ close }) =>
             {t('kubevirt-plugin~The boot source for the chosen template is still being prepared')}.
           </StackItem>
           <StackItem>
-            {t('kubevirt-plugin~Please wait until it is complete before creating from it')}.
+            {t('kubevirt-plugin~Please wait until it is completed before creating from it')}.
           </StackItem>
         </Stack>
       </ModalBody>

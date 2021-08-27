@@ -600,7 +600,7 @@
   "Please resolve the boot source before creating a virtual machine from this template.": "이 템플릿에서 가상 머신을 생성하기 전에 부팅 소스를 확인하십시오.",
   "Template source not ready": "템플릿 소스가 준비되지 않았습니다.",
   "The boot source for the chosen template is still being prepared": "선택한 템플릿의 부팅 소스가 아직 준비 중입니다.",
-  "Please wait until it is complete before creating from it": "완료될 때 까지 기다린 후 작성하십시오.",
+  "Please wait until it is completed before creating from it": "완료될 때 까지 기다린 후 작성하십시오.",
   "Cloning": "복제",
   "Missing authorized key": "인증 키 없음",
   "An authorized key is not detected. SSH access is enabled with the password.": "인증된 키가 감지되지 않습니다. SSH 액세스는 암호로 사용할 수 있습니다.",
