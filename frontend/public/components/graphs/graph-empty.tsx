@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false }) => {
+export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false, query }) => {
   const { t } = useTranslation();
-
+  if (!loading) {
+    /* eslint-disable no-console */
+    console.log('---> Query:', query);
+    /* eslint-enable no-console */
+  }
   return (
     <div
       style={{
@@ -28,4 +32,5 @@ export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = 
 type GraphEmptyProps = {
   height?: number | string;
   loading?: boolean;
+  query?: string | string[];
 };

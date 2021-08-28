@@ -141,7 +141,7 @@ export const StackChart: React.FC<AreaChartProps> = ({
             </ChartStack>
           </Chart>
         ) : (
-          <GraphEmpty height={height} loading={loading} />
+          <GraphEmpty height={height} loading={loading} query={query} />
         )}
       </PrometheusGraphLink>
     </PrometheusGraph>

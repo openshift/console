@@ -75,7 +75,7 @@ export const BarChart: React.FC<BarChartProps> = ({
             </React.Fragment>
           ))
         ) : (
-          <GraphEmpty loading={loading} />
+          <GraphEmpty loading={loading} query={query} />
         )}
       </PrometheusGraphLink>
     </PrometheusGraph>

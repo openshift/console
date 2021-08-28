@@ -31,16 +31,17 @@ const (
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the query and query_range endpoints. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
-	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
+	openshiftThanosTenancyHost = "rbac-query-proxy.open-cluster-management-observability.svc:8443"
 
 	// Well-known location of the tenant aware Thanos service for OpenShift exposing the rules endpoint. This is only accessible in-cluster.
 	// Thanos proxies requests to the cluster monitoring and user workload monitoring prometheus instances as well as Thanos ruler instances.
-	openshiftThanosTenancyForRulesHost = "thanos-querier.openshift-monitoring.svc:9093"
+	openshiftThanosTenancyForRulesHost = "rbac-query-proxy.open-cluster-management-observability.svc:8443"
 
 	// Well-known location of the Thanos service for OpenShift. This is only accessible in-cluster.
 	// This is used for non-tenant global query requests
 	// proxying to both cluster monitoring and user workload monitoring prometheus instances.
-	openshiftThanosHost = "thanos-querier.openshift-monitoring.svc:9091"
+	//CURRENT: openshiftThanosHost = "thanos-querier.openshift-monitoring.svc:9091"
+	openshiftThanosHost = "rbac-query-proxy.open-cluster-management-observability.svc:8443"
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"

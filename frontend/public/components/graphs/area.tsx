@@ -168,7 +168,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
             </ChartGroup>
           </Chart>
         ) : (
-          <GraphEmpty height={height} loading={loading} />
+          <GraphEmpty height={height} loading={loading} query={query} />
         )}
       </PrometheusGraphLink>
     </PrometheusGraph>
