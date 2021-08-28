@@ -62,7 +62,7 @@ const autoHotplugDiskClone: Disk = {
   source: DISK_SOURCE.AttachClonedDisk,
 };
 
-const autoHotplugDiskUse: Disk = {
+const autoHotplugDiskPVC: Disk = {
   description:
     'ID(CNV-6857) Attach AutoDetach hotplug disk with [Use an existing PVC] as source selection to running VM',
   name: 'disk-auto-use',
@@ -113,7 +113,7 @@ const persHotplugDiskClone: Disk = {
   source: DISK_SOURCE.AttachClonedDisk,
 };
 
-const persHotplugDiskUse: Disk = {
+const persHotplugDiskPVC: Disk = {
   description:
     'ID(CNV-6861) Attach Persistent hotplug disk with [Use an existing PVC] as source to running VM',
   name: 'disk-pers-use',
@@ -285,7 +285,7 @@ describe('Test UI for VM disk hot-plug', () => {
     persHotplugDiskUrl,
     persHotplugDiskReg,
     persHotplugDiskClone,
-    persHotplugDiskUse,
+    persHotplugDiskPVC,
   ].forEach((disk) => {
     it(`${disk.description}`, () => {
       verifyDiskAttached(disk, 'PersistingHotplug');
@@ -297,7 +297,7 @@ describe('Test UI for VM disk hot-plug', () => {
     autoHotplugDiskUrl,
     autoHotplugDiskReg,
     autoHotplugDiskClone,
-    autoHotplugDiskUse,
+    autoHotplugDiskPVC,
   ].forEach((disk) => {
     it(`${disk.description}`, () => {
       verifyDiskAttached(disk, 'AutoDetachHotplug');
