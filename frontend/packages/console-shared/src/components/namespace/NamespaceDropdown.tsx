@@ -114,8 +114,8 @@ const SystemSwitch: React.FC<{
           data-test="showSystemSwitch"
           label={
             isProject
-              ? t('console-shared~Show system projects')
-              : t('console-shared~Show system namespaces')
+              ? t('console-shared~Show default projects')
+              : t('console-shared~Show default namespaces')
           }
           isChecked={isChecked}
           onChange={onChange}
