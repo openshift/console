@@ -348,7 +348,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div className="co-file-dropzone co-file-dropzone__flex">
-            <div ref={setViewContainer} className="pf-topology-content">
+            <div
+              ref={setViewContainer}
+              className="pf-topology-content ocs-quick-search-modal__no-backdrop"
+            >
               {canDrop && isOver && (
                 <div
                   className={classNames(

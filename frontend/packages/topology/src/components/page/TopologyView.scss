@@ -90,7 +90,7 @@
   &__dropzone {
     background-color: rgba(0, 102, 204, 0.1) !important;
     color: var(--pf-global--palette--black-900) !important;
-    margin:0 !important;
+    margin: 0 !important;
   }
 
   &__dropzone-text {
@@ -115,10 +115,5 @@
     .overview__sidebar-pane-body {
       min-height: initial;
     }
-  }
-
-  .pf-c-backdrop {
-    position: absolute;
-    background: none;
   }
 }
